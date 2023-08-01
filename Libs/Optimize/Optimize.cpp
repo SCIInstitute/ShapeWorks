@@ -30,6 +30,7 @@
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
+#include <Libs/Particles/ParticleFile.h>
 #include "Logging.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
@@ -443,7 +444,7 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
-  
+
   m_sampler->GetDisentangledEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetDisentangledEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
@@ -468,7 +469,8 @@ void Optimize::InitializeSampler() {
 
   m_sampler->SetAdaptivityMode(m_adaptivity_mode);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
-  m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(
+      m_recompute_regularization_interval);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(
       m_recompute_regularization_interval);
   m_sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(
@@ -564,8 +566,8 @@ void Optimize::Initialize() {
     m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization,
                                                                      m_iterations_per_split);
 
-    m_sampler->GetDisentangledEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization,
-                                                                     m_iterations_per_split);                                                                     
+    m_sampler->GetDisentangledEnsembleEntropyFunction()->SetMinimumVarianceDecay(
+        m_starting_regularization, m_ending_regularization, m_iterations_per_split);
 
     m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
         m_starting_regularization, m_ending_regularization, m_iterations_per_split);
@@ -809,16 +811,14 @@ void Optimize::RunOptimize() {
 
   m_sampler->SetCorrespondenceOn();
 
-  if (m_use_disentangled_ssm)
-  {
-    if (m_starting_regularization == m_ending_regularization) 
-       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy);
+  if (m_use_disentangled_ssm) {
+    if (m_starting_regularization == m_ending_regularization)
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy);
     else
-       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy);
-  }
-  else if ((m_attributes_per_domain.size() > 0 &&
-       *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
-      m_mesh_based_attributes) {
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy);
+  } else if ((m_attributes_per_domain.size() > 0 &&
+              *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
+             m_mesh_based_attributes) {
     SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
   } else if (m_use_regression == true) {
@@ -1272,39 +1272,28 @@ void Optimize::WritePointFiles(std::string iter_prefix) {
     std::string local_file = iter_prefix + "/" + m_filenames[i] + "_local.particles";
     std::string world_file = iter_prefix + "/" + m_filenames[i] + "_world.particles";
 
-    std::ofstream out(local_file.c_str());
-    std::ofstream outw(world_file.c_str());
-
     std::string str = "Writing " + world_file + " and " + local_file + " files...";
     this->PrintStartMessage(str, 1);
-    if (!out) {
-      std::cerr << "Error opening output file: " << local_file << std::endl;
-      throw 1;
-    }
-    if (!outw) {
-      std::cerr << "Error opening output file: " << world_file << std::endl;
-      throw 1;
-    }
 
-    for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
-      PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
-      PointType wpos = m_sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+    auto ps = m_sampler->GetParticleSystem();
 
+    Eigen::VectorXd local_particles;
+    Eigen::VectorXd world_particles;
+    int idx = 0;
+    local_particles.resize(ps->GetNumberOfParticles(i) * 3);
+    world_particles.resize(ps->GetNumberOfParticles(i) * 3);
+
+    for (unsigned int j = 0; j < ps->GetNumberOfParticles(i); j++) {
+      PointType pos = ps->GetPosition(j, i);
       for (unsigned int k = 0; k < 3; k++) {
-        out << pos[k] << " ";
+        local_particles(idx) = pos[k];
+        world_particles(idx) = ps->GetTransformedPosition(j, i)[k];
+        idx++;
       }
-      out << std::endl;
+    }
 
-      for (unsigned int k = 0; k < 3; k++) {
-        outw << wpos[k] << " ";
-      }
-      outw << std::endl;
-
-      counter++;
-    }  // end for points
-
-    out.close();
-    outw.close();
+    particles::write_particles(local_file, local_particles);
+    particles::write_particles(world_file, world_particles);
 
     std::stringstream st;
     st << counter;
@@ -1868,11 +1857,12 @@ void Optimize::SetUseRegression(bool use_regression) { this->m_use_regression = 
 void Optimize::SetUseMixedEffects(bool use_mixed_effects) { this->m_use_mixed_effects = use_mixed_effects; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm) { this->m_use_disentangled_ssm = use_disentangled_ssm; }
+void Optimize::SetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm) {
+  this->m_use_disentangled_ssm = use_disentangled_ssm;
+}
 
 //---------------------------------------------------------------------------
 bool Optimize::GetUseDisentangledSpatiotemporalSSM() { return this->m_use_disentangled_ssm; }
-
 
 //---------------------------------------------------------------------------
 void Optimize::SetNormalAngle(double normal_angle) { this->m_normal_angle = normal_angle; }
