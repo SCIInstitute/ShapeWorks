@@ -696,10 +696,38 @@ TEST(OptimizeTests, vtk_output) {
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
-
   // check the first mode of variation.
   // If Procrustes scaling is working, this should be small.
   // Otherwise it is quite large (>4000).
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, disentangled_spatiotemporal_test) {
+  prep_temp("/optimize/disentangled_spatiotemporal", "disentangled_spatiotemporal_test");
+  
+  std::remove("test1_particles/ID01_TIME01_world.particles");
+
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("test1.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  bool runStatus = app.Run();
+
+  ASSERT_TRUE(runStatus);
+
+  // compute and test stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("test1_analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  ASSERT_GT(values[values.size() - 1], 80000);
+  ASSERT_LT(values[values.size() - 2], 200);
 }
