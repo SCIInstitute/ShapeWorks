@@ -12,6 +12,7 @@ namespace shapeworks::particles {
 //---------------------------------------------------------------------------
 static void write_vtk_particles(std::string filename, const Eigen::VectorXd& points) {
   auto vtk_points = vtkSmartPointer<vtkPoints>::New();
+  vtk_points->SetDataTypeToDouble();
   int num_points = points.size() / 3;
   int idx = 0;
   for (int i = 0; i < num_points; i++) {
