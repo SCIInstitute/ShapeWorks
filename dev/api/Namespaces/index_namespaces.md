@@ -14,6 +14,7 @@ title: Namespaces
     * **namespace [Functor](../Namespaces/namespaceitk_1_1Functor.md)** 
 * **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry) 
     * **namespace [mesh](../Namespaces/namespaceshapeworks_1_1mesh.md)** 
+    * **namespace [particles](../Namespaces/namespaceshapeworks_1_1particles.md)** 
     * **namespace [project](../Namespaces/namespaceshapeworks_1_1project.md)** 
         * **namespace [prefixes](../Namespaces/namespaceshapeworks_1_1project_1_1prefixes.md)** 
         * **namespace [types](../Namespaces/namespaceshapeworks_1_1project_1_1types.md)** 
@@ -24,4 +25,4 @@ title: Namespaces
 
 -------------------------------
 
-Updated on 2023-08-01 at 19:48:18 +0000
+Updated on 2023-08-02 at 17:10:01 +0000

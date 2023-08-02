@@ -2813,14 +2813,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitializationcriterion">SetInitializationCriterion</a></strong>(double init_criterion)<br>Set the init criterion (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoptimizationcriterion">SetOptimizationCriterion</a></strong>(double opt_criterion)<br>Set the optimization criterion (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setuseshapestatisticsininit">SetUseShapeStatisticsInInit</a></strong>(bool use_shape_statistics_in_init)<br>Set if shape statistics should be used in initialization.</td>
 </tr>
 <tr>
@@ -3004,7 +2996,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicscachesizemultiplier">SetGeodesicsCacheSizeMultiplier</a></strong>(size_t n)</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a> &amp;</td>
+<td><a href="classshapeworks_1_1OptimizationVisualizer.html">OptimizationVisualizer</a> &amp;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-getvisualizer">GetVisualizer</a></strong>()</td>
 </tr>
 <tr>
@@ -3026,6 +3018,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-updateprogress">UpdateProgress</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-set-particle-format">set_particle_format</a></strong>(std::string format)</td>
 </tr>
 </tbody>
 </table>
@@ -3314,14 +3310,6 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-iterations-per-split">m_iterations_per_split</a></strong></td>
 </tr>
 <tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-initialization-criterion">m_initialization_criterion</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-optimization-criterion">m_optimization_criterion</a></strong></td>
-</tr>
-<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-shape-statistics-in-init">m_use_shape_statistics_in_init</a></strong></td>
 </tr>
@@ -3506,6 +3494,10 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer-">visualizer_</a></strong></td>
 </tr>
 <tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-particle-format-">particle_format_</a></strong></td>
+</tr>
+<tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-project-">project_</a></strong></td>
 </tr>
@@ -3578,7 +3570,7 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-iteratecallback">shapeworks::Optimize::IterateCallback</a></p>
 <hr />
-<p>Updated on 2023-08-01 at 19:48:16 +0000</p>
+<p>Updated on 2023-08-02 at 17:10:00 +0000</p>
 
               
             </article>

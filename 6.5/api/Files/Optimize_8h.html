@@ -2565,8 +2565,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetOptimizationIterations</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">optimization_iterations</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetOptimizationIterationsCompleted</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">optimization_iterations_completed</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetIterationsPerSplit</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iterations_per_split</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetInitializationCriterion</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">init_criterion</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetOptimizationCriterion</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">opt_criterion</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetUseShapeStatisticsInInit</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">use_shape_statistics_in_init</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProcrustesInterval</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">procrustes_interval</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProcrustesScaling</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">procrustes_scaling</span><span class="p">);</span>
@@ -2637,7 +2635,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetGeodesicsCacheSizeMultiplier</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">GetVisualizer</span><span class="p">();</span>
+<span class="w">  </span><span class="n">OptimizationVisualizer</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">GetVisualizer</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetShowVisualizer</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetShowVisualizer</span><span class="p">();</span>
 
@@ -2646,6 +2644,8 @@
 <span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateProgress</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particle_format</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">format</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">particle_format_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">format</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="k">protected</span><span class="o">:</span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">();</span>
@@ -2743,8 +2743,6 @@
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_optimization_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_optimization_iterations_completed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_iterations_per_split</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_initialization_criterion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_optimization_criterion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_shape_statistics_in_init</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_procrustes_scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
@@ -2803,6 +2801,7 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_visualizer_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span>
 
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">particle_format_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;particles&quot;</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_start_time</span><span class="p">;</span>
@@ -2814,7 +2813,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-08-01 at 19:48:17 +0000</p>
+<p>Updated on 2023-08-02 at 17:10:01 +0000</p>
 
               
             </article>

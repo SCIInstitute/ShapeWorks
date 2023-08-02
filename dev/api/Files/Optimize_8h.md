@@ -148,8 +148,6 @@ class Optimize {
   void SetOptimizationIterations(int optimization_iterations);
   void SetOptimizationIterationsCompleted(int optimization_iterations_completed);
   void SetIterationsPerSplit(int iterations_per_split);
-  void SetInitializationCriterion(double init_criterion);
-  void SetOptimizationCriterion(double opt_criterion);
   void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
   void SetProcrustesInterval(int procrustes_interval);
   void SetProcrustesScaling(bool procrustes_scaling);
@@ -220,7 +218,7 @@ class Optimize {
 
   void SetGeodesicsCacheSizeMultiplier(size_t n);
 
-  shapeworks::OptimizationVisualizer& GetVisualizer();
+  OptimizationVisualizer& GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
@@ -229,6 +227,8 @@ class Optimize {
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
   void UpdateProgress();
+
+  void set_particle_format(std::string format) { particle_format_ = format; }
 
  protected:
   virtual void SetIterationCallback();
@@ -326,8 +326,6 @@ class Optimize {
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
   int m_iterations_per_split = 1000;
-  double m_initialization_criterion = 1e-6;
-  double m_optimization_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
   bool m_procrustes_scaling = true;
@@ -386,6 +384,7 @@ class Optimize {
   bool show_visualizer_ = false;
   shapeworks::OptimizationVisualizer visualizer_;
 
+  std::string particle_format_ = "particles";
   std::shared_ptr<Project> project_;
 
   std::chrono::system_clock::time_point m_start_time;
@@ -400,4 +399,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2023-08-01 at 19:48:17 +0000
+Updated on 2023-08-02 at 17:10:01 +0000

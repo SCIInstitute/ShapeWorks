@@ -2770,20 +2770,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setinitializationcriterion" class="md-nav__link">
-    function SetInitializationCriterion
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setoptimizationcriterion" class="md-nav__link">
-    function SetOptimizationCriterion
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-setuseshapestatisticsininit" class="md-nav__link">
     function SetUseShapeStatisticsInInit
   </a>
@@ -3143,6 +3129,13 @@
           <li class="md-nav__item">
   <a href="#function-updateprogress" class="md-nav__link">
     function UpdateProgress
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_particle_format" class="md-nav__link">
+    function set_particle_format
   </a>
   
 </li>
@@ -3664,20 +3657,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-m_initialization_criterion" class="md-nav__link">
-    variable m_initialization_criterion
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#variable-m_optimization_criterion" class="md-nav__link">
-    variable m_optimization_criterion
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#variable-m_use_shape_statistics_in_init" class="md-nav__link">
     variable m_use_shape_statistics_in_init
   </a>
@@ -4000,6 +3979,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#variable-particle_format_" class="md-nav__link">
+    variable particle_format_
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variable-project_" class="md-nav__link">
     variable project_
   </a>
@@ -4279,14 +4265,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitializationcriterion">SetInitializationCriterion</a></strong>(double init_criterion)<br>Set the init criterion (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setoptimizationcriterion">SetOptimizationCriterion</a></strong>(double opt_criterion)<br>Set the optimization criterion (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setuseshapestatisticsininit">SetUseShapeStatisticsInInit</a></strong>(bool use_shape_statistics_in_init)<br>Set if shape statistics should be used in initialization.</td>
 </tr>
 <tr>
@@ -4470,7 +4448,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicscachesizemultiplier">SetGeodesicsCacheSizeMultiplier</a></strong>(size_t n)</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a> &amp;</td>
+<td><a href="classshapeworks_1_1OptimizationVisualizer.html">OptimizationVisualizer</a> &amp;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-getvisualizer">GetVisualizer</a></strong>()</td>
 </tr>
 <tr>
@@ -4492,6 +4470,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-updateprogress">UpdateProgress</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-set-particle-format">set_particle_format</a></strong>(std::string format)</td>
 </tr>
 </tbody>
 </table>
@@ -4796,14 +4778,6 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-iterations-per-split">m_iterations_per_split</a></strong></td>
 </tr>
 <tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-initialization-criterion">m_initialization_criterion</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-optimization-criterion">m_optimization_criterion</a></strong></td>
-</tr>
-<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-shape-statistics-in-init">m_use_shape_statistics_in_init</a></strong></td>
 </tr>
@@ -4986,6 +4960,10 @@
 <tr>
 <td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a></td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer-">visualizer_</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-particle-format-">particle_format_</a></strong></td>
 </tr>
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt;</td>
@@ -5271,18 +5249,6 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set the number of iterations per split. </p>
-<h3 id="function-setinitializationcriterion">function SetInitializationCriterion</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetInitializationCriterion</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">init_criterion</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the init criterion (TODO: details) </p>
-<h3 id="function-setoptimizationcriterion">function SetOptimizationCriterion</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetOptimizationCriterion</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">opt_criterion</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the optimization criterion (TODO: details) </p>
 <h3 id="function-setuseshapestatisticsininit">function SetUseShapeStatisticsInInit</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseShapeStatisticsInInit</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_shape_statistics_in_init</span>
@@ -5537,7 +5503,7 @@
 </code></pre></div>
 <p>Set cache size multiplier for geodesics. The total number of cache entries will be n * number_of_triangles </p>
 <h3 id="function-getvisualizer">function GetVisualizer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetVisualizer</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetVisualizer</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setshowvisualizer">function SetShowVisualizer</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetShowVisualizer</span><span class="p">(</span>
@@ -5559,6 +5525,11 @@
 <p>transform a point if necessary </p>
 <h3 id="function-updateprogress">function UpdateProgress</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateProgress</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_particle_format">function set_particle_format</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_format</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">format</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-setiterationcallback">function SetIterationCallback</h3>
@@ -5809,12 +5780,6 @@
 <h3 id="variable-m_iterations_per_split">variable m_iterations_per_split</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_iterations_per_split</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
 </code></pre></div>
-<h3 id="variable-m_initialization_criterion">variable m_initialization_criterion</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_initialization_criterion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="variable-m_optimization_criterion">variable m_optimization_criterion</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_optimization_criterion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">;</span>
-</code></pre></div>
 <h3 id="variable-m_use_shape_statistics_in_init">variable m_use_shape_statistics_in_init</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_shape_statistics_in_init</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 </code></pre></div>
@@ -5953,6 +5918,9 @@
 <h3 id="variable-visualizer_">variable visualizer_</h3>
 <div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span>
 </code></pre></div>
+<h3 id="variable-particle_format_">variable particle_format_</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">particle_format_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;particles&quot;</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-project_">variable project_</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
 </code></pre></div>
@@ -5969,7 +5937,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-08-01 at 19:48:16 +0000</p>
+<p>Updated on 2023-08-02 at 17:09:59 +0000</p>
 
               
             </article>

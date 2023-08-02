@@ -88,6 +88,8 @@ title: shapeworks::OptimizeParameters
 | void | **[set_use_geodesics_to_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-geodesics-to-landmarks)**(bool value) |
 | double | **[get_geodesic_to_landmarks_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-geodesic-to-landmarks-weight)**() |
 | void | **[set_geodesic_to_landmarks_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-geodesic-to-landmarks-weight)**(double value) |
+| std::string | **[get_particle_format](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-particle-format)**() |
+| void | **[set_particle_format](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-particle-format)**(std::string format) |
 
 ## Detailed Description
 
@@ -680,6 +682,22 @@ void set_geodesic_to_landmarks_weight(
 ```
 
 
+### function get_particle_format
+
+```cpp
+std::string get_particle_format()
+```
+
+
+### function set_particle_format
+
+```cpp
+void set_particle_format(
+    std::string format
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-08-01 at 19:48:16 +0000
+Updated on 2023-08-02 at 17:09:59 +0000

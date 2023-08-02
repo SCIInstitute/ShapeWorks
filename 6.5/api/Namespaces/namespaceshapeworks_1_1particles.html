@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1ParticlePositionReader.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Namespaces/namespaceshapeworks_1_1particles.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>shapeworks::ParticlePositionReader - ShapeWorks</title>
+        <title>shapeworks::particles - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#shapeworksparticlepositionreader" class="md-skip">
+        <a href="#shapeworksparticles" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              shapeworks::ParticlePositionReader
+              shapeworks::particles
             
           </span>
         </div>
@@ -2212,7 +2212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Namespaces/index_namespaces.html" class="md-nav__link">
+      <a href="index_namespaces.html" class="md-nav__link">
         Namespaces
       </a>
     </li>
@@ -2226,7 +2226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_classes.html" class="md-nav__link">
+      <a href="../Classes/index_classes.html" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -2371,175 +2371,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-types" class="md-nav__link">
-    Public Types
+  <a href="#functions" class="md-nav__link">
+    Functions
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-functions" class="md-nav__link">
-    Public Functions
+  <a href="#functions-documentation" class="md-nav__link">
+    Functions Documentation
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#protected-functions" class="md-nav__link">
-    Protected Functions
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#detailed-description" class="md-nav__link">
-    Detailed Description
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-types-documentation" class="md-nav__link">
-    Public Types Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Types Documentation">
+    <nav class="md-nav" aria-label="Functions Documentation">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#typedef-self" class="md-nav__link">
-    typedef Self
+  <a href="#function-read_particles" class="md-nav__link">
+    function read_particles
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#typedef-superclass" class="md-nav__link">
-    typedef Superclass
+  <a href="#function-read_particles_as_vector" class="md-nav__link">
+    function read_particles_as_vector
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#typedef-pointer" class="md-nav__link">
-    typedef Pointer
+  <a href="#function-write_particles" class="md-nav__link">
+    function write_particles
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#typedef-constpointer" class="md-nav__link">
-    typedef ConstPointer
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-constweakpointer" class="md-nav__link">
-    typedef ConstWeakPointer
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-pointtype" class="md-nav__link">
-    typedef PointType
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-functions-documentation" class="md-nav__link">
-    Public Functions Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Functions Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#function-itknewmacro" class="md-nav__link">
-    function itkNewMacro
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-itktypemacro" class="md-nav__link">
-    function itkTypeMacro
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getoutput" class="md-nav__link">
-    function GetOutput
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-itksetstringmacro" class="md-nav__link">
-    function itkSetStringMacro
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-itkgetstringmacro" class="md-nav__link">
-    function itkGetStringMacro
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-read" class="md-nav__link">
-    function Read
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-update" class="md-nav__link">
-    function Update
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#protected-functions-documentation" class="md-nav__link">
-    Protected Functions Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Protected Functions Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#function-particlepositionreader" class="md-nav__link">
-    function ParticlePositionReader
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-printself" class="md-nav__link">
-    function PrintSelf
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-particlepositionreader_1" class="md-nav__link">
-    function ~ParticlePositionReader
+  <a href="#function-write_particles_from_vector" class="md-nav__link">
+    function write_particles_from_vector
   </a>
   
 </li>
@@ -2561,17 +2430,14 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1ParticlePositionReader.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Namespaces/namespaceshapeworks_1_1particles.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="shapeworksparticlepositionreader">shapeworks::ParticlePositionReader</h1>
-<p><a href="#detailed-description">More...</a></p>
-<p><code>#include &lt;itkParticlePositionReader.h&gt;</code></p>
-<p>Inherits from itk::DataObject</p>
-<h2 id="public-types">Public Types</h2>
+<h1 id="shapeworksparticles">shapeworks::particles</h1>
+<h2 id="functions">Functions</h2>
 <table>
 <thead>
 <tr>
@@ -2581,172 +2447,48 @@
 </thead>
 <tbody>
 <tr>
-<td>typedef <a href="classshapeworks_1_1ParticlePositionReader.html">ParticlePositionReader</a></td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#typedef-self">Self</a></strong></td>
+<td>Eigen::VectorXd</td>
+<td><strong><a href="namespaceshapeworks_1_1particles.html#function-read-particles">read_particles</a></strong>(std::string filename)</td>
 </tr>
 <tr>
-<td>typedef DataObject</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#typedef-superclass">Superclass</a></strong></td>
-</tr>
-<tr>
-<td>typedef itk::SmartPointer&lt; <a href="classshapeworks_1_1ParticlePositionReader.html#typedef-self">Self</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#typedef-pointer">Pointer</a></strong></td>
-</tr>
-<tr>
-<td>typedef itk::SmartPointer&lt; const <a href="classshapeworks_1_1ParticlePositionReader.html#typedef-self">Self</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#typedef-constpointer">ConstPointer</a></strong></td>
-</tr>
-<tr>
-<td>typedef itk::WeakPointer&lt; const <a href="classshapeworks_1_1ParticlePositionReader.html#typedef-self">Self</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#typedef-constweakpointer">ConstWeakPointer</a></strong></td>
-</tr>
-<tr>
-<td>typedef itk::Point&lt; double, 3 &gt;</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#typedef-pointtype">PointType</a></strong></td>
-</tr>
-</tbody>
-</table>
-<h2 id="public-functions">Public Functions</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-itknewmacro">itkNewMacro</a></strong>(<a href="classshapeworks_1_1ParticlePositionReader.html#typedef-self">Self</a> )</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-itktypemacro">itkTypeMacro</a></strong>(<a href="classshapeworks_1_1ParticlePositionReader.html">ParticlePositionReader</a> , itk::DataObject )</td>
-</tr>
-<tr>
-<td>const std::vector&lt; <a href="classshapeworks_1_1ParticlePositionReader.html#typedef-pointtype">PointType</a> &gt; &amp;</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-getoutput">GetOutput</a></strong>() const</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-itksetstringmacro">itkSetStringMacro</a></strong>(FileName )</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-itkgetstringmacro">itkGetStringMacro</a></strong>(FileName )</td>
+<td>std::vector&lt; itk::Point&lt; double, 3 &gt; &gt;</td>
+<td><strong><a href="namespaceshapeworks_1_1particles.html#function-read-particles-as-vector">read_particles_as_vector</a></strong>(std::string filename)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-read">Read</a></strong>()</td>
+<td><strong><a href="namespaceshapeworks_1_1particles.html#function-write-particles">write_particles</a></strong>(std::string filename, const Eigen::VectorXd &amp; points)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-update">Update</a></strong>()</td>
+<td><strong><a href="namespaceshapeworks_1_1particles.html#function-write-particles-from-vector">write_particles_from_vector</a></strong>(std::string filename, std::vector&lt; itk::Point&lt; double, 3 &gt; &gt; points)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="protected-functions">Protected Functions</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-particlepositionreader">ParticlePositionReader</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-printself">PrintSelf</a></strong>(std::ostream &amp; os, itk::Indent indent) const</td>
-</tr>
-<tr>
-<td>virtual</td>
-<td><strong><a href="classshapeworks_1_1ParticlePositionReader.html#function-~particlepositionreader">~ParticlePositionReader</a></strong>()</td>
-</tr>
-</tbody>
-</table>
-<h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ParticlePositionReader</span><span class="p">;</span>
-</code></pre></div>
-<p>This class reads a set of Points from disk and stores them in a vector. The file format is simple an ascii list of VDimension-tuples stored one per line (delimited by std::endl). There is no header required for the file, but the file should not contain leading or trailing empty lines.</p>
-<p>In 3D, for example, a fragment of a points file looks like this:</p>
-<p>1.0 2.0 5.4 2.3 8.7 33.0 4.0 8.21 4.44</p>
-<p>etc.. </p>
-<h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticlePositionReader</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticlePositionReader</span><span class="o">::</span><span class="n">Self</span><span class="p">;</span>
-</code></pre></div>
-<p>Standard class typedefs </p>
-<h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticlePositionReader</span><span class="o">::</span><span class="n">Superclass</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticlePositionReader</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticlePositionReader</span><span class="o">::</span><span class="n">ConstPointer</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="typedef-constweakpointer">typedef ConstWeakPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticlePositionReader</span><span class="o">::</span><span class="n">ConstWeakPointer</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticlePositionReader</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
-</code></pre></div>
-<p>The point type that this class reads. </p>
-<h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Self</span><span class="w"> </span>
+<h2 id="functions-documentation">Functions Documentation</h2>
+<h3 id="function-read_particles">function read_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">read_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Method for creation through the object factory. </p>
-<h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ParticlePositionReader</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">DataObject</span><span class="w"> </span>
+<h3 id="function-read_particles_as_vector">function read_particles_as_vector</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">read_particles_as_vector</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Run-time type information (and related methods). </p>
-<h3 id="function-getoutput">function GetOutput</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetOutput</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<p>Get the output of the reader. The output is a std::vector of PointType. </p>
-<h3 id="function-itksetstringmacro">function itkSetStringMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkSetStringMacro</span><span class="p">(</span>
-<span class="w">    </span><span class="n">FileName</span><span class="w"> </span>
+<h3 id="function-write_particles">function write_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">write_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Set/Get the filename. </p>
-<h3 id="function-itkgetstringmacro">function itkGetStringMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetStringMacro</span><span class="p">(</span>
-<span class="w">    </span><span class="n">FileName</span><span class="w"> </span>
+<h3 id="function-write_particles_from_vector">function write_particles_from_vector</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">write_particles_from_vector</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span>
 <span class="p">)</span>
-</code></pre></div>
-<h3 id="function-read">function Read</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Read</span><span class="p">()</span>
-</code></pre></div>
-<p>Read the file. </p>
-<h3 id="function-update">function Update</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Update</span><span class="p">()</span>
-</code></pre></div>
-<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
-<h3 id="function-particlepositionreader">function ParticlePositionReader</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticlePositionReader</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-particlepositionreader_1">function ~ParticlePositionReader</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticlePositionReader</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-08-01 at 19:48:16 +0000</p>
+<p>Updated on 2023-08-02 at 17:10:00 +0000</p>
 
               
             </article>

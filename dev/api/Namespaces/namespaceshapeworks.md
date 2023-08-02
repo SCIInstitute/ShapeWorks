@@ -13,6 +13,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | Name           |
 | -------------- |
 | **[shapeworks::mesh](../Namespaces/namespaceshapeworks_1_1mesh.md)**  |
+| **[shapeworks::particles](../Namespaces/namespaceshapeworks_1_1particles.md)**  |
 | **[shapeworks::project](../Namespaces/namespaceshapeworks_1_1project.md)**  |
 
 ## Classes
@@ -117,8 +118,6 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ParticleNormalEvaluation](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md)**  |
 | class | **[shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)**  |
 | struct | **[shapeworks::ParticlePointIndexPair](../Classes/structshapeworks_1_1ParticlePointIndexPair.md)**  |
-| class | **[shapeworks::ParticlePositionReader](../Classes/classshapeworks_1_1ParticlePositionReader.md)**  |
-| class | **[shapeworks::ParticlePositionWriter](../Classes/classshapeworks_1_1ParticlePositionWriter.md)**  |
 | class | **[shapeworks::ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)**  |
 | class | **[shapeworks::ParticleRegionNeighborhood](../Classes/classshapeworks_1_1ParticleRegionNeighborhood.md)**  |
 | class | **[shapeworks::Particles](../Classes/classshapeworks_1_1Particles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
@@ -2591,4 +2590,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-08-01 at 19:48:15 +0000
+Updated on 2023-08-02 at 17:09:58 +0000

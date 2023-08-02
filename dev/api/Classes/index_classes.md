@@ -191,8 +191,6 @@ title: Classes
     * **class [ParticleNormalEvaluation](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md)** 
     * **class [ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)** 
     * **struct [ParticlePointIndexPair](../Classes/structshapeworks_1_1ParticlePointIndexPair.md)** 
-    * **class [ParticlePositionReader](../Classes/classshapeworks_1_1ParticlePositionReader.md)** 
-    * **class [ParticlePositionWriter](../Classes/classshapeworks_1_1ParticlePositionWriter.md)** 
     * **class [ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)** 
     * **class [ParticleRegionNeighborhood](../Classes/classshapeworks_1_1ParticleRegionNeighborhood.md)** 
         * **struct [IteratorNodePair](../Classes/structshapeworks_1_1ParticleRegionNeighborhood_1_1IteratorNodePair.md)** 
@@ -259,6 +257,7 @@ title: Classes
     * **class [WheelEventForwarder](../Classes/classshapeworks_1_1WheelEventForwarder.md)** 
     * **class [Worker](../Classes/classshapeworks_1_1Worker.md)** 
     * **namespace [mesh](../Namespaces/namespaceshapeworks_1_1mesh.md)** 
+    * **namespace [particles](../Namespaces/namespaceshapeworks_1_1particles.md)** 
     * **struct [powstruct](../Classes/structshapeworks_1_1powstruct.md)** 
     * **struct [powstruct< a, 0 >](../Classes/structshapeworks_1_1powstruct_3_01a_00_010_01_4.md)** 
     * **namespace [project](../Namespaces/namespaceshapeworks_1_1project.md)** 
@@ -276,4 +275,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-08-01 at 19:48:18 +0000
+Updated on 2023-08-02 at 17:10:01 +0000

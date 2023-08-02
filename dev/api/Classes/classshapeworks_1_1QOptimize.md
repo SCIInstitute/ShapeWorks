@@ -98,8 +98,6 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetOptimizationIterations](../Classes/classshapeworks_1_1Optimize.md#function-setoptimizationiterations)**(int optimization_iterations)<br>Set the number of optimization iterations.  |
 | void | **[SetOptimizationIterationsCompleted](../Classes/classshapeworks_1_1Optimize.md#function-setoptimizationiterationscompleted)**(int optimization_iterations_completed)<br>Set the number of optimization iterations already completed (TODO: details)  |
 | void | **[SetIterationsPerSplit](../Classes/classshapeworks_1_1Optimize.md#function-setiterationspersplit)**(int iterations_per_split)<br>Set the number of iterations per split.  |
-| void | **[SetInitializationCriterion](../Classes/classshapeworks_1_1Optimize.md#function-setinitializationcriterion)**(double init_criterion)<br>Set the init criterion (TODO: details)  |
-| void | **[SetOptimizationCriterion](../Classes/classshapeworks_1_1Optimize.md#function-setoptimizationcriterion)**(double opt_criterion)<br>Set the optimization criterion (TODO: details)  |
 | void | **[SetUseShapeStatisticsInInit](../Classes/classshapeworks_1_1Optimize.md#function-setuseshapestatisticsininit)**(bool use_shape_statistics_in_init)<br>Set if shape statistics should be used in initialization.  |
 | void | **[SetProcrustesInterval](../Classes/classshapeworks_1_1Optimize.md#function-setprocrustesinterval)**(int procrustes_interval)<br>Set the interval for running procrustes (0 to disable)  |
 | void | **[SetProcrustesScaling](../Classes/classshapeworks_1_1Optimize.md#function-setprocrustesscaling)**(bool procrustes_scaling)<br>Set if procrustes scaling should be used.  |
@@ -146,12 +144,13 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetPythonFile](../Classes/classshapeworks_1_1Optimize.md#function-setpythonfile)**(std::string filename)<br>Set the python file to run at startup.  |
 | void | **[SetGeodesicsEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicsenabled)**(bool is_enabled)<br>Set whether or not geodesics are enabled.  |
 | void | **[SetGeodesicsCacheSizeMultiplier](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicscachesizemultiplier)**(size_t n) |
-| [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) & | **[GetVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getvisualizer)**() |
+| [OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) & | **[GetVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getvisualizer)**() |
 | void | **[SetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-setshowvisualizer)**(bool show) |
 | bool | **[GetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getshowvisualizer)**() |
 | bool | **[GetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-getmeshffcmode)**() |
 | vnl_vector_fixed< double, 3 > | **[TransformPoint](../Classes/classshapeworks_1_1Optimize.md#function-transformpoint)**(int domain, vnl_vector_fixed< double, 3 > input)<br>transform a point if necessary  |
 | void | **[UpdateProgress](../Classes/classshapeworks_1_1Optimize.md#function-updateprogress)**() |
+| void | **[set_particle_format](../Classes/classshapeworks_1_1Optimize.md#function-set-particle-format)**(std::string format) |
 
 **Protected Functions inherited from [shapeworks::Optimize](../Classes/classshapeworks_1_1Optimize.md)**
 
@@ -228,8 +227,6 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | int | **[m_optimization_iterations](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-iterations)**  |
 | int | **[m_optimization_iterations_completed](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-iterations-completed)**  |
 | int | **[m_iterations_per_split](../Classes/classshapeworks_1_1Optimize.md#variable-m-iterations-per-split)**  |
-| double | **[m_initialization_criterion](../Classes/classshapeworks_1_1Optimize.md#variable-m-initialization-criterion)**  |
-| double | **[m_optimization_criterion](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-criterion)**  |
 | bool | **[m_use_shape_statistics_in_init](../Classes/classshapeworks_1_1Optimize.md#variable-m-use-shape-statistics-in-init)**  |
 | unsigned int | **[m_procrustes_interval](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes-interval)**  |
 | bool | **[m_procrustes_scaling](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes-scaling)**  |
@@ -276,6 +273,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | std::function< void(void)> | **[iteration_callback_](../Classes/classshapeworks_1_1Optimize.md#variable-iteration-callback-)**  |
 | bool | **[show_visualizer_](../Classes/classshapeworks_1_1Optimize.md#variable-show-visualizer-)**  |
 | [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) | **[visualizer_](../Classes/classshapeworks_1_1Optimize.md#variable-visualizer-)**  |
+| std::string | **[particle_format_](../Classes/classshapeworks_1_1Optimize.md#variable-particle-format-)**  |
 | std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > | **[project_](../Classes/classshapeworks_1_1Optimize.md#variable-project-)**  |
 | std::chrono::system_clock::time_point | **[m_start_time](../Classes/classshapeworks_1_1Optimize.md#variable-m-start-time)**  |
 | std::chrono::system_clock::time_point | **[m_last_update_time](../Classes/classshapeworks_1_1Optimize.md#variable-m-last-update-time)**  |
@@ -390,4 +388,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2023-08-01 at 19:48:16 +0000
+Updated on 2023-08-02 at 17:10:00 +0000
