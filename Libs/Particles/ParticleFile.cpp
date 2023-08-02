@@ -64,6 +64,7 @@ Eigen::VectorXd read_particles(std::string filename) {
   Eigen::VectorXd points;
 
   auto vtk_points = vtkSmartPointer<vtkPoints>::New();
+  vtk_points->SetDataTypeToDouble();
   int num_points = 0;
   while (in.good()) {
     double x, y, z;
