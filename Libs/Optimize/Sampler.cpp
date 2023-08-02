@@ -2,12 +2,11 @@
 #include "Sampler.h"
 
 #include <Logging.h>
+#include <Particles/ParticleFile.h>
 
 #include "Libs/Optimize/Domain/ContourDomain.h"
-#include "Libs/Optimize/Domain/ImageDomain.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
-#include "itkImageRegionIterator.h"
-#include "itkParticlePositionReader.h"
+
 
 namespace shapeworks {
 
@@ -73,7 +72,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   // *after* registering the attributes to the particle system since some of
   // them respond to AddDomain.
   // Here, the Constraints actually get added to the constraints class
-  int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
 
@@ -90,8 +88,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
                       << std::endl;
         }
       }
-
-      auto imageDomain = static_cast<ImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
 
       // Adding free-form constraints to constraint object
       // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
@@ -133,10 +129,8 @@ void Sampler::ReadPointsFiles() {
   // If points file names have been specified, then read the initial points.
   for (unsigned int i = 0; i < m_PointsFiles.size(); i++) {
     if (m_PointsFiles[i] != "") {
-      ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
-      reader->SetFileName(m_PointsFiles[i].c_str());
-      reader->Update();
-      this->GetParticleSystem()->AddPositionList(reader->GetOutput(), i);
+      auto points = particles::read_particles_as_vector(m_PointsFiles[i]);
+      this->GetParticleSystem()->AddPositionList(points, i);
     }
   }
 
@@ -148,7 +142,6 @@ void Sampler::ReadPointsFiles() {
 void Sampler::InitializeOptimizationFunctions() {
   // Set the minimum neighborhood radius and maximum sigma based on the
   // domain of the 1st input image.
-  unsigned int maxdim = 0;
   double maxradius = -1.0;
   double minimumNeighborhoodRadius = this->m_Spacing;
 

@@ -1,0 +1,335 @@
+{
+    "data": [
+        {
+            "name": "sphere10_DT",
+            "shape_1": "../shared/spheres/sphere10_DT.nrrd",
+            "landmarks_file_1": "optimize_particles/sphere10_DT_local.particles",
+            "groomed_1": "../shared/spheres/sphere10_DT.nrrd",
+            "local_particles_1": "optimize_particles/sphere10_DT_local.particles",
+            "world_particles_1": "optimize_particles/sphere10_DT_world.particles",
+            "alignment_1": "",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "fixed": "yes"
+        },
+        {
+            "name": "sphere20_DT",
+            "shape_1": "../shared/spheres/sphere20_DT.nrrd",
+            "landmarks_file_1": "optimize_particles/sphere20_DT_local.particles",
+            "groomed_1": "../shared/spheres/sphere20_DT.nrrd",
+            "local_particles_1": "optimize_particles/sphere20_DT_local.particles",
+            "world_particles_1": "optimize_particles/sphere20_DT_world.particles",
+            "alignment_1": "",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "fixed": "yes"
+        },
+        {
+            "name": "sphere30_DT",
+            "shape_1": "../shared/spheres/sphere30_DT.nrrd",
+            "landmarks_file_1": "optimize_particles/sphere30_DT_local.particles",
+            "groomed_1": "../shared/spheres/sphere30_DT.nrrd",
+            "local_particles_1": "optimize_particles/sphere30_DT_local.particles",
+            "world_particles_1": "optimize_particles/sphere30_DT_world.particles",
+            "alignment_1": "",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "fixed": "yes"
+        },
+        {
+            "name": "sphere40_DT",
+            "shape_1": "../shared/spheres/sphere40_DT.nrrd",
+            "landmarks_file_1": "optimize_particles/sphere40_DT_local.particles",
+            "groomed_1": "../shared/spheres/sphere40_DT.nrrd",
+            "local_particles_1": "optimize_particles/sphere40_DT_local.particles",
+            "world_particles_1": "optimize_particles/sphere40_DT_world.particles",
+            "alignment_1": "",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "fixed": "no"
+        }
+    ],
+    "groom": {
+        "": {},
+        "1": {}
+    },
+    "optimize": {
+        "checkpointing_interval": "20",
+        "ending_regularization": "10.000000",
+        "fixed_subjects_choice": "yes",
+        "fixed_subjects_column": "fixed",
+        "geodesic_cache_multiplier": "0",
+        "initial_relative_weighting": "0.050000",
+        "iterations_per_split": "1000",
+        "multiscale": "false",
+        "multiscale_particles": "32",
+        "narrow_band": "4.000000",
+        "normals_strength": "10.000000",
+        "number_of_particles": "32",
+        "optimization_iterations": "1000",
+        "optimize_output_prefix": "<project>_particles",
+        "procrustes": "false",
+        "procrustes_interval": "0",
+        "procrustes_rotation_translation": "true",
+        "procrustes_scaling": "false",
+        "relative_weighting": "1.000000",
+        "starting_regularization": "1000.000000",
+        "use_fixed_subjects": "1",
+        "use_geodesic_distance": "false",
+        "use_landmarks": "true",
+        "use_normals": "0",
+        "verbosity": "0"
+    },
+    "studio": {
+        "analysis_mode": "mean",
+        "notes": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>",
+        "tool_state": "optimize",
+        "view_state": "Groomed",
+        "zoom_state": "0"
+    },
+    "project": {
+        "version": "2"
+    },
+    "analysis": {
+        "reconstruction_clusters": "3",
+        "reconstruction_decimation": "0.300000",
+        "reconstruction_max_angle": "60.000000"
+    },
+    "deepssm": {
+        "aug_num_dims": "3",
+        "aug_num_samples": "3",
+        "aug_percent_variability": "0.950000",
+        "aug_sampler_type": "Gaussian",
+        "testing_split": "20.000000",
+        "train_batch_size": "8",
+        "train_decay_learning_rate": "true",
+        "train_epochs": "100",
+        "train_fine_tuning": "true",
+        "train_fine_tuning_epochs": "2",
+        "train_fine_tuning_learning_rate": "0.001000",
+        "train_learning_rate": "0.001000",
+        "validation_split": "20.000000"
+    },
+    "landmarks": [
+        {
+            "domain": "1",
+            "name": "1",
+            "visible": "true",
+            "color": "#ffaf4e",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "2",
+            "visible": "true",
+            "color": "#74ff7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "3",
+            "visible": "true",
+            "color": "#8fd6ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "4",
+            "visible": "true",
+            "color": "#ff0000",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "5",
+            "visible": "true",
+            "color": "#ffe900",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "6",
+            "visible": "true",
+            "color": "#6c00d4",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "7",
+            "visible": "true",
+            "color": "#0000ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "8",
+            "visible": "true",
+            "color": "#ff5e7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "9",
+            "visible": "true",
+            "color": "#ffffa5",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "10",
+            "visible": "true",
+            "color": "#ff00ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "11",
+            "visible": "true",
+            "color": "#c27600",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "12",
+            "visible": "true",
+            "color": "#9f8fff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "13",
+            "visible": "true",
+            "color": "#ffaf4e",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "14",
+            "visible": "true",
+            "color": "#74ff7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "15",
+            "visible": "true",
+            "color": "#8fd6ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "16",
+            "visible": "true",
+            "color": "#ff0000",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "17",
+            "visible": "true",
+            "color": "#ffe900",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "18",
+            "visible": "true",
+            "color": "#6c00d4",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "19",
+            "visible": "true",
+            "color": "#0000ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "20",
+            "visible": "true",
+            "color": "#ff5e7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "21",
+            "visible": "true",
+            "color": "#ffffa5",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "22",
+            "visible": "true",
+            "color": "#ff00ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "23",
+            "visible": "true",
+            "color": "#c27600",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "24",
+            "visible": "true",
+            "color": "#9f8fff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "25",
+            "visible": "true",
+            "color": "#ffaf4e",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "26",
+            "visible": "true",
+            "color": "#74ff7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "27",
+            "visible": "true",
+            "color": "#8fd6ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "28",
+            "visible": "true",
+            "color": "#ff0000",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "29",
+            "visible": "true",
+            "color": "#ffe900",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "30",
+            "visible": "true",
+            "color": "#6c00d4",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "31",
+            "visible": "true",
+            "color": "#0000ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "32",
+            "visible": "true",
+            "color": "#ff5e7a",
+            "comment": ""
+        }
+    ]
+}

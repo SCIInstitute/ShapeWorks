@@ -48,6 +48,7 @@ const std::string field_attributes = "field_attributes";
 const std::string field_attribute_weights = "field_attribute_weights";
 const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
 const std::string geodesics_to_landmarks_weight = "geodesics_to_landmarks_weight";
+const std::string particle_format = "particle_format";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -87,9 +88,8 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::use_geodesics_to_landmarks,
                                          Keys::geodesics_to_landmarks_weight,
                                          Keys::keep_checkpoints,
-                                         Keys::use_disentangled_ssm
-
-  };
+                                         Keys::use_disentangled_ssm,
+                                         Keys::particle_format};
 
   // check if params_ has any unknown keys
   for (auto& param : params_.get_map()) {
@@ -348,6 +348,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetOutputDir(get_output_prefix());
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
   optimize->SetUseDisentangledSpatiotemporalSSM(get_use_disentangled_ssm());
+  optimize->set_particle_format(get_particle_format());
 
   // TODO Remove this once Studio has controls for shared boundary
   optimize->SetSharedBoundaryEnabled(true);
@@ -616,9 +617,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
       auto name = StringUtils::getBaseFilenameWithoutExtension(filename);
 
+      auto extension = get_particle_format();
       auto prefix = get_output_prefix();
-      local_particle_filenames.push_back(prefix + name + "_local.particles");
-      world_particle_filenames.push_back(prefix + name + "_world.particles");
+      local_particle_filenames.push_back(prefix + name + "_local." + extension);
+      world_particle_filenames.push_back(prefix + name + "_world." + extension);
     }
     s->set_local_particle_filenames(local_particle_filenames);
     s->set_world_particle_filenames(world_particle_filenames);
@@ -710,3 +712,9 @@ double OptimizeParameters::get_geodesic_to_landmarks_weight() {
 void OptimizeParameters::set_geodesic_to_landmarks_weight(double value) {
   params_.set(Keys::geodesics_to_landmarks_weight, value);
 }
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_particle_format() { return params_.get(Keys::particle_format, "particles"); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_particle_format(std::string format) { params_.set(Keys::particle_format, format); }
