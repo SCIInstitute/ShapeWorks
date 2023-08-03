@@ -316,6 +316,12 @@ def supervised_train(config_file):
 			json.dump(parameters, json_file, indent=2) 
 		print("Fine tuning complete, model saved. Best model after epoch " + str(best_ft_epoch))
 
+'''
+Network training method for TL-Net model
+	defines, initializes, and trains the models
+	logs training and validation errors
+	saves the model and returns the path it is saved to
+'''
 def supervised_train_tl(config_file):
 	with open(config_file) as json_file: 
 		parameters = json.load(json_file)

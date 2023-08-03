@@ -613,7 +613,7 @@ def Run_Pipeline(args):
         "use_best_model": True,
         "tl_net":{
 			"enabled": False,
-			"ae_epochs": 10000,
+			"ae_epochs": 100,
 			"tf_epochs":100,
 			"joint_epochs":25,
 			"alpha":1,
@@ -664,7 +664,7 @@ def Run_Pipeline(args):
     print("Validation world particle MSE: "+str(mean_MSE)+" +- "+str(std_MSE))
     template_mesh = train_mesh_files[ref_index]
     template_particles = train_local_particles[ref_index].replace("./", data_dir)
-    # Get distabce between clipped true and predicted meshes
+    # Get distance between clipped true and predicted meshes
     mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files, 
                                                     template_particles, template_mesh, val_out_dir,
                                                     planes=val_planes)

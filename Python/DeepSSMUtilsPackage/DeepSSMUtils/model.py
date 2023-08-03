@@ -158,7 +158,10 @@ class CorrespondenceDecoder(nn.Module):
 	def forward(self, z):
 		pt_out = self.decoder(z)
 		return pt_out
-
+	
+"""
+DeepSSM TL-Net Model
+"""
 class DeepSSMNet_TLNet(nn.Module):
 	def __init__(self, conflict_file):
 		super(DeepSSMNet_TLNet, self).__init__()
@@ -180,14 +183,15 @@ class DeepSSMNet_TLNet(nn.Module):
 		self.ImageEncoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir)
 
 	def forward(self, pt, x):
-		# import pdb; pdb.set_trace()
+		# for testing
 		if len(pt.shape) < 3:
-			zt, aa = self.ImageEncoder(x)
+			zt, _ = self.ImageEncoder(x)
 			pt_out = self.CorrespondenceDecoder(zt)
 			return [zt, pt_out.reshape(-1, self.num_corr, 3)]
+		# for training
 		else:
 			pt1 = pt.view(-1, pt.shape[1]*pt.shape[2])
 			z = self.CorrespondenceEncoder(pt1)
 			pt_out = self.CorrespondenceDecoder(z)
-			zt, aa = self.ImageEncoder(x)
+			zt, _ = self.ImageEncoder(x)
 		return [pt_out.view(-1, pt.shape[1], pt.shape[2]), z, zt]
