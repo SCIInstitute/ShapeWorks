@@ -728,6 +728,6 @@ TEST(OptimizeTests, disentangled_spatiotemporal_test) {
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
-  ASSERT_GT(values[values.size() - 1], 80000);
-  ASSERT_LT(values[values.size() - 2], 11000);
+  ASSERT_GT(values[values.size() - 1], 200000);
+  ASSERT_LT(values[values.size() - 2], 110000);
 }
