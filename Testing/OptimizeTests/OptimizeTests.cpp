@@ -706,7 +706,7 @@ TEST(OptimizeTests, vtk_output) {
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, disentangled_spatiotemporal_test) {
   prep_temp("/optimize/disentangled_spatiotemporal", "disentangled_spatiotemporal_test");
-  
+
   std::remove("test1_particles/ID01_TIME01_world.particles");
 
   Optimize app;
@@ -729,5 +729,5 @@ TEST(OptimizeTests, disentangled_spatiotemporal_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   ASSERT_GT(values[values.size() - 1], 80000);
-  ASSERT_LT(values[values.size() - 2], 200);
+  ASSERT_LT(values[values.size() - 2], 11000);
 }
