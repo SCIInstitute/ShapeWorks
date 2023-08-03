@@ -91,6 +91,10 @@ void TestUtils::recursive_copy(const boost::filesystem::path& src, const boost::
       recursive_copy(item.path(), dst / item.path().filename());
     }
   } else if (boost::filesystem::is_regular_file(src)) {
+    // if it already exists, remove it
+    if (boost::filesystem::exists(dst)) {
+      boost::filesystem::remove(dst);
+    }
     boost::filesystem::copy(src, dst);
   } else {
     throw std::runtime_error(dst.generic_string() + " not dir or file");

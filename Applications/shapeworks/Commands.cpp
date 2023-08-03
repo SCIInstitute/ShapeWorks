@@ -102,7 +102,10 @@ void OptimizeCommand::buildParser() {
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
   parser.add_option("--progress").action("store_true").set_default(false).help("Show progress [default: false].");
-  parser.add_option("--xmlconsole").action("store_true").set_default(false).help("XML console output [default: false].");
+  parser.add_option("--xmlconsole")
+      .action("store_true")
+      .set_default(false)
+      .help("XML console output [default: false].");
 
   Command::buildParser();
 }
@@ -126,7 +129,12 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
     try {
       // load spreadsheet project
       ProjectHandle project = std::make_shared<Project>();
-      project->load(projectFile);
+      try {
+        project->load(projectFile);
+      } catch (std::exception& e) {
+        SW_ERROR("Project failed to load: {}", e.what());
+        return false;
+      }
 
       const auto oldBasePath = boost::filesystem::current_path();
       auto base = StringUtils::getPath(projectFile);
@@ -173,7 +181,10 @@ void GroomCommand::buildParser() {
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
   parser.add_option("--progress").action("store_true").set_default(false).help("Show progress [default: false].");
-  parser.add_option("--xmlconsole").action("store_true").set_default(false).help("XML console output [default: false].");
+  parser.add_option("--xmlconsole")
+      .action("store_true")
+      .set_default(false)
+      .help("XML console output [default: false].");
 
   Command::buildParser();
 }
@@ -230,8 +241,10 @@ void AnalyzeCommand::buildParser() {
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
   parser.add_option("--output").action("store").type("string").set_default("").help("Path to output file.");
-  parser.add_option("--range").action("store").type("float").set_default(3.0f).help("Standard deviation range for PCA [default: 3.0].");
-  parser.add_option("--steps").action("store").type("int").set_default(21).help("Number of steps to use for PCA [default: 21].");
+  parser.add_option("--range").action("store").type("float").set_default(3.0f).help(
+      "Standard deviation range for PCA [default: 3.0].");
+  parser.add_option("--steps").action("store").type("int").set_default(21).help(
+      "Number of steps to use for PCA [default: 21].");
 
   Command::buildParser();
 }

@@ -1553,7 +1553,6 @@ void AnalysisTool::show_difference_to_mean_clicked() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::group_analysis_combo_changed() {
-  SW_LOG("Group analysis combo changed: {}", ui_->group_analysis_combo->currentText().toStdString());
   int index = ui_->group_analysis_combo->currentIndex();
   if (!groups_active()) {
     index = 0;

@@ -162,6 +162,15 @@ class Mesh {
   /// computes curvature using principal (default) or gaussian or mean algorithms
   Field curvature(const CurvatureType type = Principal) const;
 
+  /// compute the gradient of a scalar field for all vertices
+  void computeFieldGradient(const std::string& field) const;
+
+  /// compute the gradient of a scalar field at a point
+  Eigen::Vector3d computeFieldGradientAtPoint(const std::string& field, const Point3& query) const;
+
+  /// interpolate a scalar field at a given point
+  double interpolateFieldAtPoint(const std::string& field, const Point3& query) const;
+
   /// applies subdivision filter (butterfly (default) or loop)
   Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 

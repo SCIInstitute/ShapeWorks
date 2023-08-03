@@ -2,12 +2,12 @@
 
 #include <cmath>
 
+#include "Domain/MeshDomain.h"
 #include "Libs/Optimize/Container/GenericContainer.h"
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "Observer.h"
 #include "ParticleSystem.h"
-#include "TriMesh.h"
 #include "itkDataObject.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
@@ -32,13 +32,11 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
-  typedef ParticleSystem ParticleSystemType;
-
   /** Method for creation through the object factory. */
-  itkNewMacro(Self)
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ShapeMatrix, Observer)
+  itkTypeMacro(ShapeMatrix, Observer);
 
   virtual void BeforeIteration() {}
   virtual void AfterIteration() {}
@@ -82,11 +80,11 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
     if (d % m_DomainsPerShape == 0) this->ResizeMatrix(this->rows(), this->cols() + 1);
   }
 
-  void SetValues(const ParticleSystemType* ps, int idx, int d) {
+  void SetValues(const ParticleSystem* ps, int idx, int d) {
     const int VDimension = 3;
 
-    const typename ParticleSystemType::PointType pos = ps->GetTransformedPosition(idx, d);
-    const typename ParticleSystemType::PointType posLocal = ps->GetPosition(idx, d);
+    const typename ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
+    const typename ParticleSystem::PointType posLocal = ps->GetPosition(idx, d);
     unsigned int k = 0;
     int dom = d % m_DomainsPerShape;
     int num = 0;
@@ -116,7 +114,7 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
     }
     if (m_use_normals[dom]) {
       vnl_vector_fixed<float, DIMENSION> pN = ps->GetDomain(d)->SampleNormalAtPoint(posLocal, idx);
-      typename ParticleSystemType::VectorType tmp;
+      ParticleSystem::VectorType tmp;
       tmp[0] = pN[0];
       tmp[1] = pN[1];
       tmp[2] = pN[2];
@@ -132,21 +130,25 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
       s += VDimension;
     }
 
-    std::vector<float> fVals;
+    std::vector<float> feature_values;
     if (m_AttributesPerDomain[dom] > 0) {
-      // TODO figure out what is going on here
-      point pt;
-      pt.clear();
+      Point3 pt;
       pt[0] = posLocal[0];
       pt[1] = posLocal[1];
       pt[2] = posLocal[2];
-      fVals.clear();
-      const shapeworks::ImplicitSurfaceDomain<float>* domain =
-          static_cast<const shapeworks::ImplicitSurfaceDomain<float>*>(ps->GetDomain(d));
-      meshFIM* ptr = domain->GetMesh();
-      ptr->GetFeatureValues(pt, fVals);
+      feature_values.clear();
+      const MeshDomain* domain = static_cast<const MeshDomain*>(ps->GetDomain(d));
+
+      auto mesh = domain->GetSWMesh();
+
+      auto field_attributes = ps->GetFieldAttributes();
+
+      for (int i = 0; i < field_attributes.size(); i++) {
+        feature_values.push_back(mesh->interpolateFieldAtPoint(field_attributes[i], pt));
+      }
+
       for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++) {
-        this->operator()(aa + k, d / m_DomainsPerShape) = fVals[aa] * m_AttributeScales[aa + num + s];
+        this->operator()(aa + k, d / m_DomainsPerShape) = feature_values[aa] * m_AttributeScales[aa + num + s];
       }
     }
   }
@@ -156,7 +158,7 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
 
     // update the size of matrix based on xyz, normals and number of attributes being used
     const ParticlePositionAddEvent& event = dynamic_cast<const ParticlePositionAddEvent&>(e);
-    const ParticleSystemType* ps = dynamic_cast<const ParticleSystemType*>(o);
+    const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
 
@@ -175,7 +177,7 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
   virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
     // update xyz, normals and number of attributes being used
     const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);
-    const ParticleSystemType* ps = dynamic_cast<const ParticleSystemType*>(o);
+    const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
 
@@ -225,8 +227,8 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
   int m_DomainsPerShape;
 
  private:
-  ShapeMatrix(const Self&);  // purposely not implemented
-  void operator=(const Self&);              // purposely not implemented
+  ShapeMatrix(const Self&);     // purposely not implemented
+  void operator=(const Self&);  // purposely not implemented
 
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;

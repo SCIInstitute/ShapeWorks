@@ -1,5 +1,7 @@
 #include "ParticleSystemEvaluation.h"
 
+#include <Particles/ParticleFile.h>
+
 #include "ShapeEvaluation.h"
 #include "Shapeworks.h"
 
@@ -12,32 +14,28 @@ ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string
 
   this->paths = _paths;
   const int N = paths.size();
-  const int VDimension = 3;  // TODO Don't hardcode VDimension
+  const int VDimension = 3;
   assert(N > 0);
 
   // TODO: We're using the existing particle file reader here. This is not ideal
   //  since this particle reader loads into a std::vector, which subsequently
   //  is copied to Eigen. Refactor it to load directly to Eigen. (This is not a
   //  huge problem for now because the particle files are quite small)
-  ParticlePositionReader::Pointer reader0 = ParticlePositionReader::New();
 
   // Read the first file to find dimensions
-  reader0->SetFileName(paths[0]);
-  reader0->Update();
-  const int D = reader0->GetOutput().size() * VDimension;
+  auto points0 = particles::read_particles_as_vector(paths[0]);
+  const int D = points0.size() * VDimension;
 
   P.resize(D, N);
-  P.col(0) = Eigen::Map<const Eigen::VectorXd>((double*)reader0->GetOutput().data(), D);
+  P.col(0) = Eigen::Map<const Eigen::VectorXd>((double*)points0.data(), D);
 
   for (int i = 1; i < N; i++) {
-    ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
-    reader->SetFileName(paths[i]);
-    reader->Update();
-    int count = reader->GetOutput().size() * VDimension;
+    auto points = particles::read_particles_as_vector(paths[i]);
+    int count = points.size() * VDimension;
     if (count != D) {
       throw std::runtime_error("ParticleSystemEvaluation files must have the same number of particles");
     }
-    P.col(i) = Eigen::Map<const Eigen::VectorXd>((double*)reader->GetOutput().data(), D);
+    P.col(i) = Eigen::Map<const Eigen::VectorXd>((double*)points.data(), D);
   }
 }
 
@@ -116,32 +114,7 @@ bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation&
 }
 
 bool ParticleSystemEvaluation::ReadParticleFile(std::string filename, Eigen::VectorXd& points) {
-  std::ifstream in(filename);
-  if (!in.good()) {
-    return false;
-  }
-  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-  int num_points = 0;
-  while (in.good()) {
-    double x, y, z;
-    in >> x >> y >> z;
-    if (!in.good()) {
-      break;
-    }
-    vtk_points->InsertNextPoint(x, y, z);
-    num_points++;
-  }
-  in.close();
-  points.setZero();
-  points.resize(num_points * 3);
-
-  int idx = 0;
-  for (int i = 0; i < num_points; i++) {
-    double* pos = vtk_points->GetPoint(i);
-    points[idx++] = pos[0];
-    points[idx++] = pos[1];
-    points[idx++] = pos[2];
-  }
+  points = particles::read_particles(filename);
   return true;
 }
 

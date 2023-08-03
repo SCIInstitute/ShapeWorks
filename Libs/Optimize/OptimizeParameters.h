@@ -55,6 +55,9 @@ class OptimizeParameters {
   double get_normals_strength();
   void set_normals_strength(double value);
 
+  bool get_use_disentangled_ssm();
+  void set_use_disentangled_ssm(bool value);
+
   bool get_use_procrustes();
   void set_use_procrustes(bool value);
 
@@ -108,6 +111,21 @@ class OptimizeParameters {
 
   bool get_keep_checkpoints();
   void set_keep_checkpoints(bool enabled);
+
+  std::vector<std::string> get_field_attributes();
+  void set_field_attributes(std::vector<std::string> attributes);
+
+  std::vector<double> get_field_attribute_weights();
+  void set_field_attribute_weights(std::vector<double> weights);
+
+  bool get_use_geodesics_to_landmarks();
+  void set_use_geodesics_to_landmarks(bool value);
+
+  double get_geodesic_to_landmarks_weight();
+  void set_geodesic_to_landmarks_weight(double value);
+
+  std::string get_particle_format();
+  void set_particle_format(std::string format);
 
 
  private:

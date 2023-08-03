@@ -12,6 +12,7 @@
 #include "Libs/Optimize/Domain/MeshDomain.h"
 #include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
+#include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
@@ -121,11 +122,7 @@ class Sampler {
 
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
-  void SetFidsFiles(const std::vector<std::string>& s) { m_FidsFiles = s; }
-
-  void SetFeaFiles(const std::vector<std::string>& s) { m_FeaMeshFiles = s; }
-
-  void SetFeaGradFiles(const std::vector<std::string>& s) { m_FeaGradFiles = s; }
+  void SetFieldAttributes(const std::vector<std::string>& s);
 
   void SetDomainsPerShape(int n) {
     m_DomainsPerShape = n;
@@ -196,6 +193,12 @@ class Sampler {
     } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy) {
       m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
       m_CorrespondenceFunction->UseMeanEnergy();
+    } else if (mode == shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy) {
+      m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
+      m_DisentangledEnsembleEntropyFunction->UseEntropy();
+    } else if (mode == shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy) {
+      m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
+      m_DisentangledEnsembleEntropyFunction->UseMeanEnergy();
     }
 
     m_CorrespondenceMode = mode;
@@ -247,6 +250,8 @@ class Sampler {
 
   LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
 
+  DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() { return m_DisentangledEnsembleEntropyFunction.GetPointer(); }
+
   LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() {
     return m_EnsembleRegressionEntropyFunction.GetPointer();
   }
@@ -263,6 +268,10 @@ class Sampler {
 
   const LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() const {
     return m_EnsembleEntropyFunction.GetPointer();
+  }
+
+  const DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() const {
+    return m_DisentangledEnsembleEntropyFunction.GetPointer();
   }
 
   const LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() const {
@@ -405,6 +414,7 @@ class Sampler {
   LegacyCorrespondenceFunction::Pointer m_EnsembleEntropyFunction;
   LegacyCorrespondenceFunction::Pointer m_EnsembleRegressionEntropyFunction;
   LegacyCorrespondenceFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
+  DisentangledCorrespondenceFunction::Pointer m_DisentangledEnsembleEntropyFunction;
   CorrespondenceFunction::Pointer m_CorrespondenceFunction;
 
   LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
@@ -439,6 +449,8 @@ class Sampler {
   std::vector<FreeFormConstraint> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
   bool m_meshFFCMode = false;
+
+  std::vector<std::string> fieldAttributes_;
 
   unsigned int m_verbosity;
 };

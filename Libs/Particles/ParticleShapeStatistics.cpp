@@ -2,6 +2,7 @@
 #include "ParticleShapeStatistics.h"
 
 #include <Logging.h>
+#include <Particles/ParticleFile.h>
 #include <Project/Project.h>
 #include <vnl/algo/vnl_symmetric_eigensystem.h>
 
@@ -369,13 +370,10 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string& s) {
   if (elem) this->m_domainsPerShape = atoi(elem->GetText());
 
   // Read the point files.  Assumes all the same size.
-  ParticlePositionReader::Pointer reader1 = ParticlePositionReader::New();
-  reader1->SetFileName(pointsfiles[0].c_str());
-  reader1->Update();
   m_numSamples1 = 0;
   m_numSamples2 = 0;
   m_numSamples = pointsfiles.size() / m_domainsPerShape;
-  m_numDimensions = reader1->GetOutput().size() * VDimension * m_domainsPerShape;
+  m_numDimensions = particles::read_particles_as_vector(pointsfiles[0]).size() * VDimension * m_domainsPerShape;
 
   // Read the group ids
   int tmpID;
@@ -385,10 +383,11 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string& s) {
     for (unsigned int shapeCount = 0; shapeCount < m_numSamples; shapeCount++) {
       inputsBuffer >> tmpID;
       m_groupIDs.push_back(tmpID);
-      if (tmpID == 1)
+      if (tmpID == 1) {
         m_numSamples1++;
-      else
+      } else {
         m_numSamples2++;
+      }
     }
   }
 
@@ -427,31 +426,29 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string& s) {
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       // read file
-      ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
-      reader->SetFileName(pointsfiles[i * m_domainsPerShape + k].c_str());
-      reader->Update();
-      unsigned int q = reader->GetOutput().size();
+      auto points = particles::read_particles_as_vector(pointsfiles[i * m_domainsPerShape + k]);
+      unsigned int q = points.size();
       for (unsigned int j = 0; j < q; j++) {
         m_mean(q * k * VDimension + (VDimension * j) + 0) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 0, i) = reader->GetOutput()[j][0];
+            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 0, i) = points[j][0];
         m_mean(q * k * VDimension + (VDimension * j) + 1) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
+            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 1, i) = points[j][1];
         m_mean(q * k * VDimension + (VDimension * j) + 2) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
+            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 2, i) = points[j][2];
 
         if (m_groupIDs[i] == 1) {
-          m_mean1(q * k * VDimension + (VDimension * j) + 0) += reader->GetOutput()[j][0];
-          m_mean1(q * k * VDimension + (VDimension * j) + 1) += reader->GetOutput()[j][1];
-          m_mean1(q * k * VDimension + (VDimension * j) + 2) += reader->GetOutput()[j][2];
+          m_mean1(q * k * VDimension + (VDimension * j) + 0) += points[j][0];
+          m_mean1(q * k * VDimension + (VDimension * j) + 1) += points[j][1];
+          m_mean1(q * k * VDimension + (VDimension * j) + 2) += points[j][2];
         } else {
-          m_mean2(q * k * VDimension + (VDimension * j) + 0) += reader->GetOutput()[j][0];
-          m_mean2(q * k * VDimension + (VDimension * j) + 1) += reader->GetOutput()[j][1];
-          m_mean2(q * k * VDimension + (VDimension * j) + 2) += reader->GetOutput()[j][2];
+          m_mean2(q * k * VDimension + (VDimension * j) + 0) += points[j][0];
+          m_mean2(q * k * VDimension + (VDimension * j) + 1) += points[j][1];
+          m_mean2(q * k * VDimension + (VDimension * j) + 2) += points[j][2];
         }
 
-        m_shapes(q * k * VDimension + (VDimension * j) + 0, i) = reader->GetOutput()[j][0];
-        m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
-        m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
+        m_shapes(q * k * VDimension + (VDimension * j) + 0, i) = points[j][0];
+        m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = points[j][1];
+        m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = points[j][2];
       }
     }
   }
@@ -577,31 +574,29 @@ int ParticleShapeStatistics::ReloadPointFiles() {
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       // read file
-      ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
-      reader->SetFileName(m_pointsfiles[i * m_domainsPerShape + k].c_str());
-      reader->Update();
-      unsigned int q = reader->GetOutput().size();
+      auto points = particles::read_particles_as_vector(m_pointsfiles[i * m_domainsPerShape + k]);
+      unsigned int q = points.size();
       for (unsigned int j = 0; j < q; j++) {
         m_mean(q * k * VDimension + (VDimension * j) + 0) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 0, i) = reader->GetOutput()[j][0];
+            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 0, i) = points[j][0];
         m_mean(q * k * VDimension + (VDimension * j) + 1) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
+            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 1, i) = points[j][1];
         m_mean(q * k * VDimension + (VDimension * j) + 2) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
+            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 2, i) = points[j][2];
 
         if (m_groupIDs[i] == 1) {
-          m_mean1(q * k * VDimension + (VDimension * j) + 0) += reader->GetOutput()[j][0];
-          m_mean1(q * k * VDimension + (VDimension * j) + 1) += reader->GetOutput()[j][1];
-          m_mean1(q * k * VDimension + (VDimension * j) + 2) += reader->GetOutput()[j][2];
+          m_mean1(q * k * VDimension + (VDimension * j) + 0) += points[j][0];
+          m_mean1(q * k * VDimension + (VDimension * j) + 1) += points[j][1];
+          m_mean1(q * k * VDimension + (VDimension * j) + 2) += points[j][2];
         } else {
-          m_mean2(q * k * VDimension + (VDimension * j) + 0) += reader->GetOutput()[j][0];
-          m_mean2(q * k * VDimension + (VDimension * j) + 1) += reader->GetOutput()[j][1];
-          m_mean2(q * k * VDimension + (VDimension * j) + 2) += reader->GetOutput()[j][2];
+          m_mean2(q * k * VDimension + (VDimension * j) + 0) += points[j][0];
+          m_mean2(q * k * VDimension + (VDimension * j) + 1) += points[j][1];
+          m_mean2(q * k * VDimension + (VDimension * j) + 2) += points[j][2];
         }
 
-        m_shapes(q * k * VDimension + (VDimension * j) + 0, i) = reader->GetOutput()[j][0];
-        m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = reader->GetOutput()[j][1];
-        m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = reader->GetOutput()[j][2];
+        m_shapes(q * k * VDimension + (VDimension * j) + 0, i) = points[j][0];
+        m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = points[j][1];
+        m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = points[j][2];
       }
     }
   }

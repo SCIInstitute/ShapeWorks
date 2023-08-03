@@ -18,6 +18,7 @@
 
 // vtk
 #include <vtkAppendPolyData.h>
+#include <vtkGradientFilter.h>
 #include <vtkButterflySubdivisionFilter.h>
 #include <vtkCenterOfMass.h>
 #include <vtkCleanPolyData.h>
@@ -863,6 +864,150 @@ Field Mesh::curvature(const CurvatureType type) const {
   return curv;
 }
 
+
+void computeGradient(vtkDataSet* inputDataSet, const char* scalarFieldName, const char* gradientFieldName) {
+  vtkSmartPointer<vtkGradientFilter> gradientFilter = vtkSmartPointer<vtkGradientFilter>::New();
+  gradientFilter->SetInputData(inputDataSet);
+  gradientFilter->SetInputScalars(vtkDataSet::FIELD_ASSOCIATION_POINTS, scalarFieldName);
+  gradientFilter->SetResultArrayName(gradientFieldName);
+  gradientFilter->Update();
+  /*
+
+  vtkSmartPointer<vtkDoubleArray> gradientData = vtkSmartPointer<vtkDoubleArray>::New();
+  gradientData->SetNumberOfComponents(3);
+  gradientData->SetNumberOfTuples(inputDataSet->GetNumberOfPoints());
+  gradientData->SetName(gradientFieldName);
+*/
+  vtkDoubleArray* gradPointArray = vtkArrayDownCast<vtkDoubleArray>(
+      vtkDataSet::SafeDownCast(gradientFilter->GetOutput())->GetPointData()->GetArray(gradientFieldName));
+
+
+/*
+  for (vtkIdType pointId = 0; pointId < inputDataSet->GetNumberOfPoints(); ++pointId) {
+    double gradient[3];
+    gradientFilter->GetOutput()->GetPointData()->GetTuple(pointId, gradient);
+    gradientData->SetTuple(pointId, gradient);
+  }
+*/
+
+  //  inputDataSet->GetPointData()->AddArray(gradientData);
+  inputDataSet->GetPointData()->AddArray(gradPointArray);
+}
+
+
+void Mesh::computeFieldGradient(const std::string& field) const {
+  computeGradient(poly_data_, field.c_str(), (std::string("gradient_") + field).c_str());
+  return;
+  auto arr = poly_data_->GetPointData()->GetArray(field.c_str());
+
+  // for each vertex, compute the gradient of the field and store x,y,z
+  // components in a vector
+  auto gradient = vtkSmartPointer<vtkDoubleArray>::New();
+  gradient->SetNumberOfComponents(3);
+  gradient->SetNumberOfTuples(numPoints());
+  gradient->SetName((std::string("gradient_") + field).c_str());
+
+  for (int i = 0; i < numPoints(); i++) {
+    // get the field value at this vertex
+    double value = arr->GetTuple1(i);
+
+    // collect all neighboring vertices using vtk
+    auto cell = vtkSmartPointer<vtkGenericCell>::New();
+    auto neighbors = vtkSmartPointer<vtkIdList>::New();
+    poly_data_->GetPointCells(i, neighbors);
+    int num_neighbors = neighbors->GetNumberOfIds();
+
+    // for each neighbor vertex
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+
+    for (int j = 0; j < num_neighbors; j++) {
+      // get the neighbor vertex id
+      int neighbor_id = neighbors->GetId(j);
+
+      // get the neighbor vertex
+      auto neighbor = poly_data_->GetPoint(neighbor_id);
+
+      // get the neighbor vertex value
+      double neighbor_value = arr->GetTuple1(neighbor_id);
+
+      // compute the gradient
+      x += (neighbor[0] - getPoint(i)[0]) * (neighbor_value - value);
+      y += (neighbor[1] - getPoint(i)[1]) * (neighbor_value - value);
+      z += (neighbor[2] - getPoint(i)[2]) * (neighbor_value - value);
+    }
+
+    gradient->SetTuple3(i, x, y, z);
+  }
+
+  poly_data_->GetPointData()->AddArray(gradient);
+}
+
+Eigen::Vector3d Mesh::computeFieldGradientAtPoint(const std::string& field, const Point3& query) const {
+  this->updateCellLocator();
+
+  // compute gradient if not already computed
+  if (poly_data_->GetPointData()->GetArray((std::string("gradient_") + field).c_str()) == nullptr) {
+    computeFieldGradient(field);
+  }
+
+  double closestPoint[3];
+  vtkIdType cellId;
+  int subId;
+  double dist;
+  cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
+
+  auto cell = poly_data_->GetCell(cellId);
+
+  size_t v1 = cell->GetPointId(0);
+  size_t v2 = cell->GetPointId(1);
+  size_t v3 = cell->GetPointId(2);
+
+  auto gradient = poly_data_->GetPointData()->GetArray((std::string("gradient_") + field).c_str());
+
+  Eigen::Vector3d grad1(gradient->GetTuple3(v1)[0], gradient->GetTuple3(v1)[1], gradient->GetTuple3(v1)[2]);
+  Eigen::Vector3d grad2(gradient->GetTuple3(v2)[0], gradient->GetTuple3(v2)[1], gradient->GetTuple3(v2)[2]);
+  Eigen::Vector3d grad3(gradient->GetTuple3(v3)[0], gradient->GetTuple3(v3)[1], gradient->GetTuple3(v3)[2]);
+
+  // Compute barycentric distances
+  Eigen::Vector3d cp(closestPoint[0], closestPoint[1], closestPoint[2]);
+  Eigen::Vector3d bary = computeBarycentricCoordinates(cp, cellId);
+
+  bary = bary / bary.sum();
+
+  Eigen::Vector3d result;
+  result = bary[0] * grad1 + bary[1] * grad2 + bary[2] * grad3;
+  return result;
+}
+
+double Mesh::interpolateFieldAtPoint(const std::string& field, const Point3& query) const {
+  this->updateCellLocator();
+
+  double closestPoint[3];
+  vtkIdType cellId;
+  int subId;
+  double dist;
+  this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
+
+  auto cell = this->poly_data_->GetCell(cellId);
+
+  size_t v1 = cell->GetPointId(0);
+  size_t v2 = cell->GetPointId(1);
+  size_t v3 = cell->GetPointId(2);
+
+  // Compute barycentric distances
+  Eigen::Vector3d cp(closestPoint[0], closestPoint[1], closestPoint[2]);
+  Eigen::Vector3d bary = computeBarycentricCoordinates(cp, cellId);
+
+  bary = bary / bary.sum();
+
+  Eigen::Vector3d values(this->getFieldValue(field, v1), this->getFieldValue(field, v2),
+                         this->getFieldValue(field, v3));
+
+  return (bary * values.transpose()).mean();
+}
+
 Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision) {
   if (type == Mesh::SubdivisionType::Loop) {
     auto filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
@@ -1466,30 +1611,8 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
 }
 
 double Mesh::getFFCValue(Eigen::Vector3d query) const {
-  this->updateCellLocator();
-
-  double closestPoint[3];
-  vtkIdType cellId;
-  int subId;
-  double dist;
-  this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
-
-  auto cell = this->poly_data_->GetCell(cellId);
-
-  size_t v1 = cell->GetPointId(0);
-  size_t v2 = cell->GetPointId(1);
-  size_t v3 = cell->GetPointId(2);
-
-  // Compute barycentric distances
-  Eigen::Vector3d cp(closestPoint[0], closestPoint[1], closestPoint[2]);
-  Eigen::Vector3d bary = computeBarycentricCoordinates(cp, cellId);
-
-  bary = bary / bary.sum();
-
-  Eigen::Vector3d values(this->getFieldValue("value", v1), this->getFieldValue("value", v2),
-                         this->getFieldValue("value", v3));
-
-  return (bary * values.transpose()).mean();
+  Point3 point(query.data());
+  return interpolateFieldAtPoint("value", point);
 }
 
 Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const {
