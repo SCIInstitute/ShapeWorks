@@ -282,7 +282,8 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
 
   auto eval = [&](double angle, int expected_good_count) {
     auto normals = ParticleNormalEvaluation::compute_particle_normals(particles, meshes);
-    auto good_bad = ParticleNormalEvaluation::evaluate_particle_normals(particles, normals, angle);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(particles, normals);
+    auto good_bad = ParticleNormalEvaluation::threshold_particle_normals(angles, angle);
     int good_count = std::count(good_bad.begin(), good_bad.end(), true);
     ASSERT_EQ(good_count, expected_good_count);
   };
