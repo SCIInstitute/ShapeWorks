@@ -2,6 +2,7 @@
 
 #include <Logging.h>
 #include <MeshWarper.h>
+#include <Particles/ParticleNormalEvaluation.h>
 #include <StringUtils.h>
 
 #include <boost/filesystem.hpp>
@@ -62,7 +63,30 @@ static json create_charts(ParticleShapeStatistics* stats) {
 }
 
 //---------------------------------------------------------------------------
-void write_offline_groups(json& json_object, ProjectHandle project, Analyze& analyze, boost::filesystem::path base) {
+static void write_good_bad_angles(json& json_object, ProjectHandle project, Analyze& analyze) {
+  std::vector<double> all_angles;
+
+  std::vector<json> good_bad_angles;
+
+  for (int d = 0; d < project->get_number_of_domains_per_subject(); d++) {
+    std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
+    for (auto& shape : analyze.get_shapes()) {
+      meshes.push_back(shape->get_groomed_mesh_wrappers()[d]);
+    }
+
+    auto base = analyze.get_local_particle_system(d);
+    auto normals = ParticleNormalEvaluation::compute_particle_normals(base.Particles(), meshes);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(base.Particles(), normals);
+
+    good_bad_angles.push_back(angles);
+  }
+  // write all_angles to json
+  json_object["good_bad_angles"] = good_bad_angles;
+}
+
+//---------------------------------------------------------------------------
+static void write_offline_groups(json& json_object, ProjectHandle project, Analyze& analyze,
+                                 boost::filesystem::path base) {
   auto group_names = project->get_group_names();
 
   std::vector<json> group_jsons;
@@ -267,6 +291,8 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   j["reconstructed_samples"] = shapes;
 
   write_offline_groups(j, project_, *this, base);
+
+  write_good_bad_angles(j, project_, *this);
 
   std::ofstream file(outfile);
   if (!file.good()) {
@@ -544,6 +570,30 @@ void Analyze::set_group_selection(std::string group_name, std::string group1, st
   group2_ = group2;
   stats_ready_ = false;
   compute_stats();
+}
+
+//---------------------------------------------------------------------------
+ParticleSystemEvaluation Analyze::get_local_particle_system(int domain) {
+  Eigen::MatrixXd matrix;
+  int num_shapes = shapes_.size();
+  int num_total_particles = get_num_particles();
+  if (num_shapes == 0 || num_total_particles == 0) {
+    return ParticleSystemEvaluation{matrix};
+  }
+
+  int num_particles_domain = shapes_[0]->get_particles().get_local_particles(domain).size() / 3;
+  matrix.resize(num_particles_domain * 3, num_shapes);
+
+  for (int i = 0; i < num_shapes; i++) {
+    auto particles = shapes_[i]->get_particles().get_local_particles(domain);
+    for (int j = 0; j < num_particles_domain; j++) {
+      matrix(j * 3 + 0, i) = particles[j * 3 + 0];
+      matrix(j * 3 + 1, i) = particles[j * 3 + 1];
+      matrix(j * 3 + 2, i) = particles[j * 3 + 2];
+    }
+  }
+
+  return ParticleSystemEvaluation{matrix};
 }
 
 //---------------------------------------------------------------------------
