@@ -78,6 +78,11 @@ static void write_good_bad_angles(json& json_object, ProjectHandle project, Anal
     auto normals = ParticleNormalEvaluation::compute_particle_normals(base.Particles(), meshes);
     auto angles = ParticleNormalEvaluation::evaluate_particle_normals(base.Particles(), normals);
 
+    // round angles to 2 decimal places
+    for (auto& angle : angles) {
+      angle = std::round(angle * 100.0) / 100.0;
+    }
+
     good_bad_angles.push_back(angles);
   }
   // write all_angles to json

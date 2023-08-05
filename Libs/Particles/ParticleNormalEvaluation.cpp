@@ -85,7 +85,14 @@ std::vector<double> ParticleNormalEvaluation::evaluate_particle_normals(const Ei
     // AKM: double this appears to put many/most particles well about 1.0, which becomes impossible to mark as bad no
     // matter what the angle.  I'm commenting this out for now.
     // cur_cos_appex *= 2.0;  // due to symmetry about the mean normal
-    result[j] = cur_cos_appex;
+
+    // arccosine
+    auto cur_angle = std::acos(cur_cos_appex);
+
+    // convert to degrees
+    cur_angle *= 180.0 / M_PI;
+
+    result[j] = cur_angle;
   }
 
   return result;
@@ -97,7 +104,7 @@ std::vector<bool> ParticleNormalEvaluation::threshold_particle_normals(std::vect
   std::vector<bool> result(angles.size());
   auto num_particles = angles.size();
   for (size_t i = 0; i < num_particles; i++) {
-    result[i] = angles[i] > std::cos(max_angle_degrees * M_PI / 180.);
+    result[i] = angles[i] > max_angle_degrees;
   }
   return result;
 }
