@@ -1,5 +1,6 @@
 #include "ParticleNormalEvaluation.h"
 
+#include <Logging.h>
 #include <Utils.h>
 
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
@@ -86,7 +87,7 @@ std::vector<double> ParticleNormalEvaluation::evaluate_particle_normals(const Ei
     // matter what the angle.  I'm commenting this out for now.
     // cur_cos_appex *= 2.0;  // due to symmetry about the mean normal
 
-    // arccosine
+    // arc cosine
     auto cur_angle = std::acos(cur_cos_appex);
 
     // convert to degrees
@@ -104,7 +105,7 @@ std::vector<bool> ParticleNormalEvaluation::threshold_particle_normals(std::vect
   std::vector<bool> result(angles.size());
   auto num_particles = angles.size();
   for (size_t i = 0; i < num_particles; i++) {
-    result[i] = angles[i] > max_angle_degrees;
+    result[i] = angles[i] < max_angle_degrees;
   }
   return result;
 }
