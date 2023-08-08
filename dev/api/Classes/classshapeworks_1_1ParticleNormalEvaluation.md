@@ -13,7 +13,8 @@ title: shapeworks::ParticleNormalEvaluation
 
 |                | Name           |
 | -------------- | -------------- |
-| std::vector< bool > | **[evaluate_particle_normals](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md#function-evaluate-particle-normals)**(const Eigen::MatrixXd & particles, const Eigen::MatrixXd & normals, double max_angle_degrees) |
+| std::vector< double > | **[evaluate_particle_normals](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md#function-evaluate-particle-normals)**(const Eigen::MatrixXd & particles, const Eigen::MatrixXd & normals) |
+| std::vector< bool > | **[threshold_particle_normals](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md#function-threshold-particle-normals)**(std::vector< double > angles, double max_angle_degrees) |
 | Eigen::MatrixXd | **[compute_particle_normals](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md#function-compute-particle-normals)**(const Eigen::MatrixXd & particles, std::vector< std::shared_ptr< [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md) > > meshes)<br>Compute normals at particle positions.  |
 
 ## Public Functions Documentation
@@ -21,9 +22,18 @@ title: shapeworks::ParticleNormalEvaluation
 ### function evaluate_particle_normals
 
 ```cpp
-static std::vector< bool > evaluate_particle_normals(
+static std::vector< double > evaluate_particle_normals(
     const Eigen::MatrixXd & particles,
-    const Eigen::MatrixXd & normals,
+    const Eigen::MatrixXd & normals
+)
+```
+
+
+### function threshold_particle_normals
+
+```cpp
+static std::vector< bool > threshold_particle_normals(
+    std::vector< double > angles,
     double max_angle_degrees
 )
 ```
@@ -42,4 +52,4 @@ Compute normals at particle positions.
 
 -------------------------------
 
-Updated on 2023-08-02 at 17:09:59 +0000
+Updated on 2023-08-08 at 20:29:39 +0000
