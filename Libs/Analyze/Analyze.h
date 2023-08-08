@@ -54,6 +54,8 @@ class Analyze {
 
   void set_group_selection(std::string group_name, std::string group1, std::string group2);
 
+  ParticleSystemEvaluation get_local_particle_system(int domain);
+
  private:
   bool update_shapes();
   bool compute_stats();

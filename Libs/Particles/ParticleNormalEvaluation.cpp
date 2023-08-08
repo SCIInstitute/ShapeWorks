@@ -1,5 +1,6 @@
 #include "ParticleNormalEvaluation.h"
 
+#include <Logging.h>
 #include <Utils.h>
 
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
@@ -7,10 +8,9 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(const Eigen::MatrixXd &particles,
-                                                                      const Eigen::MatrixXd &normals,
-                                                                      double max_angle_degrees) {
-  std::vector<bool> result;
+std::vector<double> ParticleNormalEvaluation::evaluate_particle_normals(const Eigen::MatrixXd &particles,
+                                                                        const Eigen::MatrixXd &normals) {
+  std::vector<double> result;
 
   std::vector<std::vector<double>> thetas;
   std::vector<std::vector<double>> phis;
@@ -87,12 +87,26 @@ std::vector<bool> ParticleNormalEvaluation::evaluate_particle_normals(const Eige
     // matter what the angle.  I'm commenting this out for now.
     // cur_cos_appex *= 2.0;  // due to symmetry about the mean normal
 
-    // std::cerr << "cur_cos_appex = " << cur_cos_appex << "\n";
-    // std::cerr << "max_angle_degrees = " << max_angle_degrees << "\n";
-    // std::cerr << "check = " << (std::cos(max_angle_degrees * M_PI / 180.)) << "\n";
-    result[j] = cur_cos_appex > std::cos(max_angle_degrees * M_PI / 180.);
+    // arc cosine
+    auto cur_angle = std::acos(cur_cos_appex);
+
+    // convert to degrees
+    cur_angle *= 180.0 / M_PI;
+
+    result[j] = cur_angle;
   }
 
+  return result;
+}
+
+//---------------------------------------------------------------------------
+std::vector<bool> ParticleNormalEvaluation::threshold_particle_normals(std::vector<double> angles,
+                                                                       double max_angle_degrees) {
+  std::vector<bool> result(angles.size());
+  auto num_particles = angles.size();
+  for (size_t i = 0; i < num_particles; i++) {
+    result[i] = angles[i] < max_angle_degrees;
+  }
   return result;
 }
 
