@@ -17,7 +17,7 @@ class VtkMeshWrapper;
 class ParticleNormalEvaluation {
  public:
   static std::vector<double> evaluate_particle_normals(const Eigen::MatrixXd& particles,
-                                                       const Eigen::MatrixXd& normalss);
+                                                       const Eigen::MatrixXd& normals);
 
   static std::vector<bool> threshold_particle_normals(std::vector<double> angles, double max_angle_degrees);
 
