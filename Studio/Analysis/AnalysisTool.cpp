@@ -502,10 +502,14 @@ bool AnalysisTool::compute_stats() {
   }
 
   stats_ready_ = true;
+
+  /*
   std::vector<double> vals;
   for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
     vals.push_back(stats_.Eigenvalues()[i]);
   }
+*/
+
   ////  Uncomment this to write out long format sample data
   /*
   if (groups_enabled) {
