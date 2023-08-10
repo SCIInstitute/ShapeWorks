@@ -210,7 +210,7 @@ void Particles::transform_global_particles() {
           eigen[i + 2] *= scale[2];
         }
 
-        if (alignment_type_ > 0 && alignment_type_ < procrustes_transforms_.size() &&
+        if (alignment_type_ >= 0 && alignment_type_ < procrustes_transforms_.size() &&
             procrustes_transforms_[alignment_type_]) {
           pt[0] = eigen[i];
           pt[1] = eigen[i + 1];
