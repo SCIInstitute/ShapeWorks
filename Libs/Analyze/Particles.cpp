@@ -193,12 +193,36 @@ void Particles::transform_global_particles() {
         eigen[i] = new_point[0];
         eigen[i + 1] = new_point[1];
         eigen[i + 2] = new_point[2];
+        if (alignment_type_ < 0) {
+          // for local and global alignment, use per-domain value
+          alignment_type_ = d;
+        }
 
-        if (alignment_type_ < procrustes_transforms_.size() && procrustes_transforms_[alignment_type_]) {
+        if (d < procrustes_transforms_.size() && procrustes_transforms_[d]) {
+          auto transform = procrustes_transforms_[d];
+          // extract scale
+          double scale[3];
+          transform->GetScale(scale);
+
+          // apply scale
+          eigen[i] *= scale[0];
+          eigen[i + 1] *= scale[1];
+          eigen[i + 2] *= scale[2];
+        }
+
+        if (alignment_type_ > 0 && alignment_type_ < procrustes_transforms_.size() &&
+            procrustes_transforms_[alignment_type_]) {
           pt[0] = eigen[i];
           pt[1] = eigen[i + 1];
           pt[2] = eigen[i + 2];
-          double* new_point2 = procrustes_transforms_[alignment_type_]->TransformPoint(pt);
+          auto transform = procrustes_transforms_[alignment_type_];
+
+          // remove scale from transform, leaving rotation and translation
+          double scale[3];
+          transform->GetScale(scale);
+          transform->Scale(1.0 / scale[0], 1.0 / scale[1], 1.0 / scale[2]);
+
+          double* new_point2 = transform->TransformPoint(pt);
           eigen[i] = new_point2[0];
           eigen[i + 1] = new_point2[1];
           eigen[i + 2] = new_point2[2];
