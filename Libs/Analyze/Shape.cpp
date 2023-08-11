@@ -655,7 +655,7 @@ vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Shape::get_procrustest_transform(int domain) {
+vtkSmartPointer<vtkTransform> Shape::get_procrustes_transform(int domain) {
   auto transforms = subject_->get_procrustes_transforms();
   if (domain < transforms.size()) {
     return ProjectUtils::convert_transform(transforms[domain]);
@@ -664,7 +664,7 @@ vtkSmartPointer<vtkTransform> Shape::get_procrustest_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms() {
+std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustes_transforms() {
   auto lists = subject_->get_procrustes_transforms();
   std::vector<vtkSmartPointer<vtkTransform>> transforms;
   for (size_t i = 0; i < lists.size(); i++) {
@@ -694,7 +694,7 @@ Particles Shape::get_particles() { return particles_; }
 
 //---------------------------------------------------------------------------
 void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform) {
-  particles_.set_procrustes_transforms(get_procrustest_transforms());
+  particles_.set_procrustes_transforms(get_procrustes_transforms());
   particles_.set_transform(transform);
 }
 

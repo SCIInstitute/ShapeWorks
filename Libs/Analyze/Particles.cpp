@@ -6,7 +6,6 @@
 
 namespace shapeworks {
 
-
 //---------------------------------------------------------------------------
 void Particles::set_local_particles(int domain, const std::vector<itk::Point<double>>& particles) {
   set_particles(domain, particles, true);
@@ -193,12 +192,40 @@ void Particles::transform_global_particles() {
         eigen[i] = new_point[0];
         eigen[i + 1] = new_point[1];
         eigen[i + 2] = new_point[2];
+        int domain_to_align = alignment_type_;
+        if (domain_to_align == -1) {
+          // for local alignment, use per-domain value
+          domain_to_align = d;
+        }
 
-        if (alignment_type_ < procrustes_transforms_.size() && procrustes_transforms_[alignment_type_]) {
+        if (d < procrustes_transforms_.size() && procrustes_transforms_[d]) {
+          auto transform = procrustes_transforms_[d];
+          // extract scale
+          double scale[3];
+          transform->GetScale(scale);
+
+          // apply scale from procrustes transform
+          eigen[i] *= scale[0];
+          eigen[i + 1] *= scale[1];
+          eigen[i + 2] *= scale[2];
+        }
+
+        if (domain_to_align >= 0 && domain_to_align < procrustes_transforms_.size() &&
+            procrustes_transforms_[domain_to_align]) {
           pt[0] = eigen[i];
           pt[1] = eigen[i + 1];
           pt[2] = eigen[i + 2];
-          double* new_point2 = procrustes_transforms_[alignment_type_]->TransformPoint(pt);
+
+          // deep copy the transform
+          auto transform = vtkSmartPointer<vtkTransform>::New();
+          transform->DeepCopy(procrustes_transforms_[domain_to_align]);
+
+          // remove scale from transform, leaving rotation and translation
+          double scale[3];
+          transform->GetScale(scale);
+          transform->Scale(1.0 / scale[0], 1.0 / scale[1], 1.0 / scale[2]);
+
+          double* new_point2 = transform->TransformPoint(pt);
           eigen[i] = new_point2[0];
           eigen[i + 1] = new_point2[1];
           eigen[i + 2] = new_point2[2];
@@ -210,6 +237,7 @@ void Particles::transform_global_particles() {
   }
 }
 
+//---------------------------------------------------------------------------
 void Particles::save_particles_file(std::string filename, const Eigen::VectorXd& points) {
   std::ofstream out(filename);
   size_t newline = 1;
@@ -220,6 +248,7 @@ void Particles::save_particles_file(std::string filename, const Eigen::VectorXd&
   out.close();
 }
 
+//---------------------------------------------------------------------------
 void Particles::set_alignment_type(int alignment) { alignment_type_ = alignment; }
 
 }  // namespace shapeworks
