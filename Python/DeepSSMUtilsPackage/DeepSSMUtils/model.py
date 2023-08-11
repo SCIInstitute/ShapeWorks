@@ -122,3 +122,76 @@ class DeepSSMNet(nn.Module):
 		pca_load, pca_load_unwhiten = self.encoder(x)
 		corr_out = self.decoder(pca_load_unwhiten)
 		return [pca_load, corr_out]
+
+class CorrespondenceEncoder(nn.Module):
+	def __init__(self, num_latent, num_corr):
+		super(CorrespondenceEncoder, self).__init__()
+		self.num_latent = num_latent
+		self.num_corr = num_corr
+		self.dims = 3
+		self.encoder = nn.Sequential(OrderedDict([
+			('fc-en1', nn.Linear(self.dims*self.num_corr, 1024)),
+			('relu-en1', nn.PReLU()),
+			('fc-en2', nn.Linear(1024, 512)),
+			('relu-en2', nn.PReLU()),
+			('fc-en3', nn.Linear(512, self.num_latent))
+		]))
+
+	def forward(self, z):
+		z_out = self.encoder(z)
+		return z_out
+
+class CorrespondenceDecoder(nn.Module):
+	def __init__(self, num_latent, num_corr):
+		super(CorrespondenceDecoder, self).__init__()
+		self.num_latent = num_latent
+		self.num_corr = num_corr
+		self.dims = 3
+		self.decoder = nn.Sequential(OrderedDict([
+			('fc-de1', nn.Linear(self.num_latent, 512)),
+			('relu-de1', nn.PReLU()),
+			('fc-de2', nn.Linear(512, 1024)),
+			('relu-de2', nn.PReLU()),
+			('fc-de3', nn.Linear(1024, self.num_corr*self.dims))
+		]))
+
+	def forward(self, z):
+		pt_out = self.decoder(z)
+		return pt_out
+	
+"""
+DeepSSM TL-Net Model
+"""
+class DeepSSMNet_TLNet(nn.Module):
+	def __init__(self, conflict_file):
+		super(DeepSSMNet_TLNet, self).__init__()
+		if torch.cuda.is_available():
+			device = 'cuda:0'
+		else:
+			device = 'cpu'
+		self.device = device
+		with open(conflict_file) as json_file: 
+			parameters = json.load(json_file)
+		self.num_latent = parameters['num_latent_dim']
+		self.loader_dir = parameters['paths']['loader_dir']
+		loader = torch.load(self.loader_dir + "validation")
+		self.num_corr = loader.dataset.mdl_target[0].shape[0]
+		img_dims = loader.dataset.img[0].shape
+		self.img_dims = img_dims[1:]
+		self.CorrespondenceEncoder = CorrespondenceEncoder(self.num_latent, self.num_corr)
+		self.CorrespondenceDecoder = CorrespondenceDecoder(self.num_latent, self.num_corr)
+		self.ImageEncoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir)
+
+	def forward(self, pt, x):
+		# for testing
+		if len(pt.shape) < 3:
+			zt, _ = self.ImageEncoder(x)
+			pt_out = self.CorrespondenceDecoder(zt)
+			return [zt, pt_out.reshape(-1, self.num_corr, 3)]
+		# for training
+		else:
+			pt1 = pt.view(-1, pt.shape[1]*pt.shape[2])
+			z = self.CorrespondenceEncoder(pt1)
+			pt_out = self.CorrespondenceDecoder(z)
+			zt, _ = self.ImageEncoder(x)
+		return [pt_out.view(-1, pt.shape[1], pt.shape[2]), z, zt]

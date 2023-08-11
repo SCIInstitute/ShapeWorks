@@ -14,12 +14,18 @@ random.seed(1)
 ######################## Data loading functions ####################################
 
 '''
+Make folder
+'''
+def make_dir(dirPath):
+    if not os.path.exists(dirPath):
+        os.makedirs(dirPath)
+
+'''
 Reads csv and makes both train and validation data loaders from it
 '''
 def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
 	sw_message("Creating training and validation torch loaders:")
-	if not os.path.exists(loader_dir):
-		os.makedirs(loader_dir)
+	make_dir(loader_dir)
 	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
 	images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
 	# split into train and validation (e.g. 80% vs 20%)
@@ -59,8 +65,7 @@ Reads csv and makes just train data loaders
 def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
 	sw_message("Creating training torch loader...")
 	# Get data
-	if not os.path.exists(loader_dir):
-		os.makedirs(loader_dir)
+	make_dir(loader_dir)
 	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
 	images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
 	train_data = DeepSSMdataset(images, scores, models)
@@ -250,8 +255,7 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
 	all_images = []
 	for image_path in image_list:
 		if down_dir is not None:
-			if not os.path.exists(down_dir):
-				os.makedirs(down_dir)
+			make_dir(down_dir)
 			img_name = os.path.basename(image_path)
 			res_img = os.path.join(down_dir, img_name)
 			if not os.path.exists(res_img):

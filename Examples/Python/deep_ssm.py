@@ -328,7 +328,7 @@ def Run_Pipeline(args):
     num_samples = 2961
     num_dim = 0
     percent_variability = 0.95
-    sampler = "gaussian"
+    sampler = "kde"
     if args.tiny_test:
         num_samples = 2
         percent_variability = 0.99
@@ -590,13 +590,38 @@ def Run_Pipeline(args):
         "trainer": {
             "epochs": 10,
             "learning_rate": 0.001,
-            "decay_lr": False,
+            "decay_lr":{
+                "enabled":True,
+                "type":"CosineAnnealing",
+                "parameters":{
+                    "T_max":10,
+                    "eta_min":0,
+                    "step_size": 1, 
+                    "gamma": 0.99
+                }
+            },
             "val_freq": 1
         },
         "fine_tune": {
             "enabled": False,
+            "epochs": 10,
+            "loss": "MSE",
+            "learning_rate": 0.001,
+            "decay_lr": True,
+            "val_freq": 1
         },
-        "use_best_model": True
+        "use_best_model": True,
+        "tl_net":{
+			"enabled": False,
+			"ae_epochs": 100,
+			"tf_epochs":100,
+			"joint_epochs":25,
+			"alpha":1,
+			"a_ae":10,
+			"c_ae":1.32,
+			"a_lat":10,
+			"c_lat":6.3
+	    }
     }
     if args.tiny_test:
         model_parameters["trainer"]["epochs"] = 1
@@ -639,7 +664,7 @@ def Run_Pipeline(args):
     print("Validation world particle MSE: "+str(mean_MSE)+" +- "+str(std_MSE))
     template_mesh = train_mesh_files[ref_index]
     template_particles = train_local_particles[ref_index].replace("./", data_dir)
-    # Get distabce between clipped true and predicted meshes
+    # Get distance between clipped true and predicted meshes
     mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files, 
                                                     template_particles, template_mesh, val_out_dir,
                                                     planes=val_planes)
