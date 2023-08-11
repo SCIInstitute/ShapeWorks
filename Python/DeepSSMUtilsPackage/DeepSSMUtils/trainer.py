@@ -168,6 +168,7 @@ def supervised_train(config_file):
 		for img, pca, mdl in train_loader:
 			opt.zero_grad()
 			img = img.to(device)
+			pca = pca.to(device)
 			mdl = mdl.to(device)
 			[pred_pca, pred_mdl] = net(img)
 			loss = loss_func(pred_mdl, mdl)
@@ -189,6 +190,7 @@ def supervised_train(config_file):
 			for img, pca, mdl in val_loader:
 				opt.zero_grad()
 				img = img.to(device)
+				pca = pca.to(device)
 				mdl = mdl.to(device)
 				[pred_pca, pred_mdl] = net(img)
 				v_loss = loss_func(pred_pca, pca)
@@ -267,6 +269,7 @@ def supervised_train(config_file):
 			for img, pca, mdl in train_loader:
 				opt.zero_grad()
 				img = img.to(device)
+				pca = pca.to(device)
 				mdl = mdl.to(device)
 				[pred_pca, pred_mdl] = net(img)
 				loss = loss_func(pred_mdl, mdl)
@@ -288,6 +291,7 @@ def supervised_train(config_file):
 				for img, pca, mdl in val_loader:
 					opt.zero_grad()
 					img = img.to(device)
+					pca = pca.to(device)
 					mdl = mdl.to(device)
 					[pred_pca, pred_mdl] = net(img)
 					v_loss = loss_func(pred_mdl, mdl)
