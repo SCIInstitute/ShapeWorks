@@ -72,8 +72,8 @@ Representation of a single shape/patient/subject.
 | void | **[set_reconstruction_transforms](../Classes/classshapeworks_1_1Shape.md#function-set-reconstruction-transforms)**(std::vector< vtkSmartPointer< vtkTransform > > transforms) |
 | vtkSmartPointer< vtkTransform > | **[get_reconstruction_transform](../Classes/classshapeworks_1_1Shape.md#function-get-reconstruction-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_groomed_transform](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-transform)**(int domain =0) |
-| vtkSmartPointer< vtkTransform > | **[get_procrustest_transform](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transform)**(int domain =0) |
-| std::vector< vtkSmartPointer< vtkTransform > > | **[get_procrustest_transforms](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transforms)**() |
+| vtkSmartPointer< vtkTransform > | **[get_procrustes_transform](../Classes/classshapeworks_1_1Shape.md#function-get-procrustes-transform)**(int domain =0) |
+| std::vector< vtkSmartPointer< vtkTransform > > | **[get_procrustes_transforms](../Classes/classshapeworks_1_1Shape.md#function-get-procrustes-transforms)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment](../Classes/classshapeworks_1_1Shape.md#function-get-alignment)**(int domain =0) |
 | void | **[load_feature](../Classes/classshapeworks_1_1Shape.md#function-load-feature)**(DisplayMode display_mode, std::string feature) |
 | std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > | **[get_image_volume](../Classes/classshapeworks_1_1Shape.md#function-get-image-volume)**(std::string image_volume_name) |
@@ -501,19 +501,19 @@ vtkSmartPointer< vtkTransform > get_groomed_transform(
 ```
 
 
-### function get_procrustest_transform
+### function get_procrustes_transform
 
 ```cpp
-vtkSmartPointer< vtkTransform > get_procrustest_transform(
+vtkSmartPointer< vtkTransform > get_procrustes_transform(
     int domain =0
 )
 ```
 
 
-### function get_procrustest_transforms
+### function get_procrustes_transforms
 
 ```cpp
-std::vector< vtkSmartPointer< vtkTransform > > get_procrustest_transforms()
+std::vector< vtkSmartPointer< vtkTransform > > get_procrustes_transforms()
 ```
 
 
@@ -629,4 +629,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2023-08-08 at 20:29:40 +0000
+Updated on 2023-08-11 at 07:52:38 +0000

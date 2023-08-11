@@ -90,7 +90,7 @@ class Particles {
 
   vtkSmartPointer<vtkTransform> transform_;
   std::vector<vtkSmartPointer<vtkTransform>> procrustes_transforms_;
-  int alignment_type_ = -1;
+  int alignment_type_ = -3;  // not a valid value
 
 };
 }  // namespace shapeworks
@@ -99,4 +99,4 @@ class Particles {
 
 -------------------------------
 
-Updated on 2023-08-08 at 20:29:40 +0000
+Updated on 2023-08-11 at 07:52:39 +0000

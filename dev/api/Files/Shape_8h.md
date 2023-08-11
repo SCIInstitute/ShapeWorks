@@ -149,8 +149,8 @@ class Shape {
 
   vtkSmartPointer<vtkTransform> get_groomed_transform(int domain = 0);
 
-  vtkSmartPointer<vtkTransform> get_procrustest_transform(int domain = 0);
-  std::vector<vtkSmartPointer<vtkTransform>> get_procrustest_transforms();
+  vtkSmartPointer<vtkTransform> get_procrustes_transform(int domain = 0);
+  std::vector<vtkSmartPointer<vtkTransform>> get_procrustes_transforms();
 
   vtkSmartPointer<vtkTransform> get_alignment(int domain = 0);
 
@@ -225,4 +225,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2023-08-08 at 20:29:40 +0000
+Updated on 2023-08-11 at 07:52:39 +0000
