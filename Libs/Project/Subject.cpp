@@ -88,6 +88,12 @@ std::string Subject::get_display_name() { return display_name_; }
 void Subject::set_display_name(std::string display_name) { display_name_ = display_name; }
 
 //---------------------------------------------------------------------------
+bool Subject::is_fixed() { return fixed_; }
+
+//---------------------------------------------------------------------------
+void Subject::set_fixed(bool fixed) { fixed_ = fixed; }
+
+//---------------------------------------------------------------------------
 void Subject::set_local_particle_filenames(StringList filenames) { local_particle_filenames_ = filenames; }
 
 //---------------------------------------------------------------------------

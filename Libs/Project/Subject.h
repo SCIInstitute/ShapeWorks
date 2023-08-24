@@ -97,10 +97,16 @@ class Subject {
   //! Set the display name
   void set_display_name(std::string display_name);
 
+  //! Get if this subject is fixed or not
+  bool is_fixed();
+  //! Set if this subject is fixed or not
+  void set_fixed(bool fixed);
+
  private:
   int number_of_domains_ = 0;
 
   std::string display_name_;
+  bool fixed_ = false;
   StringList original_filenames_;
   StringList groomed_filenames_;
   StringList local_particle_filenames_;
