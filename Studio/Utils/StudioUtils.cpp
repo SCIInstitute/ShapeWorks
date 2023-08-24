@@ -1,12 +1,12 @@
 #include <Utils/StudioUtils.h>
-#include <vtkImageData.h>
-#include <vtkPolyLine.h>
-#include <vtkReverseSense.h>
-#include <vtkCoordinate.h>
-#include <vtkPolyDataMapper2D.h>
 #include <vtkActor2D.h>
+#include <vtkCoordinate.h>
+#include <vtkImageData.h>
+#include <vtkPolyDataMapper2D.h>
+#include <vtkPolyLine.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
+#include <vtkReverseSense.h>
 
 #include <QMessageBox>
 
@@ -104,10 +104,8 @@ void StudioUtils::add_viewport_border(vtkRenderer* renderer, double* color) {
   points->InsertPoint(2, 0, 0, 0);
   points->InsertPoint(3, 1, 0, 0);
 
-  // Create cells, and lines.
   vtkNew<vtkCellArray> cells;
   cells->Initialize();
-
   vtkNew<vtkPolyLine> lines;
 
   lines->GetPointIds()->SetNumberOfIds(5);
@@ -117,14 +115,12 @@ void StudioUtils::add_viewport_border(vtkRenderer* renderer, double* color) {
   lines->GetPointIds()->SetId(4, 0);
   cells->InsertNextCell(lines);
 
-  // Now make the polydata and display it.
   vtkNew<vtkPolyData> poly;
   poly->Initialize();
   poly->SetPoints(points);
   poly->SetLines(cells);
 
-  // Use normalized viewport coordinates since
-  // they are independent of window size.
+  // use normalized viewport coordinates since they are independent of window size
   vtkNew<vtkCoordinate> coordinate;
   coordinate->SetCoordinateSystemToNormalizedViewport();
 
@@ -135,9 +131,7 @@ void StudioUtils::add_viewport_border(vtkRenderer* renderer, double* color) {
   vtkNew<vtkActor2D> actor;
   actor->SetMapper(mapper);
   actor->GetProperty()->SetColor(color);
-  // Line width should be at least 2 to be visible at extremes.
-
-  actor->GetProperty()->SetLineWidth(4.0);  // Line Width
+  actor->GetProperty()->SetLineWidth(6.0);
 
   renderer->AddViewProp(actor);
 }
