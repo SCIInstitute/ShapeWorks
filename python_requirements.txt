@@ -172,7 +172,7 @@ toml==0.10.2
 torch==1.13.1
 torchaudio==0.13.1
 torchvision==0.14.1
-tornado==6.3.2
+tornado==6.3.3
 tqdm==4.65.0
 traitlets==5.9.0
 traittypes==0.2.1
