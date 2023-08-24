@@ -13,9 +13,9 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QThread>
+#include <QMenu>
 #include <iostream>
 
-#include "qt/QtWidgets/qmenu.h"
 
 #ifdef __APPLE__
 static QString click_message = "⌘+click";

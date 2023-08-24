@@ -27,15 +27,15 @@
 #include <ExcelProjectWriter.h>
 #include <JsonProjectReader.h>
 #include <JsonProjectWriter.h>
-#include <Project/Project.h>
 #include <Logging.h>
 #include <MeshManager.h>
+#include <Project/Project.h>
 #include <Shape.h>
 #include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
-#include "ExternalLibs/tinyxml/tinyxml.h"
 
+#include "ExternalLibs/tinyxml/tinyxml.h"
 
 namespace shapeworks {
 
@@ -437,7 +437,6 @@ bool Session::load_xl_project(QString filename) {
       break;
     }
     progress.setValue(progress.value() + 1);
-
   }
 
   groups_available_ = project_->get_group_names().size() > 0;
@@ -446,9 +445,7 @@ bool Session::load_xl_project(QString filename) {
 }
 
 //---------------------------------------------------------------------------
-void Session::set_project_path(QString relative_path) {
-  project_->set_project_path(relative_path.toStdString());
-}
+void Session::set_project_path(QString relative_path) { project_->set_project_path(relative_path.toStdString()); }
 
 //---------------------------------------------------------------------------
 std::shared_ptr<Project> Session::get_project() { return project_; }
@@ -690,10 +687,10 @@ void Session::remove_shapes(QList<int> list) {
     shapes_.erase(shapes_.begin() + i);
   }
 
-  project_->get_subjects();
   renumber_shapes();
   project_->update_subjects();
   Q_EMIT data_changed();
+  Q_EMIT update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -1163,7 +1160,6 @@ void Session::trigger_repaint() { Q_EMIT repaint(); }
 
 //---------------------------------------------------------------------------
 void Session::trigger_reinsert_shapes() { Q_EMIT reinsert_shapes(); }
-
 
 //---------------------------------------------------------------------------
 void Session::set_display_mode(DisplayMode mode) {
