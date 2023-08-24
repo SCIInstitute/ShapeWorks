@@ -1,6 +1,7 @@
 #include <Groom.h>
 #include <GroomParameters.h>
 #include <Image/Image.h>
+#include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshUtils.h>
 #include <Project/ProjectUtils.h>
@@ -10,7 +11,6 @@
 #include <vtkCenterOfMass.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkPointSet.h>
-#include <Logging.h>
 
 #include <boost/filesystem.hpp>
 #include <vector>
@@ -45,6 +45,10 @@ bool Groom::run() {
       for (int domain = 0; domain < project_->get_number_of_domains_per_subject(); domain++) {
         if (abort_) {
           success = false;
+          continue;
+        }
+
+        if (subjects[i]->is_fixed()) {
           continue;
         }
 
@@ -302,7 +306,6 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
     groom_name = original;
   }
 
-
   {
     // lock for project data structure
     std::scoped_lock lock(mutex_);
@@ -453,7 +456,7 @@ int Groom::get_total_ops() {
     }
 
     bool run_mesh = project_->get_original_domain_types()[i] == DomainType::Mesh ||
-        (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
+                    (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
@@ -499,6 +502,7 @@ bool Groom::run_alignment() {
 
     if (params.get_use_icp()) {
       global_icp = true;
+      std::vector<Mesh> reference_meshes;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
         auto mesh = get_mesh(i, domain);
@@ -506,10 +510,15 @@ bool Groom::run_alignment() {
         auto list = subjects[i]->get_groomed_transforms()[domain];
         vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
         mesh.applyTransform(transform);
+
+        if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
+          // if fixed subjects are present, only add the fixed subjects
+          reference_meshes.push_back(mesh);
+        }
         meshes.push_back(mesh);
       }
 
-      size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
+      size_t reference_mesh = MeshUtils::findReferenceMesh(reference_meshes);
 
       auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
 
@@ -541,8 +550,9 @@ bool Groom::run_alignment() {
       auto list = subjects[i]->get_groomed_transforms()[0];
       vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
       mesh.applyTransform(transform);
-
-      meshes.push_back(mesh);
+      if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
+        meshes.push_back(mesh);
+      }
     }
 
     if (global_icp) {
@@ -593,7 +603,9 @@ void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int d
     transform->Concatenate(ProjectUtils::convert_transform(transforms[i]));
 
     // store transform
-    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+    if (!subject->is_fixed()) {
+      subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+    }
   }
 }
 

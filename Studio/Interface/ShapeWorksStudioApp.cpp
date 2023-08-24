@@ -1216,9 +1216,11 @@ void ShapeWorksStudioApp::handle_reconstruction_complete() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_start() {
-  // clear out old points
-  session_->clear_particles();
-  ui_->action_analysis_mode->setEnabled(false);
+  // clear out old points (unless fixed subjects)
+  if (!session_->get_project()->get_fixed_subjects_present()) {
+    session_->clear_particles();
+    ui_->action_analysis_mode->setEnabled(false);
+  }
 }
 
 //---------------------------------------------------------------------------
