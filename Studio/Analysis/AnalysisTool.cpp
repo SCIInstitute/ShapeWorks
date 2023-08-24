@@ -444,6 +444,9 @@ bool AnalysisTool::compute_stats() {
   number_of_particles_ar.resize(dps);
   bool flag_get_num_part = false;
   for (auto& shape : session_->get_shapes()) {
+    if (shape->get_global_correspondence_points().size() == 0) {
+      continue; // skip any that don't have particles
+    }
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {
