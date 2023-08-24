@@ -10,6 +10,7 @@ class QWidget;
 #include <QStringList>
 
 class vtkImageData;
+class vtkRenderer;
 
 namespace shapeworks {
 
@@ -27,7 +28,11 @@ class StudioUtils {
   //! reverse a poly data
   static vtkSmartPointer<vtkPolyData> reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
 
+  //! return platform string
   static QString get_platform_string();
+
+  //! add a color border to a viewport
+  static void add_viewport_border(vtkRenderer* renderer, double* color);
 
 };
 

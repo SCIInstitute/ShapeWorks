@@ -638,7 +638,14 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   corner_annotation_->SetText(3, (annotations[3]).c_str());
   corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
 
+
   renderer_->RemoveAllViewProps();
+
+  auto subject = shape->get_subject();
+  if (subject && subject->is_fixed()) {
+    double color[4] = {0.0, 0.0, 1.0, 1.0};
+    StudioUtils::add_viewport_border(renderer_, color);
+  }
 
   number_of_domains_ = session_->get_domains_per_shape();
   if (meshes_.valid()) {
@@ -704,8 +711,8 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         auto compare_poly_data = compare_meshes_.meshes()[i]->get_poly_data();
 
         if (compare_settings.get_mean_shape_checked()) {
-          auto transform =
-              visualizer_->get_transform(shape_, compare_settings.get_display_mode(), visualizer_->get_alignment_domain(), i);
+          auto transform = visualizer_->get_transform(shape_, compare_settings.get_display_mode(),
+                                                      visualizer_->get_alignment_domain(), i);
 
           transform->Inverse();
           auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
@@ -1081,7 +1088,6 @@ void Viewer::insert_compare_meshes() {
       actor->SetUserTransform(identity);
     } else {
       actor->SetUserTransform(transform);
-
     }
     mapper->SetInputData(poly_data);
 

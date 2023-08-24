@@ -1,6 +1,12 @@
 #include <Utils/StudioUtils.h>
 #include <vtkImageData.h>
+#include <vtkPolyLine.h>
 #include <vtkReverseSense.h>
+#include <vtkCoordinate.h>
+#include <vtkPolyDataMapper2D.h>
+#include <vtkActor2D.h>
+#include <vtkProperty2D.h>
+#include <vtkRenderer.h>
 
 #include <QMessageBox>
 
@@ -86,5 +92,53 @@ QString StudioUtils::get_platform_string() {
   platform = "linux";
 #endif
   return platform;
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::add_viewport_border(vtkRenderer* renderer, double* color) {
+  // points start at upper right and proceed anti-clockwise
+  vtkNew<vtkPoints> points;
+  points->SetNumberOfPoints(4);
+  points->InsertPoint(0, 1, 1, 0);
+  points->InsertPoint(1, 0, 1, 0);
+  points->InsertPoint(2, 0, 0, 0);
+  points->InsertPoint(3, 1, 0, 0);
+
+  // Create cells, and lines.
+  vtkNew<vtkCellArray> cells;
+  cells->Initialize();
+
+  vtkNew<vtkPolyLine> lines;
+
+  lines->GetPointIds()->SetNumberOfIds(5);
+  for (unsigned int i = 0; i < 4; ++i) {
+    lines->GetPointIds()->SetId(i, i);
+  }
+  lines->GetPointIds()->SetId(4, 0);
+  cells->InsertNextCell(lines);
+
+  // Now make the polydata and display it.
+  vtkNew<vtkPolyData> poly;
+  poly->Initialize();
+  poly->SetPoints(points);
+  poly->SetLines(cells);
+
+  // Use normalized viewport coordinates since
+  // they are independent of window size.
+  vtkNew<vtkCoordinate> coordinate;
+  coordinate->SetCoordinateSystemToNormalizedViewport();
+
+  vtkNew<vtkPolyDataMapper2D> mapper;
+  mapper->SetInputData(poly);
+  mapper->SetTransformCoordinate(coordinate);
+
+  vtkNew<vtkActor2D> actor;
+  actor->SetMapper(mapper);
+  actor->GetProperty()->SetColor(color);
+  // Line width should be at least 2 to be visible at extremes.
+
+  actor->GetProperty()->SetLineWidth(4.0);  // Line Width
+
+  renderer->AddViewProp(actor);
 }
 }  // namespace shapeworks
