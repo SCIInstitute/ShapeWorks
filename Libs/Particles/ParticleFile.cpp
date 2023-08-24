@@ -6,6 +6,8 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkSmartPointer.h>
 
+#include <StringUtils.h>
+
 #include <fstream>
 
 namespace shapeworks::particles {
@@ -54,7 +56,7 @@ static Eigen::VectorXd read_vtk_particles(std::string filename) {
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd read_particles(std::string filename) {
-  if (filename.substr(filename.size() - 4) == ".vtk") {
+  if (StringUtils::hasSuffix(filename, ".vtk")) {
     return read_vtk_particles(filename);
   }
 
@@ -92,7 +94,7 @@ Eigen::VectorXd read_particles(std::string filename) {
 
 //---------------------------------------------------------------------------
 void write_particles(std::string filename, const Eigen::VectorXd& points) {
-  if (filename.substr(filename.size() - 4) == ".vtk") {
+  if (StringUtils::hasSuffix(filename, ".vtk")) {
     write_vtk_particles(filename, points);
     return;
   }
