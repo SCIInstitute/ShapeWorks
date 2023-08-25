@@ -19,10 +19,8 @@
 #include <Project/Project.h>
 
 #include "Libs/Optimize/Domain/DomainType.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
 #include "Libs/Optimize/Utils/OptimizationVisualizer.h"
-#include "ParticleSystem.h"
 #include "ProcrustesRegistration.h"
 #include "Sampler.h"
 

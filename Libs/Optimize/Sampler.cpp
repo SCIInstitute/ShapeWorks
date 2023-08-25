@@ -49,6 +49,7 @@ Sampler::Sampler() {
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
+//---------------------------------------------------------------------------
 void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
   m_Sigma1Cache = GenericContainerArray<double>::New();
@@ -65,6 +66,7 @@ void Sampler::AllocateDataCaches() {
   m_ParticleSystem->RegisterObserver(m_MeanCurvatureCache);
 }
 
+//---------------------------------------------------------------------------
 void Sampler::AllocateDomainsAndNeighborhoods() {
   // Allocate all the necessary domains and neighborhoods. This must be done
   // *after* registering the attributes to the particle system since some of
@@ -179,8 +181,7 @@ void Sampler::InitializeOptimizationFunctions() {
   m_GeneralShapeGradMatrix->Initialize();
 }
 
-void Sampler::GenerateData() {}
-
+//---------------------------------------------------------------------------
 void Sampler::Execute() {
   if (this->GetInitialized() == false) {
     this->AllocateDataCaches();
@@ -196,6 +197,7 @@ void Sampler::Execute() {
     this->GetOptimizer()->SetParticleSystem(m_ParticleSystem);
     this->ReadTransforms();
     this->ReadPointsFiles();
+    initialize_initial_positions();
     this->InitializeOptimizationFunctions();
 
     this->SetInitialized(true);
@@ -207,6 +209,7 @@ void Sampler::Execute() {
   this->GetOptimizer()->StartOptimization();
 }
 
+//---------------------------------------------------------------------------
 Sampler::CuttingPlaneList Sampler::ComputeCuttingPlanes() {
   CuttingPlaneList planes;
   for (size_t i = 0; i < m_CuttingPlanes.size(); i++) {
@@ -224,7 +227,9 @@ Sampler::CuttingPlaneList Sampler::ComputeCuttingPlanes() {
   return planes;
 }
 
-Eigen::Vector3d Sampler::ComputePlaneNormal(const vnl_vector<double> &a, const vnl_vector<double> &b, const vnl_vector<double> &c) {
+//---------------------------------------------------------------------------
+Eigen::Vector3d Sampler::ComputePlaneNormal(const vnl_vector<double>& a, const vnl_vector<double>& b,
+                                            const vnl_vector<double>& c) {
   // See http://mathworld.wolfram.com/Plane.html, for example
   vnl_vector<double> q;
   q = vnl_cross_3d((b - a), (c - a));
@@ -402,7 +407,7 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
     double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
     domain->SetImage(image, narrow_band_world);
 
-            // Adding meshes for FFCs
+    // Adding meshes for FFCs
     vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
     this->m_meshes.push_back(mesh);
   }
@@ -418,7 +423,7 @@ bool Sampler::initialize_ffcs(size_t dom) {
     std::cout << "dom " << dom << " point count " << mesh->numPoints() << " faces " << mesh->numFaces() << std::endl;
 
   if (m_FFCs[dom].isSet()) {
-    this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
+    m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
     m_FFCs[dom].computeGradientFields(mesh);
   }
 

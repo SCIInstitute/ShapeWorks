@@ -1887,8 +1887,8 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data) {
 //---------------------------------------------------------------------------
 void Optimize::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   m_sampler->AddContour(poly_data);
-  this->m_num_shapes++;
-  this->m_spacing = 0.5;
+  m_num_shapes++;
+  m_spacing = 0.5;
 }
 
 //---------------------------------------------------------------------------
@@ -1902,9 +1902,8 @@ void Optimize::SetPointFiles(const std::vector<std::string>& point_files) {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetInitialPoints(std::vector<std::vector<itk::Point<double> > > initial_points)
-{
-
+void Optimize::SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points) {
+  m_sampler->SetInitialPoints(initial_points);
 }
 
 //---------------------------------------------------------------------------

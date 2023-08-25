@@ -289,8 +289,7 @@ class Sampler {
 
   void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }
 
- protected:
-  void GenerateData();
+ private:
 
   bool GetInitialized() { return this->m_Initialized; }
 
