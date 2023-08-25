@@ -162,11 +162,7 @@ def Run_Pipeline(args):
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 0,
-        "use_landmarks": 1,
-        "use_fixed_subjects": 1,
         "narrow_band": 1e10,
-        "fixed_subjects_column": "fixed",
-        "fixed_subjects_choice": "yes"
     }
 
     for key in parameter_dictionary:
