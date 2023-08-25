@@ -107,7 +107,7 @@ def Run_Pipeline(args):
     The required grooming steps are:
     1. Load mesh
     2. Apply clipping with planes for finding alignment transform
-    3. Find reflection tansfrom
+    3. Find reflection transfrom
     4. Select reference mesh
     5. Find rigid alignment transform
     For more information on grooming see docs/workflow/groom.md
