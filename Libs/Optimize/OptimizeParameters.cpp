@@ -3,6 +3,7 @@
 #include <Image/Image.h>
 #include <Logging.h>
 #include <Mesh/MeshUtils.h>
+#include <Particles/ParticleFile.h>
 #include <Utils/StringUtils.h>
 
 #include <boost/algorithm/string.hpp>
@@ -13,6 +14,7 @@
 #include "Optimize.h"
 
 using namespace shapeworks;
+using namespace shapeworks::particles;
 
 namespace Keys {
 const std::string number_of_particles = "number_of_particles";
@@ -276,6 +278,68 @@ std::string OptimizeParameters::get_output_prefix() {
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_points() {
+  int domains_per_shape = project_->get_number_of_domains_per_subject();
+
+  auto subjects = project_->get_subjects();
+  std::vector<std::vector<itk::Point<double>>> domain_means;
+
+  for (int d = 0; d < domains_per_shape; d++) {
+    std::vector<itk::Point<double>> domain_sum;
+    int count = 0;
+    for (auto s : subjects) {
+      if (s->is_fixed()) {
+        count++;
+        // read the local points
+        auto filename = s->get_world_particle_filenames()[d];
+        auto particles = read_particles_as_vector(filename);
+        if (domain_sum.size() == 0) {
+          domain_sum = particles;
+        } else {
+          for (int p = 0; p < particles.size(); p++) {
+            domain_sum[p] += particles[p];
+          }
+        }
+      }
+    }
+    // now divide to find mean
+    for (int p = 0; p < domain_sum.size(); p++) {
+      domain_sum[p] /= count;
+    }
+
+    domain_means.push_back(domain_sum);
+  }
+
+  std::vector<std::vector<itk::Point<double>>> initial_points;
+  for (auto s : subjects) {
+    for (int d = 0; d < domains_per_shape; d++) {
+      if (s->is_fixed()) {
+        auto filename = s->get_local_particle_filenames()[d];
+        auto particles = read_particles_as_vector(filename);
+        initial_points.push_back(particles);
+      } else {
+        // get alignment transform and invert it
+        auto transforms = s->get_groomed_transforms();
+        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(transforms[d]);
+        transform->Inverse();
+
+        // transform each of the domain mean positions back to the local space of this new shape
+        std::vector<itk::Point<double>> points;
+        for (int i = 0; i < domain_means[d].size(); i++) {
+          itk::Point<double> point;
+          transform->TransformPoint(domain_means[d][i].GetDataPointer(), point.GetDataPointer());
+          points.push_back(point);
+        }
+
+        initial_points.push_back(points);
+      }
+    }
+  }
+
+  return initial_points;
+}
+
+//---------------------------------------------------------------------------
 int OptimizeParameters::get_geodesic_cache_multiplier() { return params_.get(Keys::geodesic_cache_multiplier, 0); }
 
 //---------------------------------------------------------------------------
@@ -442,6 +506,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   if (project_->get_fixed_subjects_present()) {
     int idx = 0;
     std::vector<int> fixed_domains;
+
+    //    std::vector<std::vector<itk::Point<double>>> fixed_points;
     for (auto s : subjects) {
       if (s->is_fixed()) {
         for (int i = 0; i < domains_per_shape; i++) {
@@ -453,6 +519,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
 
     optimize->SetFixedDomains(fixed_domains);
+    optimize->SetInitialPoints(get_initial_points());
   }
 
   for (auto s : subjects) {
@@ -559,8 +626,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           Constraints constraint = constraints[domain_count];
           constraint.clipMesh(mesh);
         }
-
-        /// HERE!
 
         if (get_use_geodesics_to_landmarks()) {
           auto filenames = s->get_landmarks_filenames();
