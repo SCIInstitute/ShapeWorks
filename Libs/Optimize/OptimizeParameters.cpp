@@ -439,6 +439,22 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     throw std::invalid_argument("No subjects to optimize");
   }
 
+  if (project_->get_fixed_subjects_present()) {
+    int idx = 0;
+    std::vector<int> fixed_domains;
+    for (auto s : subjects) {
+      if (s->is_fixed()) {
+        for (int i = 0; i < domains_per_shape; i++) {
+          fixed_domains.push_back(idx++);
+        }
+      } else {
+        idx += domains_per_shape;
+      }
+    }
+
+    optimize->SetFixedDomains(fixed_domains);
+  }
+
   for (auto s : subjects) {
     if (abort_load_) {
       return false;
@@ -472,7 +488,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         count++;
       }
     }
-    optimize->SetDomainFlags(domain_flags);
+    optimize->SetFixedDomains(domain_flags);
   }
 
   // add constraints

@@ -19,7 +19,6 @@ Sampler::Sampler() {
   m_Optimizer = OptimizerType::New();
 
   m_PointsFiles.push_back("");
-  m_MeshFiles.push_back("");
 
   m_LinkingFunction = DualVectorFunction::New();
   m_EnsembleEntropyFunction = LegacyCorrespondenceFunction::New();

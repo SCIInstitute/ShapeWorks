@@ -698,26 +698,6 @@ bool OptimizeParameterFile::read_mesh_attributes(TiXmlHandle* docHandle, Optimiz
   std::string filename;
   int numShapes = optimize->GetNumShapes();
 
-  // load mesh files
-  elem = docHandle->FirstChild("mesh_files").Element();
-  if (elem) {
-    std::vector<std::string> meshFiles;
-    inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> filename) {
-      meshFiles.push_back(filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-
-    // read mesh files only if they are all present
-    if (meshFiles.size() != numShapes) {
-      std::cerr << "Error: incorrect number of mesh files!" << std::endl;
-      return false;
-    } else {
-      optimize->SetMeshFiles(meshFiles);
-    }
-  }
-
   std::vector<int> attributes_per_domain = optimize->GetAttributesPerDomain();
 
   // attributes
@@ -1048,7 +1028,7 @@ bool OptimizeParameterFile::read_flag_particles(TiXmlHandle* doc_handle, Optimiz
 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_flag_domains(TiXmlHandle* doc_handle, Optimize* optimize) {
-  optimize->SetDomainFlags(this->read_int_list(doc_handle, "fixed_domains"));
+  optimize->SetFixedDomains(this->read_int_list(doc_handle, "fixed_domains"));
   return true;
 }
 

@@ -228,8 +228,6 @@ class Optimize {
 
   //! Get number of shapes
   int GetNumShapes();
-  //! Set the mesh files (TODO: details)
-  void SetMeshFiles(const std::vector<std::string>& mesh_files);
   //! Set attribute scales (TODO: details)
   void SetAttributeScales(const std::vector<double>& scales);
 
@@ -239,7 +237,7 @@ class Optimize {
   //! Set Particle Flags (TODO: details)
   void SetParticleFlags(std::vector<int> flags);
   //! Set Domain Flags (TODO: details)
-  void SetDomainFlags(std::vector<int> flags);
+  void SetFixedDomains(std::vector<int> flags);
 
   //! Shared boundary settings
   void SetSharedBoundaryEnabled(bool enabled);

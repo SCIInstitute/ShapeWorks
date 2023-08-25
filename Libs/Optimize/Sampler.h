@@ -98,18 +98,6 @@ class Sampler {
 
   void SetPointsFile(const std::string& s) { this->SetPointsFile(0, s); }
 
-  /**Optionally provide a filename for a mesh with geodesic distances.*/
-  void SetMeshFile(unsigned int i, const std::string& s) {
-    if (m_MeshFiles.size() < i + 1) {
-      m_MeshFiles.resize(i + 1);
-    }
-    m_MeshFiles[i] = s;
-  }
-
-  void SetMeshFile(const std::string& s) { this->SetMeshFile(0, s); }
-
-  void SetMeshFiles(const std::vector<std::string>& s) { m_MeshFiles = s; }
-
   void AddImage(ImageType::Pointer image, double narrow_band, std::string name = "");
 
   void ApplyConstraintsToZeroCrossing() {
@@ -432,10 +420,6 @@ class Sampler {
   void operator=(const Sampler&);  // purposely not implemented
 
   std::vector<std::string> m_PointsFiles;
-  std::vector<std::string> m_MeshFiles;
-  std::vector<std::string> m_FeaMeshFiles;
-  std::vector<std::string> m_FeaGradFiles;
-  std::vector<std::string> m_FidsFiles;
   std::vector<int> m_AttributesPerDomain;
   int m_DomainsPerShape;
   double m_Spacing{0};

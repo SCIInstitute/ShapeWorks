@@ -24,8 +24,6 @@
 // shapeworks
 #include <Project/Project.h>
 
-//#include "Libs/Optimize/Domain/ImageDomain.h"
-//#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include <Libs/Particles/ParticleFile.h>
 
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
@@ -1919,9 +1917,6 @@ void Optimize::SetShowVisualizer(bool show) {
 bool Optimize::GetShowVisualizer() { return this->show_visualizer_; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetMeshFiles(const std::vector<std::string>& mesh_files) { m_sampler->SetMeshFiles(mesh_files); }
-
-//---------------------------------------------------------------------------
 void Optimize::SetAttributeScales(const std::vector<double>& scales) { m_sampler->SetAttributeScales(scales); }
 
 //---------------------------------------------------------------------------
@@ -1933,7 +1928,7 @@ void Optimize::SetFieldAttributes(const std::vector<std::string>& field_attribut
 void Optimize::SetParticleFlags(std::vector<int> flags) { this->m_particle_flags = flags; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetDomainFlags(std::vector<int> flags) {
+void Optimize::SetFixedDomains(std::vector<int> flags) {
   if (flags.size() > 0) {
     // Fixed domains are in use.
     this->m_fixed_domains_present = true;
