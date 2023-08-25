@@ -123,7 +123,8 @@ def Run_Pipeline(args):
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]],  project_location)
         subject.set_original_filenames(original_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
-        subject.set_landmarks_filenames(rel_particle_files)
+        subject.set_local_particle_filenames(rel_particle_files)
+        subject.set_world_particle_filenames(rel_particle_files)
         subject.set_extra_values({"fixed": "yes"})
         subjects.append(subject)
 
@@ -135,7 +136,8 @@ def Run_Pipeline(args):
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mean_shape_path], project_location)
         subject.set_original_filenames(original_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
-        subject.set_landmarks_filenames(rel_particle_files)
+        subject.set_local_particle_filenames(rel_particle_files)
+        subject.set_world_particle_filenames(rel_particle_files)
         subject.set_extra_values({"fixed": "no"})
         subjects.append(subject)
 
@@ -186,6 +188,7 @@ def Run_Pipeline(args):
 
     # Run optimization
     optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
+    print(optimize_cmd)
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
