@@ -320,8 +320,13 @@ std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_poi
       } else {
         // get alignment transform and invert it
         auto transforms = s->get_groomed_transforms();
-        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(transforms[d]);
-        transform->Inverse();
+
+        // create identify transform in case there are no groomed transforms
+        auto transform = vtkSmartPointer<vtkTransform>::New();
+        if (d < transforms.size()) {
+          transform = ProjectUtils::convert_transform(transforms[d]);
+          transform->Inverse();
+        }
 
         // transform each of the domain mean positions back to the local space of this new shape
         std::vector<itk::Point<double>> points;
