@@ -512,7 +512,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     int idx = 0;
     std::vector<int> fixed_domains;
 
-    //    std::vector<std::vector<itk::Point<double>>> fixed_points;
     for (auto s : subjects) {
       if (s->is_fixed()) {
         for (int i = 0; i < domains_per_shape; i++) {
@@ -673,7 +672,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         }
       } else {
         Image image(filename);
-        if (is_subject_fixed(s)) {
+        if (s->is_fixed()) {
           optimize->AddImage(nullptr);
         } else {
           optimize->AddImage(image);
