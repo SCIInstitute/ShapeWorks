@@ -7,7 +7,6 @@
 #include "Libs/Optimize/Domain/ContourDomain.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 
-
 namespace shapeworks {
 
 Sampler::Sampler() {
@@ -124,29 +123,38 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   }
 }
 
+//---------------------------------------------------------------------------
 void Sampler::ReadPointsFiles() {
   // If points file names have been specified, then read the initial points.
   for (unsigned int i = 0; i < m_PointsFiles.size(); i++) {
     if (m_PointsFiles[i] != "") {
       auto points = particles::read_particles_as_vector(m_PointsFiles[i]);
-      this->GetParticleSystem()->AddPositionList(points, i);
+      m_ParticleSystem->AddPositionList(points, i);
     }
   }
 
   // Push position information out to all observers (necessary to correctly
   // fill out the shape matrix).
-  this->GetParticleSystem()->SynchronizePositions();
+  m_ParticleSystem->SynchronizePositions();
 }
 
+//---------------------------------------------------------------------------
+void Sampler::initialize_initial_positions() {
+  for (unsigned int i = 0; i < initial_points_.size(); i++) {
+    m_ParticleSystem->AddPositionList(initial_points_[i], i);
+  }
+}
+
+//---------------------------------------------------------------------------
 void Sampler::InitializeOptimizationFunctions() {
   // Set the minimum neighborhood radius and maximum sigma based on the
   // domain of the 1st input image.
   double maxradius = -1.0;
   double minimumNeighborhoodRadius = this->m_Spacing;
 
-  for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++) {
-    if (!GetParticleSystem()->GetDomain(d)->IsDomainFixed()) {
-      double radius = GetParticleSystem()->GetDomain(d)->GetMaxDiameter();
+  for (unsigned int d = 0; d < m_ParticleSystem->GetNumberOfDomains(); d++) {
+    if (!m_ParticleSystem->GetDomain(d)->IsDomainFixed()) {
+      double radius = m_ParticleSystem->GetDomain(d)->GetMaxDiameter();
       maxradius = radius > maxradius ? radius : maxradius;
     }
   }
@@ -156,7 +164,7 @@ void Sampler::InitializeOptimizationFunctions() {
 
   m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_CurvatureGradientFunction->SetParticleSystem(this->GetParticleSystem());
+  m_CurvatureGradientFunction->SetParticleSystem(m_ParticleSystem);
   m_CurvatureGradientFunction->SetDomainNumber(0);
   if (m_IsSharedBoundaryEnabled) {
     m_CurvatureGradientFunction->SetSharedBoundaryEnabled(true);
@@ -185,7 +193,7 @@ void Sampler::Execute() {
     this->AllocateDomainsAndNeighborhoods();
 
     // Point the optimizer to the particle system.
-    this->GetOptimizer()->SetParticleSystem(this->GetParticleSystem());
+    this->GetOptimizer()->SetParticleSystem(m_ParticleSystem);
     this->ReadTransforms();
     this->ReadPointsFiles();
     this->InitializeOptimizationFunctions();
@@ -199,14 +207,52 @@ void Sampler::Execute() {
   this->GetOptimizer()->StartOptimization();
 }
 
+Sampler::CuttingPlaneList Sampler::ComputeCuttingPlanes() {
+  CuttingPlaneList planes;
+  for (size_t i = 0; i < m_CuttingPlanes.size(); i++) {
+    std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>> domain_i_cps;
+    for (size_t j = 0; j < m_CuttingPlanes[i].size(); j++) {
+      std::pair<Eigen::Vector3d, Eigen::Vector3d> cut_plane;
+      cut_plane.first = ComputePlaneNormal(m_CuttingPlanes[i][j].a.as_ref(), m_CuttingPlanes[i][j].b.as_ref(),
+                                           m_CuttingPlanes[i][j].c.as_ref());
+      cut_plane.second =
+          Eigen::Vector3d(m_CuttingPlanes[i][j].a[0], m_CuttingPlanes[i][j].a[1], m_CuttingPlanes[i][j].a[2]);
+      domain_i_cps.push_back(cut_plane);
+    }
+    planes.push_back(domain_i_cps);
+  }
+  return planes;
+}
+
+Eigen::Vector3d Sampler::ComputePlaneNormal(const vnl_vector<double> &a, const vnl_vector<double> &b, const vnl_vector<double> &c) {
+  // See http://mathworld.wolfram.com/Plane.html, for example
+  vnl_vector<double> q;
+  q = vnl_cross_3d((b - a), (c - a));
+
+  if (q.magnitude() > 0.0) {
+    Eigen::Vector3d qp;
+    q = q / q.magnitude();
+    qp(0) = q[0];
+    qp(1) = q[1];
+    qp(2) = q[2];
+    return qp;
+  } else {
+    std::cerr << "Error in Sampler::ComputePlaneNormal" << std::endl;
+    std::cerr << "There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please "
+                 "check the inputs."
+              << std::endl;
+    throw std::runtime_error("Error computing plane normal");
+  }
+}
+
 void Sampler::ReadTransforms() {
   if (m_TransformFile != "") {
     ObjectReader<ParticleSystem::TransformType> reader;
     reader.SetFileName(m_TransformFile.c_str());
     reader.Update();
 
-    for (unsigned int i = 0; i < this->GetParticleSystem()->GetNumberOfDomains(); i++)
-      this->GetParticleSystem()->SetTransform(i, reader.GetOutput()[i]);
+    for (unsigned int i = 0; i < m_ParticleSystem->GetNumberOfDomains(); i++)
+      m_ParticleSystem->SetTransform(i, reader.GetOutput()[i]);
   }
 
   if (m_PrefixTransformFile != "") {
@@ -214,8 +260,8 @@ void Sampler::ReadTransforms() {
     reader.SetFileName(m_PrefixTransformFile.c_str());
     reader.Update();
 
-    for (unsigned int i = 0; i < this->GetParticleSystem()->GetNumberOfDomains(); i++)
-      this->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
+    for (unsigned int i = 0; i < m_ParticleSystem->GetNumberOfDomains(); i++)
+      m_ParticleSystem->SetPrefixTransform(i, reader.GetOutput()[i]);
   }
 }
 
@@ -263,15 +309,58 @@ void Sampler::SetFieldAttributes(const std::vector<std::string>& s) {
 
 void Sampler::TransformCuttingPlanes(unsigned int i) {
   if (m_Initialized == true) {
-    TransformType T1 = this->GetParticleSystem()->GetTransform(i) * this->GetParticleSystem()->GetPrefixTransform(i);
-    for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++) {
-      if (this->GetParticleSystem()->GetDomainFlag(d) == false) {
-        TransformType T2 = this->GetParticleSystem()->InvertTransform(this->GetParticleSystem()->GetTransform(d) *
-                                                                      this->GetParticleSystem()->GetPrefixTransform(d));
+    TransformType T1 = m_ParticleSystem->GetTransform(i) * m_ParticleSystem->GetPrefixTransform(i);
+    for (unsigned int d = 0; d < m_ParticleSystem->GetNumberOfDomains(); d++) {
+      if (m_ParticleSystem->GetDomainFlag(d) == false) {
+        TransformType T2 = m_ParticleSystem->InvertTransform(m_ParticleSystem->GetTransform(d) *
+                                                             m_ParticleSystem->GetPrefixTransform(d));
         m_ParticleSystem->GetDomain(d)->GetConstraints()->transformPlanes(T2 * T1);
       }
     }
   }
+}
+
+void Sampler::SetCorrespondenceMode(CorrespondenceMode mode) {
+  if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
+    m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
+    m_EnsembleEntropyFunction->UseMeanEnergy();
+  } else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy) {
+    m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
+    m_EnsembleEntropyFunction->UseEntropy();
+  } else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
+    m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
+  } else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy) {
+    m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
+  } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy) {
+    m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
+    m_CorrespondenceFunction->UseEntropy();
+  } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy) {
+    m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
+    m_CorrespondenceFunction->UseMeanEnergy();
+  } else if (mode == shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy) {
+    m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
+    m_DisentangledEnsembleEntropyFunction->UseEntropy();
+  } else if (mode == shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy) {
+    m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
+    m_DisentangledEnsembleEntropyFunction->UseMeanEnergy();
+  }
+
+  m_CorrespondenceMode = mode;
+}
+
+void Sampler::SetAttributesPerDomain(const std::vector<int> s) {
+  std::vector<int> s1;
+  if (s.size() == 0) {
+    s1.resize(m_CorrespondenceFunction->GetDomainsPerShape());
+    for (int i = 0; i < m_CorrespondenceFunction->GetDomainsPerShape(); i++) s1[i] = 0;
+  } else {
+    s1 = s;
+  }
+
+  m_AttributesPerDomain = s1;
+  m_CorrespondenceFunction->SetAttributesPerDomain(s1);
+  m_GeneralShapeMatrix->SetAttributesPerDomain(s1);
+  m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
 }
 
 void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dimension>& va,
@@ -313,7 +402,7 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
     double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
     domain->SetImage(image, narrow_band_world);
 
-    // Adding meshes for FFCs
+            // Adding meshes for FFCs
     vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
     this->m_meshes.push_back(mesh);
   }

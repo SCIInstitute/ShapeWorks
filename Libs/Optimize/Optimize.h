@@ -66,11 +66,13 @@ class Optimize {
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
 
-  bool SetUpOptimize(ProjectHandle projectFile);
+  //! Set up this Optimize object using a ShapeWorks project
+  bool SetUpOptimize(ProjectHandle project);
 
-  //! Set the Projects
+  //! Set the Project object
   void SetProject(std::shared_ptr<Project> project);
 
+  //! Set an iteration callback function to be called after each iteration
   void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
 
   //! Abort optimization
@@ -225,6 +227,9 @@ class Optimize {
   void SetFilenames(const std::vector<std::string>& filenames);
   //! Set starting point files (TODO: details)
   void SetPointFiles(const std::vector<std::string>& point_files);
+
+  //! Set initial particle positions (e.g. for fixed subjects)
+  void SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points);
 
   //! Get number of shapes
   int GetNumShapes();

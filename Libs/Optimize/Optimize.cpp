@@ -22,9 +22,8 @@
 #include <itkMultiThreaderBase.h>
 
 // shapeworks
-#include <Project/Project.h>
-
 #include <Libs/Particles/ParticleFile.h>
+#include <Project/Project.h>
 
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
@@ -1903,10 +1902,18 @@ void Optimize::SetPointFiles(const std::vector<std::string>& point_files) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetInitialPoints(std::vector<std::vector<itk::Point<double> > > initial_points)
+{
+
+}
+
+//---------------------------------------------------------------------------
 int Optimize::GetNumShapes() { return this->m_num_shapes; }
 
+//---------------------------------------------------------------------------
 shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() { return visualizer_; }
 
+//---------------------------------------------------------------------------
 void Optimize::SetShowVisualizer(bool show) {
   if (show && this->m_verbosity_level > 0) {
     std::cout << "WARNING Using the visualizer will increase run time!\n";
@@ -1914,6 +1921,7 @@ void Optimize::SetShowVisualizer(bool show) {
   this->show_visualizer_ = show;
 }
 
+//---------------------------------------------------------------------------
 bool Optimize::GetShowVisualizer() { return this->show_visualizer_; }
 
 //---------------------------------------------------------------------------
@@ -2014,8 +2022,8 @@ bool Optimize::LoadParameterFile(std::string filename) {
 }
 
 //---------------------------------------------------------------------------
-bool Optimize::SetUpOptimize(ProjectHandle projectFile) {
-  OptimizeParameters param(projectFile);
+bool Optimize::SetUpOptimize(ProjectHandle project) {
+  OptimizeParameters param(project);
   param.set_up_optimize(this);
   return true;
 }
