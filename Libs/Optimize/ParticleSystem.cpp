@@ -41,7 +41,7 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
   m_Domains.resize(num);
   m_Transforms.resize(num);
   m_InverseTransforms.resize(num);
-  while (num >= m_PrefixTransforms.size()) {
+  while (num > m_PrefixTransforms.size()) {
     TransformType transform;
     transform.set_identity();
     m_PrefixTransforms.push_back(transform);
@@ -50,7 +50,7 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
   m_Positions.resize(num);
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
-  while (num >= this->m_DomainFlags.size()) {
+  while (num > this->m_DomainFlags.size()) {
     m_DomainFlags.push_back(false);
   }
   this->Modified();
@@ -136,7 +136,7 @@ const ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p,
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
 
   // Potentially modifies position!
-  if (m_DomainFlags[d] == false) {
+  if (m_DomainFlags[d] == false) {  // Not a fixed domain.  Fixed domains won't load the image
     const auto idx = m_IndexCounters[d];
     m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](idx), idx);
     m_Neighborhoods[d]->AddPosition(m_Positions[d]->operator[](idx), idx);
@@ -157,8 +157,7 @@ const ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p,
   return m_Positions[d]->operator[](m_IndexCounters[d] - 1);
 }
 
-const ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p, unsigned long int k,
-                                                                      unsigned int d) {
+const ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p, unsigned long int k, unsigned int d) {
   if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false) {
     // Potentially modifies position!
     if (m_DomainFlags[d] == false) {

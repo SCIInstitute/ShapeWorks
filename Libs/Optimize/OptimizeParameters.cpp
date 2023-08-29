@@ -291,7 +291,7 @@ std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_poi
       if (s->is_fixed()) {
         count++;
         // read the local points
-        auto filename = s->get_world_particle_filenames()[d];
+        auto filename = s->get_local_particle_filenames()[d];
         auto particles = read_particles_as_vector(filename);
         if (domain_sum.size() == 0) {
           domain_sum = particles;
@@ -553,7 +553,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     int count = 0;
     for (const auto& subject : subjects) {
       for (int i = 0; i < domains_per_shape; i++) {  // need one flag for each domain
-        if (is_subject_fixed(subject)) {
+        if (subject->is_fixed()) {
           domain_flags.push_back(count);
         }
         count++;

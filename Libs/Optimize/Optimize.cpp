@@ -1963,15 +1963,15 @@ void Optimize::SetNarrowBand(double v) {
 
 //---------------------------------------------------------------------------
 double Optimize::GetNarrowBand() {
+  if (this->m_fixed_domains_present) {
+    return 1e10;
+  }
+
   if (this->m_narrow_band_set) {
     return this->m_narrow_band;
   }
 
-  if (this->m_fixed_domains_present) {
-    return 1e10;
-  } else {
-    return 4.0;
-  }
+  return 4.0;
 }
 
 //---------------------------------------------------------------------------
