@@ -127,6 +127,8 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
   // with an increased neighborhood radius.
   int err;
   m_CurrentSigma = EstimateSigma(idx, d, system->GetDomain(d), pos, m_CurrentSigma, epsilon, err, m_avgKappa);
+//  std::cout << m_CurrentSigma << std::endl;
+  m_CurrentSigma = 10;
 
   while (err != 0) {
     neighborhood_radius *= 2.0;
@@ -144,6 +146,8 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
     UpdateNeighborhood(pos, idx, d, neighborhood_radius, system);
 
     m_CurrentSigma = EstimateSigma(idx, d, system->GetDomain(d), pos, m_CurrentSigma, epsilon, err, m_avgKappa);
+//    std::cout << sigma << std::endl;
+    m_CurrentSigma = 10;
   }  // done while err
 
   // Constrain sigma to a maximum reasonable size based on the user-supplied

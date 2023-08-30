@@ -130,6 +130,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 double maximumUpdateAllowed;
                 VectorType original_gradient =
                     localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+//                maximumUpdateAllowed = 100;
 
                 PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 

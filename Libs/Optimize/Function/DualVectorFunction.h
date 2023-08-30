@@ -65,6 +65,8 @@ class DualVectorFunction : public VectorFunction {
       const_cast<DualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
     }
 
+//    std::cout << "m_AOn " << m_AOn << " m_BOn " << m_BOn << std::endl;
+
     if (m_RelativeGradientScaling == 0.0) {
       ansB.fill(0.0);
       maxB = 0.0;
@@ -189,6 +191,8 @@ class DualVectorFunction : public VectorFunction {
       const_cast<DualVectorFunction*>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
     }
 
+//    std::cout << "m_AOn " << m_AOn << " m_BOn " << m_BOn << std::endl;
+
     if (m_RelativeEnergyScaling == 0.0) {
       energyB = 0.0;
       ansB.fill(0.0);
@@ -198,6 +202,12 @@ class DualVectorFunction : public VectorFunction {
       maxB = 0.0;
       ansB.fill(0.0);
     }
+
+//    std::cout << "m_RelativeEnergyScaling " << m_RelativeEnergyScaling << " m_RelativeGradientScaling " << m_RelativeGradientScaling << std::endl;
+//    std::cout << "ansA " << ansA << " ansB " << ansB << std::endl;
+
+//    double scale = 100.;
+//    VectorType scaledA; scaledA[0] = ansA[0]*scale;
 
     // compute final energy, maxmove and predicted move based on current configuration
     VectorType predictedMove;

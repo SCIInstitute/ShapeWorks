@@ -150,6 +150,8 @@ SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsign
   // with an increased neighborhood radius.
   int err;
   sigma = this->EstimateSigma(idx, neighborhood, domain, weights, pos, sigma, epsilon, err);
+  std::cout << sigma << std::endl;
+  sigma = 100;
 
   while (err != 0) {
     neighborhood_radius *= 2.0;
@@ -166,6 +168,7 @@ SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsign
     neighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
     this->ComputeAngularWeights(pos, idx, neighborhood, domain, weights);
     sigma = this->EstimateSigma(idx, neighborhood, domain, weights, pos, sigma, epsilon, err);
+    sigma = 100;
   }  // done while err
 
   // Constrain sigma to a maximum reasonable size based on the user-supplied
