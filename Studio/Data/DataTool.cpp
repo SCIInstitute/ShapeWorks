@@ -58,7 +58,10 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->landmark_help->setText("Place landmarks using " + click_message);
   ui_->plane_contraints_instruction_->setText("• Place 3 points to define a plane on a shape using " + click_message +
                                               "\n" + "• Slide plane along normal with shift+click\n" +
-                                              "• Right click plane point to flip normal");
+                                              "• Right click plane point to flip normal or apply to other shapes");
+
+  ui_->ffc_instruction->setText(QString("• Enable painting and draw on the surface with left+click\n") +
+                                 "• Right click on a constraint in the table to apply to other shapes");
 
   // start with these off
   ui_->landmarks_open_button->toggle();
@@ -66,7 +69,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->notes_open_button->toggle();
 
   // table on
-  //ui_->table_open_button->toggle();
+  // ui_->table_open_button->toggle();
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   connect(ui_->new_landmark_button, &QPushButton::clicked, landmark_table_model_.get(),

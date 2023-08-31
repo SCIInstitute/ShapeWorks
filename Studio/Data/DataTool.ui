@@ -827,6 +827,19 @@ QWidget#specificity_panel {
             <property name="bottomMargin">
              <number>0</number>
             </property>
+            <item row="1" column="0" colspan="2">
+             <widget class="QTableWidget" name="ffc_table_">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ContiguousSelection</enum>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
@@ -834,7 +847,7 @@ QWidget#specificity_panel {
               </property>
              </widget>
             </item>
-            <item row="3" column="0" colspan="2">
+            <item row="4" column="0" colspan="2">
              <widget class="QWidget" name="ffc_controls_" native="true">
               <layout class="QGridLayout" name="gridLayout_3">
                <item row="2" column="1">
@@ -904,16 +917,13 @@ QWidget#specificity_panel {
               </property>
              </widget>
             </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QTableWidget" name="ffc_table_">
-              <property name="contextMenuPolicy">
-               <enum>Qt::CustomContextMenu</enum>
+            <item row="3" column="0">
+             <widget class="QLabel" name="ffc_instruction">
+              <property name="text">
+               <string>FFC Instructions</string>
               </property>
-              <property name="alternatingRowColors">
-               <bool>true</bool>
-              </property>
-              <property name="selectionMode">
-               <enum>QAbstractItemView::ContiguousSelection</enum>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
