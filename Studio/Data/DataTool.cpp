@@ -496,6 +496,7 @@ void DataTool::copy_ffc_clicked() {
       auto inverse = shapes[i]->get_inverse_transform(d);
 
       // get the polydata, transform and set to the new ffc
+      ffc.createInoutPolyData();
       auto ffc_poly_data = ffc.getInoutPolyData();
 
       // apply vtk transforms to poly data

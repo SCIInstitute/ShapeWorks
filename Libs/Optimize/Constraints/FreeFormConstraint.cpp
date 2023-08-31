@@ -68,8 +68,13 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   auto array = createFFCPaint(polyData);
   array->FillComponent(0, 1.0);
 
+  if (!inout || inout->GetNumberOfValues() == 0 || !inoutPolyData_ || inoutPolyData_->GetNumberOfPoints() == 0) {
+    SW_ERROR("Unable to apply free form constraint to polydata, no points");
+    return;
+  }
+
   // create a kd tree point locator
-  vtkSmartPointer<vtkKdTreePointLocator> kdTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  auto kdTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
   kdTree->SetDataSet(inoutPolyData_);
   kdTree->BuildLocator();
 
