@@ -3,6 +3,7 @@
 #include <itkGradientImageFilter.h>
 #include <itkVectorLinearInterpolateImageFunction.h>
 #include <vtkPointData.h>
+#include <vtkStaticCellLocator.h>
 
 #include "Logging.h"
 namespace shapeworks::mesh {
@@ -13,7 +14,7 @@ using GradientFilterType = itk::GradientImageFilter<Image::ImageType>;
 using GradientInterpolatorType = itk::VectorLinearInterpolateImageFunction<GradientImageType, double>;
 
 //---------------------------------------------------------------------------
-std::vector<double> smoothIntensities(std::vector<double> intensities) {
+std::vector<double> smooth_intensities(std::vector<double> intensities) {
   // smooth using average of neighbors
   std::vector<double> smoothed_intensities;
 
@@ -30,6 +31,41 @@ std::vector<double> smoothIntensities(std::vector<double> intensities) {
   }
 
   return smoothed_intensities;
+}
+
+//---------------------------------------------------------------------------
+static double get_distance_to_opposite_side(Mesh& mesh, int point_id) {
+  vtkSmartPointer<vtkPolyData> poly_data = mesh.getVTKMesh();
+
+  // Get the surface normal from the given point
+  double normal[3];
+  poly_data->GetPointData()->GetNormals()->GetTuple(point_id, normal);
+
+  // Create a ray in the opposite direction of the normal
+  double ray_start[3];
+  double ray_end[3];
+  poly_data->GetPoint(point_id, ray_start);
+  for (int i = 0; i < 3; ++i) {
+    ray_start[i] = ray_start[i] - normal[i] * 0.001;
+    ray_end[i] = ray_start[i] - normal[i] * 100.0;
+  }
+
+  auto cellLocator = mesh.getCellLocator();
+
+  // Find the intersection point with the mesh
+  double intersectionPoint[3];
+  double t;
+  int subId;
+  double pcoords[3];
+  int result = cellLocator->IntersectWithLine(ray_start, ray_end, 0.0, t, intersectionPoint, pcoords, subId);
+
+  if (result == 0) {
+    // return large number if no intersection found
+    return std::numeric_limits<double>::max();
+  }
+  // Calculate the distance between the input point and the intersection point
+  double distance = std::sqrt(vtkMath::Distance2BetweenPoints(ray_start, intersectionPoint));
+  return distance;
 }
 
 //---------------------------------------------------------------------------
@@ -162,9 +198,9 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, std
       point[2] += gradient[2];
     }
 
-    auto smoothed = smoothIntensities(intensities);
+    auto smoothed = smooth_intensities(intensities);
     for (int k = 0; k < 10; k++) {
-      smoothed = smoothIntensities(smoothed);
+      smoothed = smooth_intensities(smoothed);
     }
     intensities = smoothed;
 
@@ -291,6 +327,7 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, std
 #endif
 
     distance = std::min<double>(distance, max_dist);
+    distance = std::min<double>(distance, get_distance_to_opposite_side(mesh, i) / 2.0);
 
     values->InsertValue(i, distance);
   }

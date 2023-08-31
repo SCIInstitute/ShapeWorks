@@ -275,6 +275,12 @@ class Mesh {
   //! Clips the mesh according to a field value
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
 
+  //! Returns the cell locator
+  vtkSmartPointer<vtkStaticCellLocator> getCellLocator() const {
+    updateCellLocator();
+    return cellLocator;
+  }
+
  private:
   friend struct SharedCommandData;
   Mesh()
