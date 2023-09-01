@@ -1246,7 +1246,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("computeThickness",
        &Mesh::computeThickness,
        "Computes cortical thickness",
-       "ct"_a, "dt"_a = nullptr, "maxDist"_a=10000, "distanceMesh"_a = "")
+       "ct"_a, "dt"_a = nullptr, "maxDist"_a=10000, "medianRadius"_a=5.0, "distanceMesh"_a = "")
 
   ;
 

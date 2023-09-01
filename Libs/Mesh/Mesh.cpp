@@ -1128,8 +1128,8 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   return img;
 }
 
-Mesh& Mesh::computeThickness(Image& image, Image* dt, double max_dist, std::string distance_mesh) {
-  mesh::compute_thickness(*this, image, dt, max_dist, distance_mesh);
+Mesh& Mesh::computeThickness(Image& image, Image* dt, double max_dist, double median_radius, std::string distance_mesh) {
+  mesh::compute_thickness(*this, image, dt, max_dist, median_radius, distance_mesh);
   return *this;
 }
 

@@ -4,6 +4,7 @@
 #include <itkVectorLinearInterpolateImageFunction.h>
 #include <vtkPointData.h>
 #include <vtkStaticCellLocator.h>
+#include <vtkStaticPointLocator.h>
 
 #include "Logging.h"
 namespace shapeworks::mesh {
@@ -14,7 +15,87 @@ using GradientFilterType = itk::GradientImageFilter<Image::ImageType>;
 using GradientInterpolatorType = itk::VectorLinearInterpolateImageFunction<GradientImageType, double>;
 
 //---------------------------------------------------------------------------
-std::vector<double> smooth_intensities(std::vector<double> intensities) {
+static double compute_average_edge_length(vtkSmartPointer<vtkPolyData> poly_data) {
+  vtkPoints* points = poly_data->GetPoints();
+  vtkCellArray* cells = poly_data->GetPolys();
+
+  vtkIdType num_edges = 0;
+  double total_edge_length = 0.0;
+
+  vtkIdType cell_size;
+  vtkIdType const* cell_points;
+  for (cells->InitTraversal(); cells->GetNextCell(cell_size, cell_points);) {
+    if (cell_size == 3 || cell_size == 4) {  // Assuming triangles or quads
+      for (vtkIdType i = 0; i < cell_size; ++i) {
+        vtkIdType start_point_id = cell_points[i];
+        vtkIdType end_point_id = cell_points[(i + 1) % cell_size];
+
+        double start_point[3];
+        double end_point[3];
+        points->GetPoint(start_point_id, start_point);
+        points->GetPoint(end_point_id, end_point);
+
+        double edge_length = vtkMath::Distance2BetweenPoints(start_point, end_point);
+        total_edge_length += std::sqrt(edge_length);
+
+        num_edges++;
+      }
+    }
+  }
+
+  if (num_edges > 0) {
+    return total_edge_length / num_edges;
+  } else {
+    return 0.0;  // Return 0 if no edges found
+  }
+}
+
+//---------------------------------------------------------------------------
+static void median_smooth(vtkSmartPointer<vtkPolyData> poly_data, const char* scalar_name, double radius) {
+  vtkSmartPointer<vtkDoubleArray> smoothed_scalars = vtkSmartPointer<vtkDoubleArray>::New();
+  smoothed_scalars->SetName(scalar_name);
+
+  auto locator = vtkSmartPointer<vtkStaticPointLocator>::New();
+  locator->SetDataSet(poly_data);
+  locator->BuildLocator();
+
+  vtkSmartPointer<vtkIdList> point_ids = vtkSmartPointer<vtkIdList>::New();
+  vtkSmartPointer<vtkIdList> neighbor_point_ids = vtkSmartPointer<vtkIdList>::New();
+
+  for (vtkIdType point_id = 0; point_id < poly_data->GetNumberOfPoints(); ++point_id) {
+    double queryPoint[3];
+    poly_data->GetPoint(point_id, queryPoint);
+
+    locator->FindPointsWithinRadius(radius, queryPoint, point_ids);
+
+    int num_neighbors = point_ids->GetNumberOfIds();
+    if (num_neighbors == 0) {
+      smoothed_scalars->InsertNextValue(poly_data->GetPointData()->GetScalars(scalar_name)->GetComponent(point_id, 0));
+      continue;
+    }
+
+    std::vector<double> neighbor_scalars;
+    neighbor_scalars.reserve(num_neighbors);
+
+    for (int i = 0; i < num_neighbors; ++i) {
+      vtkIdType neighbor_id = point_ids->GetId(i);
+      double neighbor_scalar = poly_data->GetPointData()->GetScalars(scalar_name)->GetComponent(neighbor_id, 0);
+      neighbor_scalars.push_back(neighbor_scalar);
+    }
+
+    std::sort(neighbor_scalars.begin(), neighbor_scalars.end());
+
+    int median_index = num_neighbors / 2;
+    double smoothed_value = neighbor_scalars[median_index];
+
+    smoothed_scalars->InsertNextValue(smoothed_value);
+  }
+
+  poly_data->GetPointData()->AddArray(smoothed_scalars);
+}
+
+//---------------------------------------------------------------------------
+static std::vector<double> smooth_intensities(std::vector<double> intensities) {
   // smooth using average of neighbors
   std::vector<double> smoothed_intensities;
 
@@ -69,7 +150,8 @@ static double get_distance_to_opposite_side(Mesh& mesh, int point_id) {
 }
 
 //---------------------------------------------------------------------------
-void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, std::string distance_mesh) {
+void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, double median_radius,
+                       std::string distance_mesh) {
   SW_DEBUG("Computing thickness with max_dist {}", max_dist);
 
   bool use_dt = dt != nullptr;
@@ -333,12 +415,17 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, std
   }
   mesh.setField("thickness", values, Mesh::Point);
 
+  double average_edge_length = compute_average_edge_length(poly_data);
+  SW_DEBUG("average edge length: {}", average_edge_length);
+
+  median_smooth(mesh.getVTKMesh(), "thickness", average_edge_length * median_radius);
+  values = vtkDoubleArray::SafeDownCast(mesh.getVTKMesh()->GetPointData()->GetArray("thickness"));
+
   if (distance_mesh != "") {
     // create a copy
     Mesh d_mesh = mesh;
 
     // for each vertex, move the particle the distance scalar
-
     vtkSmartPointer<vtkPolyData> poly_data = d_mesh.getVTKMesh();
     for (int i = 0; i < mesh.numPoints(); i++) {
       Point3 point;

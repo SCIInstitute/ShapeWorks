@@ -182,7 +182,8 @@ class Mesh {
                             const Dims padding = Dims({1, 1, 1})) const;
 
   /// assign cortical thickness values from mesh points
-  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, std::string distance_mesh = "");
+  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, double median_radius = 5.0,
+                         std::string distance_mesh = "");
 
   /// compute geodesic distances to landmarks and assign as fields
   Mesh& computeLandmarkGeodesics(const std::vector<Point3>& landmarks);
