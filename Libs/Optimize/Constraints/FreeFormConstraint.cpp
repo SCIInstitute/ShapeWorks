@@ -30,6 +30,7 @@ namespace shapeworks {
 //-----------------------------------------------------------------------------
 bool FreeFormConstraint::readyForOptimize() const { return mesh_ != nullptr; }
 
+//-----------------------------------------------------------------------------
 bool FreeFormConstraint::isViolated(const Eigen::Vector3d& pt) const {
   if (constraintEval(pt) >= 0) {
     return false;
@@ -67,8 +68,13 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   auto array = createFFCPaint(polyData);
   array->FillComponent(0, 1.0);
 
+  if (!inout || inout->GetNumberOfValues() == 0 || !inoutPolyData_ || inoutPolyData_->GetNumberOfPoints() == 0) {
+    SW_ERROR("Unable to apply free form constraint to polydata, no points");
+    return;
+  }
+
   // create a kd tree point locator
-  vtkSmartPointer<vtkKdTreePointLocator> kdTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  auto kdTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
   kdTree->SetDataSet(inoutPolyData_);
   kdTree->BuildLocator();
 
@@ -298,7 +304,6 @@ std::vector<Eigen::Matrix3d> FreeFormConstraint::setGradientFieldForFFCs(std::sh
 
   // Flatten the gradient operator so we can quickly compute the gradient at a given point
   face_grad.resize(F.rows());
-  size_t n_insertions = 0;
   for (int k = 0; k < G.outerSize(); k++) {
     for (Eigen::SparseMatrix<double>::InnerIterator it(G, k); it; ++it) {
       const double val = it.value();
@@ -310,7 +315,6 @@ std::vector<Eigen::Matrix3d> FreeFormConstraint::setGradientFieldForFFCs(std::sh
       for (int i = 0; i < 3; i++) {
         if (F(f, i) == c) {
           face_grad[f](axis, i) = val;
-          n_insertions++;
           break;
         }
       }
@@ -353,6 +357,7 @@ std::vector<Eigen::Matrix3d> FreeFormConstraint::setGradientFieldForFFCs(std::sh
   return face_grad;
 }
 
+//-----------------------------------------------------------------------------
 void FreeFormConstraint::convertLegacyFFC(vtkSmartPointer<vtkPolyData> polyData) {
   if (polyData->GetPointData()->GetArray("ffc_paint")) {
     // clear out any old versions of the inout array or else they will get merged in
@@ -439,6 +444,7 @@ void FreeFormConstraint::convertLegacyFFC(vtkSmartPointer<vtkPolyData> polyData)
   createInoutPolyData();
 }
 
+//-----------------------------------------------------------------------------
 vtkSmartPointer<vtkFloatArray> FreeFormConstraint::computeInOutForFFCs(vtkSmartPointer<vtkPolyData> polyData,
                                                                        Eigen::Vector3d query,
                                                                        vtkSmartPointer<vtkPolyData> halfmesh) {

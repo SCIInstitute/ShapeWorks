@@ -64,6 +64,8 @@ class DataTool : public QWidget {
   void handle_landmark_mode_changed();
   void handle_constraints_mode_changed();
 
+  void constraints_table_right_click(const QPoint &point);
+  void copy_ffc_clicked();
 
  Q_SIGNALS:
   void import_button_clicked();

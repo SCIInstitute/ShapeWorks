@@ -7,11 +7,15 @@
 #include <Shape.h>
 #include <StudioMesh.h>
 #include <ui_DataTool.h>
+#include <vtkPointData.h>
+#include <vtkTransformPolyDataFilter.h>
 
 #include <QDebug>
 #include <QMessageBox>
 #include <QThread>
 #include <iostream>
+
+#include "qt/QtWidgets/qmenu.h"
 
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
@@ -54,7 +58,10 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->landmark_help->setText("Place landmarks using " + click_message);
   ui_->plane_contraints_instruction_->setText("• Place 3 points to define a plane on a shape using " + click_message +
                                               "\n" + "• Slide plane along normal with shift+click\n" +
-                                              "• Right click plane point to flip normal");
+                                              "• Right click plane point to flip normal or apply to other shapes");
+
+  ui_->ffc_instruction->setText(QString("• Enable painting and draw on the surface with left+click\n") +
+                                 "• Right click on a constraint in the table to apply to other shapes");
 
   // start with these off
   ui_->landmarks_open_button->toggle();
@@ -76,6 +83,9 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
           &LandmarkTableModel::handle_double_click);
   connect(ui_->landmark_table->horizontalHeader(), &QHeaderView::sectionClicked, landmark_table_model_.get(),
           &LandmarkTableModel::handle_header_click);
+
+  // handle right click on constraints QTableWidget
+  connect(ui_->ffc_table_, &QTableView::customContextMenuRequested, this, &DataTool::constraints_table_right_click);
 
   auto delegate = new LandmarkItemDelegate(ui_->landmark_table);
   delegate->set_model(landmark_table_model_);
@@ -437,6 +447,92 @@ void DataTool::handle_constraints_mode_changed() {
   if (ui_->landmarks_open_button->isChecked() && ui_->constraints_open_button->isChecked()) {
     ui_->landmarks_open_button->setChecked(false);
   }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::constraints_table_right_click(const QPoint& point) {
+  // get the item at the position
+  auto item = ui_->ffc_table_->itemAt(point);
+  int row = ui_->ffc_table_->row(item);
+  ui_->ffc_table_->selectRow(row);
+
+  if (!item) {
+    return;
+  }
+
+  QMenu menu(this);
+  QAction* copy_action = new QAction("Copy constraint to other shapes", this);
+  connect(copy_action, &QAction::triggered, this, &DataTool::copy_ffc_clicked);
+  menu.addAction(copy_action);
+  menu.exec(QCursor::pos());
+}
+
+//---------------------------------------------------------------------------
+void DataTool::copy_ffc_clicked() {
+  // get the selected row
+  QModelIndexList list = ui_->ffc_table_->selectionModel()->selectedRows();
+  if (list.size() < 1) {
+    return;
+  }
+  int shape_id = list[0].row();
+
+  // for each domain, copy the constraints from the selected shape to all other shapes
+  auto shapes = session_->get_shapes();
+  auto domain_names = session_->get_project()->get_domain_names();
+
+  // get current display mode
+  auto display_mode = session_->get_display_mode();
+
+  for (int d = 0; d < domain_names.size(); d++) {
+    auto constraints = shapes[shape_id]->get_constraints(d);
+    auto ffc = constraints.getFreeformConstraint();
+
+    // transform from source shape to common space
+    auto base_transform = shapes[shape_id]->get_transform(d);
+
+    for (int i = 0; i < shapes.size(); i++) {
+      if (i == shape_id) {
+        continue;
+      }
+
+      // transform from common space to destination space
+      auto inverse = shapes[i]->get_inverse_transform(d);
+
+      // get the polydata, transform and set to the new ffc
+      ffc.createInoutPolyData();
+      auto ffc_poly_data = ffc.getInoutPolyData();
+
+      // apply vtk transforms to poly data
+      auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      transform_filter->SetInputData(ffc_poly_data);
+      transform_filter->SetTransform(base_transform);
+      transform_filter->Update();
+      ffc_poly_data = transform_filter->GetOutput();
+      transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      transform_filter->SetInputData(ffc_poly_data);
+      transform_filter->SetTransform(inverse);
+      transform_filter->Update();
+      ffc_poly_data = transform_filter->GetOutput();
+
+      // apply the new ffc to the destination shape
+      auto meshes = shapes[i]->get_meshes(display_mode, true);
+      MeshHandle mesh = meshes.meshes()[d];
+      auto poly_data = mesh->get_poly_data();
+
+      // create a new FreeFormConstraint with the transformed source definition
+      FreeFormConstraint new_ffc;
+      new_ffc.setInoutPolyData(ffc_poly_data);
+      new_ffc.applyToPolyData(poly_data);
+
+      // store the new ffc
+      auto& this_ffc = shapes[i]->get_constraints(d).getFreeformConstraint();
+      this_ffc.setDefinition(poly_data);
+      this_ffc.setInoutPolyData(poly_data);
+      this_ffc.setPainted(true);
+    }
+  }
+  session_->trigger_ffc_changed();
+  session_->trigger_repaint();
 }
 
 //---------------------------------------------------------------------------
