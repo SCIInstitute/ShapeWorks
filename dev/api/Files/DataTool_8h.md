@@ -89,6 +89,8 @@ class DataTool : public QWidget {
   void handle_landmark_mode_changed();
   void handle_constraints_mode_changed();
 
+  void constraints_table_right_click(const QPoint &point);
+  void copy_ffc_clicked();
 
  Q_SIGNALS:
   void import_button_clicked();
@@ -112,4 +114,4 @@ class DataTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-08-24 at 17:40:25 +0000
+Updated on 2023-09-01 at 05:26:30 +0000

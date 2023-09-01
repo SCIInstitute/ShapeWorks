@@ -20,6 +20,8 @@ Inherits from QWidget
 | void | **[set_placing_button_clicked](../Classes/classshapeworks_1_1DataTool.md#slot-set-placing-button-clicked)**(int id) |
 | void | **[handle_landmark_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-landmark-mode-changed)**() |
 | void | **[handle_constraints_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-constraints-mode-changed)**() |
+| void | **[constraints_table_right_click](../Classes/classshapeworks_1_1DataTool.md#slot-constraints-table-right-click)**(const QPoint & point) |
+| void | **[copy_ffc_clicked](../Classes/classshapeworks_1_1DataTool.md#slot-copy-ffc-clicked)**() |
 
 ## Public Signals
 
@@ -83,6 +85,22 @@ void handle_landmark_mode_changed()
 
 ```cpp
 void handle_constraints_mode_changed()
+```
+
+
+### slot constraints_table_right_click
+
+```cpp
+void constraints_table_right_click(
+    const QPoint & point
+)
+```
+
+
+### slot copy_ffc_clicked
+
+```cpp
+void copy_ffc_clicked()
 ```
 
 
@@ -210,4 +228,4 @@ void store_data()
 
 -------------------------------
 
-Updated on 2023-08-24 at 17:40:24 +0000
+Updated on 2023-09-01 at 05:26:27 +0000
