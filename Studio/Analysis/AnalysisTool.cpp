@@ -111,6 +111,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
 
   connect(ui_->show_difference_to_mean, &QPushButton::clicked, this, &AnalysisTool::show_difference_to_mean_clicked);
+  connect(ui_->show_particle_area, &QPushButton::clicked, this, &AnalysisTool::show_particle_area_clicked);
 
   connect(ui_->group_analysis_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::group_analysis_combo_changed);
@@ -1556,6 +1557,12 @@ void AnalysisTool::handle_network_analysis_complete() {
 void AnalysisTool::show_difference_to_mean_clicked() {
   update_difference_particles();
   Q_EMIT update_view();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::show_particle_area_clicked()
+{
+
 }
 
 //---------------------------------------------------------------------------
