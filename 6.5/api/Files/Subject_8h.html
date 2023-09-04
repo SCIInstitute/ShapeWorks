@@ -2505,10 +2505,14 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_display_name</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_display_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_name</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_fixed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_fixed</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">fixed</span><span class="p">);</span>
+
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_domains_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_name_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">fixed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">original_filenames_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">groomed_filenames_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">local_particle_filenames_</span><span class="p">;</span>
@@ -2526,7 +2530,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-01 at 05:26:30 +0000</p>
+<p>Updated on 2023-09-04 at 06:51:34 +0000</p>
 
               
             </article>

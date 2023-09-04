@@ -47,10 +47,8 @@ title: Libs/Optimize/Optimize.h
 #include <Project/Project.h>
 
 #include "Libs/Optimize/Domain/DomainType.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
 #include "Libs/Optimize/Utils/OptimizationVisualizer.h"
-#include "ParticleSystem.h"
 #include "ProcrustesRegistration.h"
 #include "Sampler.h"
 
@@ -78,7 +76,7 @@ class Optimize {
 
   bool LoadParameterFile(std::string filename);
 
-  bool SetUpOptimize(ProjectHandle projectFile);
+  bool SetUpOptimize(ProjectHandle project);
 
   void SetProject(std::shared_ptr<Project> project);
 
@@ -178,14 +176,15 @@ class Optimize {
   void SetFilenames(const std::vector<std::string>& filenames);
   void SetPointFiles(const std::vector<std::string>& point_files);
 
+  void SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points);
+
   int GetNumShapes();
-  void SetMeshFiles(const std::vector<std::string>& mesh_files);
   void SetAttributeScales(const std::vector<double>& scales);
 
   void SetFieldAttributes(const std::vector<std::string>& field_attributes);
 
   void SetParticleFlags(std::vector<int> flags);
-  void SetDomainFlags(std::vector<int> flags);
+  void SetFixedDomains(std::vector<int> flags);
 
   void SetSharedBoundaryEnabled(bool enabled);
   void SetSharedBoundaryWeight(double weight);
@@ -399,4 +398,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:30 +0000
+Updated on 2023-09-04 at 06:51:33 +0000

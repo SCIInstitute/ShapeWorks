@@ -56,6 +56,8 @@ Representation of a single subject.  [More...](#detailed-description)
 | void | **[set_table_values](../Classes/classshapeworks_1_1Subject.md#function-set-table-values)**(StringMap table_values) |
 | std::string | **[get_display_name](../Classes/classshapeworks_1_1Subject.md#function-get-display-name)**()<br>Get the display name.  |
 | void | **[set_display_name](../Classes/classshapeworks_1_1Subject.md#function-set-display-name)**(std::string display_name)<br>Set the display name.  |
+| bool | **[is_fixed](../Classes/classshapeworks_1_1Subject.md#function-is-fixed)**()<br>Get if this subject is fixed or not.  |
+| void | **[set_fixed](../Classes/classshapeworks_1_1Subject.md#function-set-fixed)**(bool fixed)<br>Set if this subject is fixed or not.  |
 
 ## Detailed Description
 
@@ -370,6 +372,24 @@ void set_display_name(
 
 Set the display name. 
 
+### function is_fixed
+
+```cpp
+bool is_fixed()
+```
+
+Get if this subject is fixed or not. 
+
+### function set_fixed
+
+```cpp
+void set_fixed(
+    bool fixed
+)
+```
+
+Set if this subject is fixed or not. 
+
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:29 +0000
+Updated on 2023-09-04 at 06:51:33 +0000

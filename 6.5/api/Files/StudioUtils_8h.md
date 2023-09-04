@@ -37,6 +37,7 @@ class QWidget;
 #include <QStringList>
 
 class vtkImageData;
+class vtkRenderer;
 
 namespace shapeworks {
 
@@ -52,6 +53,8 @@ class StudioUtils {
 
   static QString get_platform_string();
 
+  static void add_viewport_border(vtkRenderer* renderer, double* color);
+
 };
 
 }  // namespace shapeworks
@@ -60,4 +63,4 @@ class StudioUtils {
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:30 +0000
+Updated on 2023-09-04 at 06:51:34 +0000

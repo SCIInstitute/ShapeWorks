@@ -21,7 +21,8 @@ Utilities for Studio.
 | QStringList | **[to_string_list](../Classes/classshapeworks_1_1StudioUtils.md#function-to-string-list)**(std::vector< std::string > vector)<br>convert a vector of std::string to QStringList  |
 | QImage | **[vtk_image_to_qimage](../Classes/classshapeworks_1_1StudioUtils.md#function-vtk-image-to-qimage)**(vtkSmartPointer< vtkImageData > image_data)<br>convert vtkImageData to QImage  |
 | vtkSmartPointer< vtkPolyData > | **[reverse_poly_data](../Classes/classshapeworks_1_1StudioUtils.md#function-reverse-poly-data)**(vtkSmartPointer< vtkPolyData > poly_data)<br>reverse a poly data  |
-| QString | **[get_platform_string](../Classes/classshapeworks_1_1StudioUtils.md#function-get-platform-string)**() |
+| QString | **[get_platform_string](../Classes/classshapeworks_1_1StudioUtils.md#function-get-platform-string)**()<br>return platform string  |
+| void | **[add_viewport_border](../Classes/classshapeworks_1_1StudioUtils.md#function-add-viewport-border)**(vtkRenderer * renderer, double * color)<br>add a color border to a viewport  |
 
 ## Public Functions Documentation
 
@@ -71,7 +72,19 @@ reverse a poly data
 static QString get_platform_string()
 ```
 
+return platform string 
+
+### function add_viewport_border
+
+```cpp
+static void add_viewport_border(
+    vtkRenderer * renderer,
+    double * color
+)
+```
+
+add a color border to a viewport 
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:29 +0000
+Updated on 2023-09-04 at 06:51:33 +0000

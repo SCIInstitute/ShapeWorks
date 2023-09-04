@@ -91,10 +91,14 @@ class Subject {
   std::string get_display_name();
   void set_display_name(std::string display_name);
 
+  bool is_fixed();
+  void set_fixed(bool fixed);
+
  private:
   int number_of_domains_ = 0;
 
   std::string display_name_;
+  bool fixed_ = false;
   StringList original_filenames_;
   StringList groomed_filenames_;
   StringList local_particle_filenames_;
@@ -115,4 +119,4 @@ class Subject {
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:30 +0000
+Updated on 2023-09-04 at 06:51:34 +0000

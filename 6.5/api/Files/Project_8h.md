@@ -97,6 +97,8 @@ class Project {
 
   bool get_images_present();
 
+  bool get_fixed_subjects_present();
+
   std::vector<std::string> get_feature_names();
 
   std::vector<std::string> get_image_names();
@@ -182,4 +184,4 @@ class Project {
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:30 +0000
+Updated on 2023-09-04 at 06:51:34 +0000

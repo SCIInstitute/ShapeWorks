@@ -43,6 +43,7 @@ Representation of a project.  [More...](#detailed-description)
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Project.md#function-get-groomed-present)**() const<br>Return if groomed files are present.  |
 | bool | **[get_particles_present](../Classes/classshapeworks_1_1Project.md#function-get-particles-present)**() const<br>Return if particle files are present.  |
 | bool | **[get_images_present](../Classes/classshapeworks_1_1Project.md#function-get-images-present)**()<br>Return if images are present (e.g. CT/MRI)  |
+| bool | **[get_fixed_subjects_present](../Classes/classshapeworks_1_1Project.md#function-get-fixed-subjects-present)**()<br>Return if there are fixed subjects present.  |
 | std::vector< std::string > | **[get_feature_names](../Classes/classshapeworks_1_1Project.md#function-get-feature-names)**()<br>Get feature names.  |
 | std::vector< std::string > | **[get_image_names](../Classes/classshapeworks_1_1Project.md#function-get-image-names)**()<br>Get image names.  |
 | std::vector< std::string > | **[get_group_names](../Classes/classshapeworks_1_1Project.md#function-get-group-names)**()<br>Get group names.  |
@@ -257,6 +258,14 @@ bool get_images_present()
 
 Return if images are present (e.g. CT/MRI) 
 
+### function get_fixed_subjects_present
+
+```cpp
+bool get_fixed_subjects_present()
+```
+
+Return if there are fixed subjects present. 
+
 ### function get_feature_names
 
 ```cpp
@@ -456,4 +465,4 @@ Get the groomed domain types.
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:28 +0000
+Updated on 2023-09-04 at 06:51:33 +0000

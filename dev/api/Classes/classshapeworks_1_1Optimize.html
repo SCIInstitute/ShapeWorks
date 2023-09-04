@@ -2938,15 +2938,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getnumshapes" class="md-nav__link">
-    function GetNumShapes
+  <a href="#function-setinitialpoints" class="md-nav__link">
+    function SetInitialPoints
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setmeshfiles" class="md-nav__link">
-    function SetMeshFiles
+  <a href="#function-getnumshapes" class="md-nav__link">
+    function GetNumShapes
   </a>
   
 </li>
@@ -2973,8 +2973,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setdomainflags" class="md-nav__link">
-    function SetDomainFlags
+  <a href="#function-setfixeddomains" class="md-nav__link">
+    function SetFixedDomains
   </a>
   
 </li>
@@ -4097,15 +4097,15 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setupoptimize">SetUpOptimize</a></strong>(ProjectHandle projectFile)</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setupoptimize">SetUpOptimize</a></strong>(ProjectHandle project)<br>Set up this <a href="classshapeworks_1_1Optimize.html">Optimize</a> object using a ShapeWorks project.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setproject">SetProject</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt; project)<br>Set the Projects.</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setproject">SetProject</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt; project)<br>Set the <a href="">Project</a> object.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setiterationcallbackfunction">SetIterationCallbackFunction</a></strong>(const std::function&lt; void(void)&gt; &amp; f)</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setiterationcallbackfunction">SetIterationCallbackFunction</a></strong>(const std::function&lt; void(void)&gt; &amp; f)<br>Set an iteration callback function to be called after each iteration.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4360,12 +4360,12 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setpointfiles">SetPointFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; point_files)<br>Set starting point files (TODO: details)</td>
 </tr>
 <tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumshapes">GetNumShapes</a></strong>()<br>Get number of shapes.</td>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitialpoints">SetInitialPoints</a></strong>(std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; initial_points)<br>Set initial particle positions (e.g. for fixed subjects)</td>
 </tr>
 <tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setmeshfiles">SetMeshFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; mesh_files)<br>Set the mesh files (TODO: details)</td>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumshapes">GetNumShapes</a></strong>()<br>Get number of shapes.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4381,7 +4381,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setdomainflags">SetDomainFlags</a></strong>(std::vector&lt; int &gt; flags)<br>Set Domain Flags (TODO: details)</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfixeddomains">SetFixedDomains</a></strong>(std::vector&lt; int &gt; flags)<br>Set Domain Flags (TODO: details)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -5024,20 +5024,22 @@
 <p>Load a parameter file. </p>
 <h3 id="function-setupoptimize">function SetUpOptimize</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">SetUpOptimize</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">projectFile</span>
+<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span>
 <span class="p">)</span>
 </code></pre></div>
+<p>Set up this <a href="classshapeworks_1_1Optimize.html">Optimize</a> object using a ShapeWorks project. </p>
 <h3 id="function-setproject">function SetProject</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProject</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Set the Projects. </p>
+<p>Set the <a href="">Project</a> object. </p>
 <h3 id="function-setiterationcallbackfunction">function SetIterationCallbackFunction</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallbackFunction</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span>
 <span class="p">)</span>
 </code></pre></div>
+<p>Set an iteration callback function to be called after each iteration. </p>
 <h3 id="function-abortoptimization">function AbortOptimization</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AbortOptimization</span><span class="p">()</span>
 </code></pre></div>
@@ -5390,16 +5392,16 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set starting point files (TODO: details) </p>
+<h3 id="function-setinitialpoints">function SetInitialPoints</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">initial_points</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set initial particle positions (e.g. for fixed subjects) </p>
 <h3 id="function-getnumshapes">function GetNumShapes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetNumShapes</span><span class="p">()</span>
 </code></pre></div>
 <p>Get number of shapes. </p>
-<h3 id="function-setmeshfiles">function SetMeshFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFiles</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh_files</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the mesh files (TODO: details) </p>
 <h3 id="function-setattributescales">function SetAttributeScales</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributeScales</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">scales</span>
@@ -5418,8 +5420,8 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set Particle Flags (TODO: details) </p>
-<h3 id="function-setdomainflags">function SetDomainFlags</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainFlags</span><span class="p">(</span>
+<h3 id="function-setfixeddomains">function SetFixedDomains</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFixedDomains</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">flags</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -5937,7 +5939,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-01 at 05:26:28 +0000</p>
+<p>Updated on 2023-09-04 at 06:51:32 +0000</p>
 
               
             </article>

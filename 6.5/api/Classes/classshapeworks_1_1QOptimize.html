@@ -2653,15 +2653,15 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setupoptimize">SetUpOptimize</a></strong>(ProjectHandle projectFile)</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setupoptimize">SetUpOptimize</a></strong>(ProjectHandle project)<br>Set up this <a href="classshapeworks_1_1Optimize.html">Optimize</a> object using a ShapeWorks project.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setproject">SetProject</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt; project)<br>Set the Projects.</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setproject">SetProject</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt; project)<br>Set the <a href="">Project</a> object.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setiterationcallbackfunction">SetIterationCallbackFunction</a></strong>(const std::function&lt; void(void)&gt; &amp; f)</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setiterationcallbackfunction">SetIterationCallbackFunction</a></strong>(const std::function&lt; void(void)&gt; &amp; f)<br>Set an iteration callback function to be called after each iteration.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2908,12 +2908,12 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setpointfiles">SetPointFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; point_files)<br>Set starting point files (TODO: details)</td>
 </tr>
 <tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumshapes">GetNumShapes</a></strong>()<br>Get number of shapes.</td>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitialpoints">SetInitialPoints</a></strong>(std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; initial_points)<br>Set initial particle positions (e.g. for fixed subjects)</td>
 </tr>
 <tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setmeshfiles">SetMeshFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; mesh_files)<br>Set the mesh files (TODO: details)</td>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumshapes">GetNumShapes</a></strong>()<br>Get number of shapes.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2929,7 +2929,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setdomainflags">SetDomainFlags</a></strong>(std::vector&lt; int &gt; flags)<br>Set Domain Flags (TODO: details)</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfixeddomains">SetFixedDomains</a></strong>(std::vector&lt; int &gt; flags)<br>Set Domain Flags (TODO: details)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3570,7 +3570,7 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-iteratecallback">shapeworks::Optimize::IterateCallback</a></p>
 <hr />
-<p>Updated on 2023-09-01 at 05:26:28 +0000</p>
+<p>Updated on 2023-09-04 at 06:51:33 +0000</p>
 
               
             </article>

@@ -26,24 +26,23 @@ title: shapeworks::Sampler
 | using [MeanCurvatureContainer](../Classes/classshapeworks_1_1MeanCurvatureContainer.md)< PixelType, Dimension > | **[MeanCurvatureCacheType](../Classes/classshapeworks_1_1Sampler.md#using-meancurvaturecachetype)**  |
 | using vnl_matrix_fixed< double, Dimension+1, Dimension+1 > | **[TransformType](../Classes/classshapeworks_1_1Sampler.md#using-transformtype)**  |
 | using [GradientDescentOptimizer](../Classes/classshapeworks_1_1GradientDescentOptimizer.md) | **[OptimizerType](../Classes/classshapeworks_1_1Sampler.md#using-optimizertype)**  |
+| using std::vector< std::vector< std::pair< Eigen::Vector3d, Eigen::Vector3d > > > | **[CuttingPlaneList](../Classes/classshapeworks_1_1Sampler.md#using-cuttingplanelist)**  |
 
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[itkGetObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) ) |
-| | **[itkGetConstObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetconstobjectmacro)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) , [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) ) |
 | | **[Sampler](../Classes/classshapeworks_1_1Sampler.md#function-sampler)**()<br>Constructor.  |
 | virtual | **[~Sampler](../Classes/classshapeworks_1_1Sampler.md#function-~sampler)**()<br>Destructor.  |
+| [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) * | **[GetParticleSystem](../Classes/classshapeworks_1_1Sampler.md#function-getparticlesystem)**()<br>Returns the particle system.  |
+| const [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) * | **[GetParticleSystem](../Classes/classshapeworks_1_1Sampler.md#function-getparticlesystem)**() const |
 | [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md) * | **[GetGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getgradientfunction)**() |
 | [CurvatureSamplingFunction](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md) * | **[GetCurvatureGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getcurvaturegradientfunction)**() |
-| | **[itkGetObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetobjectmacro)**(Optimizer , [OptimizerType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md) ) |
-| | **[itkGetConstObjectMacro](../Classes/classshapeworks_1_1Sampler.md#function-itkgetconstobjectmacro)**(Optimizer , [OptimizerType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md) ) |
+| [OptimizerType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md) * | **[GetOptimizer](../Classes/classshapeworks_1_1Sampler.md#function-getoptimizer)**()<br>Return a pointer to the optimizer object.  |
+| const [OptimizerType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md) * | **[GetOptimizer](../Classes/classshapeworks_1_1Sampler.md#function-getoptimizer)**() const |
 | void | **[SetPointsFile](../Classes/classshapeworks_1_1Sampler.md#function-setpointsfile)**(unsigned int i, const std::string & s) |
 | void | **[SetPointsFile](../Classes/classshapeworks_1_1Sampler.md#function-setpointsfile)**(const std::string & s) |
-| void | **[SetMeshFile](../Classes/classshapeworks_1_1Sampler.md#function-setmeshfile)**(unsigned int i, const std::string & s) |
-| void | **[SetMeshFile](../Classes/classshapeworks_1_1Sampler.md#function-setmeshfile)**(const std::string & s) |
-| void | **[SetMeshFiles](../Classes/classshapeworks_1_1Sampler.md#function-setmeshfiles)**(const std::vector< std::string > & s) |
+| void | **[SetInitialPoints](../Classes/classshapeworks_1_1Sampler.md#function-setinitialpoints)**(std::vector< std::vector< itk::Point< double > > > initial_points)<br>Set initial particle positions (e.g. for fixed subjects)  |
 | void | **[AddImage](../Classes/classshapeworks_1_1Sampler.md#function-addimage)**(ImageType::Pointer image, double narrow_band, std::string name ="") |
 | void | **[ApplyConstraintsToZeroCrossing](../Classes/classshapeworks_1_1Sampler.md#function-applyconstraintstozerocrossing)**() |
 | void | **[AddMesh](../Classes/classshapeworks_1_1Sampler.md#function-addmesh)**(std::shared_ptr< [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh) |
@@ -54,7 +53,7 @@ title: shapeworks::Sampler
 | void | **[AddFreeFormConstraint](../Classes/classshapeworks_1_1Sampler.md#function-addfreeformconstraint)**(int domain, const [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & ffc) |
 | void | **[TransformCuttingPlanes](../Classes/classshapeworks_1_1Sampler.md#function-transformcuttingplanes)**(unsigned int i) |
 | void | **[AddSphere](../Classes/classshapeworks_1_1Sampler.md#function-addsphere)**(unsigned int i, vnl_vector_fixed< double, Dimension > & c, double r) |
-| virtual void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Sampler.md#function-setadaptivitymode)**(int mode) |
+| void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Sampler.md#function-setadaptivitymode)**(int mode) |
 | int | **[GetAdaptivityMode](../Classes/classshapeworks_1_1Sampler.md#function-getadaptivitymode)**() const |
 | void | **[SetCorrespondenceOn](../Classes/classshapeworks_1_1Sampler.md#function-setcorrespondenceon)**() |
 | void | **[SetCorrespondenceOff](../Classes/classshapeworks_1_1Sampler.md#function-setcorrespondenceoff)**() |
@@ -62,7 +61,7 @@ title: shapeworks::Sampler
 | void | **[SetSamplingOff](../Classes/classshapeworks_1_1Sampler.md#function-setsamplingoff)**() |
 | bool | **[GetCorrespondenceOn](../Classes/classshapeworks_1_1Sampler.md#function-getcorrespondenceon)**() const |
 | bool | **[GetSamplingOn](../Classes/classshapeworks_1_1Sampler.md#function-getsamplingon)**() const |
-| virtual void | **[SetCorrespondenceMode](../Classes/classshapeworks_1_1Sampler.md#function-setcorrespondencemode)**(shapeworks::CorrespondenceMode mode) |
+| void | **[SetCorrespondenceMode](../Classes/classshapeworks_1_1Sampler.md#function-setcorrespondencemode)**(shapeworks::CorrespondenceMode mode) |
 | void | **[RegisterGeneralShapeMatrices](../Classes/classshapeworks_1_1Sampler.md#function-registergeneralshapematrices)**() |
 | void | **[SetAttributeScales](../Classes/classshapeworks_1_1Sampler.md#function-setattributescales)**(const std::vector< double > & s) |
 | void | **[SetXYZ](../Classes/classshapeworks_1_1Sampler.md#function-setxyz)**(unsigned int i, bool flag) |
@@ -98,63 +97,23 @@ title: shapeworks::Sampler
 | void | **[SetSharedBoundaryWeight](../Classes/classshapeworks_1_1Sampler.md#function-setsharedboundaryweight)**(double weight) |
 | void | **[ReadTransforms](../Classes/classshapeworks_1_1Sampler.md#function-readtransforms)**() |
 | void | **[ReadPointsFiles](../Classes/classshapeworks_1_1Sampler.md#function-readpointsfiles)**() |
-| virtual void | **[AllocateDataCaches](../Classes/classshapeworks_1_1Sampler.md#function-allocatedatacaches)**() |
-| virtual void | **[AllocateDomainsAndNeighborhoods](../Classes/classshapeworks_1_1Sampler.md#function-allocatedomainsandneighborhoods)**() |
-| virtual void | **[InitializeOptimizationFunctions](../Classes/classshapeworks_1_1Sampler.md#function-initializeoptimizationfunctions)**() |
-| virtual void | **[Initialize](../Classes/classshapeworks_1_1Sampler.md#function-initialize)**() |
-| virtual void | **[ReInitialize](../Classes/classshapeworks_1_1Sampler.md#function-reinitialize)**() |
-| virtual void | **[Execute](../Classes/classshapeworks_1_1Sampler.md#function-execute)**() |
-| std::vector< std::vector< std::pair< Eigen::Vector3d, Eigen::Vector3d > > > | **[ComputeCuttingPlanes](../Classes/classshapeworks_1_1Sampler.md#function-computecuttingplanes)**() |
+| void | **[AllocateDataCaches](../Classes/classshapeworks_1_1Sampler.md#function-allocatedatacaches)**() |
+| void | **[AllocateDomainsAndNeighborhoods](../Classes/classshapeworks_1_1Sampler.md#function-allocatedomainsandneighborhoods)**() |
+| void | **[InitializeOptimizationFunctions](../Classes/classshapeworks_1_1Sampler.md#function-initializeoptimizationfunctions)**() |
+| void | **[initialize_initial_positions](../Classes/classshapeworks_1_1Sampler.md#function-initialize-initial-positions)**() |
+| void | **[Initialize](../Classes/classshapeworks_1_1Sampler.md#function-initialize)**() |
+| void | **[ReInitialize](../Classes/classshapeworks_1_1Sampler.md#function-reinitialize)**() |
+| void | **[Execute](../Classes/classshapeworks_1_1Sampler.md#function-execute)**() |
+| CuttingPlaneList | **[ComputeCuttingPlanes](../Classes/classshapeworks_1_1Sampler.md#function-computecuttingplanes)**() |
 | Eigen::Vector3d | **[ComputePlaneNormal](../Classes/classshapeworks_1_1Sampler.md#function-computeplanenormal)**(const vnl_vector< double > & a, const vnl_vector< double > & b, const vnl_vector< double > & c) |
 | std::vector< [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) > | **[GetFFCs](../Classes/classshapeworks_1_1Sampler.md#function-getffcs)**() |
 | void | **[SetMeshFFCMode](../Classes/classshapeworks_1_1Sampler.md#function-setmeshffcmode)**(bool mesh_ffc_mode) |
-
-## Protected Functions
-
-|                | Name           |
-| -------------- | -------------- |
-| void | **[GenerateData](../Classes/classshapeworks_1_1Sampler.md#function-generatedata)**() |
-| bool | **[GetInitialized](../Classes/classshapeworks_1_1Sampler.md#function-getinitialized)**() |
-| void | **[SetInitialized](../Classes/classshapeworks_1_1Sampler.md#function-setinitialized)**(bool value) |
-| bool | **[GetInitializing](../Classes/classshapeworks_1_1Sampler.md#function-getinitializing)**() |
-| void | **[SetInitializing](../Classes/classshapeworks_1_1Sampler.md#function-setinitializing)**(bool value) |
-| bool | **[initialize_ffcs](../Classes/classshapeworks_1_1Sampler.md#function-initialize-ffcs)**(size_t dom) |
 
 ## Public Attributes
 
 |                | Name           |
 | -------------- | -------------- |
 | constexpr unsigned int | **[Dimension](../Classes/classshapeworks_1_1Sampler.md#variable-dimension)**  |
-
-## Protected Attributes
-
-|                | Name           |
-| -------------- | -------------- |
-| bool | **[m_Initialized](../Classes/classshapeworks_1_1Sampler.md#variable-m-initialized)**  |
-| int | **[m_AdaptivityMode](../Classes/classshapeworks_1_1Sampler.md#variable-m-adaptivitymode)**  |
-| bool | **[m_Initializing](../Classes/classshapeworks_1_1Sampler.md#variable-m-initializing)**  |
-| OptimizerType::Pointer | **[m_Optimizer](../Classes/classshapeworks_1_1Sampler.md#variable-m-optimizer)**  |
-| SamplingFunction::Pointer | **[m_GradientFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-gradientfunction)**  |
-| CurvatureSamplingFunction::Pointer | **[m_CurvatureGradientFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-curvaturegradientfunction)**  |
-| [GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md)< double >::Pointer | **[m_Sigma1Cache](../Classes/classshapeworks_1_1Sampler.md#variable-m-sigma1cache)**  |
-| [GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md)< double >::Pointer | **[m_Sigma2Cache](../Classes/classshapeworks_1_1Sampler.md#variable-m-sigma2cache)**  |
-| MeanCurvatureCacheType::Pointer | **[m_MeanCurvatureCache](../Classes/classshapeworks_1_1Sampler.md#variable-m-meancurvaturecache)**  |
-| ParticleSystem::Pointer | **[m_ParticleSystem](../Classes/classshapeworks_1_1Sampler.md#variable-m-particlesystem)**  |
-| std::vector< ParticleDomain::Pointer > | **[m_DomainList](../Classes/classshapeworks_1_1Sampler.md#variable-m-domainlist)**  |
-| std::vector< ParticleSurfaceNeighborhood::Pointer > | **[m_NeighborhoodList](../Classes/classshapeworks_1_1Sampler.md#variable-m-neighborhoodlist)**  |
-| int | **[m_pairwise_potential_type](../Classes/classshapeworks_1_1Sampler.md#variable-m-pairwise-potential-type)**  |
-| shapeworks::CorrespondenceMode | **[m_CorrespondenceMode](../Classes/classshapeworks_1_1Sampler.md#variable-m-correspondencemode)**  |
-| DualVectorFunction::Pointer | **[m_LinkingFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-linkingfunction)**  |
-| LegacyCorrespondenceFunction::Pointer | **[m_EnsembleEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-ensembleentropyfunction)**  |
-| LegacyCorrespondenceFunction::Pointer | **[m_EnsembleRegressionEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-ensembleregressionentropyfunction)**  |
-| LegacyCorrespondenceFunction::Pointer | **[m_EnsembleMixedEffectsEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-ensemblemixedeffectsentropyfunction)**  |
-| DisentangledCorrespondenceFunction::Pointer | **[m_DisentangledEnsembleEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-disentangledensembleentropyfunction)**  |
-| CorrespondenceFunction::Pointer | **[m_CorrespondenceFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-correspondencefunction)**  |
-| LegacyShapeMatrix::Pointer | **[m_LegacyShapeMatrix](../Classes/classshapeworks_1_1Sampler.md#variable-m-legacyshapematrix)**  |
-| LinearRegressionShapeMatrix::Pointer | **[m_LinearRegressionShapeMatrix](../Classes/classshapeworks_1_1Sampler.md#variable-m-linearregressionshapematrix)**  |
-| MixedEffectsShapeMatrix::Pointer | **[m_MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1Sampler.md#variable-m-mixedeffectsshapematrix)**  |
-| shapeworks::ShapeMatrix::Pointer | **[m_GeneralShapeMatrix](../Classes/classshapeworks_1_1Sampler.md#variable-m-generalshapematrix)**  |
-| shapeworks::ShapeGradientMatrix::Pointer | **[m_GeneralShapeGradMatrix](../Classes/classshapeworks_1_1Sampler.md#variable-m-generalshapegradmatrix)**  |
 
 ## Public Types Documentation
 
@@ -200,30 +159,14 @@ using shapeworks::Sampler::OptimizerType =  GradientDescentOptimizer;
 ```
 
 
+### using CuttingPlaneList
+
+```cpp
+using shapeworks::Sampler::CuttingPlaneList =  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> >>;
+```
+
+
 ## Public Functions Documentation
-
-### function itkGetObjectMacro
-
-```cpp
-itkGetObjectMacro(
-    ParticleSystem ,
-    ParticleSystem 
-)
-```
-
-
-Returns the particle system used in the surface sampling. 
-
-
-### function itkGetConstObjectMacro
-
-```cpp
-itkGetConstObjectMacro(
-    ParticleSystem ,
-    ParticleSystem 
-)
-```
-
 
 ### function Sampler
 
@@ -240,6 +183,21 @@ inline virtual ~Sampler()
 ```
 
 Destructor. 
+
+### function GetParticleSystem
+
+```cpp
+inline ParticleSystem * GetParticleSystem()
+```
+
+Returns the particle system. 
+
+### function GetParticleSystem
+
+```cpp
+inline const ParticleSystem * GetParticleSystem() const
+```
+
 
 ### function GetGradientFunction
 
@@ -258,26 +216,18 @@ inline CurvatureSamplingFunction * GetCurvatureGradientFunction()
 ```
 
 
-### function itkGetObjectMacro
+### function GetOptimizer
 
 ```cpp
-itkGetObjectMacro(
-    Optimizer ,
-    OptimizerType 
-)
+inline OptimizerType * GetOptimizer()
 ```
-
 
 Return a pointer to the optimizer object. 
 
-
-### function itkGetConstObjectMacro
+### function GetOptimizer
 
 ```cpp
-itkGetConstObjectMacro(
-    Optimizer ,
-    OptimizerType 
-)
+inline const OptimizerType * GetOptimizer() const
 ```
 
 
@@ -303,36 +253,15 @@ inline void SetPointsFile(
 ```
 
 
-### function SetMeshFile
+### function SetInitialPoints
 
 ```cpp
-inline void SetMeshFile(
-    unsigned int i,
-    const std::string & s
+inline void SetInitialPoints(
+    std::vector< std::vector< itk::Point< double > > > initial_points
 )
 ```
 
-
-Optionally provide a filename for a mesh with geodesic distances. 
-
-
-### function SetMeshFile
-
-```cpp
-inline void SetMeshFile(
-    const std::string & s
-)
-```
-
-
-### function SetMeshFiles
-
-```cpp
-inline void SetMeshFiles(
-    const std::vector< std::string > & s
-)
-```
-
+Set initial particle positions (e.g. for fixed subjects) 
 
 ### function AddImage
 
@@ -442,7 +371,7 @@ Optionally add spheres that may be used as constraints to the domain.
 ### function SetAdaptivityMode
 
 ```cpp
-inline virtual void SetAdaptivityMode(
+inline void SetAdaptivityMode(
     int mode
 )
 ```
@@ -503,7 +432,7 @@ inline bool GetSamplingOn() const
 ### function SetCorrespondenceMode
 
 ```cpp
-inline virtual void SetCorrespondenceMode(
+void SetCorrespondenceMode(
     shapeworks::CorrespondenceMode mode
 )
 ```
@@ -551,7 +480,7 @@ inline void SetNormals(
 ### function SetAttributesPerDomain
 
 ```cpp
-inline void SetAttributesPerDomain(
+void SetAttributesPerDomain(
     const std::vector< int > s
 )
 ```
@@ -788,56 +717,63 @@ void ReadPointsFiles()
 ### function AllocateDataCaches
 
 ```cpp
-virtual void AllocateDataCaches()
+void AllocateDataCaches()
 ```
 
 
 ### function AllocateDomainsAndNeighborhoods
 
 ```cpp
-virtual void AllocateDomainsAndNeighborhoods()
+void AllocateDomainsAndNeighborhoods()
 ```
 
 
 ### function InitializeOptimizationFunctions
 
 ```cpp
-virtual void InitializeOptimizationFunctions()
+void InitializeOptimizationFunctions()
+```
+
+
+### function initialize_initial_positions
+
+```cpp
+void initialize_initial_positions()
 ```
 
 
 ### function Initialize
 
 ```cpp
-inline virtual void Initialize()
+inline void Initialize()
 ```
 
 
 ### function ReInitialize
 
 ```cpp
-virtual void ReInitialize()
+void ReInitialize()
 ```
 
 
 ### function Execute
 
 ```cpp
-virtual void Execute()
+void Execute()
 ```
 
 
 ### function ComputeCuttingPlanes
 
 ```cpp
-inline std::vector< std::vector< std::pair< Eigen::Vector3d, Eigen::Vector3d > > > ComputeCuttingPlanes()
+CuttingPlaneList ComputeCuttingPlanes()
 ```
 
 
 ### function ComputePlaneNormal
 
 ```cpp
-inline Eigen::Vector3d ComputePlaneNormal(
+Eigen::Vector3d ComputePlaneNormal(
     const vnl_vector< double > & a,
     const vnl_vector< double > & b,
     const vnl_vector< double > & c
@@ -861,56 +797,6 @@ inline void SetMeshFFCMode(
 ```
 
 
-## Protected Functions Documentation
-
-### function GenerateData
-
-```cpp
-void GenerateData()
-```
-
-
-### function GetInitialized
-
-```cpp
-inline bool GetInitialized()
-```
-
-
-### function SetInitialized
-
-```cpp
-inline void SetInitialized(
-    bool value
-)
-```
-
-
-### function GetInitializing
-
-```cpp
-inline bool GetInitializing()
-```
-
-
-### function SetInitializing
-
-```cpp
-inline void SetInitializing(
-    bool value
-)
-```
-
-
-### function initialize_ffcs
-
-```cpp
-bool initialize_ffcs(
-    size_t dom
-)
-```
-
-
 ## Public Attributes Documentation
 
 ### variable Dimension
@@ -920,183 +806,6 @@ static constexpr unsigned int Dimension = 3;
 ```
 
 
-## Protected Attributes Documentation
-
-### variable m_Initialized
-
-```cpp
-bool m_Initialized {false};
-```
-
-
-### variable m_AdaptivityMode
-
-```cpp
-int m_AdaptivityMode {0};
-```
-
-
-### variable m_Initializing
-
-```cpp
-bool m_Initializing {false};
-```
-
-
-### variable m_Optimizer
-
-```cpp
-OptimizerType::Pointer m_Optimizer;
-```
-
-
-### variable m_GradientFunction
-
-```cpp
-SamplingFunction::Pointer m_GradientFunction;
-```
-
-
-### variable m_CurvatureGradientFunction
-
-```cpp
-CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
-```
-
-
-### variable m_Sigma1Cache
-
-```cpp
-GenericContainerArray< double >::Pointer m_Sigma1Cache;
-```
-
-
-### variable m_Sigma2Cache
-
-```cpp
-GenericContainerArray< double >::Pointer m_Sigma2Cache;
-```
-
-
-### variable m_MeanCurvatureCache
-
-```cpp
-MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
-```
-
-
-### variable m_ParticleSystem
-
-```cpp
-ParticleSystem::Pointer m_ParticleSystem;
-```
-
-
-### variable m_DomainList
-
-```cpp
-std::vector< ParticleDomain::Pointer > m_DomainList;
-```
-
-
-### variable m_NeighborhoodList
-
-```cpp
-std::vector< ParticleSurfaceNeighborhood::Pointer > m_NeighborhoodList;
-```
-
-
-### variable m_pairwise_potential_type
-
-```cpp
-int m_pairwise_potential_type;
-```
-
-
-### variable m_CorrespondenceMode
-
-```cpp
-shapeworks::CorrespondenceMode m_CorrespondenceMode;
-```
-
-
-### variable m_LinkingFunction
-
-```cpp
-DualVectorFunction::Pointer m_LinkingFunction;
-```
-
-
-### variable m_EnsembleEntropyFunction
-
-```cpp
-LegacyCorrespondenceFunction::Pointer m_EnsembleEntropyFunction;
-```
-
-
-### variable m_EnsembleRegressionEntropyFunction
-
-```cpp
-LegacyCorrespondenceFunction::Pointer m_EnsembleRegressionEntropyFunction;
-```
-
-
-### variable m_EnsembleMixedEffectsEntropyFunction
-
-```cpp
-LegacyCorrespondenceFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
-```
-
-
-### variable m_DisentangledEnsembleEntropyFunction
-
-```cpp
-DisentangledCorrespondenceFunction::Pointer m_DisentangledEnsembleEntropyFunction;
-```
-
-
-### variable m_CorrespondenceFunction
-
-```cpp
-CorrespondenceFunction::Pointer m_CorrespondenceFunction;
-```
-
-
-### variable m_LegacyShapeMatrix
-
-```cpp
-LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
-```
-
-
-### variable m_LinearRegressionShapeMatrix
-
-```cpp
-LinearRegressionShapeMatrix::Pointer m_LinearRegressionShapeMatrix;
-```
-
-
-### variable m_MixedEffectsShapeMatrix
-
-```cpp
-MixedEffectsShapeMatrix::Pointer m_MixedEffectsShapeMatrix;
-```
-
-
-### variable m_GeneralShapeMatrix
-
-```cpp
-shapeworks::ShapeMatrix::Pointer m_GeneralShapeMatrix;
-```
-
-
-### variable m_GeneralShapeGradMatrix
-
-```cpp
-shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
-```
-
-
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:28 +0000
+Updated on 2023-09-04 at 06:51:33 +0000

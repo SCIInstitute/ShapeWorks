@@ -58,9 +58,9 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | virtual | **[~Optimize](../Classes/classshapeworks_1_1Optimize.md#function-~optimize)**()<br>Destructor.  |
 | bool | **[Run](../Classes/classshapeworks_1_1Optimize.md#function-run)**()<br>Run the optimization.  |
 | bool | **[LoadParameterFile](../Classes/classshapeworks_1_1Optimize.md#function-loadparameterfile)**(std::string filename)<br>Load a parameter file.  |
-| bool | **[SetUpOptimize](../Classes/classshapeworks_1_1Optimize.md#function-setupoptimize)**(ProjectHandle projectFile) |
-| void | **[SetProject](../Classes/classshapeworks_1_1Optimize.md#function-setproject)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project)<br>Set the Projects.  |
-| void | **[SetIterationCallbackFunction](../Classes/classshapeworks_1_1Optimize.md#function-setiterationcallbackfunction)**(const std::function< void(void)> & f) |
+| bool | **[SetUpOptimize](../Classes/classshapeworks_1_1Optimize.md#function-setupoptimize)**(ProjectHandle project)<br>Set up this [Optimize](../Classes/classshapeworks_1_1Optimize.md) object using a ShapeWorks project.  |
+| void | **[SetProject](../Classes/classshapeworks_1_1Optimize.md#function-setproject)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project)<br>Set the [Project]() object.  |
+| void | **[SetIterationCallbackFunction](../Classes/classshapeworks_1_1Optimize.md#function-setiterationcallbackfunction)**(const std::function< void(void)> & f)<br>Set an iteration callback function to be called after each iteration.  |
 | void | **[AbortOptimization](../Classes/classshapeworks_1_1Optimize.md#function-abortoptimization)**()<br>Abort optimization.  |
 | bool | **[GetAborted](../Classes/classshapeworks_1_1Optimize.md#function-getaborted)**()<br>Return if the optimization was aborted.  |
 | void | **[SetCutPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setcutplanes)**(std::vector< std::array< itk::Point< double >, 3 > > cut_planes)<br>Set cutting planes.  |
@@ -122,12 +122,12 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[AddContour](../Classes/classshapeworks_1_1Optimize.md#function-addcontour)**(vtkSmartPointer< vtkPolyData > poly_data) |
 | void | **[SetFilenames](../Classes/classshapeworks_1_1Optimize.md#function-setfilenames)**(const std::vector< std::string > & filenames)<br>Set the shape filenames (TODO: details)  |
 | void | **[SetPointFiles](../Classes/classshapeworks_1_1Optimize.md#function-setpointfiles)**(const std::vector< std::string > & point_files)<br>Set starting point files (TODO: details)  |
+| void | **[SetInitialPoints](../Classes/classshapeworks_1_1Optimize.md#function-setinitialpoints)**(std::vector< std::vector< itk::Point< double > > > initial_points)<br>Set initial particle positions (e.g. for fixed subjects)  |
 | int | **[GetNumShapes](../Classes/classshapeworks_1_1Optimize.md#function-getnumshapes)**()<br>Get number of shapes.  |
-| void | **[SetMeshFiles](../Classes/classshapeworks_1_1Optimize.md#function-setmeshfiles)**(const std::vector< std::string > & mesh_files)<br>Set the mesh files (TODO: details)  |
 | void | **[SetAttributeScales](../Classes/classshapeworks_1_1Optimize.md#function-setattributescales)**(const std::vector< double > & scales)<br>Set attribute scales (TODO: details)  |
 | void | **[SetFieldAttributes](../Classes/classshapeworks_1_1Optimize.md#function-setfieldattributes)**(const std::vector< std::string > & field_attributes)<br>Set the field attributes.  |
 | void | **[SetParticleFlags](../Classes/classshapeworks_1_1Optimize.md#function-setparticleflags)**(std::vector< int > flags)<br>Set Particle Flags (TODO: details)  |
-| void | **[SetDomainFlags](../Classes/classshapeworks_1_1Optimize.md#function-setdomainflags)**(std::vector< int > flags)<br>Set Domain Flags (TODO: details)  |
+| void | **[SetFixedDomains](../Classes/classshapeworks_1_1Optimize.md#function-setfixeddomains)**(std::vector< int > flags)<br>Set Domain Flags (TODO: details)  |
 | void | **[SetSharedBoundaryEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setsharedboundaryenabled)**(bool enabled)<br>Shared boundary settings.  |
 | void | **[SetSharedBoundaryWeight](../Classes/classshapeworks_1_1Optimize.md#function-setsharedboundaryweight)**(double weight) |
 | const std::vector< int > & | **[GetDomainFlags](../Classes/classshapeworks_1_1Optimize.md#function-getdomainflags)**() |
@@ -388,4 +388,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:28 +0000
+Updated on 2023-09-04 at 06:51:33 +0000

@@ -29,6 +29,8 @@ title: Libs/Optimize/OptimizeParameters.h
 
 #include <Project/Project.h>
 
+#include <itkPoint.h>
+
 #include <functional>
 
 namespace shapeworks {
@@ -152,6 +154,8 @@ class OptimizeParameters {
  private:
   std::string get_output_prefix();
 
+  std::vector<std::vector<itk::Point<double>>> get_initial_points();
+
   Parameters params_;
   ProjectHandle project_;
 
@@ -166,4 +170,4 @@ class OptimizeParameters {
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:30 +0000
+Updated on 2023-09-04 at 06:51:34 +0000

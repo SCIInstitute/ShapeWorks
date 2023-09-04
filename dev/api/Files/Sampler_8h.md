@@ -36,13 +36,10 @@ title: Libs/Optimize/Sampler.h
 #include "GradientDescentOptimizer.h"
 #include "Libs/Optimize/Container/GenericContainerArray.h"
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
-#include "Libs/Optimize/Domain/DomainType.h"
-#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
-#include "Libs/Optimize/Domain/MeshDomain.h"
 #include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
-#include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
+#include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/SamplingFunction.h"
@@ -50,7 +47,6 @@ title: Libs/Optimize/Sampler.h
 #include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
 #include "Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h"
 #include "ParticleSystem.h"
-#include "TriMesh.h"
 #include "vnl/vnl_matrix_fixed.h"
 
 // Uncomment to visualize FFCs with scalar and vector fields
@@ -85,25 +81,19 @@ class Sampler {
     double radius;
   };
 
-  itkGetObjectMacro(ParticleSystem, ParticleSystem);
-
-  itkGetConstObjectMacro(ParticleSystem, ParticleSystem);
-
   Sampler();
 
   virtual ~Sampler(){};
 
-  SamplingFunction* GetGradientFunction() {
-    return m_GradientFunction;
-  }
+  ParticleSystem* GetParticleSystem() { return m_ParticleSystem; }
+  const ParticleSystem* GetParticleSystem() const { return m_ParticleSystem.GetPointer(); }
 
-  CurvatureSamplingFunction* GetCurvatureGradientFunction() {
-    return m_CurvatureGradientFunction;
-  }
+  SamplingFunction* GetGradientFunction() { return m_GradientFunction; }
 
-  itkGetObjectMacro(Optimizer, OptimizerType);
+  CurvatureSamplingFunction* GetCurvatureGradientFunction() { return m_CurvatureGradientFunction; }
 
-  itkGetConstObjectMacro(Optimizer, OptimizerType);
+  OptimizerType* GetOptimizer() { return m_Optimizer; }
+  const OptimizerType* GetOptimizer() const { return m_Optimizer.GetPointer(); }
 
   void SetPointsFile(unsigned int i, const std::string& s) {
     if (m_PointsFiles.size() < i + 1) {
@@ -114,16 +104,9 @@ class Sampler {
 
   void SetPointsFile(const std::string& s) { this->SetPointsFile(0, s); }
 
-  void SetMeshFile(unsigned int i, const std::string& s) {
-    if (m_MeshFiles.size() < i + 1) {
-      m_MeshFiles.resize(i + 1);
-    }
-    m_MeshFiles[i] = s;
+  void SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points) {
+    initial_points_ = initial_points;
   }
-
-  void SetMeshFile(const std::string& s) { this->SetMeshFile(0, s); }
-
-  void SetMeshFiles(const std::vector<std::string>& s) { m_MeshFiles = s; }
 
   void AddImage(ImageType::Pointer image, double narrow_band, std::string name = "");
 
@@ -157,8 +140,8 @@ class Sampler {
 
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-  virtual void SetAdaptivityMode(int mode) {
-    //SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
+  void SetAdaptivityMode(int mode) {
+    // SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
     if (mode == 0) {
       m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
     } else if (mode == 1) {
@@ -182,33 +165,7 @@ class Sampler {
 
   bool GetSamplingOn() const { return m_LinkingFunction->GetAOn(); }
 
-  virtual void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode) {
-    if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
-      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
-      m_EnsembleEntropyFunction->UseMeanEnergy();
-    } else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy) {
-      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
-      m_EnsembleEntropyFunction->UseEntropy();
-    } else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
-      m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
-    } else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy) {
-      m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
-    } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy) {
-      m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
-      m_CorrespondenceFunction->UseEntropy();
-    } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy) {
-      m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
-      m_CorrespondenceFunction->UseMeanEnergy();
-    } else if (mode == shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy) {
-      m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
-      m_DisentangledEnsembleEntropyFunction->UseEntropy();
-    } else if (mode == shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy) {
-      m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
-      m_DisentangledEnsembleEntropyFunction->UseMeanEnergy();
-    }
-
-    m_CorrespondenceMode = mode;
-  }
+  void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode);
 
   void RegisterGeneralShapeMatrices() {
     this->m_ParticleSystem->RegisterObserver(m_GeneralShapeMatrix);
@@ -233,19 +190,7 @@ class Sampler {
     m_GeneralShapeGradMatrix->SetNormals(i, flag);
   }
 
-  void SetAttributesPerDomain(const std::vector<int> s) {
-    std::vector<int> s1;
-    if (s.size() == 0) {
-      s1.resize(m_CorrespondenceFunction->GetDomainsPerShape());
-      for (int i = 0; i < m_CorrespondenceFunction->GetDomainsPerShape(); i++) s1[i] = 0;
-    } else
-      s1 = s;
-
-    m_AttributesPerDomain = s1;
-    m_CorrespondenceFunction->SetAttributesPerDomain(s1);
-    m_GeneralShapeMatrix->SetAttributesPerDomain(s1);
-    m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
-  }
+  void SetAttributesPerDomain(const std::vector<int> s);
 
   LegacyShapeMatrix* GetShapeMatrix() { return m_LegacyShapeMatrix.GetPointer(); }
 
@@ -256,7 +201,9 @@ class Sampler {
 
   LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() { return m_DisentangledEnsembleEntropyFunction.GetPointer(); }
+  DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() {
+    return m_DisentangledEnsembleEntropyFunction.GetPointer();
+  }
 
   LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() {
     return m_EnsembleRegressionEntropyFunction.GetPointer();
@@ -266,9 +213,7 @@ class Sampler {
     return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
   }
 
-  CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() {
-    return m_CorrespondenceFunction.GetPointer();
-  }
+  CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() { return m_CorrespondenceFunction.GetPointer(); }
 
   const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
 
@@ -322,65 +267,34 @@ class Sampler {
 
   void ReadTransforms();
   void ReadPointsFiles();
-  virtual void AllocateDataCaches();
-  virtual void AllocateDomainsAndNeighborhoods();
-  virtual void InitializeOptimizationFunctions();
+  void AllocateDataCaches();
+  void AllocateDomainsAndNeighborhoods();
+  void InitializeOptimizationFunctions();
 
-  virtual void Initialize() {
+  void initialize_initial_positions();
+
+  void Initialize() {
     this->m_Initializing = true;
     this->Execute();
     this->m_Initializing = false;
   }
 
-  virtual void ReInitialize();
+  void ReInitialize();
 
-  virtual void Execute();
+  void Execute();
 
-  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>>> ComputeCuttingPlanes() {
-    std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>>> planes;
-    for (size_t i = 0; i < m_CuttingPlanes.size(); i++) {
-      std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>> domain_i_cps;
-      for (size_t j = 0; j < m_CuttingPlanes[i].size(); j++) {
-        std::pair<Eigen::Vector3d, Eigen::Vector3d> cut_plane;
-        cut_plane.first = ComputePlaneNormal(m_CuttingPlanes[i][j].a.as_ref(), m_CuttingPlanes[i][j].b.as_ref(),
-                                             m_CuttingPlanes[i][j].c.as_ref());
-        cut_plane.second =
-            Eigen::Vector3d(m_CuttingPlanes[i][j].a[0], m_CuttingPlanes[i][j].a[1], m_CuttingPlanes[i][j].a[2]);
-        domain_i_cps.push_back(cut_plane);
-      }
-      planes.push_back(domain_i_cps);
-    }
-    return planes;
-  }
+  using CuttingPlaneList = std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>>>;
+
+  CuttingPlaneList ComputeCuttingPlanes();
 
   Eigen::Vector3d ComputePlaneNormal(const vnl_vector<double>& a, const vnl_vector<double>& b,
-                                     const vnl_vector<double>& c) {
-    // See http://mathworld.wolfram.com/Plane.html, for example
-    vnl_vector<double> q;
-    q = vnl_cross_3d((b - a), (c - a));
-
-    if (q.magnitude() > 0.0) {
-      Eigen::Vector3d qp;
-      q = q / q.magnitude();
-      qp(0) = q[0];
-      qp(1) = q[1];
-      qp(2) = q[2];
-      return qp;
-    } else {
-      std::cerr << "Error in Libs/Optimize/ParticleSystem/Sampler.h::ComputePlaneNormal" << std::endl;
-      std::cerr << "There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please "
-                   "check the inputs."
-                << std::endl;
-      throw std::runtime_error("Error computing plane normal");
-    }
-  }
+                                     const vnl_vector<double>& c);
 
   std::vector<FreeFormConstraint> GetFFCs() { return m_FFCs; }
 
   void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }
 
- protected:
-  void GenerateData();
+ private:
 
   bool GetInitialized() { return this->m_Initialized; }
 
@@ -437,10 +351,6 @@ class Sampler {
   void operator=(const Sampler&);  // purposely not implemented
 
   std::vector<std::string> m_PointsFiles;
-  std::vector<std::string> m_MeshFiles;
-  std::vector<std::string> m_FeaMeshFiles;
-  std::vector<std::string> m_FeaGradFiles;
-  std::vector<std::string> m_FidsFiles;
   std::vector<int> m_AttributesPerDomain;
   int m_DomainsPerShape;
   double m_Spacing{0};
@@ -457,6 +367,8 @@ class Sampler {
 
   std::vector<std::string> fieldAttributes_;
 
+  std::vector<std::vector<itk::Point<double>>> initial_points_;
+
   unsigned int m_verbosity;
 };
 
@@ -466,4 +378,4 @@ class Sampler {
 
 -------------------------------
 
-Updated on 2023-09-01 at 05:26:30 +0000
+Updated on 2023-09-04 at 06:51:34 +0000
