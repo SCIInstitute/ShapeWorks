@@ -62,6 +62,9 @@ void ProjectReader::load_subjects(StringMapList list) {
     if (contains(item, "name")) {
       name = item["name"];
     }
+    if (contains(item, "fixed")) {
+      subject->set_fixed(Variant(item["fixed"]));
+    }
     if (name == "") {
       if (subject->get_original_filenames().size() != 0) {
         name = StringUtils::getBaseFilenameWithoutExtension(subject->get_original_filenames()[0]);

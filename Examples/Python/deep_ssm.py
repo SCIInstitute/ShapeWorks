@@ -107,7 +107,7 @@ def Run_Pipeline(args):
     The required grooming steps are:
     1. Load mesh
     2. Apply clipping with planes for finding alignment transform
-    3. Find reflection tansfrom
+    3. Find reflection transfrom
     4. Select reference mesh
     5. Find rigid alignment transform
     For more information on grooming see docs/workflow/groom.md
@@ -479,7 +479,8 @@ def Run_Pipeline(args):
         transform = [ train_transforms[i].flatten() ]
         subject.set_groomed_transforms(transform)
         subject.set_constraints_filenames(rel_plane_files)
-        subject.set_landmarks_filenames([train_local_particles[i]])
+        subject.set_local_particle_filenames([train_local_particles[i]])
+        subject.set_world_particle_filenames([train_local_particles[i]])
         subject.set_extra_values({"fixed": "yes"})
         subjects.append(subject)
     # Add new validation shapes
@@ -500,7 +501,8 @@ def Run_Pipeline(args):
         transform = [ val_transforms[i].flatten() ]
         subject.set_groomed_transforms(transform)
         subject.set_constraints_filenames(rel_plane_files)
-        subject.set_landmarks_filenames(rel_particle_files)
+        subject.set_local_particle_filenames(rel_particle_files)
+        subject.set_world_particle_filenames(rel_particle_files)
         subject.set_extra_values({"fixed": "no"})
         subjects.append(subject)
     project = sw.Project()
@@ -512,11 +514,7 @@ def Run_Pipeline(args):
     parameter_dictionary["procrustes"] = 0
     parameter_dictionary["procrustes_interval"] = 0
     parameter_dictionary["procrustes_scaling"] = 0
-    parameter_dictionary["use_landmarks"] = 1
-    parameter_dictionary["use_fixed_subjects"] = 1
     parameter_dictionary["narrow_band"] = 1e10
-    parameter_dictionary["fixed_subjects_column"] = "fixed"
-    parameter_dictionary["fixed_subjects_choice"] = "yes"
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant(parameter_dictionary[key]))
     project.set_parameters("optimize", parameters)

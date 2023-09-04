@@ -91,6 +91,9 @@ class Project {
   //! Return if images are present (e.g. CT/MRI)
   bool get_images_present();
 
+  //! Return if there are fixed subjects present
+  bool get_fixed_subjects_present();
+
   //! Get feature names
   std::vector<std::string> get_feature_names();
 

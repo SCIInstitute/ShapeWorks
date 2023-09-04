@@ -22,11 +22,8 @@
 #include <itkMultiThreaderBase.h>
 
 // shapeworks
-#include <Project/Project.h>
-
-//#include "Libs/Optimize/Domain/ImageDomain.h"
-//#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include <Libs/Particles/ParticleFile.h>
+#include <Project/Project.h>
 
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
@@ -1890,8 +1887,8 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data) {
 //---------------------------------------------------------------------------
 void Optimize::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   m_sampler->AddContour(poly_data);
-  this->m_num_shapes++;
-  this->m_spacing = 0.5;
+  m_num_shapes++;
+  m_spacing = 0.5;
 }
 
 //---------------------------------------------------------------------------
@@ -1905,10 +1902,17 @@ void Optimize::SetPointFiles(const std::vector<std::string>& point_files) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points) {
+  m_sampler->SetInitialPoints(initial_points);
+}
+
+//---------------------------------------------------------------------------
 int Optimize::GetNumShapes() { return this->m_num_shapes; }
 
+//---------------------------------------------------------------------------
 shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() { return visualizer_; }
 
+//---------------------------------------------------------------------------
 void Optimize::SetShowVisualizer(bool show) {
   if (show && this->m_verbosity_level > 0) {
     std::cout << "WARNING Using the visualizer will increase run time!\n";
@@ -1916,10 +1920,8 @@ void Optimize::SetShowVisualizer(bool show) {
   this->show_visualizer_ = show;
 }
 
-bool Optimize::GetShowVisualizer() { return this->show_visualizer_; }
-
 //---------------------------------------------------------------------------
-void Optimize::SetMeshFiles(const std::vector<std::string>& mesh_files) { m_sampler->SetMeshFiles(mesh_files); }
+bool Optimize::GetShowVisualizer() { return this->show_visualizer_; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetAttributeScales(const std::vector<double>& scales) { m_sampler->SetAttributeScales(scales); }
@@ -1933,7 +1935,7 @@ void Optimize::SetFieldAttributes(const std::vector<std::string>& field_attribut
 void Optimize::SetParticleFlags(std::vector<int> flags) { this->m_particle_flags = flags; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetDomainFlags(std::vector<int> flags) {
+void Optimize::SetFixedDomains(std::vector<int> flags) {
   if (flags.size() > 0) {
     // Fixed domains are in use.
     this->m_fixed_domains_present = true;
@@ -1961,15 +1963,15 @@ void Optimize::SetNarrowBand(double v) {
 
 //---------------------------------------------------------------------------
 double Optimize::GetNarrowBand() {
+  if (this->m_fixed_domains_present) {
+    return 1e10;
+  }
+
   if (this->m_narrow_band_set) {
     return this->m_narrow_band;
   }
 
-  if (this->m_fixed_domains_present) {
-    return 1e10;
-  } else {
-    return 4.0;
-  }
+  return 4.0;
 }
 
 //---------------------------------------------------------------------------
@@ -2019,8 +2021,8 @@ bool Optimize::LoadParameterFile(std::string filename) {
 }
 
 //---------------------------------------------------------------------------
-bool Optimize::SetUpOptimize(ProjectHandle projectFile) {
-  OptimizeParameters param(projectFile);
+bool Optimize::SetUpOptimize(ProjectHandle project) {
+  OptimizeParameters param(project);
   param.set_up_optimize(this);
   return true;
 }

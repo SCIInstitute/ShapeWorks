@@ -146,8 +146,10 @@ void Shape::clear_reconstructed_mesh() { reconstructed_meshes_ = MeshGroup(subje
 bool Shape::import_global_point_files(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i], points)) {
-      throw std::invalid_argument("Unable to import point file: " + filenames[i]);
+    if (filenames[i] != "") {
+      if (!Shape::import_point_file(filenames[i], points)) {
+        throw std::invalid_argument("Unable to import point file: " + filenames[i]);
+      }
     }
     global_point_filenames_.push_back(filenames[i]);
     particles_.set_world_particles(i, points);
@@ -160,8 +162,10 @@ bool Shape::import_global_point_files(std::vector<std::string> filenames) {
 bool Shape::import_local_point_files(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i], points)) {
-      throw std::invalid_argument("Unable to import point file: " + filenames[i]);
+    if (filenames[i] != "") {
+      if (!Shape::import_point_file(filenames[i], points)) {
+        throw std::invalid_argument("Unable to import point file: " + filenames[i]);
+      }
     }
     local_point_filenames_.push_back(filenames[i]);
     particles_.set_local_particles(i, points);
@@ -307,9 +311,7 @@ bool Shape::store_constraints() {
 Eigen::VectorXd Shape::get_global_correspondence_points() { return particles_.get_combined_global_particles(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_local_correspondence_points() {
-  return particles_.get_combined_local_particles();
-}
+Eigen::VectorXd Shape::get_local_correspondence_points() { return particles_.get_combined_local_particles(); }
 
 //---------------------------------------------------------------------------
 int Shape::get_id() { return id_; }
@@ -699,9 +701,7 @@ void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform) {
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_alignment_type(int alignment) {
-  particles_.set_alignment_type(alignment);
-}
+void Shape::set_alignment_type(int alignment) { particles_.set_alignment_type(alignment); }
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
