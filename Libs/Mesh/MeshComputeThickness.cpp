@@ -115,6 +115,26 @@ static std::vector<double> smooth_intensities(std::vector<double> intensities) {
 }
 
 //---------------------------------------------------------------------------
+static std::vector<double> median_smooth_signal_intensities(std::vector<double> intensities) {
+  // smooth using average of neighbors
+  std::vector<double> smoothed_intensities;
+
+  for (int i = 0; i < intensities.size(); i++) {
+    double sum = 0;
+    int count = 0;
+    std::vector<double> local_intensities;
+    for (int j = -2; j <= 2; j++) {
+      local_intensities.push_back(intensities[i + j]);
+    }
+    // compute median
+    std::sort(local_intensities.begin(), local_intensities.end());
+    smoothed_intensities.push_back(local_intensities[2]);
+  }
+
+  return smoothed_intensities;
+}
+
+//---------------------------------------------------------------------------
 static double get_distance_to_opposite_side(Mesh& mesh, int point_id) {
   vtkSmartPointer<vtkPolyData> poly_data = mesh.getVTKMesh();
 
@@ -280,9 +300,9 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
       point[2] += gradient[2];
     }
 
-    auto smoothed = smooth_intensities(intensities);
+    auto smoothed = median_smooth_signal_intensities(intensities);
     for (int k = 0; k < 10; k++) {
-      smoothed = smooth_intensities(smoothed);
+      smoothed = median_smooth_signal_intensities(smoothed);
     }
     intensities = smoothed;
 
