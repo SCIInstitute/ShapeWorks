@@ -2,6 +2,7 @@
 
 #include <itkGradientImageFilter.h>
 #include <itkVectorLinearInterpolateImageFunction.h>
+#include <tbb/parallel_for.h>
 #include <vtkPointData.h>
 #include <vtkStaticCellLocator.h>
 #include <vtkStaticPointLocator.h>
@@ -120,8 +121,6 @@ static std::vector<double> median_smooth_signal_intensities(std::vector<double> 
   std::vector<double> smoothed_intensities;
 
   for (int i = 0; i < intensities.size(); i++) {
-    double sum = 0;
-    int count = 0;
     std::vector<double> local_intensities;
     for (int j = -2; j <= 2; j++) {
       local_intensities.push_back(intensities[i + j]);
@@ -169,6 +168,138 @@ static double get_distance_to_opposite_side(Mesh& mesh, int point_id) {
   return distance;
 }
 
+double compute_thickness_from_signal(const std::vector<double>& intensities_input, double step_size) {
+  auto smoothed = median_smooth_signal_intensities(intensities_input);
+  for (int k = 0; k < 10; k++) {
+    smoothed = median_smooth_signal_intensities(smoothed);
+  }
+  auto intensities = smoothed;
+
+  // find the highest intensity and its index
+  double max_intensity = 0;
+  int point_a = 0;
+  for (int j = 0; j < intensities.size(); j++) {
+    if (intensities[j] > max_intensity) {
+      max_intensity = intensities[j];
+      point_a = j;
+    }
+  }
+
+  // compute derivative of intensities
+  std::vector<double> derivatives;
+  for (int j = 0; j < intensities.size() - 1; j++) {
+    derivatives.push_back((intensities[j + 1] - intensities[j]) / step_size);
+  }
+
+  // compute mean of DHU (derivative houndsfield unit) of the first 2mm (point x)
+  int count_first_2mm = (1 / step_size) * 2.0;
+  int point_x = count_first_2mm;
+  int point_o = (1 / step_size) * 3.0;
+
+  double mean_dhu = 0;
+  for (int j = 0; j < count_first_2mm; j++) {
+    mean_dhu += derivatives[j];
+  }
+  mean_dhu /= count_first_2mm;
+
+  // compute standard deviation of DHU of the first 2mm
+  double std_dhu = 0;
+  for (int j = 0; j < count_first_2mm; j++) {
+    std_dhu += (derivatives[j] - mean_dhu) * (derivatives[j] - mean_dhu);
+  }
+
+  std_dhu = std::sqrt(std_dhu / count_first_2mm);
+
+  // equation 2
+  double dhu_threshold = mean_dhu + 4.27 * std_dhu;
+
+  // find the first index where the derivative is greater than the threshold (point b)
+  int point_b = -1;
+  for (int j = point_o; j < derivatives.size(); j++) {
+    if (derivatives[j] > dhu_threshold) {
+      point_b = j;
+      break;
+    }
+  }
+
+  bool not_found = false;
+  if (point_b < 0) {
+    not_found = true;
+    point_b = 0;
+  }
+  double hu_a = intensities[point_a];
+  double hu_c = intensities[point_b];
+
+  // constant from paper
+  const double k_cor = 0.605;
+
+  double hu_threshold = (hu_a - hu_c) * k_cor + hu_c;
+
+  // find the first and last point above hu_threshold
+  int point_d = -1;
+  for (int j = point_b; j < intensities.size(); j++) {
+    if (intensities[j] > hu_threshold) {
+      point_d = j;
+      break;
+    }
+  }
+  int point_e = -1;
+  if (point_d != -1) {
+    // find the next point below hu_threshold
+    for (int j = point_d; j < intensities.size(); j++) {
+      if (intensities[j] < hu_threshold) {
+        point_e = j;
+        break;
+      }
+    }
+  }
+
+  // compute the distance between the first and last point above the threshold
+  double distance = (point_e - point_d) * step_size;
+
+  if (point_d == -1 || point_e == -1 || not_found) {
+    distance = 0;
+  }
+
+#if 0  // debug
+    if (i < 10) {
+      //    write out the intensities to a file named with the point id
+      std::ofstream out("intensities_" + std::to_string(i) + ".txt");
+      for (auto intensity : intensities) {
+        out << intensity << std::endl;
+      }
+      std::ofstream out2("derivatives_" + std::to_string(i) + ".txt");
+      for (auto derivative : derivatives) {
+        out2 << derivative << std::endl;
+      }
+
+      std::ofstream out4("smoothed_" + std::to_string(i) + ".txt");
+      for (auto intensity : smoothed) {
+        out4 << intensity << std::endl;
+      }
+
+      // write out json file with the parameters
+      std::ofstream out3("parameters_" + std::to_string(i) + ".json");
+      out3 << "{\n";
+      out3 << "  \"hu_a\": " << hu_a << ",\n";
+      out3 << "  \"hu_c\": " << hu_c << ",\n";
+      out3 << "  \"k_cor\": " << k_cor << ",\n";
+      out3 << "  \"hu_threshold\": " << hu_threshold << ",\n";
+      out3 << "  \"distance\": " << distance << ",\n";
+      out3 << "  \"point_a\": " << point_a << ",\n";
+      out3 << "  \"point_b\": " << point_b << ",\n";
+      out3 << "  \"point_d\": " << point_d << ",\n";
+      out3 << "  \"point_e\": " << point_e << ",\n";
+      out3 << "  \"mean_dhu\": " << mean_dhu << ",\n";
+      out3 << "  \"std_dhu\": " << std_dhu << ",\n";
+      out3 << "  \"dhu_threshold\": " << dhu_threshold << "\n";
+      out3 << "}\n";
+    }
+#endif
+
+  return distance;
+}
+
 //---------------------------------------------------------------------------
 void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, double median_radius,
                        std::string distance_mesh) {
@@ -177,6 +308,7 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
   bool use_dt = dt != nullptr;
 
   mesh.computeNormals();
+  mesh.getCellLocator();
 
   auto poly_data = mesh.getVTKMesh();
 
@@ -247,7 +379,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
   // first establish average 'outside' values
 
   std::vector<double> average_intensities;
-  std::vector<double> all_intensities;
   for (int i = 0; i < mesh.numPoints(); i++) {
     Point3 point;
     poly_data->GetPoint(i, point.GetDataPointer());
@@ -257,7 +388,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
       // check if point is inside image
       if (check_inside(point)) {
         intensity = image.evaluate(point);
-        all_intensities.push_back(intensity);
       }
       if (j < average_intensities.size()) {
         average_intensities[j] += intensity;
@@ -275,191 +405,59 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
     average_intensities[i] /= mesh.numPoints();
   }
 
-  // compute median of all intensities
-  std::sort(all_intensities.begin(), all_intensities.end());
-  double median_intensity = all_intensities[all_intensities.size() / 2];
+  // mutex
+  std::mutex mutex;
 
+  unsigned long num_points = mesh.numPoints();
   // parallel loop over all points using TBB
+  tbb::parallel_for(tbb::blocked_range<size_t>{0, num_points}, [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i < r.end(); ++i) {
+      //  for (int i = 0; i < mesh.numPoints(); i++) {
+      Point3 point;
+      poly_data->GetPoint(i, point.GetDataPointer());
 
-  for (int i = 0; i < mesh.numPoints(); i++) {
-    Point3 point;
-    poly_data->GetPoint(i, point.GetDataPointer());
+      std::vector<double> intensities;
 
-    std::vector<double> intensities;
-
-    for (int j = 0; j <= distance_outside / step_size; j++) {
-      double intensity = 0;
-      // check if point is inside image
-      if (check_inside(point)) {
-        intensity = image.evaluate(point);
-      }
-      intensities.push_back(average_intensities[j]);
-      // intensities.push_back(median_intensity);
-      //  intensities.push_back(intensity);
-      //SW_LOG("median: {}, average: {}", median_intensity, average_intensities[j]);
-      //std::cerr << "median: " << median_intensity << ", average: " << average_intensities[j] << "\n";
-
-      VectorPixelType gradient = get_gradient(i, point);
-      point = step(point, gradient, -1.0);
-    }
-
-    // reverse the intensities vector
-    std::reverse(intensities.begin(), intensities.end());
-
-    // drop the last intensity, since we're already there
-    intensities.pop_back();
-
-    // reset point position back to the surface
-    poly_data->GetPoint(i, point.GetDataPointer());
-
-    for (int j = 0; j < distance_inside / step_size; j++) {
-      double intensity = 0;
-      // check if point is inside image
-      if (check_inside(point)) {
-        intensity = image.evaluate(point);
+      for (int j = 0; j <= distance_outside / step_size; j++) {
+        intensities.push_back(average_intensities[j]);
       }
 
-      intensities.push_back(intensity);
+      // reverse the intensities vector
+      std::reverse(intensities.begin(), intensities.end());
 
-      // evaluate gradient
-      VectorPixelType gradient = get_gradient(i, point);
+      // drop the last intensity, since we're already there
+      intensities.pop_back();
 
-      point = step(point, gradient, 1.0);
-    }
+      // reset point position back to the surface
+      poly_data->GetPoint(i, point.GetDataPointer());
 
-    auto smoothed = median_smooth_signal_intensities(intensities);
-    for (int k = 0; k < 10; k++) {
-      smoothed = median_smooth_signal_intensities(smoothed);
-    }
-    intensities = smoothed;
-
-    // find the highest intensity and its index
-    double max_intensity = 0;
-    int point_a = 0;
-    for (int j = 0; j < intensities.size(); j++) {
-      if (intensities[j] > max_intensity) {
-        max_intensity = intensities[j];
-        point_a = j;
-      }
-    }
-
-    // compute derivative of intensities
-    std::vector<double> derivatives;
-    for (int j = 0; j < intensities.size() - 1; j++) {
-      derivatives.push_back((intensities[j + 1] - intensities[j]) / step_size);
-    }
-
-    // compute mean of DHU (derivative houndsfield unit) of the first 2mm (point x)
-    int count_first_2mm = (1 / step_size) * 2.0;
-    int point_x = count_first_2mm;
-    int point_o = (1 / step_size) * 3.0;
-
-    double mean_dhu = 0;
-    for (int j = 0; j < count_first_2mm; j++) {
-      mean_dhu += derivatives[j];
-    }
-    mean_dhu /= count_first_2mm;
-
-    // compute standard deviation of DHU of the first 2mm
-    double std_dhu = 0;
-    for (int j = 0; j < count_first_2mm; j++) {
-      std_dhu += (derivatives[j] - mean_dhu) * (derivatives[j] - mean_dhu);
-    }
-
-    std_dhu = std::sqrt(std_dhu / count_first_2mm);
-
-    // equation 2
-    double dhu_threshold = mean_dhu + 4.27 * std_dhu;
-
-    // find the first index where the derivative is greater than the threshold (point b)
-    int point_b = -1;
-    for (int j = point_o; j < derivatives.size(); j++) {
-      if (derivatives[j] > dhu_threshold) {
-        point_b = j;
-        break;
-      }
-    }
-
-    bool not_found = false;
-    if (point_b < 0) {
-      not_found = true;
-      point_b = 0;
-    }
-    double hu_a = intensities[point_a];
-    double hu_c = intensities[point_b];
-
-    // constant from paper
-    const double k_cor = 0.605;
-
-    double hu_threshold = (hu_a - hu_c) * k_cor + hu_c;
-
-    // find the first and last point above hu_threshold
-    int point_d = -1;
-    for (int j = point_b; j < intensities.size(); j++) {
-      if (intensities[j] > hu_threshold) {
-        point_d = j;
-        break;
-      }
-    }
-    int point_e = -1;
-    if (point_d != -1) {
-      // find the next point below hu_threshold
-      for (int j = point_d; j < intensities.size(); j++) {
-        if (intensities[j] < hu_threshold) {
-          point_e = j;
-          break;
+      for (int j = 0; j < distance_inside / step_size; j++) {
+        double intensity = 0;
+        // check if point is inside image
+        if (check_inside(point)) {
+          intensity = image.evaluate(point);
         }
+
+        intensities.push_back(intensity);
+
+        // evaluate gradient
+        VectorPixelType gradient = get_gradient(i, point);
+
+        point = step(point, gradient, 1.0);
+      }
+
+      auto distance = compute_thickness_from_signal(intensities, step_size);
+
+      distance = std::min<double>(distance, max_dist);
+      distance = std::min<double>(distance, get_distance_to_opposite_side(mesh, i) / 2.0);
+
+      {
+        std::lock_guard<std::mutex> lock(mutex);
+        values->InsertValue(i, distance);
       }
     }
+  });
 
-    // compute the distance between the first and last point above the threshold
-    double distance = (point_e - point_d) * step_size;
-
-    if (point_d == -1 || point_e == -1 || not_found) {
-      distance = 0;
-    }
-
-#if 0  // debug
-    if (i < 10) {
-      //    write out the intensities to a file named with the point id
-      std::ofstream out("intensities_" + std::to_string(i) + ".txt");
-      for (auto intensity : intensities) {
-        out << intensity << std::endl;
-      }
-      std::ofstream out2("derivatives_" + std::to_string(i) + ".txt");
-      for (auto derivative : derivatives) {
-        out2 << derivative << std::endl;
-      }
-
-      std::ofstream out4("smoothed_" + std::to_string(i) + ".txt");
-      for (auto intensity : smoothed) {
-        out4 << intensity << std::endl;
-      }
-
-      // write out json file with the parameters
-      std::ofstream out3("parameters_" + std::to_string(i) + ".json");
-      out3 << "{\n";
-      out3 << "  \"hu_a\": " << hu_a << ",\n";
-      out3 << "  \"hu_c\": " << hu_c << ",\n";
-      out3 << "  \"k_cor\": " << k_cor << ",\n";
-      out3 << "  \"hu_threshold\": " << hu_threshold << ",\n";
-      out3 << "  \"distance\": " << distance << ",\n";
-      out3 << "  \"point_a\": " << point_a << ",\n";
-      out3 << "  \"point_b\": " << point_b << ",\n";
-      out3 << "  \"point_d\": " << point_d << ",\n";
-      out3 << "  \"point_e\": " << point_e << ",\n";
-      out3 << "  \"mean_dhu\": " << mean_dhu << ",\n";
-      out3 << "  \"std_dhu\": " << std_dhu << ",\n";
-      out3 << "  \"dhu_threshold\": " << dhu_threshold << "\n";
-      out3 << "}\n";
-    }
-#endif
-
-    distance = std::min<double>(distance, max_dist);
-    distance = std::min<double>(distance, get_distance_to_opposite_side(mesh, i) / 2.0);
-
-    values->InsertValue(i, distance);
-  }
   mesh.setField("thickness", values, Mesh::Point);
 
   double average_edge_length = compute_average_edge_length(poly_data);
