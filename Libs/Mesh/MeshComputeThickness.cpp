@@ -229,13 +229,63 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
 
   double step_size = spacing / 10.0;
 
+  auto step = [&](Point3 point, VectorPixelType gradient, double multiplier) -> Point3 {
+    // normalize the gradient
+    float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
+    Point3 new_point;
+    for (int i = 0; i < 3; i++) {
+      gradient[i] /= norm;
+      gradient[i] *= step_size;
+      new_point[i] = point[i] + gradient[i] * multiplier;
+    }
+    return new_point;
+  };
+
+  const double distance_outside = 4.0;
+  const double distance_inside = 12.0;
+
+  // first establish average 'outside' values
+
+  std::vector<double> average_intensities;
+  std::vector<double> all_intensities;
+  for (int i = 0; i < mesh.numPoints(); i++) {
+    Point3 point;
+    poly_data->GetPoint(i, point.GetDataPointer());
+
+    for (int j = 0; j <= distance_outside / step_size; j++) {
+      double intensity = 0;
+      // check if point is inside image
+      if (check_inside(point)) {
+        intensity = image.evaluate(point);
+        all_intensities.push_back(intensity);
+      }
+      if (j < average_intensities.size()) {
+        average_intensities[j] += intensity;
+      } else {
+        average_intensities.push_back(intensity);
+      }
+
+      VectorPixelType gradient = get_gradient(i, point);
+      point = step(point, gradient, -1.0);
+    }
+  }
+
+  // divide by mean to compute average
+  for (int i = 0; i < average_intensities.size(); i++) {
+    average_intensities[i] /= mesh.numPoints();
+  }
+
+  // compute median of all intensities
+  std::sort(all_intensities.begin(), all_intensities.end());
+  double median_intensity = all_intensities[all_intensities.size() / 2];
+
+  // parallel loop over all points using TBB
+
   for (int i = 0; i < mesh.numPoints(); i++) {
     Point3 point;
     poly_data->GetPoint(i, point.GetDataPointer());
 
     std::vector<double> intensities;
-    double distance_outside = 4.0;
-    double distance_inside = 12.0;
 
     for (int j = 0; j <= distance_outside / step_size; j++) {
       double intensity = 0;
@@ -243,24 +293,14 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
       if (check_inside(point)) {
         intensity = image.evaluate(point);
       }
-      intensities.push_back(intensity);
+      intensities.push_back(average_intensities[j]);
+      // intensities.push_back(median_intensity);
+      //  intensities.push_back(intensity);
+      //SW_LOG("median: {}, average: {}", median_intensity, average_intensities[j]);
+      //std::cerr << "median: " << median_intensity << ", average: " << average_intensities[j] << "\n";
 
       VectorPixelType gradient = get_gradient(i, point);
-
-      // normalize the gradient
-      float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
-      gradient[0] /= norm;
-      gradient[1] /= norm;
-      gradient[2] /= norm;
-
-      gradient[0] *= step_size;
-      gradient[1] *= step_size;
-      gradient[2] *= step_size;
-
-      // take step
-      point[0] -= gradient[0];
-      point[1] -= gradient[1];
-      point[2] -= gradient[2];
+      point = step(point, gradient, -1.0);
     }
 
     // reverse the intensities vector
@@ -284,20 +324,7 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
       // evaluate gradient
       VectorPixelType gradient = get_gradient(i, point);
 
-      // normalize the gradient
-      float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
-      gradient[0] /= norm;
-      gradient[1] /= norm;
-      gradient[2] /= norm;
-
-      gradient[0] *= step_size;
-      gradient[1] *= step_size;
-      gradient[2] *= step_size;
-
-      // take step
-      point[0] += gradient[0];
-      point[1] += gradient[1];
-      point[2] += gradient[2];
+      point = step(point, gradient, 1.0);
     }
 
     auto smoothed = median_smooth_signal_intensities(intensities);
