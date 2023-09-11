@@ -681,9 +681,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       } else {
         Image image(filename);
         if (s->is_fixed()) {
-          optimize->AddImage(nullptr);
+          optimize->AddImage(nullptr, filename);
         } else {
-          optimize->AddImage(image);
+          optimize->AddImage(image, filename);
         }
       }
 

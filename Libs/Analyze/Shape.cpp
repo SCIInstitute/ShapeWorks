@@ -89,6 +89,9 @@ bool Shape::is_subject() { return subject_ != nullptr; }
 std::shared_ptr<Subject> Shape::get_subject() { return subject_; }
 
 //---------------------------------------------------------------------------
+bool Shape::is_fixed() { return is_subject() && subject_->is_fixed(); }
+
+//---------------------------------------------------------------------------
 void Shape::import_original_file(const std::string& filename) {
   subject_->set_original_filenames({filename});
   corner_annotations_[0] = StringUtils::getFilename(filename);

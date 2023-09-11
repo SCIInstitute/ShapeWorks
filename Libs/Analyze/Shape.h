@@ -56,6 +56,9 @@ class Shape {
   //! Return the pointer to the subject object
   std::shared_ptr<shapeworks::Subject> get_subject();
 
+  //! Helper to ask if this shape is fixed or not
+  bool is_fixed();
+
   //! Import the original raw mesh or image file
   void import_original_file(const std::string& filename);
 

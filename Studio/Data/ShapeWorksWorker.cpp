@@ -1,11 +1,11 @@
 
-#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <SurfaceReconstructor.h>
 #include <Groom/Groom.h>
-#include <Optimize/OptimizeParameters.h>
-#include <Optimize/Optimize.h>
 #include <Logging.h>
+#include <Optimize/Optimize.h>
+#include <Optimize/OptimizeParameters.h>
+#include <Shape.h>
+#include <SurfaceReconstructor.h>
 
 namespace shapeworks {
 
@@ -54,13 +54,11 @@ void ShapeworksWorker::process() {
         SW_LOG("Optimizing correspondence...");
         this->optimize_->Run();
       } catch (std::runtime_error e) {
-        std::cerr << "Exception: " << e.what() << "\n";
-        SW_ERROR(std::string("Error: ") + e.what());
+        SW_ERROR(e.what());
         Q_EMIT failure();
         Q_EMIT finished();
         return;
       } catch (itk::ExceptionObject& ex) {
-        std::cerr << "ITK Exception: " << ex << std::endl;
         SW_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
         Q_EMIT failure();
         Q_EMIT finished();
