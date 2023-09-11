@@ -59,6 +59,9 @@ class Shape {
   //! Helper to ask if this shape is fixed or not
   bool is_fixed();
 
+  /// Helper to ask if this shape is excluded
+  bool is_excluded();
+
   //! Import the original raw mesh or image file
   void import_original_file(const std::string& filename);
 

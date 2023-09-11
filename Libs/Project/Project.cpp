@@ -316,13 +316,12 @@ bool Project::get_images_present() { return images_present_; }
 
 //---------------------------------------------------------------------------
 bool Project::get_fixed_subjects_present() {
-  // return if any subjects are fixed
-  for (auto& subject : subjects_) {
-    if (subject->is_fixed()) {
-      return true;
-    }
-  }
-  return false;
+  return std::any_of(subjects_.begin(), subjects_.end(), [](const auto& subject) { return subject->is_fixed(); });
+}
+
+//---------------------------------------------------------------------------
+bool Project::get_excluded_subjects_present() {
+  return std::any_of(subjects_.begin(), subjects_.end(), [](const auto& subject) { return subject->is_excluded(); });
 }
 
 //---------------------------------------------------------------------------

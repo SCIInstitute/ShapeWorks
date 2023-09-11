@@ -324,6 +324,9 @@ ProjectUtils::StringMap ProjectUtils::convert_subject_to_map(Project* project, S
   if (project->get_fixed_subjects_present()) {
     j["fixed"] = subject->is_fixed() ? "true" : "false";
   }
+  if (project->get_excluded_subjects_present()) {
+    j["excluded"] = subject->is_excluded() ? "true" : "false";
+  }
   j["notes"] = subject->get_notes();
 
   auto original_prefixes = ProjectUtils::convert_domain_types(project->get_original_domain_types());

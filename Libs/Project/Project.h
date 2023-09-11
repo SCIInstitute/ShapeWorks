@@ -94,6 +94,9 @@ class Project {
   //! Return if there are fixed subjects present
   bool get_fixed_subjects_present();
 
+  //! Return if there are excluded subjects present
+  bool get_excluded_subjects_present();
+
   //! Get feature names
   std::vector<std::string> get_feature_names();
 
