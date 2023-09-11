@@ -249,6 +249,9 @@ void Particles::save_particles_file(std::string filename, const Eigen::VectorXd&
 }
 
 //---------------------------------------------------------------------------
+int Particles::get_number_of_domains() { return local_particles_.size(); }
+
+//---------------------------------------------------------------------------
 void Particles::set_alignment_type(int alignment) { alignment_type_ = alignment; }
 
 }  // namespace shapeworks

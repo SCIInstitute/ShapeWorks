@@ -161,9 +161,11 @@ bool Session::save_project(QString filename) {
         auto local_files = shapes_[i]->get_subject()->get_local_particle_filenames();
         auto world_files = shapes_[i]->get_subject()->get_world_particle_filenames();
         auto particles = shapes_[i]->get_particles();
-        for (int i = 0; i < local_files.size(); i++) {
-          Particles::save_particles_file(local_files[i], particles.get_local_particles(i));
-          Particles::save_particles_file(world_files[i], particles.get_raw_world_particles(i));
+        if (particles.get_number_of_domains() == local_files.size()) { // un-fixed domains may not have particles
+          for (int i = 0; i < local_files.size(); i++) {
+            Particles::save_particles_file(local_files[i], particles.get_local_particles(i));
+            Particles::save_particles_file(world_files[i], particles.get_raw_world_particles(i));
+          }
         }
       }
       unsaved_particle_files_ = false;
@@ -577,7 +579,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 bool Session::update_particles(std::vector<Particles> particles) {
   for (int i = 0; i < particles.size(); i++) {
     std::shared_ptr<Shape> shape;
-    if (shapes_.size() > i) {
+    if (i < shapes_.size()) {
       shape = shapes_[i];
     } else {
       shape = std::shared_ptr<Shape>(new Shape);
@@ -587,7 +589,9 @@ bool Session::update_particles(std::vector<Particles> particles) {
       project_->get_subjects().push_back(subject);
       shapes_.push_back(shape);
     }
-    shape->set_particles(particles[i]);
+    if (!shape->is_fixed()) {  // only update if not fixed
+      shape->set_particles(particles[i]);
+    }
   }
 
   unsaved_particle_files_ = true;
