@@ -297,8 +297,8 @@ std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_poi
     for (auto s : subjects) {
       if (s->is_fixed()) {
         count++;
-        // read the local points
-        auto filename = s->get_local_particle_filenames()[d];
+        // read the world points that are in the shared coordinate space
+        auto filename = s->get_world_particle_filenames()[d];
         auto particles = read_particles_as_vector(filename);
         if (domain_sum.size() == 0) {
           domain_sum = particles;
