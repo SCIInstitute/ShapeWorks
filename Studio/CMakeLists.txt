@@ -102,6 +102,7 @@ SET(STUDIO_DATA_MOC_HDRS
 SET(STUDIO_JOB_SRCS
   Job/Job.cpp
   Job/GroupPvalueJob.cpp
+  Job/ParticleAreaJob.cpp
   Job/NetworkAnalysisJob.cpp
   Job/ParticleNormalEvaluationJob.cpp
   Job/StatsGroupLDAJob.cpp
@@ -111,6 +112,7 @@ SET(STUDIO_JOB_MOC_HDRS
   Job/Job.h
   Job/GroupPvalueJob.h
   Job/NetworkAnalysisJob.h
+  Job/ParticleAreaJob.h
   Job/ParticleNormalEvaluationJob.h
   Job/StatsGroupLDAJob.h
   )
@@ -140,10 +142,12 @@ SET(STUDIO_OPTIMIZE_MOC_HDRS
 
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cpp
+  Analysis/ParticleAreaPanel.cpp
   Analysis/ShapeEvaluationJob.cpp
   )
 SET(STUDIO_ANALYSIS_MOC_HDRS
   Analysis/AnalysisTool.h
+  Analysis/ParticleAreaPanel.h
   Analysis/ShapeEvaluationJob.h
   )
 

@@ -5,11 +5,14 @@
 
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 
+#include <Logging.h>
+
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 void ParticleArea::assign_vertex_particles(vtkSmartPointer<vtkPolyData> poly_data,
                                            std::vector<itk::Point<double>> particles) {
+  SW_DEBUG("Assigning vertex particles");
   // geodesics enabled mesh
   VtkMeshWrapper mesh(poly_data, true);
 
@@ -43,6 +46,7 @@ void ParticleArea::assign_vertex_particles(vtkSmartPointer<vtkPolyData> poly_dat
 
 //-----------------------------------------------------------------------------
 void ParticleArea::assign_vertex_colors(vtkSmartPointer<vtkPolyData> poly_data, std::vector<QColor> colors) {
+  SW_DEBUG("Assigning vertex colors");
   // create rgb colors array
   auto colors_array = vtkSmartPointer<vtkUnsignedCharArray>::New();
   colors_array->SetNumberOfComponents(3);

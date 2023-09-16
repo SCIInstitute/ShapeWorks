@@ -20,6 +20,8 @@
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
 
+#include "ParticleAreaPanel.h"
+
 namespace shapeworks {
 
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
@@ -32,6 +34,9 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
+
+  particle_area_panel_ = new ParticleAreaPanel(this);
+  layout()->addWidget(particle_area_panel_);
 
   auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
   layout()->addItem(spacer);
@@ -223,6 +228,8 @@ AnalysisTool::~AnalysisTool() {}
 //---------------------------------------------------------------------------
 void AnalysisTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+  particle_area_panel_->set_session(session);
+
   // reset to original
   ui_->mesh_warping_radio_button->setChecked(true);
   ui_->difference_button->setChecked(false);
@@ -446,7 +453,7 @@ bool AnalysisTool::compute_stats() {
   bool flag_get_num_part = false;
   for (auto& shape : session_->get_shapes()) {
     if (shape->get_global_correspondence_points().size() == 0) {
-      continue; // skip any that don't have particles
+      continue;  // skip any that don't have particles
     }
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
@@ -1560,10 +1567,7 @@ void AnalysisTool::show_difference_to_mean_clicked() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::show_particle_area_clicked()
-{
-
-}
+void AnalysisTool::show_particle_area_clicked() {}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::group_analysis_combo_changed() {

@@ -770,8 +770,8 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   update_ffc_mode();
   renderer_->AddViewProp(corner_annotation_);
 
+  /**************
   {  // TODO: temporarily here
-
     if (meshes_.valid() && glyph_lut_) {
       // for each domain
       for (size_t i = 0; i < meshes_.meshes().size(); i++) {
@@ -780,12 +780,13 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         if (!poly_data) {
           continue;
         }
-        auto colors = ParticleArea::colors_from_lut(glyph_lut_);
         ParticleArea::assign_vertex_particles(poly_data, points);
+        auto colors = ParticleArea::colors_from_lut(glyph_lut_);
         ParticleArea::assign_vertex_colors(poly_data, colors);
       }
     }
   }
+  **********/
 }
 
 //-----------------------------------------------------------------------------
