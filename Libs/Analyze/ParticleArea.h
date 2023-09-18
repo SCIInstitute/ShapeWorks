@@ -5,6 +5,8 @@
 #include "vtkPolyData.h"
 #include <itkPoint.h>
 
+#include <Eigen/Core>
+
 namespace shapeworks {
 
 class ParticleArea {
@@ -19,7 +21,12 @@ class ParticleArea {
   //! convert lut to array of colors
   static std::vector<QColor> colors_from_lut(vtkSmartPointer<vtkLookupTable> lut);
 
- private:
+  //! compute the area assigned to each particle
+  static Eigen::VectorXd compute_particle_areas(vtkSmartPointer<vtkPolyData> poly_data, std::vector<itk::Point<double>> particles);
+
+  //! compute the area assigned to each particle
+  static Eigen::VectorXd compute_particle_triangle_areas(vtkSmartPointer<vtkPolyData> poly_data, std::vector<itk::Point<double>> particles);
+
 };
 
 }  // namespace shapeworks

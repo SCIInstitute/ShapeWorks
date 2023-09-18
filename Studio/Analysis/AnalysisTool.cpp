@@ -116,7 +116,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
 
   connect(ui_->show_difference_to_mean, &QPushButton::clicked, this, &AnalysisTool::show_difference_to_mean_clicked);
-  connect(ui_->show_particle_area, &QPushButton::clicked, this, &AnalysisTool::show_particle_area_clicked);
 
   connect(ui_->group_analysis_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::group_analysis_combo_changed);
@@ -975,6 +974,7 @@ void AnalysisTool::reset_stats() {
   ui_->group_analysis_combo->setCurrentIndex(0);
   group_analysis_combo_changed();
 
+  particle_area_panel_->reset();
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
@@ -1059,6 +1059,12 @@ ShapeHandle AnalysisTool::get_mean_shape() {
         shape->set_override_feature("spm_values");
       }
     }
+  }
+
+  if (particle_area_panel_->get_display_particle_area()) {
+    SW_LOG("Setting mean areas");
+    shape->set_point_features("mean_areas", particle_area_panel_->get_mean_areas());
+    shape->set_override_feature("mean_areas");
   }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
@@ -1565,9 +1571,6 @@ void AnalysisTool::show_difference_to_mean_clicked() {
   update_difference_particles();
   Q_EMIT update_view();
 }
-
-//---------------------------------------------------------------------------
-void AnalysisTool::show_particle_area_clicked() {}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::group_analysis_combo_changed() {

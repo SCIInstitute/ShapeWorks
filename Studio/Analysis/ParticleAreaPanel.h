@@ -34,13 +34,18 @@ class ParticleAreaPanel : public QWidget {
 
   //! set the pointer to the session
   void set_session(QSharedPointer<Session> session);
+  void reset();
+
+  bool get_display_particle_area() const;
+
+  Eigen::VectorXf get_mean_areas() const;
 
  public Q_SLOTS:
 
   void run_clicked();
   void show_particle_area_clicked();
 
-  void handle_job_progress(int);
+  void handle_job_progress(int progress);
   void handle_job_complete();
 
  Q_SIGNALS:
@@ -48,6 +53,9 @@ class ParticleAreaPanel : public QWidget {
   void update_view();
 
  private:
+
+  void update_run_button();
+
   QSharedPointer<Session> session_;
   QSharedPointer<ParticleAreaJob> job_;
 
