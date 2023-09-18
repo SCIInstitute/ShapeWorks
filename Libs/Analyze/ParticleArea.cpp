@@ -1,11 +1,12 @@
 #include "ParticleArea.h"
 
-#include <vtkPointData.h>
+#include <Logging.h>
 #include <vtkLookupTable.h>
+#include <vtkMassProperties.h>
+#include <vtkPointData.h>
+#include <vtkTriangle.h>
 
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
-
-#include <Logging.h>
 
 namespace shapeworks {
 
@@ -75,4 +76,67 @@ std::vector<QColor> ParticleArea::colors_from_lut(vtkSmartPointer<vtkLookupTable
   }
   return colors;
 }
+
+//-----------------------------------------------------------------------------
+Eigen::VectorXd ParticleArea::compute_particle_areas(vtkSmartPointer<vtkPolyData> poly_data,
+                                                     std::vector<itk::Point<double>> particles) {
+  // The 'closest_particle' array should already be assigned and contains the particle id for each vertex
+  auto closest_particles = poly_data->GetPointData()->GetArray("closest_particle");
+
+  Eigen::VectorXd counts(particles.size());
+  counts.setZero();
+  // count how many vertices are assigned to each particle
+  for (int i = 0; i < poly_data->GetNumberOfPoints(); ++i) {
+    auto particle_id = closest_particles->GetTuple1(i);
+    counts[particle_id] += 1;
+  }
+
+  // get total surface area using vtkMassProperties
+  auto mass_properties = vtkSmartPointer<vtkMassProperties>::New();
+  mass_properties->SetInputData(poly_data);
+  mass_properties->Update();
+  auto total_area = mass_properties->GetSurfaceArea();
+
+  Eigen::VectorXd areas(particles.size());
+  areas.setZero();
+
+  // compute the area assigned to each particle
+  for (int i = 0; i < particles.size(); ++i) {
+    //    areas[i] = total_area * counts[i] / poly_data->GetNumberOfPoints();
+    areas[i] = counts[i];
+  }
+
+  return areas;
+}
+
+//-----------------------------------------------------------------------------
+Eigen::VectorXd ParticleArea::compute_particle_triangle_areas(vtkSmartPointer<vtkPolyData> poly_data,
+                                                              std::vector<itk::Point<double>> particles) {
+  auto closest_particles = poly_data->GetPointData()->GetArray("closest_particle");
+
+  // for each cell
+  Eigen::VectorXd areas(particles.size());
+  areas.setZero();
+  for (int i = 0; i < poly_data->GetNumberOfCells(); ++i) {
+    // get the area of this cell
+    auto cell = poly_data->GetCell(i);
+    auto points = cell->GetPoints();
+    double p0[3], p1[3], p2[3];
+    points->GetPoint(0, p0);
+    points->GetPoint(1, p1);
+    points->GetPoint(2, p2);
+    auto area = vtkTriangle::TriangleArea(p0, p1, p2);
+  //    SW_TRACE(area);
+
+    // for each vertex of the cell, give 1/3 of the area to the particle
+    for (int j = 0; j < 3; ++j) {
+      auto vertex_id = cell->GetPointId(j);
+      auto particle_id = closest_particles->GetTuple1(vertex_id);
+      areas[particle_id] += area / 3.0;
+    }
+  }
+
+  return areas;
+}
+
 }  // namespace shapeworks

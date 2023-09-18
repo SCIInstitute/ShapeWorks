@@ -214,7 +214,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
 
   threads_ << thread;
 
-  // re-enable after 2 seconds
+  // re-enable after 1 second
   QTimer::singleShot(1000, this, [&]() { update_run_button(); });
 }
 

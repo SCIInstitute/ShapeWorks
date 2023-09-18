@@ -186,7 +186,7 @@ class AnalysisTool : public QWidget {
   void handle_network_analysis_complete();
 
   void show_difference_to_mean_clicked();
-  void show_particle_area_clicked();
+
 
   void group_analysis_combo_changed();
 

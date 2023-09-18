@@ -15,14 +15,16 @@ class ParticleAreaJob : public Job {
  public:
   ParticleAreaJob(QSharedPointer<Session> session);
   void run() override;
-  QString name() override;
+  QString name() override { return "Particle Normal Evaluation"; }
+
+  const Eigen::VectorXf& get_mean_areas() const { return mean_areas_; }
+  const Eigen::VectorXf& get_stddev_areas() const { return stddev_areas_; }
 
  Q_SIGNALS:
 
-  void result_ready(std::vector<bool> good_bad);
-
  private:
   QSharedPointer<Session> session_;
-
+  Eigen::VectorXf mean_areas_;
+  Eigen::VectorXf stddev_areas_;
 };
 }  // namespace shapeworks
