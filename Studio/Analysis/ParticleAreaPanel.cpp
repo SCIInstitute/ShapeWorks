@@ -41,6 +41,9 @@ ParticleAreaPanel::ParticleAreaPanel(QWidget* parent) : QWidget(parent), ui_(new
 
   connect(ui_->run_button, &QPushButton::clicked, this, &ParticleAreaPanel::run_clicked);
   connect(ui_->show_particle_area, &QPushButton::clicked, this, &ParticleAreaPanel::show_particle_area_clicked);
+
+  connect(ui_->mean_radio, &QRadioButton::clicked, this, &ParticleAreaPanel::display_option_changed);
+  connect(ui_->stddev_radio, &QRadioButton::clicked, this, &ParticleAreaPanel::display_option_changed);
 }
 //---------------------------------------------------------------------------
 ParticleAreaPanel::~ParticleAreaPanel() {}
@@ -63,11 +66,24 @@ bool ParticleAreaPanel::get_display_particle_area() const {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf ParticleAreaPanel::get_mean_areas() const {
+Eigen::VectorXf ParticleAreaPanel::get_computed_values() const {
   if (!job_) {
     return Eigen::VectorXf();
   }
-  return job_->get_mean_areas();
+  if (ui_->mean_radio->isChecked()) {
+    return job_->get_mean_areas();
+  } else {
+    return job_->get_stddev_areas();
+  }
+}
+
+//---------------------------------------------------------------------------
+std::string ParticleAreaPanel::get_computed_value_name() const {
+  if (ui_->mean_radio->isChecked()) {
+    return "Mean area";
+  } else {
+    return "Stddev of area";
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -101,6 +117,9 @@ void ParticleAreaPanel::run_clicked() {
 
 //---------------------------------------------------------------------------
 void ParticleAreaPanel::show_particle_area_clicked() { session_->trigger_reinsert_shapes(); }
+
+//---------------------------------------------------------------------------
+void ParticleAreaPanel::display_option_changed() { session_->trigger_reinsert_shapes(); }
 
 //---------------------------------------------------------------------------
 void ParticleAreaPanel::handle_job_progress(int progress) { ui_->progress->setValue(progress * 100); }
