@@ -50,9 +50,8 @@ void ParticleAreaJob::run() {
         ParticleArea::assign_vertex_particles(poly_data, points);
         auto colors = ParticleArea::colors_from_lut(lut);
         ParticleArea::assign_vertex_colors(poly_data, colors);
-
-        // auto areas = ParticleArea::compute_particle_areas(poly_data, points);
         auto areas = ParticleArea::compute_particle_triangle_areas(poly_data, points);
+        ParticleArea::assign_vertex_areas(poly_data, areas);
 
         // assign to matrix for shape s
         all_areas.col(s) = areas;

@@ -69,7 +69,7 @@ std::pair<double, double> EigenUtils::compute_mean_and_stddev(const Eigen::Matri
   double sum_squared_diff = (row.array() - mean).square().sum();
 
   // Calculate the standard deviation
-  double stddev = std::sqrt(sum_squared_diff / (matrix.cols() - 1));
+  double stddev = std::sqrt(sum_squared_diff / matrix.cols());
 
   return std::make_pair(mean, stddev);
 }

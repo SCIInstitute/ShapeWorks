@@ -38,12 +38,15 @@ class ParticleAreaPanel : public QWidget {
 
   bool get_display_particle_area() const;
 
-  Eigen::VectorXf get_mean_areas() const;
+  Eigen::VectorXf get_computed_values() const;
+  std::string get_computed_value_name() const;
 
  public Q_SLOTS:
 
   void run_clicked();
   void show_particle_area_clicked();
+
+  void display_option_changed();
 
   void handle_job_progress(int progress);
   void handle_job_complete();

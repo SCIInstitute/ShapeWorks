@@ -1062,9 +1062,9 @@ ShapeHandle AnalysisTool::get_mean_shape() {
   }
 
   if (particle_area_panel_->get_display_particle_area()) {
-    SW_LOG("Setting mean areas");
-    shape->set_point_features("mean_areas", particle_area_panel_->get_mean_areas());
-    shape->set_override_feature("mean_areas");
+    shape->set_point_features(particle_area_panel_->get_computed_value_name(),
+                              particle_area_panel_->get_computed_values());
+    shape->set_override_feature(particle_area_panel_->get_computed_value_name());
   }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
@@ -1166,6 +1166,15 @@ std::string AnalysisTool::get_display_feature_map() {
       } else {
         return "spm_values";
       }
+    }
+  }
+
+  if (particle_area_panel_->get_display_particle_area()) {
+    if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C ||
+        get_analysis_mode() == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
+      return "particle_area";
+    } else {
+      return particle_area_panel_->get_computed_value_name();
     }
   }
 

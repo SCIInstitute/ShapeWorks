@@ -1,6 +1,7 @@
 #include "ParticleArea.h"
 
 #include <Logging.h>
+#include <vtkFloatArray.h>
 #include <vtkLookupTable.h>
 #include <vtkMassProperties.h>
 #include <vtkPointData.h>
@@ -54,7 +55,6 @@ void ParticleArea::assign_vertex_colors(vtkSmartPointer<vtkPolyData> poly_data, 
   colors_array->SetName("colors");
   colors_array->SetNumberOfTuples(poly_data->GetNumberOfPoints());
   poly_data->GetPointData()->AddArray(colors_array);
-
   auto closest_particles = poly_data->GetPointData()->GetArray("closest_particle");
 
   // for each vertex
@@ -64,7 +64,26 @@ void ParticleArea::assign_vertex_colors(vtkSmartPointer<vtkPolyData> poly_data, 
     auto color = colors[particle_id];
     colors_array->SetTuple3(i, color.red(), color.green(), color.blue());
   }
-  poly_data->GetPointData()->SetActiveScalars("colors");
+}
+
+//-----------------------------------------------------------------------------
+void ParticleArea::assign_vertex_areas(vtkSmartPointer<vtkPolyData> poly_data, Eigen::VectorXd areas) {
+  SW_DEBUG("Assigning vertex areas");
+  // create rgb colors array
+  auto array = vtkSmartPointer<vtkFloatArray>::New();
+  array->SetNumberOfComponents(1);
+  array->SetName("particle_area");
+  array->SetNumberOfTuples(poly_data->GetNumberOfPoints());
+  poly_data->GetPointData()->AddArray(array);
+
+  auto closest_particles = poly_data->GetPointData()->GetArray("closest_particle");
+
+  // for each vertex
+  for (int i = 0; i < poly_data->GetNumberOfPoints(); ++i) {
+    // get the particle id from the "closest_point" array
+    auto particle_id = closest_particles->GetTuple1(i);
+    array->SetTuple1(i, areas[particle_id]);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -75,38 +94,6 @@ std::vector<QColor> ParticleArea::colors_from_lut(vtkSmartPointer<vtkLookupTable
     colors.push_back(QColor(color[0] * 255, color[1] * 255, color[2] * 255));
   }
   return colors;
-}
-
-//-----------------------------------------------------------------------------
-Eigen::VectorXd ParticleArea::compute_particle_areas(vtkSmartPointer<vtkPolyData> poly_data,
-                                                     std::vector<itk::Point<double>> particles) {
-  // The 'closest_particle' array should already be assigned and contains the particle id for each vertex
-  auto closest_particles = poly_data->GetPointData()->GetArray("closest_particle");
-
-  Eigen::VectorXd counts(particles.size());
-  counts.setZero();
-  // count how many vertices are assigned to each particle
-  for (int i = 0; i < poly_data->GetNumberOfPoints(); ++i) {
-    auto particle_id = closest_particles->GetTuple1(i);
-    counts[particle_id] += 1;
-  }
-
-  // get total surface area using vtkMassProperties
-  auto mass_properties = vtkSmartPointer<vtkMassProperties>::New();
-  mass_properties->SetInputData(poly_data);
-  mass_properties->Update();
-  auto total_area = mass_properties->GetSurfaceArea();
-
-  Eigen::VectorXd areas(particles.size());
-  areas.setZero();
-
-  // compute the area assigned to each particle
-  for (int i = 0; i < particles.size(); ++i) {
-    //    areas[i] = total_area * counts[i] / poly_data->GetNumberOfPoints();
-    areas[i] = counts[i];
-  }
-
-  return areas;
 }
 
 //-----------------------------------------------------------------------------
@@ -126,7 +113,6 @@ Eigen::VectorXd ParticleArea::compute_particle_triangle_areas(vtkSmartPointer<vt
     points->GetPoint(1, p1);
     points->GetPoint(2, p2);
     auto area = vtkTriangle::TriangleArea(p0, p1, p2);
-  //    SW_TRACE(area);
 
     // for each vertex of the cell, give 1/3 of the area to the particle
     for (int j = 0; j < 3; ++j) {
