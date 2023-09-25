@@ -315,6 +315,17 @@ bool Project::get_particles_present() const { return particles_present_; }
 bool Project::get_images_present() { return images_present_; }
 
 //---------------------------------------------------------------------------
+bool Project::get_fixed_subjects_present() {
+  // return if any subjects are fixed
+  for (auto& subject : subjects_) {
+    if (subject->is_fixed()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
 Parameters Project::get_parameters(const std::string& name, std::string domain_name) {
   Parameters params;
   if (parameters_.find(name) == parameters_.end()) {

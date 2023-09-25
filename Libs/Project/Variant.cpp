@@ -11,8 +11,13 @@ Variant::operator std::string() const { return str_; }
 
 //---------------------------------------------------------------------------
 Variant::operator bool() const {
-  // first try to read as the word 'true' or 'false', otherwise 0 or 1
+  // first try to read as the word 'yes', 'no', 'true' or 'false', otherwise 0 or 1
   std::string str_lower(str_);
+  if (str_ == "yes") {
+    return true;
+  } else if (str_ == "no") {
+    return false;
+  }
   std::transform(str_.begin(), str_.end(), str_lower.begin(), [](unsigned char c) { return std::tolower(c); });
   bool t = (valid_ && (std::istringstream(str_lower) >> std::boolalpha >> t)) ? t : false;
   if (!t) {

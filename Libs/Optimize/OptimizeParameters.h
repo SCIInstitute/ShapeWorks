@@ -2,6 +2,8 @@
 
 #include <Project/Project.h>
 
+#include <itkPoint.h>
+
 #include <functional>
 
 namespace shapeworks {
@@ -130,6 +132,8 @@ class OptimizeParameters {
 
  private:
   std::string get_output_prefix();
+
+  std::vector<std::vector<itk::Point<double>>> get_initial_points();
 
   Parameters params_;
   ProjectHandle project_;

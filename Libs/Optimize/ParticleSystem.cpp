@@ -41,7 +41,7 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
   m_Domains.resize(num);
   m_Transforms.resize(num);
   m_InverseTransforms.resize(num);
-  while (num >= m_PrefixTransforms.size()) {
+  while (num > m_PrefixTransforms.size()) {
     TransformType transform;
     transform.set_identity();
     m_PrefixTransforms.push_back(transform);
@@ -50,7 +50,7 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
   m_Positions.resize(num);
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
-  while (num >= this->m_DomainFlags.size()) {
+  while (num > this->m_DomainFlags.size()) {
     m_DomainFlags.push_back(false);
   }
   this->Modified();
@@ -132,17 +132,13 @@ void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType* N) {
   this->InvokeEvent(e);
 }
 
-const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d) {
+const ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d) {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
 
   // Potentially modifies position!
-  if (m_DomainFlags[d] == false) {
-    // debugg
-    // std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
+  if (m_DomainFlags[d] == false) {  // Not a fixed domain.  Fixed domains won't load the image
     const auto idx = m_IndexCounters[d];
     m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](idx), idx);
-    // debugg
-    // std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
     m_Neighborhoods[d]->AddPosition(m_Positions[d]->operator[](idx), idx);
   }
 
@@ -161,19 +157,12 @@ const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const Poin
   return m_Positions[d]->operator[](m_IndexCounters[d] - 1);
 }
 
-const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p, unsigned long int k,
-                                                                      unsigned int d) {
+const ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p, unsigned long int k, unsigned int d) {
   if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false) {
     // Potentially modifies position!
     if (m_DomainFlags[d] == false) {
       m_Positions[d]->operator[](k) = p;
-
-      // Debuggg
-      // std::cout << "SynchronizePositions Apply constraints " << m_Positions[d]->operator[](k);
       m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](k), k);
-      // Debuggg
-      // std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
-
       m_Neighborhoods[d]->SetPosition(m_Positions[d]->operator[](k), k);
     }
   }
@@ -190,7 +179,7 @@ const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const Poin
 
 void ParticleSystem::AddPositionList(const std::vector<PointType>& p, unsigned int d) {
   // Traverse the list and add each point to the domain.
-  for (typename std::vector<PointType>::const_iterator it = p.begin(); it != p.end(); it++) {
+  for (auto it = p.begin(); it != p.end(); it++) {
     this->AddPosition(*it, d);
   }
 }
@@ -241,11 +230,10 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
 
   // Only runs if domains were successfully retrieved
   if (lists.size() > 0) {
-
     // Initialize augmentend lagrangian variables (mus and possibly lambdas)
     for (size_t domain = dom_to_process; domain < num_doms; domain += domains_per_shape) {
       size_t num_particles = lists[0].size();
-      std::vector<double> zeros(num_particles*2, 0.0);
+      std::vector<double> zeros(num_particles * 2, 0.0);
       this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(zeros);
     }
 

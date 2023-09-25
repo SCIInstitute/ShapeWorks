@@ -144,6 +144,8 @@ void OptimizeTool::handle_optimize_complete() {
   telemetry_.record_event("optimize", {{"duration_seconds", duration},
                                        {"num_particles", QVariant::fromValue(session_->get_num_particles())}});
 
+  session_->save_project(session_->get_filename());
+
   Q_EMIT optimize_complete();
   update_run_button();
 }

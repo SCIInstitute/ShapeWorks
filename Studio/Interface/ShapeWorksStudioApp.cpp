@@ -1216,9 +1216,11 @@ void ShapeWorksStudioApp::handle_reconstruction_complete() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_start() {
-  // clear out old points
-  session_->clear_particles();
-  ui_->action_analysis_mode->setEnabled(false);
+  // clear out old points (unless fixed subjects)
+  if (!session_->get_project()->get_fixed_subjects_present()) {
+    session_->clear_particles();
+    ui_->action_analysis_mode->setEnabled(false);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -2035,7 +2037,18 @@ bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
 }
 
 //---------------------------------------------------------------------------
-std::string ShapeWorksStudioApp::get_feature_map() { return session_->parameters().get("feature_map", ""); }
+std::string ShapeWorksStudioApp::get_feature_map() {
+  std::string feature_map = session_->parameters().get("feature_map", "");
+
+  // confirm that this is a valid feature map
+  auto feature_maps = session_->get_project()->get_feature_names();
+  for (const std::string& feature : feature_maps) {
+    if (feature_map == feature) {
+      return feature_map;
+    }
+  }
+  return "";
+}
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::get_feature_uniform_scale() {

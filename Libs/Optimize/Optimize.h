@@ -19,10 +19,8 @@
 #include <Project/Project.h>
 
 #include "Libs/Optimize/Domain/DomainType.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
 #include "Libs/Optimize/Utils/OptimizationVisualizer.h"
-#include "ParticleSystem.h"
 #include "ProcrustesRegistration.h"
 #include "Sampler.h"
 
@@ -66,11 +64,13 @@ class Optimize {
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
 
-  bool SetUpOptimize(ProjectHandle projectFile);
+  //! Set up this Optimize object using a ShapeWorks project
+  bool SetUpOptimize(ProjectHandle project);
 
-  //! Set the Projects
+  //! Set the Project object
   void SetProject(std::shared_ptr<Project> project);
 
+  //! Set an iteration callback function to be called after each iteration
   void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
 
   //! Abort optimization
@@ -226,10 +226,11 @@ class Optimize {
   //! Set starting point files (TODO: details)
   void SetPointFiles(const std::vector<std::string>& point_files);
 
+  //! Set initial particle positions (e.g. for fixed subjects)
+  void SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points);
+
   //! Get number of shapes
   int GetNumShapes();
-  //! Set the mesh files (TODO: details)
-  void SetMeshFiles(const std::vector<std::string>& mesh_files);
   //! Set attribute scales (TODO: details)
   void SetAttributeScales(const std::vector<double>& scales);
 
@@ -239,7 +240,7 @@ class Optimize {
   //! Set Particle Flags (TODO: details)
   void SetParticleFlags(std::vector<int> flags);
   //! Set Domain Flags (TODO: details)
-  void SetDomainFlags(std::vector<int> flags);
+  void SetFixedDomains(std::vector<int> flags);
 
   //! Shared boundary settings
   void SetSharedBoundaryEnabled(bool enabled);
