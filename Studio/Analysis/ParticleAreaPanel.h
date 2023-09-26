@@ -59,6 +59,8 @@ class ParticleAreaPanel : public QWidget {
 
   void update_run_button();
 
+  void update_graphs();
+
   QSharedPointer<Session> session_;
   QSharedPointer<ParticleAreaJob> job_;
 

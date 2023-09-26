@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>339</width>
-    <height>232</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -230,7 +230,31 @@ QWidget#panel {
            </layout>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="show_particle_area">
+           <property name="text">
+            <string>Show Particle Area</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
          <item row="4" column="0" colspan="2">
+          <widget class="QPushButton" name="run_button">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>Run</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="2">
           <widget class="QProgressBar" name="progress">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -243,27 +267,19 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="show_particle_area">
-           <property name="text">
-            <string>Show Particle Area</string>
+         <item row="3" column="0">
+          <widget class="JKQTPlotter" name="boxplot" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QPushButton" name="run_button">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string>Run</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>300</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -275,6 +291,14 @@ QWidget#panel {
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>JKQTPlotter</class>
+   <extends>QWidget</extends>
+   <header>jkqtplotter/jkqtplotter.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>
  </resources>

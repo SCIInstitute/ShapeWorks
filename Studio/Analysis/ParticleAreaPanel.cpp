@@ -18,7 +18,8 @@
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>
-#include <jkqtplotter/graphs/jkqtpscatter.h>
+#include <jkqtplotter/graphs/jkqtpboxplot.h>
+#include <jkqtplotter/graphs/jkqtpstatisticsadaptors.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_ParticleAreaPanel.h>
 
@@ -44,6 +45,8 @@ ParticleAreaPanel::ParticleAreaPanel(QWidget* parent) : QWidget(parent), ui_(new
 
   connect(ui_->mean_radio, &QRadioButton::clicked, this, &ParticleAreaPanel::display_option_changed);
   connect(ui_->stddev_radio, &QRadioButton::clicked, this, &ParticleAreaPanel::display_option_changed);
+
+  update_graphs();
 }
 //---------------------------------------------------------------------------
 ParticleAreaPanel::~ParticleAreaPanel() {}
@@ -116,10 +119,16 @@ void ParticleAreaPanel::run_clicked() {
 }
 
 //---------------------------------------------------------------------------
-void ParticleAreaPanel::show_particle_area_clicked() { session_->trigger_reinsert_shapes(); }
+void ParticleAreaPanel::show_particle_area_clicked() {
+  update_graphs();
+  session_->trigger_reinsert_shapes();
+}
 
 //---------------------------------------------------------------------------
-void ParticleAreaPanel::display_option_changed() { session_->trigger_reinsert_shapes(); }
+void ParticleAreaPanel::display_option_changed() {
+  update_graphs();
+  session_->trigger_reinsert_shapes();
+}
 
 //---------------------------------------------------------------------------
 void ParticleAreaPanel::handle_job_progress(int progress) { ui_->progress->setValue(progress * 100); }
@@ -134,9 +143,81 @@ void ParticleAreaPanel::handle_job_complete() {
     ui_->show_particle_area->setEnabled(true);
     ui_->show_particle_area->setChecked(true);
     session_->trigger_reinsert_shapes();
+
+    update_graphs();
   }
 }
 
+//---------------------------------------------------------------------------
+void ParticleAreaPanel::update_graphs() {
+  if (!job_) {
+    ui_->boxplot->hide();
+    return;
+  }
+  ui_->boxplot->show();
+
+  auto plot = ui_->boxplot->getPlotter();
+
+  plot->clearGraphs();
+
+  Eigen::VectorXf numbers;
+  QString x_label = QString("Mean area");
+  if (ui_->mean_radio->isChecked()) {
+    numbers = job_->get_mean_areas();
+  } else {
+    x_label = QString("Stddev of area");
+    numbers = job_->get_stddev_areas();
+  }
+
+  QVector<double> values;
+  for (int i = 0; i < numbers.size(); ++i) {
+    // values.push_back(numbers[i]);
+
+    // fill with random data
+    values.push_back((double)rand() / RAND_MAX);
+  }
+
+  // fill in datastore
+  JKQTPDatastore* ds = plot->getDatastore();
+  ds->clear();
+  size_t column_x = ds->addCopiedColumn(values, x_label);
+
+  // jkqtpstatAddVBoxplotAndOutliers(JKQTBasePlotter* plotter, InputIt first, InputIt last, double boxposX, double
+  // quantile1Spec=0.25, double quantile2Spec=0.75, double minimumQuantile=0.03, double maximumQuantile=0.97, const
+  // QString& outliercolumnBaseName=QString("boxplot"), JKQTPStat5NumberStatistics* statOutput=nullptr) {
+
+  JKQTPStat5NumberStatistics stat =
+      jkqtpstat5NumberStatistics(ds->begin(column_x), ds->end(column_x), 0.25, 0.75, 0.03, 0.97);
+
+  std::cerr << "median: " << stat.median << "\n";
+  std::cerr << "lower quartile: " << stat.quantile1 << "\n";
+  std::cerr << "upper quartile: " << stat.quantile2 << "\n";
+  std::cerr << "minimum: " << stat.minimum << "\n";
+  std::cerr << "maximum: " << stat.maximum << "\n";
+  for (auto& outlier : stat.outliers) {
+    std::cerr << "outlier: " << outlier << "\n";
+  }
+
+  auto pair = jkqtpstatAddVBoxplotAndOutliers(plot, ds->begin(column_x), ds->end(column_x), 0, 0.25, 0.75, 0.03, 0.97,
+                                              "outliers");
+
+  auto graph = pair.first;
+  auto outliers = pair.second;
+
+  // set color to blue
+  graph->setColor(Qt::blue);
+  outliers->setColor(Qt::blue);
+
+  plot->zoomToFit();
+
+  SW_LOG("draw box plot");
+
+  // graph->setXColumn(column_x);
+  // plot->addGraph(graph);
+  // plot->setXLabel(x_label);
+
+  //    jkqtpstatAddVBoxplotsAndOutliers(plot, )
+}
 //---------------------------------------------------------------------------
 void ParticleAreaPanel::update_run_button() {
   ui_->run_button->setEnabled(true);
