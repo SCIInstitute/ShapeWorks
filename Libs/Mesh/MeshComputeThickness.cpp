@@ -15,6 +15,9 @@ using GradientImageType = itk::Image<VectorPixelType, 3>;
 using GradientFilterType = itk::GradientImageFilter<Image::ImageType>;
 using GradientInterpolatorType = itk::VectorLinearInterpolateImageFunction<GradientImageType, double>;
 
+// mutex for cell locator (not thread safe)
+static std::mutex cell_mutex;
+
 //---------------------------------------------------------------------------
 static double compute_average_edge_length(vtkSmartPointer<vtkPolyData> poly_data) {
   vtkPoints* points = poly_data->GetPoints();
@@ -150,15 +153,18 @@ static double get_distance_to_opposite_side(Mesh& mesh, int point_id) {
     ray_end[i] = ray_start[i] - normal[i] * 100.0;
   }
 
-  auto cellLocator = mesh.getCellLocator();
-
+  int result = 0;
   // Find the intersection point with the mesh
   double intersectionPoint[3];
   double t;
   int subId;
   double pcoords[3];
-  int result = cellLocator->IntersectWithLine(ray_start, ray_end, 0.0, t, intersectionPoint, pcoords, subId);
-
+  {
+    // lock mutex (IntersectWithLine is not thread safe)
+    std::lock_guard<std::mutex> lock(cell_mutex);
+    auto cellLocator = mesh.getCellLocator();
+    result = cellLocator->IntersectWithLine(ray_start, ray_end, 0.0, t, intersectionPoint, pcoords, subId);
+  }
   if (result == 0) {
     // return large number if no intersection found
     return std::numeric_limits<double>::max();
@@ -409,10 +415,10 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
   std::mutex mutex;
 
   unsigned long num_points = mesh.numPoints();
+
   // parallel loop over all points using TBB
   tbb::parallel_for(tbb::blocked_range<size_t>{0, num_points}, [&](const tbb::blocked_range<size_t>& r) {
     for (size_t i = r.begin(); i < r.end(); ++i) {
-      //  for (int i = 0; i < mesh.numPoints(); i++) {
       Point3 point;
       poly_data->GetPoint(i, point.GetDataPointer());
 
