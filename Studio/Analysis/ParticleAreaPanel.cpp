@@ -170,7 +170,8 @@ void ParticleAreaPanel::update_graphs() {
   }
 
   QVector<double> values;
-  for (int i = 0; i < numbers.size(); ++i) {
+//  for (int i = 0; i < numbers.size(); ++i) {
+    for (int i = 0; i < 100000; ++i) {
     // values.push_back(numbers[i]);
 
     // fill with random data
