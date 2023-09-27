@@ -1,13 +1,17 @@
 #include "ParticleArea.h"
 
 #include <Logging.h>
+#include <Mesh/Mesh.h>
 #include <vtkFloatArray.h>
 #include <vtkLookupTable.h>
 #include <vtkMassProperties.h>
 #include <vtkPointData.h>
 #include <vtkTriangle.h>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+// geometry central
+#include <geometrycentral/surface/heat_method_distance.h>
+#include <geometrycentral/surface/surface_mesh.h>
+#include <geometrycentral/surface/surface_mesh_factories.h>
 
 namespace shapeworks {
 
@@ -16,7 +20,7 @@ void ParticleArea::assign_vertex_particles(vtkSmartPointer<vtkPolyData> poly_dat
                                            std::vector<itk::Point<double>> particles) {
   SW_DEBUG("Assigning vertex particles");
   // geodesics enabled mesh
-  VtkMeshWrapper mesh(poly_data, true);
+  Mesh mesh(poly_data);
 
   // create "closest_particle" array
   auto closest_particle_array = vtkSmartPointer<vtkIntArray>::New();
@@ -25,24 +29,49 @@ void ParticleArea::assign_vertex_particles(vtkSmartPointer<vtkPolyData> poly_dat
   closest_particle_array->SetNumberOfTuples(poly_data->GetNumberOfPoints());
   poly_data->GetPointData()->AddArray(closest_particle_array);
 
-  // for each vertex
-  for (int i = 0; i < poly_data->GetNumberOfPoints(); ++i) {
-    // get the closest particle
-    auto point = poly_data->GetPoint(i);
+  // set up geometry central for geodesic distances
 
-    // iterate over each particle to find the min
-    int min_id = 0;
-    double min_distance = std::numeric_limits<double>::max();
-    for (int j = 0; j < particles.size(); ++j) {
-      // get the geodesic distance
-      auto distance = mesh.ComputeDistance(point, -1, particles[j], -1);
-      if (distance < min_distance) {
-        min_distance = distance;
-        min_id = j;
+  // Extract mesh vertices and faces
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  vtkSmartPointer<vtkPoints> points;
+  points = mesh.getIGLMesh(V, F);
+
+  using namespace geometrycentral::surface;
+  std::unique_ptr<SurfaceMesh> gcmesh;
+  std::unique_ptr<VertexPositionGeometry> gcgeometry;
+  std::tie(gcmesh, gcgeometry) = makeSurfaceMeshAndGeometry(V, F);
+  HeatMethodDistanceSolver heat_solver(*gcgeometry, 1.0, true);
+
+  std::vector<double> min_dists(poly_data->GetNumberOfPoints(), std::numeric_limits<double>::max());
+
+  for (int i = 0; i < particles.size(); ++i) {
+    auto point = particles[i];
+    // construct SurfacePoint from face and barycentric coordinates
+    auto face = mesh.getClosestFace(point);
+    Eigen::Vector3d pt;
+    pt[0] = point[0];
+    pt[1] = point[1];
+    pt[2] = point[2];
+    auto bary = mesh.computeBarycentricCoordinates(pt, face);
+    Face f = gcmesh->face(face);
+    geometrycentral::Vector3 bary_vec;
+    bary_vec[0] = bary[0];
+    bary_vec[1] = bary[1];
+    bary_vec[2] = bary[2];
+
+    auto targetP = SurfacePoint(f, bary_vec);
+
+    VertexData<double> distToSource = heat_solver.computeDistance(targetP);
+
+    for (int j = 0; j < poly_data->GetNumberOfPoints(); j++) {
+      auto dist = distToSource[gcmesh->vertex(j)];
+      if (dist < min_dists[j]) {
+        min_dists[j] = dist;
+        // assign the particle id
+        closest_particle_array->SetTuple1(j, i);
       }
     }
-    // assign the particle id
-    closest_particle_array->SetTuple1(i, min_id);
   }
 }
 
