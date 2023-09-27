@@ -162,12 +162,12 @@ void ParticleAreaPanel::update_graphs() {
 
   Eigen::VectorXf numbers;
   QString x_label = QString("Mean area");
-  QString title = "Mean particle area";
+  QString title = "Mean particle area percent";
   if (ui_->mean_radio->isChecked()) {
     numbers = job_->get_mean_areas();
   } else {
-    title = "Stddev of particle area";
-    x_label = QString("Stddev of area");
+    title = "Stddev of particle area percent";
+    x_label = QString("Stddev of area percent");
     numbers = job_->get_stddev_areas();
   }
 
@@ -180,18 +180,6 @@ void ParticleAreaPanel::update_graphs() {
   JKQTPDatastore* ds = plot->getDatastore();
   ds->clear();
   size_t column_x = ds->addCopiedColumn(values, x_label);
-
-  JKQTPStat5NumberStatistics stat =
-      jkqtpstat5NumberStatistics(ds->begin(column_x), ds->end(column_x), 0.25, 0.75, 0.03, 0.97);
-
-  std::cerr << "median: " << stat.median << "\n";
-  std::cerr << "lower quartile: " << stat.quantile1 << "\n";
-  std::cerr << "upper quartile: " << stat.quantile2 << "\n";
-  std::cerr << "minimum: " << stat.minimum << "\n";
-  std::cerr << "maximum: " << stat.maximum << "\n";
-  for (auto& outlier : stat.outliers) {
-    std::cerr << "outlier: " << outlier << "\n";
-  }
 
   auto pair = jkqtpstatAddVBoxplotAndOutliers(plot->getPlotter(), ds->begin(column_x), ds->end(column_x), 0, 0.25, 0.75,
                                               0.03, 0.97, "outliers");

@@ -151,6 +151,12 @@ Eigen::VectorXd ParticleArea::compute_particle_triangle_areas(vtkSmartPointer<vt
     }
   }
 
+  // ideally each particle has 1/num_particles of the total area
+  // scale based on this value
+  int num_particles = particles.size();
+  double total_area = areas.sum();
+  areas *= num_particles / total_area * 100;
+
   return areas;
 }
 
