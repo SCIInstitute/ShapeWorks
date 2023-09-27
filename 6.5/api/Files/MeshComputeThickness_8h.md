@@ -27,7 +27,8 @@ title: Libs/Mesh/MeshComputeThickness.h
 
 namespace shapeworks::mesh {
 
-void compute_thickness(Mesh &mesh, Image &image, Image *dt, double max_dist, std::string distance_mesh);
+void compute_thickness(Mesh &mesh, Image &image, Image *dt, double max_dist, double median_radius,
+                       std::string distance_mesh);
 
 }  // namespace shapeworks::mesh
 ```
@@ -35,4 +36,4 @@ void compute_thickness(Mesh &mesh, Image &image, Image *dt, double max_dist, std
 
 -------------------------------
 
-Updated on 2023-09-04 at 06:51:33 +0000
+Updated on 2023-09-27 at 04:30:59 +0000

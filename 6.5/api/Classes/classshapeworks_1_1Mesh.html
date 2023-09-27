@@ -2973,6 +2973,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-getcelllocator" class="md-nav__link">
+    function getCellLocator
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getsupportedtypes" class="md-nav__link">
     function getSupportedTypes
   </a>
@@ -3260,7 +3267,7 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-computethickness">computeThickness</a></strong>(<a href="classshapeworks_1_1Image.html">Image</a> &amp; image, <a href="classshapeworks_1_1Image.html">Image</a> * dt =nullptr, double max_dist =10000, std::string distance_mesh ="")<br>assign cortical thickness values from mesh points</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-computethickness">computeThickness</a></strong>(<a href="classshapeworks_1_1Image.html">Image</a> &amp; image, <a href="classshapeworks_1_1Image.html">Image</a> * dt =nullptr, double max_dist =10000, double median_radius =5.0, std::string distance_mesh ="")<br>assign cortical thickness values from mesh points</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
@@ -3361,6 +3368,10 @@
 <tr>
 <td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-clipbyfield">clipByField</a></strong>(const std::string &amp; name, double value)<br>Clips the mesh according to a field value.</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkStaticCellLocator &gt;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getcelllocator">getCellLocator</a></strong>() const<br>Returns the cell locator.</td>
 </tr>
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
@@ -3798,6 +3809,7 @@
 <span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
 <span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">median_radius</span><span class="w"> </span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">distance_mesh</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -3952,6 +3964,10 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Clips the mesh according to a field value. </p>
+<h3 id="function-getcelllocator">function getCellLocator</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkStaticCellLocator</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getCellLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Returns the cell locator. </p>
 <h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span>
 </code></pre></div>
@@ -3963,7 +3979,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-04 at 06:51:33 +0000</p>
+<p>Updated on 2023-09-27 at 04:30:59 +0000</p>
 
               
             </article>

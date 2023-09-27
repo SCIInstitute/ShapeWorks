@@ -1285,6 +1285,8 @@ shapeworks  compute-thickness [args]...
 
 **--max_dist=DOUBLE:** Maximum distance to determine thickness
 
+**--median_radius=DOUBLE:**  Median radius for smoothing, multiplier of average edge length
+
 **--distance_mesh=STRING:**  Path to write distance mesh.  
   
 <a href="#top">Back to Top</a>

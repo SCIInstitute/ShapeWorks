@@ -76,7 +76,7 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applySubdivisionFilter](../Classes/classshapeworks_1_1Mesh.md#function-applysubdivisionfilter)**(const SubdivisionType type =Butterfly, int subdivision =1)<br>applies subdivision filter (butterfly (default) or loop)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toImage](../Classes/classshapeworks_1_1Mesh.md#function-toimage)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), Point3 spacing =Point3({1., 1., 1.})) const<br>rasterizes specified region to create binary image of desired dims (default: unit spacing)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toDistanceTransform](../Classes/classshapeworks_1_1Mesh.md#function-todistancetransform)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), const Point3 spacing =Point3({1., 1., 1.}), const Dims padding =Dims({1, 1, 1})) const<br>converts specified region to distance transform image (default: unit spacing) with (logical) padding  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeThickness](../Classes/classshapeworks_1_1Mesh.md#function-computethickness)**([Image](../Classes/classshapeworks_1_1Image.md) & image, [Image](../Classes/classshapeworks_1_1Image.md) * dt =nullptr, double max_dist =10000, std::string distance_mesh ="")<br>assign cortical thickness values from mesh points  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeThickness](../Classes/classshapeworks_1_1Mesh.md#function-computethickness)**([Image](../Classes/classshapeworks_1_1Image.md) & image, [Image](../Classes/classshapeworks_1_1Image.md) * dt =nullptr, double max_dist =10000, double median_radius =5.0, std::string distance_mesh ="")<br>assign cortical thickness values from mesh points  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeLandmarkGeodesics](../Classes/classshapeworks_1_1Mesh.md#function-computelandmarkgeodesics)**(const std::vector< Point3 > & landmarks)<br>compute geodesic distances to landmarks and assign as fields  |
 | Point3 | **[center](../Classes/classshapeworks_1_1Mesh.md#function-center)**() const<br>center of mesh  |
 | Point3 | **[centerOfMass](../Classes/classshapeworks_1_1Mesh.md#function-centerofmass)**() const<br>center of mass of mesh  |
@@ -102,6 +102,7 @@ title: shapeworks::Mesh
 | Eigen::Vector3d | **[getFFCGradient](../Classes/classshapeworks_1_1Mesh.md#function-getffcgradient)**(Eigen::Vector3d query) const<br>Gets gradients for FFCs.  |
 | MeshPoints | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
 | vtkSmartPointer< vtkPolyData > | **[clipByField](../Classes/classshapeworks_1_1Mesh.md#function-clipbyfield)**(const std::string & name, double value)<br>Clips the mesh according to a field value.  |
+| vtkSmartPointer< vtkStaticCellLocator > | **[getCellLocator](../Classes/classshapeworks_1_1Mesh.md#function-getcelllocator)**() const<br>Returns the cell locator.  |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Mesh.md#function-getsupportedtypes)**()<br>Return supported file types.  |
 
 ## Friends
@@ -663,6 +664,7 @@ Mesh & computeThickness(
     Image & image,
     Image * dt =nullptr,
     double max_dist =10000,
+    double median_radius =5.0,
     std::string distance_mesh =""
 )
 ```
@@ -919,6 +921,14 @@ vtkSmartPointer< vtkPolyData > clipByField(
 
 Clips the mesh according to a field value. 
 
+### function getCellLocator
+
+```cpp
+inline vtkSmartPointer< vtkStaticCellLocator > getCellLocator() const
+```
+
+Returns the cell locator. 
+
 ### function getSupportedTypes
 
 ```cpp
@@ -940,4 +950,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-09-04 at 06:51:33 +0000
+Updated on 2023-09-27 at 04:30:59 +0000
