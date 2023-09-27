@@ -156,36 +156,30 @@ void ParticleAreaPanel::update_graphs() {
   }
   ui_->boxplot->show();
 
-  auto plot = ui_->boxplot->getPlotter();
+  auto plot = ui_->boxplot;
 
   plot->clearGraphs();
 
   Eigen::VectorXf numbers;
   QString x_label = QString("Mean area");
+  QString title = "Mean particle area";
   if (ui_->mean_radio->isChecked()) {
     numbers = job_->get_mean_areas();
   } else {
+    title = "Stddev of particle area";
     x_label = QString("Stddev of area");
     numbers = job_->get_stddev_areas();
   }
 
   QVector<double> values;
-//  for (int i = 0; i < numbers.size(); ++i) {
-    for (int i = 0; i < 100000; ++i) {
-    // values.push_back(numbers[i]);
-
-    // fill with random data
-    values.push_back((double)rand() / RAND_MAX);
+  for (int i = 0; i < numbers.size(); ++i) {
+    values.push_back(numbers[i]);
   }
 
   // fill in datastore
   JKQTPDatastore* ds = plot->getDatastore();
   ds->clear();
   size_t column_x = ds->addCopiedColumn(values, x_label);
-
-  // jkqtpstatAddVBoxplotAndOutliers(JKQTBasePlotter* plotter, InputIt first, InputIt last, double boxposX, double
-  // quantile1Spec=0.25, double quantile2Spec=0.75, double minimumQuantile=0.03, double maximumQuantile=0.97, const
-  // QString& outliercolumnBaseName=QString("boxplot"), JKQTPStat5NumberStatistics* statOutput=nullptr) {
 
   JKQTPStat5NumberStatistics stat =
       jkqtpstat5NumberStatistics(ds->begin(column_x), ds->end(column_x), 0.25, 0.75, 0.03, 0.97);
@@ -199,8 +193,8 @@ void ParticleAreaPanel::update_graphs() {
     std::cerr << "outlier: " << outlier << "\n";
   }
 
-  auto pair = jkqtpstatAddVBoxplotAndOutliers(plot, ds->begin(column_x), ds->end(column_x), 0, 0.25, 0.75, 0.03, 0.97,
-                                              "outliers");
+  auto pair = jkqtpstatAddVBoxplotAndOutliers(plot->getPlotter(), ds->begin(column_x), ds->end(column_x), 0, 0.25, 0.75,
+                                              0.03, 0.97, "outliers");
 
   auto graph = pair.first;
   auto outliers = pair.second;
@@ -209,16 +203,20 @@ void ParticleAreaPanel::update_graphs() {
   graph->setColor(Qt::blue);
   outliers->setColor(Qt::blue);
 
+  plot->getPlotter()->setUseAntiAliasingForGraphs(true);
+  plot->getPlotter()->setUseAntiAliasingForSystem(true);
+  plot->getPlotter()->setUseAntiAliasingForText(true);
+  plot->getPlotter()->setPlotLabelFontSize(18);
+  plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
+  plot->getPlotter()->setDefaultTextSize(14);
+  plot->getPlotter()->setShowKey(false);
+
+  plot->clearAllMouseWheelActions();
+  plot->setMousePositionShown(false);
+  plot->setMinimumSize(250, 250);
   plot->zoomToFit();
-
-  SW_LOG("draw box plot");
-
-  // graph->setXColumn(column_x);
-  // plot->addGraph(graph);
-  // plot->setXLabel(x_label);
-
-  //    jkqtpstatAddVBoxplotsAndOutliers(plot, )
 }
+
 //---------------------------------------------------------------------------
 void ParticleAreaPanel::update_run_button() {
   ui_->run_button->setEnabled(true);
