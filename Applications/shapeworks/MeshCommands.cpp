@@ -1541,6 +1541,11 @@ void ComputeThickness::buildParser() {
       .type("double")
       .set_default(100000.0)
       .help("Maximum distance to determine thickness");
+  parser.add_option("--median_radius")
+      .action("store")
+      .type("double")
+      .set_default(5.0)
+      .help("Median radius for smoothing, multiplier of average edge length");
   parser.add_option("--distance_mesh")
       .action("store")
       .type("string")
@@ -1565,15 +1570,17 @@ bool ComputeThickness::execute(const optparse::Values &options, SharedCommandDat
 
   double max_dist = static_cast<double>(options.get("max_dist"));
 
+  double median_radius = static_cast<double>(options.get("median_radius"));
+
   std::string dt_filename = static_cast<std::string>(options.get("distance_transform"));
 
   std::string distance_mesh_filename = static_cast<std::string>(options.get("distance_mesh"));
 
   if (dt_filename == "") {
-    sharedData.mesh->computeThickness(img, nullptr, max_dist, distance_mesh_filename);
+    sharedData.mesh->computeThickness(img, nullptr, max_dist, median_radius, distance_mesh_filename);
   } else {
     Image dt(dt_filename);
-    sharedData.mesh->computeThickness(img, &dt, max_dist, distance_mesh_filename);
+    sharedData.mesh->computeThickness(img, &dt, max_dist, median_radius, distance_mesh_filename);
   }
 
   return sharedData.validMesh();
