@@ -282,6 +282,13 @@ class Mesh {
     return cellLocator;
   }
 
+  int getClosestFace(const Point3& point) const;
+
+  /// Computes baricentric coordinates given a query point and a face number
+  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
+      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
+
  private:
   friend struct SharedCommandData;
   Mesh()
@@ -310,9 +317,6 @@ class Mesh {
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
-  /// Computes baricentric coordinates given a query point and a face number
-  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
-      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 };
 
 /// stream insertion operators for Mesh

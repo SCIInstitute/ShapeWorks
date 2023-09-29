@@ -20,6 +20,8 @@
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
 
+#include "ParticleAreaPanel.h"
+
 namespace shapeworks {
 
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
@@ -32,6 +34,9 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
+
+  particle_area_panel_ = new ParticleAreaPanel(this);
+  layout()->addWidget(particle_area_panel_);
 
   auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
   layout()->addItem(spacer);
@@ -222,6 +227,8 @@ AnalysisTool::~AnalysisTool() {}
 //---------------------------------------------------------------------------
 void AnalysisTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+  particle_area_panel_->set_session(session);
+
   // reset to original
   ui_->mesh_warping_radio_button->setChecked(true);
   ui_->difference_button->setChecked(false);
@@ -445,7 +452,7 @@ bool AnalysisTool::compute_stats() {
   bool flag_get_num_part = false;
   for (auto& shape : session_->get_shapes()) {
     if (shape->get_global_correspondence_points().size() == 0) {
-      continue; // skip any that don't have particles
+      continue;  // skip any that don't have particles
     }
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
@@ -967,6 +974,7 @@ void AnalysisTool::reset_stats() {
   ui_->group_analysis_combo->setCurrentIndex(0);
   group_analysis_combo_changed();
 
+  particle_area_panel_->reset();
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
@@ -1051,6 +1059,12 @@ ShapeHandle AnalysisTool::get_mean_shape() {
         shape->set_override_feature("spm_values");
       }
     }
+  }
+
+  if (particle_area_panel_->get_display_particle_area()) {
+    shape->set_point_features(particle_area_panel_->get_computed_value_name(),
+                              particle_area_panel_->get_computed_values());
+    shape->set_override_feature(particle_area_panel_->get_computed_value_name());
   }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
@@ -1152,6 +1166,15 @@ std::string AnalysisTool::get_display_feature_map() {
       } else {
         return "spm_values";
       }
+    }
+  }
+
+  if (particle_area_panel_->get_display_particle_area()) {
+    if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C ||
+        get_analysis_mode() == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
+      return "particle_area";
+    } else {
+      return particle_area_panel_->get_computed_value_name();
     }
   }
 

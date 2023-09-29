@@ -37,6 +37,8 @@
 
 #include "ExternalLibs/tinyxml/tinyxml.h"
 
+#include <vtkLookupTable.h>
+
 namespace shapeworks {
 
 const std::string Session::DATA_C("data");

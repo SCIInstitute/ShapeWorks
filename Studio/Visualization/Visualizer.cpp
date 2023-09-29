@@ -314,6 +314,7 @@ void Visualizer::update_lut() {
   }
 
   glyph_lut_->Modified();
+  session_->set_glyph_lut(glyph_lut_);
   lightbox_->set_glyph_lut(glyph_lut_);
 }
 
