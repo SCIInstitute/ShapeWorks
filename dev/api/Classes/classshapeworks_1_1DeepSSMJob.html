@@ -2561,11 +2561,11 @@
 </tr>
 <tr>
 <td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-run">run</a></strong>() override</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-run">run</a></strong>() override<br>run the job</td>
 </tr>
 <tr>
 <td>virtual QString</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-name">name</a></strong>() override</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-name">name</a></strong>() override<br>get the name of the job</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2628,15 +2628,35 @@
 </tr>
 <tr>
 <td>virtual QString</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-get-completion-message">get_completion_message</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-get-completion-message">get_completion_message</a></strong>()<br>get a message to display when the job is complete</td>
+</tr>
+<tr>
+<td>virtual QString</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-get-abort-message">get_abort_message</a></strong>()<br>get a message to display when the job is aborted</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-start-timer">start_timer</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-start-timer">start_timer</a></strong>()<br>start the timer</td>
 </tr>
 <tr>
 <td>qint64</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-timer-elapsed">timer_elapsed</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-timer-elapsed">timer_elapsed</a></strong>()<br>how much time has elapsed since the timer was started</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-set-complete">set_complete</a></strong>(bool complete)<br>set the job as complete</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-is-complete">is_complete</a></strong>() const<br>is the job complete?</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-abort">abort</a></strong>()<br>abort the job</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-is-aborted">is_aborted</a></strong>() const<br>was the job aborted?</td>
 </tr>
 </tbody>
 </table>
@@ -2708,10 +2728,12 @@
 <h3 id="function-run">function run</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
+<p>run the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-run">shapeworks::Job::run</a></p>
 <h3 id="function-name">function name</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
+<p>get the name of the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-name">shapeworks::Job::name</a></p>
 <h3 id="function-run_augmentation">function run_augmentation</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_augmentation</span><span class="p">()</span>
@@ -2734,7 +2756,7 @@
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-27 at 04:30:57 +0000</p>
+<p>Updated on 2023-09-29 at 06:24:11 +0000</p>
 
               
             </article>

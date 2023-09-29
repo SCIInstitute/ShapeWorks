@@ -2468,6 +2468,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">GroupPvalueJob</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NetworkAnalysisJob</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">StatsGroupLDAJob</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleAreaPanel</span><span class="p">;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">AnalysisTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
@@ -2621,8 +2622,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_difference_to_mean_clicked</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">group_analysis_combo_changed</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">group_analysis_combo_changed</span><span class="p">();</span>
 
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 
@@ -2705,11 +2706,12 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_group_change_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">current_alignment_</span><span class="p">{</span><span class="n">AlignmentType</span><span class="o">::</span><span class="n">Local</span><span class="p">};</span>
+<span class="w">  </span><span class="n">ParticleAreaPanel</span><span class="o">*</span><span class="w"> </span><span class="n">particle_area_panel_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-27 at 04:30:59 +0000</p>
+<p>Updated on 2023-09-29 at 06:24:12 +0000</p>
 
               
             </article>

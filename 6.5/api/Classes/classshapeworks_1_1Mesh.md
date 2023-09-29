@@ -103,6 +103,8 @@ title: shapeworks::Mesh
 | MeshPoints | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
 | vtkSmartPointer< vtkPolyData > | **[clipByField](../Classes/classshapeworks_1_1Mesh.md#function-clipbyfield)**(const std::string & name, double value)<br>Clips the mesh according to a field value.  |
 | vtkSmartPointer< vtkStaticCellLocator > | **[getCellLocator](../Classes/classshapeworks_1_1Mesh.md#function-getcelllocator)**() const<br>Returns the cell locator.  |
+| int | **[getClosestFace](../Classes/classshapeworks_1_1Mesh.md#function-getclosestface)**(const Point3 & point) const |
+| Eigen::Vector3d | **[computeBarycentricCoordinates](../Classes/classshapeworks_1_1Mesh.md#function-computebarycentriccoordinates)**(const Eigen::Vector3d & pt, int face) const<br>Computes baricentric coordinates given a query point and a face number.  |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Mesh.md#function-getsupportedtypes)**()<br>Return supported file types.  |
 
 ## Friends
@@ -929,6 +931,26 @@ inline vtkSmartPointer< vtkStaticCellLocator > getCellLocator() const
 
 Returns the cell locator. 
 
+### function getClosestFace
+
+```cpp
+int getClosestFace(
+    const Point3 & point
+) const
+```
+
+
+### function computeBarycentricCoordinates
+
+```cpp
+Eigen::Vector3d computeBarycentricCoordinates(
+    const Eigen::Vector3d & pt,
+    int face
+) const
+```
+
+Computes baricentric coordinates given a query point and a face number. 
+
 ### function getSupportedTypes
 
 ```cpp
@@ -950,4 +972,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:59 +0000
+Updated on 2023-09-29 at 06:24:12 +0000

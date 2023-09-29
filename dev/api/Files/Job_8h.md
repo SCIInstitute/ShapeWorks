@@ -26,16 +26,15 @@ title: Studio/Job/Job.h
 
 ```cpp
 #pragma once
-#include <QObject>
 #include <QElapsedTimer>
+#include <QObject>
 
 namespace shapeworks {
 
 class Job : public QObject {
   Q_OBJECT
 
-public:
-
+ public:
   Job();
   virtual ~Job();
 
@@ -45,22 +44,37 @@ public:
 
   virtual QString get_completion_message();
 
+  virtual QString get_abort_message();
+
   void start_timer();
+
   qint64 timer_elapsed();
 
-public Q_SLOTS:
+  void set_complete(bool complete) { complete_ = complete; }
 
-Q_SIGNALS:
+  bool is_complete() const { return complete_; }
+
+  void abort() { abort_ = true; }
+
+  bool is_aborted() const { return abort_; }
+
+ public Q_SLOTS:
+
+ Q_SIGNALS:
+
   void progress(double);
   void finished();
 
-private:
+ private:
+  std::atomic<bool> complete_ = false;
+  std::atomic<bool> abort_ = false;
+
   QElapsedTimer timer_;
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:59 +0000
+Updated on 2023-09-29 at 06:24:12 +0000

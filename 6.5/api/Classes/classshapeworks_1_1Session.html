@@ -3259,6 +3259,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_glyph_lut" class="md-nav__link">
+    function set_glyph_lut
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_glyph_lut" class="md-nav__link">
+    function get_glyph_lut
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-is_supported_file_format" class="md-nav__link">
     function is_supported_file_format
   </a>
@@ -3847,6 +3861,14 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-display-mode">get_display_mode</a></strong>()<br>return the current display mode</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-glyph-lut">set_glyph_lut</a></strong>(vtkSmartPointer&lt; vtkLookupTable &gt; lut)</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkLookupTable &gt;</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-glyph-lut">get_glyph_lut</a></strong>()</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-is-supported-file-format">is_supported_file_format</a></strong>(std::string filename)</td>
 </tr>
@@ -4356,6 +4378,14 @@
 <div class="highlight"><pre><span></span><code><span class="n">DisplayMode</span><span class="w"> </span><span class="n">get_display_mode</span><span class="p">()</span>
 </code></pre></div>
 <p>return the current display mode </p>
+<h3 id="function-set_glyph_lut">function set_glyph_lut</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_lut</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_glyph_lut">function get_glyph_lut</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_lut</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
@@ -4384,7 +4414,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-27 at 04:30:58 +0000</p>
+<p>Updated on 2023-09-29 at 06:24:12 +0000</p>
 
               
             </article>

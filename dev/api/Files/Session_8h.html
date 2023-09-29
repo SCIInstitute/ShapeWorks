@@ -2454,10 +2454,10 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;StudioEnums.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Viewer.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrixOffsetTransformBase.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkLookupTable.h&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span>
-<span class="c1">//#include &lt;cstdlib&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
@@ -2482,9 +2482,7 @@
 <span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Reconstructed</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_mean_shape_checked</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mean_shape_checked_</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_mean_shape_checked</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mean_shape_checked_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span>
@@ -2658,7 +2656,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_compare_settings</span><span class="p">(</span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">);</span>
 <span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="nf">get_compare_settings</span><span class="p">();</span>
 
-
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_repaint</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_reinsert_shapes</span><span class="p">();</span>
@@ -2666,6 +2663,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_display_mode</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">DisplayMode</span><span class="w"> </span><span class="nf">get_display_mode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_lut</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
@@ -2677,7 +2677,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span>
 
-<span class="w">  </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">data_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">points_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">landmarks_changed</span><span class="p">();</span>
@@ -2701,7 +2701,6 @@
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
-
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">renumber_shapes</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_landmark</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
@@ -2745,12 +2744,14 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">compare_settings_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-27 at 04:30:59 +0000</p>
+<p>Updated on 2023-09-29 at 06:24:12 +0000</p>
 
               
             </article>

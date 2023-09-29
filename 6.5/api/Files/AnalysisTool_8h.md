@@ -54,6 +54,7 @@ class ShapeWorksStudioApp;
 class GroupPvalueJob;
 class NetworkAnalysisJob;
 class StatsGroupLDAJob;
+class ParticleAreaPanel;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
@@ -207,8 +208,8 @@ class AnalysisTool : public QWidget {
 
   void show_difference_to_mean_clicked();
 
-  void group_analysis_combo_changed();
 
+  void group_analysis_combo_changed();
 
  Q_SIGNALS:
 
@@ -291,6 +292,7 @@ class AnalysisTool : public QWidget {
   bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
+  ParticleAreaPanel* particle_area_panel_{nullptr};
 };
 }  // namespace shapeworks
 ```
@@ -298,4 +300,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:59 +0000
+Updated on 2023-09-29 at 06:24:12 +0000

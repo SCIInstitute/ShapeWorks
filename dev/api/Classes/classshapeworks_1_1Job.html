@@ -2455,6 +2455,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_abort_message" class="md-nav__link">
+    function get_abort_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-start_timer" class="md-nav__link">
     function start_timer
   </a>
@@ -2464,6 +2471,34 @@
           <li class="md-nav__item">
   <a href="#function-timer_elapsed" class="md-nav__link">
     function timer_elapsed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_complete" class="md-nav__link">
+    function set_complete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-is_complete" class="md-nav__link">
+    function is_complete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-abort" class="md-nav__link">
+    function abort
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-is_aborted" class="md-nav__link">
+    function is_aborted
   </a>
   
 </li>
@@ -2493,7 +2528,7 @@
 
 <h1 id="shapeworksjob">shapeworks::Job</h1>
 <p>Inherits from QObject</p>
-<p>Inherited by <a href="classshapeworks_1_1DeepSSMJob.html">shapeworks::DeepSSMJob</a>, <a href="classshapeworks_1_1GroupPvalueJob.html">shapeworks::GroupPvalueJob</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html">shapeworks::NetworkAnalysisJob</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html">shapeworks::ParticleNormalEvaluationJob</a>, <a href="classshapeworks_1_1ShapeEvaluationJob.html">shapeworks::ShapeEvaluationJob</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html">shapeworks::StatsGroupLDAJob</a></p>
+<p>Inherited by <a href="classshapeworks_1_1DeepSSMJob.html">shapeworks::DeepSSMJob</a>, <a href="classshapeworks_1_1GroupPvalueJob.html">shapeworks::GroupPvalueJob</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html">shapeworks::NetworkAnalysisJob</a>, <a href="classshapeworks_1_1ParticleAreaJob.html">shapeworks::ParticleAreaJob</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html">shapeworks::ParticleNormalEvaluationJob</a>, <a href="classshapeworks_1_1ShapeEvaluationJob.html">shapeworks::ShapeEvaluationJob</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html">shapeworks::StatsGroupLDAJob</a></p>
 <h2 id="public-signals">Public Signals</h2>
 <table>
 <thead>
@@ -2532,23 +2567,43 @@
 </tr>
 <tr>
 <td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-run">run</a></strong>() =0</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-run">run</a></strong>() =0<br>run the job</td>
 </tr>
 <tr>
 <td>virtual QString</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-name">name</a></strong>() =0</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-name">name</a></strong>() =0<br>get the name of the job</td>
 </tr>
 <tr>
 <td>virtual QString</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-get-completion-message">get_completion_message</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-get-completion-message">get_completion_message</a></strong>()<br>get a message to display when the job is complete</td>
+</tr>
+<tr>
+<td>virtual QString</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-get-abort-message">get_abort_message</a></strong>()<br>get a message to display when the job is aborted</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-start-timer">start_timer</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-start-timer">start_timer</a></strong>()<br>start the timer</td>
 </tr>
 <tr>
 <td>qint64</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-timer-elapsed">timer_elapsed</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-timer-elapsed">timer_elapsed</a></strong>()<br>how much time has elapsed since the timer was started</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-set-complete">set_complete</a></strong>(bool complete)<br>set the job as complete</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-is-complete">is_complete</a></strong>() const<br>is the job complete?</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-abort">abort</a></strong>()<br>abort the job</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-is-aborted">is_aborted</a></strong>() const<br>was the job aborted?</td>
 </tr>
 </tbody>
 </table>
@@ -2571,22 +2626,49 @@
 <h3 id="function-run">function run</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-run">shapeworks::ShapeEvaluationJob::run</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-run">shapeworks::DeepSSMJob::run</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-run">shapeworks::GroupPvalueJob::run</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-run">shapeworks::NetworkAnalysisJob::run</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-run">shapeworks::ParticleNormalEvaluationJob::run</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-run">shapeworks::StatsGroupLDAJob::run</a></p>
+<p>run the job </p>
+<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-run">shapeworks::ShapeEvaluationJob::run</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-run">shapeworks::DeepSSMJob::run</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-run">shapeworks::GroupPvalueJob::run</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-run">shapeworks::NetworkAnalysisJob::run</a>, <a href="classshapeworks_1_1ParticleAreaJob.html#function-run">shapeworks::ParticleAreaJob::run</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-run">shapeworks::ParticleNormalEvaluationJob::run</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-run">shapeworks::StatsGroupLDAJob::run</a></p>
 <h3 id="function-name">function name</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-name">shapeworks::ShapeEvaluationJob::name</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-name">shapeworks::DeepSSMJob::name</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-name">shapeworks::GroupPvalueJob::name</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-name">shapeworks::NetworkAnalysisJob::name</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-name">shapeworks::ParticleNormalEvaluationJob::name</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-name">shapeworks::StatsGroupLDAJob::name</a></p>
+<p>get the name of the job </p>
+<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-name">shapeworks::ShapeEvaluationJob::name</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-name">shapeworks::DeepSSMJob::name</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-name">shapeworks::GroupPvalueJob::name</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-name">shapeworks::NetworkAnalysisJob::name</a>, <a href="classshapeworks_1_1ParticleAreaJob.html#function-name">shapeworks::ParticleAreaJob::name</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-name">shapeworks::ParticleNormalEvaluationJob::name</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-name">shapeworks::StatsGroupLDAJob::name</a></p>
 <h3 id="function-get_completion_message">function get_completion_message</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_completion_message</span><span class="p">()</span>
 </code></pre></div>
+<p>get a message to display when the job is complete </p>
+<h3 id="function-get_abort_message">function get_abort_message</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_abort_message</span><span class="p">()</span>
+</code></pre></div>
+<p>get a message to display when the job is aborted </p>
 <h3 id="function-start_timer">function start_timer</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">start_timer</span><span class="p">()</span>
 </code></pre></div>
+<p>start the timer </p>
 <h3 id="function-timer_elapsed">function timer_elapsed</h3>
 <div class="highlight"><pre><span></span><code><span class="n">qint64</span><span class="w"> </span><span class="n">timer_elapsed</span><span class="p">()</span>
 </code></pre></div>
+<p>how much time has elapsed since the timer was started </p>
+<h3 id="function-set_complete">function set_complete</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_complete</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">complete</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>set the job as complete </p>
+<h3 id="function-is_complete">function is_complete</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_complete</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>is the job complete? </p>
+<h3 id="function-abort">function abort</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">abort</span><span class="p">()</span>
+</code></pre></div>
+<p>abort the job </p>
+<h3 id="function-is_aborted">function is_aborted</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_aborted</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>was the job aborted? </p>
 <hr />
-<p>Updated on 2023-09-27 at 04:30:58 +0000</p>
+<p>Updated on 2023-09-29 at 06:24:11 +0000</p>
 
               
             </article>

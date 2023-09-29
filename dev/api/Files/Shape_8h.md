@@ -103,6 +103,7 @@ class Shape {
   bool store_constraints();
 
   void set_particles(Particles particles);
+
   Particles get_particles();
 
   void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
@@ -225,4 +226,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:59 +0000
+Updated on 2023-09-29 at 06:24:12 +0000

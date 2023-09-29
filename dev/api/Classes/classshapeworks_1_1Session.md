@@ -146,6 +146,8 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[trigger_reinsert_shapes](../Classes/classshapeworks_1_1Session.md#function-trigger-reinsert-shapes)**() |
 | void | **[set_display_mode](../Classes/classshapeworks_1_1Session.md#function-set-display-mode)**(DisplayMode mode)<br>set display mode (original, groomed, reconstructed)  |
 | DisplayMode | **[get_display_mode](../Classes/classshapeworks_1_1Session.md#function-get-display-mode)**()<br>return the current display mode  |
+| void | **[set_glyph_lut](../Classes/classshapeworks_1_1Session.md#function-set-glyph-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
+| vtkSmartPointer< vtkLookupTable > | **[get_glyph_lut](../Classes/classshapeworks_1_1Session.md#function-get-glyph-lut)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -1104,6 +1106,22 @@ DisplayMode get_display_mode()
 
 return the current display mode 
 
+### function set_glyph_lut
+
+```cpp
+inline void set_glyph_lut(
+    vtkSmartPointer< vtkLookupTable > lut
+)
+```
+
+
+### function get_glyph_lut
+
+```cpp
+inline vtkSmartPointer< vtkLookupTable > get_glyph_lut()
+```
+
+
 ### function is_supported_file_format
 
 ```cpp
@@ -1162,4 +1180,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:58 +0000
+Updated on 2023-09-29 at 06:24:12 +0000

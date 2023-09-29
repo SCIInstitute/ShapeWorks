@@ -40,6 +40,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
 | class | **[shapeworks::DisentangledCorrespondenceFunction](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md)**  |
 | class | **[shapeworks::DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md)**  |
+| class | **[shapeworks::EigenUtils](../Classes/classshapeworks_1_1EigenUtils.md)**  |
 | class | **[shapeworks::ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project]().  |
 | class | **[shapeworks::ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project]().  |
 | class | **[shapeworks::Executable](../Classes/classshapeworks_1_1Executable.md)**  |
@@ -109,6 +110,9 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md)**  |
 | class | **[shapeworks::PaintWidget](../Classes/classshapeworks_1_1PaintWidget.md)**  |
 | class | **[shapeworks::Parameters](../Classes/classshapeworks_1_1Parameters.md)** <br>Parameter settings.  |
+| class | **[shapeworks::ParticleArea](../Classes/classshapeworks_1_1ParticleArea.md)**  |
+| class | **[shapeworks::ParticleAreaJob](../Classes/classshapeworks_1_1ParticleAreaJob.md)**  |
+| class | **[shapeworks::ParticleAreaPanel](../Classes/classshapeworks_1_1ParticleAreaPanel.md)**  |
 | class | **[shapeworks::ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)** <br>Supplies particle colors.  |
 | class | **[shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md)**  |
 | class | **[shapeworks::ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md)**  |
@@ -2590,4 +2594,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:57 +0000
+Updated on 2023-09-29 at 06:24:11 +0000

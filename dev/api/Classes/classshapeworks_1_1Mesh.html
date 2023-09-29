@@ -2980,6 +2980,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-getclosestface" class="md-nav__link">
+    function getClosestFace
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-computebarycentriccoordinates" class="md-nav__link">
+    function computeBarycentricCoordinates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getsupportedtypes" class="md-nav__link">
     function getSupportedTypes
   </a>
@@ -3372,6 +3386,14 @@
 <tr>
 <td>vtkSmartPointer&lt; vtkStaticCellLocator &gt;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-getcelllocator">getCellLocator</a></strong>() const<br>Returns the cell locator.</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getclosestface">getClosestFace</a></strong>(const Point3 &amp; point) const</td>
+</tr>
+<tr>
+<td>Eigen::Vector3d</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-computebarycentriccoordinates">computeBarycentricCoordinates</a></strong>(const Eigen::Vector3d &amp; pt, int face) const<br>Computes baricentric coordinates given a query point and a face number.</td>
 </tr>
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
@@ -3968,6 +3990,18 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkStaticCellLocator</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getCellLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns the cell locator. </p>
+<h3 id="function-getclosestface">function getClosestFace</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">getClosestFace</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<h3 id="function-computebarycentriccoordinates">function computeBarycentricCoordinates</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">computeBarycentricCoordinates</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Computes baricentric coordinates given a query point and a face number. </p>
 <h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span>
 </code></pre></div>
@@ -3979,7 +4013,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-27 at 04:30:59 +0000</p>
+<p>Updated on 2023-09-29 at 06:24:12 +0000</p>
 
               
             </article>

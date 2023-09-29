@@ -36,6 +36,7 @@ title: Files
         * **file [Libs/Analyze/MeshManager.h](../Files/MeshManager_8h.md#file-meshmanager.h)** 
         * **file [Libs/Analyze/MeshWorkQueue.h](../Files/MeshWorkQueue_8h.md#file-meshworkqueue.h)** 
         * **file [Libs/Analyze/MeshWorker.h](../Files/MeshWorker_8h.md#file-meshworker.h)** <br>Worker class for parallel mesh reconstruction. 
+        * **file [Libs/Analyze/ParticleArea.h](../Files/ParticleArea_8h.md#file-particlearea.h)** 
         * **file [Libs/Analyze/Particles.h](../Files/Particles_8h.md#file-particles.h)** 
         * **file [Libs/Analyze/QMeshWarper.h](../Files/QMeshWarper_8h.md#file-qmeshwarper.h)** 
         * **file [Libs/Analyze/Reconstruction.h](../Files/Reconstruction_8h.md#file-reconstruction.h)** 
@@ -43,7 +44,6 @@ title: Files
         * **file [Libs/Analyze/StudioEnums.h](../Files/StudioEnums_8h.md#file-studioenums.h)** 
         * **file [Libs/Analyze/StudioMesh.h](../Files/StudioMesh_8h.md#file-studiomesh.h)** 
         * **file [Libs/Analyze/SurfaceReconstructor.h](../Files/SurfaceReconstructor_8h.md#file-surfacereconstructor.h)** <br>Surface [Reconstruction](../Classes/classReconstruction.md) Layer. 
-        * **file [Libs/Analyze/Vis.h](../Files/Vis_8h.md#file-vis.h)** 
         * **file [Libs/Analyze/vtkPolyDataToImageData.h](../Files/vtkPolyDataToImageData_8h.md#file-vtkpolydatatoimagedata.h)** 
     * **dir [Libs/Common](../Files/dir_c13ed27a749775eeb2d59234813cae48.md#dir-libs/common)** 
         * **file [Libs/Common/Exception.h](../Files/Exception_8h.md#file-exception.h)** 
@@ -176,6 +176,7 @@ title: Files
 * **dir [Studio](../Files/dir_baf8d66207f3fc39faf866e67ca98ce2.md#dir-studio)** 
     * **dir [Studio/Analysis](../Files/dir_2efd803177123288b92908ec296fe578.md#dir-studio/analysis)** 
         * **file [Studio/Analysis/AnalysisTool.h](../Files/AnalysisTool_8h.md#file-analysistool.h)** 
+        * **file [Studio/Analysis/ParticleAreaPanel.h](../Files/ParticleAreaPanel_8h.md#file-particleareapanel.h)** 
         * **file [Studio/Analysis/ShapeEvaluationJob.h](../Files/ShapeEvaluationJob_8h.md#file-shapeevaluationjob.h)** 
     * **dir [Studio/Data](../Files/dir_b0b944fd4368961b4965dd28c72a00a2.md#dir-studio/data)** 
         * **file [Studio/Data/DataTool.h](../Files/DataTool_8h.md#file-datatool.h)** 
@@ -212,6 +213,7 @@ title: Files
         * **file [Studio/Job/GroupPvalueJob.h](../Files/GroupPvalueJob_8h.md#file-grouppvaluejob.h)** 
         * **file [Studio/Job/Job.h](../Files/Job_8h.md#file-job.h)** 
         * **file [Studio/Job/NetworkAnalysisJob.h](../Files/NetworkAnalysisJob_8h.md#file-networkanalysisjob.h)** 
+        * **file [Studio/Job/ParticleAreaJob.h](../Files/ParticleAreaJob_8h.md#file-particleareajob.h)** 
         * **file [Studio/Job/ParticleNormalEvaluationJob.h](../Files/ParticleNormalEvaluationJob_8h.md#file-particlenormalevaluationjob.h)** 
         * **file [Studio/Job/StatsGroupLDAJob.h](../Files/StatsGroupLDAJob_8h.md#file-statsgroupldajob.h)** 
     * **dir [Studio/Optimize](../Files/dir_9e99c41d3802fada2a0119d079df0956.md#dir-studio/optimize)** 
@@ -248,4 +250,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:31:00 +0000
+Updated on 2023-09-29 at 06:24:13 +0000

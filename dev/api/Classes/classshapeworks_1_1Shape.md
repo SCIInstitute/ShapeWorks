@@ -31,8 +31,8 @@ Representation of a single shape/patient/subject.
 | std::vector< std::string > | **[get_annotations](../Classes/classshapeworks_1_1Shape.md#function-get-annotations)**() |
 | void | **[set_mesh_manager](../Classes/classshapeworks_1_1Shape.md#function-set-mesh-manager)**(std::shared_ptr< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > mesh_manager) |
 | void | **[set_subject](../Classes/classshapeworks_1_1Shape.md#function-set-subject)**(std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > subject) |
-| bool | **[is_subject](../Classes/classshapeworks_1_1Shape.md#function-is-subject)**() |
-| std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > | **[get_subject](../Classes/classshapeworks_1_1Shape.md#function-get-subject)**() |
+| bool | **[is_subject](../Classes/classshapeworks_1_1Shape.md#function-is-subject)**()<br>Is this shape a population subject (e.g. mean/pca constructions are not)  |
+| std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > | **[get_subject](../Classes/classshapeworks_1_1Shape.md#function-get-subject)**()<br>Return the pointer to the subject object.  |
 | void | **[import_original_file](../Classes/classshapeworks_1_1Shape.md#function-import-original-file)**(const std::string & filename)<br>Import the original raw mesh or image file.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_original_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-original-meshes)**(bool wait =false)<br>Retrieve the original meshes.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_groomed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-meshes)**(bool wait =false)<br>Retrieve the groomed meshes.  |
@@ -44,8 +44,8 @@ Representation of a single shape/patient/subject.
 | bool | **[store_landmarks](../Classes/classshapeworks_1_1Shape.md#function-store-landmarks)**()<br>Store landmarks.  |
 | bool | **[import_constraints](../Classes/classshapeworks_1_1Shape.md#function-import-constraints)**(std::vector< std::string > filenames)<br>import constraints  |
 | bool | **[store_constraints](../Classes/classshapeworks_1_1Shape.md#function-store-constraints)**()<br>Store constraints.  |
-| void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([Particles](../Classes/classshapeworks_1_1Particles.md) particles) |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
+| void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([Particles](../Classes/classshapeworks_1_1Particles.md) particles)<br>Set particles.  |
+| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**()<br>Get particles.  |
 | void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform)<br>Set the particle transform (alignment)  |
 | void | **[set_alignment_type](../Classes/classshapeworks_1_1Shape.md#function-set-alignment-type)**(int alignment)<br>Set the alignment type.  |
 | Eigen::VectorXd | **[get_global_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points)**()<br>Get the global correspondence points.  |
@@ -162,6 +162,7 @@ void set_subject(
 bool is_subject()
 ```
 
+Is this shape a population subject (e.g. mean/pca constructions are not) 
 
 ### function get_subject
 
@@ -169,6 +170,7 @@ bool is_subject()
 std::shared_ptr< shapeworks::Subject > get_subject()
 ```
 
+Return the pointer to the subject object. 
 
 ### function import_original_file
 
@@ -282,6 +284,7 @@ void set_particles(
 )
 ```
 
+Set particles. 
 
 ### function get_particles
 
@@ -289,6 +292,7 @@ void set_particles(
 Particles get_particles()
 ```
 
+Get particles. 
 
 ### function set_particle_transform
 
@@ -629,4 +633,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:58 +0000
+Updated on 2023-09-29 at 06:24:12 +0000

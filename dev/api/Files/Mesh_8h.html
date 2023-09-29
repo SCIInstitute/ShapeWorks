@@ -2647,6 +2647,12 @@
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cellLocator</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">getClosestFace</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">computeBarycentricCoordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">)</span>
+<span class="w">      </span><span class="k">const</span><span class="p">;</span><span class="w">  </span><span class="c1">// // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.</span>
+
+
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">;</span>
 <span class="w">  </span><span class="n">Mesh</span><span class="p">()</span>
@@ -2669,8 +2675,6 @@
 <span class="w">  </span><span class="k">mutable</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkKdTreePointLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pointLocator</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updatePointLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">computeBarycentricCoordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">)</span>
-<span class="w">      </span><span class="k">const</span><span class="p">;</span><span class="w">  </span><span class="c1">// // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.</span>
 <span class="p">};</span>
 
 <span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
@@ -2683,7 +2687,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-09-27 at 04:30:59 +0000</p>
+<p>Updated on 2023-09-29 at 06:24:12 +0000</p>
 
               
             </article>

@@ -34,7 +34,7 @@ class shapeworks::MeshGroup;
 
 Representation of a group of meshes. 
 
-The [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) class encapsulates a group of meshes (e.g. from a single subject) 
+The [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) class encapsulates a group of meshes (e.g. from a single subject) A subject will have one mesh for each anatomy/domain 
 
 ## Public Functions Documentation
 
@@ -105,4 +105,4 @@ Return polydata of all meshes, combined.
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:58 +0000
+Updated on 2023-09-29 at 06:24:11 +0000

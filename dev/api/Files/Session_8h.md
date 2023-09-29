@@ -37,10 +37,10 @@ title: Studio/Data/Session.h
 #include <StudioEnums.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
+#include <vtkLookupTable.h>
 
 #include <QSharedPointer>
 #include <QVector>
-//#include <cstdlib>
 #include <map>
 #include <string>
 #include <vector>
@@ -65,9 +65,7 @@ class CompareSettings {
       return DisplayMode::Reconstructed;
     }
   }
-  bool get_mean_shape_checked() {
-    return mean_shape_checked_;
-  }
+  bool get_mean_shape_checked() { return mean_shape_checked_; }
 };
 
 class Shape;
@@ -241,7 +239,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_compare_settings(CompareSettings settings);
   CompareSettings get_compare_settings();
 
-
   void trigger_repaint();
 
   void trigger_reinsert_shapes();
@@ -249,6 +246,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_display_mode(DisplayMode mode);
 
   DisplayMode get_display_mode();
+
+  void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) { glyph_lut_ = lut; }
+  vtkSmartPointer<vtkLookupTable> get_glyph_lut() { return glyph_lut_; }
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -260,7 +260,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void handle_new_mesh();
   void handle_thread_complete();
 
-  Q_SIGNALS:
+ Q_SIGNALS:
   void data_changed();
   void points_changed();
   void landmarks_changed();
@@ -284,7 +284,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string DEEPSSM_C;
 
  private:
-
   void renumber_shapes();
 
   void new_landmark(PickResult result);
@@ -328,6 +327,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   bool is_loading_ = false;
   CompareSettings compare_settings_;
+
+  vtkSmartPointer<vtkLookupTable> glyph_lut_;
 };
 
 }  // namespace shapeworks
@@ -336,4 +337,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:30:59 +0000
+Updated on 2023-09-29 at 06:24:12 +0000

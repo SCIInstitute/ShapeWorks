@@ -70,7 +70,6 @@ title: Classes
 * **namespace [Ui](../Namespaces/namespaceUi.md)** 
 * **class [Utils](../Classes/classUtils.md)** 
 * **struct [VTKEXPORT](../Classes/structVTKEXPORT.md)** 
-* **class [Vis](../Classes/classVis.md)** 
 * **namespace [fmt](../Namespaces/namespacefmt.md)** 
     * **struct [formatter< QString >](../Classes/structfmt_1_1formatter_3_01QString_01_4.md)** 
 * **namespace [itk](../Namespaces/namespaceitk.md)** 
@@ -112,6 +111,7 @@ title: Classes
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
     * **class [DisentangledCorrespondenceFunction](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md)** 
     * **class [DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md)** 
+    * **class [EigenUtils](../Classes/classshapeworks_1_1EigenUtils.md)** 
     * **class [ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project](). 
     * **class [ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project](). 
     * **class [Executable](../Classes/classshapeworks_1_1Executable.md)** 
@@ -182,6 +182,9 @@ title: Classes
     * **class [OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md)** 
     * **class [PaintWidget](../Classes/classshapeworks_1_1PaintWidget.md)** 
     * **class [Parameters](../Classes/classshapeworks_1_1Parameters.md)** <br>Parameter settings. 
+    * **class [ParticleArea](../Classes/classshapeworks_1_1ParticleArea.md)** 
+    * **class [ParticleAreaJob](../Classes/classshapeworks_1_1ParticleAreaJob.md)** 
+    * **class [ParticleAreaPanel](../Classes/classshapeworks_1_1ParticleAreaPanel.md)** 
     * **class [ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)** <br>Supplies particle colors. 
     * **class [ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md)** 
     * **class [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md)** 
@@ -275,4 +278,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-09-27 at 04:31:00 +0000
+Updated on 2023-09-29 at 06:24:13 +0000
