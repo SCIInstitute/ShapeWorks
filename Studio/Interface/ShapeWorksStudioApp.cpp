@@ -577,6 +577,7 @@ void ShapeWorksStudioApp::update_table() {
   auto current_feature = ui_->features->currentText();
   feature_list << "-none-";
   auto feature_maps = project->get_feature_names();
+
   for (const std::string& feature : feature_maps) {
     feature_list << QString::fromStdString(feature);
   }
@@ -913,6 +914,7 @@ void ShapeWorksStudioApp::handle_lightbox_right_click(int index) {
 void ShapeWorksStudioApp::new_session() {
   session_ = QSharedPointer<Session>::create(this, preferences_);
   session_->set_parent(this);
+  session_->set_py_worker(get_py_worker());
   setWindowTitle(session_->get_display_name());
 
   connect(session_->get_mesh_manager().get(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);

@@ -29,6 +29,7 @@ class GroupPvalueJob;
 class NetworkAnalysisJob;
 class StatsGroupLDAJob;
 class ParticleAreaPanel;
+class ShapeScalarPanel;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
@@ -273,5 +274,6 @@ class AnalysisTool : public QWidget {
 
   AlignmentType current_alignment_{AlignmentType::Local};
   ParticleAreaPanel* particle_area_panel_{nullptr};
+  ShapeScalarPanel* shape_scalar_panel_{nullptr};
 };
 }  // namespace shapeworks

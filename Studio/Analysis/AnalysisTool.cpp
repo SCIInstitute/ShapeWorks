@@ -21,6 +21,7 @@
 #include <ui_AnalysisTool.h>
 
 #include "ParticleAreaPanel.h"
+#include "ShapeScalarPanel.h"
 
 namespace shapeworks {
 
@@ -37,6 +38,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   particle_area_panel_ = new ParticleAreaPanel(this);
   layout()->addWidget(particle_area_panel_);
+
+  shape_scalar_panel_ = new ShapeScalarPanel(this);
+  layout()->addWidget(shape_scalar_panel_);
 
   auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
   layout()->addItem(spacer);
@@ -228,6 +232,7 @@ AnalysisTool::~AnalysisTool() {}
 void AnalysisTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   particle_area_panel_->set_session(session);
+  shape_scalar_panel_->set_session(session);
 
   // reset to original
   ui_->mesh_warping_radio_button->setChecked(true);
@@ -975,6 +980,7 @@ void AnalysisTool::reset_stats() {
   group_analysis_combo_changed();
 
   particle_area_panel_->reset();
+  shape_scalar_panel_->reset();
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
