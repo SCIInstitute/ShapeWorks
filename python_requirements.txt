@@ -180,7 +180,7 @@ trimesh==3.12.6
 typing_extensions==4.5.0
 tzdata==2023.3
 uri-template==1.3.0
-urllib3==1.26.17
+urllib3==1.26.18
 verspec==0.1.0
 vtk==9.1.0
 watchdog==3.0.0
