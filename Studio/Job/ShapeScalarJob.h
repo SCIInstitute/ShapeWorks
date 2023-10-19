@@ -20,5 +20,7 @@ class ShapeScalarJob : public Job {
   ParticleShapeStatistics stats_;
 
   QString target_feature_;
+
+  Eigen::VectorXd p1_hat_;
 };
 }  // namespace shapeworks
