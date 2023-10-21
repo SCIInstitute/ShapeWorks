@@ -387,6 +387,8 @@ bool Analyze::update_shapes() {
 
   SW_LOG("number of subjects: {}", num_subjects);
 
+  auto domain_names = project_->get_domain_names();
+
   for (int i = 0; i < num_subjects; i++) {
     auto shape = std::make_shared<Shape>();
     shape->set_mesh_manager(mesh_manager_);
@@ -421,6 +423,12 @@ bool Analyze::update_shapes() {
         landmark_definitions = project_->get_landmarks(domain_id);
       }
     }
+
+    // set reference domain
+    auto transform = shape->get_groomed_transform(domain_names.size());
+    shape->set_particle_transform(transform);
+    shape->set_alignment_type(AlignmentType::Global);
+
     shapes_.push_back(shape);
   }
 
