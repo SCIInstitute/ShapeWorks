@@ -13,6 +13,12 @@ High level analyze API.  [More...](#detailed-description)
 
 `#include <Analyze.h>`
 
+## Public Types
+
+|                | Name           |
+| -------------- | -------------- |
+| enum| **[AlignmentType](../Classes/classshapeworks_1_1Analyze.md#enum-alignmenttype)** { Global = -2, Local = -1} |
+
 ## Public Functions
 
 |                | Name           |
@@ -44,6 +50,18 @@ class shapeworks::Analyze;
 High level analyze API. 
 
 The [Analyze](../Classes/classshapeworks_1_1Analyze.md) class operates on a [Project](../Classes/classshapeworks_1_1Project.md). 
+
+## Public Types Documentation
+
+### enum AlignmentType
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| Global | -2|   |
+| Local | -1|   |
+
+
+
 
 ## Public Functions Documentation
 
@@ -204,4 +222,4 @@ ParticleSystemEvaluation get_local_particle_system(
 
 -------------------------------
 
-Updated on 2023-10-10 at 07:25:28 +0000
+Updated on 2023-10-24 at 22:16:01 +0000

@@ -15,9 +15,9 @@ Inherits from QWidget
 
 |                | Name           |
 | -------------- | -------------- |
-| enum| **[AlignmentType](../Classes/classshapeworks_1_1AnalysisTool.md#enum-alignmenttype)** { Global = -2, Local = -1} |
 | enum| **[GroupAnalysisType](../Classes/classshapeworks_1_1AnalysisTool.md#enum-groupanalysistype)** { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3} |
 | enum| **[McaMode](../Classes/classshapeworks_1_1AnalysisTool.md#enum-mcamode)** { Vanilla, Within, Between} |
+| using Analyze::AlignmentType | **[AlignmentType](../Classes/classshapeworks_1_1AnalysisTool.md#using-alignmenttype)**  |
 | using itk::Point< double, 3 > | **[PointType](../Classes/classshapeworks_1_1AnalysisTool.md#using-pointtype)**  |
 
 ## Public Slots
@@ -129,16 +129,6 @@ Inherits from QWidget
 
 ## Public Types Documentation
 
-### enum AlignmentType
-
-| Enumerator | Value | Description |
-| ---------- | ----- | ----------- |
-| Global | -2|   |
-| Local | -1|   |
-
-
-
-
 ### enum GroupAnalysisType
 
 | Enumerator | Value | Description |
@@ -160,6 +150,13 @@ Inherits from QWidget
 | Between | |   |
 
 
+
+
+### using AlignmentType
+
+```cpp
+using shapeworks::AnalysisTool::AlignmentType =  Analyze::AlignmentType;
+```
 
 
 ### using PointType
@@ -849,4 +846,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2023-10-10 at 07:25:28 +0000
+Updated on 2023-10-24 at 22:16:01 +0000

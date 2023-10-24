@@ -36,6 +36,7 @@ title: Studio/Analysis/AnalysisTool.h
 
 // ShapeWorks
 #include <ParticleShapeStatistics.h>
+#include <Analyze/Analyze.h>
 
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
@@ -60,10 +61,8 @@ class AnalysisTool : public QWidget {
   Q_OBJECT;
 
  public:
-  enum AlignmentType {
-    Global = -2,
-    Local = -1,
-  };
+
+  using AlignmentType = Analyze::AlignmentType;
 
   enum GroupAnalysisType { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3 };
 
@@ -300,4 +299,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-10-10 at 07:25:30 +0000
+Updated on 2023-10-24 at 22:16:03 +0000

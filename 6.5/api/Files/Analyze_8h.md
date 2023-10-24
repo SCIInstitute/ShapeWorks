@@ -37,6 +37,13 @@ namespace shapeworks {
 
 class Analyze {
  public:
+
+  enum AlignmentType {
+    Global = -2,
+    Local = -1,
+  };
+
+
   Analyze(ProjectHandle project);
 
   void run_offline_analysis(std::string outfile, float range, float steps);
@@ -100,4 +107,4 @@ class Analyze {
 
 -------------------------------
 
-Updated on 2023-10-10 at 07:25:29 +0000
+Updated on 2023-10-24 at 22:16:02 +0000
