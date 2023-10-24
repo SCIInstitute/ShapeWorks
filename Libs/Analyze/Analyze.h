@@ -15,6 +15,13 @@ namespace shapeworks {
 
 class Analyze {
  public:
+
+  enum AlignmentType {
+    Global = -2,
+    Local = -1,
+  };
+
+
   Analyze(ProjectHandle project);
 
   /// Run offline analysis, saving results to outfile
