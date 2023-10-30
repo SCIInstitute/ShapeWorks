@@ -78,11 +78,9 @@ void ShapeScalarJob::run() {
     // B = np.array(all_scalars)
     py::object B = np.attr("array")(all_scalars);
 
-    // A = np.loadtxt("/tmp/A.csv", delimiter=",")
-    A = np.attr("loadtxt")("/tmp/A.csv", "delimiter"_a = ",");
+    // A = np.attr("loadtxt")("/tmp/A.csv", "delimiter"_a = ",");
 
-    // B = np.loadtxt("/tmp/B.csv", delimiter=",")
-    B = np.attr("loadtxt")("/tmp/B.csv", "delimiter"_a = ",");
+    // B = np.attr("loadtxt")("/tmp/B.csv", "delimiter"_a = ",");
 
     py::module mbpls = py::module::import("mbpls.mbpls");
     py::object mbpls_class = mbpls.attr("MBPLS");
@@ -116,8 +114,6 @@ void ShapeScalarJob::run() {
 
     // output dims to SW_LOG
     SW_LOG("P_eigen: {} x {}", P_eigen.rows(), P_eigen.cols());
-
-
 
     SW_DEBUG("End shape scalar job");
 

@@ -80,6 +80,7 @@ void PythonWorker::start_job(QSharedPointer<Job> job) {
       Q_EMIT job->progress(0);
       current_job_ = job;
       current_job_->run();
+      current_job_->set_complete(true);
       SW_LOG(current_job_->get_completion_message().toStdString());
     } catch (py::error_already_set& e) {
       SW_ERROR(e.what());
