@@ -7,6 +7,8 @@
 // eigen format
 #include <Eigen/Dense>
 
+#include "qt/QtGui/qimage.h"
+
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
@@ -60,35 +62,68 @@ void ShapeScalarJob::run() {
     SW_LOG("all_particles: {} x {}", all_particles.rows(), all_particles.cols());
     SW_LOG("all_scalars: {} x {}", all_scalars.rows(), all_scalars.cols());
 
-    // write all_particles to a csv file in /tmp
-    std::ofstream out("/tmp/all_particles.csv");
-    const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
-    out << all_particles.format(CSVFormat);
-    out.close();
+    /// write all_particles to a csv file in /tmp
+    // std::ofstream out("/tmp/all_particles.csv");
+    // const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
+    // out << all_particles.format(CSVFormat);
+    // out.close();
 
-    // write all_scalars to a csv file in /tmp
-    std::ofstream out2("/tmp/all_scalars.csv");
-    out2 << all_scalars.format(CSVFormat);
-    out2.close();
+    /// write all_scalars to a csv file in /tmp
+    // std::ofstream out2("/tmp/all_scalars.csv");
+    // out2 << all_scalars.format(CSVFormat);
+    // out2.close();
 
     // A = np.array(all_particles)
+    SW_LOG("import numpy");
     py::module np = py::module::import("numpy");
+    SW_LOG("create A");
     py::object A = np.attr("array")(all_particles);
 
     // B = np.array(all_scalars)
+    SW_LOG("create B");
     py::object B = np.attr("array")(all_scalars);
 
-    // A = np.attr("loadtxt")("/tmp/A.csv", "delimiter"_a = ",");
+    SW_LOG("load from disk");
+    A = np.attr("loadtxt")("/tmp/A.csv", "delimiter"_a = ",");
+    B = np.attr("loadtxt")("/tmp/B.csv", "delimiter"_a = ",");
 
-    // B = np.attr("loadtxt")("/tmp/B.csv", "delimiter"_a = ",");
+    py::module sw = py::module::import("shapeworks");
+    py::object run_mbpls = sw.attr("shape_scalars").attr("run_mbpls");
+
+    // returns a tuple of (png_raw_bytes, y_pred, mse)
+    using ResultType = std::tuple<py::array, Eigen::MatrixXd, double>;
+
+    ResultType result = run_mbpls(A, B).cast<ResultType>();
+
+    py::array png_raw_bytes = std::get<0>(result);
+    Eigen::MatrixXd y_pred = std::get<1>(result);
+    double mse = std::get<2>(result);
+
+    // interpret png_raw_bytes as a QImage
+    QImage image;
+    image.loadFromData((const uchar *)png_raw_bytes.data(), png_raw_bytes.size(), "PNG");
+    //image.loadFromData(png_raw_bytes.data(), png_raw_bytes.size(), "PNG");
+
+    plot_ = QPixmap::fromImage(image);
+
+    plot_.save("/tmp/plot.png");
+
+    SW_LOG("mse = {}", mse);
+    /*
+
+    SW_LOG("about to create mbpls");
 
     py::module mbpls = py::module::import("mbpls.mbpls");
     py::object mbpls_class = mbpls.attr("MBPLS");
     // mbpls_model = MBPLS(n_components=3)
     py::object mbpls_object = mbpls_class("n_components"_a = 3);
 
+    SW_LOG("about to run fit");
+
     // mbpls_model.fit(A,B)
     mbpls_object.attr("fit")(A, B);
+
+    SW_LOG("about to run predict");
 
     // y_pred = mbpls_model.predict(A)
     py::object y_pred = mbpls_object.attr("predict")(A);
@@ -114,6 +149,7 @@ void ShapeScalarJob::run() {
 
     // output dims to SW_LOG
     SW_LOG("P_eigen: {} x {}", P_eigen.rows(), P_eigen.cols());
+*/
 
     SW_DEBUG("End shape scalar job");
 
@@ -124,6 +160,12 @@ void ShapeScalarJob::run() {
 
 //---------------------------------------------------------------------------
 QString ShapeScalarJob::name() { return "Shape / Scalar Correlation"; }
+
+//---------------------------------------------------------------------------
+QPixmap ShapeScalarJob::get_plot()
+{
+  return plot_;
+}
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

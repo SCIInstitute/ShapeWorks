@@ -204,6 +204,35 @@ QWidget#panel {
       <item>
        <widget class="QWidget" name="content" native="true">
         <layout class="QGridLayout" name="gridLayout_19">
+         <item row="0" column="1">
+          <widget class="QComboBox" name="feature_combo"/>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QPushButton" name="run_button">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>Run</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="JKQTPlotter" name="jk_plot" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>300</height>
+            </size>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
@@ -211,10 +240,7 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="feature_combo"/>
-         </item>
-         <item row="3" column="0" colspan="2">
+         <item row="4" column="0" colspan="2">
           <widget class="QProgressBar" name="progress">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -227,29 +253,10 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QPushButton" name="run_button">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string>Run</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0" colspan="2">
-          <widget class="JKQTPlotter" name="plot" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>300</height>
-            </size>
+          <widget class="QLabel" name="plot">
+           <property name="text">
+            <string>Plot</string>
            </property>
           </widget>
          </item>

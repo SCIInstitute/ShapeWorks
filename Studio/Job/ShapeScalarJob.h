@@ -3,6 +3,8 @@
 #include <Job/Job.h>
 #include <ParticleShapeStatistics.h>
 
+#include <QPixmap>
+
 namespace shapeworks {
 
 class Project;
@@ -14,6 +16,8 @@ class ShapeScalarJob : public Job {
   void run() override;
   QString name() override;
 
+  QPixmap get_plot();
+
  private:
   QSharedPointer<Session> session_;
 
@@ -22,5 +26,6 @@ class ShapeScalarJob : public Job {
   QString target_feature_;
 
   Eigen::VectorXd p1_hat_;
+  QPixmap plot_;
 };
 }  // namespace shapeworks

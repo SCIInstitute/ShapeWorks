@@ -37,6 +37,7 @@ ShapeScalarPanel::ShapeScalarPanel(QWidget* parent) : QWidget(parent), ui_(new U
   ui_->open_button->setChecked(false);
   ui_->progress->hide();
 
+  ui_->jk_plot->hide();
   update_run_button();
 
   update_graphs();
@@ -115,22 +116,31 @@ void ShapeScalarPanel::update_graphs() {
 
   auto plot = ui_->plot;
 
-  plot->clearGraphs();
+  auto pixmap = job_->get_plot();
 
-  QString title = "Two Block PLS Loadings";
+  if (!pixmap.isNull()) {
+    QPixmap resized = pixmap.scaledToWidth(this->width() * 0.95, Qt::SmoothTransformation);
+    ui_->plot->setPixmap(resized);
+  }
 
-  plot->getPlotter()->setUseAntiAliasingForGraphs(true);
-  plot->getPlotter()->setUseAntiAliasingForSystem(true);
-  plot->getPlotter()->setUseAntiAliasingForText(true);
-  plot->getPlotter()->setPlotLabelFontSize(18);
-  plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
-  plot->getPlotter()->setDefaultTextSize(14);
-  plot->getPlotter()->setShowKey(false);
+  /*
+    plot->clearGraphs();
 
-  plot->clearAllMouseWheelActions();
-  plot->setMousePositionShown(false);
-  plot->setMinimumSize(250, 250);
-  plot->zoomToFit();
+    QString title = "Two Block PLS Loadings";
+
+    plot->getPlotter()->setUseAntiAliasingForGraphs(true);
+    plot->getPlotter()->setUseAntiAliasingForSystem(true);
+    plot->getPlotter()->setUseAntiAliasingForText(true);
+    plot->getPlotter()->setPlotLabelFontSize(18);
+    plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
+    plot->getPlotter()->setDefaultTextSize(14);
+    plot->getPlotter()->setShowKey(false);
+
+    plot->clearAllMouseWheelActions();
+    plot->setMousePositionShown(false);
+    plot->setMinimumSize(250, 250);
+    plot->zoomToFit();
+    */
 }
 
 //---------------------------------------------------------------------------
