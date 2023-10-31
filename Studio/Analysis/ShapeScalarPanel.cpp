@@ -10,9 +10,6 @@
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
 #include <Job/GroupPvalueJob.h>
-//#include <Job/NetworkAnalysisJob.h>
-#include <Job/ParticleNormalEvaluationJob.h>
-#include <Job/StatsGroupLDAJob.h>
 #include <Logging.h>
 #include <Python/PythonWorker.h>
 #include <QMeshWarper.h>
@@ -82,7 +79,8 @@ void ShapeScalarPanel::run_clicked() {
   ui_->progress->show();
   handle_job_progress(0);
 
-  job_ = QSharedPointer<ShapeScalarJob>::create(session_, ui_->feature_combo->currentText());
+  job_ = QSharedPointer<ShapeScalarJob>::create(session_, ui_->feature_combo->currentText(), Eigen::MatrixXd{},
+                                                ShapeScalarJob::JobType::MSE_Plot);
   connect(job_.data(), &ShapeScalarJob::progress, this, &ShapeScalarPanel::handle_job_progress);
   connect(job_.data(), &ShapeScalarJob::finished, this, &ShapeScalarPanel::handle_job_complete);
 
@@ -114,7 +112,7 @@ void ShapeScalarPanel::update_graphs() {
   }
   ui_->plot->show();
 
-  auto plot = ui_->plot;
+  // auto plot = ui_->plot;
 
   auto pixmap = job_->get_plot();
 

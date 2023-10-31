@@ -6,6 +6,9 @@ from mbpls.mbpls import MBPLS
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import mean_squared_error
 from matplotlib import pyplot as plt
+from shapeworks.utils import sw_message
+from shapeworks.utils import sw_progress
+from shapeworks.utils import sw_check_abort
 
 
 def run_mbpls(x, y, n_components=3, cv=5):

@@ -1145,6 +1145,16 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   shape->set_particles(points);
   shape->get_reconstructed_meshes();
   shape->set_reconstruction_transforms(reconstruction_transforms_);
+
+  if (feature_map_ != "") {
+    auto scalars_d = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
+                                                     points.get_combined_global_particles());
+
+    // convert to Eigen::VectorXd
+    Eigen::VectorXf scalars = scalars_d.cast<float>();
+
+    shape->set_point_features(feature_map_, scalars);
+  }
   return shape;
 }
 
