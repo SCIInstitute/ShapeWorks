@@ -58,10 +58,10 @@ void ShapeScalarJob::run() {
       SW_LOG("mse = {}", mse);
 
     } else if (job_type_ == JobType::Predict) {
-      int num_particles = target_particles_.rows() / 3;
-      target_particles_.resize(num_particles, 3);
+      //int num_particles = target_particles_.rows() / 3;
+      //target_particles_.resize(num_particles, 3);
 
-      py::object new_x = np.attr("array")(target_particles_);
+      py::object new_x = np.attr("array")(target_particles_.transpose());
       py::object run_prediction = sw.attr("shape_scalars").attr("pred_from_mbpls");
 
       //      using ResultType = std::tuple<Eigen::VectorXd>;
@@ -117,18 +117,14 @@ void ShapeScalarJob::prep_data() {
   auto shapes = session_->get_shapes();
   int num_shapes = shapes.size();
 
-  Eigen::MatrixXd all_particles(num_particles * num_shapes, 3);
-  Eigen::MatrixXd all_scalars(num_particles * num_shapes, 1);
+  Eigen::MatrixXd all_particles(num_shapes, 3 * num_particles);
+  Eigen::MatrixXd all_scalars(num_shapes, 1 * num_particles);
 
   for (int i = 0; i < shapes.size(); i++) {
     Eigen::VectorXd particles = shapes[i]->get_global_correspondence_points();
 
-    // reinterpret as 3 columns as an Eigen Matrix
-    Eigen::MatrixXd particles_reshaped = particles.reshaped(particles.size() / 3, 3);
-
-    // write into all_particles
-    all_particles.block(i * num_particles, 0, particles_reshaped.rows(), particles_reshaped.cols()) =
-        particles_reshaped;
+    // write as row into all_particles
+    all_particles.row(i) = particles.transpose();
 
     shapes[i]->get_reconstructed_meshes(true);
     shapes[i]->load_feature(DisplayMode::Reconstructed, target_feature_.toStdString());
@@ -139,11 +135,15 @@ void ShapeScalarJob::prep_data() {
     Eigen::VectorXd scalars_d = scalars.cast<double>();
 
     // write into all_scalars
-    all_scalars.block(i * num_particles, 0, scalars.rows(), scalars.cols()) = scalars_d;
+    all_scalars.row(i) = scalars_d.transpose();
   }
 
   all_particles_ = all_particles;
   all_scalars_ = all_scalars;
+
+  // print min, max
+  SW_DEBUG("all_scalars min = {}", all_scalars_.minCoeff());
+  SW_DEBUG("all_scalars max = {}", all_scalars_.maxCoeff());
 }
 
 //---------------------------------------------------------------------------
