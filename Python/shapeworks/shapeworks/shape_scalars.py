@@ -11,39 +11,27 @@ from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
 
 
-def run_mbpls(x, y, n_components=3, cv=1):
+def run_mbpls(x, y, n_components=3, cv=5):
     """ Run MBPLS on shape and scalar data """
 
-    # save x and y, numpy arrays as CSV files to /tmp
-    #np.savetxt('/tmp/x.csv', x, delimiter=',')
-    #np.savetxt('/tmp/y.csv', y, delimiter=',')
-
-    # print shape
-    sw_message(f'x shape: {x.shape}')
-    sw_message(f'y shape: {y.shape}')
-
-
     model = MBPLS(n_components=n_components)
-    #y_pred = cross_val_predict(model, x, y, cv=cv)
-    #mse = mean_squared_error(y, y_pred)
+    if cv == 1:
+        model.fit(x, y)
+        y_pred = model.predict(x)
+    else:
+        y_pred = cross_val_predict(model, x, y, cv=cv)
 
-    model.fit(x, y)
-    y_pred = model.predict(x)
     mse = mean_squared_error(y, y_pred)
-
-    prediction = y_pred
 
     sw_message(f'MSE: {mse}')
 
-#    prediction = cross_val_predict(model, x, y, cv=cv)
-    prediction = pd.DataFrame(np.array(prediction))
+    prediction = pd.DataFrame(np.array(y_pred))
 
     # concatenate all columns into one
     prediction = pd.DataFrame(prediction.values.flatten())
 
     y = pd.DataFrame(np.array(y))
     y = pd.DataFrame(y.values.flatten())
-
 
     prediction = pd.concat((prediction, y), axis=1)
     prediction.columns = ['Predicted Scalar', 'Known Scalar']

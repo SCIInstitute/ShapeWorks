@@ -33,10 +33,6 @@ void ShapeScalarJob::run() {
     py::object A = np.attr("array")(all_particles_);
     py::object B = np.attr("array")(all_scalars_);
 
-    // SW_LOG("override, load from disk");
-    //    A = np.attr("loadtxt")("/tmp/A.csv", "delimiter"_a = ",");
-    //  B = np.attr("loadtxt")("/tmp/B.csv", "delimiter"_a = ",");
-
     py::module sw = py::module::import("shapeworks");
 
     if (job_type_ == JobType::MSE_Plot) {
@@ -58,17 +54,12 @@ void ShapeScalarJob::run() {
       SW_LOG("mse = {}", mse);
 
     } else if (job_type_ == JobType::Predict) {
-      //int num_particles = target_particles_.rows() / 3;
-      //target_particles_.resize(num_particles, 3);
-
       py::object new_x = np.attr("array")(target_particles_.transpose());
       py::object run_prediction = sw.attr("shape_scalars").attr("pred_from_mbpls");
 
-      //      using ResultType = std::tuple<Eigen::VectorXd>;
       using ResultType = Eigen::VectorXd;
       ResultType result = run_prediction(A, B, new_x).cast<ResultType>();
 
-      // Eigen::VectorXd y_pred = std::get<0>(result);
       auto y_pred = result;
 
       prediction_ = y_pred;
@@ -140,10 +131,6 @@ void ShapeScalarJob::prep_data() {
 
   all_particles_ = all_particles;
   all_scalars_ = all_scalars;
-
-  // print min, max
-  SW_DEBUG("all_scalars min = {}", all_scalars_.minCoeff());
-  SW_DEBUG("all_scalars max = {}", all_scalars_.maxCoeff());
 }
 
 //---------------------------------------------------------------------------
