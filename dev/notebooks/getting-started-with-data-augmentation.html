@@ -3947,11 +3947,11 @@ print('Directory:  ' + data_dir)</div>
 
 <span class="c1"># Get particles path list</span>
 <span class="n">model_dir</span> <span class="o">=</span>  <span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;shape_models/femur/1024/&quot;</span> 
-<span class="n">local_particle_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">world_particle_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">model_dir</span><span class="p">):</span>
-    <span class="k">if</span> <span class="s2">&quot;local&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">local_particle_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_dir</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span>
-<span class="n">local_particle_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">local_particle_list</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;world&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">world_particle_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_dir</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span>
+<span class="n">world_particle_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">world_particle_list</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total shapes in original dataset: &quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">img_list</span><span class="p">)))</span>
 </pre></div>
@@ -3964,11 +3964,11 @@ img_list = sorted(img_list)
 
 # Get particles path list
 model_dir =  data_dir + "shape_models/femur/1024/" 
-local_particle_list = []
+world_particle_list = []
 for file in os.listdir(model_dir):
-    if "local" in file:
-        local_particle_list.append(model_dir + file)
-local_particle_list = sorted(local_particle_list)
+    if "world" in file:
+        world_particle_list.append(model_dir + file)
+world_particle_list = sorted(world_particle_list)
 
 print("Total shapes in original dataset: "+ str(len(img_list)))</div>
     
@@ -3988,21 +3988,19 @@ print("Total shapes in original dataset: "+ str(len(img_list)))</div>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="run-data-augmentation-using-a-gaussian-distribution">Run data augmentation using a Gaussian Distribution<a class="anchor-link" href="#run-data-augmentation-using-a-gaussian-distribution">&#182;</a></h2><p>Below is the command for running the complete data augmentation process:</p>
 <div class="highlight"><pre><span></span><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> 
-                                          <span class="n">local_point_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> 
+                                          <span class="n">world_point_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> 
                                           <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> 
-                                          <span class="n">sampler_type</span><span class="p">,</span> <span class="n">mixture_num</span><span class="p">,</span>
-                                          <span class="n">world_point_list</span><span class="p">)</span>
+                                          <span class="n">sampler_type</span><span class="p">,</span> <span class="n">mixture_num</span><span class="p">)</span>
 </pre></div>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory where augmented data will be stored</li>
 <li><code>img_list</code>: List of paths to images of the original dataset.</li>
-<li><code>local_point_list</code>: List of paths to local <code>.particles</code> files of the original dataset. Note, this list should be ordered in correspondence with the <code>img_list</code>.</li>
+<li><code>world_point_list</code>: List of paths to world <code>.particles</code> files of the original dataset. Note, this list should be ordered in correspondence with the <code>img_list</code>.</li>
 <li><code>num_dim</code>: The number of dimensions to reduce to in PCA embedding. If zero or not specified, the percent_variability option is used to select the numnber of dimensions.</li>
 <li><code>percent_variability</code>: The proportion of variability in the data to be preserved in embedding. Used if <code>num_dim</code> is zero or not specified. Default value is 0.95 which preserves 95% of the varibaility in the data.</li>
 <li><code>sampler_type</code>: The type of parametric distribution to fit and sample from. Options: <code>gaussian</code>, <code>mixture</code>, or <code>kde</code>. Default: <code>kde</code>.</li>
 <li><code>mixture_num</code>: Only necessary if <code>sampler_type</code> is <code>mixture</code>. The number of clusters (i.e., mixture components) to be used in fitting a mixture model. If zero or not specified, the optimal number of clusters will be automatically determined using the <a href="https://en.wikipedia.org/wiki/Elbow_method_(clustering">elbow method</a>).</li>
-<li><code>world_point_list</code>: List of paths to world <code>.particles</code> files of the original dataset. This is optional and should be provided in cases where procrustes was used for the original optimization, resulting in a difference between world and local particle files. Note, this list should be ordered in correspondence with the <code>img_list</code> and <code>local_point_list</code>.</li>
 </ul>
 <p>In this notebook we will keep most arguments the same and explore the effect of changing the <code>sampler_type</code>.
 First, we will try a Gaussian distribution. For further explanation about each distribution, see <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>.</p>
@@ -4071,12 +4069,12 @@ percent_variability = 0.95</div>
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;../Output/GaussianAugmentation/&#39;</span>
 <span class="n">sampler_type</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span>
-<span class="n">embedded_dim</span> <span class="o">=</span> <span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> <span class="n">local_particle_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">)</span>
+<span class="n">embedded_dim</span> <span class="o">=</span> <span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> <span class="n">world_particle_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">)</span>
 <span class="n">aug_data_csv</span> <span class="o">=</span> <span class="n">output_directory</span> <span class="o">+</span> <span class="s2">&quot;/TotalData.csv&quot;</span>
 </pre></div>
 <div id="cell-6" class="clipboard-copy-txt">output_directory = '../Output/GaussianAugmentation/'
 sampler_type = "gaussian"
-embedded_dim = DataAugmentationUtils.runDataAugmentation(output_directory, img_list, local_particle_list, num_samples, num_dim, percent_variability, sampler_type)
+embedded_dim = DataAugmentationUtils.runDataAugmentation(output_directory, img_list, world_particle_list, num_samples, num_dim, percent_variability, sampler_type)
 aug_data_csv = output_directory + "/TotalData.csv"</div>
     
         </div>
@@ -4184,12 +4182,12 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">output_directory</span> <span class="o">=</span> <span class="s1">&#39;../Output/MixtureAugmentation/&#39;</span>
 <span class="n">sampler_type</span> <span class="o">=</span> <span class="s2">&quot;mixture&quot;</span>
-<span class="n">embedded_dim</span> <span class="o">=</span> <span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> <span class="n">local_particle_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">)</span>
+<span class="n">embedded_dim</span> <span class="o">=</span> <span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> <span class="n">world_particle_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> <span class="n">sampler_type</span><span class="p">)</span>
 <span class="n">aug_data_csv</span> <span class="o">=</span> <span class="n">output_directory</span> <span class="o">+</span> <span class="s2">&quot;/TotalData.csv&quot;</span>
 </pre></div>
 <div id="cell-8" class="clipboard-copy-txt">output_directory = '../Output/MixtureAugmentation/'
 sampler_type = "mixture"
-embedded_dim = DataAugmentationUtils.runDataAugmentation(output_directory, img_list, local_particle_list, num_samples, num_dim, percent_variability, sampler_type)
+embedded_dim = DataAugmentationUtils.runDataAugmentation(output_directory, img_list, world_particle_list, num_samples, num_dim, percent_variability, sampler_type)
 aug_data_csv = output_directory + "/TotalData.csv"</div>
     
         </div>
