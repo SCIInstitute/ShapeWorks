@@ -102,6 +102,11 @@ class Subject {
   //! Set if this subject is fixed or not
   void set_fixed(bool fixed);
 
+  //! Get the notes
+  std::string get_notes();
+  //! Set the notes
+  void set_notes(std::string notes);
+
  private:
   int number_of_domains_ = 0;
 
@@ -120,5 +125,6 @@ class Subject {
   StringMap group_values_;
   StringMap extra_values_;
   StringMap table_values_;
+  std::string notes_;
 };
 }  // namespace shapeworks

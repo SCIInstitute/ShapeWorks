@@ -157,6 +157,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void trigger_landmarks_changed();
   void trigger_planes_changed();
   void trigger_ffc_changed();
+  void trigger_annotations_changed();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
@@ -269,6 +270,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void ffc_paint_mode_changed();
   void repaint();
   void reinsert_shapes();
+  void annotations_changed();
 
  public:
   // constants

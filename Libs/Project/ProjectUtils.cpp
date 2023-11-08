@@ -183,6 +183,7 @@ StringMap ProjectUtils::get_value_map(std::vector<std::string> prefixes, StringM
 //---------------------------------------------------------------------------
 StringMap ProjectUtils::get_extra_columns(StringMap key_map) {
   StringList prefixes = {"name",
+                         "notes",
                          "fixed",
                          SEGMENTATION_PREFIX,
                          SHAPE_PREFIX,
@@ -323,6 +324,7 @@ ProjectUtils::StringMap ProjectUtils::convert_subject_to_map(Project* project, S
   if (project->get_fixed_subjects_present()) {
     j["fixed"] = subject->is_fixed() ? "true" : "false";
   }
+  j["notes"] = subject->get_notes();
 
   auto original_prefixes = ProjectUtils::convert_domain_types(project->get_original_domain_types());
   auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project->get_groomed_domain_types());

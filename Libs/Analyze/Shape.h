@@ -118,6 +118,9 @@ class Shape {
   //! Set the id of this shape
   void set_id(int id);
 
+  //! Update the name of this shape
+  void update_name();
+
   std::vector<std::string> get_original_filenames();
   std::vector<std::string> get_original_filenames_with_path();
 

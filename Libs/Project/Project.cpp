@@ -64,7 +64,7 @@ bool Project::save(const std::string& filename) {
 
 //---------------------------------------------------------------------------
 void Project::set_project_path(const std::string& new_pathname) {
-  SW_LOG("Setting project path to " + new_pathname);
+  SW_DEBUG("Setting project path to " + new_pathname);
 
   auto old_path = fs::path(project_path_);
   auto new_path = fs::path(new_pathname);

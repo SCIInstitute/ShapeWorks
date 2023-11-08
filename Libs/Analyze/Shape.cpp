@@ -320,6 +320,13 @@ int Shape::get_id() { return id_; }
 void Shape::set_id(int id) { id_ = id; }
 
 //---------------------------------------------------------------------------
+void Shape::update_name() {
+  if (subject_->get_display_name() != "") {
+    corner_annotations_[0] = subject_->get_display_name();
+  }
+}
+
+//---------------------------------------------------------------------------
 std::string Shape::get_original_filename() {
   if (subject_->get_original_filenames().size() < 1) {
     return "";
