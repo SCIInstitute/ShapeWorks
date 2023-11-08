@@ -76,6 +76,12 @@ void ProjectReader::load_subjects(StringMapList list) {
     }
     subject->set_display_name(name);
 
+    std::string notes;
+    if (contains(item, "notes")) {
+      notes = item["notes"];
+    }
+    subject->set_notes(notes);
+
     subjects.push_back(subject);
   }
 

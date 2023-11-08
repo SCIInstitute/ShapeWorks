@@ -94,6 +94,12 @@ bool Subject::is_fixed() { return fixed_; }
 void Subject::set_fixed(bool fixed) { fixed_ = fixed; }
 
 //---------------------------------------------------------------------------
+std::string Subject::get_notes() { return notes_; }
+
+//---------------------------------------------------------------------------
+void Subject::set_notes(std::string notes) { notes_ = notes; }
+
+//---------------------------------------------------------------------------
 void Subject::set_local_particle_filenames(StringList filenames) { local_particle_filenames_ = filenames; }
 
 //---------------------------------------------------------------------------
