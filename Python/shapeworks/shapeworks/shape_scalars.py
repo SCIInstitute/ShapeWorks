@@ -56,11 +56,19 @@ def run_mbpls(x, y, n_components=3, cv=5):
 
     return figdata_png, y_pred, mse
 
+import joblib
 
 def pred_from_mbpls(x, y, new_x, n_components=3):
     """ Run MBPLS on shape and scalar data, then predict new_y from new_x """
-    model = MBPLS(n_components=n_components)
-    model.fit(x, y)
+
+    # check if global variable model exists, otherwise create it
+    global model
+    try:
+        model
+    except NameError:
+        model = MBPLS(n_components=n_components)
+        model.fit(x, y)
+
     y_pred = model.predict(new_x)
     # return as vector
     return y_pred.flatten()

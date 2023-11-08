@@ -12,7 +12,7 @@ class Project;
 class ShapeScalarJob : public Job {
   Q_OBJECT
  public:
-  enum class JobType { MSE_Plot, Predict };
+  enum class JobType { Find_Components, MSE_Plot, Predict };
 
   ShapeScalarJob(QSharedPointer<Session> session, QString target_feature, Eigen::MatrixXd target_particles,
                  JobType job_type);
@@ -20,6 +20,9 @@ class ShapeScalarJob : public Job {
   QString name() override;
 
   QPixmap get_plot();
+
+  void set_number_of_components(int num_components) { num_components_ = num_components; }
+  void set_number_of_folds(int num_folds) { num_folds_ = num_folds; }
 
   Eigen::VectorXd get_prediction() { return prediction_; };
 
@@ -45,6 +48,9 @@ class ShapeScalarJob : public Job {
 
   Eigen::MatrixXd target_particles_;
   Eigen::VectorXd prediction_;
+
+  bool num_components_ = 3;
+  int num_folds_ = 5;
 
   JobType job_type_;
 };

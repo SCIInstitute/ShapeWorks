@@ -79,8 +79,14 @@ void ShapeScalarPanel::run_clicked() {
   ui_->progress->show();
   handle_job_progress(0);
 
-  job_ = QSharedPointer<ShapeScalarJob>::create(session_, ui_->feature_combo->currentText(), Eigen::MatrixXd{},
-                                                ShapeScalarJob::JobType::MSE_Plot);
+  ShapeScalarJob::JobType job_type =
+      ui_->find_components_mode ? ShapeScalarJob::JobType::Find_Components : ShapeScalarJob::JobType::MSE_Plot;
+
+  job_ =
+      QSharedPointer<ShapeScalarJob>::create(session_, ui_->feature_combo->currentText(), Eigen::MatrixXd{}, job_type);
+  job_->set_number_of_components(ui_->num_components->text().toInt());
+  job_->set_number_of_folds(ui_->num_folds->text().toInt());
+
   connect(job_.data(), &ShapeScalarJob::progress, this, &ShapeScalarPanel::handle_job_progress);
   connect(job_.data(), &ShapeScalarJob::finished, this, &ShapeScalarPanel::handle_job_complete);
 
@@ -112,33 +118,12 @@ void ShapeScalarPanel::update_graphs() {
   }
   ui_->plot->show();
 
-  // auto plot = ui_->plot;
-
   auto pixmap = job_->get_plot();
 
   if (!pixmap.isNull()) {
     QPixmap resized = pixmap.scaledToWidth(this->width() * 0.95, Qt::SmoothTransformation);
     ui_->plot->setPixmap(resized);
   }
-
-  /*
-    plot->clearGraphs();
-
-    QString title = "Two Block PLS Loadings";
-
-    plot->getPlotter()->setUseAntiAliasingForGraphs(true);
-    plot->getPlotter()->setUseAntiAliasingForSystem(true);
-    plot->getPlotter()->setUseAntiAliasingForText(true);
-    plot->getPlotter()->setPlotLabelFontSize(18);
-    plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
-    plot->getPlotter()->setDefaultTextSize(14);
-    plot->getPlotter()->setShowKey(false);
-
-    plot->clearAllMouseWheelActions();
-    plot->setMousePositionShown(false);
-    plot->setMinimumSize(250, 250);
-    plot->zoomToFit();
-    */
 }
 
 //---------------------------------------------------------------------------
