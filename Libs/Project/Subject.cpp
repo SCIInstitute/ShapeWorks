@@ -85,7 +85,10 @@ void Subject::set_table_values(StringMap table_values) { table_values_ = table_v
 std::string Subject::get_display_name() { return display_name_; }
 
 //---------------------------------------------------------------------------
-void Subject::set_display_name(std::string display_name) { display_name_ = display_name; }
+void Subject::set_display_name(std::string display_name) {
+  display_name_ = display_name;
+  table_values_["name"] = display_name;
+}
 
 //---------------------------------------------------------------------------
 bool Subject::is_fixed() { return fixed_; }
@@ -97,7 +100,10 @@ void Subject::set_fixed(bool fixed) { fixed_ = fixed; }
 std::string Subject::get_notes() { return notes_; }
 
 //---------------------------------------------------------------------------
-void Subject::set_notes(std::string notes) { notes_ = notes; }
+void Subject::set_notes(std::string notes) {
+  notes_ = notes;
+  table_values_["notes"] = notes;
+}
 
 //---------------------------------------------------------------------------
 void Subject::set_local_particle_filenames(StringList filenames) { local_particle_filenames_ = filenames; }

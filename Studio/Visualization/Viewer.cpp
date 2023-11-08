@@ -632,12 +632,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   }
   mesh_ready_ = true;
 
-  auto annotations = shape->get_annotations();
-  corner_annotation_->SetText(0, (annotations[0]).c_str());
-  corner_annotation_->SetText(1, (annotations[1]).c_str());
-  corner_annotation_->SetText(2, (annotations[2]).c_str());
-  corner_annotation_->SetText(3, (annotations[3]).c_str());
-  corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
+  update_annotations();
 
   renderer_->RemoveAllViewProps();
 
@@ -787,6 +782,18 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
     }
   }
   **********/
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_annotations() {
+  if (shape_) {
+    auto annotations = shape_->get_annotations();
+    corner_annotation_->SetText(0, (annotations[0]).c_str());
+    corner_annotation_->SetText(1, (annotations[1]).c_str());
+    corner_annotation_->SetText(2, (annotations[2]).c_str());
+    corner_annotation_->SetText(3, (annotations[3]).c_str());
+    corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -11,11 +11,10 @@
 #include <vtkTransformPolyDataFilter.h>
 
 #include <QDebug>
+#include <QMenu>
 #include <QMessageBox>
 #include <QThread>
-#include <QMenu>
 #include <iostream>
-
 
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
@@ -61,7 +60,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
                                               "• Right click plane point to flip normal or apply to other shapes");
 
   ui_->ffc_instruction->setText(QString("• Enable painting and draw on the surface with left+click\n") +
-                                 "• Right click on a constraint in the table to apply to other shapes");
+                                "• Right click on a constraint in the table to apply to other shapes");
 
   // start with these off
   ui_->landmarks_open_button->toggle();
@@ -70,6 +69,15 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   // table on
   // ui_->table_open_button->toggle();
+
+  // when the table selection changes
+  connect(ui_->table, &QTableWidget::itemSelectionChanged, this, &DataTool::table_selection_changed);
+
+  // when the subject_notes changes
+  connect(ui_->subject_notes, &QTextEdit::textChanged, this, &DataTool::subject_notes_changed);
+
+  // when the table data changes
+  connect(ui_->table, &QTableWidget::itemChanged, this, &DataTool::table_data_edited);
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   connect(ui_->new_landmark_button, &QPushButton::clicked, landmark_table_model_.get(),
@@ -141,7 +149,7 @@ void DataTool::enable_actions() {
 }
 
 //---------------------------------------------------------------------------
-void DataTool::update_table() {
+void DataTool::update_table(bool clean) {
   if (!session_) {
     return;
   }
@@ -157,12 +165,14 @@ void DataTool::update_table() {
     table_headers << QString::fromStdString(header);
   }
 
-  ui_->table->clear();
-  ui_->table->setRowCount(shapes.size());
-  ui_->table->setColumnCount(table_headers.size());
+  if (clean) {
+    ui_->table->clear();
+    ui_->table->setRowCount(shapes.size());
+    ui_->table->setColumnCount(table_headers.size());
 
-  ui_->table->setHorizontalHeaderLabels(table_headers);
-  ui_->table->verticalHeader()->setVisible(true);
+    ui_->table->setHorizontalHeaderLabels(table_headers);
+    ui_->table->verticalHeader()->setVisible(true);
+  }
 
   for (int row = 0; row < subjects.size(); row++) {
     auto values = subjects[row]->get_table_values();
@@ -171,18 +181,25 @@ void DataTool::update_table() {
       if (values.contains(headers[h])) {
         value = values[headers[h]];
       }
-      QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(value));
-      ui_->table->setItem(row, h, new_item);
+      if (clean) {
+        QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(value));
+        ui_->table->setItem(row, h, new_item);
+      } else {
+        // just update the text
+        ui_->table->item(row, h)->setText(QString::fromStdString(value));
+      }
     }
   }
 
-  ui_->table->resizeColumnsToContents();
-  ui_->table->horizontalHeader()->setStretchLastSection(false);
-  ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
+  if (clean) {
+    ui_->table->resizeColumnsToContents();
+    ui_->table->horizontalHeader()->setStretchLastSection(false);
+    ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-  update_landmark_table();
-  update_plane_table();
-  update_ffc_table();
+    update_landmark_table();
+    update_plane_table();
+    update_ffc_table();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -533,6 +550,77 @@ void DataTool::copy_ffc_clicked() {
   }
   session_->trigger_ffc_changed();
   session_->trigger_repaint();
+}
+
+//---------------------------------------------------------------------------
+void DataTool::table_selection_changed() {
+  // if only one row is selected, update the subject_notes, otherwise disable it
+  QModelIndexList list = ui_->table->selectionModel()->selectedRows();
+  if (list.size() == 1) {
+    int row = list[0].row();
+    auto shape = session_->get_shapes()[row];
+    ui_->subject_notes->setText(QString::fromStdString(shape->get_subject()->get_notes()));
+    ui_->subject_notes->setEnabled(true);
+  } else {
+    ui_->subject_notes->setText("");
+    ui_->subject_notes->setEnabled(false);
+  }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::subject_notes_changed() {
+  // update the notes for the selected subject
+  QModelIndexList list = ui_->table->selectionModel()->selectedRows();
+  if (list.size() == 1) {
+    int row = list[0].row();
+    auto shape = session_->get_shapes()[row];
+    auto old_notes = shape->get_subject()->get_notes();
+    auto new_notes = ui_->subject_notes->toPlainText().toStdString();
+    if (old_notes != new_notes) {
+      shape->get_subject()->set_notes(new_notes);
+      // update the table
+      update_table(false);
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::table_data_edited() {
+  // store all the changes
+
+  if (ui_->table->rowCount() != session_->get_shapes().size() || ui_->table->columnCount() < 2) {
+    return;
+  }
+
+  bool change = false;
+  // iterate over all rows, not just selected
+  for (int row = 0; row < ui_->table->rowCount(); row++) {
+    auto shape = session_->get_shapes()[row];
+    auto old_name = shape->get_subject()->get_display_name();
+    auto old_notes = shape->get_subject()->get_notes();
+    if (ui_->table->item(row, 0) == nullptr) {
+      continue;
+    }
+    auto new_name = ui_->table->item(row, 0)->text().toStdString();
+    if (ui_->table->item(row, 1) == nullptr) {
+      continue;
+    }
+    auto new_notes = ui_->table->item(row, 1)->text().toStdString();
+    if (old_name != new_name) {
+      shape->get_subject()->set_display_name(new_name);
+      shape->update_name();
+      session_->trigger_annotations_changed();
+      change = true;
+    }
+    if (old_notes != new_notes) {
+      shape->get_subject()->set_notes(new_notes);
+      change = true;
+    }
+  }
+
+  if (change) {
+    table_selection_changed();
+  }
 }
 
 //---------------------------------------------------------------------------

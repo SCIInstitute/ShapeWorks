@@ -941,6 +941,8 @@ void Session::trigger_planes_changed() { Q_EMIT planes_changed(); }
 
 //---------------------------------------------------------------------------
 void Session::trigger_ffc_changed() { Q_EMIT ffc_changed(); }
+//---------------------------------------------------------------------------
+void Session::trigger_annotations_changed() { Q_EMIT annotations_changed(); }
 
 //---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }
