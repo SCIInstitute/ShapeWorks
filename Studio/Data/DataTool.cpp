@@ -558,6 +558,11 @@ void DataTool::table_selection_changed() {
   QModelIndexList list = ui_->table->selectionModel()->selectedRows();
   if (list.size() == 1) {
     int row = list[0].row();
+    if (row >= session_->get_shapes().size()) {
+      ui_->subject_notes->setText("");
+      ui_->subject_notes->setEnabled(false);
+      return;
+    }
     auto shape = session_->get_shapes()[row];
     ui_->subject_notes->setText(QString::fromStdString(shape->get_subject()->get_notes()));
     ui_->subject_notes->setEnabled(true);
