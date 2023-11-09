@@ -3,7 +3,7 @@
 #include <Logging.h>
 #include <Utils.h>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 
 namespace shapeworks {
 
@@ -112,7 +112,7 @@ std::vector<bool> ParticleNormalEvaluation::threshold_particle_normals(std::vect
 
 //---------------------------------------------------------------------------
 Eigen::MatrixXd ParticleNormalEvaluation::compute_particle_normals(
-    const Eigen::MatrixXd &particles, std::vector<std::shared_ptr<VtkMeshWrapper>> meshes) {
+    const Eigen::MatrixXd &particles, std::vector<std::shared_ptr<MeshWrapper>> meshes) {
   Eigen::MatrixXd normals;
   normals.resize(particles.rows(), particles.cols());
 

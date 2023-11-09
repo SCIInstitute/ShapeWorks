@@ -22,7 +22,7 @@ namespace shapeworks {
 class Shape;
 using ShapeHandle = std::shared_ptr<Shape>;
 using ShapeList = std::vector<ShapeHandle>;
-class VtkMeshWrapper;
+class MeshWrapper;
 
 //! Representation of a single shape/patient/subject.
 class Shape {
@@ -175,7 +175,7 @@ class Shape {
 
   bool has_planes();
 
-  std::vector<std::shared_ptr<VtkMeshWrapper>> get_groomed_mesh_wrappers();
+  std::vector<std::shared_ptr<MeshWrapper>> get_groomed_mesh_wrappers();
 
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
@@ -191,7 +191,7 @@ class Shape {
   MeshGroup original_meshes_;
   MeshGroup groomed_meshes_;
   MeshGroup reconstructed_meshes_;
-  std::vector<std::shared_ptr<VtkMeshWrapper>> groomed_mesh_wrappers_;
+  std::vector<std::shared_ptr<MeshWrapper>> groomed_mesh_wrappers_;
 
   std::string override_feature_;
 

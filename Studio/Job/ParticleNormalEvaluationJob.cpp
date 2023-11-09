@@ -27,7 +27,7 @@ void ParticleNormalEvaluationJob::run() {
   for (int domain = 0; domain < num_domains; domain++) {
     ParticleSystemEvaluation particles = session_->get_local_particle_system(domain);
 
-    std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
+    std::vector<std::shared_ptr<MeshWrapper>> meshes;
     for (auto& shape : session_->get_shapes()) {
       meshes.push_back(shape->get_groomed_mesh_wrappers()[domain]);
       count++;

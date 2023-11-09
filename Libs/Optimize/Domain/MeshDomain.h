@@ -2,7 +2,7 @@
 
 #include <itkObjectFactory.h>
 
-#include "VtkMeshWrapper.h"
+#include "MeshWrapper.h"
 #include "ParticleDomain.h"
 
 namespace shapeworks {
@@ -107,7 +107,7 @@ class MeshDomain : public ParticleDomain {
     m_FixedDomain = false;
     mesh_wrapper_ = mesh_;
     sw_mesh_ = std::make_shared<Mesh>(mesh_wrapper_->GetPolydata());
-    geodesics_mesh_ = std::make_shared<VtkMeshWrapper>(mesh_wrapper_->GetPolydata());
+    geodesics_mesh_ = std::make_shared<MeshWrapper>(mesh_wrapper_->GetPolydata());
   }
 
   std::shared_ptr<Mesh> GetSWMesh() const { return sw_mesh_; }

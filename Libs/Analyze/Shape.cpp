@@ -16,7 +16,7 @@
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -819,14 +819,14 @@ bool Shape::has_planes() {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers() {
+std::vector<std::shared_ptr<MeshWrapper>> Shape::get_groomed_mesh_wrappers() {
   if (!groomed_mesh_wrappers_.empty()) {
     return groomed_mesh_wrappers_;
   }
 
   auto group = get_groomed_meshes(true /* wait */);
   for (auto& mesh : group.meshes()) {
-    auto wrapper = std::make_shared<VtkMeshWrapper>(mesh->get_poly_data());
+    auto wrapper = std::make_shared<MeshWrapper>(mesh->get_poly_data());
     groomed_mesh_wrappers_.push_back(wrapper);
   }
   return groomed_mesh_wrappers_;

@@ -1,19 +1,21 @@
-#include "VtkMeshWrapper.h"
+#include "MeshWrapper.h"
 
-#include <vtkCellLocator.h>
-#include <vtkPolyDataNormals.h>
-#include <vtkCellData.h>
-#include <vtkCell.h>
-#include <vtkPointData.h>
-#include <vtkTriangleFilter.h>
-#include <vtkGenericCell.h>
-#include <vtkCleanPolyData.h>
-#include <vtkTriangle.h>
-#include <vtkPLYWriter.h>
-
+#include <geometrycentral/surface/surface_mesh_factories.h>
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
-#include <geometrycentral/surface/surface_mesh_factories.h>
+#include <vtkCell.h>
+#include <vtkCellData.h>
+#include <vtkCellLocator.h>
+#include <vtkCleanPolyData.h>
+#include <vtkGenericCell.h>
+#include <vtkPLYWriter.h>
+#include <vtkPointData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkTriangle.h>
+#include <vtkTriangleFilter.h>
+
+#include "ExternalLibs/robin_hood/robin_hood.h"
+#include "Libs/Optimize/Domain/DomainType.h"
 
 namespace shapeworks {
 
@@ -22,34 +24,32 @@ const static float epsilon = 1e-6;
 }
 
 namespace {
-template<class FROM, class TO>
-inline TO convert(FROM &value) {
+template <class FROM, class TO>
+inline TO convert(FROM& value) {
   TO converted;
   converted[0] = value[0];
   converted[1] = value[1];
   converted[2] = value[2];
   return converted;
 }
-}
+}  // namespace
 
-template<class T>
+template <class T>
 inline std::string PrintValue(T value) {
-  return "(" + std::to_string(value[0]) + ", " + std::to_string(value[1]) + ", " +
-         std::to_string(value[2]) + ")";
+  return "(" + std::to_string(value[0]) + ", " + std::to_string(value[1]) + ", " + std::to_string(value[2]) + ")";
 }
 
 using vec3 = Eigen::Vector3d;
-using NormalType = VtkMeshWrapper::NormalType;
-using VectorType = VtkMeshWrapper::VectorType;
-using PointType = VtkMeshWrapper::PointType;
-using GradNType = VtkMeshWrapper::GradNType;
+using NormalType = MeshWrapper::NormalType;
+using VectorType = MeshWrapper::VectorType;
+using PointType = MeshWrapper::PointType;
+using GradNType = MeshWrapper::GradNType;
 
 //---------------------------------------------------------------------------
-VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
-                               bool is_geodesics_enabled, size_t geodesics_cache_size_multiplier) {
+MeshWrapper::MeshWrapper(vtkSmartPointer<vtkPolyData> poly_data, bool is_geodesics_enabled,
+                         size_t geodesics_cache_size_multiplier) {
   original_mesh_ = poly_data;
-  vtkSmartPointer<vtkTriangleFilter> triangle_filter =
-          vtkSmartPointer<vtkTriangleFilter>::New();
+  vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(poly_data);
   triangle_filter->Update();
 
@@ -62,7 +62,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
 
   vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
   normals->SetInputConnection(clean->GetOutputPort());
-  normals->SplittingOff(); // very important or connectivity is lost
+  normals->SplittingOff();  // very important or connectivity is lost
   normals->ComputeCellNormalsOn();
   normals->ComputePointNormalsOn();
   normals->Update();
@@ -104,7 +104,7 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
 
   this->is_geodesics_enabled_ = is_geodesics_enabled;
   if (is_geodesics_enabled_) {
-    if(geodesics_cache_size_multiplier == 0) {
+    if (geodesics_cache_size_multiplier == 0) {
       // this is heuristic that gives a good trade off between memory usage and performance
       geodesics_cache_size_multiplier = 120;
     }
@@ -116,8 +116,8 @@ VtkMeshWrapper::VtkMeshWrapper(vtkSmartPointer<vtkPolyData> poly_data,
 }
 
 //---------------------------------------------------------------------------
-double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
-                                       const PointType &pt_b, int idx_b, VectorType *out_grad) const {
+double MeshWrapper::ComputeDistance(const PointType& pt_a, int idx_a, const PointType& pt_b, int idx_b,
+                                    VectorType* out_grad) const {
   // return euclidean if geodesics are disabled
   if (!is_geodesics_enabled_) {
     if (out_grad != nullptr) {
@@ -133,7 +133,8 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   FetchAndCacheFirstPoint(pt_a, idx_a, face_a, bary_a);
 
   // Find the triangle for the point b
-  // (some initial experiments at caching these like we do for point_a proved to be unfruitful. no significant perf gain)
+  // (some initial experiments at caching these like we do for point_a proved to be unfruitful. no significant perf
+  // gain)
   face_b = ComputeFaceAndWeights(pt_b, idx_b, bary_b);
 
   // The geodesics(and more importantly, its gradient) are very inaccurate if both the points are on the
@@ -156,8 +157,9 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
   // Ensure we have geodesics available in the cache. This will resize the cache to fit face_b or max_dist, whichever
   // is greater. We do this pre-emptively since GeodesicsFromTriangleToTriangle would pull geodesics to every point
   // into the cache if face_b is not found. 1.5 is an heuristic to pull in a little more than we need
-  if(!geo_dist_cache_[face_a].has_entry(face_b)) {
-    const double max_dist = idx_a >= 0 ? this->particle_neighboorhood_[idx_a]*1.5 : std::numeric_limits<double>::infinity();
+  if (!geo_dist_cache_[face_a].has_entry(face_b)) {
+    const double max_dist =
+        idx_a >= 0 ? this->particle_neighboorhood_[idx_a] * 1.5 : std::numeric_limits<double>::infinity();
     GeodesicsFromTriangle(face_a, max_dist, face_b);
   }
 
@@ -175,7 +177,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 
   // Compute gradient of geodesics
   const auto& G = face_grad_[face_a];
-  Eigen::Vector3d out_grad_eigen = (G*geo_to_b).rowwise().sum();
+  Eigen::Vector3d out_grad_eigen = (G * geo_to_b).rowwise().sum();
   out_grad_eigen *= geo_dist / out_grad_eigen.norm();
 
   // Copy to VNL data structure
@@ -189,9 +191,7 @@ double VtkMeshWrapper::ComputeDistance(const PointType &pt_a, int idx_a,
 //---------------------------------------------------------------------------
 // Fetches face/triangle index and barycentric coordinates of point in face,
 // caching or retrieving results from cache if already cached.
-void VtkMeshWrapper::FetchAndCacheFirstPoint(const PointType pt_a, int idx_a,
-                                             int& face_a, vec3& bary_a) const
-{
+void MeshWrapper::FetchAndCacheFirstPoint(const PointType pt_a, int idx_a, int& face_a, vec3& bary_a) const {
   if (geo_lq_cached_ && pt_a == geo_lq_pt_a_) {
     face_a = geo_lq_face_;
     bary_a = geo_lq_bary_;
@@ -206,18 +206,16 @@ void VtkMeshWrapper::FetchAndCacheFirstPoint(const PointType pt_a, int idx_a,
 }
 
 //---------------------------------------------------------------------------
-bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
-                                      const PointType &pt_b, int idx_b,
-                                      double test_dist, double& dist) const
-{
-  if(!is_geodesics_enabled_) {
+bool MeshWrapper::IsWithinDistance(const PointType& pt_a, int idx_a, const PointType& pt_b, int idx_b, double test_dist,
+                                   double& dist) const {
+  if (!is_geodesics_enabled_) {
     dist = pt_a.EuclideanDistanceTo(pt_b);
     return dist < test_dist;
   }
 
-  if(idx_a != -1) {
-    if(particle_neighboorhood_.size() <= idx_a) {
-      particle_neighboorhood_.resize(idx_a+1);
+  if (idx_a != -1) {
+    if (particle_neighboorhood_.size() <= idx_a) {
+      particle_neighboorhood_.resize(idx_a + 1);
     }
     particle_neighboorhood_[idx_a] = test_dist;
   }
@@ -238,22 +236,28 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
   const auto vb2 = this->triangles_[face_b]->GetPointId(2);
 
   // 1.5 is an heuristic to pull in a little more than we need
-  const auto& geo_entry = GeodesicsFromTriangle(face_a, test_dist*1.5);
+  const auto& geo_entry = GeodesicsFromTriangle(face_a, test_dist * 1.5);
 
-  if(!geo_entry.is_full_mode()) {
+  if (!geo_entry.is_full_mode()) {
     const auto& data = geo_entry.data_partial;
     const auto find_v0 = data.find(vb0);
     const auto find_v1 = data.find(vb1);
     const auto find_v2 = data.find(vb2);
-    if(find_v0 == data.end() && find_v1 == data.end() && find_v2 == data.end()) {
+    if (find_v0 == data.end() && find_v1 == data.end() && find_v2 == data.end()) {
       return false;
     }
     // quick test to see if we _really_ need the geodesic.
     double min_found = std::numeric_limits<double>::infinity();
-    if(find_v0 != data.end()) { min_found = std::min(min_found, find_v0->second.minCoeff()); }
-    if(find_v1 != data.end()) { min_found = std::min(min_found, find_v1->second.minCoeff()); }
-    if(find_v2 != data.end()) { min_found = std::min(min_found, find_v2->second.minCoeff()); }
-    if(min_found > test_dist) {
+    if (find_v0 != data.end()) {
+      min_found = std::min(min_found, find_v0->second.minCoeff());
+    }
+    if (find_v1 != data.end()) {
+      min_found = std::min(min_found, find_v1->second.minCoeff());
+    }
+    if (find_v2 != data.end()) {
+      min_found = std::min(min_found, find_v2->second.minCoeff());
+    }
+    if (min_found > test_dist) {
       return false;
     }
   }
@@ -265,23 +269,18 @@ bool VtkMeshWrapper::IsWithinDistance(const PointType &pt_a, int idx_a,
 }
 
 //---------------------------------------------------------------------------
-PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
-                                       VectorType vector) const
-{
+PointType MeshWrapper::GeodesicWalk(PointType p, int idx, VectorType vector) const {
   vec3 point(p[0], p[1], p[2]);
   double closest_point[3];
   int face_index = GetTriangleForPoint(point.data(), idx, closest_point);
   point = convert<double[3], vec3>(closest_point);
 
-  Eigen::Vector3d vector_eigen =
-    convert<VectorType, Eigen::Vector3d>(vector);
-  Eigen::Vector3d projected_vector =
-    this->ProjectVectorToFace(GetFaceNormal(face_index), vector_eigen);
+  Eigen::Vector3d vector_eigen = convert<VectorType, Eigen::Vector3d>(vector);
+  Eigen::Vector3d projected_vector = this->ProjectVectorToFace(GetFaceNormal(face_index), vector_eigen);
 
   int ending_face = -1;
 
-  Eigen::Vector3d new_point = GeodesicWalkOnFace(point, projected_vector, face_index,
-                                                 ending_face);
+  Eigen::Vector3d new_point = GeodesicWalkOnFace(point, projected_vector, face_index, ending_face);
 
   PointType new_point_pt = convert<Eigen::Vector3d, PointType>(new_point);
 
@@ -311,10 +310,7 @@ PointType VtkMeshWrapper::GeodesicWalk(PointType p, int idx,
 }
 
 //---------------------------------------------------------------------------
-VectorType
-VtkMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
-                                              VectorType &vector) const
-{
+VectorType MeshWrapper::ProjectVectorToSurfaceTangent(const PointType& pointa, int idx, VectorType& vector) const {
   double point[3];
   point[0] = pointa[0];
   point[1] = pointa[1];
@@ -326,7 +322,7 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
   double* normal = this->poly_data_->GetCellData()->GetNormals()->GetTuple(faceIndex);
 
   Eigen::Vector3d vec_normal = convert<double*, vec3>(normal);
-  Eigen::Vector3d vec_vector = convert<VectorType &, vec3>(vector);
+  Eigen::Vector3d vec_vector = convert<VectorType&, vec3>(vector);
 
   Eigen::Vector3d result = this->ProjectVectorToFace(vec_normal, vec_vector);
   VectorType resultvnl(result[0], result[1], result[2]);
@@ -334,8 +330,7 @@ VtkMeshWrapper::ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
 }
 
 //---------------------------------------------------------------------------
-NormalType VtkMeshWrapper::SampleNormalAtPoint(PointType p, int idx) const
-{
+NormalType MeshWrapper::SampleNormalAtPoint(PointType p, int idx) const {
   // if the particle is not in the cache or it has changed position, we must recompute
   if (idx < 0 || idx >= this->particle_normals_.size() || p != this->particle_positions_[idx]) {
     return this->CalculateNormalAtPoint(p, idx);
@@ -344,8 +339,7 @@ NormalType VtkMeshWrapper::SampleNormalAtPoint(PointType p, int idx) const
 }
 
 //---------------------------------------------------------------------------
-GradNType VtkMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
-{
+GradNType MeshWrapper::SampleGradNAtPoint(PointType p, int idx) const {
   vec3 weights;
   int face_index = this->ComputeFaceAndWeights(p, idx, weights);
 
@@ -361,24 +355,21 @@ GradNType VtkMeshWrapper::SampleGradNAtPoint(PointType p, int idx) const
 }
 
 //---------------------------------------------------------------------------
-PointType VtkMeshWrapper::SnapToMesh(PointType pointa, int idx) const
-{
-  VtkMeshWrapper::PointType out;
+PointType MeshWrapper::SnapToMesh(PointType pointa, int idx) const {
+  MeshWrapper::PointType out;
   this->GetTriangleForPoint(pointa.GetDataPointer(), idx, out.GetDataPointer());
   return out;
 }
 
 //---------------------------------------------------------------------------
-PointType VtkMeshWrapper::GetPointOnMesh() const
-{
+PointType MeshWrapper::GetPointOnMesh() const {
   PointType p = GetMeshUpperBound();
   p = SnapToMesh(p, -1);
   return p;
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const
-{
+int MeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const {
   // given a guess, just check whether it is still valid.
   if (idx >= 0) {
     // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
@@ -396,10 +387,10 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
     }
   }
 
-  //double closest_point[3];//the coordinates of the closest point will be returned here
-  double closest_point_dist2; //the squared distance to the closest point will be returned here
-  vtkIdType cell_id; //the cell id of the cell containing the closest point will be returned here
-  int sub_id; //this is rarely used (in triangle strips only, I believe)
+  // double closest_point[3];//the coordinates of the closest point will be returned here
+  double closest_point_dist2;  // the squared distance to the closest point will be returned here
+  vtkIdType cell_id;           // the cell id of the cell containing the closest point will be returned here
+  int sub_id;                  // this is rarely used (in triangle strips only, I believe)
 
   this->cell_locator_->FindClosestPoint(pt, closest_point, cell_id, sub_id, closest_point_dist2);
 
@@ -413,16 +404,13 @@ int VtkMeshWrapper::GetTriangleForPoint(const double pt[3], int idx, double clos
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d
-VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d &normal,
-                                    const Eigen::Vector3d &vector) const
-{
+Eigen::Vector3d MeshWrapper::ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const {
   auto old_mag = vector.norm();
 
   Eigen::Vector3d new_vector = vector - normal * normal.dot(vector);
 
   /// Old behavior is to not rescale it, uncomment for the old behavior
-  //return new_vector;
+  // return new_vector;
 
   auto new_mag = new_vector.norm();
   double ratio = old_mag / new_mag;
@@ -433,8 +421,7 @@ VtkMeshWrapper::ProjectVectorToFace(const Eigen::Vector3d &normal,
 }
 
 //---------------------------------------------------------------------------
-void VtkMeshWrapper::ComputeMeshBounds()
-{
+void MeshWrapper::ComputeMeshBounds() {
   double buffer = 5.0;
   double bounds[6];
   this->poly_data_->GetBounds(bounds);
@@ -447,8 +434,7 @@ void VtkMeshWrapper::ComputeMeshBounds()
 }
 
 //---------------------------------------------------------------------------
-void VtkMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
-{
+void MeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) {
   const int n_verts = V.rows();
   const int n_faces = F.rows();
 
@@ -491,33 +477,28 @@ void VtkMeshWrapper::ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixX
       grad_normals_[j].set(i, 2, GN_pervertex(j, i * 3 + 2));
     }
   }
-
 }
 
 //---------------------------------------------------------------------------
-bool VtkMeshWrapper::IsInTriangle(const double* pt, int face_index) const
-{
+bool MeshWrapper::IsInTriangle(const double* pt, int face_index) const {
   double closest[3];
   int sub_id;
   double pcoords[3];
   double dist2;
   double bary[3];
 
-  int ret = this->triangles_[face_index]->EvaluatePosition(pt, closest, sub_id, pcoords, dist2,
-                                                           bary);
+  int ret = this->triangles_[face_index]->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, bary);
   if (ret && dist2 < epsilon) {
     bool bary_check = ((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
                       ((bary[1] >= -epsilon) && (bary[1] <= 1 + epsilon)) &&
                       ((bary[2] >= -epsilon) && (bary[2] <= 1 + epsilon));
     return bary_check;
-
   }
   return false;
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const
-{
+Eigen::Vector3d MeshWrapper::ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const {
   double closest[3];
   int sub_id;
   double pcoords[3];
@@ -528,8 +509,7 @@ Eigen::Vector3d VtkMeshWrapper::ComputeBarycentricCoordinates(const Eigen::Vecto
 }
 
 //---------------------------------------------------------------------------
-const Eigen::Vector3d VtkMeshWrapper::GetFaceNormal(int face_index) const
-{
+const Eigen::Vector3d MeshWrapper::GetFaceNormal(int face_index) const {
   auto normals = this->poly_data_->GetCellData()->GetNormals();
   double* normal = normals->GetTuple(face_index);
   Eigen::Vector3d n(normal[0], normal[1], normal[2]);
@@ -537,35 +517,32 @@ const Eigen::Vector3d VtkMeshWrapper::GetFaceNormal(int face_index) const
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d
-VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector,
-                                   int face_index, int &ending_face) const
-{
+Eigen::Vector3d MeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector,
+                                                int face_index, int& ending_face) const {
   int currentFace = face_index;
   Eigen::Vector3d currentPoint = point_a;
   Eigen::Vector3d remainingVector = projected_vector;
   double minimumUpdate = 0.0000000001;
   double barycentricEpsilon = 0.0001;
   std::vector<int> facesTraversed;
-  //std::vector<vec3> positions;
+  // std::vector<vec3> positions;
   int prevFace = currentFace;
   while (remainingVector.norm() > minimumUpdate && currentFace != -1) {
     facesTraversed.push_back(currentFace);
-    vec3 currentBary = ComputeBarycentricCoordinates(
-      vec3(currentPoint[0], currentPoint[1], currentPoint[2]), currentFace);
-    //std::cerr << "Current Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
+    vec3 currentBary =
+        ComputeBarycentricCoordinates(vec3(currentPoint[0], currentPoint[1], currentPoint[2]), currentFace);
+    // std::cerr << "Current Bary: " << PrintValue<Eigen::Vector3d>(currentBary) << "\n";
 
     Eigen::Vector3d targetPoint = currentPoint + remainingVector;
-    //positions.push_back(currentPoint);
-    vec3 targetBary = ComputeBarycentricCoordinates(
-      vec3(targetPoint[0], targetPoint[1], targetPoint[2]), currentFace);
-    //std::cerr << "Target Bary: " << PrintValue<Eigen::Vector3d>(targetBary) << "\n";
+    // positions.push_back(currentPoint);
+    vec3 targetBary = ComputeBarycentricCoordinates(vec3(targetPoint[0], targetPoint[1], targetPoint[2]), currentFace);
+    // std::cerr << "Target Bary: " << PrintValue<Eigen::Vector3d>(targetBary) << "\n";
 
     if (facesTraversed.size() >= 3 &&
         facesTraversed[facesTraversed.size() - 1] == facesTraversed[facesTraversed.size() - 3]) {
-      // When at the intersection of two faces while also being at the edge of the mesh, the edge-sliding will keep alternating
-      // between the two faces without actually going anywhere since it is at a corner in the mesh.
-      //std::cerr << "exiting due to face repetition\n";
+      // When at the intersection of two faces while also being at the edge of the mesh, the edge-sliding will keep
+      // alternating between the two faces without actually going anywhere since it is at a corner in the mesh.
+      // std::cerr << "exiting due to face repetition\n";
       break;
     }
 
@@ -574,11 +551,11 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
       for (int i = 0; i < facesTraversed.size(); i++) {
         std::cerr << facesTraversed[i] << ", ";
       }
-      //std::cerr << "\nPositions: ";
-      //for (int i = 0; i < positions.size(); i++) {
-      //    std::cerr << "(" << positions[i][0] << "," << positions[i][1] << "," << positions[i][2]
-      //                << ") ";
-      //  }
+      // std::cerr << "\nPositions: ";
+      // for (int i = 0; i < positions.size(); i++) {
+      //     std::cerr << "(" << positions[i][0] << "," << positions[i][1] << "," << positions[i][2]
+      //                 << ") ";
+      //   }
       /*
         std::cerr << "\n\n";
         std::cerr << "ID: " << idx << "\n";
@@ -592,7 +569,6 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
         std::cerr << std::endl;
         */
       break;
-
     }
 
     if (targetBary[0] + barycentricEpsilon >= 0 && targetBary[1] + barycentricEpsilon >= 0 &&
@@ -614,14 +590,12 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
       break;
     }
     int negativeEdge = negativeVertices[0];
-    Eigen::Vector3d intersect = GetBarycentricIntersection(currentBary, targetBary, currentFace,
-                                                           negativeEdge);
+    Eigen::Vector3d intersect = GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge);
 
     // When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
     if (negativeVertices.size() == 2) {
       int negativeEdge1 = negativeVertices[1];
-      Eigen::Vector3d intersect1 = GetBarycentricIntersection(currentBary, targetBary, currentFace,
-                                                              negativeEdge1);
+      Eigen::Vector3d intersect1 = GetBarycentricIntersection(currentBary, targetBary, currentFace, negativeEdge1);
 
       double sqrLength0 = (intersect - currentPoint).squaredNorm();
       double sqrLength1 = (intersect1 - currentPoint).squaredNorm();
@@ -629,8 +603,7 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
       if (sqrLength0 < sqrLength1) {
         intersect = intersect;
         negativeEdge = negativeEdge;
-      }
-      else {
+      } else {
         intersect = intersect1;
         negativeEdge = negativeEdge1;
       }
@@ -643,8 +616,7 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     }
     remainingVector = remaining;
     if (nextFace != -1) {
-      remainingVector = RotateVectorToFace(GetFaceNormal(currentFace),
-                                           GetFaceNormal(nextFace), remainingVector);
+      remainingVector = RotateVectorToFace(GetFaceNormal(currentFace), GetFaceNormal(nextFace), remainingVector);
     }
     currentPoint = intersect;
     currentFace = nextFace;
@@ -657,8 +629,7 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
     prevFace = currentFace;
   }
 
-  vec3 bary = ComputeBarycentricCoordinates(
-    vec3(currentPoint[0], currentPoint[1], currentPoint[2]), prevFace);
+  vec3 bary = ComputeBarycentricCoordinates(vec3(currentPoint[0], currentPoint[1], currentPoint[2]), prevFace);
 
   ending_face = prevFace;
   assert(ending_face != -1);
@@ -666,10 +637,8 @@ VtkMeshWrapper::GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d proj
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d
-VtkMeshWrapper::GetBarycentricIntersection(Eigen::Vector3d start, Eigen::Vector3d end,
-                                           int currentFace, int edge) const
-{
+Eigen::Vector3d MeshWrapper::GetBarycentricIntersection(Eigen::Vector3d start, Eigen::Vector3d end, int currentFace,
+                                                        int edge) const {
   vec3 delta = end - start;
   if (delta[edge] == 0) {
     // If going parallel to the edge, it is allowed to go all the way to the end where it wants to go
@@ -687,12 +656,10 @@ VtkMeshWrapper::GetBarycentricIntersection(Eigen::Vector3d start, Eigen::Vector3
     inter += p * intersect[q];
   }
   return inter;
-
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
-{
+int MeshWrapper::GetAcrossEdge(int face_id, int edge_id) const {
   // get the neighbors of the cell
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
 
@@ -701,8 +668,7 @@ int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
   if (edge_id == 1) {
     edge_p1 = this->triangles_[face_id]->GetPointId(2);
     edge_p2 = this->triangles_[face_id]->GetPointId(0);
-  }
-  else if (edge_id == 2) {
+  } else if (edge_id == 2) {
     edge_p1 = this->triangles_[face_id]->GetPointId(0);
     edge_p2 = this->triangles_[face_id]->GetPointId(1);
   }
@@ -719,10 +685,7 @@ int VtkMeshWrapper::GetAcrossEdge(int face_id, int edge_id) const
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d &point, Eigen::Vector3d &remaining_vector,
-                                   int face, int edge) const
-{
-
+int MeshWrapper::SlideAlongEdge(Eigen::Vector3d& point, Eigen::Vector3d& remaining_vector, int face, int edge) const {
   int indexa = (edge + 1) % 3;
   int indexb = (edge + 2) % 3;
   int vertexindexa = this->GetFacePointID(face, indexa);
@@ -747,8 +710,7 @@ int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d &point, Eigen::Vector3d &rema
     point += max_slide;
     remaining_vector = projected_vector - max_slide;
     return this->GetAcrossEdge(face, towards_edge);
-  }
-  else {
+  } else {
     point += projected_vector;
     remaining_vector = Eigen::Vector3d(0, 0, 0);
     return face;
@@ -756,38 +718,32 @@ int VtkMeshWrapper::SlideAlongEdge(Eigen::Vector3d &point, Eigen::Vector3d &rema
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::GetFacePointID(int face, int point_id) const
-{
+int MeshWrapper::GetFacePointID(int face, int point_id) const {
   return this->poly_data_->GetCell(face)->GetPointId(point_id);
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d VtkMeshWrapper::GetVertexCoords(int vertex_id) const
-{
+Eigen::Vector3d MeshWrapper::GetVertexCoords(int vertex_id) const {
   double* p = this->poly_data_->GetPoint(vertex_id);
   return Eigen::Vector3d(p[0], p[1], p[2]);
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d VtkMeshWrapper::RotateVectorToFace(const Eigen::Vector3d &prev_normal,
-                                                   const Eigen::Vector3d &next_normal,
-                                                   const Eigen::Vector3d &vector) const
-{
+Eigen::Vector3d MeshWrapper::RotateVectorToFace(const Eigen::Vector3d& prev_normal, const Eigen::Vector3d& next_normal,
+                                                const Eigen::Vector3d& vector) const {
   float dotprod = prev_normal.normalized().dot(next_normal.normalized());
   if (dotprod >= 1) {
     return vector;
   }
   float angle = acos(dotprod);
-  Eigen::Vector3d rotationAxis = prev_normal.normalized().cross(
-    next_normal.normalized()).normalized();
+  Eigen::Vector3d rotationAxis = prev_normal.normalized().cross(next_normal.normalized()).normalized();
   Eigen::AngleAxisd transform(angle, rotationAxis);
   Eigen::Vector3d rotated = transform * vector;
   return rotated;
 }
 
 //---------------------------------------------------------------------------
-NormalType VtkMeshWrapper::CalculateNormalAtPoint(PointType p, int idx) const
-{
+NormalType MeshWrapper::CalculateNormalAtPoint(PointType p, int idx) const {
   vec3 weights;
   int face_index = this->ComputeFaceAndWeights(p, idx, weights);
 
@@ -801,7 +757,7 @@ NormalType VtkMeshWrapper::CalculateNormalAtPoint(PointType p, int idx) const
     weighted_normal[2] = weighted_normal[2] + normal[2] * weights[i];
   }
 
-  if (idx >= 0) { // cache
+  if (idx >= 0) {  // cache
     if (idx >= this->particle_normals_.size()) {
       this->particle_normals_.resize(idx + 1);
       this->particle_positions_.resize(idx + 1);
@@ -814,9 +770,8 @@ NormalType VtkMeshWrapper::CalculateNormalAtPoint(PointType p, int idx) const
 }
 
 //---------------------------------------------------------------------------
-void VtkMeshWrapper::InvalidateParticle(int idx)
-{
-  assert(idx >= 0); // should always be passed a valid particle
+void MeshWrapper::InvalidateParticle(int idx) {
+  assert(idx >= 0);  // should always be passed a valid particle
   if (idx >= particle_triangles_.size()) {
     particle_triangles_.resize(idx + 1, -1);
   }
@@ -825,8 +780,7 @@ void VtkMeshWrapper::InvalidateParticle(int idx)
 }
 
 //---------------------------------------------------------------------------
-int VtkMeshWrapper::ComputeFaceAndWeights(const PointType& p, int idx, Eigen::Vector3d &weights) const
-{
+int MeshWrapper::ComputeFaceAndWeights(const PointType& p, int idx, Eigen::Vector3d& weights) const {
   Eigen::Vector3d closest_point;
   int face_index = this->GetTriangleForPoint(p.GetDataPointer(), idx, closest_point.data());
   // TODO: GetTriangleForPoint is usually already computing the weights
@@ -835,8 +789,7 @@ int VtkMeshWrapper::ComputeFaceAndWeights(const PointType& p, int idx, Eigen::Ve
 }
 
 //---------------------------------------------------------------------------
-void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
-{
+void MeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const {
   const int n_verts = this->poly_data_->GetNumberOfPoints();
   const int n_faces = this->poly_data_->GetNumberOfCells();
 
@@ -853,7 +806,7 @@ void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
   }
   for (int i = 0; i < n_faces; i++) {
     auto cell = this->poly_data_->GetCell(i);
-    assert (cell->GetNumberOfPoints() == 3);
+    assert(cell->GetNumberOfPoints() == 3);
     F(i, 0) = cell->GetPointId(0);
     F(i, 1) = cell->GetPointId(1);
     F(i, 2) = cell->GetPointId(2);
@@ -861,8 +814,7 @@ void VtkMeshWrapper::GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const
 }
 
 //---------------------------------------------------------------------------
-void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F)
-{
+void MeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) {
   // Resize cache to correct size
   geo_dist_cache_.resize(F.rows());
 
@@ -873,16 +825,16 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
   // Flatten the gradient operator so we can quickly compute the gradient at a given point
   face_grad_.resize(F.rows());
   size_t n_insertions = 0;
-  for(int k=0; k<G.outerSize(); k++) {
-    for(Eigen::SparseMatrix<double>::InnerIterator it(G, k); it; ++it) {
+  for (int k = 0; k < G.outerSize(); k++) {
+    for (Eigen::SparseMatrix<double>::InnerIterator it(G, k); it; ++it) {
       const double val = it.value();
       const auto r = it.row();
       const auto c = it.col();
 
       const auto f = r % F.rows();
       const auto axis = r / F.rows();
-      for(int i=0; i<3; i++) {
-        if(F(f, i) == c) {
+      for (int i = 0; i < 3; i++) {
+        if (F(f, i) == c) {
           face_grad_[f](axis, i) = val;
           n_insertions++;
           break;
@@ -890,8 +842,7 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
       }
     }
   }
-  assert(n_insertions == 9*F.rows());
-
+  assert(n_insertions == 9 * F.rows());
 
   // geometry central stuff
   {
@@ -902,30 +853,28 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
 
   // compute k-ring
   face_kring_.resize(this->triangles_.size());
-  for(int f=0; f<this->triangles_.size(); f++) {
+  for (int f = 0; f < this->triangles_.size(); f++) {
     ComputeKRing(f, kring_, face_kring_[f]);
   }
 }
 
 //---------------------------------------------------------------------------
-bool VtkMeshWrapper::AreFacesInKRing(int f_a, int f_b) const
-{
+bool MeshWrapper::AreFacesInKRing(int f_a, int f_b) const {
   return face_kring_[f_a].find(f_b) != face_kring_[f_a].end();
 }
 
 //---------------------------------------------------------------------------
-const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist, int req_target_f) const
-{
-  if(geo_cache_size_ >= geo_max_cache_entries_) {
+const MeshGeoEntry& MeshWrapper::GeodesicsFromTriangle(int f, double max_dist, int req_target_f) const {
+  if (geo_cache_size_ >= geo_max_cache_entries_) {
     this->ClearGeodesicCache();
   }
 
   auto& entry = geo_dist_cache_[f];
-  if(entry.is_full_mode()) {
+  if (entry.is_full_mode()) {
     return entry;
   }
 
-  if(entry.max_dist >= max_dist) {
+  if (entry.max_dist >= max_dist) {
     return entry;
   }
 
@@ -935,10 +884,10 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
 
   const auto which_vert_of_tri = [&](int tri, int v) {
-    if(triangles_[tri]->GetPointId(0) == v) {
+    if (triangles_[tri]->GetPointId(0) == v) {
       return 0;
     }
-    if(triangles_[tri]->GetPointId(1) == v) {
+    if (triangles_[tri]->GetPointId(1) == v) {
       return 1;
     }
     return 2;
@@ -951,15 +900,15 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
   // some geodesic computations. its a lot trickier to handle all the edge cases to reuse a neighbors's
   // partial mode values, so we don't do that.
   auto incident_cells = vtkSmartPointer<vtkIdList>::New();
-  for(int i=0; i<3; i++) {
+  for (int i = 0; i < 3; i++) {
     const int v = this->triangles_[f]->GetPointId(i);
     this->poly_data_->GetPointCells(v, incident_cells);
-    for(int j=0; j<incident_cells->GetNumberOfIds(); j++) {
+    for (int j = 0; j < incident_cells->GetNumberOfIds(); j++) {
       const int f_j = incident_cells->GetId(j);
-      if(f_j == f) {
+      if (f_j == f) {
         continue;
       }
-      if(geo_dist_cache_[f_j].is_full_mode()) {
+      if (geo_dist_cache_[f_j].is_full_mode()) {
         const auto which = which_vert_of_tri(f_j, v);
         dists[i] = geo_dist_cache_[f_j].data_full[which];
         break;
@@ -968,8 +917,8 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
   }
 
   // Compute geodesics using heat method
-  for(int i=0; i<3; i++) {
-    if(dists[i].size() != 0) {
+  for (int i = 0; i < 3; i++) {
+    if (dists[i].size() != 0) {
       // we have already figured out these geodesics using a neighbor's
       continue;
     }
@@ -979,7 +928,7 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
     dists[i] = std::move(gc_dists.raw());
   }
 
-  if(max_dist == std::numeric_limits<double>::infinity()) {
+  if (max_dist == std::numeric_limits<double>::infinity()) {
     entry.mode = MeshGeoEntry::Full;
     entry.data_full[0] = std::move(dists[0]);
     entry.data_full[1] = std::move(dists[1]);
@@ -989,15 +938,10 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
     return entry;
   }
 
-  if(req_target_f >= 0) {
-    for(int i=0; i<3; i++) {
+  if (req_target_f >= 0) {
+    for (int i = 0; i < 3; i++) {
       const int req_v = this->triangles_[req_target_f]->GetPointId(i);
-      max_dist = std::max({
-        max_dist,
-        dists[0][req_v],
-        dists[1][req_v],
-        dists[2][req_v]
-      });
+      max_dist = std::max({max_dist, dists[0][req_v], dists[1][req_v], dists[2][req_v]});
     }
   }
 
@@ -1008,29 +952,29 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
 
   // Figure out which of these we actually need. If a vertex is included, we also pull in all 1-ring incident_cells of
   // that vertex since they may be needed to compute geodesics on triangles incident on that vertex
-  for(int i=0; i<n_verts; i++) {
+  for (int i = 0; i < n_verts; i++) {
     const auto& d0 = dists[0][i];
     const auto& d1 = dists[1][i];
     const auto& d2 = dists[2][i];
-    if(d0 <= max_dist || d1 <= max_dist || d2 <= max_dist) {
+    if (d0 <= max_dist || d1 <= max_dist || d2 <= max_dist) {
       this->poly_data_->GetPointCells(i, incident_cells);
-      for(int j=0; j<incident_cells->GetNumberOfIds(); j++) {
+      for (int j = 0; j < incident_cells->GetNumberOfIds(); j++) {
         const auto& tri = this->triangles_[incident_cells->GetId(j)];
         needed_points.insert(tri->GetPointId(0));
         needed_points.insert(tri->GetPointId(1));
         needed_points.insert(tri->GetPointId(2));
 
-        if(needed_points.size() >= switch_to_full_at) {
+        if (needed_points.size() >= switch_to_full_at) {
           break;
         }
       }
     }
-    if(needed_points.size() >= switch_to_full_at) {
+    if (needed_points.size() >= switch_to_full_at) {
       break;
     }
   }
 
-  if(needed_points.size() >= switch_to_full_at) {
+  if (needed_points.size() >= switch_to_full_at) {
     entry.mode = MeshGeoEntry::Full;
     entry.data_full[0] = std::move(dists[0]);
     entry.data_full[1] = std::move(dists[1]);
@@ -1040,7 +984,7 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
     return entry;
   }
 
-  for(auto v : needed_points) {
+  for (auto v : needed_points) {
     const auto& d0 = dists[0][v];
     const auto& d1 = dists[1][v];
     const auto& d2 = dists[2][v];
@@ -1054,17 +998,16 @@ const MeshGeoEntry& VtkMeshWrapper::GeodesicsFromTriangle(int f, double max_dist
 }
 
 //---------------------------------------------------------------------------
-const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, int f_b) const
-{
+const Eigen::Matrix3d MeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, int f_b) const {
   auto& entry = geo_dist_cache_[f_a];
   const int v0 = this->triangles_[f_b]->GetPointId(0);
   const int v1 = this->triangles_[f_b]->GetPointId(1);
   const int v2 = this->triangles_[f_b]->GetPointId(2);
 
-  if(entry.is_full_mode()) {
+  if (entry.is_full_mode()) {
     Eigen::Matrix3d result;
     const auto& data = entry.data_full;
-    for(int i=0; i<3; i++) {
+    for (int i = 0; i < 3; i++) {
       result(i, 0) = data[i][v0];
       result(i, 1) = data[i][v1];
       result(i, 2) = data[i][v2];
@@ -1077,10 +1020,10 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
   auto find_v0 = data.find(v0);
   auto find_v1 = data.find(v1);
   auto find_v2 = data.find(v2);
-  if(find_v0 == data.end() || find_v1 == data.end() || find_v2 == data.end()) {
+  if (find_v0 == data.end() || find_v1 == data.end() || find_v2 == data.end()) {
     // couldn't find geodesics. force the cache to add this item and rerun
     // *1.0001 is a hacky way to ensure that we don't end up infinitely recursing...
-    GeodesicsFromTriangle(f_a, entry.max_dist*1.0001, f_b);
+    GeodesicsFromTriangle(f_a, entry.max_dist * 1.0001, f_b);
     return GeodesicsFromTriangleToTriangle(f_a, f_b);
   }
   Eigen::Matrix3d result;
@@ -1091,17 +1034,18 @@ const Eigen::Matrix3d VtkMeshWrapper::GeodesicsFromTriangleToTriangle(int f_a, i
 }
 
 //---------------------------------------------------------------------------
-void VtkMeshWrapper::ClearGeodesicCache() const {
+void MeshWrapper::ClearGeodesicCache() const {
   const auto n_verts = this->poly_data_->GetNumberOfPoints();
 
   // figure out which triangle each particle is on
   robin_hood::unordered_set<int> active_triangles(particle_triangles_.begin(), particle_triangles_.end());
   size_t new_cache_size = 0;
 
-  // clear entries only if no particle is on that triangle. (this is significantly more performant than clearing everything)
-  for(int i=0; i<geo_dist_cache_.size(); i++) {
+  // clear entries only if no particle is on that triangle. (this is significantly more performant than clearing
+  // everything)
+  for (int i = 0; i < geo_dist_cache_.size(); i++) {
     auto& entry = geo_dist_cache_[i];
-    if(active_triangles.find(i) == active_triangles.end()) {
+    if (active_triangles.find(i) == active_triangles.end()) {
       entry.clear();
     } else {
       new_cache_size += entry.is_full_mode() ? n_verts : entry.data_partial.size();
@@ -1109,10 +1053,11 @@ void VtkMeshWrapper::ClearGeodesicCache() const {
   }
 
   // the cache is not large enough to store the subset that we know is required. we are forced to clear everything
-  if(new_cache_size > geo_max_cache_entries_) {
-    std::cerr << "Warning: Cache entries too small, clearing everything. Consider increasing cache size if this happens repeatedly\n";
-    for(auto i : active_triangles) {
-      if(i >= 0) {
+  if (new_cache_size > geo_max_cache_entries_) {
+    std::cerr << "Warning: Cache entries too small, clearing everything. Consider increasing cache size if this "
+                 "happens repeatedly\n";
+    for (auto i : active_triangles) {
+      if (i >= 0) {
         geo_dist_cache_[i].clear();
       }
     }
@@ -1123,23 +1068,23 @@ void VtkMeshWrapper::ClearGeodesicCache() const {
 }
 
 //---------------------------------------------------------------------------
-void VtkMeshWrapper::ComputeKRing(int f, int k, std::unordered_set<int>& ring) const {
-  if(k == 0) {
+void MeshWrapper::ComputeKRing(int f, int k, std::unordered_set<int>& ring) const {
+  if (k == 0) {
     return;
   }
 
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
-  for(int i=0; i<3; i++) {
+  for (int i = 0; i < 3; i++) {
     const int v = this->triangles_[f]->GetPointId(i);
     this->poly_data_->GetPointCells(v, neighbors);
-    for(int j=0; j<neighbors->GetNumberOfIds(); j++) {
+    for (int j = 0; j < neighbors->GetNumberOfIds(); j++) {
       const int f_j = neighbors->GetId(j);
-      if(ring.find(f_j) == ring.end()) {
+      if (ring.find(f_j) == ring.end()) {
         ring.insert(f_j);
-        ComputeKRing(f_j, k-1, ring);
+        ComputeKRing(f_j, k - 1, ring);
       }
     }
   }
 }
 
-}
+}  // namespace shapeworks
