@@ -64,19 +64,19 @@ ParticleDomain::GradNType MeshDomain::SampleGradNAtPoint(const PointType &p, int
 //-------------------------------------------------------------------
 double MeshDomain::Distance(const PointType &a, int idx_a, const PointType &b, int idx_b,
                             vnl_vector_fixed<double, 3> *out_grad) const {
-  return mesh_wrapper_->ComputeDistance(a, idx_a, b, idx_b, out_grad);
+  return geodesics_mesh_->ComputeDistance(a, idx_a, b, idx_b, out_grad);
 }
 
 //-------------------------------------------------------------------
 double MeshDomain::SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const {
-  double dist = mesh_wrapper_->ComputeDistance(a, idx_a, b, idx_b);
+  double dist = geodesics_mesh_->ComputeDistance(a, idx_a, b, idx_b);
   return dist * dist;
 }
 
 //-------------------------------------------------------------------
 bool MeshDomain::IsWithinDistance(const PointType &a, int idx_a, const PointType &b, int idx_b, double test_dist,
                                   double &dist) const {
-  return mesh_wrapper_->IsWithinDistance(a, idx_a, b, idx_b, test_dist, dist);
+  return geodesics_mesh_->IsWithinDistance(a, idx_a, b, idx_b, test_dist, dist);
 }
 
 //-------------------------------------------------------------------
