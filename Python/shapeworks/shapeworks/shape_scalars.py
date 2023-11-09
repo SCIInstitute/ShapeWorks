@@ -11,6 +11,20 @@ from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
 
 
+def get_fig_png():
+    # return plot as PNG in memory
+    figfile = BytesIO()
+    plt.savefig(figfile, format='png')
+    figfile.seek(0)  # rewind to beginning of file
+    figdata_png = figfile.getvalue()  # extract string (stream of bytes)
+    figfile.close()
+    plt.close()
+
+    # convert figdata_png to an array
+    figdata_png = np.frombuffer(figdata_png, dtype=np.uint8)
+    return figdata_png
+
+
 def run_mbpls(x, y, n_components=3, cv=5):
     """ Run MBPLS on shape and scalar data """
 
@@ -43,20 +57,32 @@ def run_mbpls(x, y, n_components=3, cv=5):
     plt.title('MSE = {:.4f}'.format(mean_squared_error(prediction['Known Scalar'],
                                                        prediction['Predicted Scalar'])), fontsize=18);
 
-    # return plot as PNG in memory
-    figfile = BytesIO()
-    plt.savefig(figfile, format='png')
-    figfile.seek(0)  # rewind to beginning of file
-    figdata_png = figfile.getvalue()  # extract string (stream of bytes)
-    figfile.close()
-    plt.close()
-
     # convert figdata_png to an array
-    figdata_png = np.frombuffer(figdata_png, dtype=np.uint8)
+    figdata_png = get_fig_png()
 
     return figdata_png, y_pred, mse
 
-import joblib
+
+def run_find_num_components(x, y, max_components, cv=5):
+    """ Run MBPLS on shape and scalar data to determine the number of components to use"""
+    MSEs = []
+    for lv in range(1, max_components):
+        model = MBPLS(n_components=lv + 1)
+        prediction = cross_val_predict(model, x, y, cv=cv)
+        prediction = pd.DataFrame(prediction)
+        MSEs.append(mean_squared_error(prediction, y))
+
+    plt.plot(np.arange(1, max_components), MSEs)
+    plt.xlabel('number of LVs', fontsize=16)
+    plt.xticks(np.arange(1, max_components), np.arange(1, max_components))
+    plt.ylabel('LOO-CV MSE', fontsize=16)
+    plt.title('Find the right number of LVs', fontsize=18);
+
+    # convert figdata_png to an array
+    figdata_png = get_fig_png()
+
+    return figdata_png
+
 
 def pred_from_mbpls(x, y, new_x, n_components=3):
     """ Run MBPLS on shape and scalar data, then predict new_y from new_x """

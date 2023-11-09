@@ -40,7 +40,7 @@ void ShapeScalarJob::run() {
       using ResultType = std::tuple<py::array, Eigen::MatrixXd, double>;
 
       py::object run_mbpls = sw.attr("shape_scalars").attr("run_mbpls");
-      ResultType result = run_mbpls(A, B).cast<ResultType>();
+      ResultType result = run_mbpls(A, B, num_components_, num_folds_).cast<ResultType>();
 
       py::array png_raw_bytes = std::get<0>(result);
       Eigen::MatrixXd y_pred = std::get<1>(result);
@@ -63,6 +63,19 @@ void ShapeScalarJob::run() {
       auto y_pred = result;
 
       prediction_ = y_pred;
+    } else if (job_type_ == JobType::Find_Components) {
+      // returns a tuple of (png_raw_bytes, y_pred, mse)
+      using ResultType = py::array;
+
+      py::object run = sw.attr("shape_scalars").attr("run_find_num_components");
+      ResultType result = run(A, B, max_components_, num_folds_).cast<ResultType>();
+
+      py::array png_raw_bytes = result;
+
+      // interpret png_raw_bytes as a QImage
+      QImage image;
+      image.loadFromData((const uchar*)png_raw_bytes.data(), png_raw_bytes.size(), "PNG");
+      plot_ = QPixmap::fromImage(image);
     }
     SW_DEBUG("End shape scalar job");
 

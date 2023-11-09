@@ -30,6 +30,12 @@ ShapeScalarPanel::ShapeScalarPanel(QWidget* parent) : QWidget(parent), ui_(new U
   connect(ui_->header, &QPushButton::clicked, ui_->open_button, &QPushButton::toggle);
   connect(ui_->run_button, &QPushButton::clicked, this, &ShapeScalarPanel::run_clicked);
 
+  // when the radiobutton changes state
+  connect(ui_->find_components_mode, &QRadioButton::toggled, this, [this](bool checked) {
+    ui_->max_components->setVisible(checked);
+    ui_->max_components_label->setVisible(checked);
+  });
+
   ui_->header_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->open_button->setChecked(false);
   ui_->progress->hide();
@@ -80,12 +86,13 @@ void ShapeScalarPanel::run_clicked() {
   handle_job_progress(0);
 
   ShapeScalarJob::JobType job_type =
-      ui_->find_components_mode ? ShapeScalarJob::JobType::Find_Components : ShapeScalarJob::JobType::MSE_Plot;
+      ui_->find_components_mode->isChecked() ? ShapeScalarJob::JobType::Find_Components : ShapeScalarJob::JobType::MSE_Plot;
 
   job_ =
       QSharedPointer<ShapeScalarJob>::create(session_, ui_->feature_combo->currentText(), Eigen::MatrixXd{}, job_type);
   job_->set_number_of_components(ui_->num_components->text().toInt());
   job_->set_number_of_folds(ui_->num_folds->text().toInt());
+  job_->set_max_number_of_components(ui_->max_components->text().toInt());
 
   connect(job_.data(), &ShapeScalarJob::progress, this, &ShapeScalarPanel::handle_job_progress);
   connect(job_.data(), &ShapeScalarJob::finished, this, &ShapeScalarPanel::handle_job_complete);

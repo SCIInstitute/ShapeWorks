@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>339</width>
-    <height>475</height>
+    <height>580</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -204,58 +204,7 @@ QWidget#panel {
       <item>
        <widget class="QWidget" name="content" native="true">
         <layout class="QGridLayout" name="gridLayout_19">
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="num_folds">
-           <property name="text">
-            <string>5</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="num_components">
-           <property name="text">
-            <string>3</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Feature</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="feature_combo"/>
-         </item>
-         <item row="5" column="0" colspan="2">
-          <widget class="QLabel" name="plot">
-           <property name="text">
-            <string>Plot</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Cross validation folds</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Number of components</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0" colspan="2">
+         <item row="9" column="0" colspan="2">
           <widget class="QPushButton" name="run_button">
            <property name="enabled">
             <bool>true</bool>
@@ -265,7 +214,17 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="8" column="0" colspan="2">
+         <item row="0" column="1">
+          <widget class="QComboBox" name="feature_combo"/>
+         </item>
+         <item row="5" column="0" colspan="2">
+          <widget class="QRadioButton" name="shape_scalar_mode">
+           <property name="text">
+            <string>Plot Shape/Scalar fit</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0" colspan="2">
           <widget class="QProgressBar" name="progress">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -278,7 +237,14 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="6" column="0" colspan="2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Feature</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="2">
           <widget class="JKQTPlotter" name="jk_plot" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -294,17 +260,71 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QRadioButton" name="find_components_mode">
+         <item row="7" column="0" colspan="2">
+          <widget class="QLabel" name="plot">
            <property name="text">
-            <string>Determine number of components</string>
+            <string>Plot</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="num_folds">
+           <property name="text">
+            <string>5</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Cross validation folds</string>
            </property>
           </widget>
          </item>
          <item row="4" column="0" colspan="2">
-          <widget class="QRadioButton" name="shape_scalar_mode">
+          <widget class="QRadioButton" name="find_components_mode">
            <property name="text">
-            <string>Plot Shape/Scalar fit</string>
+            <string>Determine number of components</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Number of components</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="num_components">
+           <property name="text">
+            <string>3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="max_components_label">
+           <property name="text">
+            <string>Max:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLineEdit" name="max_components">
+           <property name="text">
+            <string>20</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>

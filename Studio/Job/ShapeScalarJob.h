@@ -23,6 +23,7 @@ class ShapeScalarJob : public Job {
 
   void set_number_of_components(int num_components) { num_components_ = num_components; }
   void set_number_of_folds(int num_folds) { num_folds_ = num_folds; }
+  void set_max_number_of_components(int num) { max_components_ = num; }
 
   Eigen::VectorXd get_prediction() { return prediction_; };
 
@@ -51,6 +52,7 @@ class ShapeScalarJob : public Job {
 
   bool num_components_ = 3;
   int num_folds_ = 5;
+  int max_components_ = 20;
 
   JobType job_type_;
 };
