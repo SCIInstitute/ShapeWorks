@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "ParticleNormalEvaluation.h"
 #include "ParticleShapeStatistics.h"
 #include "ParticleSystemEvaluation.h"

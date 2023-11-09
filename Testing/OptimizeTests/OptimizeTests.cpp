@@ -7,7 +7,7 @@
 
 #include <cstdio>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"

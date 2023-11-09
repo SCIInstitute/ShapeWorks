@@ -9,10 +9,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Libs/Optimize/Domain/ParticleDomain.h"
 #include "MeshGeoEntry.h"
 #include "MeshWrapper.h"
-
-#include "Libs/Optimize/Domain/ParticleDomain.h"
 
 class vtkCellLocator;
 
@@ -20,14 +19,14 @@ namespace shapeworks {
 
 class MeshWrapper {
  public:
-  typedef typename ParticleDomain::PointType PointType;
-  typedef typename ParticleDomain::GradNType GradNType;
+  using PointType = ParticleDomain::PointType;
+  using GradNType = ParticleDomain::GradNType;
 
   using NormalType = vnl_vector_fixed<float, 3>;
   using VectorType = vnl_vector_fixed<double, 3>;
 
   explicit MeshWrapper(vtkSmartPointer<vtkPolyData> mesh, bool geodesics_enabled = false,
-                       size_t geodesics_cache_multiplier_size = 0);  // 0 => VtkMeshWrapper will choose a heuristic
+                       size_t geodesics_cache_multiplier_size = 0);  // 0 => MeshWrapper will choose a heuristic
 
   ~MeshWrapper() = default;
 
@@ -119,7 +118,6 @@ class MeshWrapper {
   // Geodesic distances
 
   bool is_geodesics_enabled_{false};
-
 
   // Geometry Central data structures
   std::unique_ptr<geometrycentral::surface::SurfaceMesh> gc_mesh_;

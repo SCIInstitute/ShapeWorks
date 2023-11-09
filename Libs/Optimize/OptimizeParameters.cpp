@@ -10,7 +10,6 @@
 #include <boost/filesystem.hpp>
 #include <functional>
 
-//#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Optimize.h"
 
 using namespace shapeworks;

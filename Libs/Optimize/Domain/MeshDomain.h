@@ -40,26 +40,9 @@ class MeshDomain : public ParticleDomain {
   const PointType &GetLowerBound() const override { return mesh_wrapper_->GetMeshLowerBound(); }
   const PointType &GetUpperBound() const override { return mesh_wrapper_->GetMeshUpperBound(); }
 
-  PointType GetZeroCrossingPoint() const override {
-    // TODO Hong
-    // Apply constraints somehow
-    if (mesh_wrapper_ == nullptr) {
-      // Fixed domain. Unsure if this is the correct thing to do, but it preserves existing behaviour.
-      PointType p;
-      p[0] = p[1] = p[2] = 0;
-      return p;
-    }
-    return mesh_wrapper_->GetPointOnMesh();
-  }
+  PointType GetZeroCrossingPoint() const override;
 
-  PointType GetValidLocationNear(PointType p) const override {
-    PointType valid;
-    valid[0] = p[0];
-    valid[1] = p[1];
-    valid[2] = p[2];
-    ApplyConstraints(valid, -1);
-    return valid;
-  }
+  PointType GetValidLocationNear(PointType p) const override;
 
   double GetSurfaceArea() const override {
     // TODO return actual surface area
@@ -68,32 +51,19 @@ class MeshDomain : public ParticleDomain {
 
   double GetMaxDiameter() const override;
 
-  inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const override {
-    return mesh_wrapper_->SampleNormalAtPoint(point, idx);
-  }
+  vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType &point, int idx) const override;
 
-  inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override {
-    return mesh_wrapper_->SampleNormalAtPoint(point, idx);
-  }
+  vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override;
 
-  inline GradNType SampleGradNAtPoint(const PointType &p, int idx) const override {
-    return mesh_wrapper_->SampleGradNAtPoint(p, idx);
-  }
+  GradNType SampleGradNAtPoint(const PointType &p, int idx) const override;
 
-  inline double Distance(const PointType &a, int idx_a, const PointType &b, int idx_b,
-                         vnl_vector_fixed<double, DIMENSION> *out_grad = nullptr) const override {
-    return mesh_wrapper_->ComputeDistance(a, idx_a, b, idx_b, out_grad);
-  }
+  double Distance(const PointType &a, int idx_a, const PointType &b, int idx_b,
+                  vnl_vector_fixed<double, DIMENSION> *out_grad = nullptr) const override;
 
-  inline double SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const override {
-    double dist = mesh_wrapper_->ComputeDistance(a, idx_a, b, idx_b);
-    return dist * dist;
-  }
+  double SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const override;
 
-  inline bool IsWithinDistance(const PointType &a, int idx_a, const PointType &b, int idx_b, double test_dist,
-                               double &dist) const override {
-    return mesh_wrapper_->IsWithinDistance(a, idx_a, b, idx_b, test_dist, dist);
-  }
+  bool IsWithinDistance(const PointType &a, int idx_a, const PointType &b, int idx_b, double test_dist,
+                        double &dist) const override;
 
   void DeleteImages() override {
     // TODO Change this to a generic delete function
@@ -103,12 +73,7 @@ class MeshDomain : public ParticleDomain {
     // TODO Change this to a generic delete function
   }
 
-  void SetMesh(std::shared_ptr<MeshWrapper> mesh_) {
-    m_FixedDomain = false;
-    mesh_wrapper_ = mesh_;
-    sw_mesh_ = std::make_shared<Mesh>(mesh_wrapper_->GetPolydata());
-    geodesics_mesh_ = std::make_shared<MeshWrapper>(mesh_wrapper_->GetPolydata());
-  }
+  void SetMesh(std::shared_ptr<MeshWrapper> mesh_);
 
   std::shared_ptr<Mesh> GetSWMesh() const { return sw_mesh_; }
 

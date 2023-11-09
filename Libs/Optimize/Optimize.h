@@ -419,7 +419,7 @@ class Optimize {
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
   bool m_geodesics_enabled = false;             // geodesics disabled by default
-  size_t m_geodesic_cache_size_multiplier = 0;  // 0 => VtkMeshWrapper will use a heuristic to determine cache size
+  size_t m_geodesic_cache_size_multiplier = 0;  // 0 => MeshWrapper will use a heuristic to determine cache size
 
   // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;

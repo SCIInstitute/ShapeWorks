@@ -15,7 +15,6 @@
 #include <vtkTriangleFilter.h>
 
 #include "ExternalLibs/robin_hood/robin_hood.h"
-#include "Libs/Optimize/Domain/DomainType.h"
 
 namespace shapeworks {
 
