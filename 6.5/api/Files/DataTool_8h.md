@@ -60,7 +60,7 @@ class DataTool : public QWidget {
 
   void enable_actions();
 
-  void update_table();
+  void update_table(bool clean = true);
 
   void update_landmark_table();
 
@@ -92,6 +92,10 @@ class DataTool : public QWidget {
   void constraints_table_right_click(const QPoint &point);
   void copy_ffc_clicked();
 
+  void table_selection_changed();
+  void subject_notes_changed();
+  void table_data_edited();
+
  Q_SIGNALS:
   void import_button_clicked();
 
@@ -114,4 +118,4 @@ class DataTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:10 +0000
+Updated on 2023-11-09 at 00:37:21 +0000

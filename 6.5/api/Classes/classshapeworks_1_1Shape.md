@@ -54,6 +54,7 @@ Representation of a single shape/patient/subject.
 | void | **[clear_reconstructed_mesh](../Classes/classshapeworks_1_1Shape.md#function-clear-reconstructed-mesh)**() |
 | int | **[get_id](../Classes/classshapeworks_1_1Shape.md#function-get-id)**()<br>Get the id of this shape.  |
 | void | **[set_id](../Classes/classshapeworks_1_1Shape.md#function-set-id)**(int id)<br>Set the id of this shape.  |
+| void | **[update_name](../Classes/classshapeworks_1_1Shape.md#function-update-name)**()<br>Update the name of this shape.  |
 | std::vector< std::string > | **[get_original_filenames](../Classes/classshapeworks_1_1Shape.md#function-get-original-filenames)**() |
 | std::vector< std::string > | **[get_original_filenames_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-original-filenames-with-path)**() |
 | std::string | **[get_original_filename](../Classes/classshapeworks_1_1Shape.md#function-get-original-filename)**() |
@@ -363,6 +364,14 @@ void set_id(
 
 Set the id of this shape. 
 
+### function update_name
+
+```cpp
+void update_name()
+```
+
+Update the name of this shape. 
+
 ### function get_original_filenames
 
 ```cpp
@@ -633,4 +642,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:09 +0000
+Updated on 2023-11-09 at 00:37:21 +0000

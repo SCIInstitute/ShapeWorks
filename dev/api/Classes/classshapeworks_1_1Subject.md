@@ -58,6 +58,8 @@ Representation of a single subject.  [More...](#detailed-description)
 | void | **[set_display_name](../Classes/classshapeworks_1_1Subject.md#function-set-display-name)**(std::string display_name)<br>Set the display name.  |
 | bool | **[is_fixed](../Classes/classshapeworks_1_1Subject.md#function-is-fixed)**()<br>Get if this subject is fixed or not.  |
 | void | **[set_fixed](../Classes/classshapeworks_1_1Subject.md#function-set-fixed)**(bool fixed)<br>Set if this subject is fixed or not.  |
+| std::string | **[get_notes](../Classes/classshapeworks_1_1Subject.md#function-get-notes)**()<br>Get the notes.  |
+| void | **[set_notes](../Classes/classshapeworks_1_1Subject.md#function-set-notes)**(std::string notes)<br>Set the notes.  |
 
 ## Detailed Description
 
@@ -390,6 +392,24 @@ void set_fixed(
 
 Set if this subject is fixed or not. 
 
+### function get_notes
+
+```cpp
+std::string get_notes()
+```
+
+Get the notes. 
+
+### function set_notes
+
+```cpp
+void set_notes(
+    std::string notes
+)
+```
+
+Set the notes. 
+
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:09 +0000
+Updated on 2023-11-09 at 00:37:21 +0000

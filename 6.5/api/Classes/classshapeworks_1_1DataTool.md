@@ -22,6 +22,9 @@ Inherits from QWidget
 | void | **[handle_constraints_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-constraints-mode-changed)**() |
 | void | **[constraints_table_right_click](../Classes/classshapeworks_1_1DataTool.md#slot-constraints-table-right-click)**(const QPoint & point) |
 | void | **[copy_ffc_clicked](../Classes/classshapeworks_1_1DataTool.md#slot-copy-ffc-clicked)**() |
+| void | **[table_selection_changed](../Classes/classshapeworks_1_1DataTool.md#slot-table-selection-changed)**() |
+| void | **[subject_notes_changed](../Classes/classshapeworks_1_1DataTool.md#slot-subject-notes-changed)**() |
+| void | **[table_data_edited](../Classes/classshapeworks_1_1DataTool.md#slot-table-data-edited)**() |
 
 ## Public Signals
 
@@ -39,7 +42,7 @@ Inherits from QWidget
 | void | **[activate](../Classes/classshapeworks_1_1DataTool.md#function-activate)**()<br>activate this tool  |
 | void | **[disable_actions](../Classes/classshapeworks_1_1DataTool.md#function-disable-actions)**() |
 | void | **[enable_actions](../Classes/classshapeworks_1_1DataTool.md#function-enable-actions)**() |
-| void | **[update_table](../Classes/classshapeworks_1_1DataTool.md#function-update-table)**() |
+| void | **[update_table](../Classes/classshapeworks_1_1DataTool.md#function-update-table)**(bool clean =true) |
 | void | **[update_landmark_table](../Classes/classshapeworks_1_1DataTool.md#function-update-landmark-table)**() |
 | void | **[landmark_domain_changed](../Classes/classshapeworks_1_1DataTool.md#function-landmark-domain-changed)**() |
 | void | **[constraints_domain_changed](../Classes/classshapeworks_1_1DataTool.md#function-constraints-domain-changed)**() |
@@ -101,6 +104,27 @@ void constraints_table_right_click(
 
 ```cpp
 void copy_ffc_clicked()
+```
+
+
+### slot table_selection_changed
+
+```cpp
+void table_selection_changed()
+```
+
+
+### slot subject_notes_changed
+
+```cpp
+void subject_notes_changed()
+```
+
+
+### slot table_data_edited
+
+```cpp
+void table_data_edited()
 ```
 
 
@@ -166,7 +190,9 @@ void enable_actions()
 ### function update_table
 
 ```cpp
-void update_table()
+void update_table(
+    bool clean =true
+)
 ```
 
 
@@ -228,4 +254,4 @@ void store_data()
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:08 +0000
+Updated on 2023-11-09 at 00:37:20 +0000

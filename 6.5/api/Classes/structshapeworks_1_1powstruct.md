@@ -40,4 +40,4 @@ static const int c = a * powstruct<a, b - 1>::c;
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:09 +0000
+Updated on 2023-11-09 at 00:37:20 +0000

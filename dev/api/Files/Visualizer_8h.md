@@ -87,6 +87,7 @@ class Visualizer : public QObject {
   void reset_camera();
 
   void update_lut();
+  void update_annotations();
 
   Particles get_current_shape();
 
@@ -194,4 +195,4 @@ class Visualizer : public QObject {
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:10 +0000
+Updated on 2023-11-09 at 00:37:22 +0000

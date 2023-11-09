@@ -22,6 +22,7 @@ summary: 3D Viewer
 | void | **[set_renderer](../Classes/classshapeworks_1_1Viewer.md#function-set-renderer)**(vtkSmartPointer< vtkRenderer > renderer) |
 | vtkSmartPointer< vtkRenderer > | **[get_renderer](../Classes/classshapeworks_1_1Viewer.md#function-get-renderer)**() |
 | void | **[display_shape](../Classes/classshapeworks_1_1Viewer.md#function-display-shape)**(std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape) |
+| void | **[update_annotations](../Classes/classshapeworks_1_1Viewer.md#function-update-annotations)**() |
 | void | **[clear_viewer](../Classes/classshapeworks_1_1Viewer.md#function-clear-viewer)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**(std::array< double, 3 > c) |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**() |
@@ -122,6 +123,13 @@ vtkSmartPointer< vtkRenderer > get_renderer()
 void display_shape(
     std::shared_ptr< Shape > shape
 )
+```
+
+
+### function update_annotations
+
+```cpp
+void update_annotations()
 ```
 
 
@@ -531,4 +539,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:09 +0000
+Updated on 2023-11-09 at 00:37:21 +0000

@@ -122,6 +122,8 @@ class Shape {
 
   void set_id(int id);
 
+  void update_name();
+
   std::vector<std::string> get_original_filenames();
   std::vector<std::string> get_original_filenames_with_path();
 
@@ -226,4 +228,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:09 +0000
+Updated on 2023-11-09 at 00:37:21 +0000

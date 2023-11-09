@@ -52,6 +52,7 @@ Inherits from QObject
 | ShapeHandle | **[get_mean_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-mean-shape)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Visualizer.md#function-reset-camera)**() |
 | void | **[update_lut](../Classes/classshapeworks_1_1Visualizer.md#function-update-lut)**() |
+| void | **[update_annotations](../Classes/classshapeworks_1_1Visualizer.md#function-update-annotations)**() |
 | [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
 | vtkFloatArray * | **[get_current_particle_scalars](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-scalars)**() |
 | vtkSmartPointer< vtkPolyData > | **[get_current_particle_poly_data](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-poly-data)**() |
@@ -329,6 +330,13 @@ void update_lut()
 ```
 
 
+### function update_annotations
+
+```cpp
+void update_annotations()
+```
+
+
 ### function get_current_shape
 
 ```cpp
@@ -585,4 +593,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:09 +0000
+Updated on 2023-11-09 at 00:37:21 +0000

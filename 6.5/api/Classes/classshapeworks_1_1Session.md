@@ -43,6 +43,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[ffc_paint_mode_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-paint-mode-changed)**() |
 | void | **[repaint](../Classes/classshapeworks_1_1Session.md#signal-repaint)**() |
 | void | **[reinsert_shapes](../Classes/classshapeworks_1_1Session.md#signal-reinsert-shapes)**() |
+| void | **[annotations_changed](../Classes/classshapeworks_1_1Session.md#signal-annotations-changed)**() |
 
 ## Public Functions
 
@@ -94,6 +95,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[trigger_landmarks_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-landmarks-changed)**() |
 | void | **[trigger_planes_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-planes-changed)**() |
 | void | **[trigger_ffc_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-ffc-changed)**() |
+| void | **[trigger_annotations_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-annotations-changed)**() |
 | void | **[set_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-set-active-landmark-domain)**(int id) |
 | int | **[get_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-get-active-landmark-domain)**() |
 | void | **[set_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-set-placing-landmark)**(int id) |
@@ -310,6 +312,13 @@ void repaint()
 
 ```cpp
 void reinsert_shapes()
+```
+
+
+### signal annotations_changed
+
+```cpp
+void annotations_changed()
 ```
 
 
@@ -691,6 +700,13 @@ void trigger_planes_changed()
 
 ```cpp
 void trigger_ffc_changed()
+```
+
+
+### function trigger_annotations_changed
+
+```cpp
+void trigger_annotations_changed()
 ```
 
 
@@ -1180,4 +1196,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:09 +0000
+Updated on 2023-11-09 at 00:37:21 +0000

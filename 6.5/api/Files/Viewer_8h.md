@@ -91,6 +91,7 @@ class Viewer {
   vtkSmartPointer<vtkRenderer> get_renderer();
 
   void display_shape(std::shared_ptr<Shape> shape);
+  void update_annotations();
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
@@ -281,4 +282,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2023-11-07 at 08:22:10 +0000
+Updated on 2023-11-09 at 00:37:22 +0000
