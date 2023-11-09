@@ -2,7 +2,7 @@
 
 #include <itkObjectFactory.h>
 
-#include "MeshWrapper.h"
+#include "VtkMeshWrapper.h"
 #include "ParticleDomain.h"
 
 namespace shapeworks {
@@ -103,10 +103,11 @@ class MeshDomain : public ParticleDomain {
     // TODO Change this to a generic delete function
   }
 
-  void SetMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh_) {
+  void SetMesh(std::shared_ptr<MeshWrapper> mesh_) {
     m_FixedDomain = false;
     mesh_wrapper_ = mesh_;
     sw_mesh_ = std::make_shared<Mesh>(mesh_wrapper_->GetPolydata());
+    geodesics_mesh_ = std::make_shared<VtkMeshWrapper>(mesh_wrapper_->GetPolydata());
   }
 
   std::shared_ptr<Mesh> GetSWMesh() const { return sw_mesh_; }
@@ -115,6 +116,7 @@ class MeshDomain : public ParticleDomain {
 
  private:
   std::shared_ptr<MeshWrapper> mesh_wrapper_;
+  std::shared_ptr<MeshWrapper> geodesics_mesh_;
   std::shared_ptr<Mesh> sw_mesh_;
   PointType zero_crossing_point_;
 };
