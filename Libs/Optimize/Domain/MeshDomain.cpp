@@ -84,7 +84,12 @@ void MeshDomain::SetMesh(std::shared_ptr<MeshWrapper> mesh_) {
   m_FixedDomain = false;
   mesh_wrapper_ = mesh_;
   sw_mesh_ = std::make_shared<Mesh>(mesh_wrapper_->GetPolydata());
-  geodesics_mesh_ = std::make_shared<MeshWrapper>(mesh_wrapper_->GetPolydata());
+
+  auto poly_data = mesh_wrapper_->GetPolydata();
+  Mesh mesh_copy(poly_data);
+  mesh_copy.remeshPercent(50, 1.0);
+
+  geodesics_mesh_ = std::make_shared<MeshWrapper>(mesh_copy.getVTKMesh());
 }
 
 //-------------------------------------------------------------------
