@@ -25,7 +25,7 @@ vnl_matrix<double> SVT(const vnl_matrix<double>& X, double tau) {
     vnl_matrix<double> U = svd.U();
     vnl_diag_matrix<double> S = shrink(svd.W(), tau).asDiagonal();
     vnl_matrix<double> VT = svd.V();
-    return U * S * VT.transpose();
+    return U * S * VT;
 } // end SVT call
 
 std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>& X) {
@@ -48,7 +48,7 @@ std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>
         count += 1;
     }
 
-    return std::make_tuple(L, S);
+    return std::make_tuple(L.transpose(), S.transpose());
 } //end RPCA call
 
 
@@ -92,7 +92,7 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
   } else {
     // Call the RPCA function
-    auto result = RPCA(points_minus_mean);
+    auto result = RPCA(points_minus_mean.transpose());
 
     // Access the elements of the tuple
     points_minus_mean = std::get<0>(result);
