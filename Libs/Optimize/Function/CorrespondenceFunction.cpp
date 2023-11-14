@@ -29,8 +29,15 @@ vnl_matrix<double> SVT(const vnl_matrix<double>& X, double tau) {
 } // end SVT call
 
 std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>& X) {
-    int n1 = X.rows();
-    int n2 = X.columns();
+    // Robust PCA to decompose data into dense and sparse matrices. 
+    // This code is converted from python code from the notebook
+    // https://github.com/dynamicslab/databook_python/blob/master/CH03/CH03_SEC07_RPCA.ipynb
+    // Robust Principal Component Analysis Paper: 
+    //Candès, Emmanuel J., et al. "Robust principal component analysis?." Journal of the ACM (JACM) 58.3 (2011): 1-37.
+    // Link: https://dl.acm.org/doi/pdf/10.1145/1970392.1970395
+
+    int n1 = X.rows(); // num_samples 
+    int n2 = X.columns(); // num_dims
 
     double mu = n1 * n2 / (4 * X.array().abs().sum());
     double lambda = 1 / std::sqrt(std::max(n1, n2));
@@ -47,7 +54,7 @@ std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>
         Y = Y + mu * (X - L - S);
         count += 1;
     }
-
+    // transpose before returning so that it matches the original points_minus_mean dimensions
     return std::make_tuple(L.transpose(), S.transpose());
 } //end RPCA call
 
@@ -92,9 +99,17 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
   } else {
     // Call the RPCA function
+    // Decompose the samples using Robust PCA into two matrices: L (dense) + S (sparse)
+    // The L matrix will consists of information about the inlier regions and use this matrix 
+    // for the covariance calculation and optimization of ShapeWorks. 
+    // S will contain information about the outlier regions. For now we ignore this.  
+    // L and S should be same size as data 
+    
     auto result = RPCA(points_minus_mean.transpose());
 
     // Access the elements of the tuple
+    // Only use L matrix for rest of the optimization 
+
     points_minus_mean = std::get<0>(result);
     // vnl_matrix<double> S = std::get<1>(result);
 
