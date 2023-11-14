@@ -6,8 +6,54 @@
 #include "Libs/Utils/Utils.h"
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
+#include <vnl/vnl_matrix.h>
 
 namespace shapeworks {
+
+
+
+
+vnl_matrix<double> shrink(const vnl_matrix<double>& X, double tau) {
+    vnl_matrix<double> Y = X;
+    Y = Y.array().abs() - tau;
+    Y = Y.cwiseMax(0).cwiseProduct(X.array().sign());
+    return Y;
+} // end shrink call
+
+vnl_matrix<double> SVT(const vnl_matrix<double>& X, double tau) {
+    vnl_svd<double> svd(X);
+    vnl_matrix<double> U = svd.U();
+    vnl_diag_matrix<double> S = shrink(svd.W(), tau).asDiagonal();
+    vnl_matrix<double> VT = svd.V();
+    return U * S * VT.transpose();
+} // end SVT call
+
+std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>& X) {
+    int n1 = X.rows();
+    int n2 = X.columns();
+
+    double mu = n1 * n2 / (4 * X.array().abs().sum());
+    double lambda = 1 / std::sqrt(std::max(n1, n2));
+    double thresh = 1e-7 * X.norm();
+
+    vnl_matrix<double> S(n1, n2, 0.0);
+    vnl_matrix<double> Y(n1, n2, 0.0);
+    vnl_matrix<double> L(n1, n2, 0.0);
+
+    int count = 0;
+    while ((X - L - S).frobenius_norm() > thresh && count < 1000) {
+        L = SVT(X - S + (1 / mu) * Y, 1 / mu);
+        S = shrink(X - L + (1 / mu) * Y, lambda / mu);
+        Y = Y + mu * (X - L - S);
+        count += 1;
+    }
+
+    return std::make_tuple(L, S);
+} //end RPCA call
+
+
+
+
 
 void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
   num_dims = m_ShapeData->rows();
@@ -45,6 +91,14 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     m_InverseCovMatrix->setZero();
 
   } else {
+    // Call the RPCA function
+    auto result = RPCA(points_minus_mean);
+
+    // Access the elements of the tuple
+    points_minus_mean = std::get<0>(result);
+    // vnl_matrix<double> S = std::get<1>(result);
+
+
     gramMat = points_minus_mean.transpose() * points_minus_mean;
 
     vnl_svd<double> svd(gramMat);

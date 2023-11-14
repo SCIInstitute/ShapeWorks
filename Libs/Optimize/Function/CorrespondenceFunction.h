@@ -178,6 +178,9 @@ class CorrespondenceFunction : public VectorFunction {
     m_InverseCovMatrix = std::make_shared<Eigen::MatrixXd>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
+  vnl_matrix<double> shrink(const vnl_matrix<double>& X, double tau);
+  vnl_matrix<double> SVT(const vnl_matrix<double>& X, double tau);
+  std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>& X);
   virtual ~CorrespondenceFunction() {}
   void operator=(const CorrespondenceFunction&);
   CorrespondenceFunction(const CorrespondenceFunction&);
