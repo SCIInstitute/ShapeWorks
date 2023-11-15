@@ -535,7 +535,7 @@ QWidget#particles_panel {
             <item row="3" column="0" colspan="2">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="mean_tab">
                <attribute name="title">
@@ -1305,10 +1305,7 @@ QWidget#particles_panel {
                      <property name="title">
                       <string>Mode of Variation </string>
                      </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_mca_box">
-                      <property name="spacing">
-                       <number>6</number>
-                      </property>
+                     <layout class="QGridLayout" name="gridLayout_24">
                       <property name="leftMargin">
                        <number>0</number>
                       </property>
@@ -1321,29 +1318,7 @@ QWidget#particles_panel {
                       <property name="bottomMargin">
                        <number>0</number>
                       </property>
-                      <item>
-                       <widget class="QRadioButton" name="mcaLevelWithinButton">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="toolTip">
-                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
-                        </property>
-                        <property name="text">
-                         <string>Shape Only</string>
-                        </property>
-                        <property name="checkable">
-                         <bool>true</bool>
-                        </property>
-                        <property name="checked">
-                         <bool>false</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
+                      <item row="1" column="0">
                        <widget class="QRadioButton" name="mcaLevelBetweenButton">
                         <property name="toolTip">
                          <string>Multi-Level Component Analysis - Modes of Variation highlighting only alignment changes for the multi-object structure in relative pose subspace.</string>
@@ -1359,18 +1334,75 @@ QWidget#particles_panel {
                         </property>
                        </widget>
                       </item>
-                      <item>
+                      <item row="2" column="0">
                        <widget class="QRadioButton" name="vanillaPCAButton">
                         <property name="toolTip">
                          <string>PCA done on the entire shape structure - Modes of Variation in the shared shape space of pose and morphology.</string>
                         </property>
                         <property name="text">
-                         <string>Both</string>
+                         <string>Shape and Pose</string>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="0">
+                       <widget class="QRadioButton" name="mcaLevelWithinButton">
+                        <property name="toolTip">
+                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
+                        </property>
+                        <property name="text">
+                         <string>Shape Only</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="groupBox_2">
+                     <property name="title">
+                      <string>Shape / Scalar</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_27">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item row="0" column="0">
+                       <widget class="QCheckBox" name="pca_shape_checkbox">
+                        <property name="text">
+                         <string>Shape</string>
                         </property>
                         <property name="checked">
                          <bool>true</bool>
                         </property>
                        </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QCheckBox" name="pca_scalar_checkbox">
+                        <property name="text">
+                         <string>Scalar</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="2">
+                       <widget class="QComboBox" name="pca_scalar_combo"/>
                       </item>
                      </layout>
                     </widget>

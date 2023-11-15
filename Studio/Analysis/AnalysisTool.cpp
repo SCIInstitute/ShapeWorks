@@ -76,6 +76,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
+  connect(ui_->pca_shape_checkbox, &QCheckBox::clicked, this, &AnalysisTool::pca_update);
+  connect(ui_->pca_scalar_checkbox, &QCheckBox::clicked, this, &AnalysisTool::pca_update);
+  connect(ui_->pca_scalar_combo, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::pca_update);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -435,6 +438,7 @@ bool AnalysisTool::compute_stats() {
     return false;
   }
 
+  SW_LOG("Compute Stats!");
   compute_reconstructed_domain_transforms();
 
   ui_->pcaModeSpinBox->setMaximum(std::max<double>(1, session_->get_shapes().size() - 1));
@@ -984,6 +988,13 @@ void AnalysisTool::reset_stats() {
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
+
+  ui_->pca_scalar_combo->clear();
+  if (session_) {
+    for (const auto& feature : session_->get_project()->get_feature_names()) {
+      ui_->pca_scalar_combo->addItem(QString::fromStdString(feature));
+    }
+  }
 }
 
 //---------------------------------------------------------------------------

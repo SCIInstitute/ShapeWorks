@@ -250,6 +250,11 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_py_worker(QSharedPointer<PythonWorker> worker) { py_worker_ = worker; }
   QSharedPointer<PythonWorker> get_py_worker() { return py_worker_; }
 
+  //! Return all world particles (number of shapes, 3 x num particles)
+  Eigen::MatrixXd get_all_particles();
+  //! Return all scalars for all shapes, given target feature
+  Eigen::MatrixXd get_all_scalars(std::string target_feature);
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 

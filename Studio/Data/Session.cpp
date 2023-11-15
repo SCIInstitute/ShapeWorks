@@ -34,10 +34,9 @@
 #include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
+#include <vtkLookupTable.h>
 
 #include "ExternalLibs/tinyxml/tinyxml.h"
-
-#include <vtkLookupTable.h>
 
 namespace shapeworks {
 
@@ -1176,6 +1175,48 @@ void Session::set_display_mode(DisplayMode mode) {
 //---------------------------------------------------------------------------
 DisplayMode Session::get_display_mode() {
   return string_to_display_mode(params_.get("view_state", display_mode_to_string(DisplayMode::Original)));
+}
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXd Session::get_all_particles() {
+  int num_particles = get_num_particles();
+  auto shapes = get_shapes();
+  int num_shapes = shapes.size();
+
+  Eigen::MatrixXd all_particles(num_shapes, 3 * num_particles);
+
+  for (int i = 0; i < shapes.size(); i++) {
+    Eigen::VectorXd particles = shapes[i]->get_global_correspondence_points();
+
+    // write as row into all_particles
+    all_particles.row(i) = particles.transpose();
+  }
+
+  return all_particles;
+}
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
+  int num_particles = get_num_particles();
+  auto shapes = get_shapes();
+  int num_shapes = shapes.size();
+
+  Eigen::MatrixXd all_scalars(num_shapes, 1 * num_particles);
+
+  for (int i = 0; i < shapes.size(); i++) {
+    shapes[i]->get_reconstructed_meshes(true);
+    shapes[i]->load_feature(DisplayMode::Reconstructed, target_feature);
+
+    Eigen::VectorXf scalars = shapes[i]->get_point_features(target_feature);
+
+    // convert to Eigen::VectorXd
+    Eigen::VectorXd scalars_d = scalars.cast<double>();
+
+    // write into all_scalars
+    all_scalars.row(i) = scalars_d.transpose();
+  }
+
+  return all_scalars;
 }
 
 //---------------------------------------------------------------------------

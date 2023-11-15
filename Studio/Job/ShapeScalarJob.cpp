@@ -5,10 +5,8 @@
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
 
-// eigen format
 #include <Eigen/Dense>
-
-#include "qt/QtGui/qimage.h"
+#include <QImage>
 
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
@@ -117,40 +115,9 @@ Eigen::VectorXd ShapeScalarJob::predict_scalars(QSharedPointer<Session> session,
 
 //---------------------------------------------------------------------------
 void ShapeScalarJob::prep_data() {
-  int num_particles = session_->get_num_particles();
-  auto shapes = session_->get_shapes();
-  int num_shapes = shapes.size();
-
-  Eigen::MatrixXd all_particles(num_shapes, 3 * num_particles);
-  Eigen::MatrixXd all_scalars(num_shapes, 1 * num_particles);
-
-  for (int i = 0; i < shapes.size(); i++) {
-    Eigen::VectorXd particles = shapes[i]->get_global_correspondence_points();
-
-    // write as row into all_particles
-    all_particles.row(i) = particles.transpose();
-
-    shapes[i]->get_reconstructed_meshes(true);
-    shapes[i]->load_feature(DisplayMode::Reconstructed, target_feature_.toStdString());
-
-    Eigen::VectorXf scalars = shapes[i]->get_point_features(target_feature_.toStdString());
-
-    // convert to Eigen::VectorXd
-    Eigen::VectorXd scalars_d = scalars.cast<double>();
-
-    // write into all_scalars
-    all_scalars.row(i) = scalars_d.transpose();
-  }
-
-  all_particles_ = all_particles;
-  all_scalars_ = all_scalars;
+  all_particles_ = session_->get_all_particles();
+  all_scalars_ = session_->get_all_scalars(target_feature_.toStdString());
 }
-
-//---------------------------------------------------------------------------
-void ShapeScalarJob::run_mse() {}
-
-//---------------------------------------------------------------------------
-void ShapeScalarJob::run_prediction() {}
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

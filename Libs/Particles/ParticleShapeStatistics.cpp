@@ -616,6 +616,7 @@ int ParticleShapeStatistics::ReloadPointFiles() {
 }
 
 int ParticleShapeStatistics::ComputeModes() {
+  SW_DEBUG("computing modes");
   Eigen::MatrixXd A = m_pointsMinusMean.transpose() * m_pointsMinusMean * (1.0 / ((double)(m_numSamples - 1)));
 
   auto vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
