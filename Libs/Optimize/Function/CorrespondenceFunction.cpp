@@ -35,6 +35,7 @@ vnl_vector<double> flatten(const vnl_matrix<double>& X) {
 
 // Shrink function for VNL matrices
 vnl_matrix<double> shrink(const vnl_matrix<double>& X, double tau) {
+    //Here, Y[i, j] is assigned the value np.sign(X[i, j]) * (absXij - tau) if absXij > tau, and 0.0 otherwise.
     vnl_matrix<double> Y(X.rows(), X.columns(), 0.0);
 
     for (unsigned i = 0; i < X.rows(); ++i) {
