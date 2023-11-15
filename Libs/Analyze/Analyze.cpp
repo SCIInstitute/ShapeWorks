@@ -193,14 +193,17 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   for (int d = 0; d < num_domains; d++) {
     std::string domain_id = std::to_string(d);
     auto mesh = meshes.meshes()[d];
-    std::string filename = "mean_shape_" + domain_id + ".vtk";
-    Mesh(mesh->get_poly_data()).write(filename);
-    mean_meshes.push_back(filename);
+    std::string vtk_filename = "mean_shape_" + domain_id + ".vtk";
+    auto filename = base / boost::filesystem::path(vtk_filename);
 
-    filename = "mean_shape_" + domain_id + ".pts";
+    Mesh(mesh->get_poly_data()).write(filename.string());
+    mean_meshes.push_back(vtk_filename);
+
+    std::string particle_filename = "mean_shape_" + domain_id + ".pts";
+    filename = base / boost::filesystem::path(particle_filename);
     auto local_particles = mean_shape->get_particles().get_local_particles(d);
-    Particles::save_particles_file(filename, local_particles);
-    mean_particles.push_back(filename);
+    Particles::save_particles_file(filename.string(), local_particles);
+    mean_particles.push_back(particle_filename);
   }
   json mean_meshes_item;
   mean_meshes_item["meshes"] = mean_meshes;
@@ -384,6 +387,8 @@ bool Analyze::update_shapes() {
 
   SW_LOG("number of subjects: {}", num_subjects);
 
+  auto domain_names = project_->get_domain_names();
+
   for (int i = 0; i < num_subjects; i++) {
     auto shape = std::make_shared<Shape>();
     shape->set_mesh_manager(mesh_manager_);
@@ -418,6 +423,12 @@ bool Analyze::update_shapes() {
         landmark_definitions = project_->get_landmarks(domain_id);
       }
     }
+
+    // set reference domain
+    auto transform = shape->get_groomed_transform(domain_names.size());
+    shape->set_particle_transform(transform);
+    shape->set_alignment_type(AlignmentType::Global);
+
     shapes_.push_back(shape);
   }
 

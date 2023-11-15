@@ -1,33 +1,28 @@
-#include <QThread>
-
 #include <Data/Worker.h>
 #include <Logging.h>
+
+#include <QThread>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-Worker::Worker()
-{}
+Worker::Worker() {}
 
 //---------------------------------------------------------------------------
-Worker::~Worker()
-{}
+Worker::~Worker() {}
 
 //---------------------------------------------------------------------------
-Worker* Worker::create_worker()
-{
+Worker* Worker::create_worker() {
   Worker* worker = new Worker{};
   return worker;
 }
 
 //---------------------------------------------------------------------------
-void Worker::run_job(QSharedPointer<Job> job)
-{
-  this->job_ = job;
+void Worker::run_job(QSharedPointer<Job> job) {
+  job_ = job;
   QThread* thread = new QThread;
   this->moveToThread(thread);
-  this->job_->moveToThread(thread);
-
+  job_->moveToThread(thread);
   connect(thread, &QThread::started, this, &Worker::process);
   connect(this, &Worker::finished, thread, &QThread::quit);
   connect(this, &Worker::finished, this, &Worker::deleteLater);
@@ -37,13 +32,20 @@ void Worker::run_job(QSharedPointer<Job> job)
 }
 
 //---------------------------------------------------------------------------
-void Worker::process()
-{
+void Worker::process() {
   try {
-    this->job_->run();
+    job_->start_timer();
+    job_->run();
+    job_->set_complete(true);
   } catch (std::exception& e) {
     SW_ERROR(e.what());
   }
-  Q_EMIT this->job_->finished();
+  if (job_->is_aborted()) {
+    SW_LOG(job_->get_abort_message().toStdString());
+  } else {
+    SW_LOG(job_->get_completion_message().toStdString());
+  }
+  Q_EMIT job_->progress(1.0);
+  Q_EMIT job_->finished();
 }
-} // shapeworks
+}  // namespace shapeworks

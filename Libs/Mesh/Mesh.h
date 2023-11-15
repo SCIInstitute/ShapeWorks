@@ -182,7 +182,8 @@ class Mesh {
                             const Dims padding = Dims({1, 1, 1})) const;
 
   /// assign cortical thickness values from mesh points
-  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, std::string distance_mesh = "");
+  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, double median_radius = 5.0,
+                         std::string distance_mesh = "");
 
   /// compute geodesic distances to landmarks and assign as fields
   Mesh& computeLandmarkGeodesics(const std::vector<Point3>& landmarks);
@@ -275,6 +276,19 @@ class Mesh {
   //! Clips the mesh according to a field value
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
 
+  //! Returns the cell locator
+  vtkSmartPointer<vtkStaticCellLocator> getCellLocator() const {
+    updateCellLocator();
+    return cellLocator;
+  }
+
+  int getClosestFace(const Point3& point) const;
+
+  /// Computes baricentric coordinates given a query point and a face number
+  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
+      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
+
  private:
   friend struct SharedCommandData;
   Mesh()
@@ -303,9 +317,6 @@ class Mesh {
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
-  /// Computes baricentric coordinates given a query point and a face number
-  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
-      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 };
 
 /// stream insertion operators for Mesh

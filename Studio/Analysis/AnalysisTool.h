@@ -9,6 +9,7 @@
 
 // ShapeWorks
 #include <ParticleShapeStatistics.h>
+#include <Analyze/Analyze.h>
 
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
@@ -27,15 +28,14 @@ class ShapeWorksStudioApp;
 class GroupPvalueJob;
 class NetworkAnalysisJob;
 class StatsGroupLDAJob;
+class ParticleAreaPanel;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
 
  public:
-  enum AlignmentType {
-    Global = -2,
-    Local = -1,
-  };
+
+  using AlignmentType = Analyze::AlignmentType;
 
   enum GroupAnalysisType { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3 };
 
@@ -186,8 +186,8 @@ class AnalysisTool : public QWidget {
 
   void show_difference_to_mean_clicked();
 
-  void group_analysis_combo_changed();
 
+  void group_analysis_combo_changed();
 
  Q_SIGNALS:
 
@@ -272,5 +272,6 @@ class AnalysisTool : public QWidget {
   bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
+  ParticleAreaPanel* particle_area_panel_{nullptr};
 };
 }  // namespace shapeworks

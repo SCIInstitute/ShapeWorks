@@ -18,7 +18,6 @@
 
 // vtk
 #include <vtkAppendPolyData.h>
-#include <vtkGradientFilter.h>
 #include <vtkButterflySubdivisionFilter.h>
 #include <vtkCenterOfMass.h>
 #include <vtkCleanPolyData.h>
@@ -28,6 +27,7 @@
 #include <vtkFeatureEdges.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkGenericCell.h>
+#include <vtkGradientFilter.h>
 #include <vtkImageData.h>
 #include <vtkImageStencil.h>
 #include <vtkIncrementalPointLocator.h>
@@ -864,7 +864,6 @@ Field Mesh::curvature(const CurvatureType type) const {
   return curv;
 }
 
-
 void computeGradient(vtkDataSet* inputDataSet, const char* scalarFieldName, const char* gradientFieldName) {
   vtkSmartPointer<vtkGradientFilter> gradientFilter = vtkSmartPointer<vtkGradientFilter>::New();
   gradientFilter->SetInputData(inputDataSet);
@@ -881,19 +880,17 @@ void computeGradient(vtkDataSet* inputDataSet, const char* scalarFieldName, cons
   vtkDoubleArray* gradPointArray = vtkArrayDownCast<vtkDoubleArray>(
       vtkDataSet::SafeDownCast(gradientFilter->GetOutput())->GetPointData()->GetArray(gradientFieldName));
 
-
-/*
-  for (vtkIdType pointId = 0; pointId < inputDataSet->GetNumberOfPoints(); ++pointId) {
-    double gradient[3];
-    gradientFilter->GetOutput()->GetPointData()->GetTuple(pointId, gradient);
-    gradientData->SetTuple(pointId, gradient);
-  }
-*/
+  /*
+    for (vtkIdType pointId = 0; pointId < inputDataSet->GetNumberOfPoints(); ++pointId) {
+      double gradient[3];
+      gradientFilter->GetOutput()->GetPointData()->GetTuple(pointId, gradient);
+      gradientData->SetTuple(pointId, gradient);
+    }
+  */
 
   //  inputDataSet->GetPointData()->AddArray(gradientData);
   inputDataSet->GetPointData()->AddArray(gradPointArray);
 }
-
 
 void Mesh::computeFieldGradient(const std::string& field) const {
   computeGradient(poly_data_, field.c_str(), (std::string("gradient_") + field).c_str());
@@ -1128,8 +1125,8 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   return img;
 }
 
-Mesh& Mesh::computeThickness(Image& image, Image* dt, double max_dist, std::string distance_mesh) {
-  mesh::compute_thickness(*this, image, dt, max_dist, distance_mesh);
+Mesh& Mesh::computeThickness(Image& image, Image* dt, double max_dist, double median_radius, std::string distance_mesh) {
+  mesh::compute_thickness(*this, image, dt, max_dist, median_radius, distance_mesh);
   return *this;
 }
 
@@ -1598,6 +1595,17 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
   poly_data->SetPoints(points);
   poly_data->SetPolys(polys);
   return poly_data;
+}
+
+int Mesh::getClosestFace(const Point3& point) const {
+  this->updateCellLocator();
+
+  double closestPoint[3];
+  vtkIdType cellId;
+  int subId;
+  double dist;
+  this->cellLocator->FindClosestPoint(point.data(), closestPoint, cellId, subId, dist);
+  return cellId;
 }
 
 Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const {

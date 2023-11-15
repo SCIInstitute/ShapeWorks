@@ -32,6 +32,7 @@
 #include <vtkUnsignedLongArray.h>
 
 // shapeworks
+#include <Analyze/ParticleArea.h>
 #include <Logging.h>
 #include <Shape.h>
 #include <Utils/StudioUtils.h>
@@ -533,7 +534,7 @@ void Viewer::update_clipping_planes() {
 vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
+void Viewer::handle_ffc_paint(double display_pos[2], double world_pos[3]) {
   if (!meshes_.valid()) {
     return;
   }
@@ -631,13 +632,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   }
   mesh_ready_ = true;
 
-  auto annotations = shape->get_annotations();
-  corner_annotation_->SetText(0, (annotations[0]).c_str());
-  corner_annotation_->SetText(1, (annotations[1]).c_str());
-  corner_annotation_->SetText(2, (annotations[2]).c_str());
-  corner_annotation_->SetText(3, (annotations[3]).c_str());
-  corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
-
+  update_annotations();
 
   renderer_->RemoveAllViewProps();
 
@@ -769,6 +764,36 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   update_planes();
   update_ffc_mode();
   renderer_->AddViewProp(corner_annotation_);
+
+  /**************
+  {  // TODO: temporarily here
+    if (meshes_.valid() && glyph_lut_) {
+      // for each domain
+      for (size_t i = 0; i < meshes_.meshes().size(); i++) {
+        auto points = shape_->get_particles().get_local_points(i);
+        auto poly_data = meshes_.meshes()[i]->get_poly_data();
+        if (!poly_data) {
+          continue;
+        }
+        ParticleArea::assign_vertex_particles(poly_data, points);
+        auto colors = ParticleArea::colors_from_lut(glyph_lut_);
+        ParticleArea::assign_vertex_colors(poly_data, colors);
+      }
+    }
+  }
+  **********/
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_annotations() {
+  if (shape_) {
+    auto annotations = shape_->get_annotations();
+    corner_annotation_->SetText(0, (annotations[0]).c_str());
+    corner_annotation_->SetText(1, (annotations[1]).c_str());
+    corner_annotation_->SetText(2, (annotations[2]).c_str());
+    corner_annotation_->SetText(3, (annotations[3]).c_str());
+    corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
+  }
 }
 
 //-----------------------------------------------------------------------------

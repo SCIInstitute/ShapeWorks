@@ -50,32 +50,34 @@ class Shape {
 
   void set_subject(std::shared_ptr<shapeworks::Subject> subject);
 
+  //! Is this shape a population subject (e.g. mean/pca constructions are not)
   bool is_subject();
 
+  //! Return the pointer to the subject object
   std::shared_ptr<shapeworks::Subject> get_subject();
 
-  /// Import the original raw mesh or image file
+  //! Import the original raw mesh or image file
   void import_original_file(const std::string& filename);
 
-  /// Retrieve the original meshes
+  //! Retrieve the original meshes
   MeshGroup get_original_meshes(bool wait = false);
 
-  /// Retrieve the groomed meshes
+  //! Retrieve the groomed meshes
   MeshGroup get_groomed_meshes(bool wait = false);
 
-  /// Retrieve the reconstructed meshes
+  //! Retrieve the reconstructed meshes
   MeshGroup get_reconstructed_meshes(bool wait = false);
 
-  /// Reset the groomed mesh so that it will be re-created
+  //! Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
 
-  /// Import global correspondence point files
+  //! Import global correspondence point files
   bool import_global_point_files(std::vector<std::string> filenames);
 
-  /// Import local correspondence point files
+  //! Import local correspondence point files
   bool import_local_point_files(std::vector<std::string> filenames);
 
-  /// Import landmarks files
+  //! Import landmarks files
   bool import_landmarks_files(std::vector<std::string> filenames);
 
   //! Store landmarks
@@ -87,7 +89,10 @@ class Shape {
   //! Store constraints
   bool store_constraints();
 
+  //! Set particles
   void set_particles(Particles particles);
+
+  //! Get particles
   Particles get_particles();
 
   //! Set the particle transform (alignment)
@@ -96,22 +101,25 @@ class Shape {
   //! Set the alignment type
   void set_alignment_type(int alignment);
 
-  /// Get the global correspondence points
+  //! Get the global correspondence points
   Eigen::VectorXd get_global_correspondence_points();
 
-  /// Get the global correspondence points for display
+  //! Get the global correspondence points for display
   std::vector<Eigen::VectorXd> get_particles_for_display();
 
-  /// Get the local correspondence points
+  //! Get the local correspondence points
   Eigen::VectorXd get_local_correspondence_points();
 
   void clear_reconstructed_mesh();
 
-  /// Get the id of this shape
+  //! Get the id of this shape
   int get_id();
 
-  /// Set the id of this shape
+  //! Set the id of this shape
   void set_id(int id);
+
+  //! Update the name of this shape
+  void update_name();
 
   std::vector<std::string> get_original_filenames();
   std::vector<std::string> get_original_filenames_with_path();

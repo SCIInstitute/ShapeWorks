@@ -5,7 +5,7 @@
 namespace shapeworks {
 
 const QString normal_button_ss =
-  R"(
+    R"(
   QPushButton{
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(238, 238, 238, 255), stop:1 rgba(192, 194, 194, 255));
     border-radius: 4px;
@@ -26,7 +26,7 @@ const QString normal_button_ss =
   )";
 
 const QString abort_button_ss =
-  R"(
+    R"(
   QPushButton{
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(98, 0, 0, 255), stop:0.299435 rgba(128, 0, 0, 255), stop:0.491525 rgba(128, 0, 0, 255), stop:1 rgba(98, 0, 0, 255));
     border-radius: 4px;
@@ -55,18 +55,17 @@ const QString abort_button_ss =
   )";
 
 //---------------------------------------------------------------------------
-Style::Style()
-{}
+Style::Style() {}
 
 //---------------------------------------------------------------------------
-void Style::apply_normal_button_style(QPushButton* button)
-{
+void Style::apply_normal_button_style(QPushButton* button) {
+  button->setMinimumHeight(22);
   button->setStyleSheet(normal_button_ss);
 }
 
 //---------------------------------------------------------------------------
-void Style::apply_abort_button_style(QPushButton *button)
-{
+void Style::apply_abort_button_style(QPushButton* button) {
+  button->setMinimumHeight(22);
   button->setStyleSheet(abort_button_ss);
 }
-}
+}  // namespace shapeworks
