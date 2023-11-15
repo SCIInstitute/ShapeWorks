@@ -68,8 +68,9 @@ std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>
 
     int n1 = X.rows();
     int n2 = X.columns();
-
-    double mu = n1 * n2 / (4 * std::abs(flatten(X)).sum());
+    // vnl_vector<int> X_abs;
+    // X_abs.absolute_value_max(flatten(X));
+    double mu = n1 * n2 / (4*(flatten(X)).one_norm()) ;
     double lambda = 1 / std::sqrt(std::max(n1, n2));
     double thresh = 1e-7 * X.fro_norm();
 
