@@ -7,26 +7,55 @@
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
 #include <vnl/vnl_matrix.h>
-
+#include <vnl/vnl_math.h>
+#include <vnl/vnl_vector.h>
+#include <tuple>
 namespace shapeworks {
 
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 
 
+
+// Flatten a matrix into a vector
+vnl_vector<double> flatten(const vnl_matrix<double>& X) {
+    vnl_vector<double> flattened(X.rows() * X.columns());
+
+    for (unsigned i = 0; i < X.rows(); ++i) {
+        for (unsigned j = 0; j < X.columns(); ++j) {
+            flattened(i * X.columns() + j) = X(i, j);
+        }
+    }
+
+    return flattened;
+}
+
+
+// Shrink function for VNL matrices
 vnl_matrix<double> shrink(const vnl_matrix<double>& X, double tau) {
-    vnl_matrix<double> Y = X;
-    Y = Y.array().abs() - tau;
-    Y = Y.cwiseMax(0).cwiseProduct(X.array().sign());
-    return Y;
-} // end shrink call
+    vnl_matrix<double> Y(X.rows(), X.columns(), 0.0);
 
+    for (unsigned i = 0; i < X.rows(); ++i) {
+        for (unsigned j = 0; j < X.columns(); ++j) {
+            double absXij = std::abs(X(i, j));
+            Y(i, j) = (absXij > tau) ? sgn(X(i, j)) * (absXij - tau) : 0.0;
+        }
+    }
+
+    return Y;
+}
+
+// SVT function with VNL matrices
 vnl_matrix<double> SVT(const vnl_matrix<double>& X, double tau) {
     vnl_svd<double> svd(X);
     vnl_matrix<double> U = svd.U();
-    vnl_diag_matrix<double> S = shrink(svd.W(), tau).asDiagonal();
+    vnl_diag_matrix<double> S;
+    S.set_diagonal(flatten(shrink(svd.W(), tau)));
     vnl_matrix<double> VT = svd.V();
     return U * S * VT;
-} // end SVT call
+}
 
 std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>& X) {
     // Robust PCA to decompose data into dense and sparse matrices. 
@@ -36,24 +65,25 @@ std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>
     //Candès, Emmanuel J., et al. "Robust principal component analysis?." Journal of the ACM (JACM) 58.3 (2011): 1-37.
     // Link: https://dl.acm.org/doi/pdf/10.1145/1970392.1970395
 
-    int n1 = X.rows(); // num_samples 
-    int n2 = X.columns(); // num_dims
+    int n1 = X.rows();
+    int n2 = X.columns();
 
-    double mu = n1 * n2 / (4 * X.array().abs().sum());
+    double mu = n1 * n2 / (4 * std::abs(flatten(X)).sum());
     double lambda = 1 / std::sqrt(std::max(n1, n2));
-    double thresh = 1e-7 * X.norm();
+    double thresh = 1e-7 * X.fro_norm();
 
     vnl_matrix<double> S(n1, n2, 0.0);
     vnl_matrix<double> Y(n1, n2, 0.0);
     vnl_matrix<double> L(n1, n2, 0.0);
 
     int count = 0;
-    while ((X - L - S).frobenius_norm() > thresh && count < 1000) {
+    while ((X - L - S).fro_norm() > thresh && count < 1000) {
         L = SVT(X - S + (1 / mu) * Y, 1 / mu);
         S = shrink(X - L + (1 / mu) * Y, lambda / mu);
         Y = Y + mu * (X - L - S);
         count += 1;
     }
+
     // transpose before returning so that it matches the original points_minus_mean dimensions
     return std::make_tuple(L.transpose(), S.transpose());
 } //end RPCA call
