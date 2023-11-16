@@ -164,7 +164,7 @@ function install_conda() {
   # for network analysis
   if [[ "$(uname)" == "Linux" ]]; then
       if ! pip install open3d-cpu==0.17.0;              then return 1; fi
-  elif [[ "$(uname)" == "Darwin" ]] then
+  elif [[ "$(uname)" == "Darwin" ]]; then
       if ! pip install open3d==0.17.0;                  then return 1; fi
       # fix hard-coded homebrew libomp.dylib
       pushd $CONDA_PREFIX/lib/python3.9/site-packages/open3d/cpu
