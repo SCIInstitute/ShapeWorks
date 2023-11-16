@@ -65,7 +65,7 @@ std::tuple<vnl_matrix<double>, vnl_matrix<double>> CorrespondenceFunction::RPCA(
     // Robust Principal Component Analysis Paper: 
     //Candès, Emmanuel J., et al. "Robust principal component analysis?." Journal of the ACM (JACM) 58.3 (2011): 1-37.
     // Link: https://dl.acm.org/doi/pdf/10.1145/1970392.1970395
-
+    
     int n1 = X.rows();
     int n2 = X.columns();
     // vnl_vector<int> X_abs;
@@ -79,11 +79,12 @@ std::tuple<vnl_matrix<double>, vnl_matrix<double>> CorrespondenceFunction::RPCA(
     vnl_matrix<double> L(n1, n2, 0.0);
 
     int count = 0;
-    while ((X - L - S).fro_norm() > thresh && count < 1000) {
+    while ((X - L - S).frobenius_norm() > thresh && count < 1000) {
         L = SVT(X - S + (1 / mu) * Y, 1 / mu);
         S = shrink(X - L + (1 / mu) * Y, lambda / mu);
         Y = Y + mu * (X - L - S);
         count += 1;
+        // std::cout << "Count: " << count;
     }
 
     // transpose before returning so that it matches the original points_minus_mean dimensions
