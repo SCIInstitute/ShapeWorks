@@ -481,6 +481,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetAttributesPerDomain(attributes_per_domain);
   bool use_extra_attributes = normals_enabled || field_attributes.size() > 0;
 
+  /// Override!
+  use_extra_attributes = true;
+
   optimize->SetUseNormals(use_normals);
   optimize->SetUseXYZ(use_xyz);
   optimize->SetUseMeshBasedAttributes(use_extra_attributes);
