@@ -80,9 +80,12 @@ SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# make it easier to see more important compiler warnings and errors (# TODO: fix the actual cause of the warnings)
 if (APPLE)
+  # make it easier to see more important compiler warnings and errors (# TODO: fix the actual cause of the warnings)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
+
+  # workaround for version of boost in use
+  add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
 endif()
 
 if(MSVC)
