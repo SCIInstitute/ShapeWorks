@@ -55,7 +55,7 @@ ipywidgets==7.7.1
 isoduration==20.11.0
 itk==5.3.0
 itk-core==5.3.0
-itk-elastix==0.14.2
+itk-elastix==0.16.0
 itk-filtering==5.3.0
 itk-io==5.3.0
 itk-meshtopolydata==0.10.0
