@@ -34,7 +34,7 @@ vnl_vector<double> flatten(const vnl_matrix<double>& X) {
 
 
 // Shrink function for VNL matrices
-vnl_matrix<double> shrink(const vnl_matrix<double>& X, double tau) {
+vnl_matrix<double> CorrespondenceFunction::shrink(const vnl_matrix<double>& X, double tau) {
     //Here, Y[i, j] is assigned the value np.sign(X[i, j]) * (absXij - tau) if absXij > tau, and 0.0 otherwise.
     vnl_matrix<double> Y(X.rows(), X.columns(), 0.0);
 
@@ -49,7 +49,7 @@ vnl_matrix<double> shrink(const vnl_matrix<double>& X, double tau) {
 }
 
 // SVT function with VNL matrices
-vnl_matrix<double> SVT(const vnl_matrix<double>& X, double tau) {
+vnl_matrix<double> CorrespondenceFunction::SVT(const vnl_matrix<double>& X, double tau) {
     vnl_svd<double> svd(X);
     vnl_matrix<double> U = svd.U();
     vnl_diag_matrix<double> S;
@@ -58,7 +58,7 @@ vnl_matrix<double> SVT(const vnl_matrix<double>& X, double tau) {
     return U * S * VT;
 }
 
-std::tuple<vnl_matrix<double>, vnl_matrix<double>> RPCA(const vnl_matrix<double>& X) {
+std::tuple<vnl_matrix<double>, vnl_matrix<double>> CorrespondenceFunction::RPCA(const vnl_matrix<double>& X) {
     // Robust PCA to decompose data into dense and sparse matrices. 
     // This code is converted from python code from the notebook
     // https://github.com/dynamicslab/databook_python/blob/master/CH03/CH03_SEC07_RPCA.ipynb
