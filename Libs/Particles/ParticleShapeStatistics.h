@@ -52,11 +52,7 @@ class ParticleShapeStatistics {
   //! Loads a set of point files and pre-computes some statistics.
   int ReadPointFiles(const std::string& s);
 
-  //! Reloads a set of point files and recomputes some statistics.
-  int ReloadPointFiles();
-
   //! Writes a text file in comma-separated format.  Suitable for reading into excel or R or Matlab for analysis.
-  int WriteCSVFile(const std::string& s);
   int WriteCSVFile2(const std::string& s);
 
   //! Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first.

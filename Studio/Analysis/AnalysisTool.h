@@ -190,6 +190,8 @@ class AnalysisTool : public QWidget {
 
   void group_analysis_combo_changed();
 
+  void change_pca_analysis_type();
+
  Q_SIGNALS:
 
   void update_view();
@@ -244,7 +246,7 @@ class AnalysisTool : public QWidget {
   vnl_vector<double> empty_shape_;
   Eigen::VectorXd temp_shape_;
   Eigen::VectorXd temp_shape_mca;
-  std::vector<int> number_of_particles_ar;
+  std::vector<int> number_of_particles_array_;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;

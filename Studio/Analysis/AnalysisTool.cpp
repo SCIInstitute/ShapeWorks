@@ -76,9 +76,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
-  connect(ui_->pca_shape_checkbox, &QCheckBox::clicked, this, &AnalysisTool::pca_update);
-  connect(ui_->pca_scalar_checkbox, &QCheckBox::clicked, this, &AnalysisTool::pca_update);
-  connect(ui_->pca_scalar_combo, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::pca_update);
+  connect(ui_->pca_shape_checkbox, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_scalar_checkbox, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_scalar_combo, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::change_pca_analysis_type);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -457,7 +457,7 @@ bool AnalysisTool::compute_stats() {
 
   auto domain_names = session_->get_project()->get_domain_names();
   unsigned int dps = domain_names.size();
-  number_of_particles_ar.resize(dps);
+  number_of_particles_array_.resize(dps);
   bool flag_get_num_part = false;
   for (auto& shape : session_->get_shapes()) {
     if (shape->get_global_correspondence_points().size() == 0) {
@@ -486,7 +486,7 @@ bool AnalysisTool::compute_stats() {
         SW_ERROR("Inconsistency in number of particles size");
       }
       for (unsigned int i = 0; i < dps; i++) {
-        number_of_particles_ar[i] = local_particles_ar[i].size() / 3;
+        number_of_particles_array_[i] = local_particles_ar[i].size() / 3;
       }
     }
   }
@@ -506,7 +506,7 @@ bool AnalysisTool::compute_stats() {
 
   stats_.ImportPoints(points, group_ids);
   // MCA needs to know number of particles per domain/object
-  stats_.SetNumberOfParticlesArray(number_of_particles_ar);
+  stats_.SetNumberOfParticlesArray(number_of_particles_array_);
   if (dps > 1) {
     stats_.ComputeMultiLevelAnalysisStatistics(points, dps);
   }
@@ -679,10 +679,10 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, Mca
     Eigen::VectorXd e_between;
     e_between.resize(sz);
     for (unsigned int i = 0; i < D; i++) {
-      int num_points = number_of_particles_ar[i];
+      int num_points = number_of_particles_array_[i];
       int row = 0;
       for (int idx = 0; idx < i; idx++) {
-        row += (3 * number_of_particles_ar[idx]);
+        row += (3 * number_of_particles_array_[idx]);
       }
       for (unsigned int j = 0; j < num_points; j++) {
         e_between(row + (j * 3)) = e(i * 3);
@@ -1626,6 +1626,17 @@ void AnalysisTool::group_analysis_combo_changed() {
     }
   }
   Q_EMIT update_view();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::change_pca_analysis_type()
+{
+  if (ui_->pca_scalar_checkbox->isChecked()) {
+    ui_->pca_scalar_combo->setEnabled(true);
+  } else {
+    ui_->pca_scalar_combo->setEnabled(false);
+  }
+
 }
 
 //---------------------------------------------------------------------------
