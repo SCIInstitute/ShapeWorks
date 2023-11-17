@@ -154,6 +154,7 @@ void DataTool::update_table(bool clean) {
     return;
   }
 
+  block_table_update_ = true;
   auto shapes = session_->get_shapes();
 
   auto project = session_->get_project();
@@ -200,6 +201,8 @@ void DataTool::update_table(bool clean) {
     update_plane_table();
     update_ffc_table();
   }
+
+  block_table_update_ = false;
 }
 
 //---------------------------------------------------------------------------
@@ -591,6 +594,10 @@ void DataTool::subject_notes_changed() {
 
 //---------------------------------------------------------------------------
 void DataTool::table_data_edited() {
+  if (block_table_update_) {
+    return;
+  }
+
   // store all the changes
 
   if (ui_->table->rowCount() != session_->get_shapes().size() || ui_->table->columnCount() < 2) {

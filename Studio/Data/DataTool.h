@@ -86,5 +86,6 @@ class DataTool : public QWidget {
   QSharedPointer<Session> session_;
 
   std::shared_ptr<LandmarkTableModel> landmark_table_model_;
+  bool block_table_update_{false};
 };
 }  // namespace shapeworks
