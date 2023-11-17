@@ -78,7 +78,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->pca_shape_checkbox, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
   connect(ui_->pca_scalar_checkbox, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
-  connect(ui_->pca_scalar_combo, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_scalar_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::change_pca_analysis_type);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -456,38 +457,57 @@ bool AnalysisTool::compute_stats() {
   group2_list_.clear();
 
   auto domain_names = session_->get_project()->get_domain_names();
-  unsigned int dps = domain_names.size();
-  number_of_particles_array_.resize(dps);
-  bool flag_get_num_part = false;
+  unsigned int domains_per_shape = domain_names.size();
+  number_of_particles_array_.resize(domains_per_shape);
+
   for (auto& shape : session_->get_shapes()) {
-    if (shape->get_global_correspondence_points().size() == 0) {
+    Eigen::VectorXd particles;
+    if (pca_shape_only_mode()) {
+      particles = shape->get_global_correspondence_points();
+    } else if (pca_scalar_only_mode()) {
+      particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
+    } else {
+      auto positions = shape->get_global_correspondence_points();
+      auto scalars = particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
+      // combine positions and scalars, interleave 3 positions for every scalar
+      particles.resize(positions.size() + scalars.size());
+      for (int i = 0; i < positions.size(); i += 3) {
+        particles[i * 4] = positions[i];
+        particles[i * 4 + 1] = positions[i + 1];
+        particles[i * 4 + 2] = positions[i + 2];
+      }
+      for (int i = 0; i < scalars.size(); i++) {
+        particles[i * 4 + 3] = scalars[i];
+      }
+    }
+
+    if (particles.size() == 0) {
       continue;  // skip any that don't have particles
     }
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {
-        points.push_back(shape->get_global_correspondence_points());
+        points.push_back(particles);
         group_ids.push_back(1);
         group1_list_.push_back(shape);
       } else if (value == right_group) {
-        points.push_back(shape->get_global_correspondence_points());
+        points.push_back(particles);
         group_ids.push_back(2);
         group2_list_.push_back(shape);
       } else {
         // we don't include it
       }
     } else {
-      points.push_back(shape->get_global_correspondence_points());
+      points.push_back(particles);
       group_ids.push_back(1);
     }
-    if (!flag_get_num_part) {
-      auto local_particles_ar = shape->get_particles().get_local_particles();
-      if (local_particles_ar.size() != dps) {
-        SW_ERROR("Inconsistency in number of particles size");
-      }
-      for (unsigned int i = 0; i < dps; i++) {
-        number_of_particles_array_[i] = local_particles_ar[i].size() / 3;
-      }
+
+    auto local_particles = shape->get_particles().get_local_particles();
+    if (local_particles.size() != domains_per_shape) {
+      SW_ERROR("Inconsistency in number of particles size");
+    }
+    for (unsigned int i = 0; i < domains_per_shape; i++) {
+      number_of_particles_array_[i] = local_particles[i].size() / 3;
     }
   }
 
@@ -507,11 +527,11 @@ bool AnalysisTool::compute_stats() {
   stats_.ImportPoints(points, group_ids);
   // MCA needs to know number of particles per domain/object
   stats_.SetNumberOfParticlesArray(number_of_particles_array_);
-  if (dps > 1) {
-    stats_.ComputeMultiLevelAnalysisStatistics(points, dps);
+  if (domains_per_shape > 1) {
+    stats_.ComputeMultiLevelAnalysisStatistics(points, domains_per_shape);
   }
   stats_.ComputeModes();
-  if (dps > 1) {
+  if (domains_per_shape > 1) {
     stats_.ComputeRelPoseModesForMca();
     stats_.ComputeShapeDevModesForMca();
   }
@@ -837,6 +857,22 @@ AnalysisTool::GroupAnalysisType AnalysisTool::get_group_analysis_type() {
 }
 
 //---------------------------------------------------------------------------
+bool AnalysisTool::pca_scalar_only_mode() {
+  return ui_->pca_scalar_checkbox->isChecked() && !ui_->pca_shape_checkbox->isChecked();
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::pca_shape_plus_scalar_mode() {
+  return ui_->pca_scalar_checkbox->isChecked() && ui_->pca_shape_checkbox->isChecked();
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::pca_shape_only_mode() {
+  // default
+  return !pca_scalar_only_mode() && !pca_shape_plus_scalar_mode();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_tabWidget_currentChanged() { update_analysis_mode(); }
 
 //---------------------------------------------------------------------------
@@ -1085,11 +1121,11 @@ ShapeHandle AnalysisTool::get_mean_shape() {
   }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
-  std::vector<Eigen::VectorXf> values;
+  std::vector<Eigen::VectorXd> values;
 
   if (feature_map_ != "") {
     auto shapes = session_->get_shapes();
-    Eigen::VectorXf sum(num_points);
+    Eigen::VectorXd sum(num_points);
     sum.setZero();
 
     bool ready = true;
@@ -1105,15 +1141,15 @@ ShapeHandle AnalysisTool::get_mean_shape() {
           sum = sum + value;
         }
       }
-      Eigen::VectorXf mean = sum / values.size();
+      Eigen::VectorXd mean = sum / values.size();
 
       if (ready) {
         shape->set_point_features(feature_map_, mean);
       }
     } else {
-      Eigen::VectorXf sum_left(num_points);
+      Eigen::VectorXd sum_left(num_points);
       sum_left.setZero();
-      Eigen::VectorXf sum_right(num_points);
+      Eigen::VectorXd sum_right(num_points);
       sum_right.setZero();
 
       Q_FOREACH (auto shape, group1_list_) {
@@ -1125,7 +1161,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
           sum_left = sum_left + value;
         }
       }
-      Eigen::VectorXf left_mean = sum_left / static_cast<double>(group1_list_.size());
+      Eigen::VectorXd left_mean = sum_left / static_cast<double>(group1_list_.size());
 
       Q_FOREACH (auto shape, group2_list_) {
         shape->load_feature(DisplayMode::Reconstructed, feature_map_);
@@ -1136,7 +1172,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
           sum_right = sum_right + value;
         }
       }
-      Eigen::VectorXf right_mean = sum_right / static_cast<double>(group2_list_.size());
+      Eigen::VectorXd right_mean = sum_right / static_cast<double>(group2_list_.size());
 
       if (ready) {
         double group_ratio = get_group_ratio();
@@ -1158,11 +1194,8 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   shape->set_reconstruction_transforms(reconstruction_transforms_);
 
   if (feature_map_ != "") {
-    auto scalars_d = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
+    auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
                                                      points.get_combined_global_particles());
-
-    // convert to Eigen::VectorXd
-    Eigen::VectorXf scalars = scalars_d.cast<float>();
 
     shape->set_point_features(feature_map_, scalars);
   }
@@ -1629,14 +1662,14 @@ void AnalysisTool::group_analysis_combo_changed() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::change_pca_analysis_type()
-{
+void AnalysisTool::change_pca_analysis_type() {
   if (ui_->pca_scalar_checkbox->isChecked()) {
     ui_->pca_scalar_combo->setEnabled(true);
   } else {
     ui_->pca_scalar_combo->setEnabled(false);
   }
-
+  reset_stats();
+  compute_stats();
 }
 
 //---------------------------------------------------------------------------

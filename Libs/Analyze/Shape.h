@@ -158,9 +158,9 @@ class Shape {
 
   std::shared_ptr<Image> get_image_volume(std::string image_volume_name);
 
-  Eigen::VectorXf get_point_features(std::string feature);
+  Eigen::VectorXd get_point_features(std::string feature);
 
-  void set_point_features(std::string feature, Eigen::VectorXf values);
+  void set_point_features(std::string feature, Eigen::VectorXd values);
 
   void load_feature_from_scalar_file(std::string filename, std::string feature_name);
 
@@ -198,7 +198,7 @@ class Shape {
   std::vector<std::string> global_point_filenames_;
   std::vector<std::string> local_point_filenames_;
 
-  std::map<std::string, Eigen::VectorXf> point_features_;
+  std::map<std::string, Eigen::VectorXd> point_features_;
   Particles particles_;
 
   std::shared_ptr<shapeworks::Subject> subject_;

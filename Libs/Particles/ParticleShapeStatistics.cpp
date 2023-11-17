@@ -94,7 +94,7 @@ int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, s
   m_numSamples1 = 0;
   m_numSamples2 = 0;
   m_numSamples = points.size() / m_domainsPerShape;
-  m_numDimensions = num_points * VDimension * m_domainsPerShape;
+  m_numDimensions = num_points * num_dimensions_ * m_domainsPerShape;
 
   // If there are no group IDs, make up some bogus ones
   if (m_groupIDs.size() != m_numSamples) {
@@ -137,19 +137,19 @@ int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, s
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       unsigned int q = points[i].size();
-      SW_LOG("q = {}, Vdimension = {}", q, VDimension);
+      SW_LOG("q = {}, Vdimension = {}", q, num_dimensions_);
       for (unsigned int j = 0; j < q; j++) {
-        m_pointsMinusMean(q * k * VDimension + j, i) = points[i][j];
+        m_pointsMinusMean(q * k * num_dimensions_ + j, i) = points[i][j];
 
-        m_mean(q * k * VDimension + j) += points[i][j];
+        m_mean(q * k * num_dimensions_ + j) += points[i][j];
 
         if (m_groupIDs[i] == 1) {
-          m_mean1(q * k * VDimension + j) += points[i][j];
+            m_mean1(q * k * num_dimensions_ + j) += points[i][j];
         } else {
-          m_mean2(q * k * VDimension + j) += points[i][j];
+            m_mean2(q * k * num_dimensions_ + j) += points[i][j];
         }
 
-        m_shapes(q * k * VDimension + j, i) = points[i][j];
+        m_shapes(q * k * num_dimensions_ + j, i) = points[i][j];
       }
     }
   }
@@ -205,7 +205,7 @@ void ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Ei
                                                                   unsigned int dps) {
   m_dps = dps;
   m_N = points.size();                // Number of Subjects
-  unsigned int n = m_N * VDimension;  // for super matrix
+  unsigned int n = m_N * num_dimensions_;  // for super matrix
   unsigned int m = 0;
   for (unsigned int idx = 0; idx < dps; idx++) {
     m += (this->m_num_particles_array[idx]);
@@ -214,9 +214,9 @@ void ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Ei
   for (unsigned int i = 0; i < points.size(); i++) {
     unsigned int p = m_super_matrix.rows();
     for (unsigned int j = 0; j < p; j++) {
-      m_super_matrix(j, i * VDimension) = points[i][j * VDimension];
-      m_super_matrix(j, i * VDimension + 1) = points[i][j * VDimension + 1];
-      m_super_matrix(j, i * VDimension + 2) = points[i][j * VDimension + 2];
+      m_super_matrix(j, i * num_dimensions_) = points[i][j * num_dimensions_];
+      m_super_matrix(j, i * num_dimensions_ + 1) = points[i][j * num_dimensions_ + 1];
+      m_super_matrix(j, i * num_dimensions_ + 2) = points[i][j * num_dimensions_ + 2];
     }
   }
 
@@ -256,15 +256,15 @@ void ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Ei
   Eigen::MatrixXd z_shape_dev_objective;
   unsigned int M = 0;
   for (unsigned int idx = 0; idx < dps; idx++) {
-    M += (this->m_num_particles_array[idx] * VDimension);
+    M += (this->m_num_particles_array[idx] * num_dimensions_);
   }
   z_shape_dev_objective.resize(M, m_N);
   for (unsigned int i = 0; i < m_N; i++) {
     unsigned int p = m;
     for (unsigned int j = 0; j < p; j++) {
-      z_shape_dev_objective(j * VDimension, i) = z_shape_dev_centered(j, i * VDimension);
-      z_shape_dev_objective(j * VDimension + 1, i) = z_shape_dev_centered(j, i * VDimension + 1);
-      z_shape_dev_objective(j * VDimension + 2, i) = z_shape_dev_centered(j, i * VDimension + 2);
+      z_shape_dev_objective(j * num_dimensions_, i) = z_shape_dev_centered(j, i * num_dimensions_);
+      z_shape_dev_objective(j * num_dimensions_ + 1, i) = z_shape_dev_centered(j, i * num_dimensions_ + 1);
+      z_shape_dev_objective(j * num_dimensions_ + 2, i) = z_shape_dev_centered(j, i * num_dimensions_ + 2);
     }
   }
   m_pointsMinusMean_for_shape_dev.resize(M, m_N);
@@ -273,15 +273,15 @@ void ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Ei
   m_pointsMinusMean_for_shape_dev = z_shape_dev_objective.colwise() - m_mean_shape_dev;
 
   Eigen::MatrixXd z_rel_pose_objective;
-  z_rel_pose_objective.resize(m_dps * VDimension, m_N);
+  z_rel_pose_objective.resize(m_dps * num_dimensions_, m_N);
   for (unsigned int k = 0; k < m_dps; k++) {
     for (unsigned int i = 0; i < m_N; i++) {
-      z_rel_pose_objective(k * VDimension, i) = z_rel_pose_centered(k, i * VDimension);
-      z_rel_pose_objective(k * VDimension + 1, i) = z_rel_pose_centered(k, i * VDimension + 1);
-      z_rel_pose_objective(k * VDimension + 2, i) = z_rel_pose_centered(k, i * VDimension + 2);
+      z_rel_pose_objective(k * num_dimensions_, i) = z_rel_pose_centered(k, i * num_dimensions_);
+      z_rel_pose_objective(k * num_dimensions_ + 1, i) = z_rel_pose_centered(k, i * num_dimensions_ + 1);
+      z_rel_pose_objective(k * num_dimensions_ + 2, i) = z_rel_pose_centered(k, i * num_dimensions_ + 2);
     }
   }
-  m_pointsMinusMean_for_rel_pose.resize(m_dps * VDimension, m_N);
+  m_pointsMinusMean_for_rel_pose.resize(m_dps * num_dimensions_, m_N);
   m_pointsMinusMean_for_rel_pose.fill(0.0);
   m_mean_rel_pose = z_rel_pose_objective.rowwise().mean();
   m_pointsMinusMean_for_rel_pose = z_rel_pose_objective.colwise() - m_mean_rel_pose;
@@ -378,7 +378,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string& s) {
   m_numSamples1 = 0;
   m_numSamples2 = 0;
   m_numSamples = pointsfiles.size() / m_domainsPerShape;
-  m_numDimensions = particles::read_particles_as_vector(pointsfiles[0]).size() * VDimension * m_domainsPerShape;
+  m_numDimensions = particles::read_particles_as_vector(pointsfiles[0]).size() * num_dimensions_ * m_domainsPerShape;
 
   // Read the group ids
   int tmpID;
@@ -431,26 +431,26 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string& s) {
       auto points = particles::read_particles_as_vector(pointsfiles[i * m_domainsPerShape + k]);
       unsigned int q = points.size();
       for (unsigned int j = 0; j < q; j++) {
-        m_mean(q * k * VDimension + (VDimension * j) + 0) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 0, i) = points[j][0];
-        m_mean(q * k * VDimension + (VDimension * j) + 1) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 1, i) = points[j][1];
-        m_mean(q * k * VDimension + (VDimension * j) + 2) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 2, i) = points[j][2];
+        m_mean(q * k * num_dimensions_ + (num_dimensions_ * j) + 0) +=
+            m_pointsMinusMean(q * k * num_dimensions_ + (num_dimensions_ * j) + 0, i) = points[j][0];
+        m_mean(q * k * num_dimensions_ + (num_dimensions_ * j) + 1) +=
+            m_pointsMinusMean(q * k * num_dimensions_ + (num_dimensions_ * j) + 1, i) = points[j][1];
+        m_mean(q * k * num_dimensions_ + (num_dimensions_ * j) + 2) +=
+            m_pointsMinusMean(q * k * num_dimensions_ + (num_dimensions_ * j) + 2, i) = points[j][2];
 
         if (m_groupIDs[i] == 1) {
-          m_mean1(q * k * VDimension + (VDimension * j) + 0) += points[j][0];
-          m_mean1(q * k * VDimension + (VDimension * j) + 1) += points[j][1];
-          m_mean1(q * k * VDimension + (VDimension * j) + 2) += points[j][2];
+            m_mean1(q * k * num_dimensions_ + (num_dimensions_ * j) + 0) += points[j][0];
+            m_mean1(q * k * num_dimensions_ + (num_dimensions_ * j) + 1) += points[j][1];
+            m_mean1(q * k * num_dimensions_ + (num_dimensions_ * j) + 2) += points[j][2];
         } else {
-          m_mean2(q * k * VDimension + (VDimension * j) + 0) += points[j][0];
-          m_mean2(q * k * VDimension + (VDimension * j) + 1) += points[j][1];
-          m_mean2(q * k * VDimension + (VDimension * j) + 2) += points[j][2];
+            m_mean2(q * k * num_dimensions_ + (num_dimensions_ * j) + 0) += points[j][0];
+            m_mean2(q * k * num_dimensions_ + (num_dimensions_ * j) + 1) += points[j][1];
+            m_mean2(q * k * num_dimensions_ + (num_dimensions_ * j) + 2) += points[j][2];
         }
 
-        m_shapes(q * k * VDimension + (VDimension * j) + 0, i) = points[j][0];
-        m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = points[j][1];
-        m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = points[j][2];
+        m_shapes(q * k * num_dimensions_ + (num_dimensions_ * j) + 0, i) = points[j][0];
+        m_shapes(q * k * num_dimensions_ + (num_dimensions_ * j) + 1, i) = points[j][1];
+        m_shapes(q * k * num_dimensions_ + (num_dimensions_ * j) + 2, i) = points[j][2];
       }
     }
   }
@@ -498,14 +498,14 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
 
   // Assumes all the same size.
   m_numSamples = global_pts.size() / m_domainsPerShape;
-  m_numDimensions = global_pts[0].size() * VDimension * m_domainsPerShape;
+  m_numDimensions = global_pts[0].size() * num_dimensions_ * m_domainsPerShape;
 
   m_pointsMinusMean.resize(m_numDimensions, m_numSamples);
   m_shapes.resize(m_numDimensions, m_numSamples);
   m_mean.resize(m_numDimensions);
   m_mean.fill(0);
 
-  std::cout << "VDimension = " << VDimension << "-------------\n";
+  std::cout << "VDimension = " << num_dimensions_ << "-------------\n";
   std::cout << "m_numSamples = " << m_numSamples << "-------------\n";
   std::cout << "m_domainsPerShape = " << m_domainsPerShape << "-------------\n";
   std::cout << "global_pts.size() = " << global_pts.size() << "-------------\n";
@@ -519,16 +519,16 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
 
       // std::cout << "q = " << q << "-------------\n";
       for (unsigned int j = 0; j < q; j++) {
-        m_mean(q * k * VDimension + (VDimension * j) + 0) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 0, i) = curDomain[j][0];
-        m_mean(q * k * VDimension + (VDimension * j) + 1) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 1, i) = curDomain[j][1];
-        m_mean(q * k * VDimension + (VDimension * j) + 2) +=
-            m_pointsMinusMean(q * k * VDimension + (VDimension * j) + 2, i) = curDomain[j][2];
+        m_mean(q * k * num_dimensions_ + (num_dimensions_ * j) + 0) +=
+            m_pointsMinusMean(q * k * num_dimensions_ + (num_dimensions_ * j) + 0, i) = curDomain[j][0];
+        m_mean(q * k * num_dimensions_ + (num_dimensions_ * j) + 1) +=
+            m_pointsMinusMean(q * k * num_dimensions_ + (num_dimensions_ * j) + 1, i) = curDomain[j][1];
+        m_mean(q * k * num_dimensions_ + (num_dimensions_ * j) + 2) +=
+            m_pointsMinusMean(q * k * num_dimensions_ + (num_dimensions_ * j) + 2, i) = curDomain[j][2];
 
-        m_shapes(q * k * VDimension + (VDimension * j) + 0, i) = curDomain[j][0];
-        m_shapes(q * k * VDimension + (VDimension * j) + 1, i) = curDomain[j][1];
-        m_shapes(q * k * VDimension + (VDimension * j) + 2, i) = curDomain[j][2];
+        m_shapes(q * k * num_dimensions_ + (num_dimensions_ * j) + 0, i) = curDomain[j][0];
+        m_shapes(q * k * num_dimensions_ + (num_dimensions_ * j) + 1, i) = curDomain[j][1];
+        m_shapes(q * k * num_dimensions_ + (num_dimensions_ * j) + 2, i) = curDomain[j][2];
       }
     }
   }
@@ -720,12 +720,12 @@ int ParticleShapeStatistics::FisherLinearDiscriminant(unsigned int numModes) {
   std::ofstream out("LinearDiscriminantsVectors.txt");
 
   out << "NUMBER_OF_POINTS = " << m_numDimensions << std::endl;
-  out << "DIMENSION = " << VDimension << std::endl;
+  out << "DIMENSION = " << num_dimensions_ << std::endl;
   out << "TYPE = Vector" << std::endl;
 
   // Write points.
   for (unsigned int i = 0; i < m_numDimensions;) {
-    for (unsigned int j = 0; j < VDimension; j++) {
+    for (unsigned int j = 0; j < num_dimensions_; j++) {
       out << -bigLD(i) << " ";
       i++;
     }

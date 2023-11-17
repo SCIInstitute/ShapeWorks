@@ -1207,13 +1207,10 @@ Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
     shapes[i]->get_reconstructed_meshes(true);
     shapes[i]->load_feature(DisplayMode::Reconstructed, target_feature);
 
-    Eigen::VectorXf scalars = shapes[i]->get_point_features(target_feature);
-
-    // convert to Eigen::VectorXd
-    Eigen::VectorXd scalars_d = scalars.cast<double>();
+    Eigen::VectorXd scalars = shapes[i]->get_point_features(target_feature);
 
     // write into all_scalars
-    all_scalars.row(i) = scalars_d.transpose();
+    all_scalars.row(i) = scalars.transpose();
   }
 
   return all_scalars;

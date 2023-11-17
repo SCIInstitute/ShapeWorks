@@ -555,9 +555,9 @@ void Analyze::initialize_mesh_warper() {
 int Analyze::get_num_subjects() { return shapes_.size(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf Analyze::get_subject_features(int subject, std::string feature_name) {
+Eigen::VectorXd Analyze::get_subject_features(int subject, std::string feature_name) {
   if (subject >= shapes_.size()) {
-    return Eigen::VectorXf();
+    return Eigen::VectorXd();
   }
 
   auto shape = shapes_[subject];

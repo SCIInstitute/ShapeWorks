@@ -33,5 +33,5 @@ void GroupPvalueJob::run() {
 QString GroupPvalueJob::name() { return "Group p-values"; }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf GroupPvalueJob::get_group_pvalues() { return this->group_pvalues_; }
+Eigen::VectorXd GroupPvalueJob::get_group_pvalues() { return this->group_pvalues_; }
 }  // namespace shapeworks

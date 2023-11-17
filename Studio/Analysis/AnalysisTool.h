@@ -117,6 +117,10 @@ class AnalysisTool : public QWidget {
 
   GroupAnalysisType get_group_analysis_type();
 
+  bool pca_scalar_only_mode();
+  bool pca_shape_plus_scalar_mode();
+  bool pca_shape_only_mode();
+
  public Q_SLOTS:
 
   // analysis mode

@@ -21,8 +21,6 @@ class Project;
  */
 class ParticleShapeStatistics {
  public:
-  constexpr static int VDimension = 3;
-
   ParticleShapeStatistics(){};
   ParticleShapeStatistics(std::shared_ptr<Project> project);
   ~ParticleShapeStatistics(){};
@@ -30,9 +28,6 @@ class ParticleShapeStatistics {
   int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
   int DoPCA(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
-
-  //! Dimensionality of the domain of the particle system.
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   //! Loads a set of point files and pre-computes some statistics.
   int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
@@ -146,6 +141,8 @@ class ParticleShapeStatistics {
 
   Eigen::MatrixXd& matrix() { return m_Matrix; };
 
+  void set_num_dimensions(int num_dimensions) { num_dimensions_ = num_dimensions; }
+
  private:
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;
@@ -198,6 +195,8 @@ class ParticleShapeStatistics {
   // 0 = bad, 1 = good
   std::vector<bool> m_goodPoints;
   std::vector<Eigen::VectorXd> points_;
+
+  int num_dimensions_ = 3;  // e.g. 3 for x/y/z, 4 for x/y/z/scalar
 };
 
 }  // namespace shapeworks
