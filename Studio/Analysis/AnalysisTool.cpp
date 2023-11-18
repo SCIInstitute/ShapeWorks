@@ -32,6 +32,22 @@ const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
 //---------------------------------------------------------------------------
+//! Helper to extract x,y,z from x,y,z,scalar
+static Eigen::VectorXd extract_shape_only(Eigen::VectorXd values) {
+  // need to drop every 4th value
+  Eigen::VectorXd particles(values.size() - values.size() / 4);
+  int j = 0;
+  for (int i = 0; i < values.size(); i++) {
+    if (i % 4 != 3) {
+      particles[j++] = values[i];
+    }
+  }
+  return particles;
+}
+
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
@@ -654,7 +670,15 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 
   temp_shape_ = stats_.get_mean() + (e * (value * lambda));
 
-  return convert_from_combined(temp_shape_);
+  auto positions = temp_shape_;
+
+  if (pca_shape_plus_scalar_mode()) {
+    positions = extract_shape_only(temp_shape_);
+  } else if (pca_scalar_only_mode()) {
+    SW_LOG("Scalar only mode not implemented yet");
+  }
+
+  return convert_from_combined(positions);
 }
 
 //---------------------------------------------------------------------------
@@ -1357,13 +1381,13 @@ void AnalysisTool::update_difference_particles() {
   Particles target = session_->get_shapes()[0]->get_particles();
   auto all_particles = target.get_combined_global_particles();
 
-  Eigen::VectorXd mean = stats_.get_mean();
+  Eigen::VectorXd mean = get_mean_shape_particles();
 
   if (get_group_difference_mode()) {
     mean = stats_.get_group2_mean();
   }
 
-  for (unsigned int i = 0; i < stats_.get_mean().size(); i++) {
+  for (unsigned int i = 0; i < mean.size(); i++) {
     all_particles[i] = mean[i];
   }
 
@@ -1372,6 +1396,16 @@ void AnalysisTool::update_difference_particles() {
   session_->set_show_difference_vectors(get_group_difference_mode() || ui_->show_difference_to_mean->isChecked());
 
   session_->set_difference_particles(target);
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd AnalysisTool::get_mean_shape_particles() {
+  if (pca_shape_plus_scalar_mode()) {
+    return extract_shape_only(stats_.get_mean());
+  } else if (pca_scalar_only_mode()) {
+    SW_LOG("Scalar only mode not implemented yet");
+  }
+  return stats_.get_mean();
 }
 
 //---------------------------------------------------------------------------

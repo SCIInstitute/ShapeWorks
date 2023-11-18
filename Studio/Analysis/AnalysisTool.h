@@ -226,7 +226,10 @@ class AnalysisTool : public QWidget {
 
   void update_difference_particles();
 
+  Eigen::VectorXd get_mean_shape_particles();
+
   ShapeHandle create_shape_from_points(Particles points);
+
 
   Preferences& preferences_;
 
