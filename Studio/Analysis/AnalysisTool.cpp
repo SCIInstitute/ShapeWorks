@@ -462,19 +462,26 @@ bool AnalysisTool::compute_stats() {
 
   for (auto& shape : session_->get_shapes()) {
     Eigen::VectorXd particles;
+    stats_.set_num_values_per_particle(3);
     if (pca_shape_only_mode()) {
       particles = shape->get_global_correspondence_points();
     } else if (pca_scalar_only_mode()) {
       particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
     } else {
+      stats_.set_num_values_per_particle(4);
+      std::string target_feature = ui_->pca_scalar_combo->currentText().toStdString();
       auto positions = shape->get_global_correspondence_points();
-      auto scalars = particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
+      shape->get_reconstructed_meshes(true);
+      shape->load_feature(DisplayMode::Reconstructed, target_feature);
+      auto scalars = particles = shape->get_point_features(target_feature);
       // combine positions and scalars, interleave 3 positions for every scalar
+      SW_LOG("positions.size() = {}, scalars.size() = {}", positions.size(), scalars.size());
       particles.resize(positions.size() + scalars.size());
-      for (int i = 0; i < positions.size(); i += 3) {
-        particles[i * 4] = positions[i];
-        particles[i * 4 + 1] = positions[i + 1];
-        particles[i * 4 + 2] = positions[i + 2];
+      int num_particles = positions.size() / 3;
+      for (int i = 0; i < num_particles; i++) {
+        particles[i * 4] = positions[i * 3];
+        particles[i * 4 + 1] = positions[i * 3 + 1];
+        particles[i * 4 + 2] = positions[i * 3 + 2];
       }
       for (int i = 0; i < scalars.size(); i++) {
         particles[i * 4 + 3] = scalars[i];
@@ -1195,7 +1202,7 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
 
   if (feature_map_ != "") {
     auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
-                                                     points.get_combined_global_particles());
+                                                   points.get_combined_global_particles());
 
     shape->set_point_features(feature_map_, scalars);
   }
@@ -1668,7 +1675,10 @@ void AnalysisTool::change_pca_analysis_type() {
   } else {
     ui_->pca_scalar_combo->setEnabled(false);
   }
-  reset_stats();
+
+  stats_ready_ = false;
+  evals_ready_ = false;
+  stats_ = ParticleShapeStatistics();
   compute_stats();
 }
 
