@@ -86,12 +86,12 @@ TEST(OptimizeTests, sample) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -120,12 +120,12 @@ TEST(OptimizeTests, open_mesh_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -154,12 +154,12 @@ TEST(OptimizeTests, fixed_domain) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -188,12 +188,12 @@ TEST(OptimizeTests, fixed_mesh_domain_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -220,12 +220,12 @@ TEST(OptimizeTests, use_normals_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -253,12 +253,12 @@ TEST(OptimizeTests, mesh_use_normals_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -304,12 +304,12 @@ TEST(OptimizeTests, project_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -338,12 +338,12 @@ TEST(OptimizeTests, contour_domain_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -372,11 +372,11 @@ TEST(OptimizeTests, procrustes_disabled_test) {
 
   // compute stats
   ParticleShapeStatistics stats(project);
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -403,11 +403,11 @@ TEST(OptimizeTests, procrustes_no_scale_test) {
 
   // compute stats
   ParticleShapeStatistics stats(project);
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -435,11 +435,11 @@ TEST(OptimizeTests, procrustes_both_enabled_test) {
 
   // compute stats
   ParticleShapeStatistics stats(project);
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -467,11 +467,11 @@ TEST(OptimizeTests, procrustes_scale_only_test) {
 
   // compute stats
   ParticleShapeStatistics stats(project);
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -536,9 +536,9 @@ TEST(OptimizeTests, cutting_plane_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   bool good = check_constraint_violations(app, 1.5e-1);
 
@@ -566,9 +566,9 @@ TEST(OptimizeTests, ffc_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   bool good = check_constraint_violations(app, 4.0e-1);
 
@@ -593,9 +593,9 @@ TEST(OptimizeTests, multi_domain_constraint) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   bool good = check_constraint_violations(app, 7.5e-1);
 
@@ -622,12 +622,12 @@ TEST(OptimizeTests, mesh_ffc_test) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -656,12 +656,12 @@ TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
@@ -687,12 +687,12 @@ TEST(OptimizeTests, vtk_output) {
 
   // compute stats
   ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze_vtk_output.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
+  stats.read_point_files("analyze_vtk_output.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
 
   // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }

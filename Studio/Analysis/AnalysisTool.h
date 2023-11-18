@@ -8,8 +8,8 @@
 #include <QWidget>
 
 // ShapeWorks
-#include <ParticleShapeStatistics.h>
 #include <Analyze/Analyze.h>
+#include <ParticleShapeStatistics.h>
 
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
@@ -35,7 +35,6 @@ class AnalysisTool : public QWidget {
   Q_OBJECT;
 
  public:
-
   using AlignmentType = Analyze::AlignmentType;
 
   enum GroupAnalysisType { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3 };
@@ -190,7 +189,6 @@ class AnalysisTool : public QWidget {
   void handle_network_analysis_complete();
 
   void show_difference_to_mean_clicked();
-
 
   void group_analysis_combo_changed();
 

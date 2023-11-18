@@ -1716,10 +1716,10 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
   }
 
   auto stats = analysis_tool_->get_stats();
-  stats.PrincipalComponentProjections();
+  stats.principal_component_projections();
 
   try {
-    stats.WriteCSVFile2(filename.toStdString());
+    stats.write_csv_file(filename.toStdString());
   } catch (std::exception& e) {
     handle_error(e.what());
   }
@@ -1898,7 +1898,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
   }
 
   auto stats = analysis_tool_->get_stats();
-  auto values = stats.Eigenvalues();
+  auto values = stats.get_eigen_values();
   std::ofstream out(filename.toStdString().c_str());
   for (size_t i = values.size() - 1; i > 0; i--) {
     out << values[i] << std::endl;
@@ -1916,7 +1916,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
   }
 
   auto stats = analysis_tool_->get_stats();
-  auto values = stats.Eigenvectors();
+  auto values = stats.get_eigen_vectors();
   auto basename = filename.toStdString().substr(0, filename.toStdString().find_last_of(".eval") - 4);
   for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
     auto col = values.col(i);

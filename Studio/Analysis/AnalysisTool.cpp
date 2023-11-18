@@ -158,12 +158,12 @@ bool AnalysisTool::get_group_difference_mode() { return ui_->difference_button->
 std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors() {
   std::vector<Shape::Point> vecs;
 
-  auto num_points = stats_.Mean().size() / 3;
+  auto num_points = stats_.get_mean().size() / 3;
   for (unsigned int i = 0; i < num_points; i++) {
     Shape::Point tmp;
-    tmp.x = stats_.Group2Mean()[i * 3] - stats_.Group1Mean()[i * 3];
-    tmp.y = stats_.Group2Mean()[i * 3 + 1] - stats_.Group1Mean()[i * 3 + 1];
-    tmp.z = stats_.Group2Mean()[i * 3 + 2] - stats_.Group1Mean()[i * 3 + 2];
+    tmp.x = stats_.get_group2_mean()[i * 3] - stats_.get_group1_mean()[i * 3];
+    tmp.y = stats_.get_group2_mean()[i * 3 + 1] - stats_.get_group1_mean()[i * 3 + 1];
+    tmp.z = stats_.get_group2_mean()[i * 3 + 2] - stats_.get_group1_mean()[i * 3 + 2];
     vecs.push_back(tmp);
   }
   return vecs;
@@ -331,7 +331,7 @@ void AnalysisTool::handle_median() {
   if (!compute_stats()) {
     return;
   }
-  ui_->sampleSpinBox->setValue(stats_.ComputeMedianShape(-32));  //-32 = both groups
+  ui_->sampleSpinBox->setValue(stats_.compute_median_shape(-32));  //-32 = both groups
   Q_EMIT update_view();
 }
 
@@ -524,16 +524,16 @@ bool AnalysisTool::compute_stats() {
     }
   }
 
-  stats_.ImportPoints(points, group_ids);
+  stats_.import_points(points, group_ids);
   // MCA needs to know number of particles per domain/object
-  stats_.SetNumberOfParticlesArray(number_of_particles_array_);
+  stats_.set_num_particles_per_domain(number_of_particles_array_);
   if (domains_per_shape > 1) {
-    stats_.ComputeMultiLevelAnalysisStatistics(points, domains_per_shape);
+    stats_.compute_multi_level_analysis_statistics(points, domains_per_shape);
   }
-  stats_.ComputeModes();
+  stats_.compute_modes();
   if (domains_per_shape > 1) {
-    stats_.ComputeRelPoseModesForMca();
-    stats_.ComputeShapeDevModesForMca();
+    stats_.compute_relative_pose_modes_for_mca();
+    stats_.compute_shape_dev_modes_for_mca();
   }
   update_difference_particles();
   if (ui_->metrics_open_button->isChecked()) {
@@ -593,44 +593,44 @@ Particles AnalysisTool::get_mean_shape_points() {
   }
 
   if (ui_->group1_button->isChecked() || ui_->difference_button->isChecked()) {
-    return convert_from_combined(stats_.Group1Mean());
+    return convert_from_combined(stats_.get_group1_mean());
   } else if (ui_->group2_button->isChecked()) {
-    return convert_from_combined(stats_.Group2Mean());
+    return convert_from_combined(stats_.get_group2_mean());
   } else if (ui_->mean_button->isChecked()) {
-    return convert_from_combined(stats_.Mean());
+    return convert_from_combined(stats_.get_mean());
   }
 
   if (groups_active()) {
     auto group_ratio = get_group_ratio();
-    temp_shape_ = stats_.Group1Mean() + (stats_.GroupDifference() * group_ratio);
+    temp_shape_ = stats_.get_group1_mean() + (stats_.get_group_difference() * group_ratio);
     return convert_from_combined(temp_shape_);
   }
 
-  return convert_from_combined(stats_.Mean());
+  return convert_from_combined(stats_.get_mean());
 }
 
 //-----------------------------------------------------------------------------
 Particles AnalysisTool::get_shape_points(int mode, double value) {
-  if (!compute_stats() || stats_.Eigenvectors().size() <= 1) {
+  if (!compute_stats() || stats_.get_eigen_vectors().size() <= 1) {
     return Particles();
   }
-  if (mode + 2 > stats_.Eigenvalues().size()) {
-    mode = stats_.Eigenvalues().size() - 2;
+  if (mode + 2 > stats_.get_eigen_values().size()) {
+    mode = stats_.get_eigen_values().size() - 2;
   }
 
-  unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
-  m = std::clamp<unsigned int>(m, 0, stats_.Eigenvectors().cols() - 1);
+  unsigned int m = stats_.get_eigen_vectors().cols() - (mode + 1);
+  m = std::clamp<unsigned int>(m, 0, stats_.get_eigen_vectors().cols() - 1);
 
-  Eigen::VectorXd e = stats_.Eigenvectors().col(m);
+  Eigen::VectorXd e = stats_.get_eigen_vectors().col(m);
 
-  double lambda = sqrt(stats_.Eigenvalues()[m]);
+  double lambda = sqrt(stats_.get_eigen_values()[m]);
 
-  pca_labels_changed(QString::number(value, 'g', 2), QString::number(stats_.Eigenvalues()[m]),
+  pca_labels_changed(QString::number(value, 'g', 2), QString::number(stats_.get_eigen_values()[m]),
                      QString::number(value * lambda));
 
   std::vector<double> vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(stats_.Eigenvalues()[i]);
+  for (int i = stats_.get_eigen_values().size() - 1; i > 0; i--) {
+    vals.push_back(stats_.get_eigen_values()[i]);
   }
   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
   double cumulation = 0;
@@ -645,7 +645,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     ui_->cumulative_explained_variance->setText("");
   }
 
-  temp_shape_ = stats_.Mean() + (e * (value * lambda));
+  temp_shape_ = stats_.get_mean() + (e * (value * lambda));
 
   return convert_from_combined(temp_shape_);
 }
@@ -656,11 +656,11 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, Mca
   Eigen::MatrixXd eigenvectors;
   std::vector<double> eigenvalues;
   if (level == McaMode::Within) {
-    eigenvectors = stats_.EigenvectorsShapeDev();
-    eigenvalues = stats_.EigenvaluesShapeDev();
+    eigenvectors = stats_.get_eigenvectors_shape_dev();
+    eigenvalues = stats_.get_eigenvalues_shape_dev();
   } else if (level == McaMode::Between) {
-    eigenvectors = stats_.EigenvectorsRelPose();
-    eigenvalues = stats_.EigenvaluesRelPose();
+    eigenvectors = stats_.get_eigenvectors_rel_pos();
+    eigenvalues = stats_.get_eigenvalues_rel_pose();
   }
   if (!compute_stats() || eigenvectors.size() <= 1) {
     return Particles();
@@ -689,11 +689,11 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, Mca
     ui_->cumulative_explained_variance->setText("");
   }
 
-  unsigned int D = stats_.NumberOfObjects();
-  unsigned int sz = stats_.Mean().size();
+  unsigned int D = stats_.get_domains_per_shape();
+  unsigned int sz = stats_.get_mean().size();
   if (level == McaMode::Within) {
     // Morphological Variations
-    temp_shape_mca = stats_.Mean() + (e * (value * lambda));
+    temp_shape_mca = stats_.get_mean() + (e * (value * lambda));
   } else if (level == McaMode::Between) {
     // Relative Pose Variations
     Eigen::VectorXd e_between;
@@ -710,7 +710,7 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, Mca
         e_between(row + (j * 3) + 2) = e(i * 3 + 2);
       }
     }
-    temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
+    temp_shape_mca = stats_.get_mean() + (e_between * (value * lambda));
   }
   return convert_from_combined(temp_shape_mca);
 }
@@ -1350,13 +1350,13 @@ void AnalysisTool::update_difference_particles() {
   Particles target = session_->get_shapes()[0]->get_particles();
   auto all_particles = target.get_combined_global_particles();
 
-  Eigen::VectorXd mean = stats_.Mean();
+  Eigen::VectorXd mean = stats_.get_mean();
 
   if (get_group_difference_mode()) {
-    mean = stats_.Group2Mean();
+    mean = stats_.get_group2_mean();
   }
 
-  for (unsigned int i = 0; i < stats_.Mean().size(); i++) {
+  for (unsigned int i = 0; i < stats_.get_mean().size(); i++) {
     all_particles[i] = mean[i];
   }
 
@@ -1449,7 +1449,7 @@ bool AnalysisTool::is_group_active(int shape_index) {
 void AnalysisTool::initialize_mesh_warper() {
   if (session_->particles_present() && session_->get_groomed_present()) {
     compute_stats();
-    int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
+    int median = stats_.compute_median_shape(-32);  //-32 = both groups
 
     if (median < 0 || median >= session_->get_num_shapes()) {
       SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
