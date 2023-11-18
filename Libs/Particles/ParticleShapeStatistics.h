@@ -1,9 +1,6 @@
 #pragma once
 
 #include <Eigen/Eigen>
-#include <cstdio>
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -69,7 +66,7 @@ class ParticleShapeStatistics {
   int get_num_dimensions() const { return num_dimensions_; }
   //! Return Number of objects present in Multi-Object Shape Structure
   int get_domains_per_shape() { return domains_per_shape_; }
-  // !Returns Number of Particles Array
+  //! Returns Number of Particles Array
   std::vector<int> NumberOfPointsArray() { return num_particles_array_; }
 
   //! Returns the group ids
@@ -98,7 +95,7 @@ class ParticleShapeStatistics {
   const Eigen::VectorXd& get_group_difference() const { return groupdiff_; }
 
   //! Returns the median shape for the set of shapes with Group ID equal to the
-  //! integer argument.  For example, ComputeMedianShape(0) returns the median
+  //! integer argument.  For example, compute_median_shape(0) returns the median
   //! shape for the set of shapes with m_groupIDs == 0. The median shape is
   //! defined as the shape with the minimum sum of Euclidean L1 norms to all
   //! other shapes in that group.  Arguments passed to this function are set to
