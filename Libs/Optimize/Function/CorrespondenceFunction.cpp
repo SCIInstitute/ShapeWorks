@@ -53,9 +53,10 @@ vnl_matrix<double> CorrespondenceFunction::SVT(const vnl_matrix<double>& X, doub
     vnl_svd<double> svd(X);
     vnl_matrix<double> U = svd.U();
     vnl_diag_matrix<double> S;
-    S.set_diagonal(flatten(shrink(svd.W(), tau)));
+    // S.set_diagonal(flatten(shrink(svd.W(), tau)));
+    S.set_diagonal( (shrink(svd.W(), tau)).flatten_row_major());
     vnl_matrix<double> VT = svd.V();
-    return U * S * VT;
+    return U * S * VT.transpose();
 }
 
 std::tuple<vnl_matrix<double>, vnl_matrix<double>> CorrespondenceFunction::RPCA(const vnl_matrix<double>& X) {
@@ -70,7 +71,8 @@ std::tuple<vnl_matrix<double>, vnl_matrix<double>> CorrespondenceFunction::RPCA(
     int n2 = X.columns();
     // vnl_vector<int> X_abs;
     // X_abs.absolute_value_max(flatten(X));
-    double mu = n1 * n2 / (4*(flatten(X)).one_norm()) ;
+    // double mu = n1 * n2 / (4*(flatten(X)).one_norm()) ;
+    double mu = n1 * n2 / (4* (X.flatten_row_major()).one_norm()) ;
     double lambda = 1 / std::sqrt(std::max(n1, n2));
     double thresh = 1e-7 * X.fro_norm();
 
