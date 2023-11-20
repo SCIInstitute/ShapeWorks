@@ -253,6 +253,8 @@ class AnalysisTool : public QWidget {
   Eigen::VectorXd temp_shape_mca;
   std::vector<int> number_of_particles_array_;
 
+  Eigen::VectorXd temp_scalars_;
+
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
 

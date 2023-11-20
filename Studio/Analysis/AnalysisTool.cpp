@@ -46,6 +46,19 @@ static Eigen::VectorXd extract_shape_only(Eigen::VectorXd values) {
 }
 
 //---------------------------------------------------------------------------
+//! Helper to extract scalar from x,y,z,scalar
+static Eigen::VectorXd extract_scalar_only(Eigen::VectorXd values) {
+  Eigen::VectorXd scalars(values.size() / 4);
+  int j = 0;
+  for (int i = 0; i < values.size(); i++) {
+    if (i % 4 == 3) {
+      scalars[j++] = values[i];
+    }
+  }
+  return scalars;
+}
+
+//---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
@@ -674,6 +687,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 
   if (pca_shape_plus_scalar_mode()) {
     positions = extract_shape_only(temp_shape_);
+    temp_scalars_ = extract_scalar_only(temp_shape_);
   } else if (pca_scalar_only_mode()) {
     SW_LOG("Scalar only mode not implemented yet");
   }
@@ -1225,10 +1239,13 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   shape->set_reconstruction_transforms(reconstruction_transforms_);
 
   if (feature_map_ != "") {
-    auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
-                                                   points.get_combined_global_particles());
+    //auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
+      //                                             points.get_combined_global_particles());
 
-    shape->set_point_features(feature_map_, scalars);
+    //shape->set_point_features(feature_map_, scalars);
+
+    shape->set_point_features(feature_map_, temp_scalars_);
+
   }
   return shape;
 }
