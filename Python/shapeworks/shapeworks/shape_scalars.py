@@ -28,16 +28,22 @@ def get_fig_png():
 def run_mbpls(x, y, n_components=3, cv=5):
     """ Run MBPLS on shape and scalar data """
 
-    model = MBPLS(n_components=n_components)
+    # don't set cv higher than the number of samples
+    cv = min(cv, len(x))
+
+    global mbpls_model
+    mbpls_model = MBPLS(n_components=n_components)
+    if cv != 1:
+        y_pred = cross_val_predict(mbpls_model, x, y, cv=cv)
+
+    mbpls_model.fit(x, y)
+    
     if cv == 1:
-        model.fit(x, y)
-        y_pred = model.predict(x)
-    else:
-        y_pred = cross_val_predict(model, x, y, cv=cv)
+        y_pred = mbpls_model.predict(x)
 
     mse = mean_squared_error(y, y_pred)
 
-    sw_message(f'MSE: {mse}')
+    sw_message(f'Python MSE: {mse}')
 
     prediction = pd.DataFrame(np.array(y_pred))
 
@@ -84,17 +90,26 @@ def run_find_num_components(x, y, max_components, cv=5):
     return figdata_png
 
 
-def pred_from_mbpls(x, y, new_x, n_components=3):
-    """ Run MBPLS on shape and scalar data, then predict new_y from new_x """
+def pred_from_mbpls(new_x, n_components=3):
+    """ Predict new_y from new_x using existing mbpls fit """
 
-    # check if global variable model exists, otherwise create it
-    global model
-    try:
-        model
-    except NameError:
-        model = MBPLS(n_components=n_components)
-        model.fit(x, y)
+    if not does_mbpls_model_exist():
+        sw_message('MBPLS model does not exist, returning none')
+        return None
 
-    y_pred = model.predict(new_x)
+    global mbpls_model
+    y_pred = mbpls_model.predict(new_x)
     # return as vector
     return y_pred.flatten()
+
+def does_mbpls_model_exist():
+    """ Check if mbpls model exists """
+
+    # check if global variable model exists, otherwise create it
+    global mbpls_model
+    try:
+        mbpls_model
+    except NameError:
+        return False
+
+    return True

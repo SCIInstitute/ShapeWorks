@@ -473,7 +473,7 @@ bool AnalysisTool::compute_stats() {
     return false;
   }
 
-  SW_LOG("Compute Stats!");
+  SW_DEBUG("Compute Stats!");
   compute_reconstructed_domain_transforms();
 
   ui_->pcaModeSpinBox->setMaximum(std::max<double>(1, session_->get_shapes().size() - 1));
@@ -691,11 +691,14 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 
   auto positions = temp_shape_;
 
+  computed_scalars_ = Eigen::VectorXd();
   if (pca_shape_plus_scalar_mode()) {
     positions = extract_shape_only(temp_shape_);
-    temp_scalars_ = extract_scalar_only(temp_shape_);
+    computed_scalars_ = extract_scalar_only(temp_shape_);
   } else if (pca_scalar_only_mode()) {
     SW_LOG("Scalar only mode not implemented yet");
+    computed_scalars_ = temp_shape_;
+    positions = construct_mean_shape();
   }
 
   return convert_from_combined(positions);
@@ -908,19 +911,13 @@ AnalysisTool::GroupAnalysisType AnalysisTool::get_group_analysis_type() {
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::pca_scalar_only_mode() {
-  return ui_->pca_scalar_only->isChecked();
-}
+bool AnalysisTool::pca_scalar_only_mode() { return ui_->pca_scalar_only->isChecked(); }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::pca_shape_plus_scalar_mode() {
-  return ui_->pca_shape_and_scalar->isChecked();
-}
+bool AnalysisTool::pca_shape_plus_scalar_mode() { return ui_->pca_shape_and_scalar->isChecked(); }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::pca_shape_only_mode() {
-  return ui_->pca_scalar_shape_only->isChecked();
-}
+bool AnalysisTool::pca_shape_only_mode() { return ui_->pca_scalar_shape_only->isChecked(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_tabWidget_currentChanged() { update_analysis_mode(); }
@@ -976,6 +973,8 @@ void AnalysisTool::handle_pca_timer() {
   }
 
   ui_->pcaSlider->setValue(value);
+
+  QApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
@@ -1244,12 +1243,13 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   shape->set_reconstruction_transforms(reconstruction_transforms_);
 
   if (feature_map_ != "") {
-    // auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
-    //                                              points.get_combined_global_particles());
-
-    // shape->set_point_features(feature_map_, scalars);
-
-    shape->set_point_features(feature_map_, temp_scalars_);
+    if (ui_->pca_predict_scalar->isChecked()) {
+      auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
+                                                     points.get_combined_global_particles());
+      shape->set_point_features(feature_map_, scalars);
+    } else {
+      shape->set_point_features(feature_map_, computed_scalars_);
+    }
   }
   return shape;
 }
@@ -1729,6 +1729,25 @@ void AnalysisTool::change_pca_analysis_type() {
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
   compute_stats();
+  Q_EMIT pca_update();
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd AnalysisTool::construct_mean_shape() {
+  if (session_->get_shapes().empty()) {
+    return Eigen::VectorXd();
+  }
+
+  Eigen::VectorXd sum_shape =
+      Eigen::VectorXd::Zero(session_->get_shapes()[0]->get_global_correspondence_points().size());
+
+  for (auto& shape : session_->get_shapes()) {
+    Eigen::VectorXd particles = shape->get_global_correspondence_points();
+    sum_shape += particles;
+  }
+
+  Eigen::VectorXd mean_shape = sum_shape / session_->get_shapes().size();
+  return mean_shape;
 }
 
 //---------------------------------------------------------------------------

@@ -33,6 +33,8 @@ class ShapeScalarJob : public Job {
  private:
   void prep_data();
 
+  void run_fit();
+  void run_prediction();
 
   QSharedPointer<Session> session_;
 

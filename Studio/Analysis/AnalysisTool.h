@@ -194,6 +194,9 @@ class AnalysisTool : public QWidget {
 
   void change_pca_analysis_type();
 
+  //! Compute the mean shape outside of the PCA in case we are using scalars only
+  Eigen::VectorXd construct_mean_shape();
+
  Q_SIGNALS:
 
   void update_view();
@@ -253,7 +256,7 @@ class AnalysisTool : public QWidget {
   Eigen::VectorXd temp_shape_mca;
   std::vector<int> number_of_particles_array_;
 
-  Eigen::VectorXd temp_scalars_;
+  Eigen::VectorXd computed_scalars_;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;

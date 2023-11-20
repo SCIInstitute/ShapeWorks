@@ -76,12 +76,16 @@ void PythonWorker::start_job(QSharedPointer<Job> job) {
   if (init()) {
     try {
       job->start_timer();
-      SW_LOG("Running Task: " + job->name().toStdString());
+      if (!job->get_quiet_mode()) {
+        SW_LOG("Running Task: " + job->name().toStdString());
+      }
       Q_EMIT job->progress(0);
       current_job_ = job;
       current_job_->run();
       current_job_->set_complete(true);
-      SW_LOG(current_job_->get_completion_message().toStdString());
+      if (!job->get_quiet_mode()) {
+        SW_LOG(current_job_->get_completion_message().toStdString());
+      }
     } catch (py::error_already_set& e) {
       SW_ERROR(e.what());
     }
