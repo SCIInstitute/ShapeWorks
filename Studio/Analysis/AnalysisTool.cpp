@@ -105,10 +105,15 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
-  connect(ui_->pca_shape_checkbox, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
-  connect(ui_->pca_scalar_checkbox, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+
+  // shape/scalar
+  connect(ui_->pca_scalar_only, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_scalar_shape_only, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_shape_and_scalar, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
   connect(ui_->pca_scalar_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_predict_scalar, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_predict_shape, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -495,6 +500,7 @@ bool AnalysisTool::compute_stats() {
     if (pca_shape_only_mode()) {
       particles = shape->get_global_correspondence_points();
     } else if (pca_scalar_only_mode()) {
+      stats_.set_num_values_per_particle(1);
       particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
     } else {
       stats_.set_num_values_per_particle(4);
@@ -903,18 +909,17 @@ AnalysisTool::GroupAnalysisType AnalysisTool::get_group_analysis_type() {
 
 //---------------------------------------------------------------------------
 bool AnalysisTool::pca_scalar_only_mode() {
-  return ui_->pca_scalar_checkbox->isChecked() && !ui_->pca_shape_checkbox->isChecked();
+  return ui_->pca_scalar_only->isChecked();
 }
 
 //---------------------------------------------------------------------------
 bool AnalysisTool::pca_shape_plus_scalar_mode() {
-  return ui_->pca_scalar_checkbox->isChecked() && ui_->pca_shape_checkbox->isChecked();
+  return ui_->pca_shape_and_scalar->isChecked();
 }
 
 //---------------------------------------------------------------------------
 bool AnalysisTool::pca_shape_only_mode() {
-  // default
-  return !pca_scalar_only_mode() && !pca_shape_plus_scalar_mode();
+  return ui_->pca_scalar_shape_only->isChecked();
 }
 
 //---------------------------------------------------------------------------
@@ -1239,13 +1244,12 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   shape->set_reconstruction_transforms(reconstruction_transforms_);
 
   if (feature_map_ != "") {
-    //auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
-      //                                             points.get_combined_global_particles());
+    // auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
+    //                                              points.get_combined_global_particles());
 
-    //shape->set_point_features(feature_map_, scalars);
+    // shape->set_point_features(feature_map_, scalars);
 
     shape->set_point_features(feature_map_, temp_scalars_);
-
   }
   return shape;
 }
@@ -1721,12 +1725,6 @@ void AnalysisTool::group_analysis_combo_changed() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::change_pca_analysis_type() {
-  if (ui_->pca_scalar_checkbox->isChecked()) {
-    ui_->pca_scalar_combo->setEnabled(true);
-  } else {
-    ui_->pca_scalar_combo->setEnabled(false);
-  }
-
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
