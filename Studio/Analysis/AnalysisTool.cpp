@@ -501,6 +501,9 @@ bool AnalysisTool::compute_stats() {
       particles = shape->get_global_correspondence_points();
     } else if (pca_scalar_only_mode()) {
       stats_.set_num_values_per_particle(1);
+      shape->get_reconstructed_meshes(true);
+      std::string target_feature = ui_->pca_scalar_combo->currentText().toStdString();
+      shape->load_feature(DisplayMode::Reconstructed, target_feature);
       particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
     } else {
       stats_.set_num_values_per_particle(4);
@@ -696,7 +699,6 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     positions = extract_shape_only(temp_shape_);
     computed_scalars_ = extract_scalar_only(temp_shape_);
   } else if (pca_scalar_only_mode()) {
-    SW_LOG("Scalar only mode not implemented yet");
     computed_scalars_ = temp_shape_;
     positions = construct_mean_shape();
   }
