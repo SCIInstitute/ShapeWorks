@@ -13,6 +13,7 @@ class ShapeScalarJob : public Job {
   Q_OBJECT
  public:
   enum class JobType { Find_Components, MSE_Plot, Predict };
+  enum class Direction { To_Shape, To_Scalar };
 
   ShapeScalarJob(QSharedPointer<Session> session, QString target_feature, Eigen::MatrixXd target_particles,
                  JobType job_type);
@@ -30,11 +31,21 @@ class ShapeScalarJob : public Job {
   static Eigen::VectorXd predict_scalars(QSharedPointer<Session> session, QString target_feature,
                                          Eigen::MatrixXd target_particles);
 
+  static Eigen::VectorXd predict_shape(QSharedPointer<Session> session, QString target_feature,
+                                       Eigen::MatrixXd target_particles);
+
+  static void clear_model() { needs_clear_ = true; };
+
+  void set_direction(Direction direction) { direction_ = direction; }
+
  private:
   void prep_data();
 
   void run_fit();
   void run_prediction();
+
+  static Eigen::VectorXd predict(QSharedPointer<Session> session, QString target_feature,
+                                 Eigen::MatrixXd target_particles, Direction direction);
 
   QSharedPointer<Session> session_;
 
@@ -47,13 +58,16 @@ class ShapeScalarJob : public Job {
   Eigen::MatrixXd all_particles_;
   Eigen::MatrixXd all_scalars_;
 
-  Eigen::MatrixXd target_particles_;
+  Eigen::MatrixXd target_values_;
   Eigen::VectorXd prediction_;
 
   bool num_components_ = 3;
   int num_folds_ = 5;
   int max_components_ = 20;
 
+  Direction direction_{Direction::To_Scalar};
   JobType job_type_;
+
+  static std::atomic<bool> needs_clear_;
 };
 }  // namespace shapeworks

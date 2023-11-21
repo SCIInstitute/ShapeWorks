@@ -16,10 +16,12 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 
 namespace shapeworks {
 
+std::atomic<bool> ShapeScalarJob::needs_clear_ = false;
+
 //---------------------------------------------------------------------------
 ShapeScalarJob::ShapeScalarJob(QSharedPointer<Session> session, QString target_feature,
                                Eigen::MatrixXd target_particles, JobType job_type)
-    : session_(session), target_feature_(target_feature), target_particles_(target_particles), job_type_(job_type) {}
+    : session_(session), target_feature_(target_feature), target_values_(target_particles), job_type_(job_type) {}
 
 //---------------------------------------------------------------------------
 void ShapeScalarJob::run() {
@@ -68,10 +70,23 @@ QPixmap ShapeScalarJob::get_plot() { return plot_; }
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeScalarJob::predict_scalars(QSharedPointer<Session> session, QString target_feature,
                                                 Eigen::MatrixXd target_particles) {
+  return predict(session, target_feature, target_particles, Direction::To_Scalar);
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ShapeScalarJob::predict_shape(QSharedPointer<Session> session, QString target_feature,
+                                              Eigen::MatrixXd target_scalars) {
+  return predict(session, target_feature, target_scalars, Direction::To_Shape);
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ShapeScalarJob::predict(QSharedPointer<Session> session, QString target_feature,
+                                        Eigen::MatrixXd target_values, Direction direction) {
   // blocking call to predict scalars for given target particles
 
-  auto job = QSharedPointer<ShapeScalarJob>::create(session, target_feature, target_particles, JobType::Predict);
+  auto job = QSharedPointer<ShapeScalarJob>::create(session, target_feature, target_values, JobType::Predict);
   job->set_quiet_mode(true);
+  job->set_direction(direction);
 
   Eigen::VectorXd prediction;
 
@@ -104,8 +119,15 @@ void ShapeScalarJob::run_fit() {
   py::module np = py::module::import("numpy");
   py::module sw = py::module::import("shapeworks");
 
-  py::object A = np.attr("array")(all_particles_);
-  py::object B = np.attr("array")(all_scalars_);
+  py::object A;
+  py::object B;
+  if (direction_ == Direction::To_Scalar) {
+    A = np.attr("array")(all_particles_);
+    B = np.attr("array")(all_scalars_);
+  } else {
+    A = np.attr("array")(all_scalars_);
+    B = np.attr("array")(all_particles_);
+  }
 
   // returns a tuple of (png_raw_bytes, y_pred, mse)
   using ResultType = std::tuple<py::array, Eigen::MatrixXd, double>;
@@ -131,12 +153,13 @@ void ShapeScalarJob::run_prediction() {
   py::module sw = py::module::import("shapeworks");
 
   py::object does_mbpls_model_exist = sw.attr("shape_scalars").attr("does_mbpls_model_exist");
-  if (!does_mbpls_model_exist().cast<bool>()) {
+  if (needs_clear_ == true || !does_mbpls_model_exist().cast<bool>()) {
     SW_LOG("No MBPLS model exists, running fit");
     run_fit();
+    needs_clear_ = false;
   }
 
-  py::object new_x = np.attr("array")(target_particles_.transpose());
+  py::object new_x = np.attr("array")(target_values_.transpose());
   py::object run_prediction = sw.attr("shape_scalars").attr("pred_from_mbpls");
 
   using ResultType = Eigen::VectorXd;

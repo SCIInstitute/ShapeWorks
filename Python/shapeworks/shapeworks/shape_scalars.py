@@ -90,7 +90,7 @@ def run_find_num_components(x, y, max_components, cv=5):
     return figdata_png
 
 
-def pred_from_mbpls(new_x, n_components=3):
+def pred_from_mbpls(new_x):
     """ Predict new_y from new_x using existing mbpls fit """
 
     if not does_mbpls_model_exist():
@@ -113,3 +113,15 @@ def does_mbpls_model_exist():
         return False
 
     return True
+
+def clear_mbpls_model():
+    """ Clear mbpls model """
+
+    global mbpls_model
+    try:
+        mbpls_model
+    except NameError:
+        return
+
+    del mbpls_model
+    return

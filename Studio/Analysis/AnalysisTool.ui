@@ -1451,14 +1451,14 @@ QWidget#particles_panel {
                       <item row="1" column="1">
                        <widget class="QCheckBox" name="pca_predict_scalar">
                         <property name="text">
-                         <string>Predict scalar</string>
+                         <string>Predict Scalar</string>
                         </property>
                        </widget>
                       </item>
                       <item row="2" column="1">
                        <widget class="QCheckBox" name="pca_predict_shape">
                         <property name="text">
-                         <string>Predict shape</string>
+                         <string>Predict Shape</string>
                         </property>
                        </widget>
                       </item>

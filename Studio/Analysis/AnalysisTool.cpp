@@ -464,6 +464,23 @@ void AnalysisTool::network_analysis_clicked() {
 }
 
 //-----------------------------------------------------------------------------
+Eigen::VectorXd AnalysisTool::extract_positions(Eigen::VectorXd& data) {
+  /*
+    auto positions = data;
+
+    if (pca_shape_plus_scalar_mode()) {
+      positions = extract_shape_only(data);
+    } else if (pca_scalar_only_mode()) {
+      computed_scalars_ = temp_shape_;
+      if (ui_->pca_predict_shape->isChecked()) {
+        positions = ShapeScalarJob::predict_shape(session_, QString::fromStdString(feature_map_), computed_scalars_);
+      } else {
+        positions = construct_mean_shape();
+      }
+    }*/
+}
+
+//-----------------------------------------------------------------------------
 bool AnalysisTool::compute_stats() {
   if (stats_ready_) {
     return true;
@@ -637,6 +654,10 @@ Particles AnalysisTool::get_mean_shape_points() {
     return Particles();
   }
 
+  if (ui_->pca_scalar_only->isChecked()) {
+    return convert_from_combined(construct_mean_shape());
+  }
+
   if (ui_->group1_button->isChecked() || ui_->difference_button->isChecked()) {
     return convert_from_combined(stats_.get_group1_mean());
   } else if (ui_->group2_button->isChecked()) {
@@ -700,7 +721,11 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     computed_scalars_ = extract_scalar_only(temp_shape_);
   } else if (pca_scalar_only_mode()) {
     computed_scalars_ = temp_shape_;
-    positions = construct_mean_shape();
+    if (ui_->pca_predict_shape->isChecked()) {
+      positions = ShapeScalarJob::predict_shape(session_, QString::fromStdString(feature_map_), computed_scalars_);
+    } else {
+      positions = construct_mean_shape();
+    }
   }
 
   return convert_from_combined(positions);
@@ -1245,7 +1270,7 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   shape->set_reconstruction_transforms(reconstruction_transforms_);
 
   if (feature_map_ != "") {
-    if (ui_->pca_predict_scalar->isChecked()) {
+    if (ui_->pca_scalar_shape_only->isChecked() && ui_->pca_predict_scalar->isChecked()) {
       auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
                                                      points.get_combined_global_particles());
       shape->set_point_features(feature_map_, scalars);
@@ -1730,6 +1755,11 @@ void AnalysisTool::change_pca_analysis_type() {
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
+  ShapeScalarJob::clear_model();
+
+  ui_->pca_predict_scalar->setEnabled(ui_->pca_scalar_shape_only->isChecked());
+  ui_->pca_predict_shape->setEnabled(ui_->pca_scalar_only->isChecked());
+
   compute_stats();
   Q_EMIT pca_update();
 }
