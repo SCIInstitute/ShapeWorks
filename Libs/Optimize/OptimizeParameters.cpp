@@ -94,11 +94,17 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::particle_format,
                                          Keys::geodesic_remesh_percent};
 
-  // check if params_ has any unknown keys
+  std::vector<std::string> to_remove;
+
+  // check if params_ has any unknown keys, and remove
   for (auto& param : params_.get_map()) {
     if (std::find(all_params.begin(), all_params.end(), param.first) == all_params.end()) {
       SW_WARN("Unknown Optimization parameter: " + param.first);
+      to_remove.push_back(param.first);
     }
+  }
+  for (auto& param : to_remove) {
+    params_.remove_entry(param);
   }
 }
 
