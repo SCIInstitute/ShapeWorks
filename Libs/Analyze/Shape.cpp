@@ -80,6 +80,16 @@ void Shape::set_subject(std::shared_ptr<Subject> subject) {
   if (subject->get_display_name() != "") {
     corner_annotations_[0] = subject->get_display_name();
   }
+
+  std::vector<std::string> corner2_items;
+  if (subject->is_fixed()) {
+    corner2_items.push_back("Fixed");
+  }
+  if (subject->is_excluded()) {
+    corner2_items.push_back("Excluded");
+  }
+
+  corner_annotations_[2] = StringUtils::join(corner2_items, ", ");
 }
 
 //---------------------------------------------------------------------------

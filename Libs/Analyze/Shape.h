@@ -207,7 +207,7 @@ class Shape {
   std::map<std::string, Eigen::VectorXd> point_features_;
   Particles particles_;
 
-  std::shared_ptr<shapeworks::Subject> subject_;
+  std::shared_ptr<Subject> subject_;
 
   vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
 

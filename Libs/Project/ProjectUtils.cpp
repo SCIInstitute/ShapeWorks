@@ -4,6 +4,8 @@
 #include <Project.h>
 #include <StringUtils.h>
 
+#include <Logging.h>
+
 namespace shapeworks {
 
 using StringList = ProjectUtils::StringList;
@@ -185,6 +187,7 @@ StringMap ProjectUtils::get_extra_columns(StringMap key_map) {
   StringList prefixes = {"name",
                          "notes",
                          "fixed",
+                         "excluded",
                          SEGMENTATION_PREFIX,
                          SHAPE_PREFIX,
                          MESH_PREFIX,

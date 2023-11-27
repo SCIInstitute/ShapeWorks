@@ -175,6 +175,8 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
+
+
 }
 
 //-----------------------------------------------------------------------------

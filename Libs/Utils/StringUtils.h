@@ -25,6 +25,8 @@ class StringUtils {
 
   //! Replace a search string with a replacement
   static std::string replace_string(std::string str, const std::string& search, const std::string& replace);
+
+  static std::string join(const std::vector<std::string>& strings, const std::string& delimiter);
 };
 
 }  // namespace shapeworks

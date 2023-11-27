@@ -92,8 +92,13 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->landmark_table->horizontalHeader(), &QHeaderView::sectionClicked, landmark_table_model_.get(),
           &LandmarkTableModel::handle_header_click);
 
-  // handle right click on constraints QTableWidget
+  // handle right click on constraints QTableWidget (note that the CustomContextMenu property must be set for this table
+  // in the UI file)
   connect(ui_->ffc_table_, &QTableView::customContextMenuRequested, this, &DataTool::constraints_table_right_click);
+
+  // handle right click on data table (note that the CustomContextMenu property must be set for this table in the UI
+  // file)
+  connect(ui_->table, &QTableView::customContextMenuRequested, this, &DataTool::data_table_right_click);
 
   auto delegate = new LandmarkItemDelegate(ui_->landmark_table);
   delegate->set_model(landmark_table_model_);
@@ -484,6 +489,56 @@ void DataTool::constraints_table_right_click(const QPoint& point) {
   QAction* copy_action = new QAction("Copy constraint to other shapes", this);
   connect(copy_action, &QAction::triggered, this, &DataTool::copy_ffc_clicked);
   menu.addAction(copy_action);
+  menu.exec(QCursor::pos());
+}
+
+//---------------------------------------------------------------------------
+void DataTool::data_table_right_click(const QPoint& point) {
+  SW_LOG("Data table right click!");
+
+  auto selected = ui_->table->selectionModel()->selectedRows();
+  if (selected.size() < 1) {
+    auto item = ui_->table->itemAt(point);
+    if (!item) {
+      return;
+    }
+    int row = ui_->table->row(item);
+    selected.push_back(ui_->table->model()->index(row, 0));
+  }
+
+  auto apply_to_selected = [=](std::function<void(std::shared_ptr<Subject>)> f) {
+    auto shapes = session_->get_shapes();
+    for (auto& index : selected) {
+      int id = index.row();
+      f(shapes[id]->get_subject());
+    }
+    session_->get_project()->update_subjects();
+    update_table();
+    session_->trigger_reinsert_shapes();
+  };
+
+  QMenu menu(this);
+
+  QAction* mark_excluded = new QAction("Mark as excluded", this);
+  connect(mark_excluded, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_excluded(true); }); });
+  menu.addAction(mark_excluded);
+
+  QAction* unmark_excluded = new QAction("Unmark as excluded", this);
+  connect(unmark_excluded, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_excluded(false); }); });
+  menu.addAction(unmark_excluded);
+
+  QAction* mark_fixed_action = new QAction("Mark as fixed", this);
+  connect(mark_fixed_action, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_fixed(true); }); });
+  menu.addAction(mark_fixed_action);
+
+  QAction* unmark_fixed_action = new QAction("Unmark as fixed", this);
+  connect(unmark_fixed_action, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_fixed(false); }); });
+  menu.addAction(unmark_fixed_action);
+
   menu.exec(QCursor::pos());
 }
 

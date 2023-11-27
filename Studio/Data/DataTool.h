@@ -65,6 +65,7 @@ class DataTool : public QWidget {
   void handle_constraints_mode_changed();
 
   void constraints_table_right_click(const QPoint &point);
+  void data_table_right_click(const QPoint &point);
   void copy_ffc_clicked();
 
   void table_selection_changed();
