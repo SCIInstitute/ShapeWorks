@@ -33,6 +33,9 @@ class StudioUtils {
 
   //! add a color border to a viewport
   static void add_viewport_border(vtkRenderer* renderer, double* color, double line_width = 6.0);
+
+  //! write a mesh to file
+  static bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 };
 
 }  // namespace shapeworks

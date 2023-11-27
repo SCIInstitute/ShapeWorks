@@ -161,7 +161,6 @@ void DataTool::update_table(bool clean) {
 
   block_table_update_ = true;
   auto shapes = session_->get_shapes();
-
   auto project = session_->get_project();
   auto headers = project->get_headers();
   auto& subjects = project->get_subjects();
@@ -175,7 +174,6 @@ void DataTool::update_table(bool clean) {
     ui_->table->clear();
     ui_->table->setRowCount(shapes.size());
     ui_->table->setColumnCount(table_headers.size());
-
     ui_->table->setHorizontalHeaderLabels(table_headers);
     ui_->table->verticalHeader()->setVisible(true);
   }
@@ -494,8 +492,6 @@ void DataTool::constraints_table_right_click(const QPoint& point) {
 
 //---------------------------------------------------------------------------
 void DataTool::data_table_right_click(const QPoint& point) {
-  SW_LOG("Data table right click!");
-
   auto selected = ui_->table->selectionModel()->selectedRows();
   if (selected.size() < 1) {
     auto item = ui_->table->itemAt(point);

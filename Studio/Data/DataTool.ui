@@ -420,6 +420,8 @@ QWidget#specificity_panel {
              <height>75</height>
             </size>
            </property>
+<<<<<<< HEAD
+=======
            <widget class="QWidget" name="scrollAreaWidgetContents">
             <property name="geometry">
              <rect>
@@ -451,6 +453,7 @@ QWidget#specificity_panel {
              </item>
             </layout>
            </widget>
+>>>>>>> 34a6663857 (Add support for exclude/fixed from data table.)
           </widget>
          </item>
         </layout>

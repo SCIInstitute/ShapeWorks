@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QMenu>
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QXmlStreamWriter>
@@ -1161,6 +1162,27 @@ void Session::set_compare_settings(CompareSettings settings) {
 
 //---------------------------------------------------------------------------
 CompareSettings Session::get_compare_settings() { return compare_settings_; }
+
+//---------------------------------------------------------------------------
+void Session::show_subject_menu(std::vector<int> subject_ids, QPoint pos)
+{
+  if (subject_ids.empty()) {
+    return;
+  }
+
+  QMenu menu(parent_);
+
+  /*
+  if (subject_ids.size() == 1) {
+    menu.addAction("Export Mesh");
+    connect(menu, &QMenu::triggered, , [=](QAction* action) { action_export_current_mesh_triggered(subject_ids[0]); });
+  } else {
+  }
+
+*/
+  menu.popup(QCursor::pos());
+
+}
 
 //---------------------------------------------------------------------------
 void Session::trigger_repaint() { Q_EMIT repaint(); }

@@ -1513,14 +1513,14 @@ void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index) {
   }
 
   if (single) {
-    write_mesh(visualizer_->get_current_mesh(index), filename);
-    handle_message("Wrote: " + filename.toStdString());
+    StudioUtils::write_mesh(visualizer_->get_current_mesh(index), filename);
+    SW_MESSAGE("Wrote: " + filename.toStdString());
   } else {
     auto meshes = visualizer_->get_current_meshes_transformed(index);
     auto domain_names = session_->get_project()->get_domain_names();
 
     if (meshes.empty()) {
-      handle_error("Error exporting mesh: not ready yet");
+      SW_ERROR("Error exporting mesh: not ready yet");
       return;
     }
 
@@ -1529,27 +1529,12 @@ void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index) {
     for (int domain = 0; domain < meshes.size(); domain++) {
       QString name = base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
 
-      if (!write_mesh(meshes[domain], name)) {
+      if (!StudioUtils::write_mesh(meshes[domain], name)) {
         return;
       }
-      handle_message("Wrote: " + name.toStdString());
+      SW_MESSAGE("Wrote: " + name.toStdString());
     }
   }
-}
-
-//---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename) {
-  if (!poly_data) {
-    handle_error("Error exporting mesh: not ready yet");
-  }
-  try {
-    Mesh mesh(poly_data);
-    mesh.write(filename.toStdString());
-  } catch (std::exception& e) {
-    handle_error(e.what());
-    return false;
-  }
-  return true;
 }
 
 //---------------------------------------------------------------------------

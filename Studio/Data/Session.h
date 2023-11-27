@@ -234,6 +234,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_compare_settings(CompareSettings settings);
   CompareSettings get_compare_settings();
 
+  //! Display subject menu at a position for a given set of selected rows
+  void show_subject_menu(std::vector<int> subject_ids, QPoint pos);
+
   void trigger_repaint();
 
   void trigger_reinsert_shapes();
