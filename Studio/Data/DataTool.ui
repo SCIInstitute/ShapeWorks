@@ -343,7 +343,11 @@ QWidget#specificity_panel {
               <number>0</number>
              </property>
              <item row="0" column="0">
-              <widget class="QTableWidget" name="table"/>
+              <widget class="QTableWidget" name="table">
+               <property name="contextMenuPolicy">
+                <enum>Qt::CustomContextMenu</enum>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -420,40 +424,6 @@ QWidget#specificity_panel {
              <height>75</height>
             </size>
            </property>
-<<<<<<< HEAD
-=======
-           <widget class="QWidget" name="scrollAreaWidgetContents">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>464</width>
-              <height>330</height>
-             </rect>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QTableWidget" name="table">
-               <property name="contextMenuPolicy">
-                <enum>Qt::CustomContextMenu</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
->>>>>>> 34a6663857 (Add support for exclude/fixed from data table.)
           </widget>
          </item>
         </layout>
@@ -603,6 +573,9 @@ QWidget#specificity_panel {
          </item>
          <item row="1" column="0" colspan="2">
           <widget class="QTableView" name="landmark_table">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -835,6 +808,9 @@ QWidget#specificity_panel {
             </item>
             <item row="1" column="0">
              <widget class="QTableWidget" name="plane_table_">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
               <property name="alternatingRowColors">
                <bool>true</bool>
               </property>
