@@ -73,7 +73,7 @@ class MeshDomain : public ParticleDomain {
     // TODO Change this to a generic delete function
   }
 
-  void SetMesh(std::shared_ptr<MeshWrapper> mesh_);
+  void SetMesh(std::shared_ptr<MeshWrapper> mesh_, double geodesic_remesh_percent);
 
   std::shared_ptr<Mesh> GetSWMesh() const { return sw_mesh_; }
 

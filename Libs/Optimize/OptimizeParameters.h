@@ -129,6 +129,9 @@ class OptimizeParameters {
   std::string get_particle_format();
   void set_particle_format(std::string format);
 
+  double get_geodesic_remesh_percent();
+  void set_geodesic_remesh_percent(double value);
+
 
  private:
   std::string get_output_prefix();

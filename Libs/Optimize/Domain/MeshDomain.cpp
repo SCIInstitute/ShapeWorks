@@ -80,16 +80,19 @@ bool MeshDomain::IsWithinDistance(const PointType &a, int idx_a, const PointType
 }
 
 //-------------------------------------------------------------------
-void MeshDomain::SetMesh(std::shared_ptr<MeshWrapper> mesh_) {
+void MeshDomain::SetMesh(std::shared_ptr<MeshWrapper> mesh, double geodesic_remesh_percent) {
   m_FixedDomain = false;
-  mesh_wrapper_ = mesh_;
+  mesh_wrapper_ = mesh;
   sw_mesh_ = std::make_shared<Mesh>(mesh_wrapper_->GetPolydata());
 
-  auto poly_data = mesh_wrapper_->GetPolydata();
-  Mesh mesh_copy(poly_data);
-  mesh_copy.remeshPercent(50, 1.0);
-
-  geodesics_mesh_ = std::make_shared<MeshWrapper>(mesh_copy.getVTKMesh());
+  if (geodesic_remesh_percent >= 100.0) { // no remeshing
+    geodesics_mesh_ = mesh_wrapper_;
+  } else {
+    auto poly_data = mesh_wrapper_->GetPolydata();
+    Mesh mesh_copy(poly_data);
+    mesh_copy.remeshPercent(geodesic_remesh_percent, 1.0);
+    geodesics_mesh_ = std::make_shared<MeshWrapper>(mesh_copy.getVTKMesh());
+  }
 }
 
 //-------------------------------------------------------------------

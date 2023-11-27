@@ -50,6 +50,7 @@ const std::string field_attribute_weights = "field_attribute_weights";
 const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
 const std::string geodesics_to_landmarks_weight = "geodesics_to_landmarks_weight";
 const std::string particle_format = "particle_format";
+const std::string geodesic_remesh_percent = "geodesic_remesh_percent";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -90,7 +91,8 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::geodesics_to_landmarks_weight,
                                          Keys::keep_checkpoints,
                                          Keys::use_disentangled_ssm,
-                                         Keys::particle_format};
+                                         Keys::particle_format,
+                                         Keys::geodesic_remesh_percent};
 
   // check if params_ has any unknown keys
   for (auto& param : params_.get_map()) {
@@ -412,6 +414,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetOptimizationIterations(get_optimization_iterations());
   optimize->SetGeodesicsEnabled(get_use_geodesic_distance());
   optimize->SetGeodesicsCacheSizeMultiplier(get_geodesic_cache_multiplier());
+  optimize->SetGeodesicsRemeshPercent(get_geodesic_remesh_percent());
   optimize->SetNarrowBand(get_narrow_band());
   optimize->SetOutputDir(get_output_prefix());
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
@@ -802,3 +805,11 @@ std::string OptimizeParameters::get_particle_format() { return params_.get(Keys:
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_particle_format(std::string format) { params_.set(Keys::particle_format, format); }
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_geodesic_remesh_percent() { return params_.get(Keys::geodesic_remesh_percent, 100); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_geodesic_remesh_percent(double value) {
+  params_.set(Keys::geodesic_remesh_percent, value);
+}

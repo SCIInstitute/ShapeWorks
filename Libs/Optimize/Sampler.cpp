@@ -282,12 +282,12 @@ void Sampler::ReInitialize() {
   this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
-void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
+void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent) {
   auto domain = std::make_shared<MeshDomain>();
   m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
   if (mesh) {
     this->m_Spacing = 1;
-    domain->SetMesh(mesh);
+    domain->SetMesh(mesh, geodesic_remesh_percent);
     this->m_meshes.push_back(mesh->GetPolydata());
     m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled());  // disable weighting for geodesics
   }

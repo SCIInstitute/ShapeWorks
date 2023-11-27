@@ -288,6 +288,9 @@ class Optimize {
   //! n * number_of_triangles
   void SetGeodesicsCacheSizeMultiplier(size_t n);
 
+  //! Set the remeshing percent for the mesh used for computing geodesics (0-100)
+  void SetGeodesicsRemeshPercent(double percent);
+
   OptimizationVisualizer& GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
@@ -420,6 +423,7 @@ class Optimize {
   std::string m_python_filename;
   bool m_geodesics_enabled = false;             // geodesics disabled by default
   size_t m_geodesic_cache_size_multiplier = 0;  // 0 => MeshWrapper will use a heuristic to determine cache size
+  double m_geodesic_remesh_percent = 100.0;    // 100% by default (e.g. no remeshing)
 
   // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;
