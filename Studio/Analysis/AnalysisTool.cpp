@@ -464,23 +464,6 @@ void AnalysisTool::network_analysis_clicked() {
 }
 
 //-----------------------------------------------------------------------------
-Eigen::VectorXd AnalysisTool::extract_positions(Eigen::VectorXd& data) {
-  /*
-    auto positions = data;
-
-    if (pca_shape_plus_scalar_mode()) {
-      positions = extract_shape_only(data);
-    } else if (pca_scalar_only_mode()) {
-      computed_scalars_ = temp_shape_;
-      if (ui_->pca_predict_shape->isChecked()) {
-        positions = ShapeScalarJob::predict_shape(session_, QString::fromStdString(feature_map_), computed_scalars_);
-      } else {
-        positions = construct_mean_shape();
-      }
-    }*/
-}
-
-//-----------------------------------------------------------------------------
 bool AnalysisTool::compute_stats() {
   if (stats_ready_) {
     return true;

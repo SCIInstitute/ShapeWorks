@@ -194,13 +194,8 @@ class AnalysisTool : public QWidget {
 
   void change_pca_analysis_type();
 
-  //Eigen::VectorXd get_mean_shape();
-
   //! Compute the mean shape outside of the PCA in case we are using scalars only
   Eigen::VectorXd construct_mean_shape();
-
-
-  Eigen::VectorXd extract_positions(Eigen::VectorXd& data);
 
  Q_SIGNALS:
 
@@ -237,7 +232,6 @@ class AnalysisTool : public QWidget {
   Eigen::VectorXd get_mean_shape_particles();
 
   ShapeHandle create_shape_from_points(Particles points);
-
 
   Preferences& preferences_;
 
