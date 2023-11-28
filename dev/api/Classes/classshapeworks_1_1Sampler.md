@@ -45,7 +45,7 @@ title: shapeworks::Sampler
 | void | **[SetInitialPoints](../Classes/classshapeworks_1_1Sampler.md#function-setinitialpoints)**(std::vector< std::vector< itk::Point< double > > > initial_points)<br>Set initial particle positions (e.g. for fixed subjects)  |
 | void | **[AddImage](../Classes/classshapeworks_1_1Sampler.md#function-addimage)**(ImageType::Pointer image, double narrow_band, std::string name ="") |
 | void | **[ApplyConstraintsToZeroCrossing](../Classes/classshapeworks_1_1Sampler.md#function-applyconstraintstozerocrossing)**() |
-| void | **[AddMesh](../Classes/classshapeworks_1_1Sampler.md#function-addmesh)**(std::shared_ptr< [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh) |
+| void | **[AddMesh](../Classes/classshapeworks_1_1Sampler.md#function-addmesh)**(std::shared_ptr< [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh, double geodesic_remesh_percent =100) |
 | void | **[AddContour](../Classes/classshapeworks_1_1Sampler.md#function-addcontour)**(vtkSmartPointer< vtkPolyData > poly_data) |
 | void | **[SetFieldAttributes](../Classes/classshapeworks_1_1Sampler.md#function-setfieldattributes)**(const std::vector< std::string > & s) |
 | void | **[SetDomainsPerShape](../Classes/classshapeworks_1_1Sampler.md#function-setdomainspershape)**(int n) |
@@ -285,7 +285,8 @@ inline void ApplyConstraintsToZeroCrossing()
 
 ```cpp
 void AddMesh(
-    std::shared_ptr< shapeworks::MeshWrapper > mesh
+    std::shared_ptr< shapeworks::MeshWrapper > mesh,
+    double geodesic_remesh_percent =100
 )
 ```
 
@@ -808,4 +809,4 @@ static constexpr unsigned int Dimension = 3;
 
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:29 +0000
+Updated on 2023-11-28 at 06:02:29 +0000

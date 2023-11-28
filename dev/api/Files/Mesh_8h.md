@@ -220,7 +220,7 @@ class Mesh {
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
 
   MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
-      const;  // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
+      const;  // Copied directly from MeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
               // from Meshwrapper. TODO: When refactoring, take this into account.
 
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
@@ -273,4 +273,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:30 +0000
+Updated on 2023-11-28 at 06:02:30 +0000

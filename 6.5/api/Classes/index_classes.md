@@ -258,7 +258,6 @@ title: Classes
     * **class [VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image. 
     * **class [Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]()
     * **class [Visualizer](../Classes/classshapeworks_1_1Visualizer.md)** <br>Controls display of objects in viewers. 
-    * **class [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)** 
     * **class [WheelEventForwarder](../Classes/classshapeworks_1_1WheelEventForwarder.md)** 
     * **class [Worker](../Classes/classshapeworks_1_1Worker.md)** 
     * **namespace [mesh](../Namespaces/namespaceshapeworks_1_1mesh.md)** 
@@ -280,4 +279,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:31 +0000
+Updated on 2023-11-28 at 06:02:30 +0000

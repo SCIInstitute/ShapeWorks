@@ -118,6 +118,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | void | **[SetPythonFile](../Classes/classshapeworks_1_1Optimize.md#function-setpythonfile)**(std::string filename)<br>Set the python file to run at startup.  |
 | void | **[SetGeodesicsEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicsenabled)**(bool is_enabled)<br>Set whether or not geodesics are enabled.  |
 | void | **[SetGeodesicsCacheSizeMultiplier](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicscachesizemultiplier)**(size_t n) |
+| void | **[SetGeodesicsRemeshPercent](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicsremeshpercent)**(double percent)<br>Set the remeshing percent for the mesh used for computing geodesics (0-100)  |
 | [OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) & | **[GetVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getvisualizer)**() |
 | void | **[SetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-setshowvisualizer)**(bool show) |
 | bool | **[GetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getshowvisualizer)**() |
@@ -227,6 +228,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | std::string | **[m_python_filename](../Classes/classshapeworks_1_1Optimize.md#variable-m-python-filename)**  |
 | bool | **[m_geodesics_enabled](../Classes/classshapeworks_1_1Optimize.md#variable-m-geodesics-enabled)**  |
 | size_t | **[m_geodesic_cache_size_multiplier](../Classes/classshapeworks_1_1Optimize.md#variable-m-geodesic-cache-size-multiplier)**  |
+| double | **[m_geodesic_remesh_percent](../Classes/classshapeworks_1_1Optimize.md#variable-m-geodesic-remesh-percent)**  |
 | double | **[m_spacing](../Classes/classshapeworks_1_1Optimize.md#variable-m-spacing)**  |
 | std::vector< std::string > | **[m_filenames](../Classes/classshapeworks_1_1Optimize.md#variable-m-filenames)**  |
 | int | **[m_num_shapes](../Classes/classshapeworks_1_1Optimize.md#variable-m-num-shapes)**  |
@@ -1171,6 +1173,16 @@ void SetGeodesicsCacheSizeMultiplier(
 Set cache size multiplier for geodesics. The total number of cache entries will be n * number_of_triangles 
 
 
+### function SetGeodesicsRemeshPercent
+
+```cpp
+void SetGeodesicsRemeshPercent(
+    double percent
+)
+```
+
+Set the remeshing percent for the mesh used for computing geodesics (0-100) 
+
 ### function GetVisualizer
 
 ```cpp
@@ -1921,6 +1933,13 @@ size_t m_geodesic_cache_size_multiplier = 0;
 ```
 
 
+### variable m_geodesic_remesh_percent
+
+```cpp
+double m_geodesic_remesh_percent = 100.0;
+```
+
+
 ### variable m_spacing
 
 ```cpp
@@ -2133,4 +2152,4 @@ std::string m_remaining_time_message;
 
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:29 +0000
+Updated on 2023-11-28 at 06:02:29 +0000

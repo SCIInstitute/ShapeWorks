@@ -2744,7 +2744,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshDomain.html#function-setmesh">SetMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1MeshWrapper.html">shapeworks::MeshWrapper</a> &gt; mesh_)</td>
+<td><strong><a href="classshapeworks_1_1MeshDomain.html#function-setmesh">SetMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1MeshWrapper.html">MeshWrapper</a> &gt; mesh_, double geodesic_remesh_percent)</td>
 </tr>
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt;</td>
@@ -2938,12 +2938,12 @@
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getupperbound">shapeworks::ParticleDomain::GetUpperBound</a></p>
 <p>Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the <a href="classshapeworks_1_1PowerOfTwoPointTree.html">PowerOfTwoPointTree</a>. </p>
 <h3 id="function-getzerocrossingpoint">function GetZeroCrossingPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getzerocrossingpoint">shapeworks::ParticleDomain::GetZeroCrossingPoint</a></p>
 <p>Get any valid point on the domain. This is used to place the first particle. </p>
 <h3 id="function-getvalidlocationnear">function GetValidLocationNear</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetValidLocationNear</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetValidLocationNear</span><span class="p">(</span>
 <span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
@@ -2960,28 +2960,28 @@
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getmaxdiameter">shapeworks::ParticleDomain::GetMaxDiameter</a></p>
 <p>GetMaxDiameter returns the maximum diameter of the domain and is used for computing sigma </p>
 <h3 id="function-samplegradientatpoint">function SampleGradientAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SampleGradientAtPoint</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SampleGradientAtPoint</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-samplegradientatpoint">shapeworks::ParticleDomain::SampleGradientAtPoint</a></p>
 <h3 id="function-samplenormalatpoint">function SampleNormalAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SampleNormalAtPoint</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SampleNormalAtPoint</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-samplenormalatpoint">shapeworks::ParticleDomain::SampleNormalAtPoint</a></p>
 <h3 id="function-samplegradnatpoint">function SampleGradNAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="n">SampleGradNAtPoint</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="n">SampleGradNAtPoint</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-samplegradnatpoint">shapeworks::ParticleDomain::SampleGradNAtPoint</a></p>
 <h3 id="function-distance">function Distance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Distance</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">Distance</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
@@ -2990,7 +2990,7 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <h3 id="function-squareddistance">function SquaredDistance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">SquaredDistance</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">SquaredDistance</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
@@ -3000,7 +3000,7 @@
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-squareddistance">shapeworks::ParticleDomain::SquaredDistance</a></p>
 <p>Squared Distance between locations is used for computing sigma. </p>
 <h3 id="function-iswithindistance">function IsWithinDistance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsWithinDistance</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsWithinDistance</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
@@ -3020,8 +3020,9 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-deletepartialderivativeimages">shapeworks::ParticleDomain::DeletePartialDerivativeImages</a></p>
 <h3 id="function-setmesh">function SetMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_</span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getswmesh">function GetSWMesh</h3>
@@ -3032,7 +3033,7 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-updatezerocrossingpoint">shapeworks::ParticleDomain::UpdateZeroCrossingPoint</a></p>
 <hr />
-<p>Updated on 2023-11-28 at 04:34:29 +0000</p>
+<p>Updated on 2023-11-28 at 06:02:28 +0000</p>
 
               
             </article>

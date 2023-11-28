@@ -185,7 +185,6 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image.  |
 | class | **[shapeworks::Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]() |
 | class | **[shapeworks::Visualizer](../Classes/classshapeworks_1_1Visualizer.md)** <br>Controls display of objects in viewers.  |
-| class | **[shapeworks::VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)**  |
 | class | **[shapeworks::WheelEventForwarder](../Classes/classshapeworks_1_1WheelEventForwarder.md)**  |
 | class | **[shapeworks::Worker](../Classes/classshapeworks_1_1Worker.md)**  |
 
@@ -2596,4 +2595,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:28 +0000
+Updated on 2023-11-28 at 06:02:28 +0000

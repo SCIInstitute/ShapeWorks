@@ -1156,11 +1156,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1VtkMeshWrapper.html</loc>
-         <lastmod>2023-11-28</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1WheelEventForwarder.html</loc>
          <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
@@ -2232,11 +2227,6 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Files/Visualizer_8h.html</loc>
-         <lastmod>2023-11-28</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Files/VtkMeshWrapper_8h.html</loc>
          <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>

@@ -9,210 +9,208 @@ title: shapeworks::MeshWrapper
 
 
 
-Inherited by [shapeworks::VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)
-
 ## Public Types
 
 |                | Name           |
 | -------------- | -------------- |
-| typedef [ParticleDomain::PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) | **[PointType](../Classes/classshapeworks_1_1MeshWrapper.md#typedef-pointtype)**  |
-| typedef ParticleDomain::GradNType | **[GradNType](../Classes/classshapeworks_1_1MeshWrapper.md#typedef-gradntype)**  |
+| using [ParticleDomain::PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) | **[PointType](../Classes/classshapeworks_1_1MeshWrapper.md#using-pointtype)**  |
+| using ParticleDomain::GradNType | **[GradNType](../Classes/classshapeworks_1_1MeshWrapper.md#using-gradntype)**  |
+| using vnl_vector_fixed< float, 3 > | **[NormalType](../Classes/classshapeworks_1_1MeshWrapper.md#using-normaltype)**  |
+| using vnl_vector_fixed< double, 3 > | **[VectorType](../Classes/classshapeworks_1_1MeshWrapper.md#using-vectortype)**  |
 
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| virtual double | **[ComputeDistance](../Classes/classshapeworks_1_1MeshWrapper.md#function-computedistance)**(const PointType & pointa, int idx_a, const PointType & pointb, int idx_b, vnl_vector_fixed< double, 3 > * out_grad =nullptr) const =0 |
-| virtual bool | **[IsWithinDistance](../Classes/classshapeworks_1_1MeshWrapper.md#function-iswithindistance)**(const PointType & a, int idx_a, const PointType & b, int idx_b, double test_dist, double & dist) const =0 |
-| virtual PointType | **[GeodesicWalk](../Classes/classshapeworks_1_1MeshWrapper.md#function-geodesicwalk)**(PointType pointa, int idx, vnl_vector_fixed< double, DIMENSION > vector) const =0 |
-| virtual PointType | **[GetPointOnMesh](../Classes/classshapeworks_1_1MeshWrapper.md#function-getpointonmesh)**() const =0 |
-| virtual const PointType & | **[GetMeshLowerBound](../Classes/classshapeworks_1_1MeshWrapper.md#function-getmeshlowerbound)**() const =0 |
-| virtual const PointType & | **[GetMeshUpperBound](../Classes/classshapeworks_1_1MeshWrapper.md#function-getmeshupperbound)**() const =0 |
-| virtual vnl_vector_fixed< double, DIMENSION > | **[ProjectVectorToSurfaceTangent](../Classes/classshapeworks_1_1MeshWrapper.md#function-projectvectortosurfacetangent)**(const PointType & pointa, int idx, vnl_vector_fixed< double, DIMENSION > & vector) const =0 |
-| virtual vnl_vector_fixed< float, DIMENSION > | **[SampleNormalAtPoint](../Classes/classshapeworks_1_1MeshWrapper.md#function-samplenormalatpoint)**(PointType p, int idx) const =0 |
-| virtual GradNType | **[SampleGradNAtPoint](../Classes/classshapeworks_1_1MeshWrapper.md#function-samplegradnatpoint)**(PointType p, int idx) const =0 |
-| virtual PointType | **[SnapToMesh](../Classes/classshapeworks_1_1MeshWrapper.md#function-snaptomesh)**(PointType pointa, int idx) const =0 |
+| | **[MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md#function-meshwrapper)**(vtkSmartPointer< vtkPolyData > mesh, bool geodesics_enabled =false, size_t geodesics_cache_multiplier_size =0) |
+| | **[~MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md#function-~meshwrapper)**() =default |
+| double | **[ComputeDistance](../Classes/classshapeworks_1_1MeshWrapper.md#function-computedistance)**(const PointType & pointa, int idxa, const PointType & pointb, int idxb, VectorType * out_grad =nullptr) const |
+| bool | **[IsWithinDistance](../Classes/classshapeworks_1_1MeshWrapper.md#function-iswithindistance)**(const PointType & pointa, int idxa, const PointType & pointb, int idxb, double test_dist, double & dist) const |
+| PointType | **[GeodesicWalk](../Classes/classshapeworks_1_1MeshWrapper.md#function-geodesicwalk)**(PointType p, int idx, VectorType vector) const |
+| VectorType | **[ProjectVectorToSurfaceTangent](../Classes/classshapeworks_1_1MeshWrapper.md#function-projectvectortosurfacetangent)**(const PointType & pointa, int idx, VectorType & vector) const |
+| NormalType | **[SampleNormalAtPoint](../Classes/classshapeworks_1_1MeshWrapper.md#function-samplenormalatpoint)**(PointType p, int idx =-1) const |
+| GradNType | **[SampleGradNAtPoint](../Classes/classshapeworks_1_1MeshWrapper.md#function-samplegradnatpoint)**(PointType p, int idx) const |
+| PointType | **[SnapToMesh](../Classes/classshapeworks_1_1MeshWrapper.md#function-snaptomesh)**(PointType pointa, int idx) const |
+| PointType | **[GetPointOnMesh](../Classes/classshapeworks_1_1MeshWrapper.md#function-getpointonmesh)**() const |
+| const PointType & | **[GetMeshLowerBound](../Classes/classshapeworks_1_1MeshWrapper.md#function-getmeshlowerbound)**() const |
+| const PointType & | **[GetMeshUpperBound](../Classes/classshapeworks_1_1MeshWrapper.md#function-getmeshupperbound)**() const |
 | virtual void | **[InvalidateParticle](../Classes/classshapeworks_1_1MeshWrapper.md#function-invalidateparticle)**(int idx) |
-| virtual bool | **[IsGeodesicsEnabled](../Classes/classshapeworks_1_1MeshWrapper.md#function-isgeodesicsenabled)**() const =0 |
-| virtual vtkSmartPointer< vtkPolyData > | **[GetPolydata](../Classes/classshapeworks_1_1MeshWrapper.md#function-getpolydata)**() const =0 |
+| vtkSmartPointer< vtkPolyData > | **[GetPolydata](../Classes/classshapeworks_1_1MeshWrapper.md#function-getpolydata)**() const |
+| bool | **[IsGeodesicsEnabled](../Classes/classshapeworks_1_1MeshWrapper.md#function-isgeodesicsenabled)**() const |
 
 ## Public Types Documentation
 
-### typedef PointType
+### using PointType
 
 ```cpp
-typedef ParticleDomain::PointType shapeworks::MeshWrapper::PointType;
+using shapeworks::MeshWrapper::PointType =  ParticleDomain::PointType;
 ```
 
 
-### typedef GradNType
+### using GradNType
 
 ```cpp
-typedef ParticleDomain::GradNType shapeworks::MeshWrapper::GradNType;
+using shapeworks::MeshWrapper::GradNType =  ParticleDomain::GradNType;
+```
+
+
+### using NormalType
+
+```cpp
+using shapeworks::MeshWrapper::NormalType =  vnl_vector_fixed<float, 3>;
+```
+
+
+### using VectorType
+
+```cpp
+using shapeworks::MeshWrapper::VectorType =  vnl_vector_fixed<double, 3>;
 ```
 
 
 ## Public Functions Documentation
 
+### function MeshWrapper
+
+```cpp
+explicit MeshWrapper(
+    vtkSmartPointer< vtkPolyData > mesh,
+    bool geodesics_enabled =false,
+    size_t geodesics_cache_multiplier_size =0
+)
+```
+
+
+### function ~MeshWrapper
+
+```cpp
+~MeshWrapper() =default
+```
+
+
 ### function ComputeDistance
 
 ```cpp
-virtual double ComputeDistance(
+double ComputeDistance(
     const PointType & pointa,
-    int idx_a,
+    int idxa,
     const PointType & pointb,
-    int idx_b,
-    vnl_vector_fixed< double, 3 > * out_grad =nullptr
-) const =0
+    int idxb,
+    VectorType * out_grad =nullptr
+) const
 ```
 
 
 ### function IsWithinDistance
 
 ```cpp
-virtual bool IsWithinDistance(
-    const PointType & a,
-    int idx_a,
-    const PointType & b,
-    int idx_b,
+bool IsWithinDistance(
+    const PointType & pointa,
+    int idxa,
+    const PointType & pointb,
+    int idxb,
     double test_dist,
     double & dist
-) const =0
+) const
 ```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::IsWithinDistance](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-iswithindistance)
 
 
 ### function GeodesicWalk
 
 ```cpp
-virtual PointType GeodesicWalk(
-    PointType pointa,
+PointType GeodesicWalk(
+    PointType p,
     int idx,
-    vnl_vector_fixed< double, DIMENSION > vector
-) const =0
+    VectorType vector
+) const
 ```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::GeodesicWalk](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-geodesicwalk)
-
-
-### function GetPointOnMesh
-
-```cpp
-virtual PointType GetPointOnMesh() const =0
-```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::GetPointOnMesh](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpointonmesh)
-
-
-### function GetMeshLowerBound
-
-```cpp
-virtual const PointType & GetMeshLowerBound() const =0
-```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::GetMeshLowerBound](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getmeshlowerbound)
-
-
-### function GetMeshUpperBound
-
-```cpp
-virtual const PointType & GetMeshUpperBound() const =0
-```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::GetMeshUpperBound](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getmeshupperbound)
 
 
 ### function ProjectVectorToSurfaceTangent
 
 ```cpp
-virtual vnl_vector_fixed< double, DIMENSION > ProjectVectorToSurfaceTangent(
+VectorType ProjectVectorToSurfaceTangent(
     const PointType & pointa,
     int idx,
-    vnl_vector_fixed< double, DIMENSION > & vector
-) const =0
+    VectorType & vector
+) const
 ```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::ProjectVectorToSurfaceTangent](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-projectvectortosurfacetangent)
 
 
 ### function SampleNormalAtPoint
 
 ```cpp
-virtual vnl_vector_fixed< float, DIMENSION > SampleNormalAtPoint(
+NormalType SampleNormalAtPoint(
     PointType p,
-    int idx
-) const =0
+    int idx =-1
+) const
 ```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::SampleNormalAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplenormalatpoint)
 
 
 ### function SampleGradNAtPoint
 
 ```cpp
-virtual GradNType SampleGradNAtPoint(
+GradNType SampleGradNAtPoint(
     PointType p,
     int idx
-) const =0
+) const
 ```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::SampleGradNAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplegradnatpoint)
 
 
 ### function SnapToMesh
 
 ```cpp
-virtual PointType SnapToMesh(
+PointType SnapToMesh(
     PointType pointa,
     int idx
-) const =0
+) const
 ```
 
 
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::SnapToMesh](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-snaptomesh)
+### function GetPointOnMesh
+
+```cpp
+PointType GetPointOnMesh() const
+```
+
+
+### function GetMeshLowerBound
+
+```cpp
+inline const PointType & GetMeshLowerBound() const
+```
+
+
+### function GetMeshUpperBound
+
+```cpp
+inline const PointType & GetMeshUpperBound() const
+```
 
 
 ### function InvalidateParticle
 
 ```cpp
-inline virtual void InvalidateParticle(
+virtual void InvalidateParticle(
     int idx
 )
 ```
 
 
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::InvalidateParticle](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-invalidateparticle)
+### function GetPolydata
+
+```cpp
+inline vtkSmartPointer< vtkPolyData > GetPolydata() const
+```
 
 
 ### function IsGeodesicsEnabled
 
 ```cpp
-virtual bool IsGeodesicsEnabled() const =0
+inline bool IsGeodesicsEnabled() const
 ```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::IsGeodesicsEnabled](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-isgeodesicsenabled)
-
-
-### function GetPolydata
-
-```cpp
-virtual vtkSmartPointer< vtkPolyData > GetPolydata() const =0
-```
-
-
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::GetPolydata](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpolydata)
 
 
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:29 +0000
+Updated on 2023-11-28 at 06:02:29 +0000

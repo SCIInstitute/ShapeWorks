@@ -3092,6 +3092,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setgeodesicsremeshpercent" class="md-nav__link">
+    function SetGeodesicsRemeshPercent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getvisualizer" class="md-nav__link">
     function GetVisualizer
   </a>
@@ -3811,6 +3818,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#variable-m_geodesic_remesh_percent" class="md-nav__link">
+    variable m_geodesic_remesh_percent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variable-m_spacing" class="md-nav__link">
     variable m_spacing
   </a>
@@ -4448,6 +4462,10 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicscachesizemultiplier">SetGeodesicsCacheSizeMultiplier</a></strong>(size_t n)</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicsremeshpercent">SetGeodesicsRemeshPercent</a></strong>(double percent)<br>Set the remeshing percent for the mesh used for computing geodesics (0-100)</td>
+</tr>
+<tr>
 <td><a href="classshapeworks_1_1OptimizationVisualizer.html">OptimizationVisualizer</a> &amp;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-getvisualizer">GetVisualizer</a></strong>()</td>
 </tr>
@@ -4864,6 +4882,10 @@
 <tr>
 <td>size_t</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-geodesic-cache-size-multiplier">m_geodesic_cache_size_multiplier</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-geodesic-remesh-percent">m_geodesic_remesh_percent</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
@@ -5504,6 +5526,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set cache size multiplier for geodesics. The total number of cache entries will be n * number_of_triangles </p>
+<h3 id="function-setgeodesicsremeshpercent">function SetGeodesicsRemeshPercent</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetGeodesicsRemeshPercent</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">percent</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set the remeshing percent for the mesh used for computing geodesics (0-100) </p>
 <h3 id="function-getvisualizer">function GetVisualizer</h3>
 <div class="highlight"><pre><span></span><code><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetVisualizer</span><span class="p">()</span>
 </code></pre></div>
@@ -5848,6 +5876,9 @@
 <h3 id="variable-m_geodesic_cache_size_multiplier">variable m_geodesic_cache_size_multiplier</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">size_t</span><span class="w"> </span><span class="n">m_geodesic_cache_size_multiplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
+<h3 id="variable-m_geodesic_remesh_percent">variable m_geodesic_remesh_percent</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_geodesic_remesh_percent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">100.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_spacing">variable m_spacing</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
@@ -5939,7 +5970,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-28 at 04:34:29 +0000</p>
+<p>Updated on 2023-11-28 at 06:02:29 +0000</p>
 
               
             </article>

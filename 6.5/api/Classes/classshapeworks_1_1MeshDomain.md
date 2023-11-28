@@ -44,7 +44,7 @@ Inherits from [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1Particl
 | virtual bool | **[IsWithinDistance](../Classes/classshapeworks_1_1MeshDomain.md#function-iswithindistance)**(const [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) & a, int idx_a, const [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) & b, int idx_b, double test_dist, double & distance) const override |
 | virtual void | **[DeleteImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deleteimages)**() override |
 | virtual void | **[DeletePartialDerivativeImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deletepartialderivativeimages)**() override |
-| void | **[SetMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-setmesh)**(std::shared_ptr< [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh_) |
+| void | **[SetMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-setmesh)**(std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh_, double geodesic_remesh_percent) |
 | std::shared_ptr< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > | **[GetSWMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-getswmesh)**() const |
 | virtual void | **[UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-updatezerocrossingpoint)**() override |
 
@@ -251,7 +251,7 @@ Gets the maximum x, y, z values of the bounding box for the domain. This is used
 ### function GetZeroCrossingPoint
 
 ```cpp
-inline virtual PointType GetZeroCrossingPoint() const override
+virtual PointType GetZeroCrossingPoint() const override
 ```
 
 
@@ -264,7 +264,7 @@ Get any valid point on the domain. This is used to place the first particle.
 ### function GetValidLocationNear
 
 ```cpp
-inline virtual PointType GetValidLocationNear(
+virtual PointType GetValidLocationNear(
     PointType p
 ) const override
 ```
@@ -305,7 +305,7 @@ GetMaxDiameter returns the maximum diameter of the domain and is used for comput
 ### function SampleGradientAtPoint
 
 ```cpp
-inline virtual vnl_vector_fixed< float, DIMENSION > SampleGradientAtPoint(
+virtual vnl_vector_fixed< float, DIMENSION > SampleGradientAtPoint(
     const PointType & point,
     int idx
 ) const override
@@ -318,7 +318,7 @@ inline virtual vnl_vector_fixed< float, DIMENSION > SampleGradientAtPoint(
 ### function SampleNormalAtPoint
 
 ```cpp
-inline virtual vnl_vector_fixed< float, DIMENSION > SampleNormalAtPoint(
+virtual vnl_vector_fixed< float, DIMENSION > SampleNormalAtPoint(
     const PointType & point,
     int idx
 ) const override
@@ -331,7 +331,7 @@ inline virtual vnl_vector_fixed< float, DIMENSION > SampleNormalAtPoint(
 ### function SampleGradNAtPoint
 
 ```cpp
-inline virtual GradNType SampleGradNAtPoint(
+virtual GradNType SampleGradNAtPoint(
     const PointType & p,
     int idx
 ) const override
@@ -344,7 +344,7 @@ inline virtual GradNType SampleGradNAtPoint(
 ### function Distance
 
 ```cpp
-inline double Distance(
+double Distance(
     const PointType & a,
     int idx_a,
     const PointType & b,
@@ -357,7 +357,7 @@ inline double Distance(
 ### function SquaredDistance
 
 ```cpp
-inline virtual double SquaredDistance(
+virtual double SquaredDistance(
     const PointType & a,
     int idx_a,
     const PointType & b,
@@ -375,7 +375,7 @@ Squared Distance between locations is used for computing sigma.
 ### function IsWithinDistance
 
 ```cpp
-inline virtual bool IsWithinDistance(
+virtual bool IsWithinDistance(
     const PointType & a,
     int idx_a,
     const PointType & b,
@@ -415,8 +415,9 @@ inline virtual void DeletePartialDerivativeImages() override
 ### function SetMesh
 
 ```cpp
-inline void SetMesh(
-    std::shared_ptr< shapeworks::MeshWrapper > mesh_
+void SetMesh(
+    std::shared_ptr< MeshWrapper > mesh_,
+    double geodesic_remesh_percent
 )
 ```
 
@@ -440,4 +441,4 @@ inline virtual void UpdateZeroCrossingPoint() override
 
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:29 +0000
+Updated on 2023-11-28 at 06:02:28 +0000

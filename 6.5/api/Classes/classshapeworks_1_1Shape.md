@@ -87,7 +87,7 @@ Representation of a single shape/patient/subject.
 | std::vector< [Constraints](../Classes/classshapeworks_1_1Constraints.md) > & | **[constraints](../Classes/classshapeworks_1_1Shape.md#function-constraints)**() |
 | [Constraints](../Classes/classshapeworks_1_1Constraints.md) & | **[get_constraints](../Classes/classshapeworks_1_1Shape.md#function-get-constraints)**(int domain_id) |
 | bool | **[has_planes](../Classes/classshapeworks_1_1Shape.md#function-has-planes)**() |
-| std::vector< std::shared_ptr< [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md) > > | **[get_groomed_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-mesh-wrappers)**() |
+| std::vector< std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > > | **[get_groomed_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-mesh-wrappers)**() |
 
 ## Public Functions Documentation
 
@@ -636,10 +636,10 @@ bool has_planes()
 ### function get_groomed_mesh_wrappers
 
 ```cpp
-std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
+std::vector< std::shared_ptr< MeshWrapper > > get_groomed_mesh_wrappers()
 ```
 
 
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:29 +0000
+Updated on 2023-11-28 at 06:02:29 +0000

@@ -90,6 +90,8 @@ title: shapeworks::OptimizeParameters
 | void | **[set_geodesic_to_landmarks_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-geodesic-to-landmarks-weight)**(double value) |
 | std::string | **[get_particle_format](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-particle-format)**() |
 | void | **[set_particle_format](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-particle-format)**(std::string format) |
+| double | **[get_geodesic_remesh_percent](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-geodesic-remesh-percent)**() |
+| void | **[set_geodesic_remesh_percent](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-geodesic-remesh-percent)**(double value) |
 
 ## Detailed Description
 
@@ -698,6 +700,22 @@ void set_particle_format(
 ```
 
 
+### function get_geodesic_remesh_percent
+
+```cpp
+double get_geodesic_remesh_percent()
+```
+
+
+### function set_geodesic_remesh_percent
+
+```cpp
+void set_geodesic_remesh_percent(
+    double value
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-11-28 at 04:34:29 +0000
+Updated on 2023-11-28 at 06:02:29 +0000
