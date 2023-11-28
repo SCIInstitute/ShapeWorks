@@ -1740,8 +1740,6 @@ void ShapeWorksStudioApp::action_export_screenshot_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
-  // close error dialog in case it is open
-  error_message_dialog_.close();
   // close the preferences window in case it is open
   preferences_window_->close();
   if (preferences_.not_saved() && ui_->action_save_project->isEnabled()) {
@@ -1769,6 +1767,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   optimize_tool_->shutdown_threads();
   deepssm_tool_->shutdown();
   SW_CLOSE_LOG();
+
+  QCoreApplication::quit();
 }
 
 //---------------------------------------------------------------------------

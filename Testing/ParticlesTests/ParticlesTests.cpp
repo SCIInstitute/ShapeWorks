@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "ParticleNormalEvaluation.h"
 #include "ParticleShapeStatistics.h"
 #include "ParticleSystemEvaluation.h"
@@ -266,10 +266,10 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals2_groomed.vtk");
   Mesh mesh3(std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals3_groomed.vtk");
 
-  std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
-  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh1.getVTKMesh()));
-  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh2.getVTKMesh()));
-  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh3.getVTKMesh()));
+  std::vector<std::shared_ptr<MeshWrapper>> meshes;
+  meshes.push_back(std::make_shared<MeshWrapper>(mesh1.getVTKMesh()));
+  meshes.push_back(std::make_shared<MeshWrapper>(mesh2.getVTKMesh()));
+  meshes.push_back(std::make_shared<MeshWrapper>(mesh3.getVTKMesh()));
 
   std::vector<std::string> particle_files = {
     std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals_particles/particle_normals1_groomed_groomed_local.particles",

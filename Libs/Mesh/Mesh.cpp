@@ -60,7 +60,7 @@
 
 #include "FEFixMesh.h"
 #include "Image.h"
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Logging.h"
 #include "MeshComputeThickness.h"
 #include "MeshUtils.h"
@@ -768,7 +768,7 @@ double Mesh::geodesicDistance(int source, int target) const {
     throw std::invalid_argument("requested point ids outside range of points available in mesh");
   }
 
-  VtkMeshWrapper wrap(this->poly_data_, true);
+  MeshWrapper wrap(this->poly_data_, true);
   return wrap.ComputeDistance(getPoint(source), -1, getPoint(target), -1);
 }
 
@@ -778,7 +778,7 @@ Field Mesh::geodesicDistance(const Point3 landmark) const {
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("GeodesicDistanceToLandmark");
 
-  VtkMeshWrapper wrap(this->poly_data_, true);
+  MeshWrapper wrap(this->poly_data_, true);
 
   for (int i = 0; i < numPoints(); i++) {
     distance->SetValue(i, wrap.ComputeDistance(landmark, -1, getPoint(i), -1));

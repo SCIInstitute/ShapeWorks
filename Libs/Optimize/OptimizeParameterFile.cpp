@@ -8,7 +8,6 @@
 #include "ExternalLibs/tinyxml/tinyxml.h"
 #include "Libs/Optimize/Domain/DomainType.h"
 #include "Libs/Optimize/Domain/MeshWrapper.h"
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Optimize.h"
 
 namespace shapeworks {
@@ -552,26 +551,15 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
         std::cout << "Reading inputfile: " << meshFiles[index] << "...\n" << std::flush;
       }
 
-      if (this->verbosity_level_ <= 1) {
-        //TriMesh::set_verbose(0);
-      }
-
-      /*
-      auto themesh = std::shared_ptr<TriMesh>(TriMesh::read(meshFiles[index].c_str()));
-      if (themesh) {
-        optimize->AddMesh(std::make_shared<shapeworks::TriMeshWrapper>(themesh));
-      }
-      */
 
       Mesh mesh = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str());
 
       if (index < planes.size()) {
         for (size_t i = 0; i < planes[index].size(); i++) {
-          // Create vtk plane
+          // clip by plane
           vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
           plane->SetNormal(planes[index][i].first[0], planes[index][i].first[1], planes[index][i].first[2]);
           plane->SetOrigin(planes[index][i].second[0], planes[index][i].second[1], planes[index][i].second[2]);
-
           mesh.clip(plane);
         }
       }

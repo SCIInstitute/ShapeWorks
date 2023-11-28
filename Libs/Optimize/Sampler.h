@@ -101,7 +101,7 @@ class Sampler {
     }
   }
 
-  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
+  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent = 100);
 
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 

@@ -7,7 +7,7 @@
 
 #include <cstdio>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"
@@ -484,7 +484,7 @@ TEST(OptimizeTests, procrustes_scale_only_test) {
 TEST(OptimizeTests, mesh_geodesics_test) {
   const std::string sphere_mesh_path = std::string(TEST_DATA_DIR) + "/sphere_highres.ply";
   const auto sw_mesh = MeshUtils::threadSafeReadMesh(sphere_mesh_path);
-  VtkMeshWrapper mesh(sw_mesh.getVTKMesh(), true, 1000000);
+  MeshWrapper mesh(sw_mesh.getVTKMesh(), true, 1000000);
 
   auto polar2cart = [](double theta, double phi) {
     const double x = sin(theta) * cos(phi);

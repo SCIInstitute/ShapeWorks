@@ -69,7 +69,7 @@ static void write_good_bad_angles(json& json_object, ProjectHandle project, Anal
   std::vector<json> good_bad_angles;
 
   for (int d = 0; d < project->get_number_of_domains_per_subject(); d++) {
-    std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
+    std::vector<std::shared_ptr<MeshWrapper>> meshes;
     for (auto& shape : analyze.get_shapes()) {
       meshes.push_back(shape->get_groomed_mesh_wrappers()[d]);
     }

@@ -25,7 +25,7 @@
 #include <Libs/Particles/ParticleFile.h>
 #include <Project/Project.h>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
@@ -1876,9 +1876,11 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data) {
     // fixed domain
     m_sampler->AddMesh(nullptr);
   } else {
+    double geodesic_remesh_percent = m_geodesics_enabled ? m_geodesic_remesh_percent : 100;
+
     const auto mesh =
-        std::make_shared<shapeworks::VtkMeshWrapper>(poly_data, m_geodesics_enabled, m_geodesic_cache_size_multiplier);
-    m_sampler->AddMesh(mesh);
+        std::make_shared<shapeworks::MeshWrapper>(poly_data, m_geodesics_enabled, m_geodesic_cache_size_multiplier);
+    m_sampler->AddMesh(mesh, geodesic_remesh_percent);
   }
   this->m_num_shapes++;
   this->m_spacing = 0.5;
@@ -2086,6 +2088,9 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled) { this->m_geodesics_enabled 
 
 //---------------------------------------------------------------------------
 void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n) { this->m_geodesic_cache_size_multiplier = n; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetGeodesicsRemeshPercent(double percent) { m_geodesic_remesh_percent = percent; }
 
 //---------------------------------------------------------------------------
 vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixed<double, 3> input) {

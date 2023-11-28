@@ -270,7 +270,7 @@ class Mesh {
 
   //! Formats mesh into an IGL format
   MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
-      const;  // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
+      const;  // Copied directly from MeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
               // from Meshwrapper. TODO: When refactoring, take this into account.
 
   //! Clips the mesh according to a field value
