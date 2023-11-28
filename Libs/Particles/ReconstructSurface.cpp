@@ -965,9 +965,9 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
   std::vector<std::vector<Point3>> worldPoints = setWorldPointsFiles(worldPointsFiles);
 
   // perform PCA on the global points that were used to compute the dense mean mesh
-  shapeStats.DoPCA(worldPoints, domainsPerShape);
+  shapeStats.do_pca(worldPoints, domainsPerShape);
 
-  std::vector<double> percentVarByMode = shapeStats.PercentVarByMode();
+  std::vector<double> percentVarByMode = shapeStats.get_percent_variance_by_mode();
   int totalNumberOfModes = percentVarByMode.size();
 
   int numberOfModes = 0;
@@ -1009,9 +1009,9 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
   }
 
   // start sampling along each mode
-  std::vector<double> eigenValues = shapeStats.Eigenvalues();
-  Eigen::MatrixXd eigenVectors = shapeStats.Eigenvectors();
-  Eigen::VectorXd mean = shapeStats.Mean();
+  std::vector<double> eigenValues = shapeStats.get_eigen_values();
+  Eigen::MatrixXd eigenVectors = shapeStats.get_eigen_vectors();
+  Eigen::VectorXd mean = shapeStats.get_mean();
 
   Mesh::MeshPoints meanPoints = Mesh::MeshPoints::New();
   for(unsigned int i = 0; i < this->numOfParticles; i++)

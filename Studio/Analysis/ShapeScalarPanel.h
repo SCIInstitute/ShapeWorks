@@ -12,11 +12,11 @@
 
 // Studio
 #include <Data/Preferences.h>
-#include <Job/ParticleAreaJob.h>
+#include <Job/ShapeScalarJob.h>
 #include <Shape.h>
 #include <Visualization/Visualizer.h>
 
-class Ui_ParticleAreaPanel;
+class Ui_ShapeScalarPanel;
 class JKQTPlotter;
 
 namespace shapeworks {
@@ -25,28 +25,20 @@ class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 
-class ParticleAreaPanel : public QWidget {
+class ShapeScalarPanel : public QWidget {
   Q_OBJECT;
 
  public:
-  ParticleAreaPanel(QWidget* parent = 0);
-  ~ParticleAreaPanel();
+  ShapeScalarPanel(QWidget* parent = 0);
+  ~ShapeScalarPanel();
 
   //! set the pointer to the session
   void set_session(QSharedPointer<Session> session);
   void reset();
 
-  bool get_display_particle_area() const;
-
-  Eigen::VectorXd get_computed_values() const;
-  std::string get_computed_value_name() const;
-
  public Q_SLOTS:
 
   void run_clicked();
-  void show_particle_area_clicked();
-
-  void display_option_changed();
 
   void handle_job_progress(int progress);
   void handle_job_complete();
@@ -56,14 +48,13 @@ class ParticleAreaPanel : public QWidget {
   void update_view();
 
  private:
-
   void update_run_button();
 
   void update_graphs();
 
   QSharedPointer<Session> session_;
-  QSharedPointer<ParticleAreaJob> job_;
+  QSharedPointer<ShapeScalarJob> job_;
 
-  Ui_ParticleAreaPanel* ui_;
+  Ui_ShapeScalarPanel* ui_;
 };
 }  // namespace shapeworks

@@ -41,6 +41,12 @@ class Job : public QObject {
   //! was the job aborted?
   bool is_aborted() const { return abort_; }
 
+  //! set to quiet mode (no progress messages)
+  void set_quiet_mode(bool quiet) { quiet_mode_ = quiet; }
+
+  //! get quiet mode
+  bool get_quiet_mode() { return quiet_mode_; }
+
  public Q_SLOTS:
 
  Q_SIGNALS:
@@ -51,6 +57,7 @@ class Job : public QObject {
  private:
   std::atomic<bool> complete_ = false;
   std::atomic<bool> abort_ = false;
+  std::atomic<bool> quiet_mode_ = false;
 
   QElapsedTimer timer_;
 };

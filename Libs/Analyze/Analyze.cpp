@@ -14,7 +14,7 @@ namespace shapeworks {
 
 //---------------------------------------------------------------------------
 static json get_eigen_vectors(ParticleShapeStatistics* stats) {
-  auto values = stats->Eigenvectors();
+    auto values = stats->get_eigen_vectors();
 
   std::vector<double> vals;
   for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
@@ -173,8 +173,8 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   double increment = range / half_steps;
 
   std::vector<double> eigen_vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    eigen_vals.push_back(stats_.Eigenvalues()[i]);
+  for (int i = stats_.get_eigen_values().size() - 1; i > 0; i--) {
+    eigen_vals.push_back(stats_.get_eigen_values()[i]);
   }
   double sum = std::accumulate(eigen_vals.begin(), eigen_vals.end(), 0.0);
 
@@ -213,7 +213,7 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   // export modes
   std::vector<json> modes;
   for (int mode = 0; mode < num_modes; mode++) {
-    unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
+    unsigned int m = stats_.get_eigen_vectors().cols() - (mode + 1);
     json jmode;
     jmode["mode"] = mode + 1;
     double eigen_value = eigen_vals[mode];
@@ -231,8 +231,8 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
     jmode["cumulative_explained_variance"] = cumulative_explained_variance;
     SW_LOG("explained_variance [{}]: {:.2f}", mode, explained_variance);
     SW_LOG("cumulative_explained_variance [{}]: {:.2f}", mode, cumulative_explained_variance);
-
-    double lambda = sqrt(stats_.Eigenvalues()[m]);
+    
+    double lambda = sqrt(stats_.get_eigen_values()[m]);
 
     std::vector<json> jmodes;
     for (int i = 1; i <= half_steps; i++) {
@@ -278,7 +278,7 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   }
 
   j["eigen_vectors"] = get_eigen_vectors(&stats_);
-  j["eigen_values"] = stats_.Eigenvalues();
+  j["eigen_values"] = stats_.get_eigen_values();
   j["modes"] = modes;
   j["charts"] = create_charts(&stats_);
 
@@ -322,7 +322,7 @@ Particles Analyze::get_mean_shape_points() {
     return Particles();
   }
 
-  return convert_from_combined(stats_.Mean());
+  return convert_from_combined(stats_.get_mean());
 }
 
 //---------------------------------------------------------------------------
@@ -336,22 +336,22 @@ ShapeHandle Analyze::get_mean_shape() {
 
 //---------------------------------------------------------------------------
 Particles Analyze::get_shape_points(int mode, double value) {
-  if (!compute_stats() || stats_.Eigenvectors().size() <= 1) {
+  if (!compute_stats() || stats_.get_eigen_vectors().size() <= 1) {
     return Particles();
   }
-  if (mode + 2 > stats_.Eigenvalues().size()) {
-    mode = stats_.Eigenvalues().size() - 2;
+  if (mode + 2 > stats_.get_eigen_values().size()) {
+    mode = stats_.get_eigen_values().size() - 2;
   }
-
-  unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
-
-  Eigen::VectorXd e = stats_.Eigenvectors().col(m);
-
-  double lambda = sqrt(stats_.Eigenvalues()[m]);
+  
+  unsigned int m = stats_.get_eigen_vectors().cols() - (mode + 1);
+  
+  Eigen::VectorXd e = stats_.get_eigen_vectors().col(m);
+  
+  double lambda = sqrt(stats_.get_eigen_values()[m]);
 
   std::vector<double> vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(stats_.Eigenvalues()[i]);
+  for (int i = stats_.get_eigen_values().size() - 1; i > 0; i--) {
+    vals.push_back(stats_.get_eigen_values()[i]);
   }
   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
   double cumulation = 0;
@@ -359,7 +359,7 @@ Particles Analyze::get_shape_points(int mode, double value) {
     cumulation += vals[i];
   }
 
-  auto temp_shape = stats_.Mean() + (e * (value * lambda));
+  auto temp_shape = stats_.get_mean() + (e * (value * lambda));
 
   return convert_from_combined(temp_shape);
 }
@@ -489,9 +489,9 @@ bool Analyze::compute_stats() {
       return false;
     }
   }
-
-  stats_.ImportPoints(points, group_ids);
-  stats_.ComputeModes();
+  
+  stats_.import_points(points, group_ids);
+  stats_.compute_modes();
 
   stats_ready_ = true;
   SW_LOG("Computed stats successfully");
@@ -522,7 +522,7 @@ Particles Analyze::convert_from_combined(const Eigen::VectorXd& points) {
 
 //---------------------------------------------------------------------------
 void Analyze::initialize_mesh_warper() {
-  int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
+  int median = stats_.compute_median_shape(-32);  //-32 = both groups
 
   if (median < 0 || median >= get_shapes().size()) {
     SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
@@ -555,9 +555,9 @@ void Analyze::initialize_mesh_warper() {
 int Analyze::get_num_subjects() { return shapes_.size(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf Analyze::get_subject_features(int subject, std::string feature_name) {
+Eigen::VectorXd Analyze::get_subject_features(int subject, std::string feature_name) {
   if (subject >= shapes_.size()) {
-    return Eigen::VectorXf();
+    return Eigen::VectorXd();
   }
 
   auto shape = shapes_[subject];
@@ -617,8 +617,8 @@ Particles Analyze::get_group_shape_particles(double ratio) {
   if (!compute_stats()) {
     return Particles();
   }
-
-  auto particles = stats_.Group1Mean() + (stats_.GroupDifference() * ratio);
+  
+  auto particles = stats_.get_group1_mean() + (stats_.get_group_difference() * ratio);
 
   return convert_from_combined(particles);
 }

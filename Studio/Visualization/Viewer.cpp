@@ -915,7 +915,7 @@ void Viewer::update_points() {
 
   vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
 
-  Eigen::VectorXf scalar_values;
+  Eigen::VectorXd scalar_values;
   if (showing_feature_map() && !session_->should_difference_vectors_show()) {
     auto feature_map = get_displayed_feature_map();
     shape_->load_feature(session_->get_display_mode(), feature_map);

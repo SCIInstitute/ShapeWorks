@@ -62,9 +62,9 @@ TEST(ParticlesTests, pca)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(subFilenames);
   ParticleShapeStatistics stats;
-  stats.DoPCA(ParticleSystemEvaluation);
-  stats.PrincipalComponentProjections();
-  auto pcaVec = stats.PCALoadings();
+  stats.do_pca(ParticleSystemEvaluation);
+  stats.principal_component_projections();
+  auto pcaVec = stats.get_pca_loadings();
 
   Eigen::Matrix<double, 3, 3, Eigen::RowMajor> ground_truth;
   ground_truth << -9.47447, 1.92655, -0.698966,

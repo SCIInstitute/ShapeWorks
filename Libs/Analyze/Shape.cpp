@@ -572,7 +572,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   int num_points = all_locals.size() / 3;
 
-  Eigen::VectorXf values(num_points);
+  Eigen::VectorXd values(num_points);
 
   int idx = 0;
   for (int i = 0; i < num_points; ++i) {
@@ -615,7 +615,7 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh) {
 
   int num_points = all_locals.size() / 3;
 
-  Eigen::VectorXf values(num_points);
+  Eigen::VectorXd values(num_points);
 
   vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(feature.c_str());
   if (!from_array) {
@@ -639,10 +639,10 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf Shape::get_point_features(std::string feature) {
+Eigen::VectorXd Shape::get_point_features(std::string feature) {
   auto it = point_features_.find(feature);
   if (it == point_features_.end()) {
-    return Eigen::VectorXf();
+    return Eigen::VectorXd();
   }
 
   return it->second;
@@ -683,7 +683,7 @@ std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustes_transforms() {
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_point_features(std::string feature, Eigen::VectorXf values) {
+void Shape::set_point_features(std::string feature, Eigen::VectorXd values) {
   point_features_[feature] = values;
 
   auto group = get_meshes(DisplayMode::Reconstructed);
@@ -778,7 +778,7 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
     floats.push_back(line);
   }
 
-  Eigen::VectorXf values(floats.size());
+  Eigen::VectorXd values(floats.size());
   for (int i = 0; i < floats.size(); i++) {
     values[i] = floats[i];
   }

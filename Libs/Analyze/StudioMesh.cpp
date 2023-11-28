@@ -76,7 +76,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image) {
 
 //---------------------------------------------------------------------------
 void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions,
-                                             Eigen::VectorXf scalar_values) {
+                                             Eigen::VectorXd scalar_values) {
   int num_points = positions.size() / 3;
   if (num_points == 0) {
     return;

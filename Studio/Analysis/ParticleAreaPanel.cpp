@@ -10,11 +10,9 @@
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
 #include <Job/GroupPvalueJob.h>
-#include <Job/NetworkAnalysisJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
 #include <Logging.h>
-#include <Python/PythonWorker.h>
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>
@@ -69,9 +67,9 @@ bool ParticleAreaPanel::get_display_particle_area() const {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf ParticleAreaPanel::get_computed_values() const {
+Eigen::VectorXd ParticleAreaPanel::get_computed_values() const {
   if (!job_) {
-    return Eigen::VectorXf();
+    return Eigen::VectorXd();
   }
   if (ui_->mean_radio->isChecked()) {
     return job_->get_mean_areas();
@@ -160,7 +158,7 @@ void ParticleAreaPanel::update_graphs() {
 
   plot->clearGraphs();
 
-  Eigen::VectorXf numbers;
+  Eigen::VectorXd numbers;
   QString x_label = QString("Mean area");
   QString title = "Mean particle area percent";
   if (ui_->mean_radio->isChecked()) {
