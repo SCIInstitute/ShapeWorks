@@ -36,7 +36,7 @@ Inherits from QWidget
 | void | **[set_session](../Classes/classshapeworks_1_1ParticleAreaPanel.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>set the pointer to the session  |
 | void | **[reset](../Classes/classshapeworks_1_1ParticleAreaPanel.md#function-reset)**() |
 | bool | **[get_display_particle_area](../Classes/classshapeworks_1_1ParticleAreaPanel.md#function-get-display-particle-area)**() const |
-| Eigen::VectorXf | **[get_computed_values](../Classes/classshapeworks_1_1ParticleAreaPanel.md#function-get-computed-values)**() const |
+| Eigen::VectorXd | **[get_computed_values](../Classes/classshapeworks_1_1ParticleAreaPanel.md#function-get-computed-values)**() const |
 | std::string | **[get_computed_value_name](../Classes/classshapeworks_1_1ParticleAreaPanel.md#function-get-computed-value-name)**() const |
 
 ## Public Slots Documentation
@@ -132,7 +132,7 @@ bool get_display_particle_area() const
 ### function get_computed_values
 
 ```cpp
-Eigen::VectorXf get_computed_values() const
+Eigen::VectorXd get_computed_values() const
 ```
 
 
@@ -145,4 +145,4 @@ std::string get_computed_value_name() const
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:06 +0000
+Updated on 2023-11-28 at 04:34:29 +0000

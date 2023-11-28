@@ -2458,20 +2458,20 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Particle Normal Evaluation&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_mean_areas</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mean_areas_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_stddev_areas</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">stddev_areas_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_mean_areas</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mean_areas_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_stddev_areas</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">stddev_areas_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">mean_areas_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">stddev_areas_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">mean_areas_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">stddev_areas_</span><span class="p">;</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-18 at 00:10:07 +0000</p>
+<p>Updated on 2023-11-28 at 04:34:31 +0000</p>
 
               
             </article>

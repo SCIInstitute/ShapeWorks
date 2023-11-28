@@ -64,7 +64,7 @@ class ParticleAreaPanel : public QWidget {
 
   bool get_display_particle_area() const;
 
-  Eigen::VectorXf get_computed_values() const;
+  Eigen::VectorXd get_computed_values() const;
   std::string get_computed_value_name() const;
 
  public Q_SLOTS:
@@ -98,4 +98,4 @@ class ParticleAreaPanel : public QWidget {
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:31 +0000

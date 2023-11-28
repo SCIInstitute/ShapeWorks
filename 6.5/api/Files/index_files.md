@@ -178,6 +178,7 @@ title: Files
         * **file [Studio/Analysis/AnalysisTool.h](../Files/AnalysisTool_8h.md#file-analysistool.h)** 
         * **file [Studio/Analysis/ParticleAreaPanel.h](../Files/ParticleAreaPanel_8h.md#file-particleareapanel.h)** 
         * **file [Studio/Analysis/ShapeEvaluationJob.h](../Files/ShapeEvaluationJob_8h.md#file-shapeevaluationjob.h)** 
+        * **file [Studio/Analysis/ShapeScalarPanel.h](../Files/ShapeScalarPanel_8h.md#file-shapescalarpanel.h)** 
     * **dir [Studio/Data](../Files/dir_b0b944fd4368961b4965dd28c72a00a2.md#dir-studio/data)** 
         * **file [Studio/Data/DataTool.h](../Files/DataTool_8h.md#file-datatool.h)** 
         * **file [Studio/Data/ExportUtils.h](../Files/ExportUtils_8h.md#file-exportutils.h)** 
@@ -215,6 +216,7 @@ title: Files
         * **file [Studio/Job/NetworkAnalysisJob.h](../Files/NetworkAnalysisJob_8h.md#file-networkanalysisjob.h)** 
         * **file [Studio/Job/ParticleAreaJob.h](../Files/ParticleAreaJob_8h.md#file-particleareajob.h)** 
         * **file [Studio/Job/ParticleNormalEvaluationJob.h](../Files/ParticleNormalEvaluationJob_8h.md#file-particlenormalevaluationjob.h)** 
+        * **file [Studio/Job/ShapeScalarJob.h](../Files/ShapeScalarJob_8h.md#file-shapescalarjob.h)** 
         * **file [Studio/Job/StatsGroupLDAJob.h](../Files/StatsGroupLDAJob_8h.md#file-statsgroupldajob.h)** 
     * **dir [Studio/Optimize](../Files/dir_9e99c41d3802fada2a0119d079df0956.md#dir-studio/optimize)** 
         * **file [Studio/Optimize/OptimizeTool.h](../Files/OptimizeTool_8h.md#file-optimizetool.h)** 
@@ -250,4 +252,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:31 +0000

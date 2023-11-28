@@ -18,8 +18,8 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | | **[ParticleAreaJob](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-particleareajob)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
 | virtual void | **[run](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-run)**() override<br>run the job  |
 | virtual QString | **[name](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-name)**() override<br>get the name of the job  |
-| const Eigen::VectorXf & | **[get_mean_areas](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-get-mean-areas)**() const |
-| const Eigen::VectorXf & | **[get_stddev_areas](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-get-stddev-areas)**() const |
+| const Eigen::VectorXd & | **[get_mean_areas](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-get-mean-areas)**() const |
+| const Eigen::VectorXd & | **[get_stddev_areas](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-get-stddev-areas)**() const |
 
 ## Additional inherited members
 
@@ -44,6 +44,8 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | bool | **[is_complete](../Classes/classshapeworks_1_1Job.md#function-is-complete)**() const<br>is the job complete?  |
 | void | **[abort](../Classes/classshapeworks_1_1Job.md#function-abort)**()<br>abort the job  |
 | bool | **[is_aborted](../Classes/classshapeworks_1_1Job.md#function-is-aborted)**() const<br>was the job aborted?  |
+| void | **[set_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-set-quiet-mode)**(bool quiet)<br>set to quiet mode (no progress messages)  |
+| bool | **[get_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-get-quiet-mode)**()<br>get quiet mode  |
 
 
 ## Public Functions Documentation
@@ -82,17 +84,17 @@ get the name of the job
 ### function get_mean_areas
 
 ```cpp
-inline const Eigen::VectorXf & get_mean_areas() const
+inline const Eigen::VectorXd & get_mean_areas() const
 ```
 
 
 ### function get_stddev_areas
 
 ```cpp
-inline const Eigen::VectorXf & get_stddev_areas() const
+inline const Eigen::VectorXd & get_stddev_areas() const
 ```
 
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:06 +0000
+Updated on 2023-11-28 at 04:34:29 +0000

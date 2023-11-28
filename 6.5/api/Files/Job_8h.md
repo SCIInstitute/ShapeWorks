@@ -58,6 +58,10 @@ class Job : public QObject {
 
   bool is_aborted() const { return abort_; }
 
+  void set_quiet_mode(bool quiet) { quiet_mode_ = quiet; }
+
+  bool get_quiet_mode() { return quiet_mode_; }
+
  public Q_SLOTS:
 
  Q_SIGNALS:
@@ -68,6 +72,7 @@ class Job : public QObject {
  private:
   std::atomic<bool> complete_ = false;
   std::atomic<bool> abort_ = false;
+  std::atomic<bool> quiet_mode_ = false;
 
   QElapsedTimer timer_;
 };
@@ -77,4 +82,4 @@ class Job : public QObject {
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:31 +0000

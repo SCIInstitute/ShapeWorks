@@ -44,14 +44,14 @@ class NetworkAnalysisJob : public Job {
   void set_pvalue_threshold(double pvalue_threshold);
   void set_num_iterations(int num_iterations);
 
-  Eigen::VectorXf get_tvalues();
-  Eigen::VectorXf get_spm_values();
+  Eigen::VectorXd get_tvalues();
+  Eigen::VectorXd get_spm_values();
 
  private:
   std::shared_ptr<Project> project_;
   ParticleShapeStatistics stats_;
-  Eigen::VectorXf tvalues_;
-  Eigen::VectorXf spm_values_;
+  Eigen::VectorXd tvalues_;
+  Eigen::VectorXd spm_values_;
   std::string target_group_;
   std::string target_feature_;
 
@@ -65,4 +65,4 @@ class NetworkAnalysisJob : public Job {
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:31 +0000

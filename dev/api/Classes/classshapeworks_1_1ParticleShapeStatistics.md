@@ -19,63 +19,50 @@ title: shapeworks::ParticleShapeStatistics
 | | **[ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-particleshapestatistics)**() |
 | | **[ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-particleshapestatistics)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project) |
 | | **[~ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-~particleshapestatistics)**() |
-| int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**(std::vector< std::vector< Point > > global_pts, int domainsPerShape =1) |
-| int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**([ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) particleSystem, int domainsPerShape =1) |
-| | **[itkStaticConstMacro](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-itkstaticconstmacro)**(Dimension , unsigned int , VDimension )<br>Dimensionality of the domain of the particle system.  |
-| int | **[ImportPoints](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-importpoints)**(std::vector< Eigen::VectorXd > points, std::vector< int > group_ids)<br>Loads a set of point files and pre-computes some statistics.  |
-| void | **[ComputeMultiLevelAnalysisStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-computemultilevelanalysisstatistics)**(std::vector< Eigen::VectorXd > points, unsigned int dps)<br>Loads a set of point files and pre-computes statistics for multi-level analysis.  |
-| int | **[ComputeShapeDevModesForMca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-computeshapedevmodesformca)**()<br>Compute shape variations for MLCA.  |
-| int | **[ComputeRelPoseModesForMca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-computerelposemodesformca)**()<br>Compute pose variations for MLCA.  |
-| void | **[SetNumberOfParticlesArray](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-setnumberofparticlesarray)**(const std::vector< int > & num_particles_array)<br>Set number of particles per domain/object (required for multi-level analysis)  |
-| int | **[ReadPointFiles](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-readpointfiles)**(const std::string & s)<br>Loads a set of point files and pre-computes some statistics.  |
-| int | **[ReloadPointFiles](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-reloadpointfiles)**()<br>Reloads a set of point files and recomputes some statistics.  |
-| int | **[WriteCSVFile](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-writecsvfile)**(const std::string & s)<br>Writes a text file in comma-separated format. Suitable for reading into excel or R or Matlab for analysis.  |
-| int | **[WriteCSVFile2](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-writecsvfile2)**(const std::string & s) |
-| int | **[ComputeModes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-computemodes)**()<br>Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first.  |
+| int | **[do_pca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-do-pca)**(std::vector< std::vector< Point > > global_pts, int domainsPerShape =1) |
+| int | **[do_pca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-do-pca)**([ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) particleSystem, int domainsPerShape =1) |
+| int | **[import_points](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-import-points)**(std::vector< Eigen::VectorXd > points, std::vector< int > group_ids)<br>Loads a set of point files and pre-computes some statistics.  |
+| void | **[compute_multi_level_analysis_statistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-compute-multi-level-analysis-statistics)**(std::vector< Eigen::VectorXd > points, unsigned int dps)<br>Loads a set of point files and pre-computes statistics for multi-level analysis.  |
+| int | **[compute_shape_dev_modes_for_mca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-compute-shape-dev-modes-for-mca)**()<br>Compute shape variations for MLCA.  |
+| int | **[compute_relative_pose_modes_for_mca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-compute-relative-pose-modes-for-mca)**()<br>Compute pose variations for MLCA.  |
+| void | **[set_num_particles_per_domain](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-set-num-particles-per-domain)**(const std::vector< int > & num_particles_array)<br>Set number of particles per domain/object (required for multi-level analysis)  |
+| int | **[read_point_files](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-read-point-files)**(const std::string & s)<br>Loads a set of point files and pre-computes some statistics.  |
+| int | **[write_csv_file](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-write-csv-file)**(const std::string & s)<br>Writes a text file in comma-separated format. Suitable for reading into excel or R or Matlab for analysis.  |
+| int | **[compute_modes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-compute-modes)**()<br>Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first.  |
 | int | **[get_num_modes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-num-modes)**() const<br>Return the number of modes.  |
-| int | **[PrincipalComponentProjections](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-principalcomponentprojections)**() |
-| int | **[FisherLinearDiscriminant](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-fisherlineardiscriminant)**(unsigned int numModes)<br>Computes fishers linear discriminant line for best group separation.  |
-| int | **[SampleSize](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-samplesize)**() const<br>Returns the sample size.  |
-| int | **[Group1SampleSize](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-group1samplesize)**() const |
-| int | **[Group2SampleSize](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-group2samplesize)**() const |
-| int | **[NumberOfDimensions](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-numberofdimensions)**() const<br>Returns the number of dimensions (this is number of points times Dimension)  |
-| int | **[NumberOfObjects](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-numberofobjects)**()<br>Return Number of objects present in Multi-Object [Shape]() Structure.  |
-| std::vector< int > | **[NumberOfPointsArray](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-numberofpointsarray)**() |
+| int | **[principal_component_projections](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-principal-component-projections)**() |
+| int | **[get_num_samples](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-num-samples)**() const<br>Returns the sample size.  |
+| int | **[get_group1_num_samples](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group1-num-samples)**() const |
+| int | **[get_group2_num_samples](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group2-num-samples)**() const |
+| int | **[get_num_dimensions](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-num-dimensions)**() const<br>Returns the number of dimensions (this is number of points times Dimension)  |
+| int | **[get_domains_per_shape](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-domains-per-shape)**()<br>Return Number of objects present in Multi-Object [Shape]() Structure.  |
+| std::vector< int > | **[NumberOfPointsArray](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-numberofpointsarray)**()<br>Returns Number of [Particles](../Classes/classshapeworks_1_1Particles.md) Array.  |
 | int | **[GroupID](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-groupid)**(unsigned int i) const<br>Returns the group ids.  |
 | const std::vector< int > & | **[GroupID](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-groupid)**() const |
-| const Eigen::MatrixXd & | **[Eigenvectors](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvectors)**() const<br>Returns the eigenvectors/values.  |
-| const std::vector< double > & | **[Eigenvalues](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvalues)**() const |
-| const Eigen::MatrixXd & | **[EigenvectorsRelPose](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvectorsrelpose)**()<br>Returns the eigenvectors/eigenvalues for morphological and relative pose pariations of MLCA.  |
-| const std::vector< double > & | **[EigenvaluesShapeDev](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvaluesshapedev)**() |
-| const Eigen::MatrixXd & | **[EigenvectorsShapeDev](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvectorsshapedev)**() |
-| const std::vector< double > & | **[EigenvaluesRelPose](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-eigenvaluesrelpose)**() |
-| const Eigen::VectorXd & | **[MeanShapeDev](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-meanshapedev)**()<br>Returns the mean vector of within and between subspace.  |
-| const Eigen::VectorXd & | **[MeanRelPose](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-meanrelpose)**() |
-| const Eigen::VectorXd & | **[Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-mean)**() const<br>Returns the mean shape.  |
-| const Eigen::VectorXd & | **[Group1Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-group1mean)**() const |
-| const Eigen::VectorXd & | **[Group2Mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-group2mean)**() const |
-| const Eigen::VectorXd & | **[NormalizedGroupDifference](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-normalizedgroupdifference)**() const<br>Returns group2 - group1 mean.  |
-| const Eigen::VectorXd & | **[GroupDifference](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-groupdifference)**() const |
-| int | **[ComputeMedianShape](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-computemedianshape)**(const int ID) |
-| double | **[L1Norm](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-l1norm)**(unsigned int a, unsigned int b)<br>Returns the euclidean L1 norm between shape a and b.  |
-| Eigen::MatrixXd & | **[PCALoadings](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-pcaloadings)**()<br>Returns the component loadings.  |
-| const Eigen::VectorXd & | **[FishersLDA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-fisherslda)**() const<br>Returns the Fisher linear discriminant.  |
-| const Eigen::MatrixXd & | **[ShapeMatrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-shapematrix)**() const<br>Returns the shape matrix.  |
-| const Eigen::MatrixXd & | **[RecenteredShape](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-recenteredshape)**() const<br>Returns the shape with the mean subtracted.  |
-| const std::vector< double > & | **[PercentVarByMode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-percentvarbymode)**() const |
-| int | **[SimpleLinearRegression](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-simplelinearregression)**(const std::vector< double > & y, const std::vector< double > & x, double & a, double & b) const |
+| const Eigen::MatrixXd & | **[get_eigen_vectors](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-eigen-vectors)**() const<br>Returns the eigenvectors/values.  |
+| const std::vector< double > & | **[get_eigen_values](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-eigen-values)**() const |
+| const Eigen::MatrixXd & | **[get_eigenvectors_rel_pos](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-eigenvectors-rel-pos)**()<br>Returns the eigenvectors/eigenvalues for morphological and relative pose pariations of MLCA.  |
+| const std::vector< double > & | **[get_eigenvalues_shape_dev](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-eigenvalues-shape-dev)**() |
+| const Eigen::MatrixXd & | **[get_eigenvectors_shape_dev](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-eigenvectors-shape-dev)**() |
+| const std::vector< double > & | **[get_eigenvalues_rel_pose](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-eigenvalues-rel-pose)**() |
+| const Eigen::VectorXd & | **[get_mean_shape_dev](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-mean-shape-dev)**()<br>Returns the mean vector of within and between subspace.  |
+| const Eigen::VectorXd & | **[get_mean_rel_pos](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-mean-rel-pos)**() |
+| const Eigen::VectorXd & | **[get_mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-mean)**() const<br>Returns the mean shape.  |
+| const Eigen::VectorXd & | **[get_group1_mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group1-mean)**() const |
+| const Eigen::VectorXd & | **[get_group2_mean](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group2-mean)**() const |
+| const Eigen::VectorXd & | **[get_group_difference](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group-difference)**() const<br>Returns group2 - group1 mean.  |
+| int | **[compute_median_shape](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-compute-median-shape)**(const int ID) |
+| double | **[l1_norm](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-l1-norm)**(unsigned int a, unsigned int b)<br>Returns the euclidean L1 norm between shape a and b.  |
+| Eigen::MatrixXd & | **[get_pca_loadings](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-pca-loadings)**()<br>Returns the component loadings.  |
+| const std::vector< double > & | **[get_percent_variance_by_mode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-percent-variance-by-mode)**() const |
 | Eigen::VectorXd | **[get_compactness](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-compactness)**(const std::function< void(float)> & progress_callback =nullptr) const |
 | Eigen::VectorXd | **[get_specificity](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-specificity)**(const std::function< void(float)> & progress_callback =nullptr) const |
 | Eigen::VectorXd | **[get_generalization](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-generalization)**(const std::function< void(float)> & progress_callback =nullptr) const |
 | Eigen::MatrixXd | **[get_group1_matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group1-matrix)**() const |
 | Eigen::MatrixXd | **[get_group2_matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group2-matrix)**() const |
 | Eigen::MatrixXd & | **[matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-matrix)**() |
-
-## Public Attributes
-
-|                | Name           |
-| -------------- | -------------- |
-| constexpr static int | **[VDimension](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#variable-vdimension)**  |
+| void | **[set_num_values_per_particle](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-set-num-values-per-particle)**(int value_per_particle)<br>Set the number of values for each particle (e.g. 3 for x/y/z, 4 for x/y/z/scalar)  |
+| int | **[simple_linear_regression](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-simple-linear-regression)**(const std::vector< double > & y, const std::vector< double > & x, double & a, double & b) |
 
 ## Detailed Description
 
@@ -111,42 +98,30 @@ inline ~ParticleShapeStatistics()
 ```
 
 
-### function DoPCA
+### function do_pca
 
 ```cpp
-int DoPCA(
+int do_pca(
     std::vector< std::vector< Point > > global_pts,
     int domainsPerShape =1
 )
 ```
 
 
-### function DoPCA
+### function do_pca
 
 ```cpp
-int DoPCA(
+int do_pca(
     ParticleSystemEvaluation particleSystem,
     int domainsPerShape =1
 )
 ```
 
 
-### function itkStaticConstMacro
+### function import_points
 
 ```cpp
-itkStaticConstMacro(
-    Dimension ,
-    unsigned int ,
-    VDimension 
-)
-```
-
-Dimensionality of the domain of the particle system. 
-
-### function ImportPoints
-
-```cpp
-int ImportPoints(
+int import_points(
     std::vector< Eigen::VectorXd > points,
     std::vector< int > group_ids
 )
@@ -154,10 +129,10 @@ int ImportPoints(
 
 Loads a set of point files and pre-computes some statistics. 
 
-### function ComputeMultiLevelAnalysisStatistics
+### function compute_multi_level_analysis_statistics
 
 ```cpp
-void ComputeMultiLevelAnalysisStatistics(
+void compute_multi_level_analysis_statistics(
     std::vector< Eigen::VectorXd > points,
     unsigned int dps
 )
@@ -165,73 +140,56 @@ void ComputeMultiLevelAnalysisStatistics(
 
 Loads a set of point files and pre-computes statistics for multi-level analysis. 
 
-### function ComputeShapeDevModesForMca
+### function compute_shape_dev_modes_for_mca
 
 ```cpp
-int ComputeShapeDevModesForMca()
+int compute_shape_dev_modes_for_mca()
 ```
 
 Compute shape variations for MLCA. 
 
-### function ComputeRelPoseModesForMca
+### function compute_relative_pose_modes_for_mca
 
 ```cpp
-int ComputeRelPoseModesForMca()
+int compute_relative_pose_modes_for_mca()
 ```
 
 Compute pose variations for MLCA. 
 
-### function SetNumberOfParticlesArray
+### function set_num_particles_per_domain
 
 ```cpp
-void SetNumberOfParticlesArray(
+void set_num_particles_per_domain(
     const std::vector< int > & num_particles_array
 )
 ```
 
 Set number of particles per domain/object (required for multi-level analysis) 
 
-### function ReadPointFiles
+### function read_point_files
 
 ```cpp
-int ReadPointFiles(
+int read_point_files(
     const std::string & s
 )
 ```
 
 Loads a set of point files and pre-computes some statistics. 
 
-### function ReloadPointFiles
+### function write_csv_file
 
 ```cpp
-int ReloadPointFiles()
-```
-
-Reloads a set of point files and recomputes some statistics. 
-
-### function WriteCSVFile
-
-```cpp
-int WriteCSVFile(
+int write_csv_file(
     const std::string & s
 )
 ```
 
 Writes a text file in comma-separated format. Suitable for reading into excel or R or Matlab for analysis. 
 
-### function WriteCSVFile2
+### function compute_modes
 
 ```cpp
-int WriteCSVFile2(
-    const std::string & s
-)
-```
-
-
-### function ComputeModes
-
-```cpp
-int ComputeModes()
+int compute_modes()
 ```
 
 Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first. 
@@ -244,60 +202,50 @@ int get_num_modes() const
 
 Return the number of modes. 
 
-### function PrincipalComponentProjections
+### function principal_component_projections
 
 ```cpp
-int PrincipalComponentProjections()
+int principal_component_projections()
 ```
 
 
 Computes the principal component loadings, or projections onto the principal componenent axes for each of the samples. ComputeModes must be called first. 
 
 
-### function FisherLinearDiscriminant
+### function get_num_samples
 
 ```cpp
-int FisherLinearDiscriminant(
-    unsigned int numModes
-)
-```
-
-Computes fishers linear discriminant line for best group separation. 
-
-### function SampleSize
-
-```cpp
-inline int SampleSize() const
+inline int get_num_samples() const
 ```
 
 Returns the sample size. 
 
-### function Group1SampleSize
+### function get_group1_num_samples
 
 ```cpp
-inline int Group1SampleSize() const
+inline int get_group1_num_samples() const
 ```
 
 
-### function Group2SampleSize
+### function get_group2_num_samples
 
 ```cpp
-inline int Group2SampleSize() const
+inline int get_group2_num_samples() const
 ```
 
 
-### function NumberOfDimensions
+### function get_num_dimensions
 
 ```cpp
-inline int NumberOfDimensions() const
+inline int get_num_dimensions() const
 ```
 
 Returns the number of dimensions (this is number of points times Dimension) 
 
-### function NumberOfObjects
+### function get_domains_per_shape
 
 ```cpp
-inline int NumberOfObjects()
+inline int get_domains_per_shape()
 ```
 
 Return Number of objects present in Multi-Object [Shape]() Structure. 
@@ -308,6 +256,7 @@ Return Number of objects present in Multi-Object [Shape]() Structure.
 inline std::vector< int > NumberOfPointsArray()
 ```
 
+Returns Number of [Particles](../Classes/classshapeworks_1_1Particles.md) Array. 
 
 ### function GroupID
 
@@ -326,118 +275,111 @@ inline const std::vector< int > & GroupID() const
 ```
 
 
-### function Eigenvectors
+### function get_eigen_vectors
 
 ```cpp
-inline const Eigen::MatrixXd & Eigenvectors() const
+inline const Eigen::MatrixXd & get_eigen_vectors() const
 ```
 
 Returns the eigenvectors/values. 
 
-### function Eigenvalues
+### function get_eigen_values
 
 ```cpp
-inline const std::vector< double > & Eigenvalues() const
+inline const std::vector< double > & get_eigen_values() const
 ```
 
 
-### function EigenvectorsRelPose
+### function get_eigenvectors_rel_pos
 
 ```cpp
-inline const Eigen::MatrixXd & EigenvectorsRelPose()
+inline const Eigen::MatrixXd & get_eigenvectors_rel_pos()
 ```
 
 Returns the eigenvectors/eigenvalues for morphological and relative pose pariations of MLCA. 
 
-### function EigenvaluesShapeDev
+### function get_eigenvalues_shape_dev
 
 ```cpp
-inline const std::vector< double > & EigenvaluesShapeDev()
+inline const std::vector< double > & get_eigenvalues_shape_dev()
 ```
 
 
-### function EigenvectorsShapeDev
+### function get_eigenvectors_shape_dev
 
 ```cpp
-inline const Eigen::MatrixXd & EigenvectorsShapeDev()
+inline const Eigen::MatrixXd & get_eigenvectors_shape_dev()
 ```
 
 
-### function EigenvaluesRelPose
+### function get_eigenvalues_rel_pose
 
 ```cpp
-inline const std::vector< double > & EigenvaluesRelPose()
+inline const std::vector< double > & get_eigenvalues_rel_pose()
 ```
 
 
-### function MeanShapeDev
+### function get_mean_shape_dev
 
 ```cpp
-inline const Eigen::VectorXd & MeanShapeDev()
+inline const Eigen::VectorXd & get_mean_shape_dev()
 ```
 
 Returns the mean vector of within and between subspace. 
 
-### function MeanRelPose
+### function get_mean_rel_pos
 
 ```cpp
-inline const Eigen::VectorXd & MeanRelPose()
+inline const Eigen::VectorXd & get_mean_rel_pos()
 ```
 
 
-### function Mean
+### function get_mean
 
 ```cpp
-inline const Eigen::VectorXd & Mean() const
+inline const Eigen::VectorXd & get_mean() const
 ```
 
 Returns the mean shape. 
 
-### function Group1Mean
+### function get_group1_mean
 
 ```cpp
-inline const Eigen::VectorXd & Group1Mean() const
+inline const Eigen::VectorXd & get_group1_mean() const
 ```
 
 
-### function Group2Mean
+### function get_group2_mean
 
 ```cpp
-inline const Eigen::VectorXd & Group2Mean() const
+inline const Eigen::VectorXd & get_group2_mean() const
 ```
 
 
-### function NormalizedGroupDifference
+### function get_group_difference
 
 ```cpp
-inline const Eigen::VectorXd & NormalizedGroupDifference() const
+inline const Eigen::VectorXd & get_group_difference() const
 ```
 
 Returns group2 - group1 mean. 
 
-### function GroupDifference
+### function compute_median_shape
 
 ```cpp
-inline const Eigen::VectorXd & GroupDifference() const
-```
-
-
-### function ComputeMedianShape
-
-```cpp
-int ComputeMedianShape(
+int compute_median_shape(
     const int ID
 )
 ```
 
 
-Returns the median shape for the set of shapes with Group ID equal to the integer argument. For example, ComputeMedianShape(0) returns the median shape for the set of shapes with m_groupIDs == 0. The median shape is defined as the shape with the minimum sum of Euclidean L1 norms to all other shapes in that group. Arguments passed to this function are set to the index number of the median shape for Group A and Group B, respectively.*/ 
+Returns the median shape for the set of shapes with Group ID equal to the integer argument. For example, compute_median_shape(0) returns the median shape for the set of shapes with m_groupIDs == 0. The median shape is defined as the shape with the minimum sum of Euclidean L1 norms to all other shapes in that group. Arguments passed to this function are set to the index number of the median shape for Group A and Group B, respectively.*/ 
 
 
-### function L1Norm
+### function l1_norm
 
 ```cpp
-double L1Norm(
+double l1_norm(
     unsigned int a,
     unsigned int b
 )
@@ -445,58 +387,19 @@ double L1Norm(
 
 Returns the euclidean L1 norm between shape a and b. 
 
-### function PCALoadings
+### function get_pca_loadings
 
 ```cpp
-inline Eigen::MatrixXd & PCALoadings()
+inline Eigen::MatrixXd & get_pca_loadings()
 ```
 
 Returns the component loadings. 
 
-### function FishersLDA
+### function get_percent_variance_by_mode
 
 ```cpp
-inline const Eigen::VectorXd & FishersLDA() const
+inline const std::vector< double > & get_percent_variance_by_mode() const
 ```
-
-Returns the Fisher linear discriminant. 
-
-### function ShapeMatrix
-
-```cpp
-inline const Eigen::MatrixXd & ShapeMatrix() const
-```
-
-Returns the shape matrix. 
-
-### function RecenteredShape
-
-```cpp
-inline const Eigen::MatrixXd & RecenteredShape() const
-```
-
-Returns the shape with the mean subtracted. 
-
-### function PercentVarByMode
-
-```cpp
-inline const std::vector< double > & PercentVarByMode() const
-```
-
-
-### function SimpleLinearRegression
-
-```cpp
-int SimpleLinearRegression(
-    const std::vector< double > & y,
-    const std::vector< double > & x,
-    double & a,
-    double & b
-) const
-```
-
-
-Computes a simple linear regression of the first list of values with respect to the second y=a + bx. Returns the estimated parameters a & b. Returns 0 on success and -1 on fail.*/ 
 
 
 ### function get_compactness
@@ -547,15 +450,31 @@ inline Eigen::MatrixXd & matrix()
 ```
 
 
-## Public Attributes Documentation
-
-### variable VDimension
+### function set_num_values_per_particle
 
 ```cpp
-static constexpr static int VDimension = 3;
+inline void set_num_values_per_particle(
+    int value_per_particle
+)
 ```
+
+Set the number of values for each particle (e.g. 3 for x/y/z, 4 for x/y/z/scalar) 
+
+### function simple_linear_regression
+
+```cpp
+static int simple_linear_regression(
+    const std::vector< double > & y,
+    const std::vector< double > & x,
+    double & a,
+    double & b
+)
+```
+
+
+Computes a simple linear regression of the first list of values with respect to the second y=a + bx. Returns the estimated parameters a & b. Returns 0 on success and -1 on fail.*/ 
 
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:06 +0000
+Updated on 2023-11-28 at 04:34:29 +0000

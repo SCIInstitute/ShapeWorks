@@ -2474,11 +2474,11 @@
 <td><strong><a href="classshapeworks_1_1ParticleAreaJob.html#function-name">name</a></strong>() override<br>get the name of the job</td>
 </tr>
 <tr>
-<td>const Eigen::VectorXf &amp;</td>
+<td>const Eigen::VectorXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleAreaJob.html#function-get-mean-areas">get_mean_areas</a></strong>() const</td>
 </tr>
 <tr>
-<td>const Eigen::VectorXf &amp;</td>
+<td>const Eigen::VectorXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleAreaJob.html#function-get-stddev-areas">get_stddev_areas</a></strong>() const</td>
 </tr>
 </tbody>
@@ -2552,6 +2552,14 @@
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Job.html#function-is-aborted">is_aborted</a></strong>() const<br>was the job aborted?</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-set-quiet-mode">set_quiet_mode</a></strong>(bool quiet)<br>set to quiet mode (no progress messages)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-get-quiet-mode">get_quiet_mode</a></strong>()<br>get quiet mode</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
@@ -2571,13 +2579,13 @@
 <p>get the name of the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-name">shapeworks::Job::name</a></p>
 <h3 id="function-get_mean_areas">function get_mean_areas</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_mean_areas</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_mean_areas</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-get_stddev_areas">function get_stddev_areas</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_stddev_areas</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_stddev_areas</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-18 at 00:10:06 +0000</p>
+<p>Updated on 2023-11-28 at 04:34:29 +0000</p>
 
               
             </article>

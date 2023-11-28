@@ -157,6 +157,8 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)**  |
 | class | **[shapeworks::ShapeGradientMatrix](../Classes/classshapeworks_1_1ShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
 | class | **[shapeworks::ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
+| class | **[shapeworks::ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md)**  |
+| class | **[shapeworks::ShapeScalarPanel](../Classes/classshapeworks_1_1ShapeScalarPanel.md)**  |
 | class | **[shapeworks::shapeworks_exception](../Classes/classshapeworks_1_1shapeworks__exception.md)**  |
 | class | **[shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)**  |
 | class | **[shapeworks::ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window.  |
@@ -2594,4 +2596,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:05 +0000
+Updated on 2023-11-28 at 04:34:28 +0000

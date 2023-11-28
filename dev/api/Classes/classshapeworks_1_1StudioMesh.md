@@ -25,7 +25,7 @@ Representation of a single mesh.  [More...](#detailed-description)
 | std::string | **[get_error_message](../Classes/classshapeworks_1_1StudioMesh.md#function-get-error-message)**()<br>Return the error message.  |
 | void | **[apply_feature_map](../Classes/classshapeworks_1_1StudioMesh.md#function-apply-feature-map)**(std::string name, ImageType::Pointer image)<br>Apply a feature map.  |
 | void | **[apply_scalars](../Classes/classshapeworks_1_1StudioMesh.md#function-apply-scalars)**(MeshHandle mesh)<br>Apply scalars from another mesh, with a transform.  |
-| void | **[interpolate_scalars_to_mesh](../Classes/classshapeworks_1_1StudioMesh.md#function-interpolate-scalars-to-mesh)**(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values)<br>Interpolation scalars at positions to this mesh.  |
+| void | **[interpolate_scalars_to_mesh](../Classes/classshapeworks_1_1StudioMesh.md#function-interpolate-scalars-to-mesh)**(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values)<br>Interpolation scalars at positions to this mesh.  |
 | double | **[get_largest_dimension_size](../Classes/classshapeworks_1_1StudioMesh.md#function-get-largest-dimension-size)**()<br>Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)  |
 | vtkFloatArray * | **[get_or_create_array](../Classes/classshapeworks_1_1StudioMesh.md#function-get-or-create-array)**(std::string name, float default_value)<br>Get or create and return an array with a given name.  |
 | void | **[paint_ffc](../Classes/classshapeworks_1_1StudioMesh.md#function-paint-ffc)**(double world_pos[], double radius, bool inclusive)<br>Paint free form constraint.  |
@@ -130,7 +130,7 @@ Apply scalars from another mesh, with a transform.
 void interpolate_scalars_to_mesh(
     std::string name,
     Eigen::VectorXd positions,
-    Eigen::VectorXf scalar_values
+    Eigen::VectorXd scalar_values
 )
 ```
 
@@ -186,4 +186,4 @@ static constexpr const char *const FFC_PAINT = "ffc_paint";
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:06 +0000
+Updated on 2023-11-28 at 04:34:29 +0000

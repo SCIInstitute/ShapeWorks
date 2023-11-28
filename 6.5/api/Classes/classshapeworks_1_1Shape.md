@@ -78,8 +78,8 @@ Representation of a single shape/patient/subject.
 | vtkSmartPointer< vtkTransform > | **[get_alignment](../Classes/classshapeworks_1_1Shape.md#function-get-alignment)**(int domain =0) |
 | void | **[load_feature](../Classes/classshapeworks_1_1Shape.md#function-load-feature)**(DisplayMode display_mode, std::string feature) |
 | std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > | **[get_image_volume](../Classes/classshapeworks_1_1Shape.md#function-get-image-volume)**(std::string image_volume_name) |
-| Eigen::VectorXf | **[get_point_features](../Classes/classshapeworks_1_1Shape.md#function-get-point-features)**(std::string feature) |
-| void | **[set_point_features](../Classes/classshapeworks_1_1Shape.md#function-set-point-features)**(std::string feature, Eigen::VectorXf values) |
+| Eigen::VectorXd | **[get_point_features](../Classes/classshapeworks_1_1Shape.md#function-get-point-features)**(std::string feature) |
+| void | **[set_point_features](../Classes/classshapeworks_1_1Shape.md#function-set-point-features)**(std::string feature, Eigen::VectorXd values) |
 | void | **[load_feature_from_scalar_file](../Classes/classshapeworks_1_1Shape.md#function-load-feature-from-scalar-file)**(std::string filename, std::string feature_name) |
 | void | **[set_override_feature](../Classes/classshapeworks_1_1Shape.md#function-set-override-feature)**(std::string feature) |
 | std::string | **[get_override_feature](../Classes/classshapeworks_1_1Shape.md#function-get-override-feature)**() |
@@ -561,7 +561,7 @@ std::shared_ptr< Image > get_image_volume(
 ### function get_point_features
 
 ```cpp
-Eigen::VectorXf get_point_features(
+Eigen::VectorXd get_point_features(
     std::string feature
 )
 ```
@@ -572,7 +572,7 @@ Eigen::VectorXf get_point_features(
 ```cpp
 void set_point_features(
     std::string feature,
-    Eigen::VectorXf values
+    Eigen::VectorXd values
 )
 ```
 
@@ -642,4 +642,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:06 +0000
+Updated on 2023-11-28 at 04:34:29 +0000

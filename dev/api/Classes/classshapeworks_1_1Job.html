@@ -2503,6 +2503,20 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-set_quiet_mode" class="md-nav__link">
+    function set_quiet_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_quiet_mode" class="md-nav__link">
+    function get_quiet_mode
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2528,7 +2542,7 @@
 
 <h1 id="shapeworksjob">shapeworks::Job</h1>
 <p>Inherits from QObject</p>
-<p>Inherited by <a href="classshapeworks_1_1DeepSSMJob.html">shapeworks::DeepSSMJob</a>, <a href="classshapeworks_1_1GroupPvalueJob.html">shapeworks::GroupPvalueJob</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html">shapeworks::NetworkAnalysisJob</a>, <a href="classshapeworks_1_1ParticleAreaJob.html">shapeworks::ParticleAreaJob</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html">shapeworks::ParticleNormalEvaluationJob</a>, <a href="classshapeworks_1_1ShapeEvaluationJob.html">shapeworks::ShapeEvaluationJob</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html">shapeworks::StatsGroupLDAJob</a></p>
+<p>Inherited by <a href="classshapeworks_1_1DeepSSMJob.html">shapeworks::DeepSSMJob</a>, <a href="classshapeworks_1_1GroupPvalueJob.html">shapeworks::GroupPvalueJob</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html">shapeworks::NetworkAnalysisJob</a>, <a href="classshapeworks_1_1ParticleAreaJob.html">shapeworks::ParticleAreaJob</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html">shapeworks::ParticleNormalEvaluationJob</a>, <a href="classshapeworks_1_1ShapeEvaluationJob.html">shapeworks::ShapeEvaluationJob</a>, <a href="classshapeworks_1_1ShapeScalarJob.html">shapeworks::ShapeScalarJob</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html">shapeworks::StatsGroupLDAJob</a></p>
 <h2 id="public-signals">Public Signals</h2>
 <table>
 <thead>
@@ -2605,6 +2619,14 @@
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Job.html#function-is-aborted">is_aborted</a></strong>() const<br>was the job aborted?</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-set-quiet-mode">set_quiet_mode</a></strong>(bool quiet)<br>set to quiet mode (no progress messages)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Job.html#function-get-quiet-mode">get_quiet_mode</a></strong>()<br>get quiet mode</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
@@ -2627,12 +2649,12 @@
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p>run the job </p>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-run">shapeworks::ShapeEvaluationJob::run</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-run">shapeworks::DeepSSMJob::run</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-run">shapeworks::GroupPvalueJob::run</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-run">shapeworks::NetworkAnalysisJob::run</a>, <a href="classshapeworks_1_1ParticleAreaJob.html#function-run">shapeworks::ParticleAreaJob::run</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-run">shapeworks::ParticleNormalEvaluationJob::run</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-run">shapeworks::StatsGroupLDAJob::run</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-run">shapeworks::ShapeEvaluationJob::run</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-run">shapeworks::DeepSSMJob::run</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-run">shapeworks::GroupPvalueJob::run</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-run">shapeworks::NetworkAnalysisJob::run</a>, <a href="classshapeworks_1_1ParticleAreaJob.html#function-run">shapeworks::ParticleAreaJob::run</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-run">shapeworks::ParticleNormalEvaluationJob::run</a>, <a href="classshapeworks_1_1ShapeScalarJob.html#function-run">shapeworks::ShapeScalarJob::run</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-run">shapeworks::StatsGroupLDAJob::run</a></p>
 <h3 id="function-name">function name</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p>get the name of the job </p>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-name">shapeworks::ShapeEvaluationJob::name</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-name">shapeworks::DeepSSMJob::name</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-name">shapeworks::GroupPvalueJob::name</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-name">shapeworks::NetworkAnalysisJob::name</a>, <a href="classshapeworks_1_1ParticleAreaJob.html#function-name">shapeworks::ParticleAreaJob::name</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-name">shapeworks::ParticleNormalEvaluationJob::name</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-name">shapeworks::StatsGroupLDAJob::name</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-name">shapeworks::ShapeEvaluationJob::name</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-name">shapeworks::DeepSSMJob::name</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-name">shapeworks::GroupPvalueJob::name</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-name">shapeworks::NetworkAnalysisJob::name</a>, <a href="classshapeworks_1_1ParticleAreaJob.html#function-name">shapeworks::ParticleAreaJob::name</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-name">shapeworks::ParticleNormalEvaluationJob::name</a>, <a href="classshapeworks_1_1ShapeScalarJob.html#function-name">shapeworks::ShapeScalarJob::name</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-name">shapeworks::StatsGroupLDAJob::name</a></p>
 <h3 id="function-get_completion_message">function get_completion_message</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_completion_message</span><span class="p">()</span>
 </code></pre></div>
@@ -2667,8 +2689,18 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_aborted</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>was the job aborted? </p>
+<h3 id="function-set_quiet_mode">function set_quiet_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_quiet_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">quiet</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>set to quiet mode (no progress messages) </p>
+<h3 id="function-get_quiet_mode">function get_quiet_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">get_quiet_mode</span><span class="p">()</span>
+</code></pre></div>
+<p>get quiet mode </p>
 <hr />
-<p>Updated on 2023-11-18 at 00:10:05 +0000</p>
+<p>Updated on 2023-11-28 at 04:34:28 +0000</p>
 
               
             </article>

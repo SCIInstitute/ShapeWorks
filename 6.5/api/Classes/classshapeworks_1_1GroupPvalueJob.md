@@ -18,7 +18,7 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | | **[GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-grouppvaluejob)**([ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) stats) |
 | virtual void | **[run](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-run)**() override<br>run the job  |
 | virtual QString | **[name](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-name)**() override<br>get the name of the job  |
-| Eigen::VectorXf | **[get_group_pvalues](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-get-group-pvalues)**() |
+| Eigen::VectorXd | **[get_group_pvalues](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-get-group-pvalues)**() |
 
 ## Additional inherited members
 
@@ -43,6 +43,8 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | bool | **[is_complete](../Classes/classshapeworks_1_1Job.md#function-is-complete)**() const<br>is the job complete?  |
 | void | **[abort](../Classes/classshapeworks_1_1Job.md#function-abort)**()<br>abort the job  |
 | bool | **[is_aborted](../Classes/classshapeworks_1_1Job.md#function-is-aborted)**() const<br>was the job aborted?  |
+| void | **[set_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-set-quiet-mode)**(bool quiet)<br>set to quiet mode (no progress messages)  |
+| bool | **[get_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-get-quiet-mode)**()<br>get quiet mode  |
 
 
 ## Public Functions Documentation
@@ -81,10 +83,10 @@ get the name of the job
 ### function get_group_pvalues
 
 ```cpp
-Eigen::VectorXf get_group_pvalues()
+Eigen::VectorXd get_group_pvalues()
 ```
 
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:05 +0000
+Updated on 2023-11-28 at 04:34:28 +0000

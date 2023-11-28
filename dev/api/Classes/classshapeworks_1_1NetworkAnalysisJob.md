@@ -21,8 +21,8 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | void | **[set_pvalue_of_interest](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-set-pvalue-of-interest)**(double pvalue_of_interest) |
 | void | **[set_pvalue_threshold](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-set-pvalue-threshold)**(double pvalue_threshold) |
 | void | **[set_num_iterations](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-set-num-iterations)**(int num_iterations) |
-| Eigen::VectorXf | **[get_tvalues](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-get-tvalues)**() |
-| Eigen::VectorXf | **[get_spm_values](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-get-spm-values)**() |
+| Eigen::VectorXd | **[get_tvalues](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-get-tvalues)**() |
+| Eigen::VectorXd | **[get_spm_values](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-get-spm-values)**() |
 
 ## Additional inherited members
 
@@ -47,6 +47,8 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | bool | **[is_complete](../Classes/classshapeworks_1_1Job.md#function-is-complete)**() const<br>is the job complete?  |
 | void | **[abort](../Classes/classshapeworks_1_1Job.md#function-abort)**()<br>abort the job  |
 | bool | **[is_aborted](../Classes/classshapeworks_1_1Job.md#function-is-aborted)**() const<br>was the job aborted?  |
+| void | **[set_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-set-quiet-mode)**(bool quiet)<br>set to quiet mode (no progress messages)  |
+| bool | **[get_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-get-quiet-mode)**()<br>get quiet mode  |
 
 
 ## Public Functions Documentation
@@ -114,17 +116,17 @@ void set_num_iterations(
 ### function get_tvalues
 
 ```cpp
-Eigen::VectorXf get_tvalues()
+Eigen::VectorXd get_tvalues()
 ```
 
 
 ### function get_spm_values
 
 ```cpp
-Eigen::VectorXf get_spm_values()
+Eigen::VectorXd get_spm_values()
 ```
 
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:06 +0000
+Updated on 2023-11-28 at 04:34:29 +0000

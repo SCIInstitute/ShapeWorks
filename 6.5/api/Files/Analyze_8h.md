@@ -70,7 +70,7 @@ class Analyze {
 
   ShapeHandle create_shape_from_points(Particles points);
 
-  Eigen::VectorXf get_subject_features(int subject, std::string feature_name);
+  Eigen::VectorXd get_subject_features(int subject, std::string feature_name);
 
   void set_group_selection(std::string group_name, std::string group1, std::string group2);
 
@@ -107,4 +107,4 @@ class Analyze {
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:30 +0000

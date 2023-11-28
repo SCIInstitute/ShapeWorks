@@ -2741,6 +2741,20 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#slot-change_pca_analysis_type" class="md-nav__link">
+    slot change_pca_analysis_type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-construct_mean_shape" class="md-nav__link">
+    slot construct_mean_shape
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3054,6 +3068,27 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-pca_scalar_only_mode" class="md-nav__link">
+    function pca_scalar_only_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-pca_shape_plus_scalar_mode" class="md-nav__link">
+    function pca_shape_plus_scalar_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-pca_shape_only_mode" class="md-nav__link">
+    function pca_shape_only_mode
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3327,6 +3362,14 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-group-analysis-combo-changed">group_analysis_combo_changed</a></strong>()</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-change-pca-analysis-type">change_pca_analysis_type</a></strong>()</td>
+</tr>
+<tr>
+<td>Eigen::VectorXd</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-construct-mean-shape">construct_mean_shape</a></strong>()<br>Compute the mean shape outside of the PCA in case we are using scalars only.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-signals">Public Signals</h2>
@@ -3512,6 +3555,18 @@
 <tr>
 <td>GroupAnalysisType</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-group-analysis-type">get_group_analysis_type</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-pca-scalar-only-mode">pca_scalar_only_mode</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-pca-shape-plus-scalar-mode">pca_shape_plus_scalar_mode</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-pca-shape-only-mode">pca_shape_only_mode</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3759,6 +3814,13 @@
 <h3 id="slot-group_analysis_combo_changed">slot group_analysis_combo_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">group_analysis_combo_changed</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="slot-change_pca_analysis_type">slot change_pca_analysis_type</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">change_pca_analysis_type</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="slot-construct_mean_shape">slot construct_mean_shape</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">construct_mean_shape</span><span class="p">()</span>
+</code></pre></div>
+<p>Compute the mean shape outside of the PCA in case we are using scalars only. </p>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-update_view">signal update_view</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_view</span><span class="p">()</span>
@@ -3922,6 +3984,15 @@
 <h3 id="function-get_group_analysis_type">function get_group_analysis_type</h3>
 <div class="highlight"><pre><span></span><code><span class="n">GroupAnalysisType</span><span class="w"> </span><span class="n">get_group_analysis_type</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-pca_scalar_only_mode">function pca_scalar_only_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">pca_scalar_only_mode</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-pca_shape_plus_scalar_mode">function pca_shape_plus_scalar_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">pca_shape_plus_scalar_mode</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-pca_shape_only_mode">function pca_shape_only_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">pca_shape_only_mode</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-mode_all_samples_c">variable MODE_ALL_SAMPLES_C</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ALL_SAMPLES_C</span><span class="p">;</span>
@@ -3939,7 +4010,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-18 at 00:10:05 +0000</p>
+<p>Updated on 2023-11-28 at 04:34:28 +0000</p>
 
               
             </article>

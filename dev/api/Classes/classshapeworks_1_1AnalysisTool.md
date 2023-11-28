@@ -65,6 +65,8 @@ Inherits from QWidget
 | void | **[handle_network_analysis_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-network-analysis-complete)**() |
 | void | **[show_difference_to_mean_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-show-difference-to-mean-clicked)**() |
 | void | **[group_analysis_combo_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-analysis-combo-changed)**() |
+| void | **[change_pca_analysis_type](../Classes/classshapeworks_1_1AnalysisTool.md#slot-change-pca-analysis-type)**() |
+| Eigen::VectorXd | **[construct_mean_shape](../Classes/classshapeworks_1_1AnalysisTool.md#slot-construct-mean-shape)**()<br>Compute the mean shape outside of the PCA in case we are using scalars only.  |
 
 ## Public Signals
 
@@ -116,6 +118,9 @@ Inherits from QWidget
 | bool | **[export_variance_graph](../Classes/classshapeworks_1_1AnalysisTool.md#function-export-variance-graph)**(QString filename) |
 | void | **[compute_shape_evaluations](../Classes/classshapeworks_1_1AnalysisTool.md#function-compute-shape-evaluations)**() |
 | GroupAnalysisType | **[get_group_analysis_type](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-analysis-type)**() |
+| bool | **[pca_scalar_only_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-pca-scalar-only-mode)**() |
+| bool | **[pca_shape_plus_scalar_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-pca-shape-plus-scalar-mode)**() |
+| bool | **[pca_shape_only_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-pca-shape-only-mode)**() |
 
 ## Public Attributes
 
@@ -478,6 +483,21 @@ void group_analysis_combo_changed()
 ```
 
 
+### slot change_pca_analysis_type
+
+```cpp
+void change_pca_analysis_type()
+```
+
+
+### slot construct_mean_shape
+
+```cpp
+Eigen::VectorXd construct_mean_shape()
+```
+
+Compute the mean shape outside of the PCA in case we are using scalars only. 
+
 ## Public Signals Documentation
 
 ### signal update_view
@@ -807,6 +827,27 @@ GroupAnalysisType get_group_analysis_type()
 ```
 
 
+### function pca_scalar_only_mode
+
+```cpp
+bool pca_scalar_only_mode()
+```
+
+
+### function pca_shape_plus_scalar_mode
+
+```cpp
+bool pca_shape_plus_scalar_mode()
+```
+
+
+### function pca_shape_only_mode
+
+```cpp
+bool pca_shape_only_mode()
+```
+
+
 ## Public Attributes Documentation
 
 ### variable MODE_ALL_SAMPLES_C
@@ -846,4 +887,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:05 +0000
+Updated on 2023-11-28 at 04:34:28 +0000

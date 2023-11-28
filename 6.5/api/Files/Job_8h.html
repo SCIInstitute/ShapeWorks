@@ -2472,6 +2472,10 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_aborted</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">abort_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_quiet_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">quiet</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">quiet_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">quiet</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_quiet_mode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">quiet_mode_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
@@ -2482,13 +2486,14 @@
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">complete_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">abort_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">quiet_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-18 at 00:10:07 +0000</p>
+<p>Updated on 2023-11-28 at 04:34:31 +0000</p>
 
               
             </article>

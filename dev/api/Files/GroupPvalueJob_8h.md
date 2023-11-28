@@ -40,12 +40,12 @@ public:
   void run() override;
   QString name() override;
 
-  Eigen::VectorXf get_group_pvalues();
+  Eigen::VectorXd get_group_pvalues();
 
 private:
 
   ParticleShapeStatistics stats_;
-  Eigen::VectorXf group_pvalues_;
+  Eigen::VectorXd group_pvalues_;
 
 };
 }
@@ -54,4 +54,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:31 +0000

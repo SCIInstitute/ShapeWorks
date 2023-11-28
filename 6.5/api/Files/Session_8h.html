@@ -2464,6 +2464,8 @@
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
+<span class="k">class</span><span class="w"> </span><span class="nc">PythonWorker</span><span class="p">;</span>
+
 <span class="k">class</span><span class="w"> </span><span class="nc">CompareSettings</span><span class="w"> </span><span class="p">{</span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">compare_enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
@@ -2668,6 +2670,12 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_lut</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_py_worker</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worker</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">py_worker_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">worker</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_py_worker</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_all_particles</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">get_all_scalars</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">target_feature</span><span class="p">);</span>
+
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
@@ -2748,12 +2756,14 @@
 <span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">compare_settings_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-18 at 00:10:07 +0000</p>
+<p>Updated on 2023-11-28 at 04:34:31 +0000</p>
 
               
             </article>

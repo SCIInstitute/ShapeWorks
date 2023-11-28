@@ -231,6 +231,8 @@ title: Classes
     * **class [ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)** 
     * **class [ShapeGradientMatrix](../Classes/classshapeworks_1_1ShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
     * **class [ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
+    * **class [ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md)** 
+    * **class [ShapeScalarPanel](../Classes/classshapeworks_1_1ShapeScalarPanel.md)** 
     * **class [ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window. 
     * **class [ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)** 
     * **class [ShapeworksUtils](../Classes/classshapeworks_1_1ShapeworksUtils.md)** 
@@ -278,4 +280,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:31 +0000

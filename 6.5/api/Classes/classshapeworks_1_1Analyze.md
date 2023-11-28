@@ -37,7 +37,7 @@ High level analyze API.  [More...](#detailed-description)
 | ShapeHandle | **[get_mode_shape](../Classes/classshapeworks_1_1Analyze.md#function-get-mode-shape)**(int mode, double value)<br>Return the shape for a given mode and value.  |
 | bool | **[groups_active](../Classes/classshapeworks_1_1Analyze.md#function-groups-active)**() |
 | ShapeHandle | **[create_shape_from_points](../Classes/classshapeworks_1_1Analyze.md#function-create-shape-from-points)**([Particles](../Classes/classshapeworks_1_1Particles.md) points) |
-| Eigen::VectorXf | **[get_subject_features](../Classes/classshapeworks_1_1Analyze.md#function-get-subject-features)**(int subject, std::string feature_name) |
+| Eigen::VectorXd | **[get_subject_features](../Classes/classshapeworks_1_1Analyze.md#function-get-subject-features)**(int subject, std::string feature_name) |
 | void | **[set_group_selection](../Classes/classshapeworks_1_1Analyze.md#function-set-group-selection)**(std::string group_name, std::string group1, std::string group2) |
 | [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1Analyze.md#function-get-local-particle-system)**(int domain) |
 
@@ -193,7 +193,7 @@ ShapeHandle create_shape_from_points(
 ### function get_subject_features
 
 ```cpp
-Eigen::VectorXf get_subject_features(
+Eigen::VectorXd get_subject_features(
     int subject,
     std::string feature_name
 )
@@ -222,4 +222,4 @@ ParticleSystemEvaluation get_local_particle_system(
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:05 +0000
+Updated on 2023-11-28 at 04:34:28 +0000

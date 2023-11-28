@@ -150,6 +150,10 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | DisplayMode | **[get_display_mode](../Classes/classshapeworks_1_1Session.md#function-get-display-mode)**()<br>return the current display mode  |
 | void | **[set_glyph_lut](../Classes/classshapeworks_1_1Session.md#function-set-glyph-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
 | vtkSmartPointer< vtkLookupTable > | **[get_glyph_lut](../Classes/classshapeworks_1_1Session.md#function-get-glyph-lut)**() |
+| void | **[set_py_worker](../Classes/classshapeworks_1_1Session.md#function-set-py-worker)**(QSharedPointer< [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md) > worker) |
+| QSharedPointer< [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md) > | **[get_py_worker](../Classes/classshapeworks_1_1Session.md#function-get-py-worker)**() |
+| Eigen::MatrixXd | **[get_all_particles](../Classes/classshapeworks_1_1Session.md#function-get-all-particles)**()<br>Return all world particles (number of shapes, 3 x num particles)  |
+| Eigen::MatrixXd | **[get_all_scalars](../Classes/classshapeworks_1_1Session.md#function-get-all-scalars)**(std::string target_feature)<br>Return all scalars for all shapes, given target feature.  |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -1138,6 +1142,40 @@ inline vtkSmartPointer< vtkLookupTable > get_glyph_lut()
 ```
 
 
+### function set_py_worker
+
+```cpp
+inline void set_py_worker(
+    QSharedPointer< PythonWorker > worker
+)
+```
+
+
+### function get_py_worker
+
+```cpp
+inline QSharedPointer< PythonWorker > get_py_worker()
+```
+
+
+### function get_all_particles
+
+```cpp
+Eigen::MatrixXd get_all_particles()
+```
+
+Return all world particles (number of shapes, 3 x num particles) 
+
+### function get_all_scalars
+
+```cpp
+Eigen::MatrixXd get_all_scalars(
+    std::string target_feature
+)
+```
+
+Return all scalars for all shapes, given target feature. 
+
 ### function is_supported_file_format
 
 ```cpp
@@ -1196,4 +1234,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:06 +0000
+Updated on 2023-11-28 at 04:34:29 +0000

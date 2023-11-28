@@ -28,9 +28,6 @@ title: Libs/Particles/ParticleShapeStatistics.h
 #pragma once
 
 #include <Eigen/Eigen>
-#include <cstdio>
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -43,87 +40,70 @@ class Project;
 
 class ParticleShapeStatistics {
  public:
-  constexpr static int VDimension = 3;
-
   ParticleShapeStatistics(){};
   ParticleShapeStatistics(std::shared_ptr<Project> project);
   ~ParticleShapeStatistics(){};
 
-  int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
+  int do_pca(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
-  int DoPCA(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
+  int do_pca(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
 
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  int import_points(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
 
-  int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
+  void compute_multi_level_analysis_statistics(std::vector<Eigen::VectorXd> points, unsigned int dps);
 
-  void ComputeMultiLevelAnalysisStatistics(std::vector<Eigen::VectorXd> points, unsigned int dps);
+  int compute_shape_dev_modes_for_mca();
 
-  int ComputeShapeDevModesForMca();
+  int compute_relative_pose_modes_for_mca();
 
-  int ComputeRelPoseModesForMca();
+  void set_num_particles_per_domain(const std::vector<int>& num_particles_array);
 
-  void SetNumberOfParticlesArray(const std::vector<int>& num_particles_array);
+  int read_point_files(const std::string& s);
 
-  int ReadPointFiles(const std::string& s);
+  int write_csv_file(const std::string& s);
 
-  int ReloadPointFiles();
-
-  int WriteCSVFile(const std::string& s);
-  int WriteCSVFile2(const std::string& s);
-
-  int ComputeModes();
+  int compute_modes();
 
   int get_num_modes() const;
 
-  int PrincipalComponentProjections();
+  int principal_component_projections();
 
-  int FisherLinearDiscriminant(unsigned int numModes);
+  int get_num_samples() const { return num_samples_; }
+  int get_group1_num_samples() const { return num_samples_group1_; }
+  int get_group2_num_samples() const { return num_samples_group2_; }
 
-  int SampleSize() const { return m_numSamples; }
-  int Group1SampleSize() const { return m_numSamples1; }
-  int Group2SampleSize() const { return m_numSamples2; }
+  int get_num_dimensions() const { return num_dimensions_; }
+  int get_domains_per_shape() { return domains_per_shape_; }
+  std::vector<int> NumberOfPointsArray() { return num_particles_array_; }
 
-  int NumberOfDimensions() const { return m_numDimensions; }
-  int NumberOfObjects() { return m_dps; }
-  // !Returns Number of Particles Array
-  std::vector<int> NumberOfPointsArray() { return m_num_particles_array; }
+  int GroupID(unsigned int i) const { return group_ids_[i]; }
+  const std::vector<int>& GroupID() const { return group_ids_; }
 
-  int GroupID(unsigned int i) const { return m_groupIDs[i]; }
-  const std::vector<int>& GroupID() const { return m_groupIDs; }
+  const Eigen::MatrixXd& get_eigen_vectors() const { return eigenvectors_; }
+  const std::vector<double>& get_eigen_values() const { return eigenvalues_; }
 
-  const Eigen::MatrixXd& Eigenvectors() const { return m_eigenvectors; }
-  const std::vector<double>& Eigenvalues() const { return m_eigenvalues; }
+  const Eigen::MatrixXd& get_eigenvectors_rel_pos() { return eigenvectors_rel_pose_; }
+  const std::vector<double>& get_eigenvalues_shape_dev() { return eigenvalues_shape_dev_; }
+  const Eigen::MatrixXd& get_eigenvectors_shape_dev() { return eigenvectors_shape_dev_; }
+  const std::vector<double>& get_eigenvalues_rel_pose() { return eigenvalues_rel_pose_; }
+  const Eigen::VectorXd& get_mean_shape_dev() { return mean_shape_dev_; }
+  const Eigen::VectorXd& get_mean_rel_pos() { return mean_rel_pose_; }
 
-  const Eigen::MatrixXd& EigenvectorsRelPose() { return m_Eigenvectors_rel_pose; }
-  const std::vector<double>& EigenvaluesShapeDev() { return m_Eigenvalues_shape_dev; }
-  const Eigen::MatrixXd& EigenvectorsShapeDev() { return m_Eigenvectors_shape_dev; }
-  const std::vector<double>& EigenvaluesRelPose() { return m_Eigenvalues_rel_pose; }
-  const Eigen::VectorXd& MeanShapeDev() { return m_mean_shape_dev; }
-  const Eigen::VectorXd& MeanRelPose() { return m_mean_rel_pose; }
+  const Eigen::VectorXd& get_mean() const { return mean_; }
+  const Eigen::VectorXd& get_group1_mean() const { return mean1_; }
+  const Eigen::VectorXd& get_group2_mean() const { return mean2_; }
 
-  const Eigen::VectorXd& Mean() const { return m_mean; }
-  const Eigen::VectorXd& Group1Mean() const { return m_mean1; }
-  const Eigen::VectorXd& Group2Mean() const { return m_mean2; }
+  const Eigen::VectorXd& get_group_difference() const { return groupdiff_; }
 
-  const Eigen::VectorXd& NormalizedGroupDifference() const { return m_groupdiffnorm; }
-  const Eigen::VectorXd& GroupDifference() const { return m_groupdiff; }
+  int compute_median_shape(const int ID);
 
-  int ComputeMedianShape(const int ID);
+  double l1_norm(unsigned int a, unsigned int b);
 
-  double L1Norm(unsigned int a, unsigned int b);
+  Eigen::MatrixXd& get_pca_loadings() { return principals_; }
 
-  Eigen::MatrixXd& PCALoadings() { return m_principals; }
+  const std::vector<double>& get_percent_variance_by_mode() const { return percent_variance_by_mode_; }
 
-  const Eigen::VectorXd& FishersLDA() const { return m_fishersLD; }
-
-  const Eigen::MatrixXd& ShapeMatrix() const { return m_shapes; }
-
-  const Eigen::MatrixXd& RecenteredShape() const { return m_pointsMinusMean; }
-
-  const std::vector<double>& PercentVarByMode() const { return m_percentVarByMode; }
-
-  int SimpleLinearRegression(const std::vector<double>& y, const std::vector<double>& x, double& a, double& b) const;
+  static int simple_linear_regression(const std::vector<double>& y, const std::vector<double>& x, double& a, double& b);
 
   Eigen::VectorXd get_compactness(const std::function<void(float)>& progress_callback = nullptr) const;
   Eigen::VectorXd get_specificity(const std::function<void(float)>& progress_callback = nullptr) const;
@@ -132,60 +112,52 @@ class ParticleShapeStatistics {
   Eigen::MatrixXd get_group1_matrix() const;
   Eigen::MatrixXd get_group2_matrix() const;
 
-  Eigen::MatrixXd& matrix() { return m_Matrix; };
+  Eigen::MatrixXd& matrix() { return matrix_; };
+
+  void set_num_values_per_particle(int value_per_particle) { values_per_particle_ = value_per_particle; }
 
  private:
-  unsigned int m_numSamples1;
-  unsigned int m_numSamples2;
-  unsigned int m_numSamples;
-  unsigned int m_domainsPerShape;
-  unsigned int m_numDimensions;
-  std::vector<int> m_groupIDs;
+  unsigned int num_samples_group1_;
+  unsigned int num_samples_group2_;
+  unsigned int num_samples_;
+  unsigned int domains_per_shape_;
+  unsigned int num_dimensions_;
+  std::vector<int> group_ids_;
 
-  Eigen::MatrixXd m_eigenvectors;
-  std::vector<double> m_eigenvalues;
-  Eigen::VectorXd m_mean;
-  Eigen::VectorXd m_mean1;
-  Eigen::VectorXd m_mean2;
-  Eigen::MatrixXd m_pointsMinusMean;
-  Eigen::MatrixXd m_shapes;
-  Eigen::MatrixXd m_projectedPMM1;
-  Eigen::MatrixXd m_projectedPMM2;
-  Eigen::VectorXd m_projectedMean1;
-  Eigen::VectorXd m_projectedMean2;
-  std::vector<double> m_fishersProjection;
-  std::vector<double> m_percentVarByMode;
-  Eigen::VectorXd m_fishersLD;
-  Eigen::MatrixXd m_principals;
+  Eigen::MatrixXd eigenvectors_;
+  std::vector<double> eigenvalues_;
+  Eigen::VectorXd mean_;
+  Eigen::VectorXd mean1_;
+  Eigen::VectorXd mean2_;
+  Eigen::MatrixXd points_minus_mean_;
+  Eigen::MatrixXd shapes_;
 
-  Eigen::VectorXd m_groupdiff;
-  Eigen::VectorXd m_groupdiffnorm;
+  std::vector<double> percent_variance_by_mode_;
+  Eigen::MatrixXd principals_;
+
+  Eigen::VectorXd groupdiff_;
 
   // Variables for MLCA
-  unsigned int m_dps;                        // Number of objects in the multi-object shape structure
-  unsigned int m_N;                          // Number of Subjects
-  std::vector<int> m_num_particles_array;    // Number of Particles for each object in the multi-object shape structure
-  Eigen::MatrixXd m_Eigenvectors_rel_pose;   // Eigenvectors defined for relative pose subspace
-  Eigen::MatrixXd m_Eigenvectors_shape_dev;  // Eigenvectors defined for morphological subspace
-  std::vector<double> m_Eigenvalues_rel_pose;   // Eigenvalues defined in relative pose subspace
-  std::vector<double> m_Eigenvalues_shape_dev;  // Eigenvectors defined in morphological subspace
-  Eigen::MatrixXd m_pointsMinusMean_for_rel_pose;
-  Eigen::MatrixXd m_pointsMinusMean_for_shape_dev;
-  Eigen::VectorXd m_mean_shape_dev;
-  Eigen::VectorXd m_mean_rel_pose;
-  Eigen::MatrixXd m_super_matrix;  // Shape Matrix reshaped, used to compute MLCA statistics
+  std::vector<int> num_particles_array_;     // Number of Particles for each object in the multi-object shape structure
+  Eigen::MatrixXd eigenvectors_rel_pose_;   // Eigenvectors defined for relative pose subspace
+  Eigen::MatrixXd eigenvectors_shape_dev_;  // Eigenvectors defined for morphological subspace
+  std::vector<double> eigenvalues_rel_pose_;   // Eigenvalues defined in relative pose subspace
+  std::vector<double> eigenvalues_shape_dev_;  // Eigenvectors defined in morphological subspace
+  Eigen::MatrixXd points_minus_mean_rel_pose_;
+  Eigen::MatrixXd points_minus_mean_shape_dev_;
+  Eigen::VectorXd mean_shape_dev_;
+  Eigen::VectorXd mean_rel_pose_;
+  Eigen::MatrixXd super_matrix_;  // Shape Matrix reshaped, used to compute MLCA statistics
 
-  // used to keep the points' files that needs to be reloaded when new updates come in.
-  std::vector<std::string> m_pointsfiles;
 
-  Eigen::MatrixXd m_Matrix;
+  Eigen::MatrixXd matrix_;
 
-  Eigen::MatrixXd m_group_1_matrix;
-  Eigen::MatrixXd m_group_2_matrix;
+  Eigen::MatrixXd group1_matrix_;
+  Eigen::MatrixXd group2_matrix_;
 
-  // 0 = bad, 1 = good
-  std::vector<bool> m_goodPoints;
   std::vector<Eigen::VectorXd> points_;
+
+  int values_per_particle_ = 3;  // e.g. 3 for x/y/z, 4 for x/y/z/scalar
 };
 
 }  // namespace shapeworks
@@ -194,4 +166,4 @@ class ParticleShapeStatistics {
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:31 +0000

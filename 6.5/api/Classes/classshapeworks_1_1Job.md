@@ -11,7 +11,7 @@ title: shapeworks::Job
 
 Inherits from QObject
 
-Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md), [shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md), [shapeworks::NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md), [shapeworks::ParticleAreaJob](../Classes/classshapeworks_1_1ParticleAreaJob.md), [shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md), [shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md), [shapeworks::StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)
+Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md), [shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md), [shapeworks::NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md), [shapeworks::ParticleAreaJob](../Classes/classshapeworks_1_1ParticleAreaJob.md), [shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md), [shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md), [shapeworks::ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md), [shapeworks::StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)
 
 ## Public Signals
 
@@ -36,6 +36,8 @@ Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.m
 | bool | **[is_complete](../Classes/classshapeworks_1_1Job.md#function-is-complete)**() const<br>is the job complete?  |
 | void | **[abort](../Classes/classshapeworks_1_1Job.md#function-abort)**()<br>abort the job  |
 | bool | **[is_aborted](../Classes/classshapeworks_1_1Job.md#function-is-aborted)**() const<br>was the job aborted?  |
+| void | **[set_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-set-quiet-mode)**(bool quiet)<br>set to quiet mode (no progress messages)  |
+| bool | **[get_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-get-quiet-mode)**()<br>get quiet mode  |
 
 ## Public Signals Documentation
 
@@ -79,7 +81,7 @@ virtual void run() =0
 
 run the job 
 
-**Reimplemented by**: [shapeworks::ShapeEvaluationJob::run](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-run), [shapeworks::DeepSSMJob::run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run), [shapeworks::GroupPvalueJob::run](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-run), [shapeworks::NetworkAnalysisJob::run](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-run), [shapeworks::ParticleAreaJob::run](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-run), [shapeworks::ParticleNormalEvaluationJob::run](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-run), [shapeworks::StatsGroupLDAJob::run](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-run)
+**Reimplemented by**: [shapeworks::ShapeEvaluationJob::run](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-run), [shapeworks::DeepSSMJob::run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run), [shapeworks::GroupPvalueJob::run](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-run), [shapeworks::NetworkAnalysisJob::run](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-run), [shapeworks::ParticleAreaJob::run](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-run), [shapeworks::ParticleNormalEvaluationJob::run](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-run), [shapeworks::ShapeScalarJob::run](../Classes/classshapeworks_1_1ShapeScalarJob.md#function-run), [shapeworks::StatsGroupLDAJob::run](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-run)
 
 
 ### function name
@@ -90,7 +92,7 @@ virtual QString name() =0
 
 get the name of the job 
 
-**Reimplemented by**: [shapeworks::ShapeEvaluationJob::name](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-name), [shapeworks::DeepSSMJob::name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name), [shapeworks::GroupPvalueJob::name](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-name), [shapeworks::NetworkAnalysisJob::name](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-name), [shapeworks::ParticleAreaJob::name](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-name), [shapeworks::ParticleNormalEvaluationJob::name](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-name), [shapeworks::StatsGroupLDAJob::name](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-name)
+**Reimplemented by**: [shapeworks::ShapeEvaluationJob::name](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-name), [shapeworks::DeepSSMJob::name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name), [shapeworks::GroupPvalueJob::name](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-name), [shapeworks::NetworkAnalysisJob::name](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-name), [shapeworks::ParticleAreaJob::name](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-name), [shapeworks::ParticleNormalEvaluationJob::name](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-name), [shapeworks::ShapeScalarJob::name](../Classes/classshapeworks_1_1ShapeScalarJob.md#function-name), [shapeworks::StatsGroupLDAJob::name](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-name)
 
 
 ### function get_completion_message
@@ -159,6 +161,24 @@ inline bool is_aborted() const
 
 was the job aborted? 
 
+### function set_quiet_mode
+
+```cpp
+inline void set_quiet_mode(
+    bool quiet
+)
+```
+
+set to quiet mode (no progress messages) 
+
+### function get_quiet_mode
+
+```cpp
+inline bool get_quiet_mode()
+```
+
+get quiet mode 
+
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:05 +0000
+Updated on 2023-11-28 at 04:34:28 +0000

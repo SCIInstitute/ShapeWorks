@@ -55,6 +55,8 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | bool | **[is_complete](../Classes/classshapeworks_1_1Job.md#function-is-complete)**() const<br>is the job complete?  |
 | void | **[abort](../Classes/classshapeworks_1_1Job.md#function-abort)**()<br>abort the job  |
 | bool | **[is_aborted](../Classes/classshapeworks_1_1Job.md#function-is-aborted)**() const<br>was the job aborted?  |
+| void | **[set_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-set-quiet-mode)**(bool quiet)<br>set to quiet mode (no progress messages)  |
+| bool | **[get_quiet_mode](../Classes/classshapeworks_1_1Job.md#function-get-quiet-mode)**()<br>get quiet mode  |
 
 
 ## Public Types Documentation
@@ -128,4 +130,4 @@ get the name of the job
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:06 +0000
+Updated on 2023-11-28 at 04:34:29 +0000

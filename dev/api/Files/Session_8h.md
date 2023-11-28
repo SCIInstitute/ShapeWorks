@@ -47,6 +47,8 @@ title: Studio/Data/Session.h
 
 namespace shapeworks {
 
+class PythonWorker;
+
 class CompareSettings {
  public:
   bool compare_enabled_ = false;
@@ -251,6 +253,12 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) { glyph_lut_ = lut; }
   vtkSmartPointer<vtkLookupTable> get_glyph_lut() { return glyph_lut_; }
 
+  void set_py_worker(QSharedPointer<PythonWorker> worker) { py_worker_ = worker; }
+  QSharedPointer<PythonWorker> get_py_worker() { return py_worker_; }
+
+  Eigen::MatrixXd get_all_particles();
+  Eigen::MatrixXd get_all_scalars(std::string target_feature);
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -331,6 +339,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   CompareSettings compare_settings_;
 
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
+
+  QSharedPointer<PythonWorker> py_worker_;
 };
 
 }  // namespace shapeworks
@@ -339,4 +349,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:31 +0000

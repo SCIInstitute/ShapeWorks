@@ -89,7 +89,7 @@ class StudioMesh {
 
   void apply_scalars(MeshHandle mesh);
 
-  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
+  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);
 
   double get_largest_dimension_size();
 
@@ -115,4 +115,4 @@ class StudioMesh {
 
 -------------------------------
 
-Updated on 2023-11-18 at 00:10:07 +0000
+Updated on 2023-11-28 at 04:34:30 +0000
