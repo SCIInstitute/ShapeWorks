@@ -531,7 +531,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
 
     optimize->SetFixedDomains(fixed_domains);
-    optimize->SetInitialPoints(get_initial_points());
+    if (!get_use_landmarks()) {  // can't use both initial points and landmarks
+      SW_DEBUG("Setting Initial Points");
+      optimize->SetInitialPoints(get_initial_points());
+    }
   }
 
   for (auto s : subjects) {
@@ -555,6 +558,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
     }
     if (!point_files.empty()) {
+      SW_DEBUG("Setting Initial Points as landmarks");
       optimize->SetPointFiles(point_files);
     }
   }

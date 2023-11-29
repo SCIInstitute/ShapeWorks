@@ -1411,19 +1411,23 @@ void AnalysisTool::update_difference_particles() {
   }
 
   auto shapes = session_->get_non_excluded_shapes();
-  if (shapes.size() < 2) {
-    SW_ERROR("WTF");
+  if (shapes.size() < 1) {
+    SW_ERROR("No shapes available for difference computation");
     return;
   }
 
   // start with a copy from the first shape so that the sizes of domains are already filled out
   Particles target = shapes[0]->get_particles();
-  auto all_particles = target.get_combined_global_particles();
-
+  Eigen::VectorXd all_particles = target.get_combined_global_particles();
   Eigen::VectorXd mean = get_mean_shape_particles();
 
   if (get_group_difference_mode()) {
     mean = stats_.get_group2_mean();
+  }
+
+  if (all_particles.size() != mean.size()) {
+    SW_ERROR("Inconsistent number of particles");
+    return;
   }
 
   for (unsigned int i = 0; i < mean.size(); i++) {
@@ -1531,11 +1535,13 @@ void AnalysisTool::initialize_mesh_warper() {
     compute_stats();
     int median = stats_.compute_median_shape(-32);  //-32 = both groups
 
-    if (median < 0 || median >= session_->get_num_shapes()) {
+    auto shapes = session_->get_non_excluded_shapes();
+
+    if (median < 0 || median >= shapes.size()) {
       SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
-    std::shared_ptr<Shape> median_shape = session_->get_non_excluded_shapes()[median];
+    std::shared_ptr<Shape> median_shape = shapes[median];
 
     auto mesh_group = median_shape->get_groomed_meshes(true);
 

@@ -909,11 +909,10 @@ double Session::get_auto_glyph_size() { return auto_glyph_size_; }
 
 //---------------------------------------------------------------------------
 void Session::clear_particles() {
-  // std::vector<Particles> particles(get_num_shapes());
-  // update_particles(particles);
-
   for (auto shape : shapes_) {
-    shape->set_particles(Particles());
+    if (!shape->is_fixed()) {
+      shape->set_particles(Particles());
+    }
   }
 }
 
