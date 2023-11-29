@@ -105,7 +105,7 @@ class Logging {
   void show_progress(double value, const std::string& message);
 
   //! Log a debug message, use SW_DEBUG macro
-  void log_debug(const std::string& message, const int line, const char* file) const;
+  void log_debug(const std::string& message, const int line, const char* file, const char *function) const;
 
   //! Log a warning message, use SW_WARN macro
   void log_warning(const std::string& message, const int line, const char* file) const;
@@ -168,7 +168,7 @@ class Logging {
 
 //! Log debug macro
 #define SW_DEBUG(message, ...) \
-  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)
 
 //! Variable trace macro (e.g. output variable name = <variable value>)
 #define SW_TRACE(x) SW_DEBUG(#x " = {}", x);

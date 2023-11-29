@@ -2,47 +2,51 @@
     "data": [
         {
             "name": "sphere10_DT",
+            "fixed": "true",
+            "notes": "",
             "shape_1": "../shared/spheres/sphere10_DT.nrrd",
             "landmarks_file_1": "optimize_particles/sphere10_DT_local.particles",
             "groomed_1": "../shared/spheres/sphere10_DT.nrrd",
             "local_particles_1": "optimize_particles/sphere10_DT_local.particles",
             "world_particles_1": "optimize_particles/sphere10_DT_world.particles",
             "alignment_1": "",
-            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
-            "fixed": "yes"
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
         },
         {
             "name": "sphere20_DT",
+            "fixed": "true",
+            "notes": "",
             "shape_1": "../shared/spheres/sphere20_DT.nrrd",
             "landmarks_file_1": "optimize_particles/sphere20_DT_local.particles",
             "groomed_1": "../shared/spheres/sphere20_DT.nrrd",
             "local_particles_1": "optimize_particles/sphere20_DT_local.particles",
             "world_particles_1": "optimize_particles/sphere20_DT_world.particles",
             "alignment_1": "",
-            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
-            "fixed": "yes"
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
         },
         {
             "name": "sphere30_DT",
+            "fixed": "true",
+            "notes": "",
             "shape_1": "../shared/spheres/sphere30_DT.nrrd",
             "landmarks_file_1": "optimize_particles/sphere30_DT_local.particles",
             "groomed_1": "../shared/spheres/sphere30_DT.nrrd",
             "local_particles_1": "optimize_particles/sphere30_DT_local.particles",
             "world_particles_1": "optimize_particles/sphere30_DT_world.particles",
             "alignment_1": "",
-            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
-            "fixed": "yes"
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
         },
         {
             "name": "sphere40_DT",
+            "fixed": "false",
+            "notes": "",
             "shape_1": "../shared/spheres/sphere40_DT.nrrd",
             "landmarks_file_1": "optimize_particles/sphere40_DT_local.particles",
             "groomed_1": "../shared/spheres/sphere40_DT.nrrd",
             "local_particles_1": "optimize_particles/sphere40_DT_local.particles",
             "world_particles_1": "optimize_particles/sphere40_DT_world.particles",
             "alignment_1": "",
-            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
-            "fixed": "no"
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
         }
     ],
     "groom": {
@@ -74,7 +78,11 @@
         "use_geodesic_distance": "false",
         "use_landmarks": "true",
         "use_normals": "0",
-        "verbosity": "0"
+        "verbosity": "0",
+        "geodesic_remesh_percent": "100.000000",
+        "use_geodesics_to_landmarks": "false",
+        "geodesics_to_landmarks_weight": "1.000000",
+        "use_disentangled_ssm": "false"
     },
     "studio": {
         "analysis_mode": "mean",
