@@ -163,7 +163,7 @@ bool Session::save_project(QString filename) {
         auto local_files = shapes_[i]->get_subject()->get_local_particle_filenames();
         auto world_files = shapes_[i]->get_subject()->get_world_particle_filenames();
         auto particles = shapes_[i]->get_particles();
-        if (particles.get_number_of_domains() == local_files.size()) { // un-fixed domains may not have particles
+        if (particles.get_number_of_domains() == local_files.size()) {  // un-fixed domains may not have particles
           for (int i = 0; i < local_files.size(); i++) {
             Particles::save_particles_file(local_files[i], particles.get_local_particles(i));
             Particles::save_particles_file(world_files[i], particles.get_raw_world_particles(i));
@@ -579,10 +579,14 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 
 //---------------------------------------------------------------------------
 bool Session::update_particles(std::vector<Particles> particles) {
+  int s = 0;
   for (int i = 0; i < particles.size(); i++) {
     std::shared_ptr<Shape> shape;
-    if (i < shapes_.size()) {
-      shape = shapes_[i];
+    while (s < shapes_.size() && shapes_[s]->is_excluded()) {
+      s++;
+    }
+    if (s < shapes_.size()) {
+      shape = shapes_[s];
     } else {
       shape = std::shared_ptr<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
@@ -594,6 +598,7 @@ bool Session::update_particles(std::vector<Particles> particles) {
     if (!shape->is_fixed()) {  // only update if not fixed
       shape->set_particles(particles[i]);
     }
+    s++;
   }
 
   unsaved_particle_files_ = true;
@@ -606,8 +611,13 @@ int Session::get_num_particles() {
   if (shapes_.empty()) {
     return 0;
   }
-  auto particles = shapes_[0]->get_particles();
-  return particles.get_combined_local_particles().size() / 3;
+  for (auto shape : shapes_) {
+    auto particles = shape->get_particles();
+    if (!shape->is_excluded() && particles.get_combined_local_particles().size() > 0) {
+      return particles.get_combined_local_particles().size() / 3;
+    }
+  }
+  return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -685,6 +695,17 @@ bool Session::get_groomed_present() { return project_->get_groomed_present(); }
 ShapeList Session::get_shapes() { return shapes_; }
 
 //---------------------------------------------------------------------------
+ShapeList Session::get_non_excluded_shapes() {
+  ShapeList non_excluded_shapes;
+  for (auto shape : shapes_) {
+    if (!shape->is_excluded()) {
+      non_excluded_shapes.push_back(shape);
+    }
+  }
+  return non_excluded_shapes;
+}
+
+//---------------------------------------------------------------------------
 void Session::remove_shapes(QList<int> list) {
   std::sort(list.begin(), list.end(), std::greater<>());
   Q_FOREACH (int i, list) {
@@ -711,12 +732,13 @@ bool Session::particles_present() {
     return false;
   }
 
-  if (shapes_.size() > 0) {
-    auto shape = shapes_[0];
-    return shape->get_global_correspondence_points().size() > 0;
+  for (auto shape : shapes_) {
+    if (shape->get_global_correspondence_points().size()) {
+      return true;
+    }
   }
 
-  return true;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -887,8 +909,12 @@ double Session::get_auto_glyph_size() { return auto_glyph_size_; }
 
 //---------------------------------------------------------------------------
 void Session::clear_particles() {
-  std::vector<Particles> particles(get_num_shapes());
-  update_particles(particles);
+  // std::vector<Particles> particles(get_num_shapes());
+  // update_particles(particles);
+
+  for (auto shape : shapes_) {
+    shape->set_particles(Particles());
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -1162,27 +1188,6 @@ void Session::set_compare_settings(CompareSettings settings) {
 
 //---------------------------------------------------------------------------
 CompareSettings Session::get_compare_settings() { return compare_settings_; }
-
-//---------------------------------------------------------------------------
-void Session::show_subject_menu(std::vector<int> subject_ids, QPoint pos)
-{
-  if (subject_ids.empty()) {
-    return;
-  }
-
-  QMenu menu(parent_);
-
-  /*
-  if (subject_ids.size() == 1) {
-    menu.addAction("Export Mesh");
-    connect(menu, &QMenu::triggered, , [=](QAction* action) { action_export_current_mesh_triggered(subject_ids[0]); });
-  } else {
-  }
-
-*/
-  menu.popup(QCursor::pos());
-
-}
 
 //---------------------------------------------------------------------------
 void Session::trigger_repaint() { Q_EMIT repaint(); }

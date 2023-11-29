@@ -902,12 +902,50 @@ void ShapeWorksStudioApp::handle_compare_settings_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_lightbox_right_click(int index) {
+  auto shapes = visualizer_->get_lightbox()->get_shapes();
+  if (index >= shapes.size()) {
+    return;
+  }
+  auto shape = shapes[index];
+
   QMenu* menu = new QMenu(nullptr);
   menu->setAttribute(Qt::WA_DeleteOnClose);
-  menu->addAction("Export Mesh");
-  menu->popup(QCursor::pos());
+  QAction* export_mesh_action = menu->addAction("Export Mesh");
+  QAction* mark_excluded_action = nullptr;
+  QAction* unmark_excluded_action = nullptr;
+  QAction* mark_fixed_action = nullptr;
+  QAction* unmark_fixed_action = nullptr;
+  if (shape->is_subject() && !shape->is_excluded()) {
+    mark_excluded_action = menu->addAction("Mark as excluded");
+  }
+  if (shape->is_subject() && shape->is_excluded()) {
+    unmark_excluded_action = menu->addAction("Unmark as excluded");
+  }
+  if (shape->is_subject() && !shape->is_fixed()) {
+    mark_fixed_action = menu->addAction("Mark as fixed");
+  }
+  if (shape->is_subject() && shape->is_fixed()) {
+    unmark_fixed_action = menu->addAction("Unmark as fixed");
+  }
 
-  connect(menu, &QMenu::triggered, menu, [=](QAction* action) { action_export_current_mesh_triggered(index); });
+  menu->popup(QCursor::pos());
+  connect(menu, &QMenu::triggered, menu, [=](QAction* action) {
+    if (action == export_mesh_action) {
+      action_export_current_mesh_triggered(index);
+    } else if (action == mark_excluded_action) {
+      shape->get_subject()->set_excluded(true);
+    } else if (action == unmark_excluded_action) {
+      shape->get_subject()->set_excluded(false);
+    } else if (action == mark_fixed_action) {
+      shape->get_subject()->set_fixed(true);
+    } else if (action == unmark_fixed_action) {
+      shape->get_subject()->set_fixed(false);
+    }
+    shape->update_annotations();
+    session_->get_project()->update_subjects();
+    session_->trigger_reinsert_shapes();
+    data_tool_->update_table();
+  });
 }
 
 //---------------------------------------------------------------------------

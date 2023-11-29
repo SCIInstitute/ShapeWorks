@@ -538,6 +538,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     if (abort_load_) {
       return false;
     }
+    if (s->is_excluded()) {
+      continue;
+    }
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");
@@ -619,6 +622,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     if (abort_load_) {
       return false;
     }
+
+    if (s->is_excluded()) {
+      continue;
+    }
+
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");

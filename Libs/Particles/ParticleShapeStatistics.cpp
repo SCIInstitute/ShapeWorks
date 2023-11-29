@@ -139,7 +139,6 @@ int ParticleShapeStatistics::import_points(std::vector<Eigen::VectorXd> points, 
   for (unsigned int i = 0; i < num_samples_; i++) {
     for (unsigned int k = 0; k < domains_per_shape_; k++) {
       unsigned int q = points[i].size();
-      SW_LOG("q = {}, Vdimension = {}", q, values_per_particle_);
       for (unsigned int j = 0; j < q; j++) {
         points_minus_mean_(q * k * values_per_particle_ + j, i) = points[i][j];
 

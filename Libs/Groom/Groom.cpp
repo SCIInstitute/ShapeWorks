@@ -52,6 +52,12 @@ bool Groom::run() {
           continue;
         }
 
+        if (subjects[i]->is_excluded()) {
+          // clear groomed filenames
+          subjects[i]->set_groomed_filenames(std::vector<std::string>());
+          return;
+        }
+
         bool is_image = project_->get_original_domain_types()[domain] == DomainType::Image;
         bool is_mesh = project_->get_original_domain_types()[domain] == DomainType::Mesh;
         bool is_contour = project_->get_original_domain_types()[domain] == DomainType::Contour;
@@ -511,9 +517,11 @@ bool Groom::run_alignment() {
         vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
         mesh.applyTransform(transform);
 
+        // if fixed subjects are present, only add the fixed subjects
         if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
-          // if fixed subjects are present, only add the fixed subjects
-          reference_meshes.push_back(mesh);
+          if (!subjects[i]->is_excluded()) {
+            reference_meshes.push_back(mesh);
+          }
         }
         meshes.push_back(mesh);
       }
@@ -550,8 +558,11 @@ bool Groom::run_alignment() {
       auto list = subjects[i]->get_groomed_transforms()[0];
       vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
       mesh.applyTransform(transform);
+      // if fixed subjects are present, only add the fixed subjects
       if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
-        meshes.push_back(mesh);
+        if (!subjects[i]->is_excluded()) {
+          meshes.push_back(mesh);
+        }
       }
     }
 
@@ -590,6 +601,9 @@ void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int d
   auto subjects = project_->get_subjects();
 
   for (size_t i = 0; i < subjects.size(); i++) {
+    if (subjects[i]->is_excluded()) {
+      continue;
+    }
     auto subject = subjects[i];
 
     int base_domain = domain;

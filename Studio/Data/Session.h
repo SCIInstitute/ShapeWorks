@@ -108,8 +108,11 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   /// remove shapes
   void remove_shapes(QList<int> list);
 
-  /// return all shapes
+  //! return all shapes
   ShapeList get_shapes();
+
+  //! return all non-excluded shapes
+  ShapeList get_non_excluded_shapes();
 
   void calculate_reconstructed_samples();
 
@@ -233,9 +236,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void set_compare_settings(CompareSettings settings);
   CompareSettings get_compare_settings();
-
-  //! Display subject menu at a position for a given set of selected rows
-  void show_subject_menu(std::vector<int> subject_ids, QPoint pos);
 
   void trigger_repaint();
 

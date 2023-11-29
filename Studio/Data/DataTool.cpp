@@ -671,7 +671,7 @@ void DataTool::table_data_edited() {
     auto new_notes = ui_->table->item(row, 1)->text().toStdString();
     if (old_name != new_name) {
       shape->get_subject()->set_display_name(new_name);
-      shape->update_name();
+      shape->update_annotations();
       session_->trigger_annotations_changed();
       change = true;
     }
