@@ -1410,8 +1410,14 @@ void AnalysisTool::update_difference_particles() {
     return;
   }
 
+  auto shapes = session_->get_non_excluded_shapes();
+  if (shapes.size() < 2) {
+    SW_ERROR("WTF");
+    return;
+  }
+
   // start with a copy from the first shape so that the sizes of domains are already filled out
-  Particles target = session_->get_non_excluded_shapes()[0]->get_particles();
+  Particles target = shapes[0]->get_particles();
   auto all_particles = target.get_combined_global_particles();
 
   Eigen::VectorXd mean = get_mean_shape_particles();

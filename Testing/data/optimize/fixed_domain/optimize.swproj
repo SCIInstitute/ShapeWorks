@@ -338,6 +338,230 @@
             "visible": "true",
             "color": "#ff5e7a",
             "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "33",
+            "visible": "true",
+            "color": "#ffffa5",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "34",
+            "visible": "true",
+            "color": "#ff00ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "35",
+            "visible": "true",
+            "color": "#c27600",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "36",
+            "visible": "true",
+            "color": "#9f8fff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "37",
+            "visible": "true",
+            "color": "#ffaf4e",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "38",
+            "visible": "true",
+            "color": "#74ff7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "39",
+            "visible": "true",
+            "color": "#8fd6ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "40",
+            "visible": "true",
+            "color": "#ff0000",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "41",
+            "visible": "true",
+            "color": "#ffe900",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "42",
+            "visible": "true",
+            "color": "#6c00d4",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "43",
+            "visible": "true",
+            "color": "#0000ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "44",
+            "visible": "true",
+            "color": "#ff5e7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "45",
+            "visible": "true",
+            "color": "#ffffa5",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "46",
+            "visible": "true",
+            "color": "#ff00ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "47",
+            "visible": "true",
+            "color": "#c27600",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "48",
+            "visible": "true",
+            "color": "#9f8fff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "49",
+            "visible": "true",
+            "color": "#ffaf4e",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "50",
+            "visible": "true",
+            "color": "#74ff7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "51",
+            "visible": "true",
+            "color": "#8fd6ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "52",
+            "visible": "true",
+            "color": "#ff0000",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "53",
+            "visible": "true",
+            "color": "#ffe900",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "54",
+            "visible": "true",
+            "color": "#6c00d4",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "55",
+            "visible": "true",
+            "color": "#0000ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "56",
+            "visible": "true",
+            "color": "#ff5e7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "57",
+            "visible": "true",
+            "color": "#ffffa5",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "58",
+            "visible": "true",
+            "color": "#ff00ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "59",
+            "visible": "true",
+            "color": "#c27600",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "60",
+            "visible": "true",
+            "color": "#9f8fff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "61",
+            "visible": "true",
+            "color": "#ffaf4e",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "62",
+            "visible": "true",
+            "color": "#74ff7a",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "63",
+            "visible": "true",
+            "color": "#8fd6ff",
+            "comment": ""
+        },
+        {
+            "domain": "1",
+            "name": "64",
+            "visible": "true",
+            "color": "#ff0000",
+            "comment": ""
         }
     ]
 }
