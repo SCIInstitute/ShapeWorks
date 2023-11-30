@@ -102,6 +102,11 @@ class Subject {
   //! Set if this subject is fixed or not
   void set_fixed(bool fixed);
 
+  //! Get if this subject is excluded or not
+  bool is_excluded();
+  //! Set if this subject is excluded or not
+  void set_excluded(bool excluded);
+
   //! Get the notes
   std::string get_notes();
   //! Set the notes
@@ -112,6 +117,7 @@ class Subject {
 
   std::string display_name_;
   bool fixed_ = false;
+  bool excluded_ = false;
   StringList original_filenames_;
   StringList groomed_filenames_;
   StringList local_particle_filenames_;

@@ -10,11 +10,17 @@ namespace spd = spdlog;
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
-static std::string create_header(const int line, const char* filename) {
+static std::string create_header(const int line, const char* filename, const char* function = "") {
   const char* name = (strrchr(filename, '/') ? strrchr(filename, '/') + 1 : filename);
   const char* name2 = (strrchr(name, '\\') ? strrchr(name, '\\') + 1 : name);
-  std::string header = "[" + std::string(name2) + "|" + std::to_string(line) + "]";
-  return header;
+  const char* function_name = (strrchr(function, ':') ? strrchr(function, ':') + 1 : function);
+  if (!function) {
+    std::string header = "[" + std::string(name2) + "|" + std::to_string(line) + "]";
+    return header;
+  } else {
+    std::string header = "[" + std::string(name2) + "|" + std::string(function_name) + "|" + std::to_string(line) + "]";
+    return header;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -98,8 +104,8 @@ void Logging::show_status(const std::string& message, const int line, const char
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_debug(const std::string& message, const int line, const char* file) const {
-  std::string str = create_header(line, file) + " " + message;
+void Logging::log_debug(const std::string& message, const int line, const char* file, const char* function) const {
+  std::string str = create_header(line, file, function) + " " + message;
   spd::debug(str);
   if (log_open_) {
     spd::get("file")->debug(str);
@@ -155,6 +161,8 @@ void Logging::set_debug_callback(const std::function<void(std::string)>& callbac
 void Logging::set_status_callback(const std::function<void(std::string)>& callback) { status_callback_ = callback; }
 
 //-----------------------------------------------------------------------------
-void Logging::set_progress_callback(const std::function<void(double, std::string)>& callback) { progress_callback_ = callback; }
+void Logging::set_progress_callback(const std::function<void(double, std::string)>& callback) {
+  progress_callback_ = callback;
+}
 
 }  // namespace shapeworks

@@ -137,7 +137,7 @@ class ImageDomain : public ParticleRegionDomain {
     } else {
       std::ostringstream message;
       message << "Domain " << m_DomainID << ": " << m_DomainName << " : Distance transform queried for a Point, " << p
-              << ", outside the given image domain. Consider increasing the narrow band";
+              << ", outside the given image domain. Consider increasing the padding in grooming or the narrow band optimization parameter";
       throw std::runtime_error(message.str());
     }
   }

@@ -1367,7 +1367,7 @@ QWidget#particles_panel {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QGroupBox" name="groupBox_2">
+                    <widget class="QGroupBox" name="shape_scalar_groupbox">
                      <property name="title">
                       <string>Shape / Scalar</string>
                      </property>

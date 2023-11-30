@@ -152,21 +152,33 @@ void Project::update_subjects() {
     return;
   }
 
-  auto subject = subjects_[0];
-  originals_present_ = !subject->get_original_filenames().empty();
-  groomed_present_ = !subject->get_groomed_filenames().empty();
-  particles_present_ = !subject->get_world_particle_filenames().empty();
-  images_present_ = !subject->get_feature_filenames().empty();
+  originals_present_ = false;
+  groomed_present_ = false;
+  particles_present_ = false;
+  images_present_ = false;
+
+  auto groomed_subject = subjects_[0];
+  for (auto subject : subjects_) {
+    originals_present_ = originals_present_ || !subject->get_original_filenames().empty();
+    groomed_present_ = groomed_present_ || !subject->get_groomed_filenames().empty();
+    if (subject->get_groomed_filenames().size() > 0) {
+      groomed_subject = subject;
+    }
+    particles_present_ = particles_present_ || !subject->get_world_particle_filenames().empty();
+    images_present_ = images_present_ || !subject->get_feature_filenames().empty();
+  }
 
   original_domain_types_.clear();
-  while (original_domain_types_.size() < subject->get_original_filenames().size()) {
+  while (original_domain_types_.size() < subjects_[0]->get_original_filenames().size()) {
     int index = original_domain_types_.size();
-    original_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_original_filenames()[index]));
+    original_domain_types_.push_back(
+        ProjectUtils::determine_domain_type(subjects_[0]->get_original_filenames()[index]));
   }
   groomed_domain_types_.clear();
-  while (groomed_domain_types_.size() < subject->get_groomed_filenames().size()) {
+  while (groomed_domain_types_.size() < groomed_subject->get_groomed_filenames().size()) {
     int index = groomed_domain_types_.size();
-    groomed_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_groomed_filenames()[index]));
+    groomed_domain_types_.push_back(
+        ProjectUtils::determine_domain_type(groomed_subject->get_groomed_filenames()[index]));
   }
   while (domain_names_.size() < original_domain_types_.size()) {
     domain_names_.push_back(std::to_string(domain_names_.size() + 1));
@@ -316,13 +328,12 @@ bool Project::get_images_present() { return images_present_; }
 
 //---------------------------------------------------------------------------
 bool Project::get_fixed_subjects_present() {
-  // return if any subjects are fixed
-  for (auto& subject : subjects_) {
-    if (subject->is_fixed()) {
-      return true;
-    }
-  }
-  return false;
+  return std::any_of(subjects_.begin(), subjects_.end(), [](const auto& subject) { return subject->is_fixed(); });
+}
+
+//---------------------------------------------------------------------------
+bool Project::get_excluded_subjects_present() {
+  return std::any_of(subjects_.begin(), subjects_.end(), [](const auto& subject) { return subject->is_excluded(); });
 }
 
 //---------------------------------------------------------------------------

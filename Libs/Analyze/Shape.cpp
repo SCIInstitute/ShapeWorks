@@ -71,15 +71,7 @@ void Shape::set_subject(std::shared_ptr<Subject> subject) {
   groomed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
   reconstructed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
 
-  if (!subject_->get_original_filenames().empty()) {
-    /// TODO: Show multiple lines of filenames for multiple domains?
-    std::string filename = subject_->get_original_filenames()[0];
-    corner_annotations_[0] = StringUtils::getFilename(filename);
-  }
-
-  if (subject->get_display_name() != "") {
-    corner_annotations_[0] = subject->get_display_name();
-  }
+  update_annotations();
 }
 
 //---------------------------------------------------------------------------
@@ -87,6 +79,12 @@ bool Shape::is_subject() { return subject_ != nullptr; }
 
 //---------------------------------------------------------------------------
 std::shared_ptr<Subject> Shape::get_subject() { return subject_; }
+
+//---------------------------------------------------------------------------
+bool Shape::is_fixed() { return is_subject() && subject_->is_fixed(); }
+
+//---------------------------------------------------------------------------
+bool Shape::is_excluded() { return is_subject() && subject_->is_excluded(); }
 
 //---------------------------------------------------------------------------
 void Shape::import_original_file(const std::string& filename) {
@@ -320,10 +318,26 @@ int Shape::get_id() { return id_; }
 void Shape::set_id(int id) { id_ = id; }
 
 //---------------------------------------------------------------------------
-void Shape::update_name() {
+void Shape::update_annotations() {
+  if (!subject_->get_original_filenames().empty()) {
+    /// TODO: Show multiple lines of filenames for multiple domains?
+    std::string filename = subject_->get_original_filenames()[0];
+    corner_annotations_[0] = StringUtils::getFilename(filename);
+  }
+
   if (subject_->get_display_name() != "") {
     corner_annotations_[0] = subject_->get_display_name();
   }
+
+  std::vector<std::string> corner2_items;
+  if (subject_->is_fixed()) {
+    corner2_items.push_back("Fixed");
+  }
+  if (subject_->is_excluded()) {
+    corner2_items.push_back("Excluded");
+  }
+
+  corner_annotations_[2] = StringUtils::join(corner2_items, ", ");
 }
 
 //---------------------------------------------------------------------------

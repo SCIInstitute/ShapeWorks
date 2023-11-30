@@ -175,6 +175,8 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
+
+
 }
 
 //-----------------------------------------------------------------------------
@@ -636,9 +638,12 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
 
   renderer_->RemoveAllViewProps();
 
-  auto subject = shape->get_subject();
-  if (subject && subject->is_fixed()) {
+  if (shape->is_fixed()) {
     double color[4] = {0.0, 0.0, 1.0, 1.0};
+    StudioUtils::add_viewport_border(renderer_, color);
+  }
+  if (shape->is_excluded()) {
+    double color[4] = {0.5, 0.5, 0.5, 1.0};
     StudioUtils::add_viewport_border(renderer_, color);
   }
 

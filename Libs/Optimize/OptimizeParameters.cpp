@@ -297,8 +297,8 @@ std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_poi
     for (auto s : subjects) {
       if (s->is_fixed()) {
         count++;
-        // read the local points
-        auto filename = s->get_local_particle_filenames()[d];
+        // read the world points that are in the shared coordinate space
+        auto filename = s->get_world_particle_filenames()[d];
         auto particles = read_particles_as_vector(filename);
         if (domain_sum.size() == 0) {
           domain_sum = particles;
@@ -531,12 +531,18 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
 
     optimize->SetFixedDomains(fixed_domains);
-    optimize->SetInitialPoints(get_initial_points());
+    if (!get_use_landmarks()) {  // can't use both initial points and landmarks
+      SW_DEBUG("Setting Initial Points");
+      optimize->SetInitialPoints(get_initial_points());
+    }
   }
 
   for (auto s : subjects) {
     if (abort_load_) {
       return false;
+    }
+    if (s->is_excluded()) {
+      continue;
     }
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
@@ -552,6 +558,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
     }
     if (!point_files.empty()) {
+      SW_DEBUG("Setting Initial Points as landmarks");
       optimize->SetPointFiles(point_files);
     }
   }
@@ -619,6 +626,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     if (abort_load_) {
       return false;
     }
+
+    if (s->is_excluded()) {
+      continue;
+    }
+
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");
@@ -681,9 +693,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       } else {
         Image image(filename);
         if (s->is_fixed()) {
-          optimize->AddImage(nullptr);
+          optimize->AddImage(nullptr, filename);
         } else {
-          optimize->AddImage(image);
+          optimize->AddImage(image, filename);
         }
       }
 

@@ -902,12 +902,50 @@ void ShapeWorksStudioApp::handle_compare_settings_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_lightbox_right_click(int index) {
+  auto shapes = visualizer_->get_lightbox()->get_shapes();
+  if (index >= shapes.size()) {
+    return;
+  }
+  auto shape = shapes[index];
+
   QMenu* menu = new QMenu(nullptr);
   menu->setAttribute(Qt::WA_DeleteOnClose);
-  menu->addAction("Export Mesh");
-  menu->popup(QCursor::pos());
+  QAction* export_mesh_action = menu->addAction("Export Mesh");
+  QAction* mark_excluded_action = nullptr;
+  QAction* unmark_excluded_action = nullptr;
+  QAction* mark_fixed_action = nullptr;
+  QAction* unmark_fixed_action = nullptr;
+  if (shape->is_subject() && !shape->is_excluded()) {
+    mark_excluded_action = menu->addAction("Mark as excluded");
+  }
+  if (shape->is_subject() && shape->is_excluded()) {
+    unmark_excluded_action = menu->addAction("Unmark as excluded");
+  }
+  if (shape->is_subject() && !shape->is_fixed()) {
+    mark_fixed_action = menu->addAction("Mark as fixed");
+  }
+  if (shape->is_subject() && shape->is_fixed()) {
+    unmark_fixed_action = menu->addAction("Unmark as fixed");
+  }
 
-  connect(menu, &QMenu::triggered, menu, [=](QAction* action) { action_export_current_mesh_triggered(index); });
+  menu->popup(QCursor::pos());
+  connect(menu, &QMenu::triggered, menu, [=](QAction* action) {
+    if (action == export_mesh_action) {
+      action_export_current_mesh_triggered(index);
+    } else if (action == mark_excluded_action) {
+      shape->get_subject()->set_excluded(true);
+    } else if (action == unmark_excluded_action) {
+      shape->get_subject()->set_excluded(false);
+    } else if (action == mark_fixed_action) {
+      shape->get_subject()->set_fixed(true);
+    } else if (action == unmark_fixed_action) {
+      shape->get_subject()->set_fixed(false);
+    }
+    shape->update_annotations();
+    session_->get_project()->update_subjects();
+    session_->trigger_reinsert_shapes();
+    data_tool_->update_table();
+  });
 }
 
 //---------------------------------------------------------------------------
@@ -1219,10 +1257,8 @@ void ShapeWorksStudioApp::handle_reconstruction_complete() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_start() {
   // clear out old points (unless fixed subjects)
-  if (!session_->get_project()->get_fixed_subjects_present()) {
-    session_->clear_particles();
-    ui_->action_analysis_mode->setEnabled(false);
-  }
+  session_->clear_particles();
+  ui_->action_analysis_mode->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -1515,14 +1551,14 @@ void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index) {
   }
 
   if (single) {
-    write_mesh(visualizer_->get_current_mesh(index), filename);
-    handle_message("Wrote: " + filename.toStdString());
+    StudioUtils::write_mesh(visualizer_->get_current_mesh(index), filename);
+    SW_MESSAGE("Wrote: " + filename.toStdString());
   } else {
     auto meshes = visualizer_->get_current_meshes_transformed(index);
     auto domain_names = session_->get_project()->get_domain_names();
 
     if (meshes.empty()) {
-      handle_error("Error exporting mesh: not ready yet");
+      SW_ERROR("Error exporting mesh: not ready yet");
       return;
     }
 
@@ -1531,27 +1567,12 @@ void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index) {
     for (int domain = 0; domain < meshes.size(); domain++) {
       QString name = base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
 
-      if (!write_mesh(meshes[domain], name)) {
+      if (!StudioUtils::write_mesh(meshes[domain], name)) {
         return;
       }
-      handle_message("Wrote: " + name.toStdString());
+      SW_MESSAGE("Wrote: " + name.toStdString());
     }
   }
-}
-
-//---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename) {
-  if (!poly_data) {
-    handle_error("Error exporting mesh: not ready yet");
-  }
-  try {
-    Mesh mesh(poly_data);
-    mesh.write(filename.toStdString());
-  } catch (std::exception& e) {
-    handle_error(e.what());
-    return false;
-  }
-  return true;
 }
 
 //---------------------------------------------------------------------------

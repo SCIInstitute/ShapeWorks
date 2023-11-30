@@ -97,6 +97,12 @@ bool Subject::is_fixed() { return fixed_; }
 void Subject::set_fixed(bool fixed) { fixed_ = fixed; }
 
 //---------------------------------------------------------------------------
+bool Subject::is_excluded() { return excluded_; }
+
+//---------------------------------------------------------------------------
+void Subject::set_excluded(bool excluded) { excluded_ = excluded; }
+
+//---------------------------------------------------------------------------
 std::string Subject::get_notes() { return notes_; }
 
 //---------------------------------------------------------------------------

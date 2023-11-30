@@ -108,8 +108,11 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   /// remove shapes
   void remove_shapes(QList<int> list);
 
-  /// return all shapes
+  //! return all shapes
   ShapeList get_shapes();
+
+  //! return all non-excluded shapes
+  ShapeList get_non_excluded_shapes();
 
   void calculate_reconstructed_samples();
 

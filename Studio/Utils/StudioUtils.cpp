@@ -10,6 +10,9 @@
 
 #include <QMessageBox>
 
+#include <Mesh/Mesh.h>
+#include <Logging.h>
+
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -95,7 +98,7 @@ QString StudioUtils::get_platform_string() {
 }
 
 //---------------------------------------------------------------------------
-void StudioUtils::add_viewport_border(vtkRenderer* renderer, double* color) {
+void StudioUtils::add_viewport_border(vtkRenderer* renderer, double* color, double line_width) {
   // points start at upper right and proceed anti-clockwise
   vtkNew<vtkPoints> points;
   points->SetNumberOfPoints(4);
@@ -131,8 +134,23 @@ void StudioUtils::add_viewport_border(vtkRenderer* renderer, double* color) {
   vtkNew<vtkActor2D> actor;
   actor->SetMapper(mapper);
   actor->GetProperty()->SetColor(color);
-  actor->GetProperty()->SetLineWidth(6.0);
+  actor->GetProperty()->SetLineWidth(line_width);
 
   renderer->AddViewProp(actor);
+}
+
+//---------------------------------------------------------------------------
+bool StudioUtils::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename) {
+  if (!poly_data) {
+    SW_ERROR("Error exporting mesh: not ready yet");
+  }
+  try {
+    Mesh mesh(poly_data);
+    mesh.write(filename.toStdString());
+  } catch (std::exception& e) {
+    SW_ERROR(e.what());
+    return false;
+  }
+  return true;
 }
 }  // namespace shapeworks

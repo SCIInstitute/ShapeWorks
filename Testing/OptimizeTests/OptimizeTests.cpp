@@ -142,7 +142,7 @@ TEST(OptimizeTests, fixed_domain) {
   prep_temp("/optimize/fixed_domain", "fixed_domain");
 
   // make sure we clean out the output file of interest
-  std::remove("optimize_particles/sphere10_DT_world.particles");
+  std::remove("optimize_particles/sphere40_DT_world.particles");
 
   // run with parameter file
   Optimize app;
@@ -176,7 +176,7 @@ TEST(OptimizeTests, fixed_mesh_domain_test) {
   prep_temp("/optimize/fixed_mesh_domain", "fixed_mesh_domain");
 
   // make sure we clean out the output file of interest
-  std::remove("optimize_particles/id0000_ss3_world.particles");
+  std::remove("optimize_particles/id0002_ss3_world.particles");
 
   // run with parameter file
   Optimize app;

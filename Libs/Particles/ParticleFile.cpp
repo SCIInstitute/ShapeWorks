@@ -9,6 +9,7 @@
 #include <StringUtils.h>
 
 #include <fstream>
+#include <Logging.h>
 
 namespace shapeworks::particles {
 //---------------------------------------------------------------------------

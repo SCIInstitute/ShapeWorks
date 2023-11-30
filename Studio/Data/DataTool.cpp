@@ -92,8 +92,13 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->landmark_table->horizontalHeader(), &QHeaderView::sectionClicked, landmark_table_model_.get(),
           &LandmarkTableModel::handle_header_click);
 
-  // handle right click on constraints QTableWidget
+  // handle right click on constraints QTableWidget (note that the CustomContextMenu property must be set for this table
+  // in the UI file)
   connect(ui_->ffc_table_, &QTableView::customContextMenuRequested, this, &DataTool::constraints_table_right_click);
+
+  // handle right click on data table (note that the CustomContextMenu property must be set for this table in the UI
+  // file)
+  connect(ui_->table, &QTableView::customContextMenuRequested, this, &DataTool::data_table_right_click);
 
   auto delegate = new LandmarkItemDelegate(ui_->landmark_table);
   delegate->set_model(landmark_table_model_);
@@ -156,7 +161,6 @@ void DataTool::update_table(bool clean) {
 
   block_table_update_ = true;
   auto shapes = session_->get_shapes();
-
   auto project = session_->get_project();
   auto headers = project->get_headers();
   auto& subjects = project->get_subjects();
@@ -170,7 +174,6 @@ void DataTool::update_table(bool clean) {
     ui_->table->clear();
     ui_->table->setRowCount(shapes.size());
     ui_->table->setColumnCount(table_headers.size());
-
     ui_->table->setHorizontalHeaderLabels(table_headers);
     ui_->table->verticalHeader()->setVisible(true);
   }
@@ -488,6 +491,54 @@ void DataTool::constraints_table_right_click(const QPoint& point) {
 }
 
 //---------------------------------------------------------------------------
+void DataTool::data_table_right_click(const QPoint& point) {
+  auto selected = ui_->table->selectionModel()->selectedRows();
+  if (selected.size() < 1) {
+    auto item = ui_->table->itemAt(point);
+    if (!item) {
+      return;
+    }
+    int row = ui_->table->row(item);
+    selected.push_back(ui_->table->model()->index(row, 0));
+  }
+
+  auto apply_to_selected = [=](std::function<void(std::shared_ptr<Subject>)> f) {
+    auto shapes = session_->get_shapes();
+    for (auto& index : selected) {
+      int id = index.row();
+      f(shapes[id]->get_subject());
+    }
+    session_->get_project()->update_subjects();
+    update_table();
+    session_->trigger_reinsert_shapes();
+  };
+
+  QMenu menu(this);
+
+  QAction* mark_excluded = new QAction("Mark as excluded", this);
+  connect(mark_excluded, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_excluded(true); }); });
+  menu.addAction(mark_excluded);
+
+  QAction* unmark_excluded = new QAction("Unmark as excluded", this);
+  connect(unmark_excluded, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_excluded(false); }); });
+  menu.addAction(unmark_excluded);
+
+  QAction* mark_fixed_action = new QAction("Mark as fixed", this);
+  connect(mark_fixed_action, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_fixed(true); }); });
+  menu.addAction(mark_fixed_action);
+
+  QAction* unmark_fixed_action = new QAction("Unmark as fixed", this);
+  connect(unmark_fixed_action, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_fixed(false); }); });
+  menu.addAction(unmark_fixed_action);
+
+  menu.exec(QCursor::pos());
+}
+
+//---------------------------------------------------------------------------
 void DataTool::copy_ffc_clicked() {
   // get the selected row
   QModelIndexList list = ui_->ffc_table_->selectionModel()->selectedRows();
@@ -620,7 +671,7 @@ void DataTool::table_data_edited() {
     auto new_notes = ui_->table->item(row, 1)->text().toStdString();
     if (old_name != new_name) {
       shape->get_subject()->set_display_name(new_name);
-      shape->update_name();
+      shape->update_annotations();
       session_->trigger_annotations_changed();
       change = true;
     }
