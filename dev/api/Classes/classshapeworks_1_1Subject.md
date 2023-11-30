@@ -58,6 +58,8 @@ Representation of a single subject.  [More...](#detailed-description)
 | void | **[set_display_name](../Classes/classshapeworks_1_1Subject.md#function-set-display-name)**(std::string display_name)<br>Set the display name.  |
 | bool | **[is_fixed](../Classes/classshapeworks_1_1Subject.md#function-is-fixed)**()<br>Get if this subject is fixed or not.  |
 | void | **[set_fixed](../Classes/classshapeworks_1_1Subject.md#function-set-fixed)**(bool fixed)<br>Set if this subject is fixed or not.  |
+| bool | **[is_excluded](../Classes/classshapeworks_1_1Subject.md#function-is-excluded)**()<br>Get if this subject is excluded or not.  |
+| void | **[set_excluded](../Classes/classshapeworks_1_1Subject.md#function-set-excluded)**(bool excluded)<br>Set if this subject is excluded or not.  |
 | std::string | **[get_notes](../Classes/classshapeworks_1_1Subject.md#function-get-notes)**()<br>Get the notes.  |
 | void | **[set_notes](../Classes/classshapeworks_1_1Subject.md#function-set-notes)**(std::string notes)<br>Set the notes.  |
 
@@ -392,6 +394,24 @@ void set_fixed(
 
 Set if this subject is fixed or not. 
 
+### function is_excluded
+
+```cpp
+bool is_excluded()
+```
+
+Get if this subject is excluded or not. 
+
+### function set_excluded
+
+```cpp
+void set_excluded(
+    bool excluded
+)
+```
+
+Set if this subject is excluded or not. 
+
 ### function get_notes
 
 ```cpp
@@ -412,4 +432,4 @@ Set the notes.
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:29 +0000
+Updated on 2023-11-30 at 08:05:28 +0000

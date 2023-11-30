@@ -2463,6 +2463,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-is_fixed" class="md-nav__link">
+    function is_fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-is_excluded" class="md-nav__link">
+    function is_excluded
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-import_original_file" class="md-nav__link">
     function import_original_file
   </a>
@@ -2610,8 +2624,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-update_name" class="md-nav__link">
-    function update_name
+  <a href="#function-update_annotations" class="md-nav__link">
+    function update_annotations
   </a>
   
 </li>
@@ -2938,6 +2952,14 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-subject">get_subject</a></strong>()<br>Return the pointer to the subject object.</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-is-fixed">is_fixed</a></strong>()<br>Helper to ask if this shape is fixed or not.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-is-excluded">is_excluded</a></strong>()<br>Helper to ask if this shape is excluded.</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-import-original-file">import_original_file</a></strong>(const std::string &amp; filename)<br>Import the original raw mesh or image file.</td>
 </tr>
@@ -3023,7 +3045,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-update-name">update_name</a></strong>()<br>Update the name of this shape.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-update-annotations">update_annotations</a></strong>()<br>Update the name of this shape.</td>
 </tr>
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
@@ -3202,6 +3224,14 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_subject</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the pointer to the subject object. </p>
+<h3 id="function-is_fixed">function is_fixed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_fixed</span><span class="p">()</span>
+</code></pre></div>
+<p>Helper to ask if this shape is fixed or not. </p>
+<h3 id="function-is_excluded">function is_excluded</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_excluded</span><span class="p">()</span>
+</code></pre></div>
+<p>Helper to ask if this shape is excluded. </p>
 <h3 id="function-import_original_file">function import_original_file</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">import_original_file</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
@@ -3309,8 +3339,8 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set the id of this shape. </p>
-<h3 id="function-update_name">function update_name</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_name</span><span class="p">()</span>
+<h3 id="function-update_annotations">function update_annotations</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_annotations</span><span class="p">()</span>
 </code></pre></div>
 <p>Update the name of this shape. </p>
 <h3 id="function-get_original_filenames">function get_original_filenames</h3>
@@ -3450,7 +3480,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-28 at 06:02:29 +0000</p>
+<p>Updated on 2023-11-30 at 08:05:28 +0000</p>
 
               
             </article>

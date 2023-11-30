@@ -231,7 +231,6 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void save_project(QString filename);
 
-  bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
   bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 
   void set_message(MessageType message_type, QString message);
@@ -300,4 +299,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

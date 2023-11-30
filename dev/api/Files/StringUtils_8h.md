@@ -48,6 +48,8 @@ class StringUtils {
   static std::string safeString(const char* s) { return s == nullptr ? std::string() : s; }
 
   static std::string replace_string(std::string str, const std::string& search, const std::string& replace);
+
+  static std::string join(const std::vector<std::string>& strings, const std::string& delimiter);
 };
 
 }  // namespace shapeworks
@@ -56,4 +58,4 @@ class StringUtils {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

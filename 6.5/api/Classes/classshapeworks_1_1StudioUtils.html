@@ -2427,6 +2427,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-write_mesh" class="md-nav__link">
+    function write_mesh
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2484,7 +2491,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioUtils.html#function-add-viewport-border">add_viewport_border</a></strong>(vtkRenderer * renderer, double * color)<br>add a color border to a viewport</td>
+<td><strong><a href="classshapeworks_1_1StudioUtils.html#function-add-viewport-border">add_viewport_border</a></strong>(vtkRenderer * renderer, double * color, double line_width =6.0)<br>add a color border to a viewport</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1StudioUtils.html#function-write-mesh">write_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; poly_data, QString filename)<br>write a mesh to file</td>
 </tr>
 </tbody>
 </table>
@@ -2520,12 +2531,20 @@
 <h3 id="function-add_viewport_border">function add_viewport_border</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">add_viewport_border</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">color</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">color</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">line_width</span><span class="w"> </span><span class="o">=</span><span class="mf">6.0</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>add a color border to a viewport </p>
+<h3 id="function-write_mesh">function write_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">write_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>write a mesh to file </p>
 <hr />
-<p>Updated on 2023-11-28 at 06:02:29 +0000</p>
+<p>Updated on 2023-11-30 at 08:05:28 +0000</p>
 
               
             </article>

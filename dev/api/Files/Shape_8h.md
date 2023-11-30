@@ -80,6 +80,10 @@ class Shape {
 
   std::shared_ptr<shapeworks::Subject> get_subject();
 
+  bool is_fixed();
+
+  bool is_excluded();
+
   void import_original_file(const std::string& filename);
 
   MeshGroup get_original_meshes(bool wait = false);
@@ -122,7 +126,7 @@ class Shape {
 
   void set_id(int id);
 
-  void update_name();
+  void update_annotations();
 
   std::vector<std::string> get_original_filenames();
   std::vector<std::string> get_original_filenames_with_path();
@@ -204,7 +208,7 @@ class Shape {
   std::map<std::string, Eigen::VectorXd> point_features_;
   Particles particles_;
 
-  std::shared_ptr<shapeworks::Subject> subject_;
+  std::shared_ptr<Subject> subject_;
 
   vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
 
@@ -228,4 +232,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

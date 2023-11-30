@@ -75,6 +75,7 @@ class Particles {
 
   static void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
+  int get_number_of_domains();
 
  private:
   void transform_global_particles();
@@ -99,4 +100,4 @@ class Particles {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

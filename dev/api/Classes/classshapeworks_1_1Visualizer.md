@@ -81,6 +81,7 @@ Inherits from QObject
 | void | **[redraw](../Classes/classshapeworks_1_1Visualizer.md#function-redraw)**()<br>Redraw renderers.  |
 | QPixmap | **[export_to_pixmap](../Classes/classshapeworks_1_1Visualizer.md#function-export-to-pixmap)**(QSize size, bool transparent_background, bool show_orientation_marker, bool show_color_scale, bool & ready)<br>Export render window to pixmap.  |
 | QSize | **[get_render_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-render-size)**()<br>Return render window size.  |
+| LightboxHandle | **[get_lightbox](../Classes/classshapeworks_1_1Visualizer.md#function-get-lightbox)**() |
 
 ## Detailed Description
 
@@ -591,6 +592,13 @@ QSize get_render_size()
 
 Return render window size. 
 
+### function get_lightbox
+
+```cpp
+inline LightboxHandle get_lightbox()
+```
+
+
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:29 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

@@ -2566,7 +2566,7 @@
 <span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">message</span><span class="p">;</span>
 <span class="w">      </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Domain &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_DomainID</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_DomainName</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; : Distance transform queried for a Point, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span>
-<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, outside the given image domain. Consider increasing the narrow band&quot;</span><span class="p">;</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, outside the given image domain. Consider increasing the padding in grooming or the narrow band optimization parameter&quot;</span><span class="p">;</span>
 <span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">str</span><span class="p">());</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
@@ -2689,7 +2689,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// end namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-28 at 06:02:30 +0000</p>
+<p>Updated on 2023-11-30 at 08:05:29 +0000</p>
 
               
             </article>

@@ -94,6 +94,9 @@ class Subject {
   bool is_fixed();
   void set_fixed(bool fixed);
 
+  bool is_excluded();
+  void set_excluded(bool excluded);
+
   std::string get_notes();
   void set_notes(std::string notes);
 
@@ -102,6 +105,7 @@ class Subject {
 
   std::string display_name_;
   bool fixed_ = false;
+  bool excluded_ = false;
   StringList original_filenames_;
   StringList groomed_filenames_;
   StringList local_particle_filenames_;
@@ -123,4 +127,4 @@ class Subject {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

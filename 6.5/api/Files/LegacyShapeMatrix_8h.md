@@ -48,11 +48,11 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
 
   itkNewMacro(Self)
 
-  
-  itkTypeMacro(LegacyShapeMatrix, Observer)
+      
+      itkTypeMacro(LegacyShapeMatrix, Observer)
 
-  
-  virtual void DomainAddEventCallback(Object*, const itk::EventObject& e) {
+      
+      virtual void DomainAddEventCallback(Object*, const itk::EventObject& e) {
     const ParticleDomainAddEvent& event = dynamic_cast<const ParticleDomainAddEvent&>(e);
     unsigned int d = event.GetDomainIndex();
 
@@ -80,16 +80,28 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
     const typename ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
 
     int numRows = 0;
-    for (int i = 0; i < m_DomainsPerShape; i++) numRows += VDimension * ps->GetNumberOfParticles(i);
+    for (int i = 0; i < m_DomainsPerShape; i++) {
+      numRows += VDimension * ps->GetNumberOfParticles(i);
+    }
 
-    if (numRows > this->rows()) this->ResizeMatrix(numRows, this->cols());
+    if (numRows > this->rows()) {
+      this->ResizeMatrix(numRows, this->cols());
+    }
 
     unsigned int k = 0;
     int dom = d % m_DomainsPerShape;
-    for (int i = 0; i < dom; i++) k += VDimension * ps->GetNumberOfParticles(i);
+    for (int i = 0; i < dom; i++) {
+      k += VDimension * ps->GetNumberOfParticles(i);
+    }
     k += idx * VDimension;
 
-    for (unsigned int i = 0; i < VDimension; i++) this->operator()(i + k, d / m_DomainsPerShape) = pos[i];
+    for (unsigned int i = 0; i < VDimension; i++) {
+      if (i + k >= this->rows()) {
+        throw std::runtime_error(
+            "PositionSetEventCallback: index out of bounds! Different number of particles per shape?");
+      }
+      this->operator()(i + k, d / m_DomainsPerShape) = pos[i];
+    }
   }
 
   virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
@@ -102,10 +114,18 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
 
     unsigned int k = 0;
     int dom = d % m_DomainsPerShape;
-    for (int i = 0; i < dom; i++) k += VDimension * ps->GetNumberOfParticles(i);
+    for (int i = 0; i < dom; i++) {
+      k += VDimension * ps->GetNumberOfParticles(i);
+    }
     k += idx * VDimension;
 
-    for (unsigned int i = 0; i < VDimension; i++) this->operator()(i + k, d / m_DomainsPerShape) = pos[i];
+    for (unsigned int i = 0; i < VDimension; i++) {
+      if (i + k >= this->rows()) {
+        throw std::runtime_error(
+            "PositionSetEventCallback: index out of bounds! Different number of particles per shape?");
+      }
+      this->operator()(i + k, d / m_DomainsPerShape) = pos[i];
+    }
   }
 
   virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {
@@ -168,4 +188,4 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

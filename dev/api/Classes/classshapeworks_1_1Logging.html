@@ -2603,7 +2603,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-log-debug">log_debug</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log a debug message, use SW_DEBUG macro.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-debug">log_debug</a></strong>(const std::string &amp; message, const int line, const char * file, const char * function) const<br>Log a debug message, use SW_DEBUG macro.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2738,7 +2738,8 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_debug</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">function</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Log a debug message, use SW_DEBUG macro. </p>
@@ -2791,7 +2792,7 @@
 </code></pre></div>
 <p>Set a progress callback function to be called whenever a progress update is posted. </p>
 <hr />
-<p>Updated on 2023-11-28 at 06:02:29 +0000</p>
+<p>Updated on 2023-11-30 at 08:05:29 +0000</p>
 
               
             </article>

@@ -21,6 +21,7 @@ Inherits from QWidget
 | void | **[handle_landmark_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-landmark-mode-changed)**() |
 | void | **[handle_constraints_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-constraints-mode-changed)**() |
 | void | **[constraints_table_right_click](../Classes/classshapeworks_1_1DataTool.md#slot-constraints-table-right-click)**(const QPoint & point) |
+| void | **[data_table_right_click](../Classes/classshapeworks_1_1DataTool.md#slot-data-table-right-click)**(const QPoint & point) |
 | void | **[copy_ffc_clicked](../Classes/classshapeworks_1_1DataTool.md#slot-copy-ffc-clicked)**() |
 | void | **[table_selection_changed](../Classes/classshapeworks_1_1DataTool.md#slot-table-selection-changed)**() |
 | void | **[subject_notes_changed](../Classes/classshapeworks_1_1DataTool.md#slot-subject-notes-changed)**() |
@@ -95,6 +96,15 @@ void handle_constraints_mode_changed()
 
 ```cpp
 void constraints_table_right_click(
+    const QPoint & point
+)
+```
+
+
+### slot data_table_right_click
+
+```cpp
+void data_table_right_click(
     const QPoint & point
 )
 ```
@@ -254,4 +264,4 @@ void store_data()
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:28 +0000
+Updated on 2023-11-30 at 08:05:27 +0000

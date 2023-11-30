@@ -79,7 +79,6 @@ class Visualizer : public QObject {
   void set_selected_point_one(int id);
   void set_selected_point_two(int id);
 
-
   void set_mean(const Eigen::VectorXd& mean);
   void set_mean_shape(ShapeHandle mean_shape);
   ShapeHandle get_mean_shape();
@@ -122,7 +121,8 @@ class Visualizer : public QObject {
 
   vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, int alignment_domain, int domain);
 
-  vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain);
+  vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, DisplayMode display_mode,
+                                              int alignment_domain, int domain);
 
   void set_opacities(std::vector<float> opacities);
 
@@ -138,10 +138,12 @@ class Visualizer : public QObject {
 
   void redraw();
 
-  QPixmap export_to_pixmap(QSize size, bool transparent_background, bool show_orientation_marker,
-                           bool show_color_scale, bool &ready);
+  QPixmap export_to_pixmap(QSize size, bool transparent_background, bool show_orientation_marker, bool show_color_scale,
+                           bool& ready);
 
   QSize get_render_size();
+
+  LightboxHandle get_lightbox() { return this->lightbox_; }
 
  public Q_SLOTS:
 
@@ -195,4 +197,4 @@ class Visualizer : public QObject {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

@@ -29,7 +29,7 @@ ShapeWorks [Logging]() Library.  [More...](#detailed-description)
 | void | **[show_message](../Classes/classshapeworks_1_1Logging.md#function-show-message)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_MESSAGE macro.  |
 | void | **[show_status](../Classes/classshapeworks_1_1Logging.md#function-show-status)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_STATUS macro.  |
 | void | **[show_progress](../Classes/classshapeworks_1_1Logging.md#function-show-progress)**(double value, const std::string & message)<br>Display progress (0-100)  |
-| void | **[log_debug](../Classes/classshapeworks_1_1Logging.md#function-log-debug)**(const std::string & message, const int line, const char * file) const<br>Log a debug message, use SW_DEBUG macro.  |
+| void | **[log_debug](../Classes/classshapeworks_1_1Logging.md#function-log-debug)**(const std::string & message, const int line, const char * file, const char * function) const<br>Log a debug message, use SW_DEBUG macro.  |
 | void | **[log_warning](../Classes/classshapeworks_1_1Logging.md#function-log-warning)**(const std::string & message, const int line, const char * file) const<br>Log a warning message, use SW_WARN macro.  |
 | void | **[close_log](../Classes/classshapeworks_1_1Logging.md#function-close-log)**()<br>Close the log, use SW_CLOSE_LOG macro.  |
 | void | **[set_error_callback](../Classes/classshapeworks_1_1Logging.md#function-set-error-callback)**(const std::function< void(std::string)> & callback)<br>Set an error callback function to be called whenever an error is raised.  |
@@ -210,7 +210,8 @@ Display progress (0-100)
 void log_debug(
     const std::string & message,
     const int line,
-    const char * file
+    const char * file,
+    const char * function
 ) const
 ```
 
@@ -298,4 +299,4 @@ Set a progress callback function to be called whenever a progress update is post
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:29 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

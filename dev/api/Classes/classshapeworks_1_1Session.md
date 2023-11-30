@@ -69,6 +69,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Session.md#function-get-groomed-present)**() |
 | void | **[remove_shapes](../Classes/classshapeworks_1_1Session.md#function-remove-shapes)**(QList< int > list)<br>remove shapes  |
 | ShapeList | **[get_shapes](../Classes/classshapeworks_1_1Session.md#function-get-shapes)**()<br>return all shapes  |
+| ShapeList | **[get_non_excluded_shapes](../Classes/classshapeworks_1_1Session.md#function-get-non-excluded-shapes)**()<br>return all non-excluded shapes  |
 | void | **[calculate_reconstructed_samples](../Classes/classshapeworks_1_1Session.md#function-calculate-reconstructed-samples)**() |
 | QString | **[get_filename](../Classes/classshapeworks_1_1Session.md#function-get-filename)**()<br>get the filename  |
 | QString | **[get_display_name](../Classes/classshapeworks_1_1Session.md#function-get-display-name)**()<br>get file display name  |
@@ -512,6 +513,14 @@ ShapeList get_shapes()
 ```
 
 return all shapes 
+
+### function get_non_excluded_shapes
+
+```cpp
+ShapeList get_non_excluded_shapes()
+```
+
+return all non-excluded shapes 
 
 ### function calculate_reconstructed_samples
 
@@ -1234,4 +1243,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:29 +0000
+Updated on 2023-11-30 at 08:05:28 +0000

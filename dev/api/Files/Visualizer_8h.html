@@ -2493,7 +2493,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point_one</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point_two</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 
-
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean_shape</span><span class="p">(</span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">mean_shape</span><span class="p">);</span>
 <span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mean_shape</span><span class="p">();</span>
@@ -2536,7 +2535,8 @@
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span>
+<span class="w">                                              </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_opacities</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">opacities</span><span class="p">);</span>
 
@@ -2552,10 +2552,12 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">redraw</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="nf">export_to_pixmap</span><span class="p">(</span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">transparent_background</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_orientation_marker</span><span class="p">,</span>
-<span class="w">                           </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_color_scale</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ready</span><span class="p">);</span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="nf">export_to_pixmap</span><span class="p">(</span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">transparent_background</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_orientation_marker</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_color_scale</span><span class="p">,</span>
+<span class="w">                           </span><span class="kt">bool</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ready</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">QSize</span><span class="w"> </span><span class="nf">get_render_size</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">LightboxHandle</span><span class="w"> </span><span class="nf">get_lightbox</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">lightbox_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 
@@ -2606,7 +2608,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-28 at 06:02:30 +0000</p>
+<p>Updated on 2023-11-30 at 08:05:29 +0000</p>
 
               
             </article>

@@ -33,6 +33,8 @@ Representation of a single shape/patient/subject.
 | void | **[set_subject](../Classes/classshapeworks_1_1Shape.md#function-set-subject)**(std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > subject) |
 | bool | **[is_subject](../Classes/classshapeworks_1_1Shape.md#function-is-subject)**()<br>Is this shape a population subject (e.g. mean/pca constructions are not)  |
 | std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > | **[get_subject](../Classes/classshapeworks_1_1Shape.md#function-get-subject)**()<br>Return the pointer to the subject object.  |
+| bool | **[is_fixed](../Classes/classshapeworks_1_1Shape.md#function-is-fixed)**()<br>Helper to ask if this shape is fixed or not.  |
+| bool | **[is_excluded](../Classes/classshapeworks_1_1Shape.md#function-is-excluded)**()<br>Helper to ask if this shape is excluded.  |
 | void | **[import_original_file](../Classes/classshapeworks_1_1Shape.md#function-import-original-file)**(const std::string & filename)<br>Import the original raw mesh or image file.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_original_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-original-meshes)**(bool wait =false)<br>Retrieve the original meshes.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_groomed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-meshes)**(bool wait =false)<br>Retrieve the groomed meshes.  |
@@ -54,7 +56,7 @@ Representation of a single shape/patient/subject.
 | void | **[clear_reconstructed_mesh](../Classes/classshapeworks_1_1Shape.md#function-clear-reconstructed-mesh)**() |
 | int | **[get_id](../Classes/classshapeworks_1_1Shape.md#function-get-id)**()<br>Get the id of this shape.  |
 | void | **[set_id](../Classes/classshapeworks_1_1Shape.md#function-set-id)**(int id)<br>Set the id of this shape.  |
-| void | **[update_name](../Classes/classshapeworks_1_1Shape.md#function-update-name)**()<br>Update the name of this shape.  |
+| void | **[update_annotations](../Classes/classshapeworks_1_1Shape.md#function-update-annotations)**()<br>Update the name of this shape.  |
 | std::vector< std::string > | **[get_original_filenames](../Classes/classshapeworks_1_1Shape.md#function-get-original-filenames)**() |
 | std::vector< std::string > | **[get_original_filenames_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-original-filenames-with-path)**() |
 | std::string | **[get_original_filename](../Classes/classshapeworks_1_1Shape.md#function-get-original-filename)**() |
@@ -172,6 +174,22 @@ std::shared_ptr< shapeworks::Subject > get_subject()
 ```
 
 Return the pointer to the subject object. 
+
+### function is_fixed
+
+```cpp
+bool is_fixed()
+```
+
+Helper to ask if this shape is fixed or not. 
+
+### function is_excluded
+
+```cpp
+bool is_excluded()
+```
+
+Helper to ask if this shape is excluded. 
 
 ### function import_original_file
 
@@ -364,10 +382,10 @@ void set_id(
 
 Set the id of this shape. 
 
-### function update_name
+### function update_annotations
 
 ```cpp
-void update_name()
+void update_annotations()
 ```
 
 Update the name of this shape. 
@@ -642,4 +660,4 @@ std::vector< std::shared_ptr< MeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:29 +0000
+Updated on 2023-11-30 at 08:05:28 +0000

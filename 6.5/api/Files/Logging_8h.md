@@ -95,7 +95,7 @@ Log error macro.
     message,
     ...
 )
-shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)
 ```
 
 Log debug macro. 
@@ -220,7 +220,7 @@ class Logging {
 
   void show_progress(double value, const std::string& message);
 
-  void log_debug(const std::string& message, const int line, const char* file) const;
+  void log_debug(const std::string& message, const int line, const char* file, const char *function) const;
 
   void log_warning(const std::string& message, const int line, const char* file) const;
 
@@ -269,7 +269,7 @@ class Logging {
   shapeworks::Logging::Instance().log_error(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 #define SW_DEBUG(message, ...) \
-  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)
 
 #define SW_TRACE(x) SW_DEBUG(#x " = {}", x);
 
@@ -298,4 +298,4 @@ class Logging {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

@@ -2631,7 +2631,7 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_debug</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_debug</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FUNCTION__</span><span class="p">)</span>
 </code></pre></div>
 <p>Log debug macro. </p>
 <h3 id="define-sw_trace">define SW_TRACE</h3>
@@ -2728,7 +2728,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_debug</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_debug</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">function</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_warning</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
@@ -2777,7 +2777,7 @@
 <span class="cp">  shapeworks::Logging::Instance().log_error(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
 
 <span class="cp">#define SW_DEBUG(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
+<span class="cp">  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)</span>
 
 <span class="cp">#define SW_TRACE(x) SW_DEBUG(#x &quot; = {}&quot;, x);</span>
 
@@ -2803,7 +2803,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-11-28 at 06:02:30 +0000</p>
+<p>Updated on 2023-11-30 at 08:05:29 +0000</p>
 
               
             </article>

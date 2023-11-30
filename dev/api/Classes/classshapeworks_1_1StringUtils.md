@@ -27,6 +27,7 @@ String utility functions.
 | std::string | **[getLowerExtension](../Classes/classshapeworks_1_1StringUtils.md#function-getlowerextension)**(std::string const & filename) |
 | std::string | **[safeString](../Classes/classshapeworks_1_1StringUtils.md#function-safestring)**(const char * s) |
 | std::string | **[replace_string](../Classes/classshapeworks_1_1StringUtils.md#function-replace-string)**(std::string str, const std::string & search, const std::string & replace)<br>Replace a search string with a replacement.  |
+| std::string | **[join](../Classes/classshapeworks_1_1StringUtils.md#function-join)**(const std::vector< std::string > & strings, const std::string & delimiter) |
 
 ## Public Functions Documentation
 
@@ -126,6 +127,16 @@ static std::string replace_string(
 
 Replace a search string with a replacement. 
 
+### function join
+
+```cpp
+static std::string join(
+    const std::vector< std::string > & strings,
+    const std::string & delimiter
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:29 +0000
+Updated on 2023-11-30 at 08:05:28 +0000

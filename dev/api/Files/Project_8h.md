@@ -99,6 +99,8 @@ class Project {
 
   bool get_fixed_subjects_present();
 
+  bool get_excluded_subjects_present();
+
   std::vector<std::string> get_feature_names();
 
   std::vector<std::string> get_image_names();
@@ -184,4 +186,4 @@ class Project {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

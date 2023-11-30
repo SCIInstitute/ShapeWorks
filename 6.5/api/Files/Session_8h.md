@@ -122,6 +122,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   ShapeList get_shapes();
 
+  ShapeList get_non_excluded_shapes();
+
   void calculate_reconstructed_samples();
 
   QString get_filename();
@@ -349,4 +351,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

@@ -90,6 +90,7 @@ class DataTool : public QWidget {
   void handle_constraints_mode_changed();
 
   void constraints_table_right_click(const QPoint &point);
+  void data_table_right_click(const QPoint &point);
   void copy_ffc_clicked();
 
   void table_selection_changed();
@@ -119,4 +120,4 @@ class DataTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000

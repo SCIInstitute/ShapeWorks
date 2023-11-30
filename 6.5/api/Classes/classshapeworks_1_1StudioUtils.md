@@ -22,7 +22,8 @@ Utilities for Studio.
 | QImage | **[vtk_image_to_qimage](../Classes/classshapeworks_1_1StudioUtils.md#function-vtk-image-to-qimage)**(vtkSmartPointer< vtkImageData > image_data)<br>convert vtkImageData to QImage  |
 | vtkSmartPointer< vtkPolyData > | **[reverse_poly_data](../Classes/classshapeworks_1_1StudioUtils.md#function-reverse-poly-data)**(vtkSmartPointer< vtkPolyData > poly_data)<br>reverse a poly data  |
 | QString | **[get_platform_string](../Classes/classshapeworks_1_1StudioUtils.md#function-get-platform-string)**()<br>return platform string  |
-| void | **[add_viewport_border](../Classes/classshapeworks_1_1StudioUtils.md#function-add-viewport-border)**(vtkRenderer * renderer, double * color)<br>add a color border to a viewport  |
+| void | **[add_viewport_border](../Classes/classshapeworks_1_1StudioUtils.md#function-add-viewport-border)**(vtkRenderer * renderer, double * color, double line_width =6.0)<br>add a color border to a viewport  |
+| bool | **[write_mesh](../Classes/classshapeworks_1_1StudioUtils.md#function-write-mesh)**(vtkSmartPointer< vtkPolyData > poly_data, QString filename)<br>write a mesh to file  |
 
 ## Public Functions Documentation
 
@@ -79,12 +80,24 @@ return platform string
 ```cpp
 static void add_viewport_border(
     vtkRenderer * renderer,
-    double * color
+    double * color,
+    double line_width =6.0
 )
 ```
 
 add a color border to a viewport 
 
+### function write_mesh
+
+```cpp
+static bool write_mesh(
+    vtkSmartPointer< vtkPolyData > poly_data,
+    QString filename
+)
+```
+
+write a mesh to file 
+
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:29 +0000
+Updated on 2023-11-30 at 08:05:28 +0000

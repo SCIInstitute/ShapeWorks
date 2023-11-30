@@ -43,7 +43,7 @@ namespace shapeworks {
 
 class StudioUtils {
  public:
-  static bool ask_multiple_domains_as_single(QWidget *parent, std::shared_ptr<Project> project);
+  static bool ask_multiple_domains_as_single(QWidget* parent, std::shared_ptr<Project> project);
 
   static QStringList to_string_list(std::vector<std::string> vector);
 
@@ -53,8 +53,9 @@ class StudioUtils {
 
   static QString get_platform_string();
 
-  static void add_viewport_border(vtkRenderer* renderer, double* color);
+  static void add_viewport_border(vtkRenderer* renderer, double* color, double line_width = 6.0);
 
+  static bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 };
 
 }  // namespace shapeworks
@@ -63,4 +64,4 @@ class StudioUtils {
 
 -------------------------------
 
-Updated on 2023-11-28 at 06:02:30 +0000
+Updated on 2023-11-30 at 08:05:29 +0000
