@@ -93,9 +93,9 @@ void DeepSSMJob::run_augmentation()
                          params.get_aug_num_dims(), params.get_aug_percent_variability(),
                          sampler_type.toStdString(),
                          0,   /* mixture_num */
-                         QThread::idealThreadCount(), /* processes */
-                         // 1,   /* processes */
-                         nullptr /* world point list? */).cast<int>();
+                         QThread::idealThreadCount() /* processes */
+                         // 1   /* processes */
+                         ).cast<int>();
 
   params.set_training_num_dims(aug_dims);
   params.save_to_project();
@@ -231,7 +231,7 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
       }
     }
     else {
-      auto particle_filenames = subjects[id]->get_local_particle_filenames();
+      auto particle_filenames = subjects[id]->get_world_particle_filenames();
       if (!particle_filenames.empty()) {
         list.push_back(particle_filenames[0]);
       }
