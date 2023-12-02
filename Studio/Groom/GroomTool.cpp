@@ -303,6 +303,10 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
 
   auto alignment = params.get_alignment_method();
   ui_->alignment_box->setCurrentText(QString::fromStdString(alignment));
+  int alignment_reference = params.get_alignment_reference();
+  ui_->alignment_reference->setText(alignment_reference < 0 ? "auto" : QString::number(alignment_reference));
+  int alignment_subset_size = params.get_alignment_subset_size();
+  ui_->alignment_subset_size->setText(alignment_subset_size < 0 ? "auto" : QString::number(alignment_subset_size));
 
   ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
@@ -383,6 +387,16 @@ void GroomTool::store_params() {
 
   params.set_alignment_enabled(ui_->alignment_image_checkbox->isChecked());
   params.set_alignment_method(ui_->alignment_box->currentText().toStdString());
+  if (ui_->alignment_reference->text() == "auto") {
+    params.set_alignment_reference(-1);
+  } else {
+    params.set_alignment_reference(ui_->alignment_reference->text().toInt());
+  }
+  if (ui_->alignment_subset_size->text() == "auto") {
+    params.set_alignment_subset_size(-1);
+  } else {
+    params.set_alignment_subset_size(ui_->alignment_subset_size->text().toInt());
+  }
 
   params.set_antialias_tool(ui_->antialias_checkbox->isChecked());
   params.set_auto_pad_tool(ui_->autopad_checkbox->isChecked());

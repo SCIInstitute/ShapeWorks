@@ -1934,6 +1934,19 @@ QWidget#domain_panel {
               </property>
              </widget>
             </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="alignment_reference">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1">
              <widget class="QComboBox" name="alignment_box">
               <item>
@@ -1951,6 +1964,33 @@ QWidget#domain_panel {
                 <string>Landmark</string>
                </property>
               </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="alignment_reference_label">
+              <property name="text">
+               <string>Reference</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="alignment_subset_size_label">
+              <property name="text">
+               <string>Random Subset Size</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="alignment_subset_size">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
              </widget>
             </item>
            </layout>
