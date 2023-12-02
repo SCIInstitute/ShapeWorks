@@ -120,7 +120,7 @@ PhysicalRegion MeshUtils::boundingBox(const std::vector<std::reference_wrapper<c
   return bbox;
 }
 
-size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes) {
+int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes) {
   std::vector<std::pair<int, int>> pairs;
 
   // enumerate all pairs of meshes

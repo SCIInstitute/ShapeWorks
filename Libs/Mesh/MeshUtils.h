@@ -40,7 +40,7 @@ public:
   static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center = false);
 
   /// determine the reference mesh
-  static size_t findReferenceMesh(std::vector<Mesh> &meshes);
+  static int findReferenceMesh(std::vector<Mesh> &meshes);
 
 
   /// boundary loop extractor for a given mesh

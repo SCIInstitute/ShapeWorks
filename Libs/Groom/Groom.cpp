@@ -526,9 +526,13 @@ bool Groom::run_alignment() {
         meshes.push_back(mesh);
       }
 
-      size_t reference_mesh = MeshUtils::findReferenceMesh(reference_meshes);
+      int reference_index = params.get_alignment_reference();
 
-      auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
+      if (reference_index < 0 || reference_index >= reference_meshes.size()) {
+        reference_index = MeshUtils::findReferenceMesh(meshes);
+      }
+
+      auto transforms = Groom::get_icp_transforms(meshes, reference_index);
 
       assign_transforms(transforms, domain);
     } else if (params.get_use_landmarks()) {
