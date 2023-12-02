@@ -109,12 +109,12 @@ void DeepSSMJob::run_training()
 {
   auto subjects = this->project_->get_subjects();
 
-  auto train_img_list = this->get_list(FileType::IMAGE, SplitType::TRAIN);
-  auto train_pts = this->get_list(FileType::PARTICLES, SplitType::TRAIN);
+  //auto train_img_list = this->get_list(FileType::IMAGE, SplitType::TRAIN);
+  //auto train_pts = this->get_list(FileType::PARTICLES, SplitType::TRAIN);
   auto test_img_list = this->get_list(FileType::IMAGE, SplitType::TEST);
 
-  py::list train_img_list_py = py::cast(train_img_list);
-  py::list train_pts_py = py::cast(train_pts);
+  //py::list train_img_list_py = py::cast(train_img_list);
+  //py::list train_pts_py = py::cast(train_pts);
 
   DeepSSMParameters params(this->project_);
 
