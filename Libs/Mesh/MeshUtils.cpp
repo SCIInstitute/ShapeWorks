@@ -14,7 +14,6 @@
 #include <vtkRenderer.h>
 #include <vtkTransformPolyDataFilter.h>
 
-#include "ParticleSystemEvaluation.h"
 #include "Utils.h"
 
 // boundary loop extractor libraries
@@ -29,9 +28,7 @@
 #include <iostream>
 // shared boundary extractor libraries
 #include <igl/AABB.h>
-#include <igl/readPLY.h>
 #include <igl/remove_unreferenced.h>
-#include <igl/writePLY.h>
 
 #include <string>
 #include <unordered_map>
@@ -426,7 +423,9 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::string>& filenames, b
 
   std::vector<Mesh> meshes;
   meshes.reserve(filenames.size());  // create a vector large enough for all the meshes that will be loaded
-  for (auto filename : filenames) meshes.push_back(Mesh(filename));
+  for (auto& filename : filenames) {
+    meshes.push_back(Mesh(filename));
+  }
 
   std::vector<std::reference_wrapper<Mesh>> rmeshes;
   rmeshes.reserve(meshes.size());
