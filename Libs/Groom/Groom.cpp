@@ -511,16 +511,20 @@ bool Groom::run_alignment() {
       std::vector<Mesh> reference_meshes;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
-        auto mesh = get_mesh(i, domain);
+        Mesh mesh = get_mesh(i, domain);
 
         auto list = subjects[i]->get_groomed_transforms()[domain];
         vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
         mesh.applyTransform(transform);
 
+        auto empty = vtkSmartPointer<vtkPolyData>::New();
+
         // if fixed subjects are present, only add the fixed subjects
         if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
           if (!subjects[i]->is_excluded()) {
             reference_meshes.push_back(mesh);
+          } else {
+            reference_meshes.push_back(Mesh(empty));
           }
         }
         meshes.push_back(mesh);
@@ -531,10 +535,8 @@ bool Groom::run_alignment() {
       if (reference_index < 0 || reference_index >= reference_meshes.size()) {
         reference_index = MeshUtils::findReferenceMesh(meshes, params.get_alignment_subset_size());
       }
-      SW_LOG("Using reference: {}", reference_index);
 
       auto transforms = Groom::get_icp_transforms(meshes, reference_index);
-
       assign_transforms(transforms, domain);
     } else if (params.get_use_landmarks()) {
       global_landmarks = true;
@@ -543,9 +545,8 @@ bool Groom::run_alignment() {
         landmarks.push_back(get_landmarks(i, domain));
       }
 
-      size_t reference = Groom::find_reference_landmarks(landmarks);
-
-      auto transforms = Groom::get_landmark_transforms(landmarks, reference);
+      int reference_index = Groom::find_reference_landmarks(landmarks);
+      auto transforms = Groom::get_landmark_transforms(landmarks, reference_index);
       assign_transforms(transforms, domain);
     }
   }
@@ -572,8 +573,8 @@ bool Groom::run_alignment() {
     }
 
     if (global_icp) {
-      size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
-      auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
+      int reference_index = MeshUtils::findReferenceMesh(meshes);
+      auto transforms = Groom::get_icp_transforms(meshes, reference_index);
       size_t domain = num_domains;  // end
       assign_transforms(transforms, domain, true /* global */);
 
@@ -799,7 +800,7 @@ int Groom::find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> land
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, size_t reference) {
+std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, int reference) {
   std::vector<std::vector<double>> transforms(meshes.size());
 
   tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
