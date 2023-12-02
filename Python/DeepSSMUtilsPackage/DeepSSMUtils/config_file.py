@@ -24,10 +24,20 @@ def prepare_config_file(config_file, model_name, embedded_dim, out_dir, loader_d
             "function": "MSE",
             "supervised_latent": True,
         },
+
         "trainer": {
             "epochs": epochs,
             "learning_rate": learning_rate,
-            "decay_lr": decay_lr,
+            "decay_lr": {
+                "enabled": decay_lr,
+                "type": "CosineAnnealing",
+                "parameters": {
+                    "T_max": 10,
+                    "eta_min": 0,
+                    "step_size": 1,
+                    "gamma": 0.99
+                }
+            },
             "val_freq": 1
         },
         "fine_tune": {
@@ -38,7 +48,18 @@ def prepare_config_file(config_file, model_name, embedded_dim, out_dir, loader_d
             "decay_lr": True,
             "val_freq": 1
         },
-        "use_best_model": True
+        "use_best_model": True,
+        "tl_net": {
+            "enabled": False,
+            "ae_epochs": 100,
+            "tf_epochs": 100,
+            "joint_epochs": 25,
+            "alpha": 1,
+            "a_ae": 10,
+            "c_ae": 1.32,
+            "a_lat": 10,
+            "c_lat": 6.3
+        }
     }
     # Save config file
     with open(config_file, "w") as outfile:
