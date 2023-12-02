@@ -1345,8 +1345,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("findReferenceMesh",
               &MeshUtils::findReferenceMesh,
               "find reference mesh from a set of meshes",
-              "meshes"_a)
-
+              "meshes"_a, "random_subset"_a=-1)
 
   .def_static("boundaryLoopExtractor",
                &MeshUtils::boundaryLoopExtractor,

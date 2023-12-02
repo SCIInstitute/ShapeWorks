@@ -964,6 +964,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
   connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
   connect(session_.data(), &Session::reinsert_shapes, this, [&]() { update_display(true); });
+  connect(session_.data(), &Session::save, this, &ShapeWorksStudioApp::on_action_save_project_triggered);
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);

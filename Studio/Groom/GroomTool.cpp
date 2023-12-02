@@ -307,6 +307,23 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
   ui_->alignment_reference->setText(alignment_reference < 0 ? "auto" : QString::number(alignment_reference));
   int alignment_subset_size = params.get_alignment_subset_size();
   ui_->alignment_subset_size->setText(alignment_subset_size < 0 ? "auto" : QString::number(alignment_subset_size));
+  alignment_option_changed(ui_->alignment_box->currentIndex());
+
+  // when editing ends, if it's not a number zero or greater, reset to auto
+  connect(ui_->alignment_reference, &QLineEdit::editingFinished, this, [=]() {
+    bool ok;
+    int value = ui_->alignment_reference->text().toInt(&ok);
+    if (!ok || value < 0) {
+      ui_->alignment_reference->setText("auto");
+    }
+  });
+  connect(ui_->alignment_subset_size, &QLineEdit::editingFinished, this, [=]() {
+    bool ok;
+    int value = ui_->alignment_subset_size->text().toInt(&ok);
+    if (!ok || value < 0) {
+      ui_->alignment_subset_size->setText("auto");
+    }
+  });
 
   ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
@@ -474,7 +491,8 @@ void GroomTool::on_run_groom_button_clicked() {
     ui_->run_groom_button->setEnabled(true);
     return;
   } else {
-    session_->save_project(session_->get_filename());
+
+    session_->trigger_save();
   }
 
   store_params();
@@ -613,7 +631,12 @@ void GroomTool::alignment_checkbox_changed(int state) {
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::alignment_option_changed(int index) { ui_->alignment_box->setCurrentIndex(index); }
+void GroomTool::alignment_option_changed(int index) {
+  ui_->alignment_box->setCurrentIndex(index);
+  bool is_icp = ui_->alignment_box->currentText().toStdString() == GroomParameters::GROOM_ALIGNMENT_ICP_C;
+  ui_->alignment_reference->setEnabled(is_icp);
+  ui_->alignment_subset_size->setEnabled(is_icp);
+}
 
 //---------------------------------------------------------------------------
 void GroomTool::reflect_checkbox_changed(int state) {

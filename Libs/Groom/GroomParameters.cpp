@@ -133,6 +133,7 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
                                          Keys::ALIGNMENT_METHOD,
                                          Keys::ALIGNMENT_ENABLED,
                                          Keys::ALIGNMENT_REFERENCE,
+                                         Keys::ALIGNMENT_SUBSET_SIZE,
                                          Keys::GROOM_OUTPUT_PREFIX,
                                          Keys::REMESH,
                                          Keys::REMESH_PERCENT_MODE,

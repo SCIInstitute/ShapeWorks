@@ -529,8 +529,9 @@ bool Groom::run_alignment() {
       int reference_index = params.get_alignment_reference();
 
       if (reference_index < 0 || reference_index >= reference_meshes.size()) {
-        reference_index = MeshUtils::findReferenceMesh(meshes);
+        reference_index = MeshUtils::findReferenceMesh(meshes, params.get_alignment_subset_size());
       }
+      SW_LOG("Using reference: {}", reference_index);
 
       auto transforms = Groom::get_icp_transforms(meshes, reference_index);
 

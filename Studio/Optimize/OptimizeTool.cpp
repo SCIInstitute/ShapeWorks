@@ -182,7 +182,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     ui_->run_optimize_button->setEnabled(true);
     return;
   } else {
-    session_->save_project(session_->get_filename());
+    session_->trigger_save();
   }
 
   optimization_is_running_ = true;

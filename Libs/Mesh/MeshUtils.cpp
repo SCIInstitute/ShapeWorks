@@ -43,6 +43,24 @@ namespace shapeworks {
 // locking to handle non-thread-safe code
 static std::mutex mesh_mutex;
 
+//! Return a random subset of size num from 0 to max-1
+static std::vector<int> get_random_subset(int num, int max) {
+  // Seed the random number generator
+  std::mt19937 rng(42);
+
+  // Generate indices from 0 to max-1
+  std::vector<int> all_indices(max);
+  std::iota(all_indices.begin(), all_indices.end(), 0);
+
+  // Shuffle the indices
+  std::shuffle(all_indices.begin(), all_indices.end(), rng);
+
+  // Take the first n elements as the random subset
+  std::vector<int> random_subset(all_indices.begin(), all_indices.begin() + num);
+
+  return random_subset;
+}
+
 const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh source, const Mesh target,
                                                                   Mesh::AlignmentType align, const unsigned iterations,
                                                                   bool meshTransform) {
@@ -54,12 +72,13 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
   icp->SetSource(source.getVTKMesh());
   icp->SetTarget(target.getVTKMesh());
 
-  if (align == Mesh::Rigid)
+  if (align == Mesh::Rigid) {
     icp->GetLandmarkTransform()->SetModeToRigidBody();
-  else if (align == Mesh::Similarity)
+  } else if (align == Mesh::Similarity) {
     icp->GetLandmarkTransform()->SetModeToSimilarity();
-  else
+  } else {
     icp->GetLandmarkTransform()->SetModeToAffine();
+  }
 
   icp->SetMaximumNumberOfIterations(iterations);
   if (meshTransform) icp->StartByMatchingCentroidsOn();
@@ -120,13 +139,25 @@ PhysicalRegion MeshUtils::boundingBox(const std::vector<std::reference_wrapper<c
   return bbox;
 }
 
-int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes) {
+int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size) {
+  bool use_random_subset = random_subset_size > 0 && random_subset_size < meshes.size();
+  int num_meshes = use_random_subset ? random_subset_size : meshes.size();
+
+  std::vector<int> subset;
+  if (use_random_subset) {
+    subset = get_random_subset(random_subset_size, meshes.size());
+  }
+
   std::vector<std::pair<int, int>> pairs;
 
   // enumerate all pairs of meshes
-  for (size_t i = 0; i < meshes.size(); i++) {
-    for (size_t j = i + 1; j < meshes.size(); j++) {
-      pairs.push_back(std::make_pair(i, j));
+  for (size_t i = 0; i < num_meshes; i++) {
+    for (size_t j = i + 1; j < num_meshes; j++) {
+      if (use_random_subset) {
+        pairs.push_back(std::make_pair(subset[i], subset[j]));
+      } else {
+        pairs.push_back(std::make_pair(i, j));
+      }
     }
   }
 

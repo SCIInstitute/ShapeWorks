@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Data/Preferences.h>
+#include <Data/Telemetry.h>
 #include <Groom/Groom.h>
 #include <Groom/GroomParameters.h>
-#include <Data/Telemetry.h>
 
 #include <QElapsedTimer>
 #include <QObject>
@@ -19,7 +19,6 @@ Q_DECLARE_METATYPE(std::string)
 namespace shapeworks {
 
 class Session;
-class ShapeWorksStudioApp;
 
 class GroomTool : public QWidget {
   Q_OBJECT;
