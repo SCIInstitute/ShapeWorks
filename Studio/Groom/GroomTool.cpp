@@ -305,6 +305,8 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
   ui_->alignment_box->setCurrentText(QString::fromStdString(alignment));
   int alignment_reference = params.get_alignment_reference();
   ui_->alignment_reference->setText(alignment_reference < 0 ? "auto" : QString::number(alignment_reference));
+  ui_->alignment_subset_size->setEnabled(ui_->alignment_reference->text() == "auto");
+
   int alignment_subset_size = params.get_alignment_subset_size();
   ui_->alignment_subset_size->setText(alignment_subset_size < 0 ? "auto" : QString::number(alignment_subset_size));
   alignment_option_changed(ui_->alignment_box->currentIndex());
@@ -316,6 +318,7 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
     if (!ok || value < 0) {
       ui_->alignment_reference->setText("auto");
     }
+    ui_->alignment_subset_size->setEnabled(ui_->alignment_reference->text() == "auto");
   });
   connect(ui_->alignment_subset_size, &QLineEdit::editingFinished, this, [=]() {
     bool ok;
@@ -491,7 +494,6 @@ void GroomTool::on_run_groom_button_clicked() {
     ui_->run_groom_button->setEnabled(true);
     return;
   } else {
-
     session_->trigger_save();
   }
 

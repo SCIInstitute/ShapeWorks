@@ -65,7 +65,7 @@ class Groom {
 
   void assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global = false);
 
-  static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, int reference);
+  static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference);
   static std::vector<std::vector<double>> get_landmark_transforms(
       const std::vector<vtkSmartPointer<vtkPoints>> landmarks, size_t reference);
 
