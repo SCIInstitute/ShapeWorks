@@ -137,7 +137,7 @@ def Run_Pipeline(args):
         train_mesh = sw.Mesh(train_mesh_file)
         train_mesh_list.append(train_mesh)
         """
-        Grooming step 2: Apply clipping for finsing alignment transform
+        Grooming step 2: Apply clipping for finishing alignment transform
         """
         train_mesh.clip(train_plane[0], train_plane[1], train_plane[2])
         """
