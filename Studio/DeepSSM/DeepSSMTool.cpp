@@ -198,12 +198,11 @@ void DeepSSMTool::update_panels() {
   this->ui_->restore_defaults->setEnabled(!this->tool_is_running_);
 
   QString string = "";
-  this->ui_->run_button->show();
   this->ui_->data_panel->hide();
   this->ui_->training_panel->hide();
   switch (this->current_tool_) {
     case DeepSSMTool::ToolMode::DeepSSM_SplitType:
-      this->ui_->run_button->hide();
+      string = "Groom and Optimize";
       break;
     case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
       string = "Data Augmentation";
