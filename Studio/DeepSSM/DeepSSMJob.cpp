@@ -83,7 +83,6 @@ void DeepSSMJob::run_prep() {
   auto shapes = session_->get_shapes();
   SW_LOG("DeepSSM: Grooming Training Data");
   update_prep_message(PrepStep::GROOM_TRAINING);
-  Q_EMIT progress(0);
 
   auto train_id_list = get_list(FileType::ID, SplitType::TRAIN);
   auto val_id_list = get_list(FileType::ID, SplitType::VAL);
@@ -95,7 +94,7 @@ void DeepSSMJob::run_prep() {
   SW_LOG("Test subjects: {}", test_id_list.size());
 
   /////////////////////////////////////////////////////////
-  // Step 1. Groom Training
+  /// Step 1. Groom Training
   /////////////////////////////////////////////////////////
 
   // first, set all excluded
@@ -127,10 +126,9 @@ void DeepSSMJob::run_prep() {
   groom.run();
 
   update_prep_message(PrepStep::OPTIMIZE_TRAINING);
-  Q_EMIT progress(25);
 
   /////////////////////////////////////////////////////////
-  // Step 2. Optimize Training Shapes
+  /// Step 2. Optimize Training Shapes
   /////////////////////////////////////////////////////////
 
   OptimizeParameters optimize_params{project_};
@@ -138,12 +136,12 @@ void DeepSSMJob::run_prep() {
   optimize_params.set_up_optimize(&optimize);
   optimize.Run();
 
-  update_prep_message(PrepStep::GROOM_IMAGES);
-  Q_EMIT progress(75);
+
 
   /////////////////////////////////////////////////////////
-  // Step 3. Groom Images
+  /// Step 3. Groom Images
   /////////////////////////////////////////////////////////
+  update_prep_message(PrepStep::GROOM_TRAINING_IMAGES);
 
   // load reference image
   auto image_filenames = subjects[reference]->get_feature_filenames();
@@ -156,17 +154,14 @@ void DeepSSMJob::run_prep() {
     return;
   }
 
-  // apply alignment transform
+  // TODO: apply alignment transform?
   auto transform = shapes[reference]->get_alignment();
   Image reference_image{image_filename};
-
-  // convert to ITK transform
-  // auto itk_transform = MeshUtils::convertToITKTransform(transform);
-
-  // image.applyTransform(transform);
   //  save as reference_image.nrrd
   reference_image.write("deepssm/reference_image.nrrd");
 
+  SW_MESSAGE("Grooming Training Images");
+  Q_EMIT progress(0);
   // for each training image
   for (int i = 0; i < train_id_list.size(); i++) {
     auto id = train_id_list[i];
@@ -210,7 +205,22 @@ void DeepSSMJob::run_prep() {
 
     // save as image.nrrd
     image.write("deepssm/train_images/" + id + ".nrrd");
+
+    double current_progress = i / static_cast<double>(train_id_list.size()) * 100.0;
+    Q_EMIT progress(current_progress);
   }
+
+  /////////////////////////////////////////////////////////
+  /// Step 4. Groom Validation Images
+  /////////////////////////////////////////////////////////
+  update_prep_message(PrepStep::GROOM_VALIDATION_IMAGES);
+
+
+  /////////////////////////////////////////////////////////
+  /// Step 5. Optimize Validation Particles
+  /////////////////////////////////////////////////////////
+  update_prep_message(PrepStep::OPTIMIZE_VALIDATION);
+
 
   update_prep_message(PrepStep::DONE);
   Q_EMIT progress(100);
@@ -404,6 +414,7 @@ void DeepSSMJob::update_prep_message(PrepStep step) {
       "</tr>"
       "<tr><td>Optimize Training Data</td>" +
       message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>" + "<tr><td>Groom Images</td>" +
-      message(step, PrepStep::GROOM_IMAGES) + "</tr></table></html>";
+      message(step, PrepStep::GROOM_TRAINING_IMAGES) + "</tr></table></html>";
+  Q_EMIT progress(-1);
 }
 }  // namespace shapeworks

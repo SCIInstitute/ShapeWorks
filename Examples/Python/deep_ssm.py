@@ -403,7 +403,7 @@ def Run_Pipeline(args):
         translation = ref_center - vt_image.center()
         vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
         transform[:3,-1] += translation
-        # 3. Transalte with respect to slightly cropped ref
+        # 3. Translate with respect to slightly cropped ref
         vt_image = sw.Image(vt_image_file).crop(large_bb).write(vt_image_file)
         itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file, 
                                 vt_image_file, transform_type='translation')
