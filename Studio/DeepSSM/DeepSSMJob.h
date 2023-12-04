@@ -21,7 +21,7 @@ class DeepSSMJob : public Job {
 
   enum class SplitType { TRAIN, VAL, TEST };
 
-  enum PrepStep { GROOM_TRAINING = 0, OPTIMIZE_TRAINING = 1, NEXT = 2, DONE = 3 };
+  enum PrepStep { GROOM_TRAINING = 0, OPTIMIZE_TRAINING = 1, GROOM_IMAGES = 2, DONE = 3 };
 
   DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode);
   ~DeepSSMJob();

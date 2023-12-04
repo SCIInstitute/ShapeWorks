@@ -643,7 +643,7 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, type);
   connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
-  if (python_type) {
+  if (python_type || 1) {
     app_->get_py_worker()->run_job(deep_ssm_);
   } else {
     auto worker = Worker::create_worker();

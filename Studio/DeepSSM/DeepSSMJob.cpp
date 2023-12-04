@@ -1,6 +1,8 @@
 // pybind
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
+
+#include "qdir.h"
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
@@ -136,9 +138,80 @@ void DeepSSMJob::run_prep() {
   optimize_params.set_up_optimize(&optimize);
   optimize.Run();
 
-  update_prep_message(PrepStep::NEXT);
+  update_prep_message(PrepStep::GROOM_IMAGES);
   Q_EMIT progress(75);
-  std::this_thread::sleep_for(std::chrono::seconds(5));
+
+  /////////////////////////////////////////////////////////
+  // Step 3. Groom Images
+  /////////////////////////////////////////////////////////
+
+  // load reference image
+  auto image_filenames = subjects[reference]->get_feature_filenames();
+  std::string image_filename;
+  if (!image_filenames.empty()) {
+    image_filename = image_filenames.begin()->second;
+  }
+  if (image_filename.empty()) {
+    SW_ERROR("No image found for reference shape");
+    return;
+  }
+
+  // apply alignment transform
+  auto transform = shapes[reference]->get_alignment();
+  Image reference_image{image_filename};
+
+  // convert to ITK transform
+  // auto itk_transform = MeshUtils::convertToITKTransform(transform);
+
+  // image.applyTransform(transform);
+  //  save as reference_image.nrrd
+  reference_image.write("deepssm/reference_image.nrrd");
+
+  // for each training image
+  for (int i = 0; i < train_id_list.size(); i++) {
+    auto id = train_id_list[i];
+    auto shape = shapes[std::stoi(id)];
+    auto subject = shape->get_subject();
+
+    // load image
+    auto image_filenames = subject->get_feature_filenames();
+    std::string image_filename;
+    if (!image_filenames.empty()) {
+      image_filename = image_filenames.begin()->second;
+    }
+    if (image_filename.empty()) {
+      SW_ERROR("No image found for subject {}", id);
+      return;
+    }
+
+    // apply alignment transform
+    auto transform = shape->get_alignment();
+    auto procrustes = shape->get_procrustes_transform();
+
+    transform->Concatenate(procrustes);
+
+    Image image{image_filename};
+
+    // invert to use for image resampling
+    transform->Inverse();
+
+    auto itk_transform = shapeworks::convert_to_image_transform(transform);
+
+    // debug
+    // image.write("deepssm/train_images/before_" + id + ".nrrd");
+
+    image.applyTransform(itk_transform, reference_image);
+
+    // create output directory
+    QDir dir("deepssm/train_images");
+    if (!dir.exists()) {
+      dir.mkpath(".");
+    }
+
+    // save as image.nrrd
+    image.write("deepssm/train_images/" + id + ".nrrd");
+  }
+
   update_prep_message(PrepStep::DONE);
   Q_EMIT progress(100);
 }
@@ -324,11 +397,11 @@ void DeepSSMJob::update_prep_message(PrepStep step) {
 
   prep_message_ =
       "<html><table border=\"0\">"
-      "<tr><td>Grooming Training Data</td>" +
+      "<tr><td>Groom Training Data</td>" +
       message(step, PrepStep::GROOM_TRAINING) +
       "</tr>"
-      "<tr><td>Optimizing Training Data</td>" +
-      message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>" + "<tr><td>Next</td>" + message(step, PrepStep::NEXT) +
-      "</tr></table></html>";
+      "<tr><td>Optimize Training Data</td>" +
+      message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>" + "<tr><td>Groom Images</td>" +
+      message(step, PrepStep::GROOM_IMAGES) + "</tr></table></html>";
 }
 }  // namespace shapeworks

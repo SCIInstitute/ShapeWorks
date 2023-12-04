@@ -572,6 +572,11 @@ Image& Image::applyTransform(const TransformPtr transform, const Point3 origin, 
   return resample(transform, origin, dims, spacing, coordsys, interp);
 }
 
+Image& Image::applyTransform(const TransformPtr transform, const Image& referenceImage, Image::InterpolationType interp) {
+  return applyTransform(transform, referenceImage.origin(), referenceImage.dims(), referenceImage.spacing(),
+                        referenceImage.coordsys(), interp);
+}
+
 Image& Image::extractLabel(const PixelType label) {
   binarize(label - std::numeric_limits<PixelType>::epsilon(), label + std::numeric_limits<PixelType>::epsilon());
 
@@ -940,7 +945,7 @@ Point3 Image::logicalToPhysical(const Coord& v) const {
 
 Coord Image::physicalToLogical(const Point3& p) const { return itk_image_->TransformPhysicalPointToIndex(p); }
 
-bool Image::isInside(const Point3 &p) const {
+bool Image::isInside(const Point3& p) const {
   auto itk_image = getITKImage();
   auto region = itk_image->GetLargestPossibleRegion();
   Image::ImageType::IndexType index;
@@ -948,7 +953,7 @@ bool Image::isInside(const Point3 &p) const {
   pitk[0] = p[0];
   pitk[1] = p[1];
   pitk[2] = p[2];
-  itk_image->TransformPhysicalPointToIndex( pitk, index );
+  itk_image->TransformPhysicalPointToIndex(pitk, index);
   return region.IsInside(index);
 }
 
