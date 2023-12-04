@@ -218,7 +218,7 @@ void DeepSSMJob::run_prep() {
 
 //---------------------------------------------------------------------------
 void DeepSSMJob::run_augmentation() {
-  auto train_img_list = get_list(FileType::IMAGE, SplitType::TRAIN);
+  auto train_img_list = get_list(FileType::GROOMED_IMAGE, SplitType::TRAIN);
   auto train_pts = get_list(FileType::PARTICLES, SplitType::TRAIN);
 
   py::list train_img_list_py = py::cast(train_img_list);
@@ -360,6 +360,8 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
     auto id = ids[i];
     if (file_type == FileType::ID) {
       list.push_back(std::to_string(id));
+    } else if (file_type == FileType::GROOMED_IMAGE) {
+      list.push_back("deepssm/train_images/" + std::to_string(id) + ".nrrd";
     } else if (file_type == FileType::IMAGE) {
       auto image_filenames = subjects[id]->get_feature_filenames();
       if (!image_filenames.empty()) {

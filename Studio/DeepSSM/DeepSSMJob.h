@@ -17,7 +17,7 @@ class DeepSSMJob : public Job {
   Q_OBJECT;
 
  public:
-  enum class FileType { ID, IMAGE, PARTICLES };
+  enum class FileType { ID, IMAGE, GROOMED_IMAGE, PARTICLES };
 
   enum class SplitType { TRAIN, VAL, TEST };
 
