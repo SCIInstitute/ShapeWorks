@@ -43,6 +43,9 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tab_widget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
 #endif
 
+  // set to html mode
+  ui_->prep_text_edit->setAcceptRichText(true);
+
   connect(ui_->run_button, &QPushButton::clicked, this, &DeepSSMTool::run_clicked);
   connect(ui_->restore_defaults, &QPushButton::clicked, this, &DeepSSMTool::restore_defaults);
 
@@ -178,6 +181,10 @@ void DeepSSMTool::handle_thread_complete() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_progress(int val) {
+  if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+    ui_->prep_text_edit->setText(deep_ssm_->get_prep_message());
+    ui_->prep_text_edit->setEnabled(true);
+  }
   load_plots();
   update_tables();
   update_meshes();

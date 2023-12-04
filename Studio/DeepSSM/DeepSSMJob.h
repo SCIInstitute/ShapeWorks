@@ -1,9 +1,10 @@
 #pragma once
 
-#include <QObject>
-#include <Project/Project.h>
-#include <Job/Job.h>
 #include <DeepSSM/DeepSSMTool.h>
+#include <Job/Job.h>
+#include <Project/Project.h>
+
+#include <QObject>
 
 namespace shapeworks {
 
@@ -13,21 +14,14 @@ namespace shapeworks {
  *
  */
 class DeepSSMJob : public Job {
-
   Q_OBJECT;
 
-public:
+ public:
+  enum class FileType { ID, IMAGE, PARTICLES };
 
-  enum class FileType {
-    ID,
-    IMAGE,
-    PARTICLES
-  };
+  enum class SplitType { TRAIN, TEST };
 
-  enum class SplitType {
-    TRAIN,
-    TEST
-  };
+  enum PrepStep { GROOM_TRAINING = 0, OPTIMIZE_TRAINING = 1, NEXT = 2, DONE = 3 };
 
   DeepSSMJob(ProjectHandle project, DeepSSMTool::ToolMode tool_mode);
   ~DeepSSMJob();
@@ -45,9 +39,19 @@ public:
 
   std::vector<std::string> get_list(FileType file_type, SplitType split_type);
 
-private:
+  QString get_prep_message();
+
+ private:
+  void update_prep_message(PrepStep step);
+
   ProjectHandle project_;
 
   DeepSSMTool::ToolMode tool_mode_;
+
+  QString prep_message_;
+  PrepStep prep_step_{GROOM_TRAINING};
+
+  // mutex
+  std::mutex mutex_;
 };
-}
+}  // namespace shapeworks

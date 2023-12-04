@@ -72,8 +72,17 @@ void DeepSSMJob::run_prep() {
   // groom training
   auto subjects = project_->get_subjects();
   SW_LOG("DeepSSM: Grooming Training Data");
-  // sleep 5
+  update_prep_message(PrepStep::GROOM_TRAINING);
+  Q_EMIT progress(25);
   std::this_thread::sleep_for(std::chrono::seconds(5));
+  update_prep_message(PrepStep::OPTIMIZE_TRAINING);
+  Q_EMIT progress(50);
+  std::this_thread::sleep_for(std::chrono::seconds(5));
+  update_prep_message(PrepStep::NEXT);
+  Q_EMIT progress(75);
+  std::this_thread::sleep_for(std::chrono::seconds(5));
+  update_prep_message(PrepStep::DONE);
+  Q_EMIT progress(100);
 }
 
 //---------------------------------------------------------------------------
@@ -230,5 +239,35 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
     }
   }
   return list;
+}
+
+//---------------------------------------------------------------------------
+QString DeepSSMJob::get_prep_message() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return prep_message_;
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMJob::update_prep_message(PrepStep step) {
+  std::lock_guard<std::mutex> lock(mutex_);
+
+  auto message = [=](PrepStep current_step, PrepStep step) -> QString {
+    if (step == current_step) {
+      return "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Running</td>";
+    } else if (step < current_step) {
+      return "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Done</td>";
+    } else {
+      return "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Waiting</td>";
+    }
+  };
+
+  prep_message_ =
+      "<html><table border=\"0\">"
+      "<tr><td>Grooming Training Data</td>" +
+      message(step, PrepStep::GROOM_TRAINING) +
+      "</tr>"
+      "<tr><td>Optimizing Training Data</td>" +
+      message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>" + "<tr><td>Next</td>" +
+      message(step, PrepStep::NEXT) + "</tr></table></html>";
 }
 }  // namespace shapeworks
