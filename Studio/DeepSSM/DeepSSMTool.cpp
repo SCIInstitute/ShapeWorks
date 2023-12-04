@@ -7,20 +7,20 @@
 #include <QThread>
 
 // shapeworks
+#include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Python/PythonWorker.h>
-#include <Logging.h>
 
 // studio
 #include <Data/Session.h>
-#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Logging.h>
 #include <DeepSSM/DeepSSMJob.h>
 #include <DeepSSM/DeepSSMParameters.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
+#include <Logging.h>
+#include <Shape.h>
 
 // vtk
 #include <vtkPointData.h>
@@ -36,7 +36,7 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   this->ui_->setupUi(this);
 
 #ifdef Q_OS_MACOS
-  ui_->tab_widget->tabBar()->setMinimumWidth(200);
+  ui_->tab_widget->tabBar()->setMinimumWidth(300);
   ui_->tab_widget->setStyleSheet(
       "QTabBar::tab:selected { border-radius: 4px; background-color: #3784f7; color: white; }");
   ui_->tab_widget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
