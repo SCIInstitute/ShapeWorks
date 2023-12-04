@@ -514,7 +514,7 @@ void ShapeWorksStudioApp::enable_possible_actions() {
     new_analysis = true;
   }
   ui_->action_analysis_mode->setEnabled(reconstructed);
-  ui_->action_deepssm_mode->setEnabled(reconstructed && session_->get_project()->get_images_present());
+  ui_->action_deepssm_mode->setEnabled(session_->get_project()->get_images_present());
   // subtools
   data_tool_->enable_actions();
   groom_tool_->enable_actions();

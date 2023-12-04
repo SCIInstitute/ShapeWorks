@@ -16,15 +16,22 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 #include <QThread>
 
 // shapeworks
+#include <Data/Session.h>
 #include <DeepSSM/DeepSSMJob.h>
 #include <DeepSSM/DeepSSMParameters.h>
+#include <Groom.h>
 #include <Logging.h>
+#include <Mesh/MeshUtils.h>
+#include <Optimize.h>
+#include <Optimize/OptimizeParameters.h>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-DeepSSMJob::DeepSSMJob(ProjectHandle project, DeepSSMTool::ToolMode tool_mode)
-    : project_(project), tool_mode_(tool_mode) {}
+DeepSSMJob::DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode)
+    : session_(session), tool_mode_(tool_mode) {
+  project_ = session_->get_project();
+}
 
 //---------------------------------------------------------------------------
 DeepSSMJob::~DeepSSMJob() {}
@@ -71,13 +78,64 @@ QString DeepSSMJob::name() {
 void DeepSSMJob::run_prep() {
   // groom training
   auto subjects = project_->get_subjects();
+  auto shapes = session_->get_shapes();
   SW_LOG("DeepSSM: Grooming Training Data");
   update_prep_message(PrepStep::GROOM_TRAINING);
-  Q_EMIT progress(25);
-  std::this_thread::sleep_for(std::chrono::seconds(5));
+  Q_EMIT progress(0);
+
+  auto train_id_list = get_list(FileType::ID, SplitType::TRAIN);
+  auto val_id_list = get_list(FileType::ID, SplitType::VAL);
+  auto test_id_list = get_list(FileType::ID, SplitType::TEST);
+
+  SW_LOG("Total subjects: {}", subjects.size());
+  SW_LOG("Train subjects: {}", train_id_list.size());
+  SW_LOG("Val subjects: {}", val_id_list.size());
+  SW_LOG("Test subjects: {}", test_id_list.size());
+
+  /////////////////////////////////////////////////////////
+  // Step 1. Groom Training
+  /////////////////////////////////////////////////////////
+
+  // first, set all excluded
+  for (auto &subject : subjects) {
+    subject->set_excluded(true);
+  }
+
+  // include only training data
+  std::vector<Mesh> meshes;
+  for (int i = 0; i < train_id_list.size(); i++) {
+    auto id = train_id_list[i];
+    auto shape = shapes[std::stoi(id)];
+    shape->get_subject()->set_excluded(false);
+    meshes.push_back(shape->get_original_meshes(true).meshes()[0]->get_poly_data());
+  }
+  project_->update_subjects();
+  session_->trigger_reinsert_shapes();
+
+  // choose reference
+  int reference = MeshUtils::findReferenceMesh(meshes, 20);
+  SW_LOG("Reference shape: {}", reference);
+
+  GroomParameters groom_params{project_};
+  groom_params.set_alignment_reference(reference);
+  groom_params.save_to_project();
+
+  // run grooming
+  Groom groom{project_};
+  groom.run();
+
   update_prep_message(PrepStep::OPTIMIZE_TRAINING);
-  Q_EMIT progress(50);
-  std::this_thread::sleep_for(std::chrono::seconds(5));
+  Q_EMIT progress(25);
+
+  /////////////////////////////////////////////////////////
+  // Step 2. Optimize Training Shapes
+  /////////////////////////////////////////////////////////
+
+  OptimizeParameters optimize_params{project_};
+  Optimize optimize;
+  optimize_params.set_up_optimize(&optimize);
+  optimize.Run();
+
   update_prep_message(PrepStep::NEXT);
   Q_EMIT progress(75);
   std::this_thread::sleep_for(std::chrono::seconds(5));
@@ -119,12 +177,7 @@ void DeepSSMJob::run_augmentation() {
 void DeepSSMJob::run_training() {
   auto subjects = project_->get_subjects();
 
-  // auto train_img_list = get_list(FileType::IMAGE, SplitType::TRAIN);
-  // auto train_pts = get_list(FileType::PARTICLES, SplitType::TRAIN);
   auto test_img_list = get_list(FileType::IMAGE, SplitType::TEST);
-
-  // py::list train_img_list_py = py::cast(train_img_list);
-  // py::list train_pts_py = py::cast(train_pts);
 
   DeepSSMParameters params(project_);
 
@@ -215,11 +268,19 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
 
   DeepSSMParameters params(project_);
 
+  double val_split = params.get_validation_split();
+  double test_split = params.get_testing_split();
+  double train_split = 100.0 - val_split - test_split;
+
   int start = 0;
-  int end = subjects.size() * (100.0 - params.get_testing_split()) / 100.0;
-  if (split_type == SplitType::TEST) {
-    start = end;
-    end = subjects.size();
+  int end = subjects.size();
+  if (split_type == SplitType::TRAIN) {
+    end = subjects.size() * (train_split / 100.0);
+  } else if (split_type == SplitType::VAL) {
+    start = subjects.size() * (train_split / 100.0);
+    end = subjects.size() * ((train_split + val_split) / 100.0);
+  } else {
+    start = subjects.size() * ((train_split + val_split) / 100.0);
   }
 
   for (int i = start; i < end; i++) {
@@ -267,7 +328,7 @@ void DeepSSMJob::update_prep_message(PrepStep step) {
       message(step, PrepStep::GROOM_TRAINING) +
       "</tr>"
       "<tr><td>Optimizing Training Data</td>" +
-      message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>" + "<tr><td>Next</td>" +
-      message(step, PrepStep::NEXT) + "</tr></table></html>";
+      message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>" + "<tr><td>Next</td>" + message(step, PrepStep::NEXT) +
+      "</tr></table></html>";
 }
 }  // namespace shapeworks

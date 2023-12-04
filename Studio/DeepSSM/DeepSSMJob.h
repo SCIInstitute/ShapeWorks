@@ -19,11 +19,11 @@ class DeepSSMJob : public Job {
  public:
   enum class FileType { ID, IMAGE, PARTICLES };
 
-  enum class SplitType { TRAIN, TEST };
+  enum class SplitType { TRAIN, VAL, TEST };
 
   enum PrepStep { GROOM_TRAINING = 0, OPTIMIZE_TRAINING = 1, NEXT = 2, DONE = 3 };
 
-  DeepSSMJob(ProjectHandle project, DeepSSMTool::ToolMode tool_mode);
+  DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode);
   ~DeepSSMJob();
 
   void run() override;
@@ -44,6 +44,7 @@ class DeepSSMJob : public Job {
  private:
   void update_prep_message(PrepStep step);
 
+  QSharedPointer<Session> session_;
   ProjectHandle project_;
 
   DeepSSMTool::ToolMode tool_mode_;

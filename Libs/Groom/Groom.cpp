@@ -834,15 +834,14 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
       matrix->Identity();
 
       Mesh source = meshes[i];
-
-      // create copies for thread safety
-      auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
-      poly_data1->DeepCopy(source.getVTKMesh());
-      auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
-      poly_data2->DeepCopy(reference.getVTKMesh());
-
-      matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
-
+      if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
+        // create copies for thread safety
+        auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data1->DeepCopy(source.getVTKMesh());
+        auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data2->DeepCopy(reference.getVTKMesh());
+        matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+      }
       auto transform = createMeshTransform(matrix);
       transform->PostMultiply();
       Groom::add_center_transform(transform, reference);
