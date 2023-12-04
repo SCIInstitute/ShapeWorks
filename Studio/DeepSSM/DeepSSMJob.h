@@ -36,6 +36,7 @@ public:
 
   QString name() override;
 
+  void run_prep();
   void run_augmentation();
   void run_training();
   void run_testing();

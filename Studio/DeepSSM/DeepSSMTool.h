@@ -25,7 +25,7 @@ class DeepSSMTool : public QWidget {
   Q_OBJECT;
 
  public:
-  enum class ToolMode { DeepSSM_SplitType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType };
+  enum class ToolMode { DeepSSM_PrepType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType };
 
   DeepSSMTool(Preferences& prefs);
   ~DeepSSMTool();

@@ -14,6 +14,7 @@
 // studio
 #include <Data/Session.h>
 #include <Data/ShapeWorksWorker.h>
+#include <Data/Worker.h>
 #include <DeepSSM/DeepSSMJob.h>
 #include <DeepSSM/DeepSSMParameters.h>
 #include <DeepSSM/DeepSSMTool.h>
@@ -76,7 +77,7 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
 void DeepSSMTool::tab_changed(int tab) {
   switch (tab) {
     case 0:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_SplitType;
+      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_PrepType;
       break;
     case 1:
       current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
@@ -198,7 +199,7 @@ void DeepSSMTool::update_panels() {
   ui_->data_panel->hide();
   ui_->training_panel->hide();
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_SplitType:
+    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
       string = "Groom and Optimize";
       break;
     case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
@@ -452,7 +453,7 @@ void DeepSSMTool::update_meshes() {
     return;
   }
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_SplitType:
+    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
       shapes_.clear();
       Q_EMIT update_view();
       break;
@@ -575,7 +576,7 @@ void DeepSSMTool::restore_defaults() {
   auto params = DeepSSMParameters(session_->get_project());
 
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_SplitType:
+    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
       params.restore_split_defaults();
       break;
     case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
@@ -598,19 +599,28 @@ void DeepSSMTool::restore_defaults() {
 void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   current_tool_ = type;
   Q_EMIT progress(-1);
+  bool python_type = true;
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
     SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/Augmentation/TotalData.csv").remove();
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
     SW_LOG("Please Wait: Running Training...");
+
     // clean
     QDir dir("deepssm/model");
     dir.removeRecursively();
 
     show_training_meshes();
-  } else {
+  } else if (type == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     SW_LOG("Please Wait: Running Testing...");
+  } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+    SW_LOG("Please Wait: Running Groom/Optimize...");
+    python_type = false;
+  } else {
+    SW_ERROR("Unknown tool mode");
+    Q_EMIT progress(100);
+    return;
   }
 
   load_plots();
@@ -622,16 +632,20 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   update_panels();
 
   store_params();
-  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), type);
 
+  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), type);
   connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
-
-  app_->get_py_worker()->run_job(deep_ssm_);
+  if (python_type) {
+    app_->get_py_worker()->run_job(deep_ssm_);
+  } else {
+    auto worker = Worker::create_worker();
+    worker->run_job(deep_ssm_);
+  }
 
   // ensure someone doesn't accidentally abort right after clicking RUN
   ui_->run_button->setEnabled(false);
-  QTimer::singleShot(1000, [=]() { ui_->run_button->setEnabled(true); });
+  QTimer::singleShot(1000, this, [=]() { ui_->run_button->setEnabled(true); });
 }
 
 //---------------------------------------------------------------------------

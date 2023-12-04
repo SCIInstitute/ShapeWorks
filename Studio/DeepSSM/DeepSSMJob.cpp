@@ -2,18 +2,18 @@
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
 namespace py = pybind11;
-using namespace pybind11::literals; // to bring in the `_a` literal
+using namespace pybind11::literals;  // to bring in the `_a` literal
 
 // std
+#include <fstream>
 #include <functional>
 #include <iostream>
-#include <fstream>
 #include <random>
 
 // qt
-#include <QThread>
 #include <QFile>
 #include <QTextStream>
+#include <QThread>
 
 // shapeworks
 #include <DeepSSM/DeepSSMJob.h>
@@ -23,79 +23,81 @@ using namespace pybind11::literals; // to bring in the `_a` literal
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-DeepSSMJob::DeepSSMJob(ProjectHandle project, DeepSSMTool::ToolMode tool_mode) : project_(project),
-  tool_mode_(tool_mode)
-{}
+DeepSSMJob::DeepSSMJob(ProjectHandle project, DeepSSMTool::ToolMode tool_mode)
+    : project_(project), tool_mode_(tool_mode) {}
 
 //---------------------------------------------------------------------------
-DeepSSMJob::~DeepSSMJob()
-{}
+DeepSSMJob::~DeepSSMJob() {}
 
 //---------------------------------------------------------------------------
-void DeepSSMJob::run()
-{
-  switch (this->tool_mode_) {
-  case DeepSSMTool::ToolMode::DeepSSM_SplitType:
-    // nothing to do
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
-    this->run_augmentation();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
-    this->run_training();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TestingType:
-    this->run_testing();
-    break;
+void DeepSSMJob::run() {
+  switch (tool_mode_) {
+    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+      run_prep();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+      run_augmentation();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+      run_training();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+      run_testing();
+      break;
   }
 }
 
 //---------------------------------------------------------------------------
-QString DeepSSMJob::name()
-{
-  switch (this->tool_mode_) {
-  case DeepSSMTool::ToolMode::DeepSSM_SplitType:
-    return "DeepSSM: Split";
-    // nothing to do
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
-    return "DeepSSM: Augmentation";
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
-    return "DeepSSM: Training";
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TestingType:
-    return "DeepSSM: Testing";
-    break;
+QString DeepSSMJob::name() {
+  switch (tool_mode_) {
+    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+      return "DeepSSM: Prep";
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+      return "DeepSSM: Augmentation";
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+      return "DeepSSM: Training";
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+      return "DeepSSM: Testing";
+      break;
   }
 
   return "DeepSSM";
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMJob::run_augmentation()
-{
+void DeepSSMJob::run_prep() {
+  // groom training
+  auto subjects = project_->get_subjects();
+  SW_LOG("DeepSSM: Grooming Training Data");
+  // sleep 5
+  std::this_thread::sleep_for(std::chrono::seconds(5));
+}
 
-  auto train_img_list = this->get_list(FileType::IMAGE, SplitType::TRAIN);
-  auto train_pts = this->get_list(FileType::PARTICLES, SplitType::TRAIN);
+//---------------------------------------------------------------------------
+void DeepSSMJob::run_augmentation() {
+  auto train_img_list = get_list(FileType::IMAGE, SplitType::TRAIN);
+  auto train_pts = get_list(FileType::PARTICLES, SplitType::TRAIN);
 
   py::list train_img_list_py = py::cast(train_img_list);
   py::list train_pts_py = py::cast(train_pts);
 
-  DeepSSMParameters params(this->project_);
+  DeepSSMParameters params(project_);
 
   QString sampler_type = QString::fromStdString(params.get_aug_sampler_type()).toLower();
   py::module py_data_aug = py::module::import("DataAugmentationUtils");
 
   py::object run_aug = py_data_aug.attr("runDataAugmentation");
   std::string aug_dir = "deepssm/Augmentation/";
-  int aug_dims = run_aug(aug_dir, train_img_list_py, train_pts_py, params.get_aug_num_samples(),
-                         params.get_aug_num_dims(), params.get_aug_percent_variability(),
-                         sampler_type.toStdString(),
-                         0,   /* mixture_num */
-                         QThread::idealThreadCount() /* processes */
-                         // 1   /* processes */
-                         ).cast<int>();
+  int aug_dims =
+      run_aug(aug_dir, train_img_list_py, train_pts_py, params.get_aug_num_samples(), params.get_aug_num_dims(),
+              params.get_aug_percent_variability(), sampler_type.toStdString(), 0, /* mixture_num */
+              QThread::idealThreadCount()                                          /* processes */
+              // 1   /* processes */
+              )
+          .cast<int>();
 
   params.set_training_num_dims(aug_dims);
   params.save_to_project();
@@ -105,18 +107,17 @@ void DeepSSMJob::run_augmentation()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMJob::run_training()
-{
-  auto subjects = this->project_->get_subjects();
+void DeepSSMJob::run_training() {
+  auto subjects = project_->get_subjects();
 
-  //auto train_img_list = this->get_list(FileType::IMAGE, SplitType::TRAIN);
-  //auto train_pts = this->get_list(FileType::PARTICLES, SplitType::TRAIN);
-  auto test_img_list = this->get_list(FileType::IMAGE, SplitType::TEST);
+  // auto train_img_list = get_list(FileType::IMAGE, SplitType::TRAIN);
+  // auto train_pts = get_list(FileType::PARTICLES, SplitType::TRAIN);
+  auto test_img_list = get_list(FileType::IMAGE, SplitType::TEST);
 
-  //py::list train_img_list_py = py::cast(train_img_list);
-  //py::list train_pts_py = py::cast(train_pts);
+  // py::list train_img_list_py = py::cast(train_img_list);
+  // py::list train_pts_py = py::cast(train_pts);
 
-  DeepSSMParameters params(this->project_);
+  DeepSSMParameters params(project_);
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
@@ -150,9 +151,8 @@ void DeepSSMJob::run_training()
   py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
   SW_LOG("DeepSSM: Preparing Config File");
   std::string config_file = "deepssm/configuration.json";
-  prepare_config_file(config_file, "model",
-                      num_dims, out_dir, loader_dir, aug_dir, epochs,
-                      learning_rate, decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate);
+  prepare_config_file(config_file, "model", num_dims, out_dir, loader_dir, aug_dir, epochs, learning_rate, decay_lr,
+                      fine_tune, fine_tune_epochs, fine_tune_learning_rate);
 
   SW_LOG("DeepSSM: Training");
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");
@@ -160,12 +160,10 @@ void DeepSSMJob::run_training()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMJob::run_testing()
-{
+void DeepSSMJob::run_testing() {
+  DeepSSMParameters params(project_);
 
-  DeepSSMParameters params(this->project_);
-
-  auto id_list = this->get_list(FileType::ID, SplitType::TEST);
+  auto id_list = get_list(FileType::ID, SplitType::TEST);
   QFile file("deepssm/TorchDataLoaders/test_names.txt");
   if (file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
     QStringList list;
@@ -189,15 +187,11 @@ void DeepSSMJob::run_testing()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMJob::python_message(std::string str)
-{
-  SW_LOG(str);
-}
+void DeepSSMJob::python_message(std::string str) { SW_LOG(str); }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType split_type)
-{
-  auto subjects = this->project_->get_subjects();
+std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType split_type) {
+  auto subjects = project_->get_subjects();
 
   std::mt19937 rng{42};
 
@@ -210,7 +204,7 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
 
   std::vector<std::string> list;
 
-  DeepSSMParameters params(this->project_);
+  DeepSSMParameters params(project_);
 
   int start = 0;
   int end = subjects.size() * (100.0 - params.get_testing_split()) / 100.0;
@@ -223,14 +217,12 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
     auto id = ids[i];
     if (file_type == FileType::ID) {
       list.push_back(std::to_string(id));
-    }
-    else if (file_type == FileType::IMAGE) {
+    } else if (file_type == FileType::IMAGE) {
       auto image_filenames = subjects[id]->get_feature_filenames();
       if (!image_filenames.empty()) {
         list.push_back(image_filenames.begin()->second);
       }
-    }
-    else {
+    } else {
       auto particle_filenames = subjects[id]->get_world_particle_filenames();
       if (!particle_filenames.empty()) {
         list.push_back(particle_filenames[0]);
@@ -239,4 +231,4 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
   }
   return list;
 }
-}
+}  // namespace shapeworks
