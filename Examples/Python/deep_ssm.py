@@ -107,7 +107,7 @@ def Run_Pipeline(args):
     The required grooming steps are:
     1. Load mesh
     2. Apply clipping with planes for finding alignment transform
-    3. Find reflection transfrom
+    3. Find reflection transform
     4. Select reference mesh
     5. Find rigid alignment transform
     For more information on grooming see docs/workflow/groom.md
@@ -132,7 +132,7 @@ def Run_Pipeline(args):
         train_name = os.path.basename(train_mesh_file).replace('.ply', '')
         train_names.append(train_name)
         """
-        Grooming step 1: Load mesg
+        Grooming step 1: Load mesh
         """
         train_mesh = sw.Mesh(train_mesh_file)
         train_mesh_list.append(train_mesh)
@@ -322,7 +322,7 @@ def Run_Pipeline(args):
     Parameters:
     - num_samples is how many samples to generate 
     - num_dim is the number of PCA scores to use
-    - percent_dim what percent of variablity to retain (used if num_dim is 0)
+    - percent_dim what percent of variability to retain (used if num_dim is 0)
     - sampler is the distribution to use for sampling. Can be gaussian, mixture, or kde
     """
     num_samples = 2961
@@ -642,7 +642,7 @@ def Run_Pipeline(args):
     """
     Step 11: Validation analysis
     Use trained DeepSSM model to predict world validation particles
-    and apply inverse transforms to get local predcitions
+    and apply inverse transforms to get local predictions
     Analyze accuracy
     """
     val_out_dir = output_directory + model_name + '/validation_predictions/'
@@ -662,7 +662,7 @@ def Run_Pipeline(args):
     print("Validation local predictions written to: " + local_val_prediction_dir)
     '''
     Analyze validation accuracy in terms of:
-    - MSE between true and predcited world partcles
+    - MSE between true and predicted world particles
     - Surface to surface distance between true mesh and mesh generated from predicted local particles
     '''
     mean_MSE, std_MSE = DeepSSMUtils.analyzeMSE(predicted_val_world_particles, val_world_particles)
