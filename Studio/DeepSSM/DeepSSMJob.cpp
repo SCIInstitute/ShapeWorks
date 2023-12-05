@@ -103,18 +103,18 @@ void DeepSSMJob::run_prep() {
   }
 
   // include only training data
-  std::vector<Mesh> meshes;
+  std::vector<Mesh> training_meshes;
   for (int i = 0; i < train_id_list.size(); i++) {
     auto id = train_id_list[i];
     auto shape = shapes[std::stoi(id)];
     shape->get_subject()->set_excluded(false);
-    meshes.push_back(shape->get_original_meshes(true).meshes()[0]->get_poly_data());
+    training_meshes.push_back(shape->get_original_meshes(true).meshes()[0]->get_poly_data());
   }
   project_->update_subjects();
   session_->trigger_reinsert_shapes();
 
   // choose reference
-  int reference = MeshUtils::findReferenceMesh(meshes, 20);
+  int reference = MeshUtils::findReferenceMesh(training_meshes, 20);
   SW_LOG("Reference shape: {}", reference);
 
   GroomParameters groom_params{project_};
@@ -136,8 +136,6 @@ void DeepSSMJob::run_prep() {
   optimize_params.set_up_optimize(&optimize);
   optimize.Run();
 
-
-
   /////////////////////////////////////////////////////////
   /// Step 3. Groom Images
   /////////////////////////////////////////////////////////
@@ -157,11 +155,16 @@ void DeepSSMJob::run_prep() {
   // TODO: apply alignment transform?
   auto transform = shapes[reference]->get_alignment();
   Image reference_image{image_filename};
+  std::string ref_image_file = "deepssm/reference_image.nrrd";
   //  save as reference_image.nrrd
-  reference_image.write("deepssm/reference_image.nrrd");
+  reference_image.write(ref_image_file);
 
   SW_MESSAGE("Grooming Training Images");
   Q_EMIT progress(0);
+
+  // determine shared bounding box
+  auto bounding_box = MeshUtils::boundingBox(training_meshes).pad(10);
+
   // for each training image
   for (int i = 0; i < train_id_list.size(); i++) {
     auto id = train_id_list[i];
@@ -203,6 +206,9 @@ void DeepSSMJob::run_prep() {
       dir.mkpath(".");
     }
 
+    // crop to shared bounding box
+    image.crop(bounding_box);
+
     // save as image.nrrd
     image.write("deepssm/train_images/" + id + ".nrrd");
 
@@ -215,12 +221,78 @@ void DeepSSMJob::run_prep() {
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::GROOM_VALIDATION_IMAGES);
 
+  // # Get reference image
+
+  std::string data_dir = "deepssm/";
+  auto ref_center = reference_image.center();
+
+  // # Slightly cropped ref image
+  auto large_bb = PhysicalRegion(bounding_box.min, bounding_box.max).pad(80);
+  auto large_cropped_ref_image_file = data_dir + "large_cropped_reference_image.nrrd";
+  auto large_cropped_ref_image = Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file);
+
+  // # Further croppped ref image
+  auto medium_bb = PhysicalRegion(bounding_box.min, bounding_box.max).pad(20);
+  auto medium_cropped_ref_image_file = data_dir + "medium_cropped_reference_image.nrrd";
+  auto medium_cropped_ref_image = Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file);
+
+  // # Fully cropped ref image
+  auto cropped_ref_image_file = data_dir + "cropped_reference_image.nrrd";
+  auto cropped_ref_image = Image(ref_image_file).crop(bounding_box).write(cropped_ref_image_file);
+
+  // # Make dirs
+  auto val_test_images_dir = data_dir + "val_and_test_images/";
+
+  QDir dir(val_test_images_dir.c_str());
+  if (!dir.exists()) {
+    dir.mkpath(".");
+  }
+
+  // combine val_id_list and test_id_list
+  auto val_test_id_list = val_id_list;
+  val_test_id_list.insert(val_test_id_list.end(), test_id_list.begin(), test_id_list.end());
+
+  for (int i = 0; i < val_test_id_list.size(); i++) {
+    auto id = val_test_id_list[i];
+    auto shape = shapes[std::stoi(id)];
+    auto subject = shape->get_subject();
+
+    // load image
+    auto image_filenames = subject->get_feature_filenames();
+    std::string image_filename;
+    if (!image_filenames.empty()) {
+      image_filename = image_filenames.begin()->second;
+    }
+    if (image_filename.empty()) {
+      SW_ERROR("No image found for subject {}", id);
+      return;
+    }
+
+    // # Translate to have ref center to make rigid registration easier
+
+    // # Translate with respect to slightly cropped ref
+
+    // # Apply transform
+
+    // # Crop with medium bounding box and find rigid transform
+
+    // # Apply transform
+
+    // # Get similarity transform from image registration and apply
+
+    // # Save transform
+
+
+
+
+
+
+  }
 
   /////////////////////////////////////////////////////////
   /// Step 5. Optimize Validation Particles
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::OPTIMIZE_VALIDATION);
-
 
   update_prep_message(PrepStep::DONE);
   Q_EMIT progress(100);
