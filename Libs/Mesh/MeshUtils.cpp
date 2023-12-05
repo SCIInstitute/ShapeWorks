@@ -139,6 +139,18 @@ PhysicalRegion MeshUtils::boundingBox(const std::vector<std::reference_wrapper<c
   return bbox;
 }
 
+PhysicalRegion MeshUtils::boundingBox(const std::vector<Mesh>& meshes, bool center) {
+  if (meshes.empty()) throw std::invalid_argument("No meshes provided to compute a bounding box");
+
+  PhysicalRegion bbox(meshes[0].boundingBox());
+
+  for (auto& mesh : meshes) {
+    bbox.expand(mesh.boundingBox());
+  }
+
+  return bbox;
+}
+
 int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size) {
   bool use_random_subset = random_subset_size > 0 && random_subset_size < meshes.size();
   int num_meshes = use_random_subset ? random_subset_size : meshes.size();

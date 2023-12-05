@@ -36,6 +36,9 @@ class MeshUtils {
   /// calculate bounding box incrementally for meshes
   static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center = false);
 
+  /// calculate bounding box incrementally for meshes
+  static PhysicalRegion boundingBox(const std::vector<Mesh>& meshes, bool center = false);
+
   /// determine the reference mesh
   static int findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size = -1);
 
