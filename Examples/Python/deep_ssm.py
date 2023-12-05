@@ -348,10 +348,10 @@ def Run_Pipeline(args):
     """
     Step 7: Find test and validation transforms and images
     1. Find reflection
-    2. Transalte to have the same center as ref image
-    3. Crop with large bounding box and transalte
+    2. Translate to have the same center as ref image
+    3. Crop with large bounding box and translate
     4. Crop with medium bounding box and find rigid transform
-    5. Apply full croppping and find similarity transform
+    5. Apply full cropping and find similarity transform
     """
     # Get reference image
     ref_image_file = data_dir + 'reference_image.nrrd'
@@ -361,7 +361,7 @@ def Run_Pipeline(args):
     large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(80)
     large_cropped_ref_image_file = data_dir + 'large_cropped_reference_image.nrrd'
     large_cropped_ref_image = sw.Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file)  
-    # Further croppped ref image 
+    # Further cropped ref image
     medium_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(20)
     medium_cropped_ref_image_file = data_dir + 'medium_cropped_reference_image.nrrd'
     medium_cropped_ref_image = sw.Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file)   
@@ -373,6 +373,7 @@ def Run_Pipeline(args):
     val_test_images_dir = data_dir + 'val_and_test_images/'
     if not os.path.exists(val_test_images_dir):
         os.makedirs(val_test_images_dir)
+
     # Combine mesh files
     val_test_mesh_files = val_mesh_files + test_mesh_files
     
@@ -392,17 +393,20 @@ def Run_Pipeline(args):
         vt_image = sw.Image(corresponding_image_file)
         vt_image_file = val_test_images_dir + vt_name + ".nrrd"
         val_test_image_files.append(vt_image_file)
-        # 1. Apply reflection transform 
+
+        # 1. Apply reflection transform
         reflection = np.eye(4) # Identity
         if ref_side in vt_name:
             reflection[0][0] = -1 # Reflect across X
             reflection[-1][0] = 2*vt_image.center()[0] # account for offset
         vt_image.applyTransform(reflection)
         transform = sw.utils.getVTKtransform(reflection)
+
         # 2. Translate to have ref center to make rigid registration easier
         translation = ref_center - vt_image.center()
         vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
         transform[:3,-1] += translation
+
         # 3. Translate with respect to slightly cropped ref
         vt_image = sw.Image(vt_image_file).crop(large_bb).write(vt_image_file)
         itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file, 
@@ -414,6 +418,7 @@ def Run_Pipeline(args):
                              sw.InterpolationType.Linear, meshTransform=False)
         vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
         transform = np.matmul(vtk_translation_transform, transform)
+
         # 4. Crop with medium bounding box and find rigid transform
         vt_image.crop(medium_bb).write(vt_image_file)
         itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file, 
@@ -425,6 +430,7 @@ def Run_Pipeline(args):
                              sw.InterpolationType.Linear, meshTransform=False)
         vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
         transform = np.matmul(vtk_rigid_transform, transform)
+
         # 5. Get similarity transform from image registration and apply
         vt_image.crop(bounding_box).write(vt_image_file)
         itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file, 
@@ -437,7 +443,8 @@ def Run_Pipeline(args):
         transform = np.matmul(vtk_similarity_transform, transform)
         # Save transform
         val_test_transforms.append(transform)
-    # split val and test groomed images and transforms    
+
+    # split val and test groomed images and transforms
     val_image_files = val_test_image_files[:len(val_mesh_files)]
     val_transforms = val_test_transforms[:len(val_mesh_files)]
     test_image_files = val_test_image_files[len(val_mesh_files):]
