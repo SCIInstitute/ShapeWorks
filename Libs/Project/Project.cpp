@@ -51,6 +51,12 @@ bool Project::load(const std::string& filename) {
 bool Project::save(const std::string& filename) {
   filename_ = filename;
 
+  // get the directory of the project file
+  fs::path path = filename;
+  project_path_ = path.parent_path().string();
+
+  set_project_path(project_path_);
+
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
   project_parameters.set("version", version_);
   set_parameters(Parameters::PROJECT_PARAMS, project_parameters);
