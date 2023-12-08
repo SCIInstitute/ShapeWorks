@@ -1946,6 +1946,17 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Subject::set_display_name,
       "Set the display name",
       "display_name"_a)
+
+  .def("set_excluded",
+      &Subject::set_excluded,
+      "Set excluded",
+      "excluded"_a)
+
+  .def("set_fixed",
+      &Subject::set_fixed,
+      "Set fixed",
+      "fixed"_a)
+
   ;//Subject
 
   // Parameters 
