@@ -20,6 +20,7 @@ import DeepSSMUtils
 torch.multiprocessing.set_sharing_strategy('file_system')
 random.seed(4)
 
+
 def Run_Pipeline(args):
     ######################################################################################
     print("\nStep 1. Acquire Data")
@@ -29,7 +30,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
     """
-    dataset_name =  "deep_ssm_femur"
+    dataset_name = "deep_ssm_femur"
     output_directory = os.getcwd() + "/Output/deep_ssm/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -39,24 +40,24 @@ def Run_Pipeline(args):
         os.environ['OMP_NUM_THREADS'] = "1"
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
-        dataset_name =  "deep_ssm_femur_tiny_test"
+        dataset_name = "deep_ssm_femur_tiny_test"
         sw.download_dataset(dataset_name, output_directory)
         dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/meshes/*.ply"))[:5]
+                                      dataset_name + "/meshes/*.ply"))[:5]
         image_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/images/*.nrrd"))[:5]
+                                       dataset_name + "/images/*.nrrd"))[:5]
         plane_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/constraints/*.json"))[:5]
+                                       dataset_name + "/constraints/*.json"))[:5]
     else:
         sw.download_dataset(dataset_name, output_directory)
         dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/meshes/*.ply"))
-        image_files = sorted(glob.glob(output_directory + 
-                            dataset_name + "/images/*.nrrd"))
+                                      dataset_name + "/meshes/*.ply"))
+        image_files = sorted(glob.glob(output_directory +
+                                       dataset_name + "/images/*.nrrd"))
         plane_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/constraints/*.json"))
+                                       dataset_name + "/constraints/*.json"))
 
     ######################################################################################
     print("\nStep 2. Defining Split")
@@ -66,13 +67,13 @@ def Run_Pipeline(args):
     # Shuffle files
     random.shuffle(mesh_files)
     # Get size of validation and test sets
-    test_val_size = int(math.ceil(len(mesh_files)*.10))
+    test_val_size = int(math.ceil(len(mesh_files) * .10))
     # Split data
     test_mesh_files = sorted(mesh_files[:test_val_size])
-    val_mesh_files = sorted(mesh_files[test_val_size: test_val_size*2])
-    train_mesh_files = sorted(mesh_files[test_val_size*2:])
-    print(str(len(train_mesh_files))+" in train set, "+str(len(val_mesh_files))+
-            " in validation set, and "+str(len(test_mesh_files))+" in test set")
+    val_mesh_files = sorted(mesh_files[test_val_size: test_val_size * 2])
+    train_mesh_files = sorted(mesh_files[test_val_size * 2:])
+    print(str(len(train_mesh_files)) + " in train set, " + str(len(val_mesh_files)) +
+          " in validation set, and " + str(len(test_mesh_files)) + " in test set")
     # Load and split cutting planes
     planes = []
     for plane_file in plane_files:
@@ -82,21 +83,21 @@ def Run_Pipeline(args):
     train_planes = []
     train_plane_files = []
     for train_mesh_file in train_mesh_files:
-        plane_file = train_mesh_file.replace('meshes', 'constraints').replace('.ply','.json')
+        plane_file = train_mesh_file.replace('meshes', 'constraints').replace('.ply', '.json')
         train_planes.append(planes[plane_files.index(plane_file)])
         train_plane_files.append(plane_file)
     # Val planes
     val_planes = []
     val_plane_files = []
     for val_mesh_file in val_mesh_files:
-        plane_file = val_mesh_file.replace('meshes', 'constraints').replace('.ply','.json')
+        plane_file = val_mesh_file.replace('meshes', 'constraints').replace('.ply', '.json')
         val_planes.append(planes[plane_files.index(plane_file)])
         val_plane_files.append(plane_file)
     # Test planes
     test_planes = []
     test_plane_files = []
     for test_mesh_file in test_mesh_files:
-        plane_file = test_mesh_file.replace('meshes', 'constraints').replace('.ply','.json')
+        plane_file = test_mesh_file.replace('meshes', 'constraints').replace('.ply', '.json')
         test_planes.append(planes[plane_files.index(plane_file)])
         test_plane_files.append(plane_file)
 
@@ -122,8 +123,8 @@ def Run_Pipeline(args):
     """
     To begin grooming, we loop over the files and load the meshes
     """
-    ref_side = "L" # chosen so reflection happens in tiny test 
-    train_reflections = [] 
+    ref_side = "L"  # chosen so reflection happens in tiny test
+    train_reflections = []
     train_names = []
     train_mesh_list = []
     print('Loading meshes...')
@@ -145,9 +146,9 @@ def Run_Pipeline(args):
         right femurs, so we reflect the non-reference side meshes 
         so that all of the femurs can be aligned.
         """
-        reflection = np.eye(4) # Identity
+        reflection = np.eye(4)  # Identity
         if ref_side in train_name:
-            reflection[0][0] = -1 # Reflect across X
+            reflection[0][0] = -1  # Reflect across X
             train_mesh.applyTransform(reflection)
         train_reflections.append(reflection)
 
@@ -165,15 +166,15 @@ def Run_Pipeline(args):
     ref_mesh.write(data_dir + 'reference.vtk')
 
     print('Creating alignment transforms to ' + ref_name)
-    train_rigid_transforms = [] # save in case grooming images
+    train_rigid_transforms = []  # save in case grooming images
     for train_mesh, train_name in zip(train_mesh_list, train_names):
         """
         Grooming Step 5: Rigid alignment
         This step rigidly aligns each shape to the selected reference. 
         """
         # compute rigid transformation
-        rigid_transform = train_mesh.createTransform(ref_mesh, 
-                                        sw.Mesh.AlignmentType.Rigid, 100)
+        rigid_transform = train_mesh.createTransform(ref_mesh,
+                                                     sw.Mesh.AlignmentType.Rigid, 100)
         # apply rigid transform
         train_rigid_transforms.append(rigid_transform)
         train_mesh.applyTransform(rigid_transform)
@@ -204,7 +205,7 @@ def Run_Pipeline(args):
         subject.set_original_filenames(rel_mesh_files)
         rel_groom_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
         subject.set_groomed_filenames(rel_groom_files)
-        transform = [ train_transforms[i].flatten() ]
+        transform = [train_transforms[i].flatten()]
         subject.set_groomed_transforms(transform)
         rel_plane_files = sw.utils.get_relative_paths([train_plane_files[i]], project_location)
         subject.set_constraints_filenames(rel_plane_files)
@@ -216,26 +217,26 @@ def Run_Pipeline(args):
 
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
-        "number_of_particles" : 512,
+        "number_of_particles": 512,
         "use_normals": 0,
         "normals_strength": 10.0,
-        "checkpointing_interval" : 200,
-        "keep_checkpoints" : 0,
-        "iterations_per_split" : 1500,
-        "optimization_iterations" : 1000,
-        "starting_regularization" : 200,
-        "ending_regularization" : 0.1,
-        "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.1,
-        "procrustes" : 1,
-        "procrustes_interval" : 1,
-        "procrustes_scaling" : 1,
-        "save_init_splits" : 1,
-        "verbosity" : 0,
-    } 
+        "checkpointing_interval": 200,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 1500,
+        "optimization_iterations": 1000,
+        "starting_regularization": 200,
+        "ending_regularization": 0.1,
+        "relative_weighting": 10,
+        "initial_relative_weighting": 0.1,
+        "procrustes": 1,
+        "procrustes_interval": 1,
+        "procrustes_scaling": 1,
+        "save_init_splits": 1,
+        "verbosity": 0,
+    }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = 128 
+        parameter_dictionary["number_of_particles"] = 128
         parameter_dictionary["optimization_iterations"] = 25
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
@@ -243,8 +244,8 @@ def Run_Pipeline(args):
         parameter_dictionary["multiscale_particles"] = 64
 
     for key in parameter_dictionary:
-        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    project.set_parameters("optimize",parameters)
+        parameters.set(key, sw.Variant([parameter_dictionary[key]]))
+    project.set_parameters("optimize", parameters)
     spreadsheet_file = data_dir + "train.xlsx"
     project.save(spreadsheet_file)
 
@@ -259,9 +260,9 @@ def Run_Pipeline(args):
     project = sw.Project()
     project.load(spreadsheet_file)
     train_alignments = [[float(x) for x in s.split()] for s in project.get_string_column("alignment_1")]
-    train_alignments = [np.array(x).reshape(4, 4) for x in train_alignments] # reshape
+    train_alignments = [np.array(x).reshape(4, 4) for x in train_alignments]  # reshape
     train_procrustes = [[float(x) for x in s.split()] for s in project.get_string_column("procrustes_1")]
-    train_procrustes = [np.array(x).reshape(4, 4) for x in train_procrustes] #reshape
+    train_procrustes = [np.array(x).reshape(4, 4) for x in train_procrustes]  # reshape
     train_local_particles = project.get_string_column("local_particles_1")
     train_world_particles = [x.replace("./", data_dir) for x in project.get_string_column("world_particles_1")]
 
@@ -290,10 +291,10 @@ def Run_Pipeline(args):
     # Get reference image and transform it so it matches reference mesh
     ref_image = train_image_list[ref_index].copy()
     if ref_side in train_names[ref_index]:
-        reflection = np.eye(4) # Identity
-        reflection[0][0] = -1 # Reflect across X
+        reflection = np.eye(4)  # Identity
+        reflection[0][0] = -1  # Reflect across X
         ref_image.applyTransform(reflection)
-    ref_image.resample([1,1,1], sw.InterpolationType.Linear)
+    ref_image.resample([1, 1, 1], sw.InterpolationType.Linear)
     ref_image.setOrigin(ref_image.origin() - ref_translate)
     ref_image.write(data_dir + 'reference_image.nrrd')
     ref_procrustes = sw.utils.getITKtransform(train_procrustes[ref_index])
@@ -302,9 +303,9 @@ def Run_Pipeline(args):
         train_transform = np.matmul(train_proc, train_align)
         train_transforms.append(train_transform)
         train_image.applyTransform(train_transform,
-                             ref_image.origin(),  ref_image.dims(),
-                             ref_image.spacing(), ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=True)
+                                   ref_image.origin(), ref_image.dims(),
+                                   ref_image.spacing(), ref_image.coordsys(),
+                                   sw.InterpolationType.Linear, meshTransform=True)
     # Get bounding box using groomed meshes
     bounding_box = sw.MeshUtils.boundingBox(train_mesh_list).pad(10)
     # Crop images
@@ -313,7 +314,7 @@ def Run_Pipeline(args):
     # Write images
     print("Writing groomed train images.")
     train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
-                    train_names, extension='nrrd', compressed=True, verbose=False)
+                                             train_names, extension='nrrd', compressed=True, verbose=False)
 
     ######################################################################################
     print("\nStep 6. Augment data")
@@ -333,10 +334,10 @@ def Run_Pipeline(args):
         num_samples = 2
         percent_variability = 0.99
     aug_dir = data_dir + "augmentation/"
-    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files, 
-                                                            train_world_particles, num_samples, 
-                                                            num_dim, percent_variability, 
-                                                            sampler, mixture_num=0, processes=1)
+    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files,
+                                                             train_world_particles, num_samples,
+                                                             num_dim, percent_variability,
+                                                             sampler, mixture_num=0, processes=1)
     print("Dimensions retained: " + str(embedded_dim))
     aug_data_csv = aug_dir + "TotalData.csv"
 
@@ -356,18 +357,18 @@ def Run_Pipeline(args):
     # Get reference image
     ref_image_file = data_dir + 'reference_image.nrrd'
     ref_image = sw.Image(ref_image_file)
-    ref_center = ref_image.center() # get center
+    ref_center = ref_image.center()  # get center
     # Slightly cropped ref image
     large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(80)
     large_cropped_ref_image_file = data_dir + 'large_cropped_reference_image.nrrd'
-    large_cropped_ref_image = sw.Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file)  
+    large_cropped_ref_image = sw.Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file)
     # Further cropped ref image
     medium_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(20)
     medium_cropped_ref_image_file = data_dir + 'medium_cropped_reference_image.nrrd'
-    medium_cropped_ref_image = sw.Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file)   
+    medium_cropped_ref_image = sw.Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file)
     # Fully cropped ref image
     cropped_ref_image_file = data_dir + 'cropped_reference_image.nrrd'
-    cropped_ref_image = sw.Image(ref_image_file).crop(bounding_box).write(cropped_ref_image_file)   
+    cropped_ref_image = sw.Image(ref_image_file).crop(bounding_box).write(cropped_ref_image_file)
 
     # Make dirs 
     val_test_images_dir = data_dir + 'val_and_test_images/'
@@ -376,7 +377,7 @@ def Run_Pipeline(args):
 
     # Combine mesh files
     val_test_mesh_files = val_mesh_files + test_mesh_files
-    
+
     # Loop over
     print("Grooming validation and test images...")
     val_test_image_files = []
@@ -395,50 +396,52 @@ def Run_Pipeline(args):
         val_test_image_files.append(vt_image_file)
 
         # 1. Apply reflection transform
-        reflection = np.eye(4) # Identity
+        reflection = np.eye(4)  # Identity
         if ref_side in vt_name:
-            reflection[0][0] = -1 # Reflect across X
-            reflection[-1][0] = 2*vt_image.center()[0] # account for offset
+            reflection[0][0] = -1  # Reflect across X
+            reflection[-1][0] = 2 * vt_image.center()[0]  # account for offset
         vt_image.applyTransform(reflection)
         transform = sw.utils.getVTKtransform(reflection)
 
         # 2. Translate to have ref center to make rigid registration easier
         translation = ref_center - vt_image.center()
         vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
-        transform[:3,-1] += translation
+        transform[:3, -1] += translation
 
         # 3. Translate with respect to slightly cropped ref
         vt_image = sw.Image(vt_image_file).crop(large_bb).write(vt_image_file)
-        itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file, 
-                                vt_image_file, transform_type='translation')
+        itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file,
+                                                                                  vt_image_file,
+                                                                                  transform_type='translation')
         # Apply transform
         vt_image.applyTransform(itk_translation_transform,
-                             large_cropped_ref_image.origin(),  large_cropped_ref_image.dims(),
-                             large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=False)
+                                large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
+                                large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
+                                sw.InterpolationType.Linear, meshTransform=False)
         vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
         transform = np.matmul(vtk_translation_transform, transform)
 
         # 4. Crop with medium bounding box and find rigid transform
         vt_image.crop(medium_bb).write(vt_image_file)
-        itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file, 
-                                vt_image_file, transform_type='rigid')
+        itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
+                                                                            vt_image_file, transform_type='rigid')
         # Apply transform
         vt_image.applyTransform(itk_rigid_transform,
-                             medium_cropped_ref_image.origin(),  medium_cropped_ref_image.dims(),
-                             medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=False)
+                                medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
+                                medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
+                                sw.InterpolationType.Linear, meshTransform=False)
         vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
         transform = np.matmul(vtk_rigid_transform, transform)
 
         # 5. Get similarity transform from image registration and apply
         vt_image.crop(bounding_box).write(vt_image_file)
-        itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file, 
-                                vt_image_file, transform_type='similarity')
+        itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
+                                                                                 vt_image_file,
+                                                                                 transform_type='similarity')
         vt_image.applyTransform(itk_similarity_transform,
-                             cropped_ref_image.origin(),  cropped_ref_image.dims(),
-                             cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=False)
+                                cropped_ref_image.origin(), cropped_ref_image.dims(),
+                                cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
+                                sw.InterpolationType.Linear, meshTransform=False)
         vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
         transform = np.matmul(vtk_similarity_transform, transform)
         # Save transform
@@ -450,7 +453,7 @@ def Run_Pipeline(args):
     test_image_files = val_test_image_files[len(val_mesh_files):]
     test_transforms = val_test_transforms[len(val_mesh_files):]
     print("Done.")
-    
+
     ######################################################################################
     print("\nStep 8. Optimize Validation Particles with Fixed Domains")
     """
@@ -467,7 +470,7 @@ def Run_Pipeline(args):
 
     # Get meanshape in world particles
     mean_shape = np.loadtxt(train_world_particles[0])
-    for i in range(1,len(train_world_particles)):
+    for i in range(1, len(train_world_particles)):
         mean_shape += np.loadtxt(train_world_particles[i])
     mean_shape = mean_shape / len(train_world_particles)
     np.savetxt(data_dir + '/meanshape_world.particles', mean_shape)
@@ -483,7 +486,7 @@ def Run_Pipeline(args):
         rel_plane_files = sw.utils.get_relative_paths([train_plane_files[i]], project_location)
         subject.set_original_filenames(rel_mesh_files)
         subject.set_groomed_filenames(rel_groom_files)
-        transform = [ train_transforms[i].flatten() ]
+        transform = [train_transforms[i].flatten()]
         subject.set_groomed_transforms(transform)
         subject.set_constraints_filenames(rel_plane_files)
         subject.set_local_particle_filenames([train_local_particles[i]])
@@ -505,7 +508,7 @@ def Run_Pipeline(args):
         rel_particle_files = sw.utils.get_relative_paths([initial_particle_file], project_location)
         subject.set_original_filenames(rel_mesh_files)
         subject.set_groomed_filenames(rel_groom_files)
-        transform = [ val_transforms[i].flatten() ]
+        transform = [val_transforms[i].flatten()]
         subject.set_groomed_transforms(transform)
         subject.set_constraints_filenames(rel_plane_files)
         subject.set_local_particle_filenames(rel_particle_files)
@@ -547,7 +550,7 @@ def Run_Pipeline(args):
     # Get validation world particle files
     val_world_particles = []
     for val_name in val_names:
-        val_world_particles.append(data_dir+'validation_particles/'+val_name+"_world.particles")
+        val_world_particles.append(data_dir + 'validation_particles/' + val_name + "_world.particles")
 
     ######################################################################################
     print("\nStep 9. Create PyTorch loaders from data.")
@@ -595,13 +598,13 @@ def Run_Pipeline(args):
         "trainer": {
             "epochs": 10,
             "learning_rate": 0.001,
-            "decay_lr":{
-                "enabled":True,
-                "type":"CosineAnnealing",
-                "parameters":{
-                    "T_max":10,
-                    "eta_min":0,
-                    "step_size": 1, 
+            "decay_lr": {
+                "enabled": True,
+                "type": "CosineAnnealing",
+                "parameters": {
+                    "T_max": 10,
+                    "eta_min": 0,
+                    "step_size": 1,
                     "gamma": 0.99
                 }
             },
@@ -616,17 +619,17 @@ def Run_Pipeline(args):
             "val_freq": 1
         },
         "use_best_model": True,
-        "tl_net":{
-			"enabled": False,
-			"ae_epochs": 100,
-			"tf_epochs":100,
-			"joint_epochs":25,
-			"alpha":1,
-			"a_ae":10,
-			"c_ae":1.32,
-			"a_lat":10,
-			"c_lat":6.3
-	    }
+        "tl_net": {
+            "enabled": False,
+            "ae_epochs": 100,
+            "tf_epochs": 100,
+            "joint_epochs": 25,
+            "alpha": 1,
+            "a_ae": 10,
+            "c_ae": 1.32,
+            "a_lat": 10,
+            "c_lat": 6.3
+        }
     }
     if args.tiny_test:
         model_parameters["trainer"]["epochs"] = 1
@@ -666,14 +669,14 @@ def Run_Pipeline(args):
     - Surface to surface distance between true mesh and mesh generated from predicted local particles
     '''
     mean_MSE, std_MSE = DeepSSMUtils.analyzeMSE(predicted_val_world_particles, val_world_particles)
-    print("Validation world particle MSE: "+str(mean_MSE)+" +- "+str(std_MSE))
+    print("Validation world particle MSE: " + str(mean_MSE) + " +- " + str(std_MSE))
     template_mesh = train_mesh_files[ref_index]
     template_particles = train_local_particles[ref_index].replace("./", data_dir)
     # Get distance between clipped true and predicted meshes
-    mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files, 
-                                                    template_particles, template_mesh, val_out_dir,
-                                                    planes=val_planes)
-    print("Validation mean mesh surface-to-surface distance: "+str(mean_dist))
+    mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files,
+                                                 template_particles, template_mesh, val_out_dir,
+                                                 planes=val_planes)
+    print("Validation mean mesh surface-to-surface distance: " + str(mean_dist))
 
     # If tiny test or verify, check results and exit
     check_results(args, mean_dist)
@@ -705,12 +708,13 @@ def Run_Pipeline(args):
     Analyze test accuracy in terms of surface to surface distance between 
     clipped true mesh and clipped mesh generated from predicted local particles
     '''
-    mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_test_local_particles, test_mesh_files, 
-                                                    template_particles, template_mesh, test_out_dir,
-                                                    planes=test_planes)
-    print("Test mean mesh surface-to-surface distance: "+str(mean_dist))
+    mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_test_local_particles, test_mesh_files,
+                                                 template_particles, template_mesh, test_out_dir,
+                                                 planes=test_planes)
+    print("Test mean mesh surface-to-surface distance: " + str(mean_dist))
 
-# Verification 
+
+# Verification
 def check_results(args, mean_dist):
     if args.tiny_test:
         print("\nVerifying use case results.")
