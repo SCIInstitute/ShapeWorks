@@ -60,6 +60,34 @@ def Run_Pipeline(args):
                                        dataset_name + "/constraints/*.json"))
 
     ######################################################################################
+    # Step 1. Construct ShapeWorks Project
+    ######################################################################################
+
+    # Create a directory for groomed output
+    data_dir = output_directory + 'data/'
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+
+    # Create Subjects
+    subjects = []
+    for i in range(len(mesh_files)):
+        subject = sw.Subject()
+        subject.set_original_filenames([mesh_files[i]])
+        subject.set_constraints_filenames([plane_files[i]])
+        subjects.append(subject)
+    # Create ShapeWorks Project
+    project = sw.Project()
+    project.set_subjects(subjects)
+
+    # Save project spreadsheet
+    spreadsheet_file = data_dir + "deepssm_project.xlsx"
+    project.save(spreadsheet_file)
+
+    # exit
+    return
+
+
+    ######################################################################################
     print("\nStep 2. Defining Split")
     """
     Step 2: Define random split for train (70%), validation (15%), and test (15%) sets
@@ -114,11 +142,6 @@ def Run_Pipeline(args):
     For more information on grooming see docs/workflow/groom.md
     http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
     """
-
-    # Create a directory for groomed output
-    data_dir = output_directory + 'data/'
-    if not os.path.exists(data_dir):
-        os.makedirs(data_dir)
 
     """
     To begin grooming, we loop over the files and load the meshes
