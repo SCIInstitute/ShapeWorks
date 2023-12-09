@@ -36,7 +36,6 @@
 
 // pybind
 #include <pybind11/embed.h>
-#include <tbb/global_control.h>
 
 namespace py = pybind11;
 
@@ -71,14 +70,7 @@ bool Optimize::Run() {
   m_start_time = std::chrono::system_clock::now();
   m_last_update_time = m_start_time;
 
-  // control number of threads
-  int num_threads = tbb::info::default_concurrency();
-  const char* num_threads_env = getenv("TBB_NUM_THREADS");
-  if (num_threads_env) {
-    num_threads = std::max(1, atoi(num_threads_env));
-  }
-  SW_DEBUG("TBB using {} threads", num_threads);
-  tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
+  ShapeWorksUtils::setup_threads();
 
   if (m_python_filename != "") {
 #ifdef _WIN32

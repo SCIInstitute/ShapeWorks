@@ -28,6 +28,8 @@ Groom::Groom(ProjectHandle project) { project_ = project; }
 
 //---------------------------------------------------------------------------
 bool Groom::run() {
+  ShapeWorksUtils::setup_threads();
+
   used_names_.clear();
   progress_ = 0;
   progress_counter_ = 0;
@@ -439,8 +441,6 @@ void Groom::fix_origin(Image& image) {
 
 //---------------------------------------------------------------------------
 int Groom::get_total_ops() {
-  int num_subjects = project_->get_subjects().size();
-
   int num_tools = 0;
 
   project_->update_subjects();
@@ -465,14 +465,22 @@ int Groom::get_total_ops() {
                     (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
-      num_tools += params.get_fill_holes_tool() ? 1 : 0;
+      num_tools += params.get_fill_mesh_holes_tool() ? 1 : 0;
       num_tools += params.get_mesh_smooth() ? 1 : 0;
       num_tools += params.get_remesh() ? 1 : 0;
     }
   }
 
+  // count non-excluded subjects
+  int num_non_excluded = 0;
+  for (int i = 0; i < subjects.size(); i++) {
+    if (!subjects[i]->is_excluded()) {
+      num_non_excluded++;
+    }
+  }
+
   // +10 for alignment
-  return num_subjects * num_tools + 10;
+  return num_non_excluded * num_tools + 10;
 }
 
 //---------------------------------------------------------------------------

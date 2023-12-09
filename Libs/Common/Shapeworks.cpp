@@ -189,7 +189,7 @@ TransformPtr convert_to_image_transform(vtkSmartPointer<vtkTransform> vtkTransfo
   // Create an ITK transform
   TransformType::Pointer itkTransform = TransformType::New();
   
-  Matrix33 mat = ShapeworksUtils::convert_matrix(vtkMatrix);
+  Matrix33 mat = ShapeWorksUtils::convert_matrix(vtkMatrix);
 
   itkTransform->SetMatrix(mat);
   // Set the translation vector

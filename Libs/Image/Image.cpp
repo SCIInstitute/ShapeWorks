@@ -104,8 +104,8 @@ Image::ImageType::Pointer Image::read(const std::string& pathname) {
   if (pathname.empty()) {
     throw std::invalid_argument("Empty pathname");
   }
-
-  if (ShapeworksUtils::is_directory(pathname)) return readDICOMImage(pathname);
+  
+  if (ShapeWorksUtils::is_directory(pathname)) return readDICOMImage(pathname);
 
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
@@ -997,7 +997,7 @@ TransformPtr Image::createRigidRegistrationTransform(const Image& target_dt, flo
 
   try {
     auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
-    return shapeworks::createTransform(ShapeworksUtils::convert_matrix(mat), ShapeworksUtils::get_offset(mat));
+    return shapeworks::createTransform(ShapeWorksUtils::convert_matrix(mat), ShapeWorksUtils::get_offset(mat));
   } catch (std::invalid_argument) {
     std::cerr << "failed to create ICP transform.\n";
     if (sourceContour.numPoints() == 0) {

@@ -523,8 +523,8 @@ TEST(OptimizeTests, cutting_plane_test) {
 
   // make sure we clean out at least one output file
   std::remove("optimize_particles/sphere10_DT_world.particles");
-
-  auto start = shapeworks::ShapeworksUtils::now();
+  
+  auto start = shapeworks::ShapeWorksUtils::now();
 
   // run with parameter file
   Optimize app;
@@ -541,10 +541,10 @@ TEST(OptimizeTests, cutting_plane_test) {
   stats.principal_component_projections();
 
   bool good = check_constraint_violations(app, 1.5e-1);
-
-  auto end = shapeworks::ShapeworksUtils::now();
+  
+  auto end = shapeworks::ShapeWorksUtils::now();
   std::cout << "Time taken to run cutting_plane optimize test: "
-            << shapeworks::ShapeworksUtils::elapsed(start, end, false) << "sec \n";
+            << shapeworks::ShapeWorksUtils::elapsed(start, end, false) << "sec \n";
 
   ASSERT_TRUE(good);
 }

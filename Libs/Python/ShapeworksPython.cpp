@@ -56,9 +56,14 @@ PYBIND11_MODULE(shapeworks_py, m)
   m.attr("Pi") = std::atan(1.0) * 4.0;
 
   m.def("seed",
-        &ShapeworksUtils::set_rng_seed,
+        &ShapeWorksUtils::set_rng_seed,
         "sets the seed for random number generation (internal use)",
         "seed"_a=std::chrono::system_clock::now().time_since_epoch().count());
+
+  m.def("setup_console_logging",
+        &ShapeWorksUtils::setup_console_logging,
+        "sets up console logging options",
+        "show_progress"_a=true, "xml_status"_a=false);
 
   // Axis
   py::enum_<Axis>(m, "Axis")

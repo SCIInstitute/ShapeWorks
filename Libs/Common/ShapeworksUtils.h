@@ -11,7 +11,7 @@
 
 namespace shapeworks {
 
-class ShapeworksUtils {
+class ShapeWorksUtils {
   using time_point = std::chrono::time_point<std::chrono::steady_clock>;
 
  public:
@@ -37,6 +37,12 @@ class ShapeworksUtils {
   /// returns true if filename exists
   // TODO: in C++17 this is a standard function
   static bool file_exists(const std::string& filename);
+
+  //! Set up the console logging options
+  static void setup_console_logging(bool show_progress, bool xml_status);
+
+  //! Set up the number of threads from TBB_NUM_THREADS env variable
+  static void setup_threads();
 
   /// converts a vtkMatrix4x4 to a Matrix33 and corresponding translationVector
   static Matrix33 convert_matrix(const vtkSmartPointer<vtkMatrix4x4>& mat);
