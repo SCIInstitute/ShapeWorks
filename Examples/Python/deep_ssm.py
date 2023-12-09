@@ -60,7 +60,7 @@ def Run_Pipeline(args):
                                        dataset_name + "/constraints/*.json"))
 
     ######################################################################################
-    # Step 1. Construct ShapeWorks Project
+    # Step 2. Construct ShapeWorks Project
     ######################################################################################
 
     # Create a directory for groomed output
@@ -74,6 +74,7 @@ def Run_Pipeline(args):
         subject = sw.Subject()
         subject.set_original_filenames([mesh_files[i]])
         subject.set_constraints_filenames([plane_files[i]])
+        subject.set_feature_filenames({"ct": image_files[i]})
         subjects.append(subject)
     # Create ShapeWorks Project
     project = sw.Project()
@@ -83,9 +84,15 @@ def Run_Pipeline(args):
     spreadsheet_file = data_dir + "deepssm_project.xlsx"
     project.save(spreadsheet_file)
 
+    ######################################################################################
+    # Step 3. Define Split
+    ######################################################################################
+
+    DeepSSMUtils.create_split(project, 80, 10, 10)
+    project.save(spreadsheet_file)
+
     # exit
     return
-
 
     ######################################################################################
     print("\nStep 2. Defining Split")
@@ -292,7 +299,7 @@ def Run_Pipeline(args):
     ######################################################################################
     print("\nStep 5. Groom Training Images")
     """
-    Step 5: Prep training images
+    Step 5: Prep training images                        
     This includes:
     - Creating a reference image
     - Applying transforms found in step 3
