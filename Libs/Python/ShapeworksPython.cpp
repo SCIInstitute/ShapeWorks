@@ -56,7 +56,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   m.attr("Pi") = std::atan(1.0) * 4.0;
 
   m.def("seed",
-        &ShapeworksUtils::setRngSeed,
+        &ShapeworksUtils::set_rng_seed,
         "sets the seed for random number generation (internal use)",
         "seed"_a=std::chrono::system_clock::now().time_since_epoch().count());
 

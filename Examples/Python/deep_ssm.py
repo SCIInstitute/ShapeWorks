@@ -104,12 +104,10 @@ def Run_Pipeline(args):
     ######################################################################################
 
     DeepSSMUtils.groom_training_data(project)
-
+    project.save(spreadsheet_file)
 
     # exit
     return
-
-
 
     ######################################################################################
     print("\nStep 3. Find Training Mesh Transforms")

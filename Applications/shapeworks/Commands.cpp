@@ -87,7 +87,7 @@ void Seed::buildParser() {
 bool Seed::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   int value = static_cast<int>(options.get("value"));
 
-  ShapeworksUtils::setRngSeed(value);
+  ShapeworksUtils::set_rng_seed(value);
 
   return true;
 }

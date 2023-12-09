@@ -78,7 +78,7 @@ Mesh::MeshType MeshReader::read(const std::string& pathname) {
   if (pathname.empty()) {
     throw std::invalid_argument("Empty pathname");
   }
-  if (!ShapeworksUtils::exists(pathname)) {
+  if (!ShapeworksUtils::file_exists(pathname)) {
     throw std::invalid_argument(pathname + " does not exist");
   }
 

@@ -997,7 +997,7 @@ TransformPtr Image::createRigidRegistrationTransform(const Image& target_dt, flo
 
   try {
     auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
-    return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+    return shapeworks::createTransform(ShapeworksUtils::convert_matrix(mat), ShapeworksUtils::get_offset(mat));
   } catch (std::invalid_argument) {
     std::cerr << "failed to create ICP transform.\n";
     if (sourceContour.numPoints() == 0) {

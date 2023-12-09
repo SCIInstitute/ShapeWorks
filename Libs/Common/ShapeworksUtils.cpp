@@ -15,11 +15,12 @@ namespace shapeworks {
 #define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
 
-unsigned ShapeworksUtils::rngSeed_ = std::chrono::system_clock::now().time_since_epoch().count();
+unsigned ShapeworksUtils::rng_seed_ = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 ShapeworksUtils::mt_;
 
+//-----------------------------------------------------------------------------
 /// looks at the pathname to see if it's a file or a directory or neither
-bool statdatpath(const std::string& pathname, bool isdir = false) {
+static bool stat_path(const std::string& pathname, bool isdir = false) {
   struct stat info;
   if (stat(pathname.c_str(), &info) != 0) {
     return false;
@@ -28,16 +29,20 @@ bool statdatpath(const std::string& pathname, bool isdir = false) {
   }
 }
 
-void ShapeworksUtils::setRngSeed(const unsigned seed) {
-  rngSeed_ = seed;
-  mt_.seed(rngSeed_);
+//-----------------------------------------------------------------------------
+void ShapeworksUtils::set_rng_seed(const unsigned seed) {
+  rng_seed_ = seed;
+  mt_.seed(rng_seed_);
 }
 
-bool ShapeworksUtils::is_directory(const std::string& pathname) { return statdatpath(pathname, true); }
+//-----------------------------------------------------------------------------
+bool ShapeworksUtils::is_directory(const std::string& pathname) { return stat_path(pathname, true); }
 
-bool ShapeworksUtils::exists(const std::string& filename) { return statdatpath(filename, false); }
+//-----------------------------------------------------------------------------
+bool ShapeworksUtils::file_exists(const std::string& filename) { return stat_path(filename, false); }
 
-Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat) {
+//-----------------------------------------------------------------------------
+Matrix33 ShapeworksUtils::convert_matrix(const vtkSmartPointer<vtkMatrix4x4>& mat) {
   Matrix33 m;
 
   for (int i = 0; i < 3; i++) {
@@ -49,10 +54,12 @@ Matrix33 ShapeworksUtils::getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat) {
   return m;
 }
 
-Vector3 ShapeworksUtils::getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat) {
+//-----------------------------------------------------------------------------
+Vector3 ShapeworksUtils::get_offset(const vtkSmartPointer<vtkMatrix4x4>& mat) {
   return makeVector({mat->GetElement(0, 3), mat->GetElement(1, 3), mat->GetElement(2, 3)});
 }
 
+//-----------------------------------------------------------------------------
 double ShapeworksUtils::elapsed(ShapeworksUtils::time_point start, ShapeworksUtils::time_point end,
                                 bool print_elapsed) {
   // Calculating total time taken by the program.
