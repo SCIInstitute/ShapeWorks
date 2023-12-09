@@ -22,7 +22,7 @@ random.seed(4)
 
 
 def Run_Pipeline(args):
-    sw.setup_console_logging(False, True)
+    sw.setup_console_logging()
 
     ######################################################################################
     # Step 1. Acquire Data

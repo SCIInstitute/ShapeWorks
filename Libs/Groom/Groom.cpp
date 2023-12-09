@@ -525,9 +525,12 @@ bool Groom::run_alignment() {
       for (size_t i = 0; i < subjects.size(); i++) {
         Mesh mesh = get_mesh(i, domain);
 
-        auto list = subjects[i]->get_groomed_transforms()[domain];
-        auto transform = ProjectUtils::convert_transform(list);
-        mesh.applyTransform(transform);
+        auto transforms = subjects[i]->get_groomed_transforms();
+        if (transforms.size() > domain) {
+          auto list = transforms[domain];
+          auto transform = ProjectUtils::convert_transform(list);
+          mesh.applyTransform(transform);
+        }
 
         if (!subjects[i]->is_excluded()) {
           // if fixed subjects are present, only add the fixed subjects

@@ -1,5 +1,6 @@
 #include "ExcelProjectWriter.h"
 
+#include <Logging.h>
 #include <xlnt/workbook/workbook_view.hpp>
 #include <xlnt/xlnt.hpp>
 

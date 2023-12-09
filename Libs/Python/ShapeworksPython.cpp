@@ -1999,6 +1999,13 @@ PYBIND11_MODULE(shapeworks_py, m)
       "set a parameter based on a key",
       "key"_a,"Variant"_a)
 
+  .def("set",
+      [](Parameters& params, const std::string& key, const std::string& value) -> decltype(auto) {
+        params.set(key, Variant(value));
+        },
+      "set a parameter based on a key",
+      "key"_a,"value"_a)
+
   .def("remove_entry",
       &Parameters::remove_entry,
       "remove an entry",
