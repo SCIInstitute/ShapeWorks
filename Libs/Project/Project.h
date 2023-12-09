@@ -33,7 +33,6 @@ class LandmarkDefinition {
  */
 class Project {
  public:
-  using StringMap = std::map<std::string, std::string>;
 
   Project();
   ~Project();

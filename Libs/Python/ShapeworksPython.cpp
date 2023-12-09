@@ -1879,7 +1879,14 @@ PYBIND11_MODULE(shapeworks_py, m)
       "Get the feature map filenames")
 
   .def("set_feature_filenames",
-      &Subject::set_feature_filenames,
+           [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {
+             project::types::StringMap m;
+
+             for (auto& [k, v] : map) {
+               m[k] = v;
+             }
+             subject.set_feature_filenames(m);
+           },
       "Set the feature map filenames",
       "filenames"_a)
 
@@ -1922,8 +1929,16 @@ PYBIND11_MODULE(shapeworks_py, m)
       "Set group values map"
       "group_values"_a)
 
-  .def("get_extra_values",
-      &Subject::get_extra_values,
+  .def("get_extra_values", [](Subject& subject) -> decltype(auto) {
+         project::types::StringMap m = subject.get_extra_values();
+         std::map<std::string,std::string> map;
+
+         for (auto& [k, v] : m) {
+           map[k] = v;
+         }
+
+         return map;
+       },
       "Get extra values (extra columns we don't interpret)")
 
   .def("set_extra_values",
@@ -1932,6 +1947,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
          for (auto& [k, v] : map) {
            m[k] = v;
+             std::cerr << "set_extra_values: " << k << " " << v << "\n";
          }
          subject.set_extra_values(m);
        },
