@@ -35,6 +35,9 @@ class GroomParameters {
   int get_alignment_reference();
   void set_alignment_reference(int reference);
 
+  int get_alignment_reference_chosen();
+  void set_alignment_reference_chosen(int reference);
+
   int get_alignment_subset_size();
   void set_alignment_subset_size(int size);
 

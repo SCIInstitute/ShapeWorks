@@ -23,6 +23,8 @@ random.seed(4)
 
 def Run_Pipeline(args):
     ######################################################################################
+    # Step 1. Acquire Data
+    ######################################################################################
     print("\nStep 1. Acquire Data")
     """
     Step 1: ACQUIRE DATA
@@ -68,13 +70,19 @@ def Run_Pipeline(args):
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
 
+    ref_side = "L"  # chosen so reflection happens in tiny test
+
     # Create Subjects
     subjects = []
     for i in range(len(mesh_files)):
         subject = sw.Subject()
         subject.set_original_filenames([mesh_files[i]])
         subject.set_constraints_filenames([plane_files[i]])
-        subject.set_feature_filenames({"ct": image_files[i]})
+        subject.set_feature_filenames({"CT": image_files[i]})
+        if ref_side in mesh_files[i]:
+            subject.set_extra_values({"side": "L"})
+        else:
+            subject.set_extra_values({"side": "R"})
         subjects.append(subject)
     # Create ShapeWorks Project
     project = sw.Project()
@@ -91,50 +99,17 @@ def Run_Pipeline(args):
     DeepSSMUtils.create_split(project, 80, 10, 10)
     project.save(spreadsheet_file)
 
+    ######################################################################################
+    # Step 4. Groom Training Data
+    ######################################################################################
+
+    DeepSSMUtils.groom_training_data(project)
+
+
     # exit
     return
 
-    ######################################################################################
-    print("\nStep 2. Defining Split")
-    """
-    Step 2: Define random split for train (70%), validation (15%), and test (15%) sets
-    """
-    # Shuffle files
-    random.shuffle(mesh_files)
-    # Get size of validation and test sets
-    test_val_size = int(math.ceil(len(mesh_files) * .10))
-    # Split data
-    test_mesh_files = sorted(mesh_files[:test_val_size])
-    val_mesh_files = sorted(mesh_files[test_val_size: test_val_size * 2])
-    train_mesh_files = sorted(mesh_files[test_val_size * 2:])
-    print(str(len(train_mesh_files)) + " in train set, " + str(len(val_mesh_files)) +
-          " in validation set, and " + str(len(test_mesh_files)) + " in test set")
-    # Load and split cutting planes
-    planes = []
-    for plane_file in plane_files:
-        with open(plane_file) as json_file:
-            planes.append(json.load(json_file)['planes'][0]['points'])
-    # Train planes
-    train_planes = []
-    train_plane_files = []
-    for train_mesh_file in train_mesh_files:
-        plane_file = train_mesh_file.replace('meshes', 'constraints').replace('.ply', '.json')
-        train_planes.append(planes[plane_files.index(plane_file)])
-        train_plane_files.append(plane_file)
-    # Val planes
-    val_planes = []
-    val_plane_files = []
-    for val_mesh_file in val_mesh_files:
-        plane_file = val_mesh_file.replace('meshes', 'constraints').replace('.ply', '.json')
-        val_planes.append(planes[plane_files.index(plane_file)])
-        val_plane_files.append(plane_file)
-    # Test planes
-    test_planes = []
-    test_plane_files = []
-    for test_mesh_file in test_mesh_files:
-        plane_file = test_mesh_file.replace('meshes', 'constraints').replace('.ply', '.json')
-        test_planes.append(planes[plane_files.index(plane_file)])
-        test_plane_files.append(plane_file)
+
 
     ######################################################################################
     print("\nStep 3. Find Training Mesh Transforms")

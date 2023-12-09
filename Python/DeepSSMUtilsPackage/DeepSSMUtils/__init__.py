@@ -5,14 +5,11 @@ from DeepSSMUtils import eval_utils
 from DeepSSMUtils import config_file
 from DeepSSMUtils import train_viz
 from DeepSSMUtils import image_utils
+from DeepSSMUtils import run_utils
 
-from shapeworks.utils import sw_message
-from shapeworks.utils import sw_progress
-from shapeworks.utils import sw_check_abort
+from .run_utils import create_split, groom_training_data
 
 import torch
-import random
-import math
 
 
 def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
@@ -85,36 +82,3 @@ def testPytorch():
         print("**********************************************************")
 
 
-def create_split(project, train, val, test):
-    # Create split
-
-    subjects = project.get_subjects()
-
-    print(f"Creating split: {len(subjects)} subjects")
-
-    # create an array of all the index numbers from 0 to the number of subjects
-    subject_indices = list(range(len(subjects)))
-
-    # shuffle indices
-    random.shuffle(subject_indices)
-
-    # get the number of subjects in each split
-    test_val_size = int(math.ceil(len(subject_indices) * .10))
-    test_indices = sorted(subject_indices[:test_val_size])
-    val_indices = sorted(subject_indices[test_val_size: test_val_size * 2])
-    train_indices = sorted(subject_indices[test_val_size * 2:])
-
-    sw_message(f"Creating split: train:{train}%, val:{val}%, test:{test}%")
-    sw_message(f"Split sizes: train:{len(train_indices)}, val:{len(val_indices)}, test:{len(test_indices)}")
-
-    for i in range(len(subjects)):
-        extra_values = subjects[i].get_extra_values()
-        if i in test_indices:
-            extra_values["split"] = "test"
-        elif i in val_indices:
-            extra_values["split"] = "val"
-        else:
-            extra_values["split"] = "train"
-        subjects[i].set_extra_values(extra_values)
-
-    project.set_subjects(subjects)

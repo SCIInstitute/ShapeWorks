@@ -45,6 +45,7 @@ using namespace pybind11::literals;
 #include "pybind_utils.h"
 
 #include "PythonAnalyze.h"
+#include "PythonGroom.h"
 
 using namespace shapeworks;
 
@@ -1494,6 +1495,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   ;
 
   define_python_analyze(m);
+  define_python_groom(m);
 
   py::class_<ReconstructSurface<ThinPlateSplineTransform>>(m, "ReconstructSurface_ThinPlateSplineTransform")
 
@@ -1676,7 +1678,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   ;
 
   // Project 
-  // py::class_<Project>(m, "Project")
   py::class_<Project, std::shared_ptr<Project> /* <- holder type */> proj(m, "Project");
   proj.def(py::init<>())
 

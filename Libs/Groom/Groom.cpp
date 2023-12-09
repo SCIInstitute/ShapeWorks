@@ -543,6 +543,8 @@ bool Groom::run_alignment() {
       } else {
         reference_mesh = get_mesh(reference_index, domain);
       }
+      params.set_alignment_reference_chosen(reference_index);
+      params.save_to_project();
 
       auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
       assign_transforms(transforms, domain);
@@ -554,6 +556,9 @@ bool Groom::run_alignment() {
       }
 
       int reference_index = Groom::find_reference_landmarks(landmarks);
+      params.set_alignment_reference_chosen(reference_index);
+      params.save_to_project();
+
       auto transforms = Groom::get_landmark_transforms(landmarks, reference_index);
       assign_transforms(transforms, domain);
     }
