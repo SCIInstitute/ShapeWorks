@@ -1881,7 +1881,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("set_feature_filenames",
            [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {
              project::types::StringMap m;
-
              for (auto& [k, v] : map) {
                m[k] = v;
              }
@@ -1947,7 +1946,6 @@ PYBIND11_MODULE(shapeworks_py, m)
 
          for (auto& [k, v] : map) {
            m[k] = v;
-             std::cerr << "set_extra_values: " << k << " " << v << "\n";
          }
          subject.set_extra_values(m);
        },

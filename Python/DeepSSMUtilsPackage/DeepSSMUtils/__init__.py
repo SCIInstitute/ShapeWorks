@@ -90,7 +90,7 @@ def create_split(project, train, val, test):
 
     subjects = project.get_subjects()
 
-    print(f"Creating split with {len(subjects)} subjects")
+    print(f"Creating split: {len(subjects)} subjects")
 
     # create an array of all the index numbers from 0 to the number of subjects
     subject_indices = list(range(len(subjects)))
@@ -104,20 +104,17 @@ def create_split(project, train, val, test):
     val_indices = sorted(subject_indices[test_val_size: test_val_size * 2])
     train_indices = sorted(subject_indices[test_val_size * 2:])
 
-    sw_message("Creating split...")
+    sw_message(f"Creating split: train:{train}%, val:{val}%, test:{test}%")
+    sw_message(f"Split sizes: train:{len(train_indices)}, val:{len(val_indices)}, test:{len(test_indices)}")
 
     for i in range(len(subjects)):
         extra_values = subjects[i].get_extra_values()
         if i in test_indices:
-            print(f"test: {subjects[i]}")
             extra_values["split"] = "test"
         elif i in val_indices:
-            print(f"val: {subjects[i]}")
             extra_values["split"] = "val"
         else:
-            print(f"train: {subjects[i]}")
             extra_values["split"] = "train"
         subjects[i].set_extra_values(extra_values)
 
     project.set_subjects(subjects)
-    sw_message("Split completed.\n")
