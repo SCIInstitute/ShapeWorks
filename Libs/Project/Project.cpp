@@ -97,11 +97,12 @@ void Project::set_project_path(const std::string& new_pathname) {
     subject->set_constraints_filenames(fixup(subject->get_constraints_filenames()));
 
     auto features = subject->get_feature_filenames();
-    StringMap new_features;
+    project::types::StringMap new_features;
     for (auto const& x : features) {
       auto canonical = fs::canonical(x.second, old_path);
       new_features[x.first] = fs::relative(canonical, new_path).string();
     }
+    subject->set_feature_filenames(new_features);
   }
 
   project_path_ = new_pathname;
