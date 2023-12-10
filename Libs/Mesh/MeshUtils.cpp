@@ -152,7 +152,6 @@ PhysicalRegion MeshUtils::boundingBox(const std::vector<Mesh>& meshes, bool cent
 }
 
 int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size) {
-  std::cerr << "num meshes: " << meshes.size() << "\n";
   bool use_random_subset = random_subset_size > 0 && random_subset_size < meshes.size();
   int num_meshes = use_random_subset ? random_subset_size : meshes.size();
 
@@ -173,8 +172,6 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_si
       }
     }
   }
-
-  std::cerr << "number of pairs: " << pairs.size() << "\n";
 
   // map of pair to distance value
   std::map<size_t, double> results;

@@ -16,6 +16,7 @@ import json
 import shapeworks as sw
 import DataAugmentationUtils
 import DeepSSMUtils
+from shapeworks.utils import sw_message
 
 torch.multiprocessing.set_sharing_strategy('file_system')
 random.seed(4)
@@ -105,122 +106,24 @@ def Run_Pipeline(args):
     # Step 4. Groom Training Data
     ######################################################################################
 
+    # Set to ICP
+    params = project.get_parameters("groom")
+    params.set("alignment_method", "Iterative Closest Point")
+    params.set("alignment_subset_size", "20")
+    params.set("remesh", "0")
+    project.set_parameters("groom", params)
+
+    sw_message("Grooming training data...")
     DeepSSMUtils.groom_training_data(project)
     project.save(spreadsheet_file)
 
     reference_index = DeepSSMUtils.get_reference_index(project)
     print("Reference index: " + str(reference_index))
 
-    # exit
-    return
-
     ######################################################################################
-    print("\nStep 3. Find Training Mesh Transforms")
-    """
-    Step 3: Train Mesh Grooming 
-    The required grooming steps are:
-    1. Load mesh
-    2. Apply clipping with planes for finding alignment transform
-    3. Find reflection transform
-    4. Select reference mesh
-    5. Find rigid alignment transform
-    For more information on grooming see docs/workflow/groom.md
-    http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
-    """
-
-    """
-    To begin grooming, we loop over the files and load the meshes
-    """
-    ref_side = "L"  # chosen so reflection happens in tiny test
-    train_reflections = []
-    train_names = []
-    train_mesh_list = []
-    print('Loading meshes...')
-    for train_mesh_file, train_plane in zip(train_mesh_files, train_planes):
-        # Get shape name
-        train_name = os.path.basename(train_mesh_file).replace('.ply', '')
-        train_names.append(train_name)
-        """
-        Grooming step 1: Load mesh
-        """
-        train_mesh = sw.Mesh(train_mesh_file)
-        train_mesh_list.append(train_mesh)
-        """
-        Grooming step 2: Apply clipping for finishing alignment transform
-        """
-        train_mesh.clip(train_plane[0], train_plane[1], train_plane[2])
-        """
-        Grooming Step 3: Get reflection transform - We have left and 
-        right femurs, so we reflect the non-reference side meshes 
-        so that all of the femurs can be aligned.
-        """
-        reflection = np.eye(4)  # Identity
-        if ref_side in train_name:
-            reflection[0][0] = -1  # Reflect across X
-            train_mesh.applyTransform(reflection)
-        train_reflections.append(reflection)
-
-    """
-    Grooming Step 4: Select a reference
-    This step requires loading all of the meshes at once so the shape
-    closest to the mean can be found and selected as the reference. 
-    """
-    ref_index = sw.find_reference_mesh_index(train_mesh_list)
-    # Make a copy of the reference mesh
-    ref_mesh = train_mesh_list[ref_index].copy()
-    ref_name = train_names[ref_index]
-    ref_translate = ref_mesh.center()
-    ref_mesh.translate(-ref_translate)
-    ref_mesh.write(data_dir + 'reference.vtk')
-
-    print('Creating alignment transforms to ' + ref_name)
-    train_rigid_transforms = []  # save in case grooming images
-    for train_mesh, train_name in zip(train_mesh_list, train_names):
-        """
-        Grooming Step 5: Rigid alignment
-        This step rigidly aligns each shape to the selected reference. 
-        """
-        # compute rigid transformation
-        rigid_transform = train_mesh.createTransform(ref_mesh,
-                                                     sw.Mesh.AlignmentType.Rigid, 100)
-        # apply rigid transform
-        train_rigid_transforms.append(rigid_transform)
-        train_mesh.applyTransform(rigid_transform)
-
-    # Combine transforms to pass to optimizer
-    train_transforms = []
-    for reflection, rigid_transform in zip(train_reflections, train_rigid_transforms):
-        train_transform = np.matmul(rigid_transform, reflection)
-        train_transforms.append(train_transform)
-    print("Training mesh transforms found.")
-
+    # Step 5. Optimize Training Particles
     ######################################################################################
-    print("\nStep 4. Optimize Training Particles")
-    """
-    Step 4: Optimize particles on training meshes
-    For more information about optimization see:
-    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
-    """
-    # Create project spreadsheet
-    project_location = data_dir
-    # Set subjects
-    subjects = []
-    number_domains = 1
-    for i in range(len(train_mesh_list)):
-        subject = sw.Subject()
-        subject.set_number_of_domains(1)
-        rel_mesh_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
-        subject.set_original_filenames(rel_mesh_files)
-        rel_groom_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
-        subject.set_groomed_filenames(rel_groom_files)
-        transform = [train_transforms[i].flatten()]
-        subject.set_groomed_transforms(transform)
-        rel_plane_files = sw.utils.get_relative_paths([train_plane_files[i]], project_location)
-        subject.set_constraints_filenames(rel_plane_files)
-        subjects.append(subject)
-    # Set project
-    project = sw.Project()
-    project.set_subjects(subjects)
+
     parameters = sw.Parameters()
 
     # Create a dictionary for all the parameters required by optimization
@@ -257,12 +160,13 @@ def Run_Pipeline(args):
     spreadsheet_file = data_dir + "train.xlsx"
     project.save(spreadsheet_file)
 
-    # Run optimization
-    optimizeCmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimizeCmd)
+    sw_message("Optimize training particles...")
+    optimize = sw.Optimize()
+    optimize.SetUpOptimize(project)
+    optimize.run()
 
-    print("To analyze train shape model, call:")
-    print(" ShapeWorksStudio " + spreadsheet_file)
+    # exit
+    return
 
     # Get transforms and particle files from updated project spreadsheet
     project = sw.Project()
