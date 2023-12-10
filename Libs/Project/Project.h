@@ -46,6 +46,9 @@ class Project {
   //! Set the project path
   void set_project_path(const std::string& path);
 
+  //! Return the project path
+  std::string get_project_path();
+
   //! Return the filename
   std::string get_filename();
 

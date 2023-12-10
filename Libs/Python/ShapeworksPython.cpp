@@ -1700,6 +1700,10 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Project::get_filename,
       "Return the filename")
 
+   .def("get_project_path",
+      &Project::get_project_path,
+      "Return the project path")
+
   .def("set_filename",
       &Project::set_filename,
       "Set project filename",
@@ -1880,9 +1884,16 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Subject::get_number_of_domains,
       "Get the number of domains")
 
-  .def("get_feature_filenames",
-      &Subject::get_feature_filenames,
-      "Get the feature map filenames")
+  .def("get_feature_filenames", [](Subject& subject) -> decltype(auto) {
+       project::types::StringMap m = subject.get_feature_filenames();
+       std::map<std::string,std::string> map;
+
+       for (auto& [k, v] : m) {
+         map[k] = v;
+       }
+
+       return map;
+       }, "Get the feature map filenames")
 
   .def("set_feature_filenames",
            [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {

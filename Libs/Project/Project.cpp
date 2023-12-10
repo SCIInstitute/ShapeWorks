@@ -110,6 +110,9 @@ void Project::set_project_path(const std::string& new_pathname) {
 }
 
 //---------------------------------------------------------------------------
+std::string Project::get_project_path() { return project_path_; }
+
+//---------------------------------------------------------------------------
 std::vector<std::string> Project::get_headers() {
   if (subjects_.empty()) {
     return {};

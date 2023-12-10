@@ -7,7 +7,7 @@ from DeepSSMUtils import train_viz
 from DeepSSMUtils import image_utils
 from DeepSSMUtils import run_utils
 
-from .run_utils import create_split, groom_training_data, get_reference_index
+from .run_utils import create_split, groom_training_shapes, groom_training_images, get_reference_index
 
 import torch
 

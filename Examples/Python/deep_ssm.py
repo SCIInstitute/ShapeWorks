@@ -106,15 +106,18 @@ def Run_Pipeline(args):
     # Step 4. Groom Training Data
     ######################################################################################
 
-    # Set to ICP
     params = project.get_parameters("groom")
     params.set("alignment_method", "Iterative Closest Point")
     params.set("alignment_subset_size", "20")
     params.set("remesh", "0")
+    params.set("reflect", "1")
+    params.set("reflect_column", "side")
+    params.set("reflect_choice", "L")
+    params.set("reflect_axis", "Y")
     project.set_parameters("groom", params)
 
     sw_message("Grooming training data...")
-    DeepSSMUtils.groom_training_data(project)
+    DeepSSMUtils.groom_training_shapes(project)
     project.save(spreadsheet_file)
 
     reference_index = DeepSSMUtils.get_reference_index(project)
@@ -147,7 +150,7 @@ def Run_Pipeline(args):
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = 128
+        parameter_dictionary["number_of_particles"] = 32
         parameter_dictionary["optimization_iterations"] = 25
     # Run multi-scale optimization unless single scale is specified
     if not args.use_single_scale:
@@ -164,19 +167,24 @@ def Run_Pipeline(args):
     optimize = sw.Optimize()
     optimize.SetUpOptimize(project)
     optimize.Run()
-
-    # exit
-    return
+    project.save(spreadsheet_file)
 
     # Get transforms and particle files from updated project spreadsheet
-    project = sw.Project()
-    project.load(spreadsheet_file)
     train_alignments = [[float(x) for x in s.split()] for s in project.get_string_column("alignment_1")]
     train_alignments = [np.array(x).reshape(4, 4) for x in train_alignments]  # reshape
     train_procrustes = [[float(x) for x in s.split()] for s in project.get_string_column("procrustes_1")]
     train_procrustes = [np.array(x).reshape(4, 4) for x in train_procrustes]  # reshape
     train_local_particles = project.get_string_column("local_particles_1")
     train_world_particles = [x.replace("./", data_dir) for x in project.get_string_column("world_particles_1")]
+
+    ######################################################################################
+    # Step 6. Groom Training Images
+    ######################################################################################
+
+    DeepSSMUtils.groom_training_images(project)
+
+    # exit
+    return
 
     ######################################################################################
     print("\nStep 5. Groom Training Images")
