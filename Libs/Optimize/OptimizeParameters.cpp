@@ -642,6 +642,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     for (int i = 0; i < files.size(); i++) {
       auto filename = files[i];
 
+
       if (!ShapeWorksUtils::file_exists(filename)) {
         throw std::invalid_argument("Error, file does not exist: " + filename);
       }
@@ -655,7 +656,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           Constraints constraint = constraints[domain_count];
           constraint.clipMesh(mesh);
           auto poly_data = mesh.getVTKMesh();
-          throw std::invalid_argument("Mesh has zero cells after constraint clipping: " + filename);
+          if (poly_data->GetNumberOfCells() == 0) {
+            throw std::invalid_argument("Mesh has zero cells after constraint clipping: " + filename);
+          }
         }
 
         if (get_use_geodesics_to_landmarks()) {
