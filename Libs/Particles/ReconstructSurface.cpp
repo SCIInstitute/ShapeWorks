@@ -77,7 +77,7 @@ std::vector<bool> ReconstructSurface<TransformType>::setGoodPoints(const std::st
 }
 
 template<class TransformType>
-double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices)
+double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points, std::vector<int> particlesIndices)
 {
   int K = 6; // hexagonal ring - one jump
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
@@ -122,12 +122,12 @@ double ReconstructSurface<TransformType>::computeAverageDistanceToNeighbors(Mesh
 }
 
 template<class TransformType>
-void ReconstructSurface<TransformType>::checkMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints)
+void ReconstructSurface<TransformType>::checkMapping(TransformTypePtr transform, vtkSmartPointer<vtkPoints> sourcePoints, vtkSmartPointer<vtkPoints> targetPoints)
 {
   // source should be warped to the target
   double rms = 0.0;
   double rms_wo_mapping = 0.0;
-  Mesh::MeshPoints mappedCorrespondences = Mesh::MeshPoints::New();
+  vtkSmartPointer<vtkPoints> mappedCorrespondences = vtkSmartPointer<vtkPoints>::New();
 
   for (unsigned int i = 0; i < sourcePoints->GetNumberOfPoints(); i++)
   {
@@ -275,9 +275,9 @@ Mesh ReconstructSurface<TransformType>::getMesh(std::vector<Point3> localPoints)
 }
 
 template<class TransformType>
-Mesh::MeshPoints ReconstructSurface<TransformType>::convertToImageCoordinates(Mesh::MeshPoints particles, const Vector& spacing, const Point3& origin)
+vtkSmartPointer<vtkPoints> ReconstructSurface<TransformType>::convertToImageCoordinates(vtkSmartPointer<vtkPoints> particles, const Vector& spacing, const Point3& origin)
 {
-  Mesh::MeshPoints points = Mesh::MeshPoints::New();
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   for (unsigned int i = 0; i < particles->GetNumberOfPoints(); i++)
   {
     double p[3];
@@ -561,15 +561,15 @@ void ReconstructSurface<TransformType>::computeDenseMean(std::vector<std::vector
     for (int i = 0; i < sparseMeanPoint.size(); i++)
       sparseMeanPoint[i] /= static_cast<float>(worldPoints.size());
 
-    this->sparseMean = Mesh::MeshPoints::New();
+    this->sparseMean = vtkSmartPointer<vtkPoints>::New();
     for (auto &a : sparseMeanPoint)
       this->sparseMean->InsertNextPoint(a[0], a[1], a[2]);
 
     std::vector<Eigen::MatrixXd> normals;
-    std::vector<Mesh::MeshPoints> subjectPoints;
+    std::vector<vtkSmartPointer<vtkPoints>> subjectPoints;
     for (int shape = 0; shape < localPoints.size(); shape++)
     {
-      subjectPoints.push_back(Mesh::MeshPoints::New());
+      subjectPoints.push_back(vtkSmartPointer<vtkPoints>::New());
       for (auto &a : localPoints[shape])
         subjectPoints[shape]->InsertNextPoint(a[0], a[1], a[2]);
 
@@ -851,7 +851,7 @@ std::vector<std::vector<Point3>> ReconstructSurface<TransformType>::computeSpars
   procrustes.ComputeMeanShape(meanSparseShape, shapelist);
   int medianShapeIndex = procrustes.ComputeMedianShape(shapelist);
 
-  this->sparseMean = Mesh::MeshPoints::New(); // for visualization and estimating kernel support
+  this->sparseMean = vtkSmartPointer<vtkPoints>::New(); // for visualization and estimating kernel support
   Point3 center({0,0,0});
   for(unsigned int i = 0; i < meanSparseShape.size(); i++)
   {
@@ -1013,7 +1013,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
   Eigen::MatrixXd eigenVectors = shapeStats.get_eigen_vectors();
   Eigen::VectorXd mean = shapeStats.get_mean();
 
-  Mesh::MeshPoints meanPoints = Mesh::MeshPoints::New();
+  vtkSmartPointer<vtkPoints> meanPoints = vtkSmartPointer<vtkPoints>::New();
   for(unsigned int i = 0; i < this->numOfParticles; i++)
   {
     double pt[3];

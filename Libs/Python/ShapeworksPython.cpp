@@ -1984,10 +1984,13 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def(py::init<>())
 
+
   .def("get",
-      &Parameters::get,
+      [](Parameters& params, const std::string& key, const std::string& default_value) -> decltype(auto) {
+        return static_cast<std::string>(params.get(key, Variant(default_value)));
+      },
       "get a parameter based on a key, return default if it doesn't exist",
-      "key"_a,"Variant"_a)
+      "key"_a,"default"_a="")
 
   .def("key_exists",
       &Parameters::key_exists,

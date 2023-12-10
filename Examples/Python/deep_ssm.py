@@ -108,6 +108,9 @@ def Run_Pipeline(args):
     DeepSSMUtils.groom_training_data(project)
     project.save(spreadsheet_file)
 
+    reference_index = DeepSSMUtils.get_reference_index(project)
+    print("Reference index: " + str(reference_index))
+
     # exit
     return
 
@@ -243,7 +246,7 @@ def Run_Pipeline(args):
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 128
         parameter_dictionary["optimization_iterations"] = 25
-    # Run multiscale optimization unless single scale is specified
+    # Run multi-scale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1
         parameter_dictionary["multiscale_particles"] = 64

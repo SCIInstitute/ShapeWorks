@@ -74,7 +74,7 @@
 
 namespace shapeworks {
 
-Mesh::MeshType MeshReader::read(const std::string& pathname) {
+vtkSmartPointer<vtkPolyData> MeshReader::read(const std::string& pathname) {
   if (pathname.empty()) {
     throw std::invalid_argument("Empty pathname");
   }
@@ -126,7 +126,7 @@ Mesh::MeshType MeshReader::read(const std::string& pathname) {
 }
 
 Mesh::Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces) {
-  this->poly_data_ = MeshType::New();
+  this->poly_data_ = vtkSmartPointer<vtkPolyData>::New();
 
   vtkNew<vtkPoints> vertices;
   vtkNew<vtkCellArray> polys;

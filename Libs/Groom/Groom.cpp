@@ -538,9 +538,6 @@ bool Groom::run_alignment() {
             reference_meshes.push_back(mesh);
           }
           meshes.push_back(mesh);
-        } else {
-          // insert blank for each excluded shape
-          meshes.push_back(vtkSmartPointer<vtkPolyData>::New());
         }
       }
 
@@ -550,10 +547,10 @@ bool Groom::run_alignment() {
       Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
       if (reference_index < 0 || reference_index >= reference_meshes.size()) {
         reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
-        reference_mesh = reference_meshes[reference_index];
-      } else {
-        reference_mesh = get_mesh(reference_index, domain);
+        reference_index = reference_meshes[reference_index].get_id();
       }
+      reference_mesh = get_mesh(reference_index, domain);
+
       params.set_alignment_reference_chosen(reference_index);
       params.save_to_project();
 
@@ -647,6 +644,7 @@ bool Groom::run_alignment() {
 void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global) {
   auto subjects = project_->get_subjects();
 
+  int count = 0;
   for (size_t i = 0; i < subjects.size(); i++) {
     if (subjects[i]->is_excluded()) {
       continue;
@@ -661,7 +659,7 @@ void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int d
     auto list = subjects[i]->get_groomed_transforms()[base_domain];
     vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
     transform->PostMultiply();
-    transform->Concatenate(ProjectUtils::convert_transform(transforms[i]));
+    transform->Concatenate(ProjectUtils::convert_transform(transforms[count++]));
 
     // store transform
     if (!subject->is_fixed()) {
@@ -741,12 +739,16 @@ Mesh Groom::get_mesh(int subject, int domain) {
 
   if (project_->get_original_domain_types()[domain] == DomainType::Image) {
     Image image(path);
-    return image.toMesh(0.5);
+    Mesh mesh = image.toMesh(0.5);
+    mesh.set_id(subject);
+    return mesh;
   } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+    mesh.set_id(subject);
     return mesh;
   } else if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+    mesh.set_id(subject);
     return mesh;
   }
   throw std::invalid_argument("invalid domain type");
