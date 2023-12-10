@@ -163,7 +163,7 @@ def Run_Pipeline(args):
     sw_message("Optimize training particles...")
     optimize = sw.Optimize()
     optimize.SetUpOptimize(project)
-    optimize.run()
+    optimize.Run()
 
     # exit
     return
