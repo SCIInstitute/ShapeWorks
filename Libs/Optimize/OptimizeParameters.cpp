@@ -582,9 +582,13 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   std::vector<Constraints> constraints;
   for (auto& s : subjects) {
     auto files = s->get_constraints_filenames();
+    if (s->is_excluded()) {
+      continue;
+    }
     for (int f = 0; f < files.size(); f++) {
       auto file = files[f];
       Constraints constraint;
+      SW_DEBUG("reading constraint: {}", file);
       constraint.read(file);
       constraints.push_back(constraint);
       auto domain_type = project_->get_groomed_domain_types()[f];
@@ -641,7 +645,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
     for (int i = 0; i < files.size(); i++) {
       auto filename = files[i];
-
 
       if (!ShapeWorksUtils::file_exists(filename)) {
         throw std::invalid_argument("Error, file does not exist: " + filename);

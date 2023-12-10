@@ -454,6 +454,9 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
   for (int i = 0; i < filenames.size(); i++) {
     auto filename = filenames[i];
+    if (filename == "") {
+      continue;
+    }
     MeshWorkItem item;
     item.filename = filename;
     MeshHandle new_mesh = mesh_manager_->get_mesh(item, wait);
