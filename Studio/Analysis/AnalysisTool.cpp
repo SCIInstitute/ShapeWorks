@@ -513,7 +513,6 @@ bool AnalysisTool::compute_stats() {
       shape->load_feature(DisplayMode::Reconstructed, target_feature);
       auto scalars = particles = shape->get_point_features(target_feature);
       // combine positions and scalars, interleave 3 positions for every scalar
-      SW_LOG("positions.size() = {}, scalars.size() = {}", positions.size(), scalars.size());
       particles.resize(positions.size() + scalars.size());
       int num_particles = positions.size() / 3;
       for (int i = 0; i < num_particles; i++) {
@@ -1426,7 +1425,7 @@ void AnalysisTool::update_difference_particles() {
   }
 
   if (all_particles.size() != mean.size()) {
-    SW_ERROR("Inconsistent number of particles");
+    SW_ERROR("Inconsistent number of values in particle vector, {} vs. {}", all_particles.size(), mean.size());
     return;
   }
 
@@ -1446,7 +1445,7 @@ Eigen::VectorXd AnalysisTool::get_mean_shape_particles() {
   if (pca_shape_plus_scalar_mode()) {
     return extract_shape_only(stats_.get_mean());
   } else if (pca_scalar_only_mode()) {
-    SW_LOG("Scalar only mode not implemented yet");
+    return construct_mean_shape();
   }
   return stats_.get_mean();
 }
