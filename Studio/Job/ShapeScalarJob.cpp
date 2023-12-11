@@ -25,11 +25,8 @@ ShapeScalarJob::ShapeScalarJob(QSharedPointer<Session> session, QString target_f
 
 //---------------------------------------------------------------------------
 void ShapeScalarJob::run() {
-  // SW_DEBUG("Running shape scalar job");
-
   try {
     py::module np = py::module::import("numpy");
-
     py::module sw = py::module::import("shapeworks");
 
     if (job_type_ == JobType::MSE_Plot) {
@@ -54,7 +51,6 @@ void ShapeScalarJob::run() {
       image.loadFromData((const uchar*)png_raw_bytes.data(), png_raw_bytes.size(), "PNG");
       plot_ = QPixmap::fromImage(image);
     }
-    // SW_DEBUG("End shape scalar job");
 
   } catch (const std::exception& e) {
     SW_ERROR("Exception in shape scalar job: {}", e.what());
@@ -83,7 +79,6 @@ Eigen::VectorXd ShapeScalarJob::predict_shape(QSharedPointer<Session> session, Q
 Eigen::VectorXd ShapeScalarJob::predict(QSharedPointer<Session> session, QString target_feature,
                                         Eigen::MatrixXd target_values, Direction direction) {
   // blocking call to predict scalars for given target particles
-
   auto job = QSharedPointer<ShapeScalarJob>::create(session, target_feature, target_values, JobType::Predict);
   job->set_quiet_mode(true);
   job->set_direction(direction);
@@ -92,7 +87,6 @@ Eigen::VectorXd ShapeScalarJob::predict(QSharedPointer<Session> session, QString
 
   std::atomic_bool finished(false);
   connect(job.data(), &ShapeScalarJob::finished, [&] {
-    SW_DEBUG("shape scalar predict job finished");
     prediction = job->get_prediction();
     finished = true;
   });
