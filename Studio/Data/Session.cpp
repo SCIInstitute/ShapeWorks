@@ -1103,6 +1103,28 @@ void Session::set_image_sync_slice(bool enabled) {
 bool Session::get_image_sync_slice() { return params_.get("image_sync_slice", true); }
 
 //---------------------------------------------------------------------------
+void Session::set_image_thickness_feature(bool enabled) {
+  if (enabled == get_image_thickness_feature() || is_loading()) {
+    return;
+  }
+  params_.set("image_thickness_feature", enabled);
+  Q_EMIT image_slice_settings_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_image_thickness_feature() { return params_.get("image_thickness_feature", false); }
+
+//---------------------------------------------------------------------------
+void Session::set_feature_map(std::string feature_map) {
+  if (feature_map != get_feature_map() || is_loading()) {
+    params_.set("feature_map", feature_map);
+  }
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_feature_map() { return params_.get("feature_map", ""); }
+
+//---------------------------------------------------------------------------
 bool Session::has_constraints() {
   for (auto& shape : shapes_) {
     if (!shape->constraints().empty()) {
