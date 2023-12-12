@@ -2441,8 +2441,10 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shapeworks.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;qcolor.h&quot;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkImageActor</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkImageSliceMapper</span><span class="p">;</span>
@@ -2458,20 +2460,18 @@
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">SeedWidget</span><span class="p">;</span>
-
 <span class="k">class</span><span class="w"> </span><span class="nc">Viewer</span><span class="p">;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">SliceView</span><span class="w"> </span><span class="p">{</span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
-
 <span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">SliceChange</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Down</span><span class="p">,</span><span class="w"> </span><span class="n">Up</span><span class="w"> </span><span class="p">};</span>
 
 <span class="w">  </span><span class="n">SliceView</span><span class="p">(</span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_volume</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span><span class="w"> </span><span class="n">volume</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_meshes</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">orientation</span><span class="p">);</span>
 
@@ -2502,12 +2502,13 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_point_show</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">z</span><span class="p">);</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
-
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_slice_number</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">slice</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_extent</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create_shape_actor</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span><span class="w"> </span><span class="n">QColor</span><span class="w"> </span><span class="n">color</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">image_slice_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageSliceMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_mapper_</span><span class="p">;</span>
@@ -2517,19 +2518,15 @@
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">current_slice_number_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cut_mapper_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cut_actor_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransformPolyDataFilter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cut_transform_filter_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCutter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cutter_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkStripper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stripper_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">cut_actors_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_poly_data_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">poly_datas_</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-12-11 at 16:46:22 +0000</p>
+<p>Updated on 2023-12-12 at 10:00:06 +0000</p>
 
               
             </article>

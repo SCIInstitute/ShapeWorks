@@ -209,6 +209,13 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_image_sync_slice(bool enabled);
   bool get_image_sync_slice();
 
+  // 3D image, thickness feature
+  void set_image_thickness_feature(bool enabled);
+  bool get_image_thickness_feature();
+
+  void set_feature_map(std::string feature_map);
+  std::string get_feature_map();
+
   bool has_constraints();
 
   void set_loading(bool loading);
@@ -351,4 +358,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2023-12-11 at 16:46:22 +0000
+Updated on 2023-12-12 at 10:00:06 +0000

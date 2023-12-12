@@ -12,6 +12,7 @@ title: shapeworks::mesh
 |                | Name           |
 | -------------- | -------------- |
 | void | **[compute_thickness](../Namespaces/namespaceshapeworks_1_1mesh.md#function-compute-thickness)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh, [Image](../Classes/classshapeworks_1_1Image.md) & image, [Image](../Classes/classshapeworks_1_1Image.md) * dt, double max_dist, double median_radius, std::string distance_mesh)<br>Compute the cortical thickness of a mesh and image (e.g. CT)  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[compute_inner_mesh](../Namespaces/namespaceshapeworks_1_1mesh.md#function-compute-inner-mesh)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh, std::string array_name) |
 
 
 ## Functions Documentation
@@ -31,10 +32,20 @@ void compute_thickness(
 
 Compute the cortical thickness of a mesh and image (e.g. CT) 
 
+### function compute_inner_mesh
+
+```cpp
+Mesh compute_inner_mesh(
+    const Mesh & mesh,
+    std::string array_name
+)
+```
+
+
 
 
 
 
 -------------------------------
 
-Updated on 2023-12-11 at 16:46:21 +0000
+Updated on 2023-12-12 at 10:00:05 +0000

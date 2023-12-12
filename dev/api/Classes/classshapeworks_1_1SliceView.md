@@ -25,7 +25,8 @@ summary: SliceView.
 | -------------- | -------------- |
 | | **[SliceView](../Classes/classshapeworks_1_1SliceView.md#function-sliceview)**([Viewer](../Classes/classshapeworks_1_1Viewer.md) * viewer) |
 | void | **[set_volume](../Classes/classshapeworks_1_1SliceView.md#function-set-volume)**(std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > volume) |
-| void | **[set_mesh](../Classes/classshapeworks_1_1SliceView.md#function-set-mesh)**(vtkSmartPointer< vtkPolyData > poly_data) |
+| void | **[add_mesh](../Classes/classshapeworks_1_1SliceView.md#function-add-mesh)**(vtkSmartPointer< vtkPolyData > poly_data) |
+| void | **[clear_meshes](../Classes/classshapeworks_1_1SliceView.md#function-clear-meshes)**() |
 | void | **[set_orientation](../Classes/classshapeworks_1_1SliceView.md#function-set-orientation)**(int orientation) |
 | bool | **[is_image_loaded](../Classes/classshapeworks_1_1SliceView.md#function-is-image-loaded)**() |
 | void | **[update_renderer](../Classes/classshapeworks_1_1SliceView.md#function-update-renderer)**() |
@@ -83,12 +84,19 @@ void set_volume(
 ```
 
 
-### function set_mesh
+### function add_mesh
 
 ```cpp
-void set_mesh(
+void add_mesh(
     vtkSmartPointer< vtkPolyData > poly_data
 )
+```
+
+
+### function clear_meshes
+
+```cpp
+void clear_meshes()
 ```
 
 
@@ -207,4 +215,4 @@ bool should_point_show(
 
 -------------------------------
 
-Updated on 2023-12-11 at 16:46:21 +0000
+Updated on 2023-12-12 at 10:00:05 +0000

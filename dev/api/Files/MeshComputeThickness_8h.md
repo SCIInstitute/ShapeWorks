@@ -30,10 +30,12 @@ namespace shapeworks::mesh {
 void compute_thickness(Mesh &mesh, Image &image, Image *dt, double max_dist, double median_radius,
                        std::string distance_mesh);
 
+Mesh compute_inner_mesh(const Mesh &mesh, std::string array_name);
+
 }  // namespace shapeworks::mesh
 ```
 
 
 -------------------------------
 
-Updated on 2023-12-11 at 16:46:22 +0000
+Updated on 2023-12-12 at 10:00:06 +0000

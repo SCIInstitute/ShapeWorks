@@ -122,6 +122,10 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[get_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-get-image-share-window-and-level)**() |
 | void | **[set_image_sync_slice](../Classes/classshapeworks_1_1Session.md#function-set-image-sync-slice)**(bool enabled) |
 | bool | **[get_image_sync_slice](../Classes/classshapeworks_1_1Session.md#function-get-image-sync-slice)**() |
+| void | **[set_image_thickness_feature](../Classes/classshapeworks_1_1Session.md#function-set-image-thickness-feature)**(bool enabled) |
+| bool | **[get_image_thickness_feature](../Classes/classshapeworks_1_1Session.md#function-get-image-thickness-feature)**() |
+| void | **[set_feature_map](../Classes/classshapeworks_1_1Session.md#function-set-feature-map)**(std::string feature_map) |
+| std::string | **[get_feature_map](../Classes/classshapeworks_1_1Session.md#function-get-feature-map)**() |
 | bool | **[has_constraints](../Classes/classshapeworks_1_1Session.md#function-has-constraints)**() |
 | void | **[set_loading](../Classes/classshapeworks_1_1Session.md#function-set-loading)**(bool loading) |
 | bool | **[is_loading](../Classes/classshapeworks_1_1Session.md#function-is-loading)**() |
@@ -922,6 +926,38 @@ bool get_image_sync_slice()
 ```
 
 
+### function set_image_thickness_feature
+
+```cpp
+void set_image_thickness_feature(
+    bool enabled
+)
+```
+
+
+### function get_image_thickness_feature
+
+```cpp
+bool get_image_thickness_feature()
+```
+
+
+### function set_feature_map
+
+```cpp
+void set_feature_map(
+    std::string feature_map
+)
+```
+
+
+### function get_feature_map
+
+```cpp
+std::string get_feature_map()
+```
+
+
 ### function has_constraints
 
 ```cpp
@@ -1243,4 +1279,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-12-11 at 16:46:21 +0000
+Updated on 2023-12-12 at 10:00:05 +0000
