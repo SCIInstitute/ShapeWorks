@@ -1,7 +1,9 @@
 #pragma once
 
-#include <vtkSmartPointer.h>
 #include <Shapeworks.h>
+#include <vtkSmartPointer.h>
+
+#include "qcolor.h"
 
 class vtkImageActor;
 class vtkImageSliceMapper;
@@ -17,25 +19,22 @@ class vtkImageActorPointPlacer;
 
 namespace shapeworks {
 
-class SeedWidget;
-
 class Viewer;
 //! SliceView
 /*!
  * Provide slice viewing to the Viewer
  *
- *
  */
 class SliceView {
  public:
-
   enum SliceChange { Down, Up };
 
   SliceView(Viewer* viewer);
 
   void set_volume(std::shared_ptr<Image> volume);
 
-  void set_mesh(vtkSmartPointer<vtkPolyData> poly_data);
+  void add_mesh(vtkSmartPointer<vtkPolyData> poly_data);
+  void clear_meshes();
 
   void set_orientation(int orientation);
 
@@ -66,12 +65,13 @@ class SliceView {
   bool should_point_show(double x, double y, double z);
 
  private:
-
   void set_slice_number(int slice);
 
   void update_extent();
 
-  Viewer* viewer_;
+  vtkSmartPointer<vtkActor> create_shape_actor(vtkSmartPointer<vtkPolyData> poly_data, QColor color);
+
+  Viewer* viewer_{nullptr};
 
   vtkSmartPointer<vtkImageActor> image_slice_;
   vtkSmartPointer<vtkImageSliceMapper> slice_mapper_;
@@ -81,13 +81,9 @@ class SliceView {
 
   int current_slice_number_ = 0;
 
-  vtkSmartPointer<vtkPolyDataMapper> cut_mapper_;
-  vtkSmartPointer<vtkActor> cut_actor_;
-  vtkSmartPointer<vtkTransformPolyDataFilter> cut_transform_filter_;
-  vtkSmartPointer<vtkCutter> cutter_;
-  vtkSmartPointer<vtkStripper> stripper_;
+  std::vector<vtkSmartPointer<vtkActor>> cut_actors_;
 
-  vtkSmartPointer<vtkPolyData> current_poly_data_;
+  std::vector<vtkSmartPointer<vtkPolyData>> poly_datas_;
 };
 
 }  // namespace shapeworks

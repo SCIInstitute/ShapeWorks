@@ -9,4 +9,6 @@ namespace shapeworks::mesh {
 void compute_thickness(Mesh &mesh, Image &image, Image *dt, double max_dist, double median_radius,
                        std::string distance_mesh);
 
+Mesh compute_inner_mesh(const Mesh &mesh, std::string array_name);
+
 }  // namespace shapeworks::mesh
