@@ -36,6 +36,7 @@
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
 
+#include <boost/filesystem.hpp>
 #include <cmath>
 #include <exception>
 
@@ -104,7 +105,7 @@ Image::ImageType::Pointer Image::read(const std::string& pathname) {
   if (pathname.empty()) {
     throw std::invalid_argument("Empty pathname");
   }
-  
+
   if (ShapeWorksUtils::is_directory(pathname)) return readDICOMImage(pathname);
 
   using ReaderType = itk::ImageFileReader<ImageType>;
@@ -319,6 +320,10 @@ Image& Image::write(const std::string& filename, bool compressed) {
   if (filename.empty()) {
     throw std::invalid_argument("Empty pathname");
   }
+
+  // if the directory doesn't exist, create it
+  boost::filesystem::path dir(filename);
+  boost::filesystem::create_directories(dir.parent_path());
 
   using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
@@ -572,7 +577,8 @@ Image& Image::applyTransform(const TransformPtr transform, const Point3 origin, 
   return resample(transform, origin, dims, spacing, coordsys, interp);
 }
 
-Image& Image::applyTransform(const TransformPtr transform, const Image& referenceImage, Image::InterpolationType interp) {
+Image& Image::applyTransform(const TransformPtr transform, const Image& referenceImage,
+                             Image::InterpolationType interp) {
   return applyTransform(transform, referenceImage.origin(), referenceImage.dims(), referenceImage.spacing(),
                         referenceImage.coordsys(), interp);
 }

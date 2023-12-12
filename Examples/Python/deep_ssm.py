@@ -67,6 +67,7 @@ def Run_Pipeline(args):
     ######################################################################################
     # Step 2. Construct ShapeWorks Project
     ######################################################################################
+    print("\nStep 2. Construct ShapeWorks Project")
 
     # Create a directory for groomed output
     data_dir = output_directory + 'data/'
@@ -98,13 +99,15 @@ def Run_Pipeline(args):
     ######################################################################################
     # Step 3. Define Split
     ######################################################################################
+    print("\nStep 3. Define Split")
 
     DeepSSMUtils.create_split(project, 80, 10, 10)
     project.save(spreadsheet_file)
 
     ######################################################################################
-    # Step 4. Groom Training Data
+    # Step 4. Groom Training Shapes
     ######################################################################################
+    print("\nStep 4. Groom Training Shapes")
 
     params = project.get_parameters("groom")
     params.set("alignment_method", "Iterative Closest Point")
@@ -126,6 +129,7 @@ def Run_Pipeline(args):
     ######################################################################################
     # Step 5. Optimize Training Particles
     ######################################################################################
+    print("\nStep 5. Optimize Training Particles")
 
     parameters = sw.Parameters()
 
@@ -150,17 +154,17 @@ def Run_Pipeline(args):
     }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["number_of_particles"] = 64
+    parameter_dictionary["optimization_iterations"] = 25
     # Run multi-scale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1
-        parameter_dictionary["multiscale_particles"] = 64
+    parameter_dictionary["multiscale_particles"] = 64
 
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = data_dir + "train.xlsx"
+    # spreadsheet_file = data_dir + "train.xlsx"
     project.save(spreadsheet_file)
 
     sw_message("Optimize training particles...")
@@ -169,77 +173,18 @@ def Run_Pipeline(args):
     optimize.Run()
     project.save(spreadsheet_file)
 
-    # Get transforms and particle files from updated project spreadsheet
-    train_alignments = [[float(x) for x in s.split()] for s in project.get_string_column("alignment_1")]
-    train_alignments = [np.array(x).reshape(4, 4) for x in train_alignments]  # reshape
-    train_procrustes = [[float(x) for x in s.split()] for s in project.get_string_column("procrustes_1")]
-    train_procrustes = [np.array(x).reshape(4, 4) for x in train_procrustes]  # reshape
-    train_local_particles = project.get_string_column("local_particles_1")
-    train_world_particles = [x.replace("./", data_dir) for x in project.get_string_column("world_particles_1")]
-
     ######################################################################################
     # Step 6. Groom Training Images
     ######################################################################################
-
+    print("\nStep 6. Groom Training Images")
     DeepSSMUtils.groom_training_images(project)
 
-    # exit
-    return
-
     ######################################################################################
-    print("\nStep 5. Groom Training Images")
-    """
-    Step 5: Prep training images                        
-    This includes:
-    - Creating a reference image
-    - Applying transforms found in step 3
-    - Crop using bounding box 
-    """
-    # Get transforms from spreadsheet
-    train_image_list = []
-    train_transforms = []
-    print("Preparing training images...")
-    for train_name in train_names:
-        ID = train_name.split("_")[0]
-        # Get corresponding image
-        for index in range(len(image_files)):
-            if ID in image_files[index]:
-                corresponding_image_file = image_files[index]
-                break
-        train_image = sw.Image(corresponding_image_file)
-        train_image_list.append(train_image)
-    # Get reference image and transform it so it matches reference mesh
-    ref_image = train_image_list[ref_index].copy()
-    if ref_side in train_names[ref_index]:
-        reflection = np.eye(4)  # Identity
-        reflection[0][0] = -1  # Reflect across X
-        ref_image.applyTransform(reflection)
-    ref_image.resample([1, 1, 1], sw.InterpolationType.Linear)
-    ref_image.setOrigin(ref_image.origin() - ref_translate)
-    ref_image.write(data_dir + 'reference_image.nrrd')
-    ref_procrustes = sw.utils.getITKtransform(train_procrustes[ref_index])
-    # Applying rigid transform
-    for train_image, train_align, train_proc in zip(train_image_list, train_alignments, train_procrustes):
-        train_transform = np.matmul(train_proc, train_align)
-        train_transforms.append(train_transform)
-        train_image.applyTransform(train_transform,
-                                   ref_image.origin(), ref_image.dims(),
-                                   ref_image.spacing(), ref_image.coordsys(),
-                                   sw.InterpolationType.Linear, meshTransform=True)
-    # Get bounding box using groomed meshes
-    bounding_box = sw.MeshUtils.boundingBox(train_mesh_list).pad(10)
-    # Crop images
-    for train_image in train_image_list:
-        train_image.crop(bounding_box)
-    # Write images
-    print("Writing groomed train images.")
-    train_image_files = sw.utils.save_images(data_dir + 'train_images/', train_image_list,
-                                             train_names, extension='nrrd', compressed=True, verbose=False)
-
+    # Step 7. Groom Training Images
     ######################################################################################
-    print("\nStep 6. Augment data")
+    print("\nStep 7. Augment data")
     """
-    Step 6: Create additional training data via augmentation
+    Step 7: Create additional training data via augmentation
     Parameters:
     - num_samples is how many samples to generate 
     - num_dim is the number of PCA scores to use
@@ -252,7 +197,7 @@ def Run_Pipeline(args):
     sampler = "kde"
     if args.tiny_test:
         num_samples = 2
-        percent_variability = 0.99
+    percent_variability = 0.99
     aug_dir = data_dir + "augmentation/"
     embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files,
                                                              train_world_particles, num_samples,
@@ -263,6 +208,9 @@ def Run_Pipeline(args):
 
     if not args.tiny_test and not args.verify:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
+
+    # exit
+    return
 
     ######################################################################################
     print("\nStep 7. Find Test and Validation Transforms and Groom Images")

@@ -1754,9 +1754,10 @@ void Optimize::UpdateProject() {
   auto transforms = GetProcrustesTransforms();
   auto& subjects = project_->get_subjects();
 
-  for (size_t i = 0; i < transforms.size(); i++) {
-    if (subjects.size() > i) {
-      subjects[i]->set_procrustes_transforms(transforms[i]);
+  int transform_index = 0;
+  for (size_t i = 0; i < subjects.size(); i++) {
+    if (!subjects[i]->is_excluded() && transform_index < transforms.size()) {
+      subjects[i]->set_procrustes_transforms(transforms[transform_index++]);
     }
   }
 }
@@ -2018,6 +2019,7 @@ bool Optimize::LoadParameterFile(std::string filename) {
 bool Optimize::SetUpOptimize(ProjectHandle project) {
   OptimizeParameters param(project);
   param.set_up_optimize(this);
+  SetProject(project);
   return true;
 }
 //---------------------------------------------------------------------------
