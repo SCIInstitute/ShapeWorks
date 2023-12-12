@@ -174,6 +174,7 @@ static double get_distance_to_opposite_side(Mesh& mesh, int point_id) {
   return distance;
 }
 
+//---------------------------------------------------------------------------
 double compute_thickness_from_signal(const std::vector<double>& intensities_input, double step_size) {
   auto smoothed = median_smooth_signal_intensities(intensities_input);
   for (int k = 0; k < 10; k++) {
@@ -518,4 +519,49 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
     d_mesh.write(distance_mesh);
   }
 }
+
+//---------------------------------------------------------------------------
+Mesh compute_inner_mesh(const Mesh& mesh, std::string array_name) {
+  // create a copy
+  Mesh new_mesh = mesh;
+
+  auto poly_data = new_mesh.getVTKMesh();
+
+  // check if it has this array
+  if (!poly_data->GetPointData()->HasArray(array_name.c_str())) {
+    SW_ERROR("Mesh does not have array {}", array_name);
+  }
+
+  // check if it has normals, if not, compute them
+  if (!poly_data->GetPointData()->GetNormals()) {
+    new_mesh.computeNormals();
+  }
+
+  auto values = vtkDoubleArray::SafeDownCast(poly_data->GetPointData()->GetArray(array_name.c_str()));
+  if (!values) {
+    return new_mesh;
+  }
+
+  // for each vertex, move the particle the distance scalar
+  for (int i = 0; i < mesh.numPoints(); i++) {
+    Point3 point;
+    poly_data->GetPoint(i, point.GetDataPointer());
+
+    double value = values->GetValue(i);
+
+    // get the normal
+    double normal[3];
+    poly_data->GetPointData()->GetNormals()->GetTuple(i, normal);
+
+    // move the point in the opposite direction of the normal by the value
+    for (int j = 0; j < 3; j++) {
+      point[j] -= normal[j] * value;
+    }
+
+    // modify the point position in the poly_data
+    poly_data->GetPoints()->SetPoint(i, point.GetDataPointer());
+  }
+  return new_mesh;
+}
+
 }  // namespace shapeworks::mesh

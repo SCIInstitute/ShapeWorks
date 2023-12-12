@@ -978,6 +978,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->image_share_window_and_level_, &QCheckBox::clicked, session_.data(),
           &Session::set_image_share_window_and_level);
   connect(ui_->image_sync_slices, &QCheckBox::clicked, session_.data(), &Session::set_image_sync_slice);
+  connect(ui_->image_thickness_feature, &QCheckBox::clicked, session_.data(), &Session::set_image_thickness_feature);
 
   connect(ui_->planes_visible_button_, &QToolButton::toggled, session_.data(), &Session::set_show_planes);
   connect(ui_->landmarks_visible_button, &QToolButton::clicked, session_.data(), &Session::set_show_landmarks);
@@ -2050,9 +2051,7 @@ void ShapeWorksStudioApp::image_combo_changed(int index) {
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
   if (feature_map != get_feature_map()) {
-    if (!session_->is_loading()) {
-      session_->parameters().set("feature_map", feature_map);
-    }
+    session_->set_feature_map(feature_map);
     update_view_mode();
     return true;
   }
@@ -2061,7 +2060,7 @@ bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
 
 //---------------------------------------------------------------------------
 std::string ShapeWorksStudioApp::get_feature_map() {
-  std::string feature_map = session_->parameters().get("feature_map", "");
+  std::string feature_map = session_->get_feature_map();
 
   // confirm that this is a valid feature map
   auto feature_maps = session_->get_project()->get_feature_names();

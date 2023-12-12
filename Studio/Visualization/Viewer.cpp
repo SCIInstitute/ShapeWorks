@@ -34,6 +34,7 @@
 // shapeworks
 #include <Analyze/ParticleArea.h>
 #include <Logging.h>
+#include <Mesh/MeshComputeThickness.h>
 #include <Shape.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/LandmarkWidget.h>
@@ -175,8 +176,6 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
-
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1156,7 +1155,17 @@ void Viewer::update_image_volume() {
   slice_view_.set_orientation(session_->get_image_axis());
 
   if (meshes_.valid()) {
-    slice_view_.set_mesh(meshes_.meshes()[0]->get_poly_data());
+    slice_view_.clear_meshes();
+    auto poly_data = meshes_.meshes()[0]->get_poly_data();
+    slice_view_.add_mesh(poly_data);
+
+    if (session_->get_image_thickness_feature()) {
+      auto target_feature = session_->get_feature_map();
+      if (target_feature != "" && target_feature != "-none-") {
+        Mesh inner = mesh::compute_inner_mesh(poly_data, target_feature);
+        slice_view_.add_mesh(inner.getVTKMesh());
+      }
+    }
   }
 
   slice_view_.update_particles();
