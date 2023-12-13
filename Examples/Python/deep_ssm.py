@@ -193,134 +193,36 @@ def Run_Pipeline(args):
     """
     num_samples = 2961
     num_dim = 0
-    percent_variability = 0.95
     sampler = "kde"
     if args.tiny_test:
         num_samples = 2
     percent_variability = 0.99
+
+    embedded_dim = DeepSSMUtils.run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler, mixture_num=0, processes=1)
+
     aug_dir = data_dir + "augmentation/"
-    embedded_dim = DataAugmentationUtils.runDataAugmentation(aug_dir, train_image_files,
-                                                             train_world_particles, num_samples,
-                                                             num_dim, percent_variability,
-                                                             sampler, mixture_num=0, processes=1)
     print("Dimensions retained: " + str(embedded_dim))
     aug_data_csv = aug_dir + "TotalData.csv"
 
     if not args.tiny_test and not args.verify:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
-    # exit
-    return
 
     ######################################################################################
-    print("\nStep 7. Find Test and Validation Transforms and Groom Images")
-    """
-    Step 7: Find test and validation transforms and images
-    1. Find reflection
-    2. Translate to have the same center as ref image
-    3. Crop with large bounding box and translate
-    4. Crop with medium bounding box and find rigid transform
-    5. Apply full cropping and find similarity transform
-    """
-    # Get reference image
-    ref_image_file = data_dir + 'reference_image.nrrd'
-    ref_image = sw.Image(ref_image_file)
-    ref_center = ref_image.center()  # get center
-    # Slightly cropped ref image
-    large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(80)
-    large_cropped_ref_image_file = data_dir + 'large_cropped_reference_image.nrrd'
-    large_cropped_ref_image = sw.Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file)
-    # Further cropped ref image
-    medium_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(20)
-    medium_cropped_ref_image_file = data_dir + 'medium_cropped_reference_image.nrrd'
-    medium_cropped_ref_image = sw.Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file)
-    # Fully cropped ref image
-    cropped_ref_image_file = data_dir + 'cropped_reference_image.nrrd'
-    cropped_ref_image = sw.Image(ref_image_file).crop(bounding_box).write(cropped_ref_image_file)
+    # Step 8. Groom Test and Validation Images
+    ######################################################################################
+    print("\nStep 8. Groom Test and Validation Images")
 
-    # Make dirs 
-    val_test_images_dir = data_dir + 'val_and_test_images/'
-    if not os.path.exists(val_test_images_dir):
-        os.makedirs(val_test_images_dir)
+    DeepSSMUtils.groom_val_test_images(project)
 
-    # Combine mesh files
-    val_test_mesh_files = val_mesh_files + test_mesh_files
 
-    # Loop over
-    print("Grooming validation and test images...")
-    val_test_image_files = []
-    val_test_transforms = []
-    for vt_mesh_file in val_test_mesh_files:
-        # Get name
-        vt_name = os.path.basename(vt_mesh_file).replace('.ply', '')
-        ID = vt_name.split("_")[0]
-        # Get corresponding image
-        for index in range(len(image_files)):
-            if ID in image_files[index]:
-                corresponding_image_file = image_files[index]
-                break
-        vt_image = sw.Image(corresponding_image_file)
-        vt_image_file = val_test_images_dir + vt_name + ".nrrd"
-        val_test_image_files.append(vt_image_file)
+    ######################################################################################
+    # Step 9. Optimize Validation Particles with Fixed Domains
+    ######################################################################################
 
-        # 1. Apply reflection transform
-        reflection = np.eye(4)  # Identity
-        if ref_side in vt_name:
-            reflection[0][0] = -1  # Reflect across X
-            reflection[-1][0] = 2 * vt_image.center()[0]  # account for offset
-        vt_image.applyTransform(reflection)
-        transform = sw.utils.getVTKtransform(reflection)
 
-        # 2. Translate to have ref center to make rigid registration easier
-        translation = ref_center - vt_image.center()
-        vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
-        transform[:3, -1] += translation
-
-        # 3. Translate with respect to slightly cropped ref
-        vt_image = sw.Image(vt_image_file).crop(large_bb).write(vt_image_file)
-        itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file,
-                                                                                  vt_image_file,
-                                                                                  transform_type='translation')
-        # Apply transform
-        vt_image.applyTransform(itk_translation_transform,
-                                large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
-                                large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
-                                sw.InterpolationType.Linear, meshTransform=False)
-        vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
-        transform = np.matmul(vtk_translation_transform, transform)
-
-        # 4. Crop with medium bounding box and find rigid transform
-        vt_image.crop(medium_bb).write(vt_image_file)
-        itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
-                                                                            vt_image_file, transform_type='rigid')
-        # Apply transform
-        vt_image.applyTransform(itk_rigid_transform,
-                                medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
-                                medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
-                                sw.InterpolationType.Linear, meshTransform=False)
-        vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
-        transform = np.matmul(vtk_rigid_transform, transform)
-
-        # 5. Get similarity transform from image registration and apply
-        vt_image.crop(bounding_box).write(vt_image_file)
-        itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
-                                                                                 vt_image_file,
-                                                                                 transform_type='similarity')
-        vt_image.applyTransform(itk_similarity_transform,
-                                cropped_ref_image.origin(), cropped_ref_image.dims(),
-                                cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
-                                sw.InterpolationType.Linear, meshTransform=False)
-        vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
-        transform = np.matmul(vtk_similarity_transform, transform)
-        # Save transform
-        val_test_transforms.append(transform)
-
-    # split val and test groomed images and transforms
-    val_image_files = val_test_image_files[:len(val_mesh_files)]
-    val_transforms = val_test_transforms[:len(val_mesh_files)]
-    test_image_files = val_test_image_files[len(val_mesh_files):]
-    test_transforms = val_test_transforms[len(val_mesh_files):]
-    print("Done.")
+    # exit
+    return
 
     ######################################################################################
     print("\nStep 8. Optimize Validation Particles with Fixed Domains")

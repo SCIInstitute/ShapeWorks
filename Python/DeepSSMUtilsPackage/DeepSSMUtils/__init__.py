@@ -7,7 +7,8 @@ from DeepSSMUtils import train_viz
 from DeepSSMUtils import image_utils
 from DeepSSMUtils import run_utils
 
-from .run_utils import create_split, groom_training_shapes, groom_training_images, get_reference_index
+from .run_utils import create_split, groom_training_shapes, groom_training_images, get_reference_index, \
+    run_data_augmentation, groom_val_test_images
 
 import torch
 
@@ -80,5 +81,3 @@ def testPytorch():
         print("please reinstall Pytorch to your shapeworks conda ")
         print("environment with the correct CUDA version.")
         print("**********************************************************")
-
-

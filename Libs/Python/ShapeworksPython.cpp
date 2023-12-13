@@ -564,6 +564,10 @@ PYBIND11_MODULE(shapeworks_py, m) {
         return PhysicalRegion(Point({min[0], min[1], min[2]}), Point({max[0], max[1], max[2]}));
       }))
 
+      .def(py::init([](std::string str) {
+          return PhysicalRegion(str);
+      }))
+
       .def(py::self == py::self)
 
       .def("__repr__",
@@ -641,7 +645,11 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def("expand", py::overload_cast<const Point&>(&PhysicalRegion::expand),
            "expand this region to include this point", "point"_a)
 
-      .def("pad", &PhysicalRegion::pad, "grows or shrinks the region by the specified amount", "padding"_a);
+      .def("pad", &PhysicalRegion::pad, "grows or shrinks the region by the specified amount", "padding"_a)
+
+      .def("to_string", &PhysicalRegion::to_string, "returns a string representation of this region");
+
+
 
   // IndexRegion
   py::class_<IndexRegion>(m, "IndexRegion")

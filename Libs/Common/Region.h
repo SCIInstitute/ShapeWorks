@@ -76,6 +76,8 @@ public:
     max = Point({-1000000000, -1000000000, -1000000000});
   }
 
+  PhysicalRegion(std::string str);
+
   bool operator==(const PhysicalRegion &other) const {
     return min == other.min && max == other.max;
   }
@@ -101,6 +103,9 @@ public:
 
   /// uniformly grows or shrinks the region by the specified amount
   PhysicalRegion& pad(double padding);
+
+  /// serialize to a string
+  std::string to_string() const;
 
 };
 
