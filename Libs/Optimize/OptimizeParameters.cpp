@@ -320,6 +320,9 @@ std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_poi
   std::vector<std::vector<itk::Point<double>>> initial_points;
   for (auto s : subjects) {
     for (int d = 0; d < domains_per_shape; d++) {
+      if (s->is_excluded()) {
+        continue;
+      }
       if (s->is_fixed()) {
         auto filename = s->get_local_particle_filenames()[d];
         auto particles = read_particles_as_vector(filename);
@@ -510,7 +513,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetUseShapeStatisticsAfter(multiscale_particles);
 
   // should add the images last
-  auto subjects = project_->get_subjects();
+  auto subjects = project_->get_non_excluded_subjects();
 
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to optimize");

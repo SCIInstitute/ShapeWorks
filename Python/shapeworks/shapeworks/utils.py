@@ -339,3 +339,11 @@ def transformParticles(particles, transform, inverse=False):
         transformed_particles.append(np.matmul(transform, np.append(particle, 1))[:3])
     transformed_particles = np.array(transformed_particles)
     return transformed_particles
+
+def load_mesh(filename):
+    accepted_extensions = ['.vtk', '.vtp', '.ply', '.obj', '.stl']
+    extension = os.path.splitext(filename)[1]
+    if extension in accepted_extensions:
+        return sw.Mesh(filename)
+    else:
+        return sw.Image(filename).toMesh(0.5)

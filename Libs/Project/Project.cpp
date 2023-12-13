@@ -148,6 +148,17 @@ int Project::get_number_of_domains_per_subject() { return get_domain_names().siz
 std::vector<std::shared_ptr<Subject>>& Project::get_subjects() { return subjects_; }
 
 //---------------------------------------------------------------------------
+std::vector<std::shared_ptr<Subject>> Project::get_non_excluded_subjects() {
+  std::vector<std::shared_ptr<Subject>> non_excluded_subjects;
+  for (auto& subject : subjects_) {
+    if (!subject->is_excluded()) {
+      non_excluded_subjects.push_back(subject);
+    }
+  }
+  return non_excluded_subjects;
+}
+
+//---------------------------------------------------------------------------
 void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects) {
   subjects_ = subjects;
   update_subjects();

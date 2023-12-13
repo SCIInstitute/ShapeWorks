@@ -198,7 +198,8 @@ def Run_Pipeline(args):
         num_samples = 2
     percent_variability = 0.99
 
-    embedded_dim = DeepSSMUtils.run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler, mixture_num=0, processes=1)
+    embedded_dim = DeepSSMUtils.run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler,
+                                                      mixture_num=0, processes=1)
 
     aug_dir = data_dir + "augmentation/"
     print("Dimensions retained: " + str(embedded_dim))
@@ -207,7 +208,6 @@ def Run_Pipeline(args):
     if not args.tiny_test and not args.verify:
         DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
-
     ######################################################################################
     # Step 8. Groom Test and Validation Images
     ######################################################################################
@@ -215,10 +215,33 @@ def Run_Pipeline(args):
 
     DeepSSMUtils.groom_val_test_images(project)
 
-
     ######################################################################################
     # Step 9. Optimize Validation Particles with Fixed Domains
     ######################################################################################
+
+    DeepSSMUtils.prep_project_for_val_particles(project)
+
+
+    # update parameters
+    params = project.get_parameters("optimize")
+    params.set("multiscale", "0")
+    params.set("procrustes", "0")
+    params.set("procrustes_interval", "0")
+    params.set("procrustes_scaling", "0")
+    params.set("narrow_band", "1e10")
+
+    project.set_parameters("optimize", params)
+
+
+    sw_message("Grooming validation shapes...")
+    DeepSSMUtils.groom_validation_shapes(project)
+
+    sw_message("Optimize validation particles...")
+    project.save(spreadsheet_file)
+    optimize = sw.Optimize()
+    optimize.SetUpOptimize(project)
+    optimize.Run()
+    project.save(spreadsheet_file)
 
 
     # exit
