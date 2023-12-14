@@ -33,13 +33,15 @@ bool Groom::run() {
   used_names_.clear();
   progress_ = 0;
   progress_counter_ = 0;
-  total_ops_ = get_total_ops();
 
   auto subjects = project_->get_subjects();
 
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to groom");
   }
+
+  total_ops_ = get_total_ops();
+
   std::atomic<bool> success = true;
 
   tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {

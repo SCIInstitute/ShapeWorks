@@ -95,6 +95,8 @@ def Run_Pipeline(args):
     # Save project spreadsheet
     spreadsheet_file = data_dir + "deepssm_project.xlsx"
     project.save(spreadsheet_file)
+    deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
+
 
     ######################################################################################
     # Step 3. Define Split
@@ -155,11 +157,11 @@ def Run_Pipeline(args):
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 64
-    parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["optimization_iterations"] = 25
     # Run multi-scale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1
-    parameter_dictionary["multiscale_particles"] = 64
+        parameter_dictionary["multiscale_particles"] = 64
 
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
@@ -201,7 +203,7 @@ def Run_Pipeline(args):
     embedded_dim = DeepSSMUtils.run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler,
                                                       mixture_num=0, processes=1)
 
-    aug_dir = data_dir + "augmentation/"
+    aug_dir = deepssm_dir + "augmentation/"
     print("Dimensions retained: " + str(embedded_dim))
     aug_data_csv = aug_dir + "TotalData.csv"
 
@@ -221,7 +223,6 @@ def Run_Pipeline(args):
 
     DeepSSMUtils.prep_project_for_val_particles(project)
 
-
     # update parameters
     params = project.get_parameters("optimize")
     params.set("multiscale", "0")
@@ -231,7 +232,6 @@ def Run_Pipeline(args):
     params.set("narrow_band", "1e10")
 
     project.set_parameters("optimize", params)
-
 
     sw_message("Grooming validation shapes...")
     DeepSSMUtils.groom_validation_shapes(project)
@@ -243,123 +243,23 @@ def Run_Pipeline(args):
     optimize.Run()
     project.save(spreadsheet_file)
 
-
-    # exit
-    return
-
     ######################################################################################
-    print("\nStep 8. Optimize Validation Particles with Fixed Domains")
-    """
-    Step 8: Optimize particles on validation and training meshes, keeping
-    training particles fixed and initializing validation particles to mean
-    For more information about optimization see:
-    http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
-    """
-    # Get validation names
-    val_names = []
-    for val_mesh_filename in val_mesh_files:
-        val_name = os.path.basename(val_mesh_filename).replace('.ply', '')
-        val_names.append(val_name)
-
-    # Get meanshape in world particles
-    mean_shape = np.loadtxt(train_world_particles[0])
-    for i in range(1, len(train_world_particles)):
-        mean_shape += np.loadtxt(train_world_particles[i])
-    mean_shape = mean_shape / len(train_world_particles)
-    np.savetxt(data_dir + '/meanshape_world.particles', mean_shape)
-    # Create spreadsheet
-    project_location = data_dir
-    subjects = []
-    # Add fixed training shapes
-    for i in range(len(train_mesh_list)):
-        subject = sw.Subject()
-        subject.set_number_of_domains(1)
-        rel_mesh_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
-        rel_groom_files = sw.utils.get_relative_paths([train_mesh_files[i]], project_location)
-        rel_plane_files = sw.utils.get_relative_paths([train_plane_files[i]], project_location)
-        subject.set_original_filenames(rel_mesh_files)
-        subject.set_groomed_filenames(rel_groom_files)
-        transform = [train_transforms[i].flatten()]
-        subject.set_groomed_transforms(transform)
-        subject.set_constraints_filenames(rel_plane_files)
-        subject.set_local_particle_filenames([train_local_particles[i]])
-        subject.set_world_particle_filenames([train_local_particles[i]])
-        subject.set_extra_values({"fixed": "yes"})
-        subjects.append(subject)
-    # Add new validation shapes
-    if not os.path.exists(data_dir + "validation_particles/"):
-        os.makedirs(data_dir + "validation_particles/")
-    for i in range(len(val_mesh_files)):
-        subject = sw.Subject()
-        subject.set_number_of_domains(1)
-        rel_mesh_files = sw.utils.get_relative_paths([val_mesh_files[i]], project_location)
-        rel_groom_files = sw.utils.get_relative_paths([val_mesh_files[i]], project_location)
-        rel_plane_files = sw.utils.get_relative_paths([val_plane_files[i]], project_location)
-        initial_particles = sw.utils.transformParticles(mean_shape, val_transforms[i], inverse=True)
-        initial_particle_file = data_dir + "validation_particles/" + val_names[i] + "_local.particles"
-        np.savetxt(initial_particle_file, initial_particles)
-        rel_particle_files = sw.utils.get_relative_paths([initial_particle_file], project_location)
-        subject.set_original_filenames(rel_mesh_files)
-        subject.set_groomed_filenames(rel_groom_files)
-        transform = [val_transforms[i].flatten()]
-        subject.set_groomed_transforms(transform)
-        subject.set_constraints_filenames(rel_plane_files)
-        subject.set_local_particle_filenames(rel_particle_files)
-        subject.set_world_particle_filenames(rel_particle_files)
-        subject.set_extra_values({"fixed": "no"})
-        subjects.append(subject)
-    project = sw.Project()
-    project.set_subjects(subjects)
-    parameters = sw.Parameters()
-
-    # Update parameter dictionary from step 4
-    parameter_dictionary["multiscale"] = 0
-    parameter_dictionary["procrustes"] = 0
-    parameter_dictionary["procrustes_interval"] = 0
-    parameter_dictionary["procrustes_scaling"] = 0
-    parameter_dictionary["narrow_band"] = 1e10
-    for key in parameter_dictionary:
-        parameters.set(key, sw.Variant(parameter_dictionary[key]))
-    project.set_parameters("optimize", parameters)
-    # Set studio parameters
-    studio_dictionary = {
-        "show_landmarks": 0,
-        "tool_state": "analysis"
-    }
-    studio_parameters = sw.Parameters()
-    for key in studio_dictionary:
-        studio_parameters.set(key, sw.Variant(studio_dictionary[key]))
-    project.set_parameters("studio", studio_parameters)
-    spreadsheet_file = data_dir + "validation.xlsx"
-    project.save(spreadsheet_file)
-
-    # Run optimization
-    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
-    subprocess.check_call(optimize_cmd)
-
-    print("To analyze validation shape model, call:")
-    print(" ShapeWorksStudio " + spreadsheet_file)
-
-    # Get validation world particle files
-    val_world_particles = []
-    for val_name in val_names:
-        val_world_particles.append(data_dir + 'validation_particles/' + val_name + "_world.particles")
-
+    # Step 10. Create PyTorch loaders from data."
     ######################################################################################
-    print("\nStep 9. Create PyTorch loaders from data.")
+    print("\nStep 10. Create PyTorch loaders from data.")
+
     """
-    Step 9: Create PyTorch loaders from data
     Create training, validation, and test torch loaders
     If down_sample is true, model will train on images that are smaller by down_factor
     Hyper-parameter batch_size is for training
         Higher batch size will help speed up training but uses more cuda memory, 
         if you get a memory error try reducing the batch size
     """
+
     batch_size = 8
-    loader_dir = output_directory + 'torch_loaders/'
-    DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size)
-    DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles)
-    DeepSSMUtils.getTestLoader(loader_dir, test_image_files)
+    DeepSSMUtils.prepare_data_loaders(project, batch_size)
+
+
 
     ######################################################################################
     print("\nStep 10. Train DeepSSM model.")
@@ -367,6 +267,8 @@ def Run_Pipeline(args):
     Step 10: Train DeepSSM model on training loader
     This requires creating a json config file of model parameters
     """
+    loader_dir = deepssm_dir + 'torch_loaders/'
+
     # Define model parameters
     model_name = "femur_deepssm"
     model_parameters = {
@@ -433,6 +335,10 @@ def Run_Pipeline(args):
     # Train
     DeepSSMUtils.trainDeepSSM(config_file)
 
+    # exit
+    return
+
+
     ######################################################################################
     print("\nStep 11. Predict validation particles with trained DeepSSM and analyze accuracy.")
     """
@@ -479,7 +385,7 @@ def Run_Pipeline(args):
     """
     Step 12: Test analysis
     Use trained DeepSSM model to predict world validation particles
-    and apply inverse transforms to get local predcitions
+    and apply inverse transforms to get local predictions
     Analyze accuracy
     """
     test_out_dir = output_directory + model_name + '/test_predictions/'

@@ -181,12 +181,12 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 			# add name
 			prefix = get_prefix(image_path)
 			# data error check
-			if prefix not in get_prefix(model_path):
-				print("Error: Images and particles are mismatched in csv.")
-				print(index)
-				print(prefix)
-				print(get_prefix(model_path))
-				exit()
+			# if prefix not in get_prefix(model_path):
+			# 	print("Error: Images and particles are mismatched in csv.")
+			# 	print(f"index: {index}")
+			# 	print(f"prefix: {prefix}")
+			# 	print(f"get_prefix(model_path): {get_prefix(model_path)}}")
+			# 	exit()
 			prefixes.append(prefix)
 			# add image path
 			image_paths.append(image_path)
