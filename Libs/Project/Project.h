@@ -33,7 +33,6 @@ class LandmarkDefinition {
  */
 class Project {
  public:
-
   Project();
   ~Project();
 
@@ -77,7 +76,7 @@ class Project {
   std::vector<std::shared_ptr<Subject>>& get_subjects();
 
   //! Return the non-excluded Subjects (as a reference)
-  std::vector<std::shared_ptr<Subject> > get_non_excluded_subjects();
+  std::vector<std::shared_ptr<Subject>> get_non_excluded_subjects();
 
   //! Set the Subjects
   void set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects);
@@ -174,8 +173,6 @@ class Project {
   std::string get_next_landmark_color(int domain_id);
 
   std::vector<std::shared_ptr<Subject>> subjects_;
-
-  bool loaded_{false};
 
   std::string filename_;
   std::string project_path_;

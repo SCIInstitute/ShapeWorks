@@ -63,6 +63,7 @@ def get_mesh_from_particles(particle_list, mesh_dir, template_particles, templat
 	for fl in particle_list:
 		execCommand.append(fl)
 	execCommand.append('--')
+	print(f"Running: {' '.join(execCommand)}")
 	subprocess.check_call(execCommand)
 
 	if not os.path.exists(mesh_dir):

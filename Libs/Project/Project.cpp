@@ -28,12 +28,18 @@ Project::~Project() = default;
 //---------------------------------------------------------------------------
 bool Project::load(const std::string& filename) {
   filename_ = filename;
+  // get the directory of the project file
+  fs::path path = filename;
+  project_path_ = path.parent_path().string();
+  std::cerr << "Setting Project path: " << project_path_ << std::endl;
+
+  bool return_value = false;
   if (StringUtils::hasSuffix(filename, "swproj")) {
     JsonProjectReader reader(*this);
-    return reader.read_project(filename);
+    return_value = reader.read_project(filename);
   } else if (StringUtils::hasSuffix(filename, "xlsx")) {
     ExcelProjectReader reader(*this);
-    return reader.read_project(filename);
+    return_value = reader.read_project(filename);
   } else {
     throw std::runtime_error("Unsupported project file type: " + filename +
                              ", supported filetypes are xlsx and swproj");
@@ -43,8 +49,7 @@ bool Project::load(const std::string& filename) {
 
   version_ = project_parameters.get("version", -1);
 
-  loaded_ = true;
-  return true;
+  return return_value;
 }
 
 //---------------------------------------------------------------------------
