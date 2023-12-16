@@ -878,23 +878,7 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
       auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
       poly_data2->DeepCopy(reference.getVTKMesh());
 
-      // output number of points from each
-      std::cerr << "Source: " << poly_data1->GetNumberOfPoints() << std::endl;
-      std::cerr << "Target: " << poly_data2->GetNumberOfPoints() << std::endl;
-
-      // write out the polydata
-      Mesh(poly_data1).write("/tmp/poly_data1.vtk");
-      Mesh(poly_data2).write("/tmp/poly_data2.vtk");
-
       matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
-      // print it out:
-      std::cerr << "Matrix: " << std::endl;
-      for (int r = 0; r < 4; r++) {
-        for (int c = 0; c < 4; c++) {
-          std::cerr << matrix->GetElement(r, c) << " ";
-        }
-        std::cerr << std::endl;
-      }
     }
     auto transform = createMeshTransform(matrix);
     transform->PostMultiply();
