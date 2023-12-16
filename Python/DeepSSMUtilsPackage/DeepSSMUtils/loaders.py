@@ -264,19 +264,16 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
         # for_viewing returns 'F' order, i.e., transpose, needed for this array
 		img = sw.Image(image_path).toArray(copy=True, for_viewing=True)
 		all_images.append(img)
+
 	all_images = np.array(all_images)
 	# get mean and std
 	mean_path = loader_dir + 'mean_img.npy'
 	std_path = loader_dir + 'std_img.npy'
-	if not os.path.exists(mean_path) or not os.path.exists(std_path):
-		mean_image = np.mean(all_images)
-		std_image = np.std(all_images)
-		np.save(mean_path, mean_image)
-		np.save(std_path, std_image)
-	else:
-		mean_image = np.load(mean_path)
-		std_image = np.load(std_path)
-	# normlaize
+	mean_image = np.mean(all_images)
+	std_image = np.std(all_images)
+	np.save(mean_path, mean_image)
+	np.save(std_path, std_image)
+	# normalize
 	norm_images = []
 	for image in all_images:
 		norm_images.append([(image-mean_image)/std_image])

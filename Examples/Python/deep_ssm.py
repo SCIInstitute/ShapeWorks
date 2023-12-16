@@ -9,6 +9,7 @@ import glob
 import platform
 import torch
 import random
+import shutil
 import math
 import numpy as np
 import subprocess
@@ -26,9 +27,13 @@ def Run_Pipeline(args):
     sw.setup_console_logging()
 
     model_name = "femur_deepssm"
-
     dataset_name = "deep_ssm_femur"
     output_directory = os.getcwd() + "/Output/deep_ssm/"
+
+    if args.clean:
+        print("Cleaning output directory: " + output_directory)
+        shutil.rmtree(output_directory)
+
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -39,10 +44,6 @@ def Run_Pipeline(args):
     data_dir = output_directory + 'data/'
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
-
-    if args.clean:
-        print("Cleaning output directory: " + output_directory)
-        subprocess.call(["rm", "-rf", output_directory + "*"])
 
     ######################################################################################
     # Step 1. Acquire Data
@@ -62,7 +63,7 @@ def Run_Pipeline(args):
         # If running a tiny_test, then download subset of the data
         if args.tiny_test:
             dataset_name = "deep_ssm_femur_tiny_test"
-            sw.download_dataset(dataset_name, output_directory)
+            sw.download_dataset(dataset_name, output_directory, args.clean)
             dataset_name = "femur"
             mesh_files = sorted(glob.glob(output_directory +
                                           dataset_name + "/meshes/*.ply"))[:5]
@@ -118,6 +119,8 @@ def Run_Pipeline(args):
         project = sw.Project()
         project.load(spreadsheet_file)
 
+    print(f"Using project: {spreadsheet_file}")
+    # Now that the project is ready, set up some paths
     project_path = project.get_project_path() + "/"
     os.chdir(project_path)
     deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
@@ -146,7 +149,7 @@ def Run_Pipeline(args):
         params.set("reflect", "1")
         params.set("reflect_column", "side")
         params.set("reflect_choice", "L")
-        params.set("reflect_axis", "Y")
+        params.set("reflect_axis", "X")
         project.set_parameters("groom", params)
 
         sw_message("Grooming training data...")
@@ -215,7 +218,7 @@ def Run_Pipeline(args):
         open(status_dir + "step_6.txt", 'w').close()
 
     ######################################################################################
-    # Step 7. Groom Training Images
+    # Step 7. Augment data
     ######################################################################################
     if not os.path.exists(status_dir + "step_7.txt"):
         print("\nStep 7. Augment data")

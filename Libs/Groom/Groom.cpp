@@ -4,6 +4,7 @@
 #include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshUtils.h>
+#include <Optimize/Constraints/Constraints.h>
 #include <Project/ProjectUtils.h>
 #include <Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
@@ -525,14 +526,7 @@ bool Groom::run_alignment() {
       std::vector<Mesh> reference_meshes;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
-        Mesh mesh = get_mesh(i, domain);
-
-        auto transforms = subjects[i]->get_groomed_transforms();
-        if (transforms.size() > domain) {
-          auto list = transforms[domain];
-          auto transform = ProjectUtils::convert_transform(list);
-          mesh.applyTransform(transform);
-        }
+        Mesh mesh = get_mesh(i, domain, true);
 
         if (!subjects[i]->is_excluded()) {
           // if fixed subjects are present, only add the fixed subjects
@@ -551,7 +545,7 @@ bool Groom::run_alignment() {
         reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
         reference_index = reference_meshes[reference_index].get_id();
       }
-      reference_mesh = get_mesh(reference_index, domain);
+      reference_mesh = get_mesh(reference_index, domain, true);
 
       params.set_alignment_reference_chosen(reference_index);
       params.save_to_project();
@@ -579,9 +573,9 @@ bool Groom::run_alignment() {
     std::vector<Mesh> meshes;
 
     for (size_t i = 0; i < subjects.size(); i++) {
-      Mesh mesh = get_mesh(i, 0);
+      Mesh mesh = get_mesh(i, 0, true);
       for (size_t domain = 1; domain < num_domains; domain++) {
-        mesh += get_mesh(i, domain);  // combine
+        mesh += get_mesh(i, domain, true);  // combine
       }
 
       // grab the first domain's initial transform (e.g. potentially reflect) and use before ICP
@@ -609,9 +603,9 @@ bool Groom::run_alignment() {
         reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
         reference_mesh = reference_meshes[reference_index];
       } else {
-        reference_mesh = get_mesh(reference_index, 0);
+        reference_mesh = get_mesh(reference_index, 0, true);
         for (size_t domain = 1; domain < num_domains; domain++) {
-          reference_mesh += get_mesh(reference_index, domain);  // combine
+          reference_mesh += get_mesh(reference_index, domain, true);  // combine
         }
       }
       auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
@@ -735,25 +729,47 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 }
 
 //---------------------------------------------------------------------------
-Mesh Groom::get_mesh(int subject, int domain) {
+Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
   auto subjects = project_->get_subjects();
   auto path = subjects[subject]->get_original_filenames()[domain];
 
-  if (project_->get_original_domain_types()[domain] == DomainType::Image) {
-    Image image(path);
-    Mesh mesh = image.toMesh(0.5);
-    mesh.set_id(subject);
-    return mesh;
-  } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
-    Mesh mesh = MeshUtils::threadSafeReadMesh(path);
-    mesh.set_id(subject);
-    return mesh;
-  } else if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
+  auto constraint_filename = subjects[subject]->get_constraints_filenames();
+  Constraints constraint;
+  if (constraint_filename.size() > domain) {
+    constraint.read(constraint_filename[domain]);
+  }
+
+  if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
     mesh.set_id(subject);
     return mesh;
   }
-  throw std::invalid_argument("invalid domain type");
+
+  Mesh mesh = vtkSmartPointer<vtkPolyData>::New();
+
+  if (project_->get_original_domain_types()[domain] == DomainType::Image) {
+    Image image(path);
+    mesh = image.toMesh(0.5);
+    mesh.set_id(subject);
+    constraint.clipMesh(mesh);
+  } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
+    mesh = MeshUtils::threadSafeReadMesh(path);
+    mesh.set_id(subject);
+    constraint.clipMesh(mesh);
+  } else {
+    throw std::invalid_argument("invalid domain type");
+  }
+
+  if (transformed) {
+    auto transforms = subjects[subject]->get_groomed_transforms();
+    if (transforms.size() > domain) {
+      auto list = transforms[domain];
+      auto transform = ProjectUtils::convert_transform(list);
+      mesh.applyTransform(transform);
+    }
+  }
+
+  return mesh;
 }
 
 //---------------------------------------------------------------------------
@@ -848,26 +864,45 @@ int Groom::find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> land
 std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference) {
   std::vector<std::vector<double>> transforms(meshes.size());
 
-  tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
-    for (size_t i = r.begin(); i < r.end(); ++i) {
-      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-      matrix->Identity();
+  // tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
+  // for (size_t i = r.begin(); i < r.end(); ++i) {
+  for (size_t i = 0; i < meshes.size(); i++) {
+    vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+    matrix->Identity();
 
-      Mesh source = meshes[i];
-      if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
-        // create copies for thread safety
-        auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
-        poly_data1->DeepCopy(source.getVTKMesh());
-        auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
-        poly_data2->DeepCopy(reference.getVTKMesh());
-        matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+    Mesh source = meshes[i];
+    if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
+      // create copies for thread safety
+      auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
+      poly_data1->DeepCopy(source.getVTKMesh());
+      auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+      poly_data2->DeepCopy(reference.getVTKMesh());
+
+      // output number of points from each
+      std::cerr << "Source: " << poly_data1->GetNumberOfPoints() << std::endl;
+      std::cerr << "Target: " << poly_data2->GetNumberOfPoints() << std::endl;
+
+      // write out the polydata
+      Mesh(poly_data1).write("/tmp/poly_data1.vtk");
+      Mesh(poly_data2).write("/tmp/poly_data2.vtk");
+
+      matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+      // print it out:
+      std::cerr << "Matrix: " << std::endl;
+      for (int r = 0; r < 4; r++) {
+        for (int c = 0; c < 4; c++) {
+          std::cerr << matrix->GetElement(r, c) << " ";
+        }
+        std::cerr << std::endl;
       }
-      auto transform = createMeshTransform(matrix);
-      transform->PostMultiply();
-      Groom::add_center_transform(transform, reference);
-      transforms[i] = ProjectUtils::convert_transform(transform);
     }
-  });
+    auto transform = createMeshTransform(matrix);
+    transform->PostMultiply();
+    Groom::add_center_transform(transform, reference);
+    transforms[i] = ProjectUtils::convert_transform(transform);
+  }
+  //  });
+
   return transforms;
 }
 

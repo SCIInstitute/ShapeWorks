@@ -46,6 +46,8 @@ if __name__ == '__main__':
             "Users: Please make sure you have run \"source install_shapeworks.sh\" (once) and \"conda activate shapeworks\" (each time)")
         print("\tSee http://sciinstitute.github.io/ShapeWorks/users/install.html for more information")
         print("\nDevelopers: Please make sure you have run \"source ./devenv.sh <SOURCE_DIR> <BUILD_DIR>\"")
+
+        print(f"\nError message: {error}")
         sys.exit(1)
 
     # parse arguments
