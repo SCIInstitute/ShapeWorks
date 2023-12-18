@@ -40,7 +40,7 @@ class Mesh {
     invalidateLocators();
   }
 
-  Mesh(Mesh&& orig) : poly_data_(orig.poly_data_) { orig.poly_data_ = nullptr; }
+  Mesh(Mesh&& orig) : poly_data_(orig.poly_data_), id_{orig.id_} { orig.poly_data_ = nullptr; }
 
   Mesh& operator=(const Mesh& orig) {
     poly_data_ = vtkSmartPointer<vtkPolyData>::New();
