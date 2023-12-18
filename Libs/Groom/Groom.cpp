@@ -731,6 +731,8 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 //---------------------------------------------------------------------------
 Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
   auto subjects = project_->get_subjects();
+  assert(subject < subjects.size());
+  assert(domain < subjects[subject]->get_original_filenames().size());
   auto path = subjects[subject]->get_original_filenames()[domain];
 
   auto constraint_filename = subjects[subject]->get_constraints_filenames();
