@@ -38,6 +38,8 @@ def Run_Pipeline(args):
         os.makedirs(output_directory)
 
     status_dir = output_directory + "status/"
+    if args.tiny_test:
+        status_dir = output_directory + "tiny_test_status/"
     if not os.path.exists(status_dir):
         os.makedirs(status_dir)
 
