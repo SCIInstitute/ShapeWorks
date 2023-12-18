@@ -752,11 +752,9 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
   if (project_->get_original_domain_types()[domain] == DomainType::Image) {
     Image image(path);
     mesh = image.toMesh(0.5);
-    mesh.set_id(subject);
     constraint.clipMesh(mesh);
   } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
     mesh = MeshUtils::threadSafeReadMesh(path);
-    mesh.set_id(subject);
     constraint.clipMesh(mesh);
   } else {
     throw std::invalid_argument("invalid domain type");
@@ -771,6 +769,7 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
     }
   }
 
+  mesh.set_id(subject);
   return mesh;
 }
 
