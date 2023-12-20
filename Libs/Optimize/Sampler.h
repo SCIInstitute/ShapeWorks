@@ -235,6 +235,14 @@ class Sampler {
 
   shapeworks::CorrespondenceMode GetCorrespondenceMode() const { return m_CorrespondenceMode; }
 
+  void SetTrainScoreNetworkCallback(const std::function<void(void)>& f) { 
+    this->GetEnsembleEntropyFunction()->SetTrainScoreNetworkCallback(f);
+  }
+
+  void SetGradientComputationCallback(const std::function<void(void)>& f) { 
+    this->GetEnsembleEntropyFunction()->SetGradientComputationCallback(f);
+  }
+
   void SetTransformFile(const std::string& s) { m_TransformFile = s; }
 
   void SetTransformFile(const char* s) { m_TransformFile = std::string(s); }

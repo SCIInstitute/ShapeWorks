@@ -142,7 +142,7 @@ def generate_segmentations(generated_directories, randomize_size=False, spacing=
         segList = []
         meshIndex = 0
         for mesh_ in meshList:
-            print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(meshList)))
+            print("Generating NEW seg " + str(meshIndex + 1) + " out of " + str(len(meshList)))
             segFile = rename(mesh_, segDir, "", ".nrrd")
             segList.append(segFile)
 

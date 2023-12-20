@@ -82,6 +82,11 @@ class LegacyCorrespondenceFunction : public VectorFunction {
       m_Counter++;
       if (m_Counter >= m_RecomputeCovarianceInterval) {
         m_Counter = 0;
+        if (m_train_score_network_callback)
+        {
+          std::cout << "Calling Train Function from cpp " << std::endl;
+          this->m_train_score_network_callback();
+        }
         m_MinimumVariance *= m_MinimumVarianceDecayConstant;
       }
     }
@@ -90,7 +95,10 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   /** */
   void SetMinimumVariance(double d) { m_MinimumVariance = d; }
   double GetMinimumVariance() const { return m_MinimumVariance; }
-
+  void SetGradientComputationCallback(const std::function<void(void)>& f) { m_compute_gradient_callback = f; }
+  void SetTrainScoreNetworkCallback(const std::function<void(void)>& f) { m_train_score_network_callback = f; }
+  void SetMaxMove(double val) { m_MinimumEigenValue = val; }
+  std::shared_ptr<vnl_matrix_type> GetPointsUpdateMatrix() { return this->m_PointsUpdate; }
   void SetMinimumVarianceDecay(double initial_value, double final_value, double time_period) {
     m_MinimumVarianceDecayConstant = exp(log(final_value / initial_value) / time_period);
     m_MinimumVariance = initial_value;
@@ -162,6 +170,9 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   int m_RecomputeCovarianceInterval;
   int m_Counter;
   bool m_UseMeanEnergy;
+  std::function<void(void)> m_compute_gradient_callback;
+  std::function<void(void)> m_train_score_network_callback;
+
 
   std::shared_ptr<vnl_matrix_type> m_points_mean;       // 3Nx3N - used for energy computation
   std::shared_ptr<Eigen::MatrixXd> m_InverseCovMatrix;  // 3NxM - used for energy computation

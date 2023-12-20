@@ -7,6 +7,14 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize* opt) {
   return container.matrix_;
 }
 
+
+void optimize_set_score_updates(shapeworks::Optimize *opt, Eigen::MatrixXd updates)
+{
+  shapeworks::MatrixContainer container;
+  container.matrix_ = updates;
+  opt->SetScoreUpdates(container);
+}
+
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
@@ -1406,7 +1414,25 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def("SetIterationCallbackFunction", &Optimize::SetIterationCallbackFunction)
 
+<<<<<<< HEAD
       .def("GetParticleSystem", &optimize_get_particle_system);
+=======
+  .def("SetTrainScoreNetworkCallback",
+       &Optimize::SetTrainScoreNetworkCallback)
+  .def("SetGradientComputationCallback",
+       &Optimize::SetGradientComputationCallback)
+  .def("SetScoreUpdates", &optimize_set_score_updates)
+  .def("LoadXlsxProjectFile",
+     &Optimize::LoadXlsxProjectFile)
+  .def("SaveProject",
+       &Optimize::SaveProject)
+  .def("SetMaxMove",
+       &Optimize::SetMaxMove)
+
+  .def("GetParticleSystem",
+       &optimize_get_particle_system)
+  ;
+>>>>>>> ef5d2801ca (tmp)
 
   // DomainType
   py::enum_<DomainType>(m, "DomainType")

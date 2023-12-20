@@ -63,6 +63,9 @@ class Optimize {
 
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
+  //! Load SW XLSX Project file
+  bool LoadXlsxProjectFile(std::string filename);
+  void SaveProject(const std::string& filename);
 
   //! Set up this Optimize object using a ShapeWorks project
   bool SetUpOptimize(ProjectHandle project);
@@ -72,6 +75,11 @@ class Optimize {
 
   //! Set an iteration callback function to be called after each iteration
   void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
+  void SetTrainScoreNetworkCallback(const std::function<void(void)>& f) { this->GetSampler()->SetTrainScoreNetworkCallback(f); }
+  void SetGradientComputationCallback(const std::function<void(void)>& f) { this->GetSampler()->SetGradientComputationCallback(f); }
+  void SetScoreUpdates(MatrixContainer matrix);
+  void SetMaxMove(double val) { this->GetSampler()->GetEnsembleEntropyFunction()->SetMaxMove(val); }
+
 
   //! Abort optimization
   void AbortOptimization();

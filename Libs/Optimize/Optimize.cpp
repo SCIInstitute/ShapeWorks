@@ -313,6 +313,21 @@ void Optimize::SetNumberOfParticles(std::vector<int> number_of_particles) {
   this->m_number_of_particles = number_of_particles;
 }
 
+
+//---------------------------------------------------------------------------
+void Optimize::SetScoreUpdates(MatrixContainer matrix)
+{
+  auto vnl = this->m_sampler->GetEnsembleEntropyFunction()->GetPointsUpdateMatrix();
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+  std::cout << "Gradients successfully set 1 " <<std::endl;
+}
+
 //---------------------------------------------------------------------------
 std::vector<int> Optimize::GetNumberOfParticles() { return this->m_number_of_particles; }
 
@@ -2027,7 +2042,7 @@ void Optimize::SetProject(std::shared_ptr<Project> project) { project_ = project
 
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem() {
-  auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
+  auto shape_matrix = m_sampler->GetShapeMatrix();
 
   MatrixType matrix;
   matrix.resize(shape_matrix->rows(), shape_matrix->cols());
@@ -2042,6 +2057,30 @@ MatrixContainer Optimize::GetParticleSystem() {
   container.matrix_ = matrix;
   return container;
 }
+
+
+//---------------------------------------------------------------------------
+bool Optimize::LoadXlsxProjectFile(std::string filename)
+{
+  ProjectHandle project = std::make_shared<Project>();
+  project->load(filename);
+  OptimizeParameters params(project);
+  if(!params.set_up_optimize(this)){
+    std::cerr << "Error in loading xlsx sheet" << std::endl;
+    return false;
+  }
+  this->SetProject(project);
+  return true;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SaveProject(const std::string& filename)
+{
+  project_->save(filename);
+  std::cout << "Project File saved! " << std::endl;
+}
+
+
 
 //---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir() {

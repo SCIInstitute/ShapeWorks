@@ -162,28 +162,30 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
                   // Step F update the point position in the particle system
                   m_ParticleSystem->SetPosition(newpoint, k, dom);
+                  // Force update
+                  m_TimeSteps[dom][k] *= factor;
+                  if (gradmag > maxchange) maxchange = gradmag;
+                  // // Step G compute the new energy of the particle system
+                  // newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
 
-                  // Step G compute the new energy of the particle system
-                  newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
+                  // if (newenergy < energy)  // good move, increase timestep for next time
+                  // {
+                  //   m_TimeSteps[dom][k] *= factor;
+                  //   if (gradmag > maxchange) maxchange = gradmag;
+                  //   break;
+                  // } else {  // bad move, reset point position and back off on timestep
+                  //   if (m_TimeSteps[dom][k] > minimumTimeStep) {
+                  //     domain->ApplyConstraints(pt, k);
+                  //     m_ParticleSystem->SetPosition(pt, k, dom);
+                  //     domain->InvalidateParticlePosition(k);
 
-                  if (newenergy < energy)  // good move, increase timestep for next time
-                  {
-                    m_TimeSteps[dom][k] *= factor;
-                    if (gradmag > maxchange) maxchange = gradmag;
-                    break;
-                  } else {  // bad move, reset point position and back off on timestep
-                    if (m_TimeSteps[dom][k] > minimumTimeStep) {
-                      domain->ApplyConstraints(pt, k);
-                      m_ParticleSystem->SetPosition(pt, k, dom);
-                      domain->InvalidateParticlePosition(k);
-
-                      m_TimeSteps[dom][k] /= factor;
-                    } else  // keep the move with timestep 1.0 anyway
-                    {
-                      if (gradmag > maxchange) maxchange = gradmag;
-                      break;
-                    }
-                  }
+                  //     m_TimeSteps[dom][k] /= factor;
+                  //   } else  // keep the move with timestep 1.0 anyway
+                  //   {
+                  //     if (gradmag > maxchange) maxchange = gradmag;
+                  //     break;
+                  //   }
+                  // }
                 }  // end while(true)
               }    // for each particle
             }

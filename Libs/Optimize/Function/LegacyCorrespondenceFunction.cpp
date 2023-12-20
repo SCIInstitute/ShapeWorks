@@ -36,6 +36,7 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
 
   m_points_mean->clear();
   m_points_mean->set_size(num_dims, 1);
+  m_InverseCovMatrix->setZero();
 
   // Compute the covariance matrix.
   // (A is D' in Davies paper)
@@ -50,63 +51,70 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
     _total += total;
   }
 
-  for (unsigned int j = 0; j < num_dims; j++) {
-    for (unsigned int i = 0; i < num_samples; i++) {
-      points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - m_points_mean->get(j, 0);
-    }
+  std::cout << "Computing Gradient Updates from Score Network 0" << std::endl;
+  if (m_compute_gradient_callback) {
+    std::cout << "Computing Gradient Updates from Score Network 1" << std::endl;
+    m_compute_gradient_callback();
+    std::cout << "Computing Gradient Updates from Score Network 2" << std::endl;
   }
 
-  vnl_diag_matrix<double> W;
+  // for (unsigned int j = 0; j < num_dims; j++) {
+  //   for (unsigned int i = 0; i < num_samples; i++) {
+  //     points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - m_points_mean->get(j, 0);
+  //   }
+  // }
 
-  vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
-  vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);  // gramMat inverse
+  // vnl_diag_matrix<double> W;
 
-  if (this->m_UseMeanEnergy) {
-    pinvMat.set_identity();
-    m_InverseCovMatrix->setZero();
-  } else {
-    gramMat = points_minus_mean.transpose() * points_minus_mean;
+  // vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
+  // vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);  // gramMat inverse
 
-    vnl_svd<double> svd(gramMat);
+  // if (this->m_UseMeanEnergy) {
+  //   pinvMat.set_identity();
+  //   m_InverseCovMatrix->setZero();
+  // } else {
+  //   gramMat = points_minus_mean.transpose() * points_minus_mean;
 
-    vnl_matrix_type UG = svd.U();
-    W = svd.W();
+  //   vnl_svd<double> svd(gramMat);
 
-    vnl_diag_matrix<double> invLambda = svd.W();
+  //   vnl_matrix_type UG = svd.U();
+  //   W = svd.W();
 
-    invLambda.set_diagonal(invLambda.get_diagonal() / (double)(num_samples - 1) + m_MinimumVariance);
-    invLambda.invert_in_place();
+  //   vnl_diag_matrix<double> invLambda = svd.W();
 
-    pinvMat = (UG * invLambda) * UG.transpose();
+  //   invLambda.set_diagonal(invLambda.get_diagonal() / (double)(num_samples - 1) + m_MinimumVariance);
+  //   invLambda.invert_in_place();
 
-    vnl_matrix_type projMat = points_minus_mean * UG;
-    const auto lhs = projMat * invLambda;
-    const auto rhs =
-        invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
-    if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
-      m_InverseCovMatrix->resize(num_dims, num_dims);
-    }
-    Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
-  }
-  m_PointsUpdate->update(points_minus_mean * pinvMat);
+  //   pinvMat = (UG * invLambda) * UG.transpose();
+
+  //   vnl_matrix_type projMat = points_minus_mean * UG;
+  //   const auto lhs = projMat * invLambda;
+  //   const auto rhs =
+  //       invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
+  //   if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
+  //     m_InverseCovMatrix->resize(num_dims, num_dims);
+  //   }
+  //   Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+  // }
+  // m_PointsUpdate->update(points_minus_mean * pinvMat);
 
   //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
 
   m_CurrentEnergy = 0.0;
 
-  if (m_UseMeanEnergy)
-    m_CurrentEnergy = points_minus_mean.frobenius_norm();
-  else {
-    m_MinimumEigenValue = W(0) * W(0) + m_MinimumVariance;
-    for (unsigned int i = 0; i < num_samples; i++) {
-      double val_i = W(i) * W(i) + m_MinimumVariance;
-      if (val_i < m_MinimumEigenValue) m_MinimumEigenValue = val_i;
-      m_CurrentEnergy += log(val_i);
-    }
-  }
+  // if (m_UseMeanEnergy)
+  //   m_CurrentEnergy = points_minus_mean.frobenius_norm();
+  // else {
+  //   m_MinimumEigenValue = W(0) * W(0) + m_MinimumVariance;
+  //   for (unsigned int i = 0; i < num_samples; i++) {
+  //     double val_i = W(i) * W(i) + m_MinimumVariance;
+  //     if (val_i < m_MinimumEigenValue) m_MinimumEigenValue = val_i;
+  //     m_CurrentEnergy += log(val_i);
+  //   }
+  // }
 
-  m_CurrentEnergy /= 2.0;
-  if (m_UseMeanEnergy) m_MinimumEigenValue = m_CurrentEnergy / 2.0;
+  // m_CurrentEnergy /= 2.0;
+  // if (m_UseMeanEnergy) m_MinimumEigenValue = m_CurrentEnergy / 2.0;
 }
 
 LegacyCorrespondenceFunction::VectorType LegacyCorrespondenceFunction ::Evaluate(unsigned int idx, unsigned int d,
@@ -130,19 +138,21 @@ LegacyCorrespondenceFunction::VectorType LegacyCorrespondenceFunction ::Evaluate
   Xi(2, 0) = m_ShapeMatrix->operator()(k + 2, d / DomainsPerShape) - m_points_mean->get(k + 2, 0);
 
   vnl_matrix_type tmp1(3, 3, 0.0);
+  tmp1.set_identity();
 
-  if (this->m_UseMeanEnergy) {
-    tmp1.set_identity();
-  } else {
-    // extract 3x3 submatrix at k,k
-    Eigen::MatrixXd region = m_InverseCovMatrix->block(k, k, 3, 3);
-    // convert to vnl
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++) {
-        tmp1(i, j) = region(i, j);
-      }
-    }
-  }
+
+  // if (this->m_UseMeanEnergy) {
+  //   tmp1.set_identity();
+  // } else {
+  //   // extract 3x3 submatrix at k,k
+  //   Eigen::MatrixXd region = m_InverseCovMatrix->block(k, k, 3, 3);
+  //   // convert to vnl
+  //   for (unsigned int i = 0; i < 3; i++) {
+  //     for (unsigned int j = 0; j < 3; j++) {
+  //       tmp1(i, j) = region(i, j);
+  //     }
+  //   }
+  // }
 
   vnl_matrix_type tmp = Xi.transpose() * tmp1;
 
