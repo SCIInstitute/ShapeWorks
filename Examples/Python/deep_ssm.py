@@ -83,14 +83,7 @@ def Run_Pipeline(args):
             plane_files = sorted(glob.glob(output_directory +
                                            dataset_name + "/constraints/*.json"))
 
-        open(status_dir + "step_1.txt", 'w').close()
-
-    ######################################################################################
-    # Step 2. Construct ShapeWorks Project
-    ######################################################################################
-    if not os.path.exists(status_dir + "step_2.txt"):
-        print("\nStep 2. Construct ShapeWorks Project")
-
+        # Construct ShapeWorks Project
         ref_side = "L"  # chosen so reflection happens in tiny test
 
         # Create Subjects
@@ -99,7 +92,14 @@ def Run_Pipeline(args):
             subject = sw.Subject()
             subject.set_original_filenames([mesh_files[i]])
             subject.set_constraints_filenames([plane_files[i]])
-            subject.set_feature_filenames({"CT": image_files[i]})
+
+            id = mesh_files[i].split("_")[0]
+            for index in range(len(image_files)):
+                if id in image_files[index]:
+                    corresponding_image_file = image_files[index]
+                    subject.set_feature_filenames({"CT": corresponding_image_file})
+                    break
+
             if ref_side in mesh_files[i]:
                 subject.set_extra_values({"side": "L"})
             else:
@@ -113,7 +113,7 @@ def Run_Pipeline(args):
         spreadsheet_file = data_dir + "deepssm_project.xlsx"
         project.save(spreadsheet_file)
 
-        open(status_dir + "step_2.txt", 'w').close()
+        open(status_dir + "step_1.txt", 'w').close()
     else:
         # Load project spreadsheet
         spreadsheet_file = data_dir + "deepssm_project.xlsx"
@@ -129,20 +129,20 @@ def Run_Pipeline(args):
     aug_dir = deepssm_dir + "augmentation/"
 
     ######################################################################################
-    # Step 3. Define Split
+    # Step 2. Define Split
     ######################################################################################
-    if not os.path.exists(status_dir + "step_3.txt"):
+    if not os.path.exists(status_dir + "step_2.txt"):
         print("\nStep 3. Define Split")
 
         DeepSSMUtils.create_split(project, 80, 10, 10)
         project.save(spreadsheet_file)
-        open(status_dir + "step_3.txt", 'w').close()
+        open(status_dir + "step_2.txt", 'w').close()
 
     ######################################################################################
-    # Step 4. Groom Training Shapes
+    # Step 3. Groom Training Shapes
     ######################################################################################
-    if not os.path.exists(status_dir + "step_4.txt"):
-        print("\nStep 4. Groom Training Shapes")
+    if not os.path.exists(status_dir + "step_3.txt"):
+        print("\nStep 3. Groom Training Shapes")
 
         params = project.get_parameters("groom")
         params.set("alignment_method", "Iterative Closest Point")
@@ -160,13 +160,13 @@ def Run_Pipeline(args):
 
         reference_index = DeepSSMUtils.get_reference_index(project)
         print("Reference index: " + str(reference_index))
-        open(status_dir + "step_4.txt", 'w').close()
+        open(status_dir + "step_3.txt", 'w').close()
 
     ######################################################################################
-    # Step 5. Optimize Training Particles
+    # Step 4. Optimize Training Particles
     ######################################################################################
-    if not os.path.exists(status_dir + "step_5.txt"):
-        print("\nStep 5. Optimize Training Particles")
+    if not os.path.exists(status_dir + "step_4.txt"):
+        print("\nStep 4. Optimize Training Particles")
 
         parameters = sw.Parameters()
 
@@ -209,23 +209,23 @@ def Run_Pipeline(args):
         optimize.SetUpOptimize(project)
         optimize.Run()
         project.save(spreadsheet_file)
+        open(status_dir + "step_4.txt", 'w').close()
+
+    ######################################################################################
+    # Step 5. Groom Training Images
+    ######################################################################################
+    if not os.path.exists(status_dir + "step_5.txt"):
+        print("\nStep 6. Groom Training Images")
+        DeepSSMUtils.groom_training_images(project)
         open(status_dir + "step_5.txt", 'w').close()
 
     ######################################################################################
-    # Step 6. Groom Training Images
+    # Step 6. Augment data
     ######################################################################################
     if not os.path.exists(status_dir + "step_6.txt"):
-        print("\nStep 6. Groom Training Images")
-        DeepSSMUtils.groom_training_images(project)
-        open(status_dir + "step_6.txt", 'w').close()
-
-    ######################################################################################
-    # Step 7. Augment data
-    ######################################################################################
-    if not os.path.exists(status_dir + "step_7.txt"):
-        print("\nStep 7. Augment data")
+        print("\nStep 6. Augment data")
         """
-        Step 7: Create additional training data via augmentation
+        Step 6: Create additional training data via augmentation
         Parameters:
         - num_samples is how many samples to generate 
         - num_dim is the number of PCA scores to use
@@ -248,21 +248,21 @@ def Run_Pipeline(args):
         if not args.tiny_test and not args.verify:
             DataAugmentationUtils.visualizeAugmentation(aug_data_csv, "violin")
 
+        open(status_dir + "step_6.txt", 'w').close()
+
+    ######################################################################################
+    # Step 7. Groom Test and Validation Images
+    ######################################################################################
+    if not os.path.exists(status_dir + "step_7.txt"):
+        print("\nStep 7. Groom Test and Validation Images")
+        DeepSSMUtils.groom_val_test_images(project)
+        project.save(spreadsheet_file)
         open(status_dir + "step_7.txt", 'w').close()
 
     ######################################################################################
-    # Step 8. Groom Test and Validation Images
+    # Step 8. Optimize Validation Particles with Fixed Domains
     ######################################################################################
     if not os.path.exists(status_dir + "step_8.txt"):
-        print("\nStep 8. Groom Test and Validation Images")
-        DeepSSMUtils.groom_val_test_images(project)
-        project.save(spreadsheet_file)
-        open(status_dir + "step_8.txt", 'w').close()
-
-    ######################################################################################
-    # Step 9. Optimize Validation Particles with Fixed Domains
-    ######################################################################################
-    if not os.path.exists(status_dir + "step_9.txt"):
         DeepSSMUtils.prep_project_for_val_particles(project)
 
         # update parameters
@@ -284,13 +284,13 @@ def Run_Pipeline(args):
         optimize.SetUpOptimize(project)
         optimize.Run()
         project.save(spreadsheet_file)
-        open(status_dir + "step_9.txt", 'w').close()
+        open(status_dir + "step_8.txt", 'w').close()
 
     ######################################################################################
-    # Step 10. Create PyTorch loaders from data.
+    # Step 9. Create PyTorch loaders from data.
     ######################################################################################
-    if not os.path.exists(status_dir + "step_10.txt"):
-        print("\nStep 10. Create PyTorch loaders from data.")
+    if not os.path.exists(status_dir + "step_9.txt"):
+        print("\nStep 9. Create PyTorch loaders from data.")
 
         """
         Create training, validation, and test torch loaders
@@ -302,14 +302,14 @@ def Run_Pipeline(args):
 
         batch_size = 8
         DeepSSMUtils.prepare_data_loaders(project, batch_size)
-        open(status_dir + "step_10.txt", 'w').close()
+        open(status_dir + "step_9.txt", 'w').close()
 
     ######################################################################################
-    # Step 11. Train DeepSSM model
+    # Step 10. Train DeepSSM model
     ######################################################################################
     config_file = output_directory + model_name + ".json"
-    if not os.path.exists(status_dir + "step_11.txt"):
-        print("\nStep 11. Train DeepSSM model.")
+    if not os.path.exists(status_dir + "step_10.txt"):
+        print("\nStep 10. Train DeepSSM model.")
         """
         Step 10: Train DeepSSM model on training loader
         This requires creating a json config file of model parameters
@@ -383,13 +383,13 @@ def Run_Pipeline(args):
             json.dump(model_parameters, outfile, indent=2)
         # Train
         DeepSSMUtils.trainDeepSSM(config_file)
-        open(status_dir + "step_11.txt", 'w').close()
+        open(status_dir + "step_10.txt", 'w').close()
 
     ######################################################################################
-    # Step 12. Predict validation particles with trained DeepSSM and analyze accuracy.
+    # Step 11. Predict validation particles with trained DeepSSM and analyze accuracy.
     ######################################################################################
-    if not os.path.exists(status_dir + "step_12.txt"):
-        print("\nStep 12. Predict validation particles with trained DeepSSM and analyze accuracy.")
+    if not os.path.exists(status_dir + "step_11.txt"):
+        print("\nStep 11. Predict validation particles with trained DeepSSM and analyze accuracy.")
         """
         Step 11: Validation analysis
         Use trained DeepSSM model to predict world validation particles
@@ -458,12 +458,12 @@ def Run_Pipeline(args):
 
         # If tiny test or verify, check results and exit
         ###TMP: check_results(args, mean_dist)
-        open(status_dir + "step_12.txt", 'w').close()
+        open(status_dir + "step_11.txt", 'w').close()
 
     ######################################################################################
-    # Step 13. Predict test particles with trained DeepSSM and analyze accuracy.
+    # Step 12. Predict test particles with trained DeepSSM and analyze accuracy.
     ######################################################################################
-    if not os.path.exists(status_dir + "step_13.txt"):
+    if not os.path.exists(status_dir + "step_12.txt"):
         print("\nStep 13. Predict test particles with trained DeepSSM and analyze accuracy.")
         """
         Step 13: Test analysis
@@ -519,7 +519,7 @@ def Run_Pipeline(args):
                                                      template_particles, template_mesh, test_out_dir,
                                                      planes=test_planes)
         print("Test mean mesh surface-to-surface distance: " + str(mean_dist))
-        open(status_dir + "step_13.txt", 'w').close()
+        open(status_dir + "step_12.txt", 'w').close()
 
     print("All steps complete")
 
