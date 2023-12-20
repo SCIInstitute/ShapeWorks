@@ -93,12 +93,15 @@ def Run_Pipeline(args):
             subject.set_original_filenames([mesh_files[i]])
             subject.set_constraints_filenames([plane_files[i]])
 
-            id = mesh_files[i].split("_")[0]
+            identifier = os.path.basename(mesh_files[i]).split("_")[0]
+            corresponding_image_file = ""
             for index in range(len(image_files)):
-                if id in image_files[index]:
+                if identifier in image_files[index]:
                     corresponding_image_file = image_files[index]
-                    subject.set_feature_filenames({"CT": corresponding_image_file})
                     break
+            if corresponding_image_file == "":
+                raise Exception("No corresponding image file found for mesh: " + mesh_files[i])
+            subject.set_feature_filenames({"CT": corresponding_image_file})
 
             if ref_side in mesh_files[i]:
                 subject.set_extra_values({"side": "L"})
