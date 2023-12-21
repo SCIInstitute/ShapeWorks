@@ -33,6 +33,11 @@ def Run_Pipeline(args):
     if args.clean:
         print("Cleaning output directory: " + output_directory)
         shutil.rmtree(output_directory)
+        if args.tiny_test:
+            os.remove("Output/deep_ssm_femur_tiny_test.downloaded")
+        else:
+            os.remove("Output/deep_ssm_femur.downloaded")
+        
 
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
