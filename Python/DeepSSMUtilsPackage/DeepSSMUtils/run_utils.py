@@ -199,9 +199,8 @@ def groom_training_images(project):
         # apply bounding box
         image.crop(bounding_box)
 
-        # write image using basename of original image, remove file extension
-        base = os.path.splitext(os.path.basename(image_name))[0]
-        image.write(deepssm_dir + f"/train_images/{base}.nrrd")
+        # write image using the index of the subject
+        image.write(deepssm_dir + f"/train_images/{i}.nrrd")
 
 
 def run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler, mixture_num=0, processes=1):
@@ -215,9 +214,7 @@ def run_data_augmentation(project, num_samples, num_dim, percent_variability, sa
     train_image_filenames = []
     train_world_particle_filenames = []
     for i in get_training_indices(project):
-        image_name = get_image_filename(subjects[i])
-        base = os.path.splitext(os.path.basename(image_name))[0]
-        train_image_filenames.append(deepssm_dir + f"/train_images/{base}.nrrd")
+        train_image_filenames.append(deepssm_dir + f"/train_images/{i}.nrrd")
         particle_file = subjects[i].get_world_particle_filenames()[0]
         train_world_particle_filenames.append(particle_file)
 
@@ -315,14 +312,11 @@ def groom_val_test_images(project):
 
     for i in val_test_indices:
         image_name = get_image_filename(subjects[i])
-        base = os.path.basename(image_name)
         sw_message(f"loading {image_name}")
         print(f"pwd = {os.getcwd()}")
         image = sw.Image(image_name)
 
-        base = os.path.basename(image_name)
-
-        image_file = val_test_images_dir + base + ".nrrd"
+        image_file = val_test_images_dir + i + ".nrrd"
 
         # check if this subject needs reflection
         needs_reflection, axis = does_subject_need_reflection(project, subjects[i])
@@ -397,18 +391,14 @@ def prepare_data_loaders(project, batch_size):
     val_image_files = []
     val_world_particles = []
     for i in val_indicies:
-        image_name = get_image_filename(project.get_subjects()[i])
-        base = os.path.basename(image_name)
-        val_image_files.append(deepssm_dir + f"/val_and_test_images/{base}.nrrd")
+        val_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
         particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
         val_world_particles.append(particle_file)
 
     test_image_files = []
     test_indicies = get_split_indices(project, "test")
     for i in test_indicies:
-        image_name = get_image_filename(project.get_subjects()[i])
-        base = os.path.basename(image_name)
-        test_image_files.append(deepssm_dir + f"/val_and_test_images/{base}.nrrd")
+        test_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
 
     DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size)
     DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles)
