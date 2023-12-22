@@ -168,6 +168,15 @@ def groom_training_images(project):
     ref_image.setOrigin(ref_image.origin() - ref_translate)
     ref_mesh.translate(-ref_translate)
 
+    # check if this subject needs reflection
+    needs_reflection, axis = does_subject_need_reflection(project, subjects[ref_index])
+
+    # apply reflection
+    reflection = np.eye(4)
+    if needs_reflection:
+        reflection[axis, axis] = -1
+    ref_image.applyTransform(reflection)
+
     ref_image.write(deepssm_dir + "reference_image.nrrd")
 
     # determine bounding box of meshes
