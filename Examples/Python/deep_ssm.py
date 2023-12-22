@@ -223,7 +223,7 @@ def Run_Pipeline(args):
     # Step 5. Groom Training Images
     ######################################################################################
     if not os.path.exists(status_dir + "step_5.txt"):
-        print("\nStep 6. Groom Training Images")
+        print("\nStep 5. Groom Training Images")
         DeepSSMUtils.groom_training_images(project)
         open(status_dir + "step_5.txt", 'w').close()
 
