@@ -316,7 +316,7 @@ def groom_val_test_images(project):
         print(f"pwd = {os.getcwd()}")
         image = sw.Image(image_name)
 
-        image_file = val_test_images_dir + i + ".nrrd"
+        image_file = val_test_images_dir + f"{i}.nrrd"
 
         # check if this subject needs reflection
         needs_reflection, axis = does_subject_need_reflection(project, subjects[i])
