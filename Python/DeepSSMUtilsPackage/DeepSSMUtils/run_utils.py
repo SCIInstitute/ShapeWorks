@@ -163,10 +163,17 @@ def groom_training_images(project):
     ref_index = get_reference_index(project)
     ref_image = sw.Image(get_image_filename(subjects[ref_index]))
     ref_mesh = sw.utils.load_mesh(subjects[ref_index].get_groomed_filenames()[0])
-    # apply transform
-    ref_translate = ref_mesh.center()
-    ref_image.setOrigin(ref_image.origin() - ref_translate)
-    ref_mesh.translate(-ref_translate)
+
+    # apply alignment transform
+    alignment = convert_transform_to_numpy(subjects[ref_index].get_groomed_transforms()[0])
+    ref_mesh.applyTransform(alignment)
+    ref_mesh.write(deepssm_dir + "reference_mesh.vtk")
+
+    # extract translation from alignment transform
+    ref_translate = alignment[:3, -1]
+
+    # opposite
+    ref_translate = -ref_translate
 
     # check if this subject needs reflection
     needs_reflection, axis = does_subject_need_reflection(project, subjects[ref_index])
@@ -176,6 +183,8 @@ def groom_training_images(project):
     if needs_reflection:
         reflection[axis, axis] = -1
     ref_image.applyTransform(reflection)
+
+    ref_image.setOrigin(ref_image.origin() - ref_translate)
 
     ref_image.write(deepssm_dir + "reference_image.nrrd")
 
@@ -322,7 +331,6 @@ def groom_val_test_images(project):
     for i in val_test_indices:
         image_name = get_image_filename(subjects[i])
         sw_message(f"loading {image_name}")
-        print(f"pwd = {os.getcwd()}")
         image = sw.Image(image_name)
 
         image_file = val_test_images_dir + f"{i}.nrrd"
@@ -330,7 +338,7 @@ def groom_val_test_images(project):
         # check if this subject needs reflection
         needs_reflection, axis = does_subject_need_reflection(project, subjects[i])
 
-        # apply reflection
+        # 1. Apply reflection
         reflection = np.eye(4)
         if needs_reflection:
             reflection[axis, axis] = -1
@@ -359,7 +367,8 @@ def groom_val_test_images(project):
         image.crop(medium_bb).write(image_file)
         itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
                                                                             image_file, transform_type='rigid')
-        # Apply transform
+
+        # 5. Apply transform
         image.applyTransform(itk_rigid_transform,
                              medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
                              medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
@@ -367,7 +376,7 @@ def groom_val_test_images(project):
         vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
         transform = np.matmul(vtk_rigid_transform, transform)
 
-        # 5. Get similarity transform from image registration and apply
+        # 6. Get similarity transform from image registration and apply
         image.crop(bounding_box).write(image_file)
         itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
                                                                                  image_file,
@@ -376,6 +385,7 @@ def groom_val_test_images(project):
                              cropped_ref_image.origin(), cropped_ref_image.dims(),
                              cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=False)
+
         vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
         transform = np.matmul(vtk_similarity_transform, transform)
         # Save transform
