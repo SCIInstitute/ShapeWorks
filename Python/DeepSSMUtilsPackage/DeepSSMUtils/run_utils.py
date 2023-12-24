@@ -184,6 +184,7 @@ def groom_training_images(project):
         reflection[axis, axis] = -1
     ref_image.applyTransform(reflection)
 
+    ref_image.resample([1, 1, 1], sw.InterpolationType.Linear)
     ref_image.setOrigin(ref_image.origin() - ref_translate)
 
     ref_image.write(deepssm_dir + "reference_image.nrrd")

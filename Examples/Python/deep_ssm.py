@@ -407,7 +407,6 @@ def Run_Pipeline(args):
 
         """ Predict validation particles and analyze accuracy """
 
-        # collect val_transforms, val_plans
         subjects = project.get_subjects()
         val_transforms = []
         val_planes = []
@@ -424,13 +423,6 @@ def Run_Pipeline(args):
                 val_planes.append(json.load(json_file)['planes'][0]['points'])
             val_world_particles.append(project_path + subjects[index].get_world_particle_filenames()[0])
             val_mesh_files.append(project_path + subjects[index].get_groomed_filenames()[0])
-
-        train_mesh_files = []
-        train_local_particles = []
-        train_indices = DeepSSMUtils.get_split_indices(project, "train")
-        for index in train_indices:
-            train_mesh_files.append(project_path + subjects[index].get_groomed_filenames()[0])
-            train_local_particles.append(project_path + subjects[index].get_local_particle_filenames()[0])
 
         val_out_dir = output_directory + model_name + '/validation_predictions/'
         predicted_val_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='validation')
@@ -472,9 +464,9 @@ def Run_Pipeline(args):
     # Step 12. Predict test particles with trained DeepSSM and analyze accuracy.
     ######################################################################################
     if not os.path.exists(status_dir + "step_12.txt"):
-        print("\nStep 13. Predict test particles with trained DeepSSM and analyze accuracy.")
+        print("\nStep 12. Predict test particles with trained DeepSSM and analyze accuracy.")
         """
-        Step 13: Test analysis
+        Step 12: Test analysis
         Use trained DeepSSM model to predict world validation particles
         and apply inverse transforms to get local predictions
         Analyze accuracy
@@ -486,7 +478,6 @@ def Run_Pipeline(args):
         test_planes = []
         test_indices = DeepSSMUtils.get_split_indices(project, "test")
         for index in test_indices:
-            extra_values = subjects[index].get_extra_values()
             alignment = subjects[index].get_extra_values()["registration_transform"]
             # parse alignment from space separated string to 4x4 matrix
             alignment = alignment.split()
