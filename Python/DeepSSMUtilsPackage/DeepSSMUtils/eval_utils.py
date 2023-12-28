@@ -84,7 +84,7 @@ def get_mesh_from_particles(particle_list, mesh_dir, template_particles, templat
     if planes is not None:
         for index in range(len(outmeshes)):
             sw.Mesh(outmeshes[index]).clip(planes[index][0], planes[index][1], planes[index][2]).write(outmeshes[index])
-    return sorted(outmeshes)
+    return outmeshes
 
 
 def surface_to_surface_distance(orig_list, pred_list, out_dir):
@@ -126,20 +126,24 @@ def get_MSE(pred_particle_files, true_particle_files):
 
 def get_mesh_distance(pred_particle_files, mesh_list, template_particles, template_mesh, out_dir, planes=None):
     # Step 1: Get predicted meshes from predicted particles
-    print("Getting meshes from predicted local particles...")
-    pred_mesh_list = sorted(
-        get_mesh_from_particles(pred_particle_files, out_dir + "/predicted_meshes/", template_particles, template_mesh,
-                                planes))
+    pred_mesh_list = get_mesh_from_particles(pred_particle_files, out_dir + "/predicted_meshes/", template_particles,
+                                             template_mesh, planes)
     print(f"pred_mesh_list: {pred_mesh_list}")
     # Step 2: Get distance between original and predicted mesh
     mean_distances = []
     for index in range(len(mesh_list)):
+        print(f"Getting distance between {mesh_list[index]} and {pred_mesh_list[index]}")
         orig_mesh = sw.Mesh(mesh_list[index])
         if planes is not None:
             orig_mesh.clip(planes[index][0], planes[index][1], planes[index][2])
         pred_mesh = sw.Mesh(pred_mesh_list[index])
         orig_mesh.write("/tmp/orig_mesh.vtk")
         pred_mesh.write("/tmp/pred_mesh.vtk")
+        val1 = np.mean(orig_mesh.distance(pred_mesh)[0])
+        val2 = np.mean(pred_mesh.distance(orig_mesh)[0])
+        print(f"val1: {val1}")
+        print(f"val2: {val2}")
+
         mean_distances.append(np.mean(orig_mesh.distance(pred_mesh)[0]))
         mean_distances.append(np.mean(pred_mesh.distance(orig_mesh)[0]))
     return np.mean(np.array(mean_distances))
