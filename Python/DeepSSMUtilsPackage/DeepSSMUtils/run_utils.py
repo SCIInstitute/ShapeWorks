@@ -139,7 +139,7 @@ def get_training_bounding_box(project):
     train_mesh_list = []
     for i in training_indices:
         subject = subjects[i]
-        mesh = sw.utils.load_mesh(subject.get_groomed_filenames()[0])
+        mesh = subject.get_groomed_clipped_mesh()
         # apply transform
         alignment = convert_transform_to_numpy(subject.get_groomed_transforms()[0])
         mesh.applyTransform(alignment)
