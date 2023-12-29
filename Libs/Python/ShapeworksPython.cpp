@@ -564,9 +564,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
         return PhysicalRegion(Point({min[0], min[1], min[2]}), Point({max[0], max[1], max[2]}));
       }))
 
-      .def(py::init([](std::string str) {
-          return PhysicalRegion(str);
-      }))
+      .def(py::init([](std::string str) { return PhysicalRegion(str); }))
 
       .def(py::self == py::self)
 
@@ -648,8 +646,6 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def("pad", &PhysicalRegion::pad, "grows or shrinks the region by the specified amount", "padding"_a)
 
       .def("to_string", &PhysicalRegion::to_string, "returns a string representation of this region");
-
-
 
   // IndexRegion
   py::class_<IndexRegion>(m, "IndexRegion")
@@ -1586,8 +1582,26 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def("set_excluded", &Subject::set_excluded, "Set excluded", "excluded"_a)
 
-      .def("set_fixed", &Subject::set_fixed, "Set fixed",
-           "fixed"_a)
+      .def("set_fixed", &Subject::set_fixed, "Set fixed", "fixed"_a)
+
+      .def(
+          "get_groomed_clipped_mesh",
+          [](Subject& subject, int domain_id) -> decltype(auto) {
+            if (domain_id >= subject.get_groomed_filenames().size()) {
+              throw std::invalid_argument("domain_id out of range");
+            }
+            auto groomed_filename = subject.get_groomed_filenames()[domain_id];
+            Mesh mesh = MeshUtils::create_mesh_from_file(groomed_filename);
+            // if there are constraints, apply them
+            if (domain_id < subject.get_constraints_filenames().size()) {
+              auto constraints_filename = subject.get_constraints_filenames()[domain_id];
+              Constraints constraint;
+              constraint.read(constraints_filename);
+              constraint.clipMesh(mesh);
+            }
+            return mesh;
+          },
+          "Get the mesh clipped by constraints", "domain_id"_a = 0)
 
       ;  // Subject
 
