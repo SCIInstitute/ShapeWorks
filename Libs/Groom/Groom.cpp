@@ -652,8 +652,12 @@ void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int d
       base_domain = 0;
     }
 
-    auto list = subjects[i]->get_groomed_transforms()[base_domain];
-    vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    if (base_domain < subjects[i]->get_groomed_transforms().size()) {
+      auto list = subjects[i]->get_groomed_transforms()[base_domain];
+      transform = ProjectUtils::convert_transform(list);
+    }
     transform->PostMultiply();
     transform->Concatenate(ProjectUtils::convert_transform(transforms[count++]));
 
