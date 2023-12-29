@@ -24,6 +24,9 @@ class MeshUtils {
                                                                 const unsigned iterations = 20,
                                                                 bool meshTransform = false);
 
+  /// Mesh from mesh or image file
+  static Mesh create_mesh_from_file(std::string filename, double iso_value = 0.5);
+
   /// Thread safe reading of a mesh, uses a lock
   static Mesh threadSafeReadMesh(std::string filename);
 

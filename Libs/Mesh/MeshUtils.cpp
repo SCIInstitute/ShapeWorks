@@ -14,6 +14,7 @@
 #include <vtkRenderer.h>
 #include <vtkTransformPolyDataFilter.h>
 
+#include "StringUtils.h"
 #include "Utils.h"
 
 // boundary loop extractor libraries
@@ -91,15 +92,40 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
   icpTransformFilter->Update();
 
   vtkSmartPointer<vtkMatrix4x4> m = vtkMatrix4x4::New();
-  if (meshTransform)
+  if (meshTransform) {
     m = icp->GetMatrix();
-  else
+  } else {
     vtkMatrix4x4::Invert(
         icp->GetMatrix(),
         m);  // It's inversed because when an image is transformed,
              // a new image is created in the target space and samples through the transform back to the original space
+  }
 
   return m;
+}
+
+Mesh MeshUtils::create_mesh_from_file(std::string filename, double iso_value) {
+  bool is_mesh = false;
+  for (auto& type : shapeworks::Mesh::getSupportedTypes()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      is_mesh = true;
+    }
+  }
+
+  bool is_image = false;
+  for (auto& type : shapeworks::Image::getSupportedTypes()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      is_image = true;
+    }
+  }
+
+  if (is_mesh) {
+    return Mesh(filename);
+  } else if (is_image) {
+    return Image(filename).toMesh(iso_value);
+  } else {
+    throw std::invalid_argument("Unsupported file type");
+  }
 }
 
 Mesh MeshUtils::threadSafeReadMesh(std::string filename) {
