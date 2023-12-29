@@ -59,6 +59,7 @@ def groom_training_shapes(project):
     for i in range(len(subjects)):
         extra_values = subjects[i].get_extra_values()
         subjects[i].set_excluded(extra_values["split"] != "train")
+        subjects[i].set_fixed(False)
 
     project.set_subjects(subjects)
 
