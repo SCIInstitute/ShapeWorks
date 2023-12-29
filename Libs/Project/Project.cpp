@@ -110,8 +110,11 @@ void Project::set_project_path(const std::string& new_pathname) {
     subject->set_feature_filenames(new_features);
   }
 
+
   project_path_ = new_pathname;
-  fs::current_path(project_path_);  // chdir
+  if (project_path_ != "") {
+    fs::current_path(project_path_);  // chdir
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -187,7 +190,7 @@ void Project::update_subjects() {
   for (auto subject : subjects_) {
     originals_present_ = originals_present_ || !subject->get_original_filenames().empty();
     groomed_present_ = groomed_present_ || !subject->get_groomed_filenames().empty();
-    if (subject->get_groomed_filenames().size() > 0) {
+    if (subject->get_groomed_filenames().size() > 0 && subject->get_groomed_filenames()[0] != "") {
       groomed_subject = subject;
     }
     particles_present_ = particles_present_ || !subject->get_world_particle_filenames().empty();
