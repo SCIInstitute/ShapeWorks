@@ -140,7 +140,7 @@ def Run_Pipeline(args):
     # Step 2. Define Split
     ######################################################################################
     if not os.path.exists(status_dir + "step_2.txt"):
-        print("\nStep 3. Define Split")
+        print("\nStep 2. Define Split")
 
         DeepSSMUtils.create_split(project, 80, 10, 10)
         project.save(spreadsheet_file)
@@ -154,6 +154,7 @@ def Run_Pipeline(args):
 
         params = project.get_parameters("groom")
         params.set("alignment_method", "Iterative Closest Point")
+        params.set("alignment_reference", "32")
         params.set("alignment_subset_size", "20")
         params.set("remesh", "0")
         params.set("reflect", "1")
@@ -168,6 +169,9 @@ def Run_Pipeline(args):
 
         reference_index = DeepSSMUtils.get_reference_index(project)
         print("Reference index: " + str(reference_index))
+        # print reference mesh name
+        print("Reference mesh: " + project_path + project.get_subjects()[reference_index].get_original_filenames()[0])
+
         open(status_dir + "step_3.txt", 'w').close()
 
     ######################################################################################
