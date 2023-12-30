@@ -246,10 +246,11 @@ def Run_Pipeline(args):
         """
         num_samples = 2961
         num_dim = 0
+        percent_variability = 0.95
         sampler = "kde"
         if args.tiny_test:
             num_samples = 2
-        percent_variability = 0.99
+            percent_variability = 0.99
 
         embedded_dim = DeepSSMUtils.run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler,
                                                           mixture_num=0, processes=1)
