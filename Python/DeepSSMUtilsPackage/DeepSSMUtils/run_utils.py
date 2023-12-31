@@ -51,6 +51,24 @@ def create_split(project, train, val, test):
     project.set_subjects(subjects)
 
 
+def optimize_training_particles(project):
+    """ Optimize the particles for just the training data. """
+    subjects = project.get_subjects()
+
+    # Exclude all except training, set none to fixed
+    for i in range(len(subjects)):
+        extra_values = subjects[i].get_extra_values()
+        subjects[i].set_excluded(extra_values["split"] != "train")
+        subjects[i].set_fixed(False)
+
+    project.set_subjects(subjects)
+
+    optimize = sw.Optimize()
+    optimize.SetUpOptimize(project)
+    optimize.Run()
+    project.save(spreadsheet_file)
+
+
 def groom_training_shapes(project):
     """ Prepare the data for grooming the training data only. """
     subjects = project.get_subjects()

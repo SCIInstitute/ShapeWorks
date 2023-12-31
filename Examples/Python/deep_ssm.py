@@ -217,11 +217,11 @@ def Run_Pipeline(args):
         project.save(spreadsheet_file)
 
         sw_message("Optimize training particles...")
-        optimize = sw.Optimize()
-        optimize.SetUpOptimize(project)
-        optimize.Run()
+        DeepSSMUtils.optimize_training_particles(project)
+
         project.save(spreadsheet_file)
         open(status_dir + "step_4.txt", 'w').close()
+
 
     ######################################################################################
     # Step 5. Groom Training Images
