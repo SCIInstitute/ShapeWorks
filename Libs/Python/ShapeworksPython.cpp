@@ -1407,7 +1407,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
   proj.def(py::init<>())
 
       .def("load", &Project::load, "Load from XLSX file", "filename"_a)
-      .def("save", &Project::save, "Save to XLSX file", "filename"_a)
+      .def("save", &Project::save, "Save to XLSX file", "filename"_a = "")
       .def("get_filename", &Project::get_filename, "Return the filename")
       .def("get_project_path", &Project::get_project_path, "Return the project path")
       .def("set_filename", &Project::set_filename, "Set project filename", "filename"_a)
