@@ -54,7 +54,13 @@ bool Project::load(const std::string& filename) {
 
 //---------------------------------------------------------------------------
 bool Project::save(const std::string& filename) {
-  filename_ = filename;
+  if (filename != "") {
+    filename_ = filename;
+  }
+
+  if (filename_.empty()) {
+    throw std::runtime_error("Project filename is empty");
+  }
 
   // get the directory of the project file
   fs::path path = filename;
@@ -66,10 +72,10 @@ bool Project::save(const std::string& filename) {
   project_parameters.set("version", version_);
   set_parameters(Parameters::PROJECT_PARAMS, project_parameters);
   update_subjects();
-  if (StringUtils::hasSuffix(filename, "swproj")) {
-    return JsonProjectWriter::write_project(*this, filename);
+  if (StringUtils::hasSuffix(filename_, "swproj")) {
+    return JsonProjectWriter::write_project(*this, filename_);
   } else {
-    return ExcelProjectWriter::write_project(*this, filename);
+    return ExcelProjectWriter::write_project(*this, filename_);
   }
 }
 
@@ -109,7 +115,6 @@ void Project::set_project_path(const std::string& new_pathname) {
     }
     subject->set_feature_filenames(new_features);
   }
-
 
   project_path_ = new_pathname;
   if (project_path_ != "") {

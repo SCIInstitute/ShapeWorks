@@ -62,7 +62,7 @@ def optimize_training_particles(project):
         subjects[i].set_fixed(False)
 
     project.set_subjects(subjects)
-    project.save(spreadsheet_file)
+    project.save()
 
     optimize = sw.Optimize()
     optimize.SetUpOptimize(project)
