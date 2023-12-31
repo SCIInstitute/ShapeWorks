@@ -310,7 +310,7 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
 void Constraints::read(std::string filename) {
   std::ifstream in(filename);
   if (!in.good()) {
-    throw std::runtime_error("Unable to open " + filename + " for reading");
+    throw std::runtime_error("Unable to open constraint file: \"" + filename + "\" for reading");
   }
   try {
     json j;
@@ -404,7 +404,7 @@ void Constraints::write(std::string filename) {
 
   std::ofstream file(filename);
   if (!file.good()) {
-    throw std::runtime_error("Unable to open \"" + filename + "\" for writing");
+    throw std::runtime_error("Unable to open constraint file \"" + filename + "\" for writing");
   }
   file << j.dump(4);
 }

@@ -67,7 +67,7 @@ def optimize_training_particles(project):
     optimize = sw.Optimize()
     optimize.SetUpOptimize(project)
     optimize.Run()
-    project.save(spreadsheet_file)
+    project.save()
 
 
 def groom_training_shapes(project):
