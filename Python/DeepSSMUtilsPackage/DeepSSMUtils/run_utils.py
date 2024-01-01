@@ -363,6 +363,9 @@ def groom_val_test_images(project):
         reflection = np.eye(4)
         if needs_reflection:
             reflection[axis, axis] = -1
+            # account for offset
+            reflection[-1][0] = 2*image.center()[0]
+            
         image.applyTransform(reflection)
         transform = sw.utils.getVTKtransform(reflection)
 
