@@ -462,7 +462,7 @@ def Run_Pipeline(args):
         print("Validation mean mesh surface-to-surface distance: " + str(mean_dist))
 
         # If tiny test or verify, check results and exit
-        ###TMP: check_results(args, mean_dist)
+        check_results(args, mean_dist)
         open(status_dir + "step_11.txt", 'w').close()
 
     ######################################################################################
