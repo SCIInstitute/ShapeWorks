@@ -606,7 +606,7 @@ void DeepSSMTool::restore_defaults() {
 void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   current_tool_ = type;
   Q_EMIT progress(-1);
-  bool python_type = true;
+
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
     SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
@@ -623,7 +623,6 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
     SW_LOG("Please Wait: Running Testing...");
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
     SW_LOG("Please Wait: Running Groom/Optimize...");
-    python_type = false;
   } else {
     SW_ERROR("Unknown tool mode");
     Q_EMIT progress(100);
@@ -643,12 +642,8 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, type);
   connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
-  if (python_type || 1) {
-    app_->get_py_worker()->run_job(deep_ssm_);
-  } else {
-    auto worker = Worker::create_worker();
-    worker->run_job(deep_ssm_);
-  }
+
+  app_->get_py_worker()->run_job(deep_ssm_);
 
   // ensure someone doesn't accidentally abort right after clicking RUN
   ui_->run_button->setEnabled(false);
