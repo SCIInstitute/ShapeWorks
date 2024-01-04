@@ -112,6 +112,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_optimize_start();
   void handle_optimize_complete();
   void handle_reconstruction_complete();
+  void handle_reset_stats();
 
   void handle_display_setting_changed();
   void handle_glyph_changed();

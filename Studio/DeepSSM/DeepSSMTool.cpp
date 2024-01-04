@@ -177,6 +177,7 @@ void DeepSSMTool::handle_thread_complete() {
   update_meshes();
   tool_is_running_ = false;
   update_panels();
+  session_->reload_particles();
 }
 
 //---------------------------------------------------------------------------

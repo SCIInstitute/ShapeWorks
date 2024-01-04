@@ -164,6 +164,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void trigger_ffc_changed();
   void trigger_annotations_changed();
   void trigger_save();
+  void trigger_data_changed();
+  void reload_particles();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
@@ -284,6 +286,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void planes_changed();
   void ffc_changed();
   void update_display();
+  void reset_stats();
   void new_mesh();
   void feature_range_changed();
   void update_view_mode();

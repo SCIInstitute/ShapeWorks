@@ -154,6 +154,9 @@ void DeepSSMJob::run_prep() {
   optimize.SetUpOptimize(project_);
   optimize.Run();
 
+  project_->update_subjects();
+  project_->save();
+
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::DONE);
   Q_EMIT progress(100);

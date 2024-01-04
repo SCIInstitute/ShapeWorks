@@ -487,7 +487,7 @@ void ShapeWorksStudioApp::disable_all_actions() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::enable_possible_actions() {
   // export / save / new / open
-  bool reconstructed = session_->particles_present();
+  bool analysis_ready = session_->particles_present();
 
   bool original_present = session_->get_project()->get_originals_present();
 
@@ -496,10 +496,10 @@ void ShapeWorksStudioApp::enable_possible_actions() {
                       filename.endsWith(".swproj", Qt::CaseInsensitive);
   ui_->action_save_project->setEnabled(save_enabled);
   ui_->menu_save_project_as->setEnabled(true);
-  ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
-  ui_->actionExport_Eigenvalues->setEnabled(reconstructed);
-  ui_->actionExport_Eigenvectors->setEnabled(reconstructed);
-  ui_->actionExport_PCA_Mode_Points->setEnabled(reconstructed);
+  ui_->actionExport_PCA_Mesh->setEnabled(analysis_ready);
+  ui_->actionExport_Eigenvalues->setEnabled(analysis_ready);
+  ui_->actionExport_Eigenvectors->setEnabled(analysis_ready);
+  ui_->actionExport_PCA_Mode_Points->setEnabled(analysis_ready);
   ui_->action_new_project->setEnabled(true);
   ui_->action_open_project->setEnabled(true);
   ui_->action_import->setEnabled(true);
@@ -510,10 +510,10 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   ui_->action_groom_mode->setEnabled(original_present);
   ui_->action_optimize_mode->setEnabled(original_present);
   bool new_analysis = false;
-  if (!ui_->action_analysis_mode->isEnabled() && reconstructed) {
+  if (!ui_->action_analysis_mode->isEnabled() && analysis_ready) {
     new_analysis = true;
   }
-  ui_->action_analysis_mode->setEnabled(reconstructed);
+  ui_->action_analysis_mode->setEnabled(analysis_ready);
   ui_->action_deepssm_mode->setEnabled(session_->get_project()->get_images_present());
   // subtools
   data_tool_->enable_actions();
@@ -960,6 +960,7 @@ void ShapeWorksStudioApp::new_session() {
 
   connect(session_.data(), &Session::data_changed, this, &ShapeWorksStudioApp::handle_project_changed);
   connect(session_.data(), &Session::points_changed, this, &ShapeWorksStudioApp::handle_points_changed);
+  connect(session_.data(), &Session::reset_stats, this, &ShapeWorksStudioApp::handle_reset_stats);
   connect(session_.data(), &Session::update_display, this, &ShapeWorksStudioApp::handle_display_setting_changed);
   connect(session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
   connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
@@ -1225,14 +1226,7 @@ void ShapeWorksStudioApp::handle_points_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete() {
-  int num_domains = session_->get_domains_per_shape();
-  for (int i = 0; i < num_domains; i++) {
-    session_->get_mesh_manager()->get_surface_reconstructor(i)->resetReconstruct();
-  }
-  analysis_tool_->reset_stats();
-  analysis_tool_->initialize_mesh_warper();
-  session_->handle_clear_cache();
-  update_view_combo();
+  handle_reset_stats();
   ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Groomed);
   session_->set_display_mode(DisplayMode::Groomed);
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
@@ -1253,6 +1247,23 @@ void ShapeWorksStudioApp::handle_reconstruction_complete() {
   visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
   visualizer_->update_lut();
   update_display(true);
+  enable_possible_actions();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_reset_stats()
+{
+  int num_domains = session_->get_domains_per_shape();
+  for (int i = 0; i < num_domains; i++) {
+    session_->get_mesh_manager()->get_surface_reconstructor(i)->resetReconstruct();
+  }
+  analysis_tool_->reset_stats();
+  analysis_tool_->initialize_mesh_warper();
+  session_->handle_clear_cache();
+  update_view_combo();
+  update_display();
+  visualizer_->update_samples();
+  handle_glyph_changed();
   enable_possible_actions();
 }
 
