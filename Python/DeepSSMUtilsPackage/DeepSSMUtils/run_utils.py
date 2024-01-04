@@ -53,6 +53,7 @@ def create_split(project, train, val, test):
 
 def optimize_training_particles(project):
     """ Optimize the particles for just the training data. """
+    sw_message(f"Optimizing training particles")
     subjects = project.get_subjects()
 
     # Exclude all except training, set none to fixed
@@ -72,6 +73,8 @@ def optimize_training_particles(project):
 
 def groom_training_shapes(project):
     """ Prepare the data for grooming the training data only. """
+    sw_message(f"Grooming training shapes")
+
     subjects = project.get_subjects()
 
     # Exclude all except training
