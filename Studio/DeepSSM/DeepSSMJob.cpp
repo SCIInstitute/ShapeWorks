@@ -82,218 +82,79 @@ void DeepSSMJob::run_prep() {
   auto subjects = project_->get_subjects();
   auto shapes = session_->get_shapes();
   SW_LOG("DeepSSM: Grooming Training Data");
+
+  py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
+
+  DeepSSMParameters params(project_);
+
+  /////////////////////////////////////////////////////////
+  /// Step 1. Create Split
+  /////////////////////////////////////////////////////////
+  double val_split = params.get_validation_split();
+  double test_split = params.get_testing_split();
+  double train_split = 100.0 - val_split - test_split;
+  py::object create_split = py_deep_ssm_utils.attr("create_split");
+  create_split(project_, train_split, val_split, test_split);
+
+  /////////////////////////////////////////////////////////
+  /// Step 2. Groom Training Shapes
+  /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::GROOM_TRAINING);
+  py::object groom_training_shapes = py_deep_ssm_utils.attr("groom_training_shapes");
 
-  auto train_id_list = get_list(FileType::ID, SplitType::TRAIN);
-  auto val_id_list = get_list(FileType::ID, SplitType::VAL);
-  auto test_id_list = get_list(FileType::ID, SplitType::TEST);
-
-  SW_LOG("Total subjects: {}", subjects.size());
-  SW_LOG("Train subjects: {}", train_id_list.size());
-  SW_LOG("Val subjects: {}", val_id_list.size());
-  SW_LOG("Test subjects: {}", test_id_list.size());
-
-  /////////////////////////////////////////////////////////
-  /// Step 1. Groom Training
-  /////////////////////////////////////////////////////////
-
-  // first, set all excluded
-  for (auto &subject : subjects) {
-    subject->set_excluded(true);
-  }
-
-  // include only training data
-  std::vector<Mesh> training_meshes;
-  for (int i = 0; i < train_id_list.size(); i++) {
-    auto id = train_id_list[i];
-    auto shape = shapes[std::stoi(id)];
-    shape->get_subject()->set_excluded(false);
-    training_meshes.push_back(shape->get_original_meshes(true).meshes()[0]->get_poly_data());
-  }
-  project_->update_subjects();
-  session_->trigger_reinsert_shapes();
-
-  // choose reference
-  int reference = MeshUtils::findReferenceMesh(training_meshes, 20);
-  SW_LOG("Reference shape: {}", reference);
-
+  // force ICP on to get reference
   GroomParameters groom_params{project_};
-  groom_params.set_alignment_reference(reference);
+  groom_params.set_alignment_method("Iterative Closest Point");
+  groom_params.set_alignment_enabled(true);
   groom_params.save_to_project();
 
-  // run grooming
-  Groom groom{project_};
-  groom.run();
+  groom_training_shapes(project_);
+  project_->save();
 
+  /////////////////////////////////////////////////////////
+  /// Step 3. Optimize Training Particles
+  /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::OPTIMIZE_TRAINING);
+  py::object optimize_training_particles = py_deep_ssm_utils.attr("optimize_training_particles");
+  optimize_training_particles(project_);
+  project_->save();
 
   /////////////////////////////////////////////////////////
-  /// Step 2. Optimize Training Shapes
+  /// Step 4. Groom Training Images
   /////////////////////////////////////////////////////////
 
-  OptimizeParameters optimize_params{project_};
-  Optimize optimize;
-  optimize_params.set_up_optimize(&optimize);
-  optimize.Run();
-
-  /////////////////////////////////////////////////////////
-  /// Step 3. Groom Images
-  /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::GROOM_TRAINING_IMAGES);
-
-  // load reference image
-  auto image_filenames = subjects[reference]->get_feature_filenames();
-  std::string image_filename;
-  if (!image_filenames.empty()) {
-    image_filename = image_filenames.begin()->second;
-  }
-  if (image_filename.empty()) {
-    SW_ERROR("No image found for reference shape");
-    return;
-  }
-
-  // TODO: apply alignment transform?
-  auto transform = shapes[reference]->get_alignment();
-  Image reference_image{image_filename};
-  std::string ref_image_file = "deepssm/reference_image.nrrd";
-  //  save as reference_image.nrrd
-  reference_image.write(ref_image_file);
-
-  SW_MESSAGE("Grooming Training Images");
-  Q_EMIT progress(0);
-
-  // determine shared bounding box
-  auto bounding_box = MeshUtils::boundingBox(training_meshes).pad(10);
-
-  // for each training image
-  for (int i = 0; i < train_id_list.size(); i++) {
-    auto id = train_id_list[i];
-    auto shape = shapes[std::stoi(id)];
-    auto subject = shape->get_subject();
-
-    // load image
-    auto image_filenames = subject->get_feature_filenames();
-    std::string image_filename;
-    if (!image_filenames.empty()) {
-      image_filename = image_filenames.begin()->second;
-    }
-    if (image_filename.empty()) {
-      SW_ERROR("No image found for subject {}", id);
-      return;
-    }
-
-    // apply alignment transform
-    auto transform = shape->get_alignment();
-    auto procrustes = shape->get_procrustes_transform();
-
-    transform->Concatenate(procrustes);
-
-    Image image{image_filename};
-
-    // invert to use for image resampling
-    transform->Inverse();
-
-    auto itk_transform = shapeworks::convert_to_image_transform(transform);
-
-    // debug
-    // image.write("deepssm/train_images/before_" + id + ".nrrd");
-
-    image.applyTransform(itk_transform, reference_image);
-
-    // create output directory
-    QDir dir("deepssm/train_images");
-    if (!dir.exists()) {
-      dir.mkpath(".");
-    }
-
-    // crop to shared bounding box
-    image.crop(bounding_box);
-
-    // save as image.nrrd
-    image.write("deepssm/train_images/" + id + ".nrrd");
-
-    double current_progress = i / static_cast<double>(train_id_list.size()) * 100.0;
-    Q_EMIT progress(current_progress);
-  }
+  py::object groom_training_images = py_deep_ssm_utils.attr("groom_training_images");
+  groom_training_images(project_);
+  project_->save();
 
   /////////////////////////////////////////////////////////
-  /// Step 4. Groom Validation Images
+  /// Step 5. Groom Validation and Test Images
   /////////////////////////////////////////////////////////
-  update_prep_message(PrepStep::GROOM_VALIDATION_IMAGES);
-
-  // # Get reference image
-
-  std::string data_dir = "deepssm/";
-  auto ref_center = reference_image.center();
-
-  // # Slightly cropped ref image
-  auto large_bb = PhysicalRegion(bounding_box.min, bounding_box.max).pad(80);
-  auto large_cropped_ref_image_file = data_dir + "large_cropped_reference_image.nrrd";
-  auto large_cropped_ref_image = Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file);
-
-  // # Further croppped ref image
-  auto medium_bb = PhysicalRegion(bounding_box.min, bounding_box.max).pad(20);
-  auto medium_cropped_ref_image_file = data_dir + "medium_cropped_reference_image.nrrd";
-  auto medium_cropped_ref_image = Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file);
-
-  // # Fully cropped ref image
-  auto cropped_ref_image_file = data_dir + "cropped_reference_image.nrrd";
-  auto cropped_ref_image = Image(ref_image_file).crop(bounding_box).write(cropped_ref_image_file);
-
-  // # Make dirs
-  auto val_test_images_dir = data_dir + "val_and_test_images/";
-
-  QDir dir(val_test_images_dir.c_str());
-  if (!dir.exists()) {
-    dir.mkpath(".");
-  }
-
-  // combine val_id_list and test_id_list
-  auto val_test_id_list = val_id_list;
-  val_test_id_list.insert(val_test_id_list.end(), test_id_list.begin(), test_id_list.end());
-
-  for (int i = 0; i < val_test_id_list.size(); i++) {
-    auto id = val_test_id_list[i];
-    auto shape = shapes[std::stoi(id)];
-    auto subject = shape->get_subject();
-
-    // load image
-    auto image_filenames = subject->get_feature_filenames();
-    std::string image_filename;
-    if (!image_filenames.empty()) {
-      image_filename = image_filenames.begin()->second;
-    }
-    if (image_filename.empty()) {
-      SW_ERROR("No image found for subject {}", id);
-      return;
-    }
-
-    // # Translate to have ref center to make rigid registration easier
-
-    // # Translate with respect to slightly cropped ref
-
-    // # Apply transform
-
-    // # Crop with medium bounding box and find rigid transform
-
-    // # Apply transform
-
-    // # Get similarity transform from image registration and apply
-
-    // # Save transform
-
-
-
-
-
-
-  }
+  update_prep_message(PrepStep::GROOM_VAL_AND_TEST_IMAGES);
+  py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
+  groom_val_test_images(project_);
+  project_->save();
 
   /////////////////////////////////////////////////////////
-  /// Step 5. Optimize Validation Particles
+  /// Step 6. Optimize Validation Particles with Fixed Domains
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::OPTIMIZE_VALIDATION);
 
+  // DeepSSMUtils.prep_project_for_val_particles(project)
+  py::object prep_project_for_val_particles = py_deep_ssm_utils.attr("prep_project_for_val_particles");
+  prep_project_for_val_particles(project_);
+
+  // DeepSSMUtils.groom_validation_shapes(project)
+  py::object groom_validation_shapes = py_deep_ssm_utils.attr("groom_validation_shapes");
+  groom_validation_shapes(project_);
+
+  // run optimize
+  Optimize optimize;
+  optimize.SetUpOptimize(project_);
+  optimize.Run();
+
+  /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::DONE);
   Q_EMIT progress(100);
 }
@@ -335,17 +196,18 @@ void DeepSSMJob::run_training() {
   auto test_img_list = get_list(FileType::IMAGE, SplitType::TEST);
 
   DeepSSMParameters params(project_);
+  int batch_size = params.get_training_batch_size();
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
+
+  py::object prepare_data_loaders = py_deep_ssm_utils.attr("prepare_data_loaders");
+  prepare_data_loaders(project_, batch_size);
 
   std::string out_dir = "deepssm/";
   std::string aug_dir = out_dir + "Augmentation/";
   std::string aug_data_csv = aug_dir + "TotalData.csv";
 
-  double down_factor = 0.75;
-  std::string down_dir = out_dir + "DownsampledImages/";
-  int batch_size = params.get_training_batch_size();
-  std::string loader_dir = out_dir + "TorchDataLoaders/";
+  std::string loader_dir = out_dir + "torch_loaders/";
 
   int epochs = params.get_training_epochs();
   double learning_rate = params.get_training_learning_rate();
@@ -354,16 +216,6 @@ void DeepSSMJob::run_training() {
   int fine_tune_epochs = params.get_training_fine_tuning_epochs();
   double fine_tune_learning_rate = params.get_training_fine_tuning_learning_rate();
   int num_dims = params.get_training_num_dims();
-
-  double train_split = (100.0 - params.get_validation_split()) / 100.0;
-
-  SW_LOG("DeepSSM: Loading Train/Validation Loaders");
-  py::object get_train_val_loaders = py_deep_ssm_utils.attr("getTrainValLoaders");
-  get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split);
-
-  SW_LOG("DeepSSM: Loading Test Loader");
-  py::object get_test_loader = py_deep_ssm_utils.attr("getTestLoader");
-  get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
 
   py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
   SW_LOG("DeepSSM: Preparing Config File");
@@ -381,7 +233,7 @@ void DeepSSMJob::run_testing() {
   DeepSSMParameters params(project_);
 
   auto id_list = get_list(FileType::ID, SplitType::TEST);
-  QFile file("deepssm/TorchDataLoaders/test_names.txt");
+  QFile file("deepssm/torch_loaders/test_names.txt");
   if (file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
     QStringList list;
     for (auto &id : id_list) {
@@ -479,14 +331,17 @@ void DeepSSMJob::update_prep_message(PrepStep step) {
     }
   };
 
-  prep_message_ =
-      "<html><table border=\"0\">"
-      "<tr><td>Groom Training Data</td>" +
-      message(step, PrepStep::GROOM_TRAINING) +
-      "</tr>"
-      "<tr><td>Optimize Training Data</td>" +
-      message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>" + "<tr><td>Groom Images</td>" +
-      message(step, PrepStep::GROOM_TRAINING_IMAGES) + "</tr></table></html>";
+  QString m = "<html><table border=\"0\">";
+
+  m = m + "<tr><td>Groom Training Shapes</td>" + message(step, PrepStep::GROOM_TRAINING) + "</tr>";
+  m = m + "<tr><td>Optimize Training Particles</td>" + message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>";
+  m = m + "<tr><td>Groom Images</td>" + message(step, PrepStep::GROOM_TRAINING_IMAGES) + "</tr>";
+  m = m + "<tr><td>Groom Validation and Test Images</td>" + message(step, PrepStep::GROOM_VAL_AND_TEST_IMAGES) +
+      "</tr>";
+  m = m + "<tr><td>Optimize Validation Particles</td>" + message(step, PrepStep::OPTIMIZE_VALIDATION) + "</tr>";
+  m = m + "</tr></table></html>";
+
+  prep_message_ = m;
   Q_EMIT progress(-1);
 }
 }  // namespace shapeworks
