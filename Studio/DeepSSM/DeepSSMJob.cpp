@@ -338,7 +338,7 @@ void DeepSSMJob::update_prep_message(PrepStep step) {
 
   m = m + "<tr><td>Groom Training Shapes</td>" + message(step, PrepStep::GROOM_TRAINING) + "</tr>";
   m = m + "<tr><td>Optimize Training Particles</td>" + message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>";
-  m = m + "<tr><td>Groom Images</td>" + message(step, PrepStep::GROOM_TRAINING_IMAGES) + "</tr>";
+  m = m + "<tr><td>Groom Training Images</td>" + message(step, PrepStep::GROOM_TRAINING_IMAGES) + "</tr>";
   m = m + "<tr><td>Groom Validation and Test Images</td>" + message(step, PrepStep::GROOM_VAL_AND_TEST_IMAGES) +
       "</tr>";
   m = m + "<tr><td>Optimize Validation Particles</td>" + message(step, PrepStep::OPTIMIZE_VALIDATION) + "</tr>";
