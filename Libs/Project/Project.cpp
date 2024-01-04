@@ -31,6 +31,9 @@ bool Project::load(const std::string& filename) {
   // get the directory of the project file
   fs::path path = filename;
   project_path_ = path.parent_path().string();
+  if (project_path_ == "") {
+    project_path_ = ".";
+  }
   std::cerr << "Setting Project path: " << project_path_ << std::endl;
 
   bool return_value = false;
@@ -65,6 +68,9 @@ bool Project::save(const std::string& filename) {
   // get the directory of the project file
   fs::path path = filename_;
   project_path_ = path.parent_path().string();
+  if (project_path_ == "") {
+    project_path_ = ".";
+  }
 
   set_project_path(project_path_);
 
@@ -394,7 +400,9 @@ Parameters Project::get_parameters(const std::string& name, std::string domain_n
 std::map<std::string, Parameters> Project::get_parameter_map(const std::string& name) {
   std::map<std::string, Parameters> map;
   auto domains = get_domain_names();
-  domains.insert(domains.begin(), 1, "");  // add global parameters
+  if (domains.size() > 1) {
+    domains.insert(domains.begin(), 1, "");  // add global parameters
+  }
   for (int i = 0; i < domains.size(); i++) {
     map[domains[i]] = get_parameters(name, domains[i]);
   }

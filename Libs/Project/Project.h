@@ -40,7 +40,7 @@ class Project {
   bool load(const std::string& filename);
 
   //! Save to project file
-  bool save(const std::string& filename);
+  bool save(const std::string& filename = "");
 
   //! Set the project path
   void set_project_path(const std::string& path);
