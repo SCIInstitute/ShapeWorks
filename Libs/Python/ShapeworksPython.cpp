@@ -21,6 +21,7 @@ using namespace pybind11::literals;
 #include <vtkFloatArray.h>
 
 #include <bitset>
+#include <boost/filesystem.hpp>
 #include <sstream>
 
 #include "EigenUtils.h"
@@ -44,6 +45,8 @@ using namespace pybind11::literals;
 #include "Variant.h"
 #include "VectorImage.h"
 #include "pybind_utils.h"
+
+namespace fs = boost::filesystem;
 
 using namespace shapeworks;
 
@@ -1407,7 +1410,16 @@ PYBIND11_MODULE(shapeworks_py, m) {
   proj.def(py::init<>())
 
       .def("load", &Project::load, "Load from XLSX file", "filename"_a)
-      .def("save", &Project::save, "Save to XLSX file", "filename"_a = "")
+      .def(
+          "save",
+          [](Project& project, std::string filename) -> decltype(auto) {
+            // store cwd
+            std::string cwd = fs::current_path().string();
+            project.save(filename);
+            // restore cwd
+            fs::current_path(cwd);
+          },
+          "Save to XLSX file", "filename"_a = "")
       .def("get_filename", &Project::get_filename, "Return the filename")
       .def("get_project_path", &Project::get_project_path, "Return the project path")
       .def("set_filename", &Project::set_filename, "Set project filename", "filename"_a)

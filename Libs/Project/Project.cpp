@@ -67,12 +67,12 @@ bool Project::save(const std::string& filename) {
 
   // get the directory of the project file
   fs::path path = filename_;
-  project_path_ = path.parent_path().string();
-  if (project_path_ == "") {
-    project_path_ = ".";
+  std::string project_path = path.parent_path().string();
+  if (project_path == "") {
+    project_path = ".";
   }
 
-  set_project_path(project_path_);
+  set_project_path(project_path);
 
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
   project_parameters.set("version", version_);
@@ -121,6 +121,9 @@ void Project::set_project_path(const std::string& new_pathname) {
     }
     subject->set_feature_filenames(new_features);
   }
+
+  // filename becomes basename
+  filename_ = fs::path(filename_).filename().string();
 
   project_path_ = new_pathname;
   if (project_path_ != "") {
