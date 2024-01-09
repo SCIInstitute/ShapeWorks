@@ -256,7 +256,7 @@ void DeepSSMTool::training_fine_tuning_changed() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::update_tables() {
   populate_table_from_csv(ui_->training_table, "deepssm/model/train_log.csv", true);
-  populate_table_from_csv(ui_->table, "deepssm/Augmentation/TotalData.csv", false);
+  populate_table_from_csv(ui_->table, "deepssm/augmentation/TotalData.csv", false);
 }
 
 //---------------------------------------------------------------------------
@@ -486,7 +486,7 @@ void DeepSSMTool::show_augmentation_meshes() {
   update_tables();
   shapes_.clear();
 
-  QString filename = "deepssm/Augmentation/TotalData.csv";
+  QString filename = "deepssm/augmentation/TotalData.csv";
   if (QFile(filename).exists()) {
     QFile file(filename);
 
@@ -536,7 +536,7 @@ ShapeList DeepSSMTool::get_shapes() { return shapes_; }
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::load_plots() {
-  violin_plot_ = load_plot("deepssm/Augmentation/violin.png");
+  violin_plot_ = load_plot("deepssm/augmentation/violin.png");
   training_plot_ = load_plot("deepssm/model/training_plot.png");
   resize_plots();
 }
@@ -615,7 +615,7 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
     SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
-    QFile("deepssm/Augmentation/TotalData.csv").remove();
+    QFile("deepssm/augmentation/TotalData.csv").remove();
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
     SW_LOG("Please Wait: Running Training...");
 

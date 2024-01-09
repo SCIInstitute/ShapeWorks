@@ -91,6 +91,7 @@ def groom_training_shapes(project):
 
 def groom_validation_shapes(project):
     """ Prepare the data for grooming the training data only. """
+    sw_message(f"Grooming validation shapes")
     subjects = project.get_subjects()
     prep_project_for_val_particles(project)
     groom = sw.Groom(project)
@@ -128,7 +129,6 @@ def get_image_filename(subject):
 def get_deepssm_dir(project):
     """ Get the directory for deepssm data"""
     project_path = project.get_project_path()
-    print(f"Project path: {project_path}")
     deepssm_dir = project_path + "/deepssm/"
     # if dir project_path/deepssm doesn't exist, create it using python
     if not os.path.exists(deepssm_dir):

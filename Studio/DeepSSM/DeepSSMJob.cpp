@@ -218,7 +218,7 @@ void DeepSSMJob::run_training() {
   prepare_data_loaders(project_, batch_size);
 
   std::string out_dir = "deepssm/";
-  std::string aug_dir = out_dir + "Augmentation/";
+  std::string aug_dir = out_dir + "augmentation/";
   std::string aug_data_csv = aug_dir + "TotalData.csv";
 
   std::string loader_dir = out_dir + "torch_loaders/";
