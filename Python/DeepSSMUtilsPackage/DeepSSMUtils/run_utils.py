@@ -424,7 +424,7 @@ def groom_val_test_images(project):
                              cropped_ref_image.origin(), cropped_ref_image.dims(),
                              cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=False)
-
+        image.write(image_file)
         vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
         transform = np.matmul(vtk_similarity_transform, transform)
         # Save transform
