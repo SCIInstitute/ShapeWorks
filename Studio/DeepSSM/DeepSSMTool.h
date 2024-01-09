@@ -1,9 +1,9 @@
 #pragma once
 
 // qt
+#include <QElapsedTimer>
 #include <QSharedPointer>
 #include <QWidget>
-#include <QElapsedTimer>
 
 // studio
 #include <Data/Preferences.h>
@@ -57,7 +57,7 @@ class DeepSSMTool : public QWidget {
 
   void handle_thread_complete();
 
-  void handle_progress(int val);
+  void handle_progress(int val, QString message);
   void handle_error(QString msg);
 
   void tab_changed(int tab);

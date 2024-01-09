@@ -142,6 +142,7 @@ void Shape::clear_reconstructed_mesh() { reconstructed_meshes_ = MeshGroup(subje
 
 //---------------------------------------------------------------------------
 bool Shape::import_global_point_files(std::vector<std::string> filenames) {
+  global_point_filenames_.clear();
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
     if (filenames[i] != "") {
@@ -158,6 +159,7 @@ bool Shape::import_global_point_files(std::vector<std::string> filenames) {
 
 //---------------------------------------------------------------------------
 bool Shape::import_local_point_files(std::vector<std::string> filenames) {
+  local_point_filenames_.clear();
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
     if (filenames[i] != "") {
@@ -788,16 +790,15 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
     return;
   }
 
-  std::vector<float> floats;
-  while (in.good()) {
-    float line;
-    in >> line;
-    floats.push_back(line);
-  }
-
-  Eigen::VectorXd values(floats.size());
-  for (int i = 0; i < floats.size(); i++) {
-    values[i] = floats[i];
+  Eigen::VectorXd values;
+  // read from file into values
+  std::string line;
+  while (std::getline(in, line)) {
+    std::istringstream iss(line);
+    double value;
+    iss >> value;
+    values.conservativeResize(values.size() + 1);
+    values[values.size() - 1] = value;
   }
 
   set_point_features(feature_name, values);

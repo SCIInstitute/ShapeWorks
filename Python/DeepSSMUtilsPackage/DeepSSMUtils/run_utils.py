@@ -139,13 +139,13 @@ def get_deepssm_dir(project):
 def get_split_indices(project, split):
     """ Get the indices of the subjects. """
     subjects = project.get_subjects()
-    training_indices = []
+    list = []
     for i in range(len(subjects)):
         extra_values = subjects[i].get_extra_values()
-        is_training = extra_values["split"] == split
-        if is_training:
-            training_indices.append(i)
-    return training_indices
+        match = extra_values["split"] == split
+        if match:
+            list.append(i)
+    return list
 
 
 def get_training_indices(project):
@@ -222,8 +222,13 @@ def groom_training_images(project):
 
     sw_message("Grooming training images")
     for i in get_training_indices(project):
+
+        if sw_check_abort():
+            sw_message("Aborted")
+            return
+
         image_name = get_image_filename(subjects[i])
-        print(f"Grooming {image_name}")
+        sw_progress(i / (len(subjects) + 1), f"Grooming Training Image: {image_name}")
         image = sw.Image(image_name)
         subject = subjects[i]
         # get alignment transform
@@ -352,9 +357,16 @@ def groom_val_test_images(project):
     val_test_transforms = []
     val_test_image_files = []
 
+    count = 1
     for i in val_test_indices:
+        if sw_check_abort():
+            sw_message("Aborted")
+            return
+
         image_name = get_image_filename(subjects[i])
-        sw_message(f"loading {image_name}")
+        sw_progress(count / (len(val_test_indices) + 1),
+                    f"Grooming val/test image {image_name} ({count}/{len(val_test_indices)})")
+        count = count + 1
         image = sw.Image(image_name)
 
         image_file = val_test_images_dir + f"{i}.nrrd"

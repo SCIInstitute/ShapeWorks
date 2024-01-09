@@ -697,7 +697,9 @@ void ShapeWorksStudioApp::message_callback(std::string str) {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress_with_message(int value, std::string str) {
   handle_progress(value);
-  handle_status(str);
+  if (str != "") {
+    handle_status(str);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -1251,8 +1253,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_reset_stats()
-{
+void ShapeWorksStudioApp::handle_reset_stats() {
   int num_domains = session_->get_domains_per_shape();
   for (int i = 0; i < num_domains; i++) {
     session_->get_mesh_manager()->get_surface_reconstructor(i)->resetReconstruct();

@@ -96,6 +96,10 @@ void DeepSSMJob::run_prep() {
   py::object create_split = py_deep_ssm_utils.attr("create_split");
   create_split(project_, train_split, val_split, test_split);
 
+  if (is_aborted()) {
+    return;
+  }
+
   /////////////////////////////////////////////////////////
   /// Step 2. Groom Training Shapes
   /////////////////////////////////////////////////////////
@@ -111,6 +115,10 @@ void DeepSSMJob::run_prep() {
   groom_training_shapes(project_);
   project_->save();
 
+  if (is_aborted()) {
+    return;
+  }
+
   /////////////////////////////////////////////////////////
   /// Step 3. Optimize Training Particles
   /////////////////////////////////////////////////////////
@@ -119,6 +127,9 @@ void DeepSSMJob::run_prep() {
   optimize_training_particles(project_);
   project_->save();
 
+  if (is_aborted()) {
+    return;
+  }
   /////////////////////////////////////////////////////////
   /// Step 4. Groom Training Images
   /////////////////////////////////////////////////////////
@@ -128,6 +139,9 @@ void DeepSSMJob::run_prep() {
   groom_training_images(project_);
   project_->save();
 
+  if (is_aborted()) {
+    return;
+  }
   /////////////////////////////////////////////////////////
   /// Step 5. Groom Validation and Test Images
   /////////////////////////////////////////////////////////
@@ -136,6 +150,9 @@ void DeepSSMJob::run_prep() {
   groom_val_test_images(project_);
   project_->save();
 
+  if (is_aborted()) {
+    return;
+  }
   /////////////////////////////////////////////////////////
   /// Step 6. Optimize Validation Particles with Fixed Domains
   /////////////////////////////////////////////////////////
@@ -164,39 +181,33 @@ void DeepSSMJob::run_prep() {
 
 //---------------------------------------------------------------------------
 void DeepSSMJob::run_augmentation() {
-  auto train_img_list = get_list(FileType::GROOMED_IMAGE, SplitType::TRAIN);
-  auto train_pts = get_list(FileType::PARTICLES, SplitType::TRAIN);
-
-  py::list train_img_list_py = py::cast(train_img_list);
-  py::list train_pts_py = py::cast(train_pts);
-
   DeepSSMParameters params(project_);
 
   QString sampler_type = QString::fromStdString(params.get_aug_sampler_type()).toLower();
-  py::module py_data_aug = py::module::import("DataAugmentationUtils");
 
-  py::object run_aug = py_data_aug.attr("runDataAugmentation");
-  std::string aug_dir = "deepssm/Augmentation/";
-  int aug_dims =
-      run_aug(aug_dir, train_img_list_py, train_pts_py, params.get_aug_num_samples(), params.get_aug_num_dims(),
-              params.get_aug_percent_variability(), sampler_type.toStdString(), 0, /* mixture_num */
-              QThread::idealThreadCount()                                          /* processes */
-              // 1   /* processes */
-              )
-          .cast<int>();
+  py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
+  py::object run_data_aug = py_deep_ssm_utils.attr("run_data_augmentation");
+
+  int aug_dims = run_data_aug(project_, params.get_aug_num_samples(), params.get_aug_num_dims(),
+                              params.get_aug_percent_variability(), sampler_type.toStdString(), 0, /* mixture_num */
+                              QThread::idealThreadCount()                                          /* processes */
+                              // 1   /* processes */
+                              )
+                     .cast<int>();
 
   params.set_training_num_dims(aug_dims);
   params.save_to_project();
 
+  py::module py_data_aug = py::module::import("DataAugmentationUtils");
   py::object vis_aug = py_data_aug.attr("visualizeAugmentation");
+
+  std::string aug_dir = "deepssm/augmentation/";
   vis_aug(aug_dir + "TotalData.csv", "violin", false);
 }
 
 //---------------------------------------------------------------------------
 void DeepSSMJob::run_training() {
   auto subjects = project_->get_subjects();
-
-  auto test_img_list = get_list(FileType::IMAGE, SplitType::TEST);
 
   DeepSSMParameters params(project_);
   int batch_size = params.get_training_batch_size();
@@ -235,11 +246,12 @@ void DeepSSMJob::run_training() {
 void DeepSSMJob::run_testing() {
   DeepSSMParameters params(project_);
 
-  auto id_list = get_list(FileType::ID, SplitType::TEST);
+  std::vector<std::string> test_indices = get_list(FileType::ID, SplitType::TEST);
+
   QFile file("deepssm/torch_loaders/test_names.txt");
   if (file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
     QStringList list;
-    for (auto &id : id_list) {
+    for (auto &id : test_indices) {
       QString item = "'" + QString::fromStdString(id) + "'";
       list << item;
     }
@@ -251,7 +263,6 @@ void DeepSSMJob::run_testing() {
   }
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
-
   std::string config_file = "deepssm/configuration.json";
   SW_LOG("DeepSSM: Testing");
   py::object test_deep_ssm = py_deep_ssm_utils.attr("testDeepSSM");
@@ -265,50 +276,29 @@ void DeepSSMJob::python_message(std::string str) { SW_LOG(str); }
 std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType split_type) {
   auto subjects = project_->get_subjects();
 
-  std::mt19937 rng{42};
-
-  std::vector<int> ids;
-  for (size_t i = 0; i < subjects.size(); i++) {
-    ids.push_back(i);
-  }
-
-  std::shuffle(ids.begin(), ids.end(), rng);
-
   std::vector<std::string> list;
 
-  DeepSSMParameters params(project_);
+  for (int id = 0; id < subjects.size(); id++) {
+    auto extra_values = subjects[id]->get_extra_values();
 
-  double val_split = params.get_validation_split();
-  double test_split = params.get_testing_split();
-  double train_split = 100.0 - val_split - test_split;
+    std::string split = extra_values["split"];
 
-  int start = 0;
-  int end = subjects.size();
-  if (split_type == SplitType::TRAIN) {
-    end = subjects.size() * (train_split / 100.0);
-  } else if (split_type == SplitType::VAL) {
-    start = subjects.size() * (train_split / 100.0);
-    end = subjects.size() * ((train_split + val_split) / 100.0);
-  } else {
-    start = subjects.size() * ((train_split + val_split) / 100.0);
-  }
+    if (split_type == SplitType::TRAIN) {
+      if (split != "train") {
+        continue;
+      }
+    } else if (split_type == SplitType::VAL) {
+      if (split != "val") {
+        continue;
+      }
+    } else if (split_type == SplitType::TEST) {
+      if (split != "test") {
+        continue;
+      }
+    }
 
-  for (int i = start; i < end; i++) {
-    auto id = ids[i];
     if (file_type == FileType::ID) {
       list.push_back(std::to_string(id));
-    } else if (file_type == FileType::GROOMED_IMAGE) {
-      list.push_back("deepssm/train_images/" + std::to_string(id) + ".nrrd");
-    } else if (file_type == FileType::IMAGE) {
-      auto image_filenames = subjects[id]->get_feature_filenames();
-      if (!image_filenames.empty()) {
-        list.push_back(image_filenames.begin()->second);
-      }
-    } else {
-      auto particle_filenames = subjects[id]->get_world_particle_filenames();
-      if (!particle_filenames.empty()) {
-        list.push_back(particle_filenames[0]);
-      }
     }
   }
   return list;

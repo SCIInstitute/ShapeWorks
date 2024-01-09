@@ -70,6 +70,13 @@ void ShapeWorksUtils::setup_console_logging(bool show_progress, bool xml_status)
 }
 
 //-----------------------------------------------------------------------------
+void ShapeWorksUtils::set_progress_callback(void* ptr) {
+  std::function<void(double, std::string)>& callback =
+      *reinterpret_cast<std::function<void(double, std::string)>*>(ptr);
+  Logging::Instance().set_progress_callback(callback);
+}
+
+//-----------------------------------------------------------------------------
 void ShapeWorksUtils::setup_threads() {
   // control number of threads
   int num_threads = tbb::info::default_concurrency();

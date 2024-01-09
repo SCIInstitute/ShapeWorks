@@ -61,6 +61,8 @@ PYBIND11_MODULE(shapeworks_py, m) {
   m.def("setup_console_logging", &ShapeWorksUtils::setup_console_logging, "sets up console logging options",
         "show_progress"_a = true, "xml_status"_a = false);
 
+  m.def("set_progress_callback", &ShapeWorksUtils::set_progress_callback, "sets up a progress callback", "callback"_a);
+
   // Axis
   py::enum_<Axis>(m, "Axis")
       .value("invalid", Axis::invalid)

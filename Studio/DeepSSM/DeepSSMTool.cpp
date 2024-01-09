@@ -165,6 +165,7 @@ void DeepSSMTool::run_clicked() {
   if (tool_is_running_) {
     ui_->run_button->setText("Aborting...");
     ui_->run_button->setEnabled(false);
+    deep_ssm_->abort();
     app_->get_py_worker()->abort_job();
   } else {
     run_tool(current_tool_);
@@ -173,6 +174,9 @@ void DeepSSMTool::run_clicked() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_thread_complete() {
+  if (deep_ssm_->is_aborted()) {
+    ui_->prep_text_edit->setText("Aborted");
+  }
   Q_EMIT progress(100);
   update_meshes();
   tool_is_running_ = false;
@@ -181,7 +185,7 @@ void DeepSSMTool::handle_thread_complete() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_progress(int val) {
+void DeepSSMTool::handle_progress(int val, QString message) {
   if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
     ui_->prep_text_edit->setText(deep_ssm_->get_prep_message());
     ui_->prep_text_edit->setEnabled(true);
@@ -189,7 +193,7 @@ void DeepSSMTool::handle_progress(int val) {
   load_plots();
   update_tables();
   update_meshes();
-  Q_EMIT progress(val);
+  SW_PROGRESS(val, message.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -419,7 +423,7 @@ void DeepSSMTool::update_testing_meshes() {
       QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
       table->setItem(idx, 0, new_item);
 
-      auto mesh_group = shapes[i]->get_groomed_meshes(true);
+      auto mesh_group = shapes[i]->get_original_meshes(true);
       if (!mesh_group.valid()) {
         SW_WARN("Warning: Couldn't load groomed mesh for " + name.toStdString());
         continue;

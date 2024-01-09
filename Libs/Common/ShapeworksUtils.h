@@ -41,6 +41,9 @@ class ShapeWorksUtils {
   //! Set up the console logging options
   static void setup_console_logging(bool show_progress, bool xml_status);
 
+  //! Set up a progress callback
+  static void set_progress_callback(void* ptr);
+
   //! Set up the number of threads from TBB_NUM_THREADS env variable
   static void setup_threads();
 
