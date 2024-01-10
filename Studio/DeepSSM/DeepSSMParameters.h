@@ -5,15 +5,9 @@
 namespace shapeworks {
 
 class DeepSSMParameters {
+  enum class SamplerTypeOption { gaussian, gaussian_mixture, kde };
 
-  enum class SamplerTypeOption {
-    gaussian,
-    gaussian_mixture,
-    kde
-  };
-
-public:
-
+ public:
   explicit DeepSSMParameters(ProjectHandle project);
   void save_to_project();
 
@@ -62,6 +56,24 @@ public:
   double get_testing_split();
   void set_testing_split(double value);
 
+  bool get_prep_step_complete();
+  void set_prep_step_complete(bool value);
+
+  std::string get_prep_message();
+  void set_prep_message(std::string message);
+
+  bool get_aug_step_complete();
+  void set_aug_step_complete(bool value);
+
+  std::string get_aug_message();
+  void set_aug_message(std::string message);
+
+  bool get_training_step_complete();
+  void set_training_step_complete(bool value);
+
+  std::string get_training_message();
+  void set_training_message(std::string message);
+
   void restore_split_defaults();
   void restore_augmentation_defaults();
   void restore_training_defaults();
@@ -73,11 +85,9 @@ public:
   const static std::string DEEPSSM_SAMPLER_MIXTURE_C;
   const static std::string DEEPSSM_SAMPLER_KDE_C;
 
-private:
-
+ private:
   Parameters params_;
   ProjectHandle project_;
-
 };
 
-}
+}  // namespace shapeworks

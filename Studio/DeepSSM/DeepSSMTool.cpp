@@ -103,6 +103,7 @@ DeepSSMTool::~DeepSSMTool() {}
 void DeepSSMTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   load_params();
+  update_panels();
   update_meshes();
 }
 
@@ -128,6 +129,8 @@ void DeepSSMTool::load_params() {
   ui_->training_fine_tuning_epochs->setText(QString::number(params.get_training_fine_tuning_epochs()));
   ui_->training_batch_size->setText(QString::number(params.get_training_batch_size()));
   ui_->training_fine_tuning_learning_rate->setText(QString::number(params.get_training_fine_tuning_learning_rate()));
+
+  ui_->prep_text_edit->setText(QString::fromStdString(params.get_prep_message()));
 
   update_meshes();
 }
@@ -207,9 +210,15 @@ void DeepSSMTool::update_panels() {
   ui_->tab_widget->setEnabled(!tool_is_running_);
   ui_->restore_defaults->setEnabled(!tool_is_running_);
 
+  if (!session_ || !session_->get_project()) {
+    return;
+  }
+
+  auto params = DeepSSMParameters(session_->get_project());
   QString string = "";
   ui_->data_panel->hide();
   ui_->training_panel->hide();
+  bool enabled = true;
   switch (current_tool_) {
     case DeepSSMTool::ToolMode::DeepSSM_PrepType:
       string = "Groom and Optimize";
@@ -217,24 +226,28 @@ void DeepSSMTool::update_panels() {
     case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
       string = "Data Augmentation";
       ui_->data_panel->show();
+      enabled = params.get_prep_step_complete();
       break;
     case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
       string = "Training";
       ui_->training_panel->show();
+      enabled = params.get_aug_step_complete();
       break;
     case DeepSSMTool::ToolMode::DeepSSM_TestingType:
       string = "Testing";
+      enabled = params.get_training_step_complete();
       break;
   }
 
   if (tool_is_running_) {
     Style::apply_abort_button_style(ui_->run_button);
     ui_->run_button->setText("Abort");
+    ui_->run_button->setEnabled(true);
   } else {
     Style::apply_normal_button_style(ui_->run_button);
+    ui_->run_button->setEnabled(enabled);
     ui_->run_button->setText("Run " + string);
   }
-  ui_->run_button->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
@@ -365,8 +378,8 @@ void DeepSSMTool::show_testing_meshes() {
   auto shapes = session_->get_shapes();
 
   for (auto& id : id_list) {
-    QString filename = QString("deepssm/model/test_predictions/FT_Predictions/predicted_ft_") +
-                       QString::number(id) + ".particles";
+    QString filename =
+        QString("deepssm/model/test_predictions/FT_Predictions/predicted_ft_") + QString::number(id) + ".particles";
 
     if (QFileInfo(filename).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
@@ -427,7 +440,8 @@ void DeepSSMTool::update_testing_meshes() {
         continue;
       }
       Mesh base(mesh_group.meshes()[0]->get_poly_data());
-      std::string filename = "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
+      std::string filename =
+          "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
       if (QFileInfo(QString::fromStdString(filename)).exists()) {
         if (idx < shapes_.size()) {
           auto shape = shapes_[idx++];

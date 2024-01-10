@@ -86,6 +86,11 @@ void DeepSSMJob::run_prep() {
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
   DeepSSMParameters params(project_);
+  params.set_prep_step_complete(false);
+  params.set_aug_step_complete(false);
+  params.set_training_step_complete(false);
+  params.set_prep_message("");
+  params.save_to_project();
 
   /////////////////////////////////////////////////////////
   /// Step 1. Create Split
@@ -176,12 +181,21 @@ void DeepSSMJob::run_prep() {
 
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::DONE);
+  params.set_prep_step_complete(true);
+  params.set_aug_step_complete(false);
+  params.set_training_step_complete(false);
+
+  params.set_prep_message(prep_message_.toStdString());
+  params.save_to_project();
+
   Q_EMIT progress(100);
 }
 
 //---------------------------------------------------------------------------
 void DeepSSMJob::run_augmentation() {
   DeepSSMParameters params(project_);
+  params.set_training_step_complete(false);
+  params.save_to_project();
 
   QString sampler_type = QString::fromStdString(params.get_aug_sampler_type()).toLower();
 
@@ -203,6 +217,10 @@ void DeepSSMJob::run_augmentation() {
 
   std::string aug_dir = "deepssm/augmentation/";
   vis_aug(aug_dir + "TotalData.csv", "violin", false);
+  if (!is_aborted()) {
+    params.set_aug_step_complete(true);
+  }
+  params.save_to_project();
 }
 
 //---------------------------------------------------------------------------
@@ -210,6 +228,9 @@ void DeepSSMJob::run_training() {
   auto subjects = project_->get_subjects();
 
   DeepSSMParameters params(project_);
+  params.set_training_step_complete(false);
+  params.save_to_project();
+
   int batch_size = params.get_training_batch_size();
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
@@ -240,6 +261,11 @@ void DeepSSMJob::run_training() {
   SW_LOG("DeepSSM: Training");
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");
   train_deep_ssm(config_file);
+
+  if (!is_aborted()) {
+    params.set_training_step_complete(true);
+    params.save_to_project();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -297,7 +323,7 @@ std::vector<int> DeepSSMJob::get_split(SplitType split_type) {
       }
     }
 
-      list.push_back(id);
+    list.push_back(id);
   }
   return list;
 }

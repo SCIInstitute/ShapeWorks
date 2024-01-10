@@ -24,6 +24,14 @@ const std::string TRAIN_NUM_DIMS = "train_num_dims";
 const std::string TRAIN_BATCH_SIZE = "train_batch_size";
 const std::string TRAIN_FINE_TUNING_EPOCHS = "train_fine_tuning_epochs";
 const std::string TRAIN_FINE_TUNING_LEARNING_RATE = "train_fine_tuning_learning_rate";
+
+const std::string PREP_STEP_COMPLETE = "prep_step_complete";
+const std::string PREP_STEP_MESSAGE = "prep_step_message";
+const std::string AUG_STEP_COMPLETE = "aug_step_complete";
+const std::string AUG_STEP_MESSAGE = "aug_step_message";
+const std::string TRAIN_STEP_COMPLETE = "train_step_complete";
+const std::string TRAIN_STEP_MESSAGE = "train_step_message";
+
 }  // namespace Keys
 
 namespace Defaults {
@@ -48,6 +56,15 @@ const int TRAIN_NUM_DIMS = 0;
 const int TRAIN_BATCH_SIZE = 8;
 const int TRAIN_FINE_TUNING_EPOCHS = 2;
 const double TRAIN_FINE_TUNING_LEARNING_RATE = 0.001;
+
+// stage defaults
+const bool PREP_STEP_COMPLETE = false;
+const std::string PREP_STEP_MESSAGE = "";
+const bool AUG_STEP_COMPLETE = false;
+const std::string AUG_STEP_MESSAGE = "";
+const bool TRAIN_STEP_COMPLETE = false;
+const std::string TRAIN_STEP_MESSAGE = "";
+
 }  // namespace Defaults
 
 //---------------------------------------------------------------------------
@@ -180,6 +197,54 @@ double DeepSSMParameters::get_testing_split() { return params_.get(Keys::TESTING
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::set_testing_split(double value) { params_.set(Keys::TESTING_SPLIT, value); }
+
+//---------------------------------------------------------------------------
+bool DeepSSMParameters::get_prep_step_complete() {
+  return params_.get(Keys::PREP_STEP_COMPLETE, Defaults::PREP_STEP_COMPLETE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_prep_step_complete(bool value) { params_.set(Keys::PREP_STEP_COMPLETE, value); }
+
+//---------------------------------------------------------------------------
+std::string DeepSSMParameters::get_prep_message() {
+  return params_.get(Keys::PREP_STEP_MESSAGE, Defaults::PREP_STEP_MESSAGE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_prep_message(std::string message) { params_.set(Keys::PREP_STEP_MESSAGE, message); }
+
+//---------------------------------------------------------------------------
+bool DeepSSMParameters::get_aug_step_complete() {
+  return params_.get(Keys::AUG_STEP_COMPLETE, Defaults::AUG_STEP_COMPLETE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_aug_step_complete(bool value) { params_.set(Keys::AUG_STEP_COMPLETE, value); }
+
+//---------------------------------------------------------------------------
+std::string DeepSSMParameters::get_aug_message() {
+  return params_.get(Keys::AUG_STEP_MESSAGE, Defaults::AUG_STEP_MESSAGE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_aug_message(std::string message) { params_.set(Keys::AUG_STEP_MESSAGE, message); }
+
+//---------------------------------------------------------------------------
+bool DeepSSMParameters::get_training_step_complete() {
+  return params_.get(Keys::TRAIN_STEP_COMPLETE, Defaults::TRAIN_STEP_COMPLETE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_step_complete(bool value) { params_.set(Keys::TRAIN_STEP_COMPLETE, value); }
+
+//---------------------------------------------------------------------------
+std::string DeepSSMParameters::get_training_message() {
+  return params_.get(Keys::TRAIN_STEP_MESSAGE, Defaults::TRAIN_STEP_MESSAGE);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_training_message(std::string message) { params_.set(Keys::TRAIN_STEP_MESSAGE, message); }
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::restore_split_defaults() {
