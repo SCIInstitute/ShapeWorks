@@ -359,27 +359,26 @@ void DeepSSMTool::show_training_meshes() {
 void DeepSSMTool::show_testing_meshes() {
   shapes_.clear();
   deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
-  auto id_list = deep_ssm_->get_list(DeepSSMJob::FileType::ID, DeepSSMJob::SplitType::TEST);
+  auto id_list = deep_ssm_->get_split(DeepSSMJob::SplitType::TEST);
 
   auto subjects = session_->get_project()->get_subjects();
   auto shapes = session_->get_shapes();
 
   for (auto& id : id_list) {
-    int i = QString::fromStdString(id).toInt();
     QString filename = QString("deepssm/model/test_predictions/FT_Predictions/predicted_ft_") +
-                       QString::fromStdString(id) + ".particles";
+                       QString::number(id) + ".particles";
 
     if (QFileInfo(filename).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
-      subject->set_display_name(id);
+      subject->set_display_name(QString::number(id).toStdString());
       shape->set_subject(subject);
       shape->set_mesh_manager(session_->get_mesh_manager());
       shape->import_local_point_files({filename.toStdString()});
       shape->import_global_point_files({filename.toStdString()});
       shape->get_reconstructed_meshes();
       std::vector<std::string> list;
-      list.push_back(shapes[i]->get_annotations()[0]);
+      list.push_back(shapes[id]->get_annotations()[0]);
       list.push_back("");
       list.push_back("");
       list.push_back("");
@@ -398,7 +397,7 @@ void DeepSSMTool::show_testing_meshes() {
 void DeepSSMTool::update_testing_meshes() {
   try {
     deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
-    auto id_list = deep_ssm_->get_list(DeepSSMJob::FileType::ID, DeepSSMJob::SplitType::TEST);
+    auto id_list = deep_ssm_->get_split(DeepSSMJob::SplitType::TEST);
 
     auto subjects = session_->get_project()->get_subjects();
     auto shapes = session_->get_shapes();
@@ -417,19 +416,18 @@ void DeepSSMTool::update_testing_meshes() {
 
     int idx = 0;
     for (auto& id : id_list) {
-      int i = QString::fromStdString(id).toInt();
-      auto name = QString::fromStdString(subjects[i]->get_display_name());
+      auto name = QString::fromStdString(subjects[id]->get_display_name());
 
       QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
       table->setItem(idx, 0, new_item);
 
-      auto mesh_group = shapes[i]->get_original_meshes(true);
+      auto mesh_group = shapes[id]->get_original_meshes(true);
       if (!mesh_group.valid()) {
         SW_WARN("Warning: Couldn't load groomed mesh for " + name.toStdString());
         continue;
       }
       Mesh base(mesh_group.meshes()[0]->get_poly_data());
-      std::string filename = "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + id + ".particles";
+      std::string filename = "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
       if (QFileInfo(QString::fromStdString(filename)).exists()) {
         if (idx < shapes_.size()) {
           auto shape = shapes_[idx++];

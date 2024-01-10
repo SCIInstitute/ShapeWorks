@@ -17,8 +17,6 @@ class DeepSSMJob : public Job {
   Q_OBJECT;
 
  public:
-  enum class FileType { ID, IMAGE, GROOMED_IMAGE, PARTICLES };
-
   enum class SplitType { TRAIN, VAL, TEST };
 
   enum PrepStep {
@@ -44,7 +42,7 @@ class DeepSSMJob : public Job {
 
   void python_message(std::string str);
 
-  std::vector<std::string> get_list(FileType file_type, SplitType split_type);
+  std::vector<int> get_split(SplitType split_type);
 
   QString get_prep_message();
 

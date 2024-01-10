@@ -246,13 +246,13 @@ void DeepSSMJob::run_training() {
 void DeepSSMJob::run_testing() {
   DeepSSMParameters params(project_);
 
-  std::vector<std::string> test_indices = get_list(FileType::ID, SplitType::TEST);
+  std::vector<int> test_indices = get_split(SplitType::TEST);
 
   QFile file("deepssm/torch_loaders/test_names.txt");
   if (file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
     QStringList list;
     for (auto &id : test_indices) {
-      QString item = "'" + QString::fromStdString(id) + "'";
+      QString item = "'" + QString::number(id) + "'";
       list << item;
     }
 
@@ -273,10 +273,10 @@ void DeepSSMJob::run_testing() {
 void DeepSSMJob::python_message(std::string str) { SW_LOG(str); }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType split_type) {
+std::vector<int> DeepSSMJob::get_split(SplitType split_type) {
   auto subjects = project_->get_subjects();
 
-  std::vector<std::string> list;
+  std::vector<int> list;
 
   for (int id = 0; id < subjects.size(); id++) {
     auto extra_values = subjects[id]->get_extra_values();
@@ -297,9 +297,7 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
       }
     }
 
-    if (file_type == FileType::ID) {
-      list.push_back(std::to_string(id));
-    }
+      list.push_back(id);
   }
   return list;
 }
