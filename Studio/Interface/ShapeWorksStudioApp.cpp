@@ -2129,6 +2129,11 @@ void ShapeWorksStudioApp::reset_num_viewers() {
 
   if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
     size_t num_samples = session_->get_shapes().size();
+
+    if (session_->get_tool_state() == Session::DEEPSSM_C) {
+      num_samples = deepssm_tool_->get_shapes().size();
+    }
+
     int value = 4;
     if (num_samples == 1) {
       value = 0;  // single
