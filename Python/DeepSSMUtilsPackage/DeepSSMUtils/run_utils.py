@@ -223,6 +223,9 @@ def groom_training_images(project):
     spacing = params.get("spacing")
     if (spacing == ""):
         spacing = [1, 1, 1]
+    else:
+        spacing = [float(item) for item in spacing.split(" ")]
+    sw_message(f"Spacing: {spacing}")
     ref_image.resample(spacing, sw.InterpolationType.Linear)
     ref_image.setOrigin(ref_image.origin() - ref_translate)
 
