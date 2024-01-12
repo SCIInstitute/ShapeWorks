@@ -1180,30 +1180,37 @@ Preserved</string>
   </layout>
  </widget>
  <tabstops>
+  <tabstop>num_samples</tabstop>
+  <tabstop>sampler_type</tabstop>
+  <tabstop>data_header</tabstop>
+  <tabstop>controls_open_button</tabstop>
   <tabstop>controls_header</tabstop>
   <tabstop>tab_widget</tabstop>
   <tabstop>testing_split</tabstop>
   <tabstop>validation_split</tabstop>
+  <tabstop>spacing_x</tabstop>
+  <tabstop>spacing_y</tabstop>
+  <tabstop>spacing_z</tabstop>
+  <tabstop>prep_text_edit</tabstop>
   <tabstop>run_button</tabstop>
   <tabstop>restore_defaults</tabstop>
   <tabstop>data_open_button</tabstop>
-  <tabstop>data_header</tabstop>
   <tabstop>original_data_checkbox</tabstop>
   <tabstop>generated_data_checkbox</tabstop>
   <tabstop>table</tabstop>
-  <tabstop>training_header</tabstop>
+  <tabstop>training_open_button</tabstop>
   <tabstop>training_table</tabstop>
-  <tabstop>sampler_type</tabstop>
-  <tabstop>num_samples</tabstop>
+  <tabstop>testing_table</tabstop>
+  <tabstop>training_fine_tuning</tabstop>
+  <tabstop>num_pca_dims</tabstop>
+  <tabstop>training_learning_rate</tabstop>
+  <tabstop>training_header</tabstop>
+  <tabstop>training_fine_tuning_epochs</tabstop>
+  <tabstop>training_batch_size</tabstop>
+  <tabstop>training_fine_tuning_learning_rate</tabstop>
   <tabstop>percent_variability</tabstop>
   <tabstop>training_epochs</tabstop>
   <tabstop>training_decay_learning</tabstop>
-  <tabstop>training_learning_rate</tabstop>
-  <tabstop>training_fine_tuning</tabstop>
-  <tabstop>testing_table</tabstop>
-  <tabstop>controls_open_button</tabstop>
-  <tabstop>num_pca_dims</tabstop>
-  <tabstop>training_open_button</tabstop>
  </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>
