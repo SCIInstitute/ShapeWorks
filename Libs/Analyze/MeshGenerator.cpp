@@ -181,7 +181,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       }
 
     } catch (itk::ExceptionObject& excep) {
-      SW_ERROR(excep.what());
+      SW_ERROR("{}", excep.what());
       mesh->set_error_message(std::string("Exception: ") + excep.what());
     }
   } else {

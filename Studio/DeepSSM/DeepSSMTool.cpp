@@ -479,7 +479,7 @@ void DeepSSMTool::update_testing_meshes() {
     }
 
   } catch (std::exception& e) {
-    SW_ERROR(e.what());
+    SW_ERROR("{}", e.what());
   }
 
   Q_EMIT update_view();

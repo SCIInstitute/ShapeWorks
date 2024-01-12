@@ -387,7 +387,7 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
               params.set_spacing({spacing[0], spacing[1], spacing[2]});
             }
           } catch (std::exception& e) {
-            SW_ERROR(e.what());
+            SW_ERROR("{}", e.what());
           }
         }
       }

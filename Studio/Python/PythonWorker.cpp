@@ -92,7 +92,7 @@ void PythonWorker::start_job(QSharedPointer<Job> job) {
         SW_LOG(current_job_->get_completion_message().toStdString());
       }
     } catch (py::error_already_set& e) {
-      SW_ERROR(e.what());
+      SW_ERROR("{}", e.what());
     }
   }
 

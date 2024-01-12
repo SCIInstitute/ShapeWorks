@@ -137,7 +137,7 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
 
       return success;
     } catch (std::exception& e) {
-      SW_ERROR(e.what());
+      SW_ERROR("{}", e.what());
       return false;
     }
   } else {
@@ -202,7 +202,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
 
     return success;
   } catch (std::exception& e) {
-    SW_ERROR(e.what());
+    SW_ERROR("{}", e.what());
     return false;
   }
 }

@@ -148,7 +148,7 @@ bool StudioUtils::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString fil
     Mesh mesh(poly_data);
     mesh.write(filename.toStdString());
   } catch (std::exception& e) {
-    SW_ERROR(e.what());
+    SW_ERROR("{}", e.what());
     return false;
   }
   return true;

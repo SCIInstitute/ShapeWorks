@@ -258,7 +258,7 @@ bool Shape::import_constraints(std::vector<std::string> filenames) {
         constraints.read(filenames[i]);
       }
     } catch (std::exception& e) {
-      SW_ERROR(e.what());
+      SW_ERROR("{}", e.what());
       return false;
     }
     constraints_.push_back(constraints);
@@ -300,7 +300,7 @@ bool Shape::store_constraints() {
     try {
       get_constraints(i).write(filenames[i]);
     } catch (std::exception& e) {
-      SW_ERROR(e.what());
+      SW_ERROR("{}", e.what());
       return false;
     }
   }
