@@ -449,6 +449,8 @@ def prepare_data_loaders(project, batch_size, split="all"):
     """ Prepare PyTorch laoders """
     deepssm_dir = get_deepssm_dir(project)
     loader_dir = deepssm_dir + 'torch_loaders/'
+    if not os.path.exists(loader_dir):
+        os.makedirs(loader_dir)
 
     if split == "all" or split == "val":
         val_image_files = []
