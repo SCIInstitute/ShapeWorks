@@ -268,7 +268,12 @@ def Run_Pipeline(args):
     ######################################################################################
     if not os.path.exists(status_dir + "step_7.txt"):
         print("\nStep 7. Groom Test and Validation Images")
-        DeepSSMUtils.groom_val_test_images(project)
+
+        val_indices = get_split_indices(project, "val")
+        test_indices = get_split_indices(project, "test")
+        val_test_indices = val_indices + test_indices
+
+        DeepSSMUtils.groom_val_test_images(project, val_test_indices)
         project.save(spreadsheet_file)
         open(status_dir + "step_7.txt", 'w').close()
 

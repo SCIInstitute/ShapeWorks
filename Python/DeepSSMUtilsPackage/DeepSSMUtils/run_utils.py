@@ -316,7 +316,7 @@ def transform_to_string(transform):
     return transform_string
 
 
-def groom_val_test_images(project):
+def groom_val_test_images(project, indices):
     """ Groom the validation and test images """
     subjects = project.get_subjects()
     deepssm_dir = get_deepssm_dir(project)
@@ -349,10 +349,7 @@ def groom_val_test_images(project):
     if not os.path.exists(val_test_images_dir):
         os.makedirs(val_test_images_dir)
 
-    val_indices = get_split_indices(project, "val")
-    test_indices = get_split_indices(project, "test")
-
-    val_test_indices = val_indices + test_indices
+    val_test_indices = indices
 
     val_test_transforms = []
     val_test_image_files = []
