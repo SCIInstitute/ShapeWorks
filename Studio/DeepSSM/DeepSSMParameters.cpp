@@ -32,6 +32,7 @@ const std::string AUG_STEP_MESSAGE = "aug_step_message";
 const std::string TRAIN_STEP_COMPLETE = "train_step_complete";
 const std::string TRAIN_STEP_MESSAGE = "train_step_message";
 
+const std::string SPACING = "spacing";
 }  // namespace Keys
 
 namespace Defaults {
@@ -64,6 +65,8 @@ const bool AUG_STEP_COMPLETE = false;
 const std::string AUG_STEP_MESSAGE = "";
 const bool TRAIN_STEP_COMPLETE = false;
 const std::string TRAIN_STEP_MESSAGE = "";
+
+const std::vector<double> spacing{1, 1, 1};
 
 }  // namespace Defaults
 
@@ -245,6 +248,20 @@ std::string DeepSSMParameters::get_training_message() {
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::set_training_message(std::string message) { params_.set(Keys::TRAIN_STEP_MESSAGE, message); }
+
+//---------------------------------------------------------------------------
+std::vector<double> DeepSSMParameters::get_spacing() {
+  std::vector<double> spacing = params_.get(Keys::SPACING, Defaults::spacing);
+  if (spacing.size() != 3) {
+    spacing = Defaults::spacing;
+  }
+  return spacing;
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_spacing(std::vector<double> spacing) {
+  params_.set(Keys::SPACING, spacing);
+}
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::restore_split_defaults() {

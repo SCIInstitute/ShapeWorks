@@ -74,6 +74,9 @@ class DeepSSMParameters {
   std::string get_training_message();
   void set_training_message(std::string message);
 
+  std::vector<double> get_spacing();
+  void set_spacing(std::vector<double> spacing);
+
   void restore_split_defaults();
   void restore_augmentation_defaults();
   void restore_training_defaults();

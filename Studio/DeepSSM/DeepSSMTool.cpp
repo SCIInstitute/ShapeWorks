@@ -117,6 +117,11 @@ void DeepSSMTool::load_params() {
   ui_->validation_split->setText(QString::number(params.get_validation_split()));
   ui_->testing_split->setText(QString::number(params.get_testing_split()));
 
+  auto spacing = params.get_spacing();
+  ui_->spacing_x->setText(QString::number(spacing[0]));
+  ui_->spacing_y->setText(QString::number(spacing[1]));
+  ui_->spacing_z->setText(QString::number(spacing[2]));
+
   ui_->num_samples->setText(QString::number(params.get_aug_num_samples()));
   ui_->num_pca_dims->setText(QString::number(params.get_aug_num_dims()));
   ui_->percent_variability->setText(QString::number(params.get_aug_percent_variability()));
@@ -141,6 +146,9 @@ void DeepSSMTool::store_params() {
 
   params.set_validation_split(ui_->validation_split->text().toDouble());
   params.set_testing_split(ui_->testing_split->text().toDouble());
+
+  params.set_spacing(
+      {ui_->spacing_x->text().toDouble(), ui_->spacing_y->text().toDouble(), ui_->spacing_z->text().toDouble()});
 
   params.set_aug_num_samples(ui_->num_samples->text().toInt());
   params.set_aug_num_dims(ui_->num_pca_dims->text().toInt());
