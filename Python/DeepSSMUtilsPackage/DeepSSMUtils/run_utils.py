@@ -21,7 +21,18 @@ def create_split(project, train, val, test):
     print(f"Creating split: {len(subjects)} subjects")
 
     # create an array of all the index numbers from 0 to the number of subjects
-    subject_indices = list(range(len(subjects)))
+    subject_indices = []
+
+    # first see if any subjects don't have an original mesh, but only an image
+    # these will be forced into the test set
+    for i in range(len(subjects)):
+        filenames = subjects[i].get_original_filenames()
+        if len(filenames) == 0 or filenames[0] == '':
+            extra_values = subjects[i].get_extra_values()
+            extra_values["split"] = "test"
+            subjects[i].set_extra_values(extra_values)
+        else:
+            subject_indices.append(i)
 
     # set the random seed
     random.seed(972)
@@ -38,7 +49,7 @@ def create_split(project, train, val, test):
     sw_message(f"Creating split: train:{train}%, val:{val}%, test:{test}%")
     sw_message(f"Split sizes: train:{len(train_indices)}, val:{len(val_indices)}, test:{len(test_indices)}")
 
-    for i in range(len(subjects)):
+    for i in subject_indices:
         extra_values = subjects[i].get_extra_values()
         if i in test_indices:
             extra_values["split"] = "test"
@@ -49,6 +60,7 @@ def create_split(project, train, val, test):
         subjects[i].set_extra_values(extra_values)
 
     project.set_subjects(subjects)
+    project.save()
 
 
 def optimize_training_particles(project):

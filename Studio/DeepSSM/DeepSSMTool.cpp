@@ -425,18 +425,23 @@ void DeepSSMTool::update_testing_meshes() {
     table->horizontalHeader()->setVisible(true);
     table->setHorizontalHeaderLabels(headers);
     table->verticalHeader()->setVisible(false);
-    table->setRowCount(shapes_.size());
+    table->setRowCount(id_list.size());
 
-    int idx = 0;
+    int idx = -1;
     for (auto& id : id_list) {
+      idx++;
+
       auto name = QString::fromStdString(subjects[id]->get_display_name());
 
       QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
+
       table->setItem(idx, 0, new_item);
 
       auto mesh_group = shapes[id]->get_original_meshes(true);
       if (!mesh_group.valid()) {
-        SW_WARN("Warning: Couldn't load groomed mesh for " + name.toStdString());
+        // SW_WARN("Warning: Couldn't load groomed mesh for " + name.toStdString());
+        QTableWidgetItem* new_item = new QTableWidgetItem("inference");
+        table->setItem(idx, 1, new_item);
         continue;
       }
       Mesh base(mesh_group.meshes()[0]->get_poly_data());
@@ -444,7 +449,7 @@ void DeepSSMTool::update_testing_meshes() {
           "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
       if (QFileInfo(QString::fromStdString(filename)).exists()) {
         if (idx < shapes_.size()) {
-          auto shape = shapes_[idx++];
+          auto shape = shapes_[idx];
           MeshGroup group = shape->get_reconstructed_meshes();
           if (group.valid()) {
             Mesh m(group.meshes()[0]->get_poly_data());
@@ -454,16 +459,17 @@ void DeepSSMTool::update_testing_meshes() {
             double average_distance = mean(field);
 
             QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
-            table->setItem(idx - 1, 1, new_item);
+            table->setItem(idx, 1, new_item);
 
             group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
           } else {
             QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
-            table->setItem(idx - 1, 1, new_item);
+            table->setItem(idx, 1, new_item);
           }
         }
       }
     }
+
   } catch (std::exception& e) {
     SW_ERROR(e.what());
   }

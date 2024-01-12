@@ -526,9 +526,9 @@ bool Groom::run_alignment() {
       std::vector<Mesh> reference_meshes;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
-        Mesh mesh = get_mesh(i, domain, true);
 
         if (!subjects[i]->is_excluded()) {
+          Mesh mesh = get_mesh(i, domain, true);
           // if fixed subjects are present, only add the fixed subjects
           if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
             reference_meshes.push_back(mesh);

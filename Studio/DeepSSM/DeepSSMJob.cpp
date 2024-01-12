@@ -285,8 +285,7 @@ void DeepSSMJob::run_testing() {
   SW_MESSAGE("Preparing Test Data Loaders");
   py::object prepare_data_loaders = py_deep_ssm_utils.attr("prepare_data_loaders");
   int batch_size = params.get_training_batch_size();
-  prepare_data_loaders(project_, batch_size, "train");
-  prepare_data_loaders(project_, batch_size, "val");
+  prepare_data_loaders(project_, batch_size, "test");
 
   QFile file("deepssm/torch_loaders/test_names.txt");
   if (file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
