@@ -433,28 +433,29 @@ def groom_val_test_images(project, indices):
     project.set_subjects(subjects)
 
 
-def prepare_data_loaders(project, batch_size):
+def prepare_data_loaders(project, batch_size, split="all"):
     """ Prepare PyTorch laoders """
-    val_indicies = get_split_indices(project, "val")
-
     deepssm_dir = get_deepssm_dir(project)
-    aug_dir = deepssm_dir + "augmentation/"
-    aug_data_csv = aug_dir + "TotalData.csv"
-
     loader_dir = deepssm_dir + 'torch_loaders/'
 
-    val_image_files = []
-    val_world_particles = []
-    for i in val_indicies:
-        val_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
-        particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
-        val_world_particles.append(particle_file)
+    if split == "all" or split == "val":
+        val_image_files = []
+        val_world_particles = []
+        val_indicies = get_split_indices(project, "val")
+        for i in val_indicies:
+            val_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
+            particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
+            val_world_particles.append(particle_file)
+        DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles)
 
-    test_image_files = []
-    test_indicies = get_split_indices(project, "test")
-    for i in test_indicies:
-        test_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
+    if split == "all" or split == "train":
+        aug_dir = deepssm_dir + "augmentation/"
+        aug_data_csv = aug_dir + "TotalData.csv"
+        DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size)
 
-    DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size)
-    DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles)
-    DeepSSMUtils.getTestLoader(loader_dir, test_image_files)
+    if split == "all" or split == "test":
+        test_image_files = []
+        test_indicies = get_split_indices(project, "test")
+        for i in test_indicies:
+            test_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
+        DeepSSMUtils.getTestLoader(loader_dir, test_image_files)

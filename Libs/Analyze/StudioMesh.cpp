@@ -110,7 +110,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
   point_locator->SetDivisions(100, 100, 100);
   point_locator->BuildLocator();
 
-  if (!poly_data_) {
+  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0) {
     return;
   }
 

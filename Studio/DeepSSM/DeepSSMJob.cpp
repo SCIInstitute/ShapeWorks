@@ -148,11 +148,11 @@ void DeepSSMJob::run_prep() {
     return;
   }
   /////////////////////////////////////////////////////////
-  /// Step 5. Groom Validation and Test Images
+  /// Step 5. Groom Validation Images
   /////////////////////////////////////////////////////////
-  update_prep_message(PrepStep::GROOM_VAL_AND_TEST_IMAGES);
+  update_prep_message(PrepStep::GROOM_VAL_IMAGES);
   py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
-  groom_val_test_images(project_);
+  groom_val_test_images(project_, get_split(SplitType::VAL));
   project_->save();
 
   if (is_aborted()) {
@@ -163,11 +163,9 @@ void DeepSSMJob::run_prep() {
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::OPTIMIZE_VALIDATION);
 
-  // DeepSSMUtils.prep_project_for_val_particles(project)
   py::object prep_project_for_val_particles = py_deep_ssm_utils.attr("prep_project_for_val_particles");
   prep_project_for_val_particles(project_);
 
-  // DeepSSMUtils.groom_validation_shapes(project)
   py::object groom_validation_shapes = py_deep_ssm_utils.attr("groom_validation_shapes");
   groom_validation_shapes(project_);
 
@@ -236,7 +234,8 @@ void DeepSSMJob::run_training() {
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
   py::object prepare_data_loaders = py_deep_ssm_utils.attr("prepare_data_loaders");
-  prepare_data_loaders(project_, batch_size);
+  prepare_data_loaders(project_, batch_size, "train");
+  prepare_data_loaders(project_, batch_size, "val");
 
   std::string out_dir = "deepssm/";
   std::string aug_dir = out_dir + "augmentation/";
@@ -272,7 +271,22 @@ void DeepSSMJob::run_training() {
 void DeepSSMJob::run_testing() {
   DeepSSMParameters params(project_);
 
+  py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
+
   std::vector<int> test_indices = get_split(SplitType::TEST);
+
+  // Groom Test Images
+  SW_MESSAGE("Grooming Test Images");
+  py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
+  groom_val_test_images(project_, test_indices);
+  project_->save();
+
+  // Prepare Test Data Loaders
+  SW_MESSAGE("Preparing Test Data Loaders");
+  py::object prepare_data_loaders = py_deep_ssm_utils.attr("prepare_data_loaders");
+  int batch_size = params.get_training_batch_size();
+  prepare_data_loaders(project_, batch_size, "train");
+  prepare_data_loaders(project_, batch_size, "val");
 
   QFile file("deepssm/torch_loaders/test_names.txt");
   if (file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
@@ -288,7 +302,6 @@ void DeepSSMJob::run_testing() {
     stream << "]";
   }
 
-  py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
   std::string config_file = "deepssm/configuration.json";
   SW_LOG("DeepSSM: Testing");
   py::object test_deep_ssm = py_deep_ssm_utils.attr("testDeepSSM");
@@ -353,8 +366,7 @@ void DeepSSMJob::update_prep_message(PrepStep step) {
   m = m + "<tr><td>Groom Training Shapes</td>" + message(step, PrepStep::GROOM_TRAINING) + "</tr>";
   m = m + "<tr><td>Optimize Training Particles</td>" + message(step, PrepStep::OPTIMIZE_TRAINING) + "</tr>";
   m = m + "<tr><td>Groom Training Images</td>" + message(step, PrepStep::GROOM_TRAINING_IMAGES) + "</tr>";
-  m = m + "<tr><td>Groom Validation and Test Images</td>" + message(step, PrepStep::GROOM_VAL_AND_TEST_IMAGES) +
-      "</tr>";
+  m = m + "<tr><td>Groom Validation Images</td>" + message(step, PrepStep::GROOM_VAL_IMAGES) + "</tr>";
   m = m + "<tr><td>Optimize Validation Particles</td>" + message(step, PrepStep::OPTIMIZE_VALIDATION) + "</tr>";
   m = m + "</tr></table></html>";
 
