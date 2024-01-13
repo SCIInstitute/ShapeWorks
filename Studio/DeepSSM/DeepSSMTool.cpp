@@ -354,6 +354,17 @@ void DeepSSMTool::show_training_meshes() {
   scalar_filenames << "deepssm/model/examples/train_median.scalars";
   scalar_filenames << "deepssm/model/examples/train_worst.scalars";
 
+  QStringList index_filenames;
+  index_filenames << "deepssm/model/examples/validation_best.index";
+  index_filenames << "deepssm/model/examples/validation_median.index";
+  index_filenames << "deepssm/model/examples/validation_worst.index";
+  index_filenames << "deepssm/model/examples/train_best.index";
+  index_filenames << "deepssm/model/examples/train_median.index";
+  index_filenames << "deepssm/model/examples/train_worst.index";
+
+  auto all_shapes = session_->get_shapes();
+  auto all_subjects = session_->get_project()->get_subjects();
+
   for (int i = 0; i < names.size(); i++) {
     if (QFileInfo(filenames[i]).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
@@ -364,6 +375,15 @@ void DeepSSMTool::show_training_meshes() {
       shape->import_global_point_files({filenames[i].toStdString()});
       shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(), "deepssm_error");
       shape->get_reconstructed_meshes();
+
+      // read index from file
+      std::ifstream index_file(index_filenames[i].toStdString());
+      std::string index_string;
+      std::getline(index_file, index_string);
+      index_file.close();
+      int index = std::stoi(index_string);
+      subject->set_feature_filenames(all_subjects[index]->get_feature_filenames());
+
       std::vector<std::string> list;
       list.push_back(names[i].toStdString());
       list.push_back("");

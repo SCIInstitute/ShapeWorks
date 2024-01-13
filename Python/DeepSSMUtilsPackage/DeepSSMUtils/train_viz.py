@@ -21,3 +21,10 @@ def write_examples(pred_particles, true_particles, out_dir):
 		out_scalar_file = out_dir + names[i] + ".scalars"
 		scalars = np.mean((pred - true_particles[indices[i]])**2, axis=1)
 		np.savetxt(out_scalar_file, scalars)
+		# write index out to file as an integer
+		out_index_file = out_dir + names[i] + ".index"
+		f = open(out_index_file, "w")
+		f.write(str(indices[i]))
+		f.close()
+
+		
