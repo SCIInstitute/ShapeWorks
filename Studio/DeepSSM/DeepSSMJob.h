@@ -17,7 +17,6 @@ class DeepSSMJob : public Job {
   Q_OBJECT;
 
  public:
-  enum class SplitType { TRAIN, VAL, TEST };
 
   enum PrepStep {
     GROOM_TRAINING = 0,
@@ -41,8 +40,6 @@ class DeepSSMJob : public Job {
   void run_testing();
 
   void python_message(std::string str);
-
-  std::vector<int> get_split(SplitType split_type);
 
   QString get_prep_message();
 

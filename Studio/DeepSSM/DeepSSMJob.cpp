@@ -152,7 +152,7 @@ void DeepSSMJob::run_prep() {
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::GROOM_VAL_IMAGES);
   py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
-  groom_val_test_images(project_, get_split(SplitType::VAL));
+  groom_val_test_images(project_, DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::VAL));
   project_->save();
 
   if (is_aborted()) {
@@ -273,7 +273,7 @@ void DeepSSMJob::run_testing() {
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
-  std::vector<int> test_indices = get_split(SplitType::TEST);
+  std::vector<int> test_indices = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::TEST);
 
   // Groom Test Images
   SW_MESSAGE("Grooming Test Images");
@@ -309,36 +309,6 @@ void DeepSSMJob::run_testing() {
 
 //---------------------------------------------------------------------------
 void DeepSSMJob::python_message(std::string str) { SW_LOG(str); }
-
-//---------------------------------------------------------------------------
-std::vector<int> DeepSSMJob::get_split(SplitType split_type) {
-  auto subjects = project_->get_subjects();
-
-  std::vector<int> list;
-
-  for (int id = 0; id < subjects.size(); id++) {
-    auto extra_values = subjects[id]->get_extra_values();
-
-    std::string split = extra_values["split"];
-
-    if (split_type == SplitType::TRAIN) {
-      if (split != "train") {
-        continue;
-      }
-    } else if (split_type == SplitType::VAL) {
-      if (split != "val") {
-        continue;
-      }
-    } else if (split_type == SplitType::TEST) {
-      if (split != "test") {
-        continue;
-      }
-    }
-
-    list.push_back(id);
-  }
-  return list;
-}
 
 //---------------------------------------------------------------------------
 QString DeepSSMJob::get_prep_message() {

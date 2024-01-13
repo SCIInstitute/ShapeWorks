@@ -362,6 +362,8 @@ void DeepSSMTool::show_training_meshes() {
   index_filenames << "deepssm/model/examples/train_median.index";
   index_filenames << "deepssm/model/examples/train_worst.index";
 
+  std::vector<bool> validation = {true, true, true, false, false, false};
+
   auto all_shapes = session_->get_shapes();
   auto all_subjects = session_->get_project()->get_subjects();
 
@@ -383,7 +385,14 @@ void DeepSSMTool::show_training_meshes() {
         std::getline(index_file, index_string);
         index_file.close();
         int index = std::stoi(index_string);
-        subject->set_feature_filenames(all_subjects[index]->get_feature_filenames());
+
+        if (validation[i]) {
+          auto id_list = get_split(session_->get_project(), SplitType::VAL);
+          subject->set_feature_filenames(all_subjects[id_list[index]]->get_feature_filenames());
+        } else {
+          auto id_list = get_split(session_->get_project(), SplitType::TRAIN);
+          subject->set_feature_filenames(all_subjects[id_list[index]]->get_feature_filenames());
+        }
       }
 
       std::vector<std::string> list;
@@ -403,7 +412,7 @@ void DeepSSMTool::show_training_meshes() {
 void DeepSSMTool::show_testing_meshes() {
   shapes_.clear();
   deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
-  auto id_list = deep_ssm_->get_split(DeepSSMJob::SplitType::TEST);
+  auto id_list = get_split(session_->get_project(), SplitType::TEST);
 
   auto subjects = session_->get_project()->get_subjects();
   auto shapes = session_->get_shapes();
@@ -442,7 +451,7 @@ void DeepSSMTool::show_testing_meshes() {
 void DeepSSMTool::update_testing_meshes() {
   try {
     deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
-    auto id_list = deep_ssm_->get_split(DeepSSMJob::SplitType::TEST);
+    auto id_list = get_split(session_->get_project(), SplitType::TEST);
 
     auto subjects = session_->get_project()->get_subjects();
     auto shapes = session_->get_shapes();
@@ -628,6 +637,36 @@ std::string DeepSSMTool::get_display_feature() {
     return "deepssm_error";
   }
   return "";
+}
+
+//---------------------------------------------------------------------------
+std::vector<int> DeepSSMTool::get_split(ProjectHandle project, SplitType split_type) {
+  auto subjects = project->get_subjects();
+
+  std::vector<int> list;
+
+  for (int id = 0; id < subjects.size(); id++) {
+    auto extra_values = subjects[id]->get_extra_values();
+
+    std::string split = extra_values["split"];
+
+    if (split_type == SplitType::TRAIN) {
+      if (split != "train") {
+        continue;
+      }
+    } else if (split_type == SplitType::VAL) {
+      if (split != "val") {
+        continue;
+      }
+    } else if (split_type == SplitType::TEST) {
+      if (split != "test") {
+        continue;
+      }
+    }
+
+    list.push_back(id);
+  }
+  return list;
 }
 
 //---------------------------------------------------------------------------

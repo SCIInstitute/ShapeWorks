@@ -8,6 +8,7 @@
 // studio
 #include <Data/Preferences.h>
 #include <Shape.h>
+#include <Project.h>
 
 class Ui_DeepSSMTool;
 class QLabel;
@@ -26,6 +27,8 @@ class DeepSSMTool : public QWidget {
 
  public:
   enum class ToolMode { DeepSSM_PrepType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType };
+
+  enum class SplitType { TRAIN, VAL, TEST };
 
   DeepSSMTool(Preferences& prefs);
   ~DeepSSMTool();
@@ -49,6 +52,8 @@ class DeepSSMTool : public QWidget {
   void resizeEvent(QResizeEvent* event) override;
 
   std::string get_display_feature();
+
+  static std::vector<int> get_split(ProjectHandle project, SplitType split_type);
 
  public Q_SLOTS:
 
