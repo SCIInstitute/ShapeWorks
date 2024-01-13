@@ -410,7 +410,7 @@ def groom_val_test_images(project, indices):
         itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file,
                                                                                   image_file,
                                                                                   transform_type='translation')
-        # Apply transform
+        # 4. Apply transform
         image.applyTransform(itk_translation_transform,
                              large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
                              large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
@@ -418,12 +418,12 @@ def groom_val_test_images(project, indices):
         vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
         transform = np.matmul(vtk_translation_transform, transform)
 
-        # 4. Crop with medium bounding box and find rigid transform
+        # 5. Crop with medium bounding box and find rigid transform
         image.crop(medium_bb).write(image_file)
         itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
                                                                             image_file, transform_type='rigid')
 
-        # 5. Apply transform
+        # 6. Apply transform
         image.applyTransform(itk_rigid_transform,
                              medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
                              medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
@@ -431,7 +431,7 @@ def groom_val_test_images(project, indices):
         vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
         transform = np.matmul(vtk_rigid_transform, transform)
 
-        # 6. Get similarity transform from image registration and apply
+        # 7. Get similarity transform from image registration and apply
         image.crop(bounding_box).write(image_file)
         itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
                                                                                  image_file,
@@ -443,7 +443,8 @@ def groom_val_test_images(project, indices):
         image.write(image_file)
         vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
         transform = np.matmul(vtk_similarity_transform, transform)
-        # Save transform
+
+        # 8. Save transform
         val_test_transforms.append(transform)
         extra_values = subjects[i].get_extra_values()
         extra_values["registration_transform"] = transform_to_string(transform)

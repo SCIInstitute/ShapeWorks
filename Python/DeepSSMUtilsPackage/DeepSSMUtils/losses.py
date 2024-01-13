@@ -11,3 +11,4 @@ def Focal(predicted, ground_truth, a = 1.32, c = 10):
 	l = torch.abs(predicted - ground_truth)
 	out = l**2 / (1 + torch.exp(a*(c - l)))
 	return torch.mean(out)
+¢£

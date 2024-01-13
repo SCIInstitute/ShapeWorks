@@ -418,9 +418,14 @@ void DeepSSMTool::show_training_meshes() {
 
         if (validation[i]) {
           auto id_list = get_split(session_->get_project(), SplitType::VAL);
-          subject->set_feature_filenames(all_subjects[id_list[index]]->get_feature_filenames());
-          auto map = all_subjects[id_list[index]]->get_feature_filenames();
-          feature_name = map.begin()->first;
+          if (index < id_list.size()) {
+            int id = id_list[index];
+            if (id < all_subjects.size()) {
+              subject->set_feature_filenames(all_subjects[id]->get_feature_filenames());
+              auto map = all_subjects[id_list[index]]->get_feature_filenames();
+              feature_name = map.begin()->first;
+            }
+          }
         } else {
           QStringList list = read_images_from_csv("deepssm/augmentation/TotalData.csv");
           project::types::StringMap map;
