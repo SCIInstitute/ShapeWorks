@@ -327,6 +327,34 @@ void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename,
 }
 
 //---------------------------------------------------------------------------
+QStringList DeepSSMTool::read_images_from_csv(QString filename) {
+  // first column is image, no header
+  QStringList list;
+  QFile file(filename);
+  if (!file.open(QIODevice::ReadOnly)) {
+    SW_ERROR("Unable to open file: " + filename.toStdString());
+    return list;
+  }
+
+  auto data = QString(file.readAll()).trimmed();
+  auto lines = data.split('\n');
+  file.close();
+
+  if (lines.empty()) {
+    return list;
+  }
+
+  for (auto line : lines) {
+    auto item = line.split(',')[0].trimmed();
+    if (item != "") {
+      list.push_back(item);
+    }
+  }
+
+  return list;
+}
+
+//---------------------------------------------------------------------------
 void DeepSSMTool::show_training_meshes() {
   shapes_.clear();
 
@@ -367,6 +395,8 @@ void DeepSSMTool::show_training_meshes() {
   auto all_shapes = session_->get_shapes();
   auto all_subjects = session_->get_project()->get_subjects();
 
+  std::string feature_name = "";
+
   for (int i = 0; i < names.size(); i++) {
     if (QFileInfo(filenames[i]).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
@@ -389,9 +419,13 @@ void DeepSSMTool::show_training_meshes() {
         if (validation[i]) {
           auto id_list = get_split(session_->get_project(), SplitType::VAL);
           subject->set_feature_filenames(all_subjects[id_list[index]]->get_feature_filenames());
+          auto map = all_subjects[id_list[index]]->get_feature_filenames();
+          feature_name = map.begin()->first;
         } else {
-          auto id_list = get_split(session_->get_project(), SplitType::TRAIN);
-          subject->set_feature_filenames(all_subjects[id_list[index]]->get_feature_filenames());
+          QStringList list = read_images_from_csv("deepssm/augmentation/TotalData.csv");
+          project::types::StringMap map;
+          map[feature_name] = list[index].toStdString();
+          subject->set_feature_filenames(map);
         }
       }
 

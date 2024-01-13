@@ -94,6 +94,8 @@ class DeepSSMTool : public QWidget {
 
   void populate_table_from_csv(QTableWidget* table, QString filename, bool header);
 
+  QStringList read_images_from_csv(QString filename);
+
   Preferences& preferences_;
 
   Ui_DeepSSMTool* ui_;
