@@ -378,11 +378,13 @@ void DeepSSMTool::show_training_meshes() {
 
       // read index from file
       std::ifstream index_file(index_filenames[i].toStdString());
-      std::string index_string;
-      std::getline(index_file, index_string);
-      index_file.close();
-      int index = std::stoi(index_string);
-      subject->set_feature_filenames(all_subjects[index]->get_feature_filenames());
+      if (index_file.is_open()) {
+        std::string index_string;
+        std::getline(index_file, index_string);
+        index_file.close();
+        int index = std::stoi(index_string);
+        subject->set_feature_filenames(all_subjects[index]->get_feature_filenames());
+      }
 
       std::vector<std::string> list;
       list.push_back(names[i].toStdString());
@@ -426,7 +428,6 @@ void DeepSSMTool::show_testing_meshes() {
       list.push_back("");
       list.push_back("");
       shape->set_annotations(list);
-
 
       shapes_.push_back(shape);
     }
