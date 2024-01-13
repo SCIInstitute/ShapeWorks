@@ -393,11 +393,12 @@ void DeepSSMTool::show_testing_meshes() {
     if (QFileInfo(filename).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
-      subject->set_display_name(QString::number(id).toStdString());
+      subject->set_display_name(shapes[id]->get_display_name());
       shape->set_subject(subject);
       shape->set_mesh_manager(session_->get_mesh_manager());
       shape->import_local_point_files({filename.toStdString()});
       shape->import_global_point_files({filename.toStdString()});
+      subject->set_feature_filenames(subjects[id]->get_feature_filenames());
       shape->get_reconstructed_meshes();
       std::vector<std::string> list;
       list.push_back(shapes[id]->get_annotations()[0]);
@@ -405,6 +406,7 @@ void DeepSSMTool::show_testing_meshes() {
       list.push_back("");
       list.push_back("");
       shape->set_annotations(list);
+
 
       shapes_.push_back(shape);
     }

@@ -319,6 +319,10 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
       base_transform->TransformPoint(point.GetDataPointer(), common.GetDataPointer());
 
       for (int i = 1; i < viewers_.size(); i++) {
+        if (!viewers_[i]->get_shape()) {
+          continue;
+        }
+
         // transform from common space to destination space
         auto inverse = viewers_[i]->get_shape()->get_inverse_transform();
 
