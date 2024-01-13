@@ -137,6 +137,7 @@ void DeepSSMTool::load_params() {
 
   ui_->prep_text_edit->setText(QString::fromStdString(params.get_prep_message()));
 
+  update_panels();
   update_meshes();
 }
 
