@@ -141,8 +141,10 @@ def Run_Pipeline(args):
     ######################################################################################
     if not os.path.exists(status_dir + "step_2.txt"):
         print("\nStep 2. Define Split")
-
-        DeepSSMUtils.create_split(project, 80, 10, 10)
+        if args.tiny_test:
+            DeepSSMUtils.create_split(project, 60, 20, 20)
+        else:
+            DeepSSMUtils.create_split(project, 80, 10, 10)
         project.save(spreadsheet_file)
         open(status_dir + "step_2.txt", 'w').close()
 
