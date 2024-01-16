@@ -395,7 +395,7 @@ void DeepSSMTool::show_training_meshes() {
   auto all_shapes = session_->get_shapes();
   auto all_subjects = session_->get_project()->get_subjects();
 
-  std::string feature_name = "";
+  std::string feature_name = session_->get_image_name();
 
   for (int i = 0; i < names.size(); i++) {
     if (QFileInfo(filenames[i]).exists()) {
@@ -414,22 +414,26 @@ void DeepSSMTool::show_training_meshes() {
         std::string index_string;
         std::getline(index_file, index_string);
         index_file.close();
-        int index = std::stoi(index_string);
+        std::string image_filename = index_string;
 
         if (validation[i]) {
-          auto id_list = get_split(session_->get_project(), SplitType::VAL);
-          if (index < id_list.size()) {
-            int id = id_list[index];
-            if (id < all_subjects.size()) {
-              subject->set_feature_filenames(all_subjects[id]->get_feature_filenames());
-              auto map = all_subjects[id_list[index]]->get_feature_filenames();
-              feature_name = map.begin()->first;
-            }
-          }
+          image_filename = "deepssm/val_and_test_images/" + image_filename + ".nrrd";
         } else {
-          QStringList list = read_images_from_csv("deepssm/augmentation/TotalData.csv");
+          if (image_filename.find("Generated") != std::string::npos) {
+            image_filename = "deepssm/augmentation/Generated-Images/" + image_filename + ".nrrd";
+          } else {
+            image_filename = "deepssm/train_images/" + image_filename + ".nrrd";
+          }
+        }
+
+        // if the filename doesn't exist, print a warning
+        if (!QFileInfo(QString::fromStdString(image_filename)).exists()) {
+          SW_WARN("File doesn't exist: {}", image_filename);
+        } else {
+          std::cerr << "image filename " << index_string << std::endl;
+
           project::types::StringMap map;
-          map[feature_name] = list[index].toStdString();
+          map[feature_name] = image_filename;
           subject->set_feature_filenames(map);
         }
       }
