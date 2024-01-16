@@ -165,7 +165,9 @@ def supervised_train(config_file):
 		train_rel_losses = []
 		pred_particles = []
 		true_particles = []
-		for img, pca, mdl in train_loader:
+		train_names = []
+		for img, pca, mdl, names in train_loader:
+			train_names.extend(names)
 			opt.zero_grad()
 			img = img.to(device)
 			pca = pca.to(device)
@@ -179,15 +181,17 @@ def supervised_train(config_file):
 			train_rel_losses.append(train_rel_loss.item())
 			pred_particles.extend(pred_mdl.detach().cpu().numpy())
 			true_particles.extend(mdl.detach().cpu().numpy())
-		train_viz.write_examples(np.array(pred_particles), np.array(true_particles), model_dir + "examples/train_")
+		train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names, model_dir + "examples/train_")
 		# test validation
 		pred_particles = []
 		true_particles = []
+		val_names = []
 		if ((e % eval_freq) == 0 or e == 1):
 			net.eval()
 			val_losses = []
 			val_rel_losses = []
-			for img, pca, mdl in val_loader:
+			for img, pca, mdl, names in val_loader:
+				val_names.extend(names)
 				opt.zero_grad()
 				img = img.to(device)
 				pca = pca.to(device)
@@ -199,7 +203,7 @@ def supervised_train(config_file):
 				val_rel_losses.append(val_rel_loss.item())
 				pred_particles.extend(pred_mdl.detach().cpu().numpy())
 				true_particles.extend(mdl.detach().cpu().numpy())
-			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), model_dir + "examples/validation_")
+			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), val_names, model_dir + "examples/validation_")
 			# log
 			train_mr_MSE = np.mean(np.sqrt(train_losses))
 			val_mr_MSE = np.mean(np.sqrt(val_losses))
@@ -266,7 +270,9 @@ def supervised_train(config_file):
 			train_rel_losses = []
 			pred_particles = []
 			true_particles = []
-			for img, pca, mdl in train_loader:
+			train_names = []
+			for img, pca, mdl, names in train_loader:
+				train_names.extend(names)
 				opt.zero_grad()
 				img = img.to(device)
 				pca = pca.to(device)
@@ -280,15 +286,17 @@ def supervised_train(config_file):
 				train_rel_losses.append(train_rel_loss.item())
 				pred_particles.extend(pred_mdl.detach().cpu().numpy())
 				true_particles.extend(mdl.detach().cpu().numpy())
-			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), model_dir + "examples/train_")
+			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names, model_dir + "examples/train_")
 			# test validation
 			pred_particles = []
 			true_particles = []
+			val_names = []
 			if ((e % eval_freq) == 0 or e == 1):
 				net.eval()
 				val_losses = []
 				val_rel_losses = []
-				for img, pca, mdl in val_loader:
+				for img, pca, mdl, names in val_loader:
+					val_names.extend(names)
 					opt.zero_grad()
 					img = img.to(device)
 					pca = pca.to(device)
@@ -304,7 +312,7 @@ def supervised_train(config_file):
 						torch.save(net.state_dict(), os.path.join(model_dir, 'best_model_ft.torch'))
 					pred_particles.extend(pred_mdl.detach().cpu().numpy())
 					true_particles.extend(mdl.detach().cpu().numpy())
-				train_viz.write_examples(np.array(pred_particles), np.array(true_particles), model_dir + "examples/validation_")
+				train_viz.write_examples(np.array(pred_particles), np.array(true_particles), val_names, model_dir + "examples/validation_")
 				# log
 				train_mr_MSE = np.mean(np.sqrt(train_losses))
 				val_mr_MSE = np.mean(np.sqrt(val_losses))
@@ -384,7 +392,7 @@ def supervised_train_tl(config_file):
 		ae_train_losses = []
 		ae_train_rel_losses = []
 
-		for img, pca, mdl in train_loader:
+		for img, pca, mdl, names in train_loader:
 			opt.zero_grad()
 			img = img.to(device)
 			pca = pca.to(device)
@@ -405,7 +413,7 @@ def supervised_train_tl(config_file):
 			net.eval()
 			ae_val_losses = []
 			ae_val_rel_losses = []
-			for img, pca, mdl in val_loader:
+			for img, pca, mdl, names in val_loader:
 				opt.zero_grad()
 				img = img.to(device)
 				pca = pca.to(device)
@@ -446,7 +454,7 @@ def supervised_train_tl(config_file):
 		tf_train_losses = []
 		tf_train_rel_losses = []
 
-		for img, pca, mdl in train_loader:
+		for img, pca, mdl, names in train_loader:
 			opt.zero_grad()
 			img = img.to(device)
 			pca = pca.to(device)
@@ -468,7 +476,7 @@ def supervised_train_tl(config_file):
 			
 			tf_val_losses = []
 			tf_val_rel_losses = []
-			for img, pca, mdl in val_loader:
+			for img, pca, mdl, names in val_loader:
 				opt.zero_grad()
 				img = img.to(device)
 				pca = pca.to(device)
@@ -508,7 +516,7 @@ def supervised_train_tl(config_file):
 		ae_train_rel_losses = []
 		tf_train_rel_losses = []
 		
-		for img, pca, mdl in train_loader:
+		for img, pca, mdl, names in train_loader:
 			opt.zero_grad()
 			img = img.to(device)
 			pca = pca.to(device)
@@ -536,7 +544,7 @@ def supervised_train_tl(config_file):
 			net.eval()
 			ae_val_rel_losses = []
 			tf_val_rel_losses = []
-			for img, pca, mdl in val_loader:
+			for img, pca, mdl, names in val_loader:
 				opt.zero_grad()
 				img = img.to(device)
 				pca = pca.to(device)
