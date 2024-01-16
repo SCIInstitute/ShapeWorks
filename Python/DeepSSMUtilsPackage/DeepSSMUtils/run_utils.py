@@ -40,11 +40,10 @@ def create_split(project, train, val, test):
     # shuffle indices
     random.shuffle(subject_indices)
 
-    # get the number of subjects in each split
-    test_val_size = int(math.ceil(len(subject_indices) * .10))
-    test_indices = sorted(subject_indices[:test_val_size])
-    val_indices = sorted(subject_indices[test_val_size: test_val_size * 2])
-    train_indices = sorted(subject_indices[test_val_size * 2:])
+    train_indices = subject_indices[:math.floor(len(subject_indices) * train / 100)]
+    val_indices = subject_indices[
+                  math.floor(len(subject_indices) * train / 100):math.floor(len(subject_indices) * (train + val) / 100)]
+    test_indices = subject_indices[math.floor(len(subject_indices) * (train + val) / 100):]
 
     sw_message(f"Creating split: train:{train}%, val:{val}%, test:{test}%")
     sw_message(f"Split sizes: train:{len(train_indices)}, val:{len(val_indices)}, test:{len(test_indices)}")
