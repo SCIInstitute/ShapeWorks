@@ -430,8 +430,6 @@ void DeepSSMTool::show_training_meshes() {
         if (!QFileInfo(QString::fromStdString(image_filename)).exists()) {
           SW_WARN("File doesn't exist: {}", image_filename);
         } else {
-          std::cerr << "image filename " << index_string << std::endl;
-
           project::types::StringMap map;
           map[feature_name] = image_filename;
           subject->set_feature_filenames(map);

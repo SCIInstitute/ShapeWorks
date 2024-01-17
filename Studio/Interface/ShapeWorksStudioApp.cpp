@@ -1062,7 +1062,6 @@ void ShapeWorksStudioApp::update_tool_mode() {
     session_->set_display_mode(DisplayMode::Reconstructed);
   } else {  // DATA
     ui_->stacked_widget->setCurrentWidget(data_tool_.data());
-    // ui_->stacked_widget->setCurrentIndex(DisplayMode::Original);
     ui_->controlsDock->setWindowTitle("Data");
     ui_->action_import_mode->setChecked(true);
     update_display();
@@ -1071,6 +1070,8 @@ void ShapeWorksStudioApp::update_tool_mode() {
   ui_->stacked_widget->widget(ui_->stacked_widget->currentIndex())
       ->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   ui_->stacked_widget->adjustSize();
+
+  update_view_combo();
 
   on_actionShow_Tool_Window_triggered();
 }
