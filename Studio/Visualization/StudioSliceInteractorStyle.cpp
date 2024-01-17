@@ -68,7 +68,7 @@ void StudioSliceInteractorStyle::WindowLevel() {
 
 //-----------------------------------------------------------------------------
 void StudioSliceInteractorStyle::set_lightbox(Lightbox* lightbox) { this->lightbox_ = lightbox; }
-/*
+
 //-----------------------------------------------------------------------------
 void StudioSliceInteractorStyle::OnMouseWheelForward() {
   // do nothing so that it will be passed on to Qt
@@ -78,7 +78,7 @@ void StudioSliceInteractorStyle::OnMouseWheelForward() {
 void StudioSliceInteractorStyle::OnMouseWheelBackward() {
   // do nothing so that it will be passed on to Qt
 }
-
+/*
 //-----------------------------------------------------------------------------
 void StudioSliceInteractorStyle::OnKeyDown() {
   int* click_pos = this->GetInteractor()->GetEventPosition();
