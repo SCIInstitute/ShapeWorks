@@ -68,7 +68,7 @@ jedi==0.18.2
 Jinja2==3.1.3
 joblib==1.3.1
 jsonpointer==2.4
-jsonschema==4.17.3
+jsonschema==4.18.0
 jupyter-contrib-core==0.4.2
 jupyter-contrib-nbextensions==0.5.1
 jupyter-events==0.9.0
