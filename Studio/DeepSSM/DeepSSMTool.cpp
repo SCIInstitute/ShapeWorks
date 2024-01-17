@@ -123,7 +123,6 @@ void DeepSSMTool::load_params() {
   ui_->spacing_z->setText(QString::number(spacing[2]));
 
   ui_->num_samples->setText(QString::number(params.get_aug_num_samples()));
-  ui_->num_pca_dims->setText(QString::number(params.get_aug_num_dims()));
   ui_->percent_variability->setText(QString::number(params.get_aug_percent_variability()));
   ui_->sampler_type->setCurrentText(QString::fromStdString(params.get_aug_sampler_type()));
 
@@ -152,7 +151,6 @@ void DeepSSMTool::store_params() {
       {ui_->spacing_x->text().toDouble(), ui_->spacing_y->text().toDouble(), ui_->spacing_z->text().toDouble()});
 
   params.set_aug_num_samples(ui_->num_samples->text().toInt());
-  params.set_aug_num_dims(ui_->num_pca_dims->text().toInt());
   params.set_aug_percent_variability(ui_->percent_variability->text().toDouble());
   params.set_aug_sampler_type(ui_->sampler_type->currentText().toStdString());
 

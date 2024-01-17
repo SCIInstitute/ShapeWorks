@@ -259,9 +259,7 @@ std::vector<double> DeepSSMParameters::get_spacing() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMParameters::set_spacing(std::vector<double> spacing) {
-  params_.set(Keys::SPACING, spacing);
-}
+void DeepSSMParameters::set_spacing(std::vector<double> spacing) { params_.set(Keys::SPACING, spacing); }
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::restore_split_defaults() {

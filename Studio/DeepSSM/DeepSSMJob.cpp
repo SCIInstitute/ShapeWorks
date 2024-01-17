@@ -200,10 +200,10 @@ void DeepSSMJob::run_augmentation() {
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
   py::object run_data_aug = py_deep_ssm_utils.attr("run_data_augmentation");
 
-  int aug_dims = run_data_aug(project_, params.get_aug_num_samples(), params.get_aug_num_dims(),
-                              params.get_aug_percent_variability(), sampler_type.toStdString(), 0, /* mixture_num */
-                              QThread::idealThreadCount()                                          /* processes */
-                              // 1   /* processes */
+  int aug_dims = run_data_aug(project_, params.get_aug_num_samples(),
+                              0 /* num dims, set to zero to allow percent variability to be used */,
+                              params.get_aug_percent_variability(), sampler_type.toStdString(), 0 /* mixture_num */,
+                              QThread::idealThreadCount() /* processes */
                               )
                      .cast<int>();
 
