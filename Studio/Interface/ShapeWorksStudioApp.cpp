@@ -447,11 +447,8 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged() {
     lightbox_->set_tile_layout(value, value);
   }
 
-  visualizer_->update_viewer_properties();
-
   update_scrollbar();
-
-  ui_->qvtkWidget->renderWindow()->Render();
+  on_vertical_scroll_bar_valueChanged();
 }
 
 //---------------------------------------------------------------------------
