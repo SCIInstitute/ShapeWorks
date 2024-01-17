@@ -610,6 +610,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   visible_ = true;
 
   shape_ = shape;
+  current_image_name_ = "";
 
   meshes_ = shape->get_meshes(session_->get_display_mode());
 
