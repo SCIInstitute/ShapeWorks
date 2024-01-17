@@ -71,7 +71,7 @@ jsonpointer==2.4
 jsonschema==4.17.3
 jupyter-contrib-core==0.4.2
 jupyter-contrib-nbextensions==0.5.1
-jupyter-events==0.6.3
+jupyter-events==0.9.0
 jupyter-highlight-selected-word==0.2.0
 jupyter-latex-envs==1.4.6
 jupyter-nbextensions-configurator==0.6.3
