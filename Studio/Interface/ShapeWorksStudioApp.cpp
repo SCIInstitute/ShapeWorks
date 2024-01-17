@@ -210,8 +210,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->feature_uniform_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::set_feature_uniform_scale);
 
   // glyph options signals/slots
-  connect(ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
-  connect(ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
+  connect(ui_->glyphs_visible_button, &QPushButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(ui_->surface_visible_button, &QPushButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
 
   preferences_.set_saved();
   enable_possible_actions();
@@ -1324,9 +1324,6 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   visualizer_->set_domain_particle_visibilities(domains_to_display);
 
   visualizer_->update_viewer_properties();
-
-  // ideally we should only call this for some changes since it is slower
-  update_display(true);
 }
 
 //---------------------------------------------------------------------------
@@ -1543,6 +1540,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   create_glyph_submenu();
   create_iso_submenu();
   handle_glyph_changed();
+  update_display(true);
   handle_progress(100);
   SW_LOG("Project loaded: " + filename.toStdString());
 }

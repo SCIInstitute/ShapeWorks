@@ -8,7 +8,7 @@ class StudioLogger : public QObject {
 
  public:
   StudioLogger() {}
-  virtual ~StudioLogger() {}
+  virtual ~StudioLogger();
 
   void register_callbacks();
 
