@@ -65,10 +65,11 @@ SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
 
 //-----------------------------------------------------------------------------
 void SliceView::set_volume(std::shared_ptr<Image> volume) {
+  volume_ = volume;
   if (!volume) {
+    update_renderer();
     return;
   }
-  volume_ = volume;
   vtk_volume_ = volume->getVTKImage();
   slice_mapper_->SetInputData(vtk_volume_);
 
