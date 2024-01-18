@@ -92,6 +92,7 @@ void Lightbox::reset_camera() {
   if (!viewers_.empty()) {
     viewers_[0]->reset_camera();
   }
+  redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -262,6 +263,8 @@ ShapeList Lightbox::get_shapes() { return shapes_; }
 //-----------------------------------------------------------------------------
 void Lightbox::redraw() {
   if (render_window_) {
+    // reset clipping range
+    reset_camera_clipping_range();
     render_window_->Render();
   }
 }
@@ -336,6 +339,7 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
         viewers_[i]->slice_view().change_slice(change);
       }
     }
+    redraw();
   }
 }
 
