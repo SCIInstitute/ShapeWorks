@@ -40,19 +40,23 @@ DeepSSMJob::~DeepSSMJob() {}
 
 //---------------------------------------------------------------------------
 void DeepSSMJob::run() {
-  switch (tool_mode_) {
-    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
-      run_prep();
-      break;
-    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
-      run_augmentation();
-      break;
-    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
-      run_training();
-      break;
-    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
-      run_testing();
-      break;
+  try {
+    switch (tool_mode_) {
+      case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+        run_prep();
+        break;
+      case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+        run_augmentation();
+        break;
+      case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+        run_training();
+        break;
+      case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+        run_testing();
+        break;
+    }
+  } catch (const std::exception& e) {
+    SW_ERROR("Exception Caught: {}", e.what());
   }
 }
 
@@ -290,7 +294,7 @@ void DeepSSMJob::run_testing() {
   QFile file("deepssm/torch_loaders/test_names.txt");
   if (file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
     QStringList list;
-    for (auto &id : test_indices) {
+    for (auto& id : test_indices) {
       QString item = "'" + QString::number(id) + "'";
       list << item;
     }

@@ -190,23 +190,29 @@ void DeepSSMTool::run_clicked() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_thread_complete() {
-  if (deep_ssm_->is_aborted()) {
-    ui_->prep_text_edit->setText("Aborted");
-  }
-  Q_EMIT progress(100);
-  update_meshes();
-  tool_is_running_ = false;
-  update_panels();
-  session_->reload_particles();
-
-  if (ui_->run_all->isChecked()) {
-    if (current_tool_ == ToolMode::DeepSSM_PrepType) {
-      run_tool(DeepSSMTool::ToolMode::DeepSSM_AugmentationType);
-    } else if (current_tool_ == ToolMode::DeepSSM_AugmentationType) {
-      run_tool(DeepSSMTool::ToolMode::DeepSSM_TrainingType);
-    } else if (current_tool_ == ToolMode::DeepSSM_TrainingType) {
-      run_tool(DeepSSMTool::ToolMode::DeepSSM_TestingType);
+  try {
+    if (deep_ssm_->is_aborted()) {
+      ui_->prep_text_edit->setText("Aborted");
     }
+    Q_EMIT progress(100);
+    update_meshes();
+    tool_is_running_ = false;
+    update_panels();
+    session_->reload_particles();
+
+    if (!deep_ssm_->is_aborted()) {
+      if (ui_->run_all->isChecked()) {
+        if (current_tool_ == ToolMode::DeepSSM_PrepType) {
+          run_tool(DeepSSMTool::ToolMode::DeepSSM_AugmentationType);
+        } else if (current_tool_ == ToolMode::DeepSSM_AugmentationType) {
+          run_tool(DeepSSMTool::ToolMode::DeepSSM_TrainingType);
+        } else if (current_tool_ == ToolMode::DeepSSM_TrainingType) {
+          run_tool(DeepSSMTool::ToolMode::DeepSSM_TestingType);
+        }
+      }
+    }
+  } catch (std::exception& e) {
+    SW_ERROR("{}", e.what());
   }
 }
 
