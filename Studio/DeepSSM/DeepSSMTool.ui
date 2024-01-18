@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>438</width>
-    <height>1220</height>
+    <height>1318</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -245,7 +245,7 @@ QWidget#training_panel {
                <item>
                 <widget class="QLabel" name="controls_label">
                  <property name="text">
-                  <string>Controls</string>
+                  <string>DeepSSM</string>
                  </property>
                 </widget>
                </item>
@@ -294,7 +294,7 @@ QWidget#training_panel {
             <property name="verticalSpacing">
              <number>6</number>
             </property>
-            <item row="2" column="0">
+            <item row="3" column="0">
              <widget class="QPushButton" name="restore_defaults">
               <property name="minimumSize">
                <size>
@@ -307,23 +307,10 @@ QWidget#training_panel {
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="run_button">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Run Augmentation</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0">
              <widget class="QTabWidget" name="tab_widget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>3</number>
               </property>
               <widget class="QWidget" name="split_tab">
                <attribute name="title">
@@ -797,6 +784,67 @@ Preserved</string>
               </widget>
              </widget>
             </item>
+            <item row="1" column="0">
+             <widget class="QWidget" name="widget_3" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>50</height>
+               </size>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_9">
+               <item row="0" column="0">
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="run_all">
+                 <property name="toolTip">
+                  <string>Run Prep, Augmentation, Training and Testing Steps</string>
+                 </property>
+                 <property name="text">
+                  <string>Run All Steps</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <spacer name="horizontalSpacer_6">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="run_button">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Run Augmentation</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -1172,18 +1220,26 @@ Preserved</string>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>num_samples</tabstop>
-  <tabstop>sampler_type</tabstop>
-  <tabstop>data_header</tabstop>
   <tabstop>controls_open_button</tabstop>
-  <tabstop>controls_header</tabstop>
   <tabstop>tab_widget</tabstop>
   <tabstop>testing_split</tabstop>
   <tabstop>validation_split</tabstop>
+  <tabstop>percent_variability</tabstop>
   <tabstop>spacing_x</tabstop>
   <tabstop>spacing_y</tabstop>
   <tabstop>spacing_z</tabstop>
   <tabstop>prep_text_edit</tabstop>
+  <tabstop>num_samples</tabstop>
+  <tabstop>sampler_type</tabstop>
+  <tabstop>training_epochs</tabstop>
+  <tabstop>training_learning_rate</tabstop>
+  <tabstop>training_batch_size</tabstop>
+  <tabstop>training_decay_learning</tabstop>
+  <tabstop>training_fine_tuning</tabstop>
+  <tabstop>training_fine_tuning_epochs</tabstop>
+  <tabstop>training_fine_tuning_learning_rate</tabstop>
+  <tabstop>testing_table</tabstop>
+  <tabstop>run_all</tabstop>
   <tabstop>run_button</tabstop>
   <tabstop>restore_defaults</tabstop>
   <tabstop>data_open_button</tabstop>
@@ -1192,15 +1248,9 @@ Preserved</string>
   <tabstop>table</tabstop>
   <tabstop>training_open_button</tabstop>
   <tabstop>training_table</tabstop>
-  <tabstop>testing_table</tabstop>
-  <tabstop>training_fine_tuning</tabstop>
-  <tabstop>training_learning_rate</tabstop>
   <tabstop>training_header</tabstop>
-  <tabstop>training_fine_tuning_epochs</tabstop>
-  <tabstop>training_batch_size</tabstop>
-  <tabstop>training_fine_tuning_learning_rate</tabstop>
-  <tabstop>training_epochs</tabstop>
-  <tabstop>training_decay_learning</tabstop>
+  <tabstop>data_header</tabstop>
+  <tabstop>controls_header</tabstop>
  </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>

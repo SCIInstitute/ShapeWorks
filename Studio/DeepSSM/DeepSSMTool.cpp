@@ -60,6 +60,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->training_fine_tuning, &QCheckBox::stateChanged, this, &DeepSSMTool::training_fine_tuning_changed);
 
+  connect(ui_->run_all, &QCheckBox::stateChanged, this, &DeepSSMTool::update_panels);
+
   QIntValidator* zero_to_hundred = new QIntValidator(0, 100, this);
   ui_->validation_split->setValidator(zero_to_hundred);
   ui_->testing_split->setValidator(zero_to_hundred);
@@ -178,7 +180,11 @@ void DeepSSMTool::run_clicked() {
     deep_ssm_->abort();
     app_->get_py_worker()->abort_job();
   } else {
-    run_tool(current_tool_);
+    if (ui_->run_all->isChecked()) {
+      run_tool(DeepSSMTool::ToolMode::DeepSSM_PrepType);
+    } else {
+      run_tool(current_tool_);
+    }
   }
 }
 
@@ -192,6 +198,16 @@ void DeepSSMTool::handle_thread_complete() {
   tool_is_running_ = false;
   update_panels();
   session_->reload_particles();
+
+  if (ui_->run_all->isChecked()) {
+    if (current_tool_ == ToolMode::DeepSSM_PrepType) {
+      run_tool(DeepSSMTool::ToolMode::DeepSSM_AugmentationType);
+    } else if (current_tool_ == ToolMode::DeepSSM_AugmentationType) {
+      run_tool(DeepSSMTool::ToolMode::DeepSSM_TrainingType);
+    } else if (current_tool_ == ToolMode::DeepSSM_TrainingType) {
+      run_tool(DeepSSMTool::ToolMode::DeepSSM_TestingType);
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -244,6 +260,10 @@ void DeepSSMTool::update_panels() {
       string = "Testing";
       enabled = params.get_training_step_complete();
       break;
+  }
+
+  if (ui_->run_all->isChecked()) {
+    string = "All Steps";
   }
 
   if (tool_is_running_) {
@@ -741,10 +761,13 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   Q_EMIT progress(-1);
 
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
+    ui_->tab_widget->setCurrentIndex(1);
+
     SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/augmentation/TotalData.csv").remove();
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
+    ui_->tab_widget->setCurrentIndex(2);
     SW_LOG("Please Wait: Running Training...");
 
     // clean
@@ -753,8 +776,12 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
 
     show_training_meshes();
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
+    ui_->tab_widget->setCurrentIndex(3);
+
     SW_LOG("Please Wait: Running Testing...");
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+    ui_->tab_widget->setCurrentIndex(0);
+
     SW_LOG("Please Wait: Running Groom/Optimize...");
   } else {
     SW_ERROR("Unknown tool mode");

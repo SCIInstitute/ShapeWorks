@@ -7,8 +7,8 @@
 
 // studio
 #include <Data/Preferences.h>
-#include <Shape.h>
 #include <Project.h>
+#include <Shape.h>
 
 class Ui_DeepSSMTool;
 class QLabel;
@@ -26,7 +26,12 @@ class DeepSSMTool : public QWidget {
   Q_OBJECT;
 
  public:
-  enum class ToolMode { DeepSSM_PrepType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType };
+  enum class ToolMode {
+    DeepSSM_PrepType = 0,
+    DeepSSM_AugmentationType = 1,
+    DeepSSM_TrainingType = 2,
+    DeepSSM_TestingType = 3
+  };
 
   enum class SplitType { TRAIN, VAL, TEST };
 
