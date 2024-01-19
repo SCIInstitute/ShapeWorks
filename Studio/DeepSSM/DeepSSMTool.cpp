@@ -481,6 +481,7 @@ void DeepSSMTool::show_testing_meshes() {
 
   auto subjects = session_->get_project()->get_subjects();
   auto shapes = session_->get_shapes();
+  std::string feature_name = session_->get_image_name();
 
   for (auto& id : id_list) {
     QString filename =
@@ -494,7 +495,13 @@ void DeepSSMTool::show_testing_meshes() {
       shape->set_mesh_manager(session_->get_mesh_manager());
       shape->import_local_point_files({filename.toStdString()});
       shape->import_global_point_files({filename.toStdString()});
-      subject->set_feature_filenames(subjects[id]->get_feature_filenames());
+
+      auto image_filename = "deepssm/val_and_test_images/" + std::to_string(id) + ".nrrd";
+      project::types::StringMap map;
+      map[feature_name] = image_filename;
+      subject->set_feature_filenames(map);
+
+      /// subject->set_feature_filenames(subjects[id]->get_feature_filenames());
       shape->get_reconstructed_meshes();
       std::vector<std::string> list;
       list.push_back(shapes[id]->get_annotations()[0]);
@@ -551,10 +558,20 @@ void DeepSSMTool::update_testing_meshes() {
         continue;
       }
       Mesh base(mesh_group.meshes()[0]->get_poly_data());
+
+      // transform base by registration transforms
+      auto extra_values = subjects[id]->get_extra_values();
+      if (extra_values.count("registration_transform")) {
+        std::string transform = extra_values["registration_transform"];
+        // convert to vtkTransform
+        auto transform_matrix = ProjectUtils::convert_transform(transform);
+        base.applyTransform(transform_matrix);
+      }
+
       std::string filename =
           "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
       if (QFileInfo(QString::fromStdString(filename)).exists()) {
-        if (idx < shapes_.size()) {
+        if (idx < shapes_.size()) {  // test shapes
           auto shape = shapes_[idx];
           MeshGroup group = shape->get_reconstructed_meshes();
           if (group.valid()) {
