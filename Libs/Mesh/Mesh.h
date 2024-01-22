@@ -154,6 +154,9 @@ class Mesh {
   /// returns closest point id in this mesh to the given point in space
   int closestPointId(const Point3 point) const;
 
+  /// returns if the given point is inside the mesh
+  bool isPointInside(const Point3 point) const;
+
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target) const;
 
