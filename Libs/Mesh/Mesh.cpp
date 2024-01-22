@@ -1066,6 +1066,7 @@ Image Mesh::toImage(PhysicalRegion region, Point3 spacing) const {
 }
 
 Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, const Dims padding) const {
+  invalidateLocators();
   this->updateCellLocator();
 
   // if no region, use mesh bounding box
