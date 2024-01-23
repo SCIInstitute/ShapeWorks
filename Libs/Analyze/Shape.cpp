@@ -568,9 +568,13 @@ std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
     auto filename = filenames[image_volume_name];
 
     if (image_volume_filename_ != filename) {
-      std::shared_ptr<Image> image = std::make_shared<Image>(filename);
-      image_volume_ = image;
-      image_volume_filename_ = filename;
+      try {
+        std::shared_ptr<Image> image = std::make_shared<Image>(filename);
+        image_volume_ = image;
+        image_volume_filename_ = filename;
+      } catch (std::exception &ex) {
+        SW_ERROR("Unable to open file: {}", filename);
+      }
     }
 
     return image_volume_;
