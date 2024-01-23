@@ -646,14 +646,8 @@ void summarize_internal_intensities(Mesh& outer_mesh, Mesh& inner_mesh, Image& i
   values_mean->SetNumberOfTuples(num_points);
   values_mean->SetName("intensity_mean");
 
-  std::cerr << "computing DTs\n";
-
-  inner_mesh.write("inner_mesh.vtk");
-  outer_mesh.write("outer_mesh.vtk");
-
   auto inner_dt = inner_mesh.toDistanceTransform(PhysicalRegion(), image.spacing(), {1, 1, 1});
   auto outer_dt = outer_mesh.toDistanceTransform(PhysicalRegion(), image.spacing(), {1, 1, 1});
-  std::cerr << "done computing DTs\n";
 
   // Iterate over each point in the outer mesh
   for (vtkIdType pointId = 0; pointId < outerMeshWithNormals->GetNumberOfPoints(); ++pointId) {
@@ -705,14 +699,21 @@ void summarize_internal_intensities(Mesh& outer_mesh, Mesh& inner_mesh, Image& i
     values_max->SetValue(pointId, max_value);
     values_mean->SetValue(pointId, sum / count);
 
-    std::cout << "point " << pointId << " min " << min_value << " max " << max_value << " mean " << sum / count
-              << std::endl;
+    // std::cout << "point " << pointId << " min " << min_value << " max " << max_value << " mean " << sum / count
+    //          << std::endl;
   }
   //});
 
   outer_mesh.setField("intensity_min", values_min, Mesh::Point);
   outer_mesh.setField("intensity_max", values_max, Mesh::Point);
   outer_mesh.setField("intensity_mean", values_mean, Mesh::Point);
+
+  double average_edge_length = compute_average_edge_length(outer_mesh.getVTKMesh());
+
+  double median_radius = 5.0;
+  median_smooth(outer_mesh.getVTKMesh(), "intensity_min", average_edge_length * median_radius);
+  median_smooth(outer_mesh.getVTKMesh(), "intensity_max", average_edge_length * median_radius);
+  median_smooth(outer_mesh.getVTKMesh(), "intensity_mean", average_edge_length * median_radius);
 }
 
 }  // namespace shapeworks::mesh
