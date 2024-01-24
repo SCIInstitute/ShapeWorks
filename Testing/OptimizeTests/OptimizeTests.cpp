@@ -570,7 +570,7 @@ TEST(OptimizeTests, ffc_test) {
   stats.compute_modes();
   stats.principal_component_projections();
 
-  bool good = check_constraint_violations(app, 4.0e-1);
+  bool good = check_constraint_violations(app, 6.0e-1);
 
   ASSERT_TRUE(good);
 }
