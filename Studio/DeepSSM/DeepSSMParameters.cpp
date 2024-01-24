@@ -33,6 +33,18 @@ const std::string TRAIN_STEP_COMPLETE = "train_step_complete";
 const std::string TRAIN_STEP_MESSAGE = "train_step_message";
 
 const std::string SPACING = "spacing";
+
+const std::string LOSS_FUNCTION = "loss_function";
+const std::string TL_NET_ENABLED = "tl_net_enabled";
+const std::string TL_NET_AE_EPOCHS = "tl_net_ae_epochs";
+const std::string TL_NET_TF_EPOCHS = "tl_net_tf_epochs";
+const std::string TL_NET_JOINT_EPOCHS = "tl_net_joint_epochs";
+const std::string TL_NET_ALPHA = "tl_net_alpha";
+const std::string TL_NET_A_AE = "tl_net_a_ae";
+const std::string TL_NET_C_AE = "tl_net_c_ae";
+const std::string TL_NET_A_LAT = "tl_net_a_lat";
+const std::string TL_NET_C_LAT = "tl_net_c_lat";
+
 }  // namespace Keys
 
 namespace Defaults {
@@ -57,6 +69,7 @@ const int TRAIN_NUM_DIMS = 0;
 const int TRAIN_BATCH_SIZE = 8;
 const int TRAIN_FINE_TUNING_EPOCHS = 2;
 const double TRAIN_FINE_TUNING_LEARNING_RATE = 0.001;
+const std::string LOSS_FUNCTION = "MSE";
 
 // stage defaults
 const bool PREP_STEP_COMPLETE = false;
@@ -67,6 +80,17 @@ const bool TRAIN_STEP_COMPLETE = false;
 const std::string TRAIN_STEP_MESSAGE = "";
 
 const std::vector<double> spacing{1, 1, 1};
+
+// transfer learning defaults
+const bool TL_NET_ENABLED = false;
+const int TL_NET_AE_EPOCHS = 100;
+const int TL_NET_TF_EPOCHS = 100;
+const int TL_NET_JOINT_EPOCHS = 25;
+const double TL_NET_ALPHA = 1.0;
+const double TL_NET_A_AE = 10.0;
+const double TL_NET_C_AE = 1.32;
+const double TL_NET_A_LAT = 10.0;
+const double TL_NET_C_LAT = 6.3;
 
 }  // namespace Defaults
 
@@ -260,6 +284,74 @@ std::vector<double> DeepSSMParameters::get_spacing() {
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::set_spacing(std::vector<double> spacing) { params_.set(Keys::SPACING, spacing); }
+
+//---------------------------------------------------------------------------
+std::string DeepSSMParameters::get_loss_function() { return params_.get(Keys::LOSS_FUNCTION, Defaults::LOSS_FUNCTION); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_loss_function(std::string loss_function) {
+  params_.set(Keys::LOSS_FUNCTION, loss_function);
+}
+
+//---------------------------------------------------------------------------
+bool DeepSSMParameters::get_tl_net_enabled() { return params_.get(Keys::TL_NET_ENABLED, Defaults::TL_NET_ENABLED); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_enabled(bool enabled) { params_.set(Keys::TL_NET_ENABLED, enabled); }
+
+//---------------------------------------------------------------------------
+int DeepSSMParameters::get_tl_net_ae_epochs() {
+  return params_.get(Keys::TL_NET_AE_EPOCHS, Defaults::TL_NET_AE_EPOCHS);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_ae_epochs(int num_epochs) { params_.set(Keys::TL_NET_AE_EPOCHS, num_epochs); }
+
+//---------------------------------------------------------------------------
+int DeepSSMParameters::get_tl_net_tf_epochs() {
+  return params_.get(Keys::TL_NET_TF_EPOCHS, Defaults::TL_NET_TF_EPOCHS);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_tf_epochs(int num_epochs) { params_.set(Keys::TL_NET_TF_EPOCHS, num_epochs); }
+
+//---------------------------------------------------------------------------
+int DeepSSMParameters::get_tl_net_joint_epochs() {
+  return params_.get(Keys::TL_NET_JOINT_EPOCHS, Defaults::TL_NET_JOINT_EPOCHS);
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_joint_epochs(int num_epochs) { params_.set(Keys::TL_NET_JOINT_EPOCHS, num_epochs); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_tl_net_alpha() { return params_.get(Keys::TL_NET_ALPHA, Defaults::TL_NET_ALPHA); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_alpha(double alpha) { params_.set(Keys::TL_NET_ALPHA, alpha); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_tl_net_a_ae() { return params_.get(Keys::TL_NET_A_AE, Defaults::TL_NET_A_AE); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_a_ae(double a_ae) { params_.set(Keys::TL_NET_A_AE, a_ae); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_tl_net_c_ae() { return params_.get(Keys::TL_NET_C_AE, Defaults::TL_NET_C_AE); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_c_ae(double c_ae) { params_.set(Keys::TL_NET_C_AE, c_ae); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_tl_net_a_lat() { return params_.get(Keys::TL_NET_A_LAT, Defaults::TL_NET_A_LAT); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_a_lat(double a_lat) { params_.set(Keys::TL_NET_A_LAT, a_lat); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_tl_net_c_lat() { return params_.get(Keys::TL_NET_C_LAT, Defaults::TL_NET_C_LAT); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_tl_net_c_lat(double c_lat) { params_.set(Keys::TL_NET_C_LAT, c_lat); }
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::restore_split_defaults() {

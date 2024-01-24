@@ -77,6 +77,36 @@ class DeepSSMParameters {
   std::vector<double> get_spacing();
   void set_spacing(std::vector<double> spacing);
 
+  std::string get_loss_function();
+  void set_loss_function(std::string loss_function);
+
+  bool get_tl_net_enabled();
+  void set_tl_net_enabled(bool enabled);
+
+  int get_tl_net_ae_epochs();
+  void set_tl_net_ae_epochs(int num_epochs);
+
+  int get_tl_net_tf_epochs();
+  void set_tl_net_tf_epochs(int num_epochs);
+
+  int get_tl_net_joint_epochs();
+  void set_tl_net_joint_epochs(int num_epochs);
+
+  double get_tl_net_alpha();
+  void set_tl_net_alpha(double alpha);
+
+  double get_tl_net_a_ae();
+  void set_tl_net_a_ae(double a_ae);
+
+  double get_tl_net_c_ae();
+  void set_tl_net_c_ae(double c_ae);
+
+  double get_tl_net_a_lat();
+  void set_tl_net_a_lat(double a_lat);
+
+  double get_tl_net_c_lat();
+  void set_tl_net_c_lat(double c_lat);
+
   void restore_split_defaults();
   void restore_augmentation_defaults();
   void restore_training_defaults();
