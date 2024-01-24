@@ -1002,7 +1002,7 @@ double Mesh::interpolateFieldAtPoint(const std::string& field, const Point3& que
   Eigen::Vector3d values(this->getFieldValue(field, v1), this->getFieldValue(field, v2),
                          this->getFieldValue(field, v3));
 
-  return (bary * values.transpose()).mean();
+  return values[0] * bary[0] + values[1] * bary[1] + values[2] * bary[2];
 }
 
 Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision) {
