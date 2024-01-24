@@ -808,3 +808,36 @@ TEST(MeshTests, thicknessTest) {
   Mesh baseline(std::string(TEST_DATA_DIR) + "/thickness/thickness.vtk");
   ASSERT_TRUE(thickness == baseline);
 }
+
+TEST(MeshTests, interpolateFieldAtPoint) {
+  
+  Eigen::MatrixXd points;
+  Eigen::MatrixXi faces;
+
+  points.resize(3, 3);
+  points.block<1, 3>(0, 0) = Eigen::Vector3d(-10, 0, 50);
+  points.block<1, 3>(1, 0) = Eigen::Vector3d(0, 10, 50);
+  points.block<1, 3>(2, 0) = Eigen::Vector3d(10, 0, 50);
+
+  faces.resize(1, 3);
+  faces(0) = 0;
+  faces(1) = 1;
+  faces(2) = 2;
+
+  Mesh mesh(points, faces);
+
+  auto values = vtkDoubleArray::New();
+  values->SetNumberOfValues(3);
+  values->SetValue(0, -100);
+  values->SetValue(1, 0);
+  values->SetValue(2, 100);
+
+  const std::string fieldName = "Test";
+  mesh.setField(fieldName, values, Mesh::Point);
+
+  ASSERT_DOUBLE_EQ(mesh.interpolateFieldAtPoint(fieldName, Point3({-10, 0, 50})), -100);
+  ASSERT_DOUBLE_EQ(mesh.interpolateFieldAtPoint(fieldName, Point3({0, 10, 50})), 0);
+  ASSERT_DOUBLE_EQ(mesh.interpolateFieldAtPoint(fieldName, Point3({10, 0, 50})), 100);
+  ASSERT_DOUBLE_EQ(mesh.interpolateFieldAtPoint(fieldName, Point3({0, 0, 50})), 0);
+}
+
