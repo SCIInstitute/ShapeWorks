@@ -727,7 +727,7 @@ void DeepSSMTool::load_plots() {
   violin_plot_ = load_plot("deepssm/augmentation/violin.png");
   training_plot_ = load_plot("deepssm/model/training_plot.png");
   training_plot_tl1_ = load_plot("deepssm/model/training_plot_ae.png");
-  training_plot_tl2_ = load_plot("deepssm/model/training_plot_tl.png");
+  training_plot_tl2_ = load_plot("deepssm/model/training_plot_tf.png");
   training_plot_tl3_ = load_plot("deepssm/model/training_plot_joint.png");
   resize_plots();
 }
