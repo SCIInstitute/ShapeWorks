@@ -13,7 +13,6 @@
 
 #include <QSharedPointer>
 #include <QVector>
-#include <map>
 #include <string>
 #include <vector>
 

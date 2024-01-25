@@ -226,6 +226,7 @@ void DeepSSMTool::run_clicked() {
     deep_ssm_->abort();
     app_->get_py_worker()->abort_job();
   } else {
+    session_->trigger_save();
     if (ui_->run_all->isChecked()) {
       run_tool(DeepSSMTool::ToolMode::DeepSSM_PrepType);
     } else {
