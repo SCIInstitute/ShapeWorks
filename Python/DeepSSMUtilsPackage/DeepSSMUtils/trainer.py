@@ -33,12 +33,14 @@ Train helper
 	prints and logs values during training
 '''
 def log_print(logger, values):
-	# print values
-	if isinstance(values[0], str):
-		print('	  '.join(values))
-	else:
-		format_values = ['%.5f' % i for i in values]
-		print('	  '.join(format_values))
+
+	# for each value, if it is a string, print it, otherwise print it with 5 decimal places
+	for i in range(len(values)):
+		if isinstance(values[i], str):
+			print(values[i], end='	  ')
+		else:
+			print('%.5f' % values[i], end='	  ')
+
 	# csv format
 	string_values = [str(i) for i in values]
 	log_string = ','.join(string_values)
