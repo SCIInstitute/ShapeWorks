@@ -371,17 +371,28 @@ def supervised_train_tl(config_file):
 	# train
 	print("Beginning training on device = " + device + '\n')
 	logger = open(model_dir + "train_log.csv", "w+")
-	
+	# Initialize training plot
+	train_plot = plt.figure()
+	axe = train_plot.add_subplot(111)
+	axe.set_title('TL-DeepSSSM(Autoencoder) Training')
+	sp_train, = axe.plot([],[],label='Training',ms=10,color='b',marker='o',ls='')
+	sp_val, = axe.plot([],[],label='Validation',ms=10,color='r',marker='o',ls='')
+	axe.set_xlabel('Epochs')
+	axe.set_xlim(0,ae_epochs+1)
+	axe.set_ylabel('Particle MSE')
+	axe.legend()
+	train_plot.savefig(model_dir + "training_plot_ae.png", dpi=300)
+	# initialize
+	epochs = []
+	plot_train_losses = []
+	plot_val_losses = []
 	t0 = time.time()
 	best_val_rel_error = np.Inf
 	
 	# train the AE first
-	log_print(logger,['##################################'])
-	log_print(logger,['Training the Autoencoder...'])
-	log_print(logger,['##################################'])
 	ae_epochs = parameters['tl_net']['ae_epochs']
 
-	log_print(logger, ["Epoch", "LR", "Train_Err_AE", "Train_Rel_Err_AE", "Val_Err_AE", "Val_Rel_Err_AE", "Sec"])
+	log_print(logger, ["Training_Stage", "Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
 
 	mean_mdl = torch.mean(train_loader.dataset.mdl_target, 0).to(device)
 
@@ -397,8 +408,11 @@ def supervised_train_tl(config_file):
 		net.train()
 		ae_train_losses = []
 		ae_train_rel_losses = []
-
+		pred_particles = []
+		true_particles = []
+		train_names = []
 		for img, pca, mdl, names in train_loader:
+			train_names.extend(names)
 			opt.zero_grad()
 			img = img.to(device)
 			pca = pca.to(device)
@@ -414,12 +428,19 @@ def supervised_train_tl(config_file):
 			opt.step()
 			ae_train_losses.append(loss.item())
 			ae_train_rel_losses.append(train_rel_loss.item())
-		
+			pred_particles.extend(pred_pt.detach().cpu().numpy())
+			true_particles.extend(mdl.detach().cpu().numpy())
+		train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names, model_dir + "examples/train_")
+		# test validation
+		pred_particles = []
+		true_particles = []
+		val_names = []
 		if ((e % eval_freq) == 0 or e == 1):
 			net.eval()
 			ae_val_losses = []
 			ae_val_rel_losses = []
 			for img, pca, mdl, names in val_loader:
+				val_names.extend(names)
 				opt.zero_grad()
 				img = img.to(device)
 				pca = pca.to(device)
@@ -430,15 +451,26 @@ def supervised_train_tl(config_file):
 				ae_val_rel_loss = losses.MSE(pred_pt, mdl) / losses.MSE(pred_pt * 0, mdl)
 				ae_val_losses.append(loss_ae.item())
 				ae_val_rel_losses.append(ae_val_rel_loss.item())
-			
+				pred_particles.extend(pred_pt.detach().cpu().numpy())
+				true_particles.extend(mdl.detach().cpu().numpy())
+			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), val_names, model_dir + "examples/validation_")
 			# log
 			train_ae_err = np.mean(ae_train_losses)
 			train_rel_ae_err = np.mean(ae_train_rel_losses)
 			val_ae_err = np.mean(ae_val_losses)
 			val_rel_ae_err = np.mean(ae_val_rel_losses)
-			
-			log_print(logger, [e, scheduler.get_lr()[0], train_ae_err, train_rel_ae_err, val_ae_err, val_rel_ae_err, time.time()-t0])
+			log_print(logger, ["AE", e, scheduler.get_lr()[0], train_ae_err, train_rel_ae_err, val_ae_err, val_rel_ae_err, time.time()-t0])
+			# plot
+			epochs.append(e)
+			plot_train_losses.append(train_ae_err)
+			plot_val_losses.append(val_ae_err)
+			sp_train.set_data(epochs, plot_train_losses)
+			sp_val.set_data(epochs, plot_val_losses)
+			axe.set_ylim(0,max(max(plot_train_losses), max(plot_val_losses))+3)
+			train_plot.canvas.draw()
+			train_plot.savefig(model_dir + "training_plot_ae.png")
 			t0 = time.time()
+	# save
 	torch.save(net.state_dict(), os.path.join(model_dir, 'final_model_ae.torch'))
 	# fix the autoencoder and train the TL-net
 	for param in net.CorrespondenceDecoder.parameters():
@@ -448,11 +480,26 @@ def supervised_train_tl(config_file):
 
 	# train the t-flank
 	tf_epochs = parameters['tl_net']['tf_epochs']
-	log_print(logger,['##################################'])
-	log_print(logger,['Training the T-Flank...'])
-	log_print(logger,['##################################'])
-	log_print(logger, ["Epoch", "LR", "Train_Err_TF", "Train_Rel_Err_TF", "Val_Err_TF", "Val_Rel_Err_TF", "Sec"])
-
+	# log_print(logger,['##################################'])
+	# log_print(logger,['Training the T-Flank...'])
+	# log_print(logger,['##################################'])
+	# log_print(logger, ["Train", "Epoch", "LR", "Train_Err_TF", "Train_Rel_Err_TF", "Val_Err_TF", "Val_Rel_Err_TF", "Sec"])
+	# Initialize training plot
+	train_plot = plt.figure()
+	axe = train_plot.add_subplot(111)
+	axe.set_title('TL-DeepSSM(T-Flank) Training')
+	sp_train, = axe.plot([],[],label='Training',ms=10,color='b',marker='o',ls='')
+	sp_val, = axe.plot([],[],label='Validation',ms=10,color='r',marker='o',ls='')
+	axe.set_xlabel('Epochs')
+	axe.set_xlim(0,tf_epochs+1)
+	axe.set_ylabel('Particle MSE')
+	axe.legend()
+	train_plot.savefig(model_dir + "training_plot_tf.png", dpi=300)
+	# initialize
+	t0 = time.time()
+	epochs = []
+	plot_train_losses = []
+	plot_val_losses = []
 	for e in range(1, tf_epochs + 1):
 		if sw_check_abort():
 			sw_message("Aborted")
@@ -465,8 +512,11 @@ def supervised_train_tl(config_file):
 		net.train()
 		tf_train_losses = []
 		tf_train_rel_losses = []
-
+		pred_particles = []
+		true_particles = []
+		train_names = []
 		for img, pca, mdl, names in train_loader:
+			train_names.extend(names)
 			opt.zero_grad()
 			img = img.to(device)
 			pca = pca.to(device)
@@ -482,6 +532,13 @@ def supervised_train_tl(config_file):
 			opt.step()
 			tf_train_losses.append(loss.item())
 			tf_train_rel_losses.append(train_rel_loss.item())
+			pred_particles.extend(pred_pt.detach().cpu().numpy())
+			true_particles.extend(mdl.detach().cpu().numpy())
+		train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names, model_dir + "examples/train_")
+		# test validation
+		pred_particles = []
+		true_particles = []
+		val_names = []
 
 		if ((e % eval_freq) == 0 or e == 1):
 			net.eval()
@@ -489,24 +546,37 @@ def supervised_train_tl(config_file):
 			tf_val_losses = []
 			tf_val_rel_losses = []
 			for img, pca, mdl, names in val_loader:
+				val_names.extend(names)
 				opt.zero_grad()
 				img = img.to(device)
 				pca = pca.to(device)
 				mdl = mdl.to(device)
 				[pred_pt, lat, lat_img] = net(mdl, img)
 				loss_tf = losses.MSE(lat_img, lat)
-				tf_val_rel_loss =  losses.MSE(lat_img, lat) / losses.MSE(lat_img * 0, lat)
+				tf_val_rel_loss = losses.MSE(lat_img, lat) / losses.MSE(lat_img * 0, lat)
 				tf_val_losses.append(loss_tf.item())
 				tf_val_rel_losses.append(tf_val_rel_loss.item())
+				pred_particles.extend(pred_pt.detach().cpu().numpy())
+				true_particles.extend(mdl.detach().cpu().numpy())
+			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), val_names, model_dir + "examples/validation_")
 			
 			# log
 			train_tf_err = np.mean(tf_train_losses)
 			train_rel_tf_err = np.mean(tf_train_rel_losses)
 			val_tf_err = np.mean(tf_val_losses)
 			val_rel_tf_err = np.mean(tf_val_rel_losses)
-			
-			log_print(logger, [e, scheduler.get_lr()[0], train_tf_err, train_rel_tf_err, val_tf_err, val_rel_tf_err, time.time()-t0])
+			log_print(logger, ["T-Flank", e, scheduler.get_lr()[0], train_tf_err, train_rel_tf_err, val_tf_err, val_rel_tf_err, time.time()-t0])
+			# plot
+			epochs.append(e)
+			plot_train_losses.append(train_tf_err)
+			plot_val_losses.append(val_tf_err)
+			sp_train.set_data(epochs, plot_train_losses)
+			sp_val.set_data(epochs, plot_val_losses)
+			axe.set_ylim(0,max(max(plot_train_losses), max(plot_val_losses))+3)
+			train_plot.canvas.draw()
+			train_plot.savefig(model_dir + "training_plot_tf.png")
 			t0 = time.time()
+	# save
 	torch.save(net.state_dict(), os.path.join(model_dir, 'final_model_tf.torch'))
 	# jointly train the model
 	joint_epochs = parameters['tl_net']['joint_epochs']
@@ -517,11 +587,23 @@ def supervised_train_tl(config_file):
 	for param in net.CorrespondenceEncoder.parameters():
 		param.requires_grad = True
 
-	log_print(logger,['##################################'])
-	log_print(logger,['Joint training of the full network...'])
-	log_print(logger,['##################################'])
-
-	log_print(logger, ["Epoch", "LR", "Train_Rel_Err_AE", "Val_Rel_Err_AE", "Train_Rel_Err_TF", "Val_Rel_Err_TF", "Sec"])
+	log_print(logger, ["Training_Stage", "Epoch", "LR", "Train_Rel_Err_AE", "Val_Rel_Err_AE", "Train_Rel_Err_TF", "Val_Rel_Err_TF", "Sec"])
+	# Initialize training plot
+	train_plot = plt.figure()
+	axe = train_plot.add_subplot(111)
+	axe.set_title('TL-DeepSSM(Joint) Training')
+	sp_train, = axe.plot([],[],label='Training',ms=10,color='b',marker='o',ls='')
+	sp_val, = axe.plot([],[],label='Validation',ms=10,color='r',marker='o',ls='')
+	axe.set_xlabel('Epochs')
+	axe.set_xlim(0,joint_epochs+1)
+	axe.set_ylabel('Particle MSE')
+	axe.legend()
+	train_plot.savefig(model_dir + "training_plot_joint.png", dpi=300)
+	# initialize
+	epochs = []
+	plot_train_losses = []
+	plot_val_losses = []
+	t0 = time.time()
 	for e in range(1, joint_epochs + 1):
 		if sw_check_abort():
 			sw_message("Aborted")
@@ -533,8 +615,12 @@ def supervised_train_tl(config_file):
 		net.train()
 		ae_train_rel_losses = []
 		tf_train_rel_losses = []
-		
+		joint_train_losses = []
+		pred_particles = []
+		true_particles = []
+		train_names = []
 		for img, pca, mdl, names in train_loader:
+			train_names.extend(names)
 			opt.zero_grad()
 			img = img.to(device)
 			pca = pca.to(device)
@@ -553,16 +639,23 @@ def supervised_train_tl(config_file):
 			loss = loss_ae  + alpha*loss_tf
 			loss.backward()
 			opt.step()
-			
+			joint_train_losses.append(loss.item())
 			ae_train_rel_losses.append(ae_train_rel_loss.item())
 			tf_train_rel_losses.append(tf_train_rel_loss.item())
-
+			pred_particles.extend(pred_pt.detach().cpu().numpy())
+			true_particles.extend(mdl.detach().cpu().numpy())
+		train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names, model_dir + "examples/train_")
 		# test validation
+		pred_particles = []
+		true_particles = []
+		val_names = []
 		if ((e % eval_freq) == 0 or e == 1):
 			net.eval()
 			ae_val_rel_losses = []
 			tf_val_rel_losses = []
+			joint_val_losses = []
 			for img, pca, mdl, names in val_loader:
+				val_names.extend(names)
 				opt.zero_grad()
 				img = img.to(device)
 				pca = pca.to(device)
@@ -573,16 +666,28 @@ def supervised_train_tl(config_file):
 				loss_tf = losses.MSE(lat_img, lat)
 				tf_val_rel_loss = losses.MSE(lat, lat_img) / losses.MSE(lat * 0, lat_img)
 				
+				joint_val_losses.append(loss_ae.item()+alpha*loss_tf.item())
 				ae_val_rel_losses.append(ae_val_rel_loss.item())
 				tf_val_rel_losses.append(tf_val_rel_loss.item())
+				pred_particles.extend(pred_pt.detach().cpu().numpy())
+				true_particles.extend(mdl.detach().cpu().numpy())
+			train_viz.write_examples(np.array(pred_particles), np.array(true_particles), val_names, model_dir + "examples/validation_")
 			
 			# log
 			train_rel_ae_err = np.mean(ae_train_rel_losses)
 			train_rel_tf_err = np.mean(tf_train_rel_losses)
 			val_rel_ae_err = np.mean(ae_val_rel_losses)
 			val_rel_tf_err = np.mean(tf_val_rel_losses)
-			
-			log_print(logger, [e, scheduler.get_lr()[0], train_rel_ae_err, val_rel_ae_err, train_rel_tf_err, val_rel_tf_err, time.time()-t0])
+			log_print(logger, ["Joint", e, scheduler.get_lr()[0], train_rel_ae_err, val_rel_ae_err, train_rel_tf_err, val_rel_tf_err, time.time()-t0])
+			# plot
+			epochs.append(e)
+			plot_train_losses.append(joint_train_losses)
+			plot_val_losses.append(joint_val_losses)
+			sp_train.set_data(epochs, plot_train_losses)
+			sp_val.set_data(epochs, plot_val_losses)
+			axe.set_ylim(0,max(max(plot_train_losses), max(plot_val_losses))+3)
+			train_plot.canvas.draw()
+			train_plot.savefig(model_dir + "training_plot_joint.png")
 			# save
 			val_rel_err = val_rel_ae_err + alpha*val_rel_tf_err
 			if val_rel_err < best_val_rel_error:
