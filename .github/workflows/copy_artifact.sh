@@ -21,11 +21,11 @@ if [[ "$PLATFORM" == "windows" ]]; then
     curl.exe --output libzstd-1.5.2-1-x86_64.pkg.tar.zst https://repo.msys2.org/msys/x86_64/libzstd-1.5.2-1-x86_64.pkg.tar.zst
     zstd -d libzstd-1.5.2-1-x86_64.pkg.tar.zst
     tar -xvf libzstd-1.5.2-1-x86_64.pkg.tar
-    mv usr/bin/msys-zstd-1.dll "C:\Program Files\Git\usr\bin\\"
-    curl.exe --output libxxhash-0.8.0-1-x86_64.pkg.tar.zst https://repo.msys2.org/msys/x86_64/libxxhash-0.8.1-1-x86_64.pkg.tar.zst
-    zstd -d libxxhash-0.8.0-1-x86_64.pkg.tar.zst
-    tar -xvf libxxhash-0.8.0-1-x86_64.pkg.tar
-    mv usr/bin/msys-xxhash-0.8.0.dll "C:\Program Files\Git\usr\bin\\"
+    mv usr/bin/msys-zstd-*.dll "C:\Program Files\Git\usr\bin\\"
+    curl.exe --output libxxhash-0.8.1-1-x86_64.pkg.tar.zst https://repo.msys2.org/msys/x86_64/libxxhash-0.8.1-1-x86_64.pkg.tar.zst
+    zstd -d libxxhash-0.8.1-1-x86_64.pkg.tar.zst
+    tar -xvf libxxhash-0.8.1-1-x86_64.pkg.tar
+    mv usr/bin/msys-xxhash-*.dll "C:\Program Files\Git\usr\bin\\"
     echo "rsync installed on windows runner"
 fi
 
