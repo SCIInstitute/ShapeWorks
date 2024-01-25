@@ -1478,6 +1478,23 @@ Preserved</string>
            </property>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QTableWidget" name="training_table"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="training_plot_3">
+           <property name="text">
+            <string>Training Plot Pixmap</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="training_plot_2">
+           <property name="text">
+            <string>Training Plot Pixmap</string>
+           </property>
+          </widget>
+         </item>
          <item row="3" column="0">
           <widget class="QLabel" name="training_plot">
            <property name="text">
@@ -1492,8 +1509,12 @@ Preserved</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QTableWidget" name="training_table"/>
+         <item row="6" column="0">
+          <widget class="QLabel" name="training_plot_4">
+           <property name="text">
+            <string>Training Plot Pixmap</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

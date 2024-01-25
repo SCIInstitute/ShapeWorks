@@ -726,6 +726,9 @@ ShapeList DeepSSMTool::get_shapes() { return shapes_; }
 void DeepSSMTool::load_plots() {
   violin_plot_ = load_plot("deepssm/augmentation/violin.png");
   training_plot_ = load_plot("deepssm/model/training_plot.png");
+  training_plot_tl1_ = load_plot("deepssm/model/training_plot_ae.png");
+  training_plot_tl2_ = load_plot("deepssm/model/training_plot_tl.png");
+  training_plot_tl3_ = load_plot("deepssm/model/training_plot_joint.png");
   resize_plots();
 }
 
@@ -740,7 +743,17 @@ QPixmap DeepSSMTool::load_plot(QString filename) {
 //---------------------------------------------------------------------------
 void DeepSSMTool::resize_plots() {
   set_plot(ui_->violin_plot, violin_plot_);
-  set_plot(ui_->training_plot, training_plot_);
+  if (ui_->tl_net_enabled->isChecked()) {
+    set_plot(ui_->training_plot_2, training_plot_tl1_);
+    set_plot(ui_->training_plot_3, training_plot_tl2_);
+    set_plot(ui_->training_plot_4, training_plot_tl3_);
+    set_plot(ui_->training_plot, QPixmap{});
+  } else {
+    set_plot(ui_->training_plot, training_plot_);
+    set_plot(ui_->training_plot_2, QPixmap{});
+    set_plot(ui_->training_plot_3, QPixmap{});
+    set_plot(ui_->training_plot_4, QPixmap{});
+  }
 }
 
 //---------------------------------------------------------------------------

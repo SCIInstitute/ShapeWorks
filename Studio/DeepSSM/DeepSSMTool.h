@@ -115,6 +115,10 @@ class DeepSSMTool : public QWidget {
   ShapeList shapes_;
   QPixmap violin_plot_;
   QPixmap training_plot_;
+  // training plots for TL mode
+  QPixmap training_plot_tl1_;
+  QPixmap training_plot_tl2_;
+  QPixmap training_plot_tl3_;
 };
 
 }  // namespace shapeworks
