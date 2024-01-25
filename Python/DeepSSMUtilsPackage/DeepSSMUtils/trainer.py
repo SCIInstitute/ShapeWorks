@@ -386,6 +386,12 @@ def supervised_train_tl(config_file):
 	mean_mdl = torch.mean(train_loader.dataset.mdl_target, 0).to(device)
 
 	for e in range(1, ae_epochs + 1):
+		if sw_check_abort():
+			sw_message("Aborted")
+			return
+		sw_message(f"Autoencoder Epoch {e}/{ae_epochs}")
+		sw_progress(e / (ae_epochs+1))
+
 		torch.cuda.empty_cache()
 		# train
 		net.train()
@@ -448,6 +454,12 @@ def supervised_train_tl(config_file):
 	log_print(logger, ["Epoch", "LR", "Train_Err_TF", "Train_Rel_Err_TF", "Val_Err_TF", "Val_Rel_Err_TF", "Sec"])
 
 	for e in range(1, tf_epochs + 1):
+		if sw_check_abort():
+			sw_message("Aborted")
+			return
+		sw_message(f"T-Flank Epoch {e}/{tf_epochs}")
+		sw_progress(e / (tf_epochs+1))
+
 		torch.cuda.empty_cache()
 		# train
 		net.train()
@@ -511,6 +523,12 @@ def supervised_train_tl(config_file):
 
 	log_print(logger, ["Epoch", "LR", "Train_Rel_Err_AE", "Val_Rel_Err_AE", "Train_Rel_Err_TF", "Val_Rel_Err_TF", "Sec"])
 	for e in range(1, joint_epochs + 1):
+		if sw_check_abort():
+			sw_message("Aborted")
+			return
+		sw_message(f"Joint Epoch {e}/{joint_epochs}")
+		sw_progress(e / (joint_epochs+1))
+
 		# train
 		net.train()
 		ae_train_rel_losses = []
