@@ -682,6 +682,8 @@ def supervised_train_tl(config_file):
 			train_rel_tf_err = np.mean(tf_train_rel_losses)
 			val_rel_ae_err = np.mean(ae_val_rel_losses)
 			val_rel_tf_err = np.mean(tf_val_rel_losses)
+			joint_train_losses = np.mean(joint_train_losses)
+			joint_val_losses = np.mean(joint_val_losses)
 			log_print(logger, ["Joint", e, scheduler.get_lr()[0], train_rel_ae_err, val_rel_ae_err, train_rel_tf_err, val_rel_tf_err, time.time()-t0])
 			# plot
 			epochs.append(e)
