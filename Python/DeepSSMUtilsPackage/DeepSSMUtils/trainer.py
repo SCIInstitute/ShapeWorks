@@ -371,6 +371,9 @@ def supervised_train_tl(config_file):
 	# train
 	print("Beginning training on device = " + device + '\n')
 	logger = open(model_dir + "train_log.csv", "w+")
+
+	ae_epochs = parameters['tl_net']['ae_epochs']
+
 	# Initialize training plot
 	train_plot = plt.figure()
 	axe = train_plot.add_subplot(111)
@@ -390,7 +393,6 @@ def supervised_train_tl(config_file):
 	best_val_rel_error = np.Inf
 	
 	# train the AE first
-	ae_epochs = parameters['tl_net']['ae_epochs']
 
 	log_print(logger, ["Training_Stage", "Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
 
