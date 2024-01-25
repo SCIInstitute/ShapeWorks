@@ -36,6 +36,25 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_DeepSSMTool;
   ui_->setupUi(this);
 
+  ui_->loss_function->setToolTip("Loss function for training and fine tuning");
+  ui_->training_epochs->setToolTip("Number of epochs to train the model");
+  ui_->training_learning_rate->setToolTip("Learning rate for training");
+  ui_->training_decay_learning->setToolTip("Decay learning rate");
+  ui_->training_fine_tuning->setToolTip("Fine tune the model");
+  ui_->training_fine_tuning_epochs->setToolTip("Number of epochs to fine tune the model");
+  ui_->training_fine_tuning_learning_rate->setToolTip("Learning rate for fine tuning");
+  ui_->training_batch_size->setToolTip("Batch size for training and fine tuning");
+  ui_->tl_net_enabled->setToolTip("Enable TL-DeepSSM network");
+  ui_->tl_ae_epochs->setToolTip("Number of epochs to train the autoencoder");
+  ui_->tl_tf_epochs->setToolTip("Number of epochs to train the T-flank");
+  ui_->tl_joint_epochs->setToolTip("Number of epochs to train the whole model");
+  ui_->tl_alpha->setToolTip(
+      "The weight applied to the T-flank with respect to the autoencoder loss when training the whole model.");
+  ui_->tl_ae_a->setToolTip("Focal loss parameter when calculating the autoencoder loss.");
+  ui_->tl_ae_c->setToolTip("Focal loss parameter when calculating the autoencoder loss.");
+  ui_->tl_lat_a->setToolTip("Focal loss parameter when calculating the T-flank loss.");
+  ui_->tl_lat_c->setToolTip("Focal loss parameter when calculating the T-flank loss.");
+
 #ifdef Q_OS_MACOS
   ui_->tab_widget->tabBar()->setMinimumWidth(300);
   ui_->tab_widget->setStyleSheet(
@@ -68,6 +87,11 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->validation_split, &QLineEdit::textChanged, this, [=]() { update_split(ui_->validation_split); });
   connect(ui_->testing_split, &QLineEdit::textChanged, this, [=]() { update_split(ui_->testing_split); });
+
+  ui_->tl_net_options->setVisible(false);
+
+  connect(ui_->tl_net_enabled, &QCheckBox::stateChanged, this,
+          [=]() { ui_->tl_net_options->setVisible(ui_->tl_net_enabled->isChecked()); });
 
   ui_->tab_widget->setCurrentIndex(0);
   tab_changed(0);
@@ -138,6 +162,17 @@ void DeepSSMTool::load_params() {
 
   ui_->prep_text_edit->setText(QString::fromStdString(params.get_prep_message()));
 
+  ui_->tl_net_enabled->setChecked(params.get_tl_net_enabled());
+  ui_->tl_net_options->setVisible(params.get_tl_net_enabled());
+  ui_->tl_ae_epochs->setText(QString::number(params.get_tl_net_ae_epochs()));
+  ui_->tl_tf_epochs->setText(QString::number(params.get_tl_net_tf_epochs()));
+  ui_->tl_joint_epochs->setText(QString::number(params.get_tl_net_joint_epochs()));
+  ui_->tl_alpha->setText(QString::number(params.get_tl_net_alpha()));
+  ui_->tl_ae_a->setText(QString::number(params.get_tl_net_a_ae()));
+  ui_->tl_ae_c->setText(QString::number(params.get_tl_net_c_ae()));
+  ui_->tl_lat_a->setText(QString::number(params.get_tl_net_a_lat()));
+  ui_->tl_lat_c->setText(QString::number(params.get_tl_net_c_lat()));
+
   update_panels();
   update_meshes();
 }
@@ -163,6 +198,17 @@ void DeepSSMTool::store_params() {
   params.set_training_fine_tuning_epochs(ui_->training_fine_tuning_epochs->text().toInt());
   params.set_training_batch_size(ui_->training_batch_size->text().toInt());
   params.set_training_fine_tuning_learning_rate(ui_->training_fine_tuning_learning_rate->text().toDouble());
+
+  params.set_tl_net_enabled(ui_->tl_net_enabled->isChecked());
+  params.set_tl_net_ae_epochs(ui_->tl_ae_epochs->text().toInt());
+  params.set_tl_net_tf_epochs(ui_->tl_tf_epochs->text().toInt());
+  params.set_tl_net_joint_epochs(ui_->tl_joint_epochs->text().toInt());
+  params.set_tl_net_alpha(ui_->tl_alpha->text().toDouble());
+  params.set_tl_net_a_ae(ui_->tl_ae_a->text().toDouble());
+  params.set_tl_net_c_ae(ui_->tl_ae_c->text().toDouble());
+  params.set_tl_net_a_lat(ui_->tl_lat_a->text().toDouble());
+  params.set_tl_net_c_lat(ui_->tl_lat_c->text().toDouble());
+
   params.save_to_project();
 }
 

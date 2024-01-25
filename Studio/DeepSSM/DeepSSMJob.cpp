@@ -255,11 +255,15 @@ void DeepSSMJob::run_training() {
   double fine_tune_learning_rate = params.get_training_fine_tuning_learning_rate();
   int num_dims = params.get_training_num_dims();
 
-  py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
+  py::object prepare_config_file = py_deep_ssm_utils.attr("prepare_config_file");
   SW_LOG("DeepSSM: Preparing Config File");
   std::string config_file = "deepssm/configuration.json";
   prepare_config_file(config_file, "model", num_dims, out_dir, loader_dir, aug_dir, epochs, learning_rate, decay_lr,
-                      fine_tune, fine_tune_epochs, fine_tune_learning_rate);
+                      fine_tune, fine_tune_epochs, fine_tune_learning_rate, params.get_loss_function(),
+                      params.get_tl_net_enabled(), params.get_tl_net_ae_epochs(), params.get_tl_net_tf_epochs(),
+                      params.get_tl_net_joint_epochs(), params.get_tl_net_alpha(), params.get_tl_net_a_ae(),
+                      params.get_tl_net_c_ae(), params.get_tl_net_a_lat(), params.get_tl_net_c_lat()
+  );
 
   SW_LOG("DeepSSM: Training");
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");

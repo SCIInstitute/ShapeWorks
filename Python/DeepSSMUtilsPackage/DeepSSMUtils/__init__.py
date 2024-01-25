@@ -11,6 +11,8 @@ from .run_utils import create_split, groom_training_shapes, groom_training_image
     run_data_augmentation, groom_val_test_images, prep_project_for_val_particles, groom_validation_shapes, \
     prepare_data_loaders, get_deepssm_dir, get_split_indices, optimize_training_particles
 
+from .config_file import prepare_config_file
+
 import torch
 
 
