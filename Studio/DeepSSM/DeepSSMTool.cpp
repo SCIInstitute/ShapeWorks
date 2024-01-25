@@ -328,6 +328,9 @@ void DeepSSMTool::update_panels() {
     ui_->run_button->setEnabled(enabled);
     ui_->run_button->setText("Run " + string);
   }
+
+  load_plots();
+  update_tables();
 }
 
 //---------------------------------------------------------------------------
