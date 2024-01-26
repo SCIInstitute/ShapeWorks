@@ -358,24 +358,35 @@ void DeepSSMParameters::restore_split_defaults() {
   params_.remove_entry(Keys::TRAINING_SPLIT);
   params_.remove_entry(Keys::VALIDATION_SPLIT);
   params_.remove_entry(Keys::TESTING_SPLIT);
+  params_.remove_entry(Keys::AUG_PERCENT_VARIABILITY);
+  params_.remove_entry(Keys::SPACING);
 }
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::restore_augmentation_defaults() {
   params_.remove_entry(Keys::AUG_NUM_SAMPLES);
-  params_.remove_entry(Keys::AUG_NUM_DIMS);
-  params_.remove_entry(Keys::AUG_PERCENT_VARIABILITY);
   params_.remove_entry(Keys::AUG_SAMPLER_TYPE);
 }
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::restore_training_defaults() {
+  params_.remove_entry(Keys::LOSS_FUNCTION);
   params_.remove_entry(Keys::TRAIN_EPOCHS);
   params_.remove_entry(Keys::TRAIN_LEARNING_RATE);
+  params_.remove_entry(Keys::TRAIN_BATCH_SIZE);
   params_.remove_entry(Keys::TRAIN_DECAY_LEARNING_RATE);
   params_.remove_entry(Keys::TRAIN_FINE_TUNING);
   params_.remove_entry(Keys::TRAIN_FINE_TUNING_EPOCHS);
-  params_.remove_entry(Keys::TRAIN_BATCH_SIZE);
   params_.remove_entry(Keys::TRAIN_FINE_TUNING_LEARNING_RATE);
+
+  params_.remove_entry(Keys::TL_NET_ENABLED);
+  params_.remove_entry(Keys::TL_NET_AE_EPOCHS);
+  params_.remove_entry(Keys::TL_NET_TF_EPOCHS);
+  params_.remove_entry(Keys::TL_NET_JOINT_EPOCHS);
+  params_.remove_entry(Keys::TL_NET_ALPHA);
+  params_.remove_entry(Keys::TL_NET_A_AE);
+  params_.remove_entry(Keys::TL_NET_C_AE);
+  params_.remove_entry(Keys::TL_NET_A_LAT);
+  params_.remove_entry(Keys::TL_NET_C_LAT);
 }
 }  // namespace shapeworks

@@ -173,6 +173,7 @@ void DeepSSMTool::load_params() {
   ui_->tl_lat_a->setText(QString::number(params.get_tl_net_a_lat()));
   ui_->tl_lat_c->setText(QString::number(params.get_tl_net_c_lat()));
 
+  ui_->loss_function->setCurrentText(QString::fromStdString(params.get_loss_function()));
   update_panels();
   update_meshes();
 }
@@ -208,6 +209,8 @@ void DeepSSMTool::store_params() {
   params.set_tl_net_c_ae(ui_->tl_ae_c->text().toDouble());
   params.set_tl_net_a_lat(ui_->tl_lat_a->text().toDouble());
   params.set_tl_net_c_lat(ui_->tl_lat_c->text().toDouble());
+
+  params.set_loss_function(ui_->loss_function->currentText().toStdString());
 
   params.save_to_project();
 }
