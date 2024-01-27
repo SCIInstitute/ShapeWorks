@@ -127,7 +127,9 @@ static std::vector<double> median_smooth_signal_intensities(std::vector<double> 
   for (int i = 0; i < intensities.size(); i++) {
     std::vector<double> local_intensities;
     for (int j = -2; j <= 2; j++) {
-      local_intensities.push_back(intensities[i + j]);
+      if (i + j >= 0 && i + j < intensities.size()) {
+        local_intensities.push_back(intensities[i + j]);
+      }
     }
     // compute median
     std::sort(local_intensities.begin(), local_intensities.end());
