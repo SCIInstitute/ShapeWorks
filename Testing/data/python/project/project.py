@@ -12,7 +12,7 @@ print(sw.Variant("10").as_str())
 print(p.get_parameters("project").as_map()["version"])
 project_params = p.get_parameters("project")
 project_params.set("version", sw.Variant("3"))
-print(project_params.get("version", sw.Variant("10")).as_str())
+print(project_params.get("version", "10"))
 print(project_params.as_map()["version"])
 
 subjects = p.get_subjects()

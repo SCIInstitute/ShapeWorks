@@ -176,6 +176,7 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
+  corner_annotation_->SetMinimumFontSize(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -818,8 +819,8 @@ void Viewer::reset_camera(std::array<double, 3> c) { renderer_->ResetCamera(); }
 //-----------------------------------------------------------------------------
 void Viewer::reset_camera() {
   slice_view_.update_camera();
-  renderer_->ResetCameraClippingRange();
   renderer_->ResetCamera();
+  renderer_->ResetCameraClippingRange();
   renderer_->GetRenderWindow()->Render();
 }
 

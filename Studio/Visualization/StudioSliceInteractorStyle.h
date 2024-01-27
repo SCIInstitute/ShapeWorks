@@ -22,24 +22,12 @@ class StudioSliceInteractorStyle : public vtkInteractorStyleImage {
 
   void OnLeftButtonDown() override;
   void OnRightButtonDown() override;
-
-  void OnKeyDown() override;
-
-  void WindowLevel() override;
-
-  /*
   void OnMouseWheelForward() override;
   void OnMouseWheelBackward() override;
+  void OnKeyDown() override;
+  void WindowLevel() override;
 
-  void Dolly() override;
-
-  void Rotate() override;
-
-  void OnMouseMove() override;
-*/
  protected:
-//  void Dolly(double factor) override;
-
  private:
   Lightbox* lightbox_;
 };

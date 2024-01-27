@@ -5,7 +5,7 @@ def MSE(predicted, ground_truth):
 
 def Focal(predicted, ground_truth, a = 1.32, c = 10):
 	'''
-	Emplioys general formulation of focal loss, the pred and groundtruth can either be PCA/latent space or the correspondences directly.
+	Employs general formulation of focal loss, the pred and groundtruth can either be PCA/latent space or the correspondences directly.
 	a = 0 results in standard MSE loss
 	'''
 	l = torch.abs(predicted - ground_truth)

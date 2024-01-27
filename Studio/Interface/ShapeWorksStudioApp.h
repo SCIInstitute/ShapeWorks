@@ -2,13 +2,13 @@
 
 #include <Data/PreferencesWindow.h>
 #include <Data/Telemetry.h>
+#include <Interface/CustomSlider.h>
 #include <Interface/LogWindow.h>
+#include <Interface/StudioLogger.h>
+#include <Interface/UpdateChecker.h>
 #include <Visualization/StudioVtkOutputWindow.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
-
-#include <Interface/StudioLogger.h>
-#include <Interface/UpdateChecker.h>
 
 #include <Eigen/Eigen>
 #include <QActionGroup>
@@ -22,7 +22,6 @@
 #include <QProgressBar>
 #include <QSpinBox>
 #include <QTimer>
-#include <Interface/CustomSlider.h>
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -41,7 +40,6 @@ class WheelEventForwarder;
 class StatusBarWidget;
 class PythonWorker;
 class CompareWidget;
-
 
 //! Main ShapeWorksStudio window
 /*!
@@ -112,6 +110,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_optimize_start();
   void handle_optimize_complete();
   void handle_reconstruction_complete();
+  void handle_reset_stats();
 
   void handle_display_setting_changed();
   void handle_glyph_changed();

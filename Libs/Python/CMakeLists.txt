@@ -1,6 +1,7 @@
 pybind11_add_module(shapeworks_py
   ShapeworksPython.cpp
   PythonAnalyze.cpp
+  PythonGroom.cpp
   )
 
 if(LINUX)
@@ -13,6 +14,7 @@ target_link_libraries(shapeworks_py PUBLIC
   Image
   Mesh
   Optimize
+  Groom
   Project
   Particles
   ${ITK_LIBRARIES}

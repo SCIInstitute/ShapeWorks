@@ -210,8 +210,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->feature_uniform_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::set_feature_uniform_scale);
 
   // glyph options signals/slots
-  connect(ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
-  connect(ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
+  connect(ui_->glyphs_visible_button, &QPushButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(ui_->surface_visible_button, &QPushButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
 
   preferences_.set_saved();
   enable_possible_actions();
@@ -447,11 +447,8 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged() {
     lightbox_->set_tile_layout(value, value);
   }
 
-  visualizer_->update_viewer_properties();
-
   update_scrollbar();
-
-  ui_->qvtkWidget->renderWindow()->Render();
+  on_vertical_scroll_bar_valueChanged();
 }
 
 //---------------------------------------------------------------------------
@@ -487,7 +484,7 @@ void ShapeWorksStudioApp::disable_all_actions() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::enable_possible_actions() {
   // export / save / new / open
-  bool reconstructed = session_->particles_present();
+  bool analysis_ready = session_->particles_present();
 
   bool original_present = session_->get_project()->get_originals_present();
 
@@ -496,10 +493,10 @@ void ShapeWorksStudioApp::enable_possible_actions() {
                       filename.endsWith(".swproj", Qt::CaseInsensitive);
   ui_->action_save_project->setEnabled(save_enabled);
   ui_->menu_save_project_as->setEnabled(true);
-  ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
-  ui_->actionExport_Eigenvalues->setEnabled(reconstructed);
-  ui_->actionExport_Eigenvectors->setEnabled(reconstructed);
-  ui_->actionExport_PCA_Mode_Points->setEnabled(reconstructed);
+  ui_->actionExport_PCA_Mesh->setEnabled(analysis_ready);
+  ui_->actionExport_Eigenvalues->setEnabled(analysis_ready);
+  ui_->actionExport_Eigenvectors->setEnabled(analysis_ready);
+  ui_->actionExport_PCA_Mode_Points->setEnabled(analysis_ready);
   ui_->action_new_project->setEnabled(true);
   ui_->action_open_project->setEnabled(true);
   ui_->action_import->setEnabled(true);
@@ -510,11 +507,11 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   ui_->action_groom_mode->setEnabled(original_present);
   ui_->action_optimize_mode->setEnabled(original_present);
   bool new_analysis = false;
-  if (!ui_->action_analysis_mode->isEnabled() && reconstructed) {
+  if (!ui_->action_analysis_mode->isEnabled() && analysis_ready) {
     new_analysis = true;
   }
-  ui_->action_analysis_mode->setEnabled(reconstructed);
-  ui_->action_deepssm_mode->setEnabled(reconstructed && session_->get_project()->get_images_present());
+  ui_->action_analysis_mode->setEnabled(analysis_ready);
+  ui_->action_deepssm_mode->setEnabled(session_->get_project()->get_images_present());
   // subtools
   data_tool_->enable_actions();
   groom_tool_->enable_actions();
@@ -697,7 +694,9 @@ void ShapeWorksStudioApp::message_callback(std::string str) {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress_with_message(int value, std::string str) {
   handle_progress(value);
-  handle_status(str);
+  if (str != "") {
+    handle_status(str);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -960,10 +959,12 @@ void ShapeWorksStudioApp::new_session() {
 
   connect(session_.data(), &Session::data_changed, this, &ShapeWorksStudioApp::handle_project_changed);
   connect(session_.data(), &Session::points_changed, this, &ShapeWorksStudioApp::handle_points_changed);
+  connect(session_.data(), &Session::reset_stats, this, &ShapeWorksStudioApp::handle_reset_stats);
   connect(session_.data(), &Session::update_display, this, &ShapeWorksStudioApp::handle_display_setting_changed);
   connect(session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
   connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
   connect(session_.data(), &Session::reinsert_shapes, this, [&]() { update_display(true); });
+  connect(session_.data(), &Session::save, this, &ShapeWorksStudioApp::on_action_save_project_triggered);
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
@@ -1058,7 +1059,6 @@ void ShapeWorksStudioApp::update_tool_mode() {
     session_->set_display_mode(DisplayMode::Reconstructed);
   } else {  // DATA
     ui_->stacked_widget->setCurrentWidget(data_tool_.data());
-    // ui_->stacked_widget->setCurrentIndex(DisplayMode::Original);
     ui_->controlsDock->setWindowTitle("Data");
     ui_->action_import_mode->setChecked(true);
     update_display();
@@ -1067,6 +1067,8 @@ void ShapeWorksStudioApp::update_tool_mode() {
   ui_->stacked_widget->widget(ui_->stacked_widget->currentIndex())
       ->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   ui_->stacked_widget->adjustSize();
+
+  update_view_combo();
 
   on_actionShow_Tool_Window_triggered();
 }
@@ -1224,14 +1226,7 @@ void ShapeWorksStudioApp::handle_points_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete() {
-  int num_domains = session_->get_domains_per_shape();
-  for (int i = 0; i < num_domains; i++) {
-    session_->get_mesh_manager()->get_surface_reconstructor(i)->resetReconstruct();
-  }
-  analysis_tool_->reset_stats();
-  analysis_tool_->initialize_mesh_warper();
-  session_->handle_clear_cache();
-  update_view_combo();
+  handle_reset_stats();
   ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Groomed);
   session_->set_display_mode(DisplayMode::Groomed);
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
@@ -1252,6 +1247,22 @@ void ShapeWorksStudioApp::handle_reconstruction_complete() {
   visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
   visualizer_->update_lut();
   update_display(true);
+  enable_possible_actions();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_reset_stats() {
+  int num_domains = session_->get_domains_per_shape();
+  for (int i = 0; i < num_domains; i++) {
+    session_->get_mesh_manager()->get_surface_reconstructor(i)->resetReconstruct();
+  }
+  analysis_tool_->reset_stats();
+  analysis_tool_->initialize_mesh_warper();
+  session_->handle_clear_cache();
+  update_view_combo();
+  update_display();
+  visualizer_->update_samples();
+  handle_glyph_changed();
   enable_possible_actions();
 }
 
@@ -1313,9 +1324,6 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   visualizer_->set_domain_particle_visibilities(domains_to_display);
 
   visualizer_->update_viewer_properties();
-
-  // ideally we should only call this for some changes since it is slower
-  update_display(true);
 }
 
 //---------------------------------------------------------------------------
@@ -1532,6 +1540,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   create_glyph_submenu();
   create_iso_submenu();
   handle_glyph_changed();
+  update_display(true);
   handle_progress(100);
   SW_LOG("Project loaded: " + filename.toStdString());
 }
@@ -2116,6 +2125,11 @@ void ShapeWorksStudioApp::reset_num_viewers() {
 
   if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
     size_t num_samples = session_->get_shapes().size();
+
+    if (session_->get_tool_state() == Session::DEEPSSM_C) {
+      num_samples = deepssm_tool_->get_shapes().size();
+    }
+
     int value = 4;
     if (num_samples == 1) {
       value = 0;  // single

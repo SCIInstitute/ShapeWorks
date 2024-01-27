@@ -1,5 +1,6 @@
 // shapeworks
 #include "StudioMesh.h"
+
 #include <StringUtils.h>
 
 // itk
@@ -96,7 +97,8 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
   }
 
   if (num_points != scalar_values.size()) {
-    std::cerr << "Warning, mismatch of points and scalar values\n";
+    std::cerr << "Warning, mismatch of points and scalar values (num_points = " << num_points
+              << ", scalar_values.size() = " << scalar_values.size() << std::endl;
     return;
   }
 
@@ -108,7 +110,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
   point_locator->SetDivisions(100, 100, 100);
   point_locator->BuildLocator();
 
-  if (!poly_data_) {
+  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0) {
     return;
   }
 
@@ -184,7 +186,7 @@ double StudioMesh::get_largest_dimension_size() {
 
 //---------------------------------------------------------------------------
 vtkFloatArray* StudioMesh::get_or_create_array(std::string name, float default_value) {
-  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0 || !poly_data_->GetPointData() ) {
+  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0 || !poly_data_->GetPointData()) {
     return nullptr;
   }
   auto result = poly_data_->GetPointData()->GetArray(name.c_str());

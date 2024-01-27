@@ -33,8 +33,6 @@ class LandmarkDefinition {
  */
 class Project {
  public:
-  using StringMap = std::map<std::string, std::string>;
-
   Project();
   ~Project();
 
@@ -42,10 +40,13 @@ class Project {
   bool load(const std::string& filename);
 
   //! Save to project file
-  bool save(const std::string& filename);
+  bool save(const std::string& filename = "");
 
   //! Set the project path
   void set_project_path(const std::string& path);
+
+  //! Return the project path
+  std::string get_project_path();
 
   //! Return the filename
   std::string get_filename();
@@ -73,6 +74,9 @@ class Project {
 
   //! Return the Subjects (as a reference)
   std::vector<std::shared_ptr<Subject>>& get_subjects();
+
+  //! Return the non-excluded Subjects (as a reference)
+  std::vector<std::shared_ptr<Subject>> get_non_excluded_subjects();
 
   //! Set the Subjects
   void set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects);
@@ -169,8 +173,6 @@ class Project {
   std::string get_next_landmark_color(int domain_id);
 
   std::vector<std::shared_ptr<Subject>> subjects_;
-
-  bool loaded_{false};
 
   std::string filename_;
   std::string project_path_;

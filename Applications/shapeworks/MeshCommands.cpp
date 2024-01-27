@@ -1469,6 +1469,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
       movingPoints.resize(3, numParticles);
       movingPoints.transposeInPlace();
       Mesh output = warper.build_mesh(movingPoints);
+      SW_DEBUG("Writing mesh {} with {} points", filenm, output.numPoints());
       output.write(filenm);
       if (warp_along_with_landmarks) {
         std::string warped_landmarks_filename = targetPointsFilenames[i];

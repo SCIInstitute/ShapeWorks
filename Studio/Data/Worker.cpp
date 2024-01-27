@@ -38,7 +38,7 @@ void Worker::process() {
     job_->run();
     job_->set_complete(true);
   } catch (std::exception& e) {
-    SW_ERROR(e.what());
+    SW_ERROR("{}", e.what());
   }
   if (job_->is_aborted()) {
     SW_LOG(job_->get_abort_message().toStdString());

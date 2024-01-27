@@ -189,8 +189,8 @@ void SliceView::update_camera() {
   }
 
   renderer->GetActiveCamera()->SetParallelProjection(1);
-  renderer->ResetCameraClippingRange();
   renderer->ResetCamera();
+  renderer->ResetCameraClippingRange();
   update_extent();
 }
 
@@ -322,9 +322,9 @@ void SliceView::set_slice_number(int slice) {
   current_slice_number_ = std::max(current_slice_number_, slice_mapper_->GetSliceNumberMinValue());
 
   slice_mapper_->SetSliceNumber(current_slice_number_);
-  viewer_->get_renderer()->GetRenderWindow()->Render();
   update_extent();
   viewer_->update_points();
+  viewer_->get_renderer()->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------

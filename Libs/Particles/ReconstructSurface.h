@@ -23,15 +23,15 @@ public:
   ReconstructSurface() = default;
   ReconstructSurface(const std::string &denseFile, const std::string &sparseFile, const std::string &goodPointsFile);
 
-  double computeAverageDistanceToNeighbors(Mesh::MeshPoints points, std::vector<int> particlesIndices);
+  double computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points, std::vector<int> particlesIndices);
 
-  void checkMapping(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints);
+  void checkMapping(TransformTypePtr transform, vtkSmartPointer<vtkPoints> sourcePoints, vtkSmartPointer<vtkPoints> targetPoints);
 
   void generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>& outputMesh);
 
   Mesh getMesh(PointArray localPoints);
 
-  Mesh::MeshPoints convertToImageCoordinates(Mesh::MeshPoints particles, const Vector& spacing, const Point3& origin);
+  vtkSmartPointer<vtkPoints> convertToImageCoordinates(vtkSmartPointer<vtkPoints> particles, const Vector& spacing, const Point3& origin);
 
   int computeMedianShape(std::vector<Eigen::MatrixXd>& shapeList);
 
@@ -97,7 +97,7 @@ private:
   std::vector<std::string> worldPointsFiles;
   std::vector<std::string> distanceTransformFiles;
   vtkSmartPointer<vtkPolyData> denseMean;
-  Mesh::MeshPoints sparseMean;
+  vtkSmartPointer<vtkPoints> sparseMean;
   std::vector<bool> goodPoints;
   std::string outPrefix;
   std::string outPath;
@@ -116,7 +116,7 @@ private:
   float maxVarianceCaptured = 0;
   float maxAngleDegrees = 0;
 
-  Mesh::MeshPoints setSparseMean(const std::string& sparsePath);
+  vtkSmartPointer<vtkPoints> setSparseMean(const std::string& sparsePath);
   std::vector<bool> setGoodPoints(const std::string& pointsPath);
   std::vector<PointArray> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);
   std::vector<PointArray> setWorldPointsFiles(const std::vector<std::string> worldPointsFiles);

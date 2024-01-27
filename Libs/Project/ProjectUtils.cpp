@@ -1,10 +1,9 @@
 #include "ProjectUtils.h"
 
+#include <Logging.h>
 #include <Mesh/MeshUtils.h>
 #include <Project.h>
 #include <StringUtils.h>
-
-#include <Logging.h>
 
 namespace shapeworks {
 
@@ -32,6 +31,16 @@ vtkSmartPointer<vtkTransform> shapeworks::ProjectUtils::convert_transform(std::v
     transform->SetMatrix(matrix);
   }
   return transform;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> ProjectUtils::convert_transform(std::string string) {
+  std::istringstream ss(string);
+  std::vector<double> values;
+  for (double value = 0; ss >> value;) {
+    values.push_back(value);
+  }
+  return convert_transform(values);
 }
 
 //---------------------------------------------------------------------------
@@ -284,6 +293,11 @@ static void assign_keys(StringMap& j, std::vector<std::string> prefixes, std::ve
   }
   auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {
+    SW_DEBUG("filename size: " + std::to_string(filenames.size()));
+    for (auto& filename : filenames) {
+      SW_DEBUG("filename: " + filename);
+    }
+
     throw std::invalid_argument(prefix + " filenames and number of domains mismatch (" +
                                 std::to_string(filenames.size()) + " vs " + std::to_string(domains.size()) + ")");
   }
