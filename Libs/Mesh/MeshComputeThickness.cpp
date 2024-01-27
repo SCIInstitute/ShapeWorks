@@ -677,7 +677,7 @@ void summarize_internal_intensities(Mesh& outer_mesh, Mesh& inner_mesh, Image& i
     double count = 0;
 
     while (outer_dt.evaluate(point) > 0) {
-      if (inner_dt.evaluate(point) > spacing && image.isInside(point)) {
+        if (inner_dt.isInside(point) && inner_dt.evaluate(point) > spacing && image.isInside(point)) {
         double value = image.evaluate(point);
         max_value = std::max<double>(max_value, value);
         min_value = std::min<double>(min_value, value);
