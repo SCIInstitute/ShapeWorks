@@ -2468,6 +2468,8 @@
 <span class="k">using</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="n">GenericTransform</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span>
 <span class="n">TransformPtr</span><span class="w"> </span><span class="nf">createTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Matrix33</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mat</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">translate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeVector</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}));</span>
 
+<span class="n">TransformPtr</span><span class="w"> </span><span class="nf">convert_to_image_transform</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtk_transform</span><span class="p">);</span>
+
 <span class="n">Plane</span><span class="w"> </span><span class="nf">makePlane</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
 <span class="n">Plane</span><span class="w"> </span><span class="nf">makePlane</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p0</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p2</span><span class="p">);</span>
 
@@ -2693,7 +2695,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:26 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

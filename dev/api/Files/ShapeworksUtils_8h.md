@@ -17,7 +17,7 @@ title: Libs/Common/ShapeworksUtils.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::ShapeworksUtils](../Classes/classshapeworks_1_1ShapeworksUtils.md)**  |
+| class | **[shapeworks::ShapeWorksUtils](../Classes/classshapeworks_1_1ShapeWorksUtils.md)**  |
 
 
 
@@ -27,51 +27,55 @@ title: Libs/Common/ShapeworksUtils.h
 ```cpp
 #pragma once
 
-#include "Shapeworks.h"
-
-#include <vtkSmartPointer.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 
 #include <chrono>
 #include <random>
 
+#include "Shapeworks.h"
+
 namespace shapeworks {
 
-class ShapeworksUtils
-{
+class ShapeWorksUtils {
   using time_point = std::chrono::time_point<std::chrono::steady_clock>;
 
-public:
-
+ public:
   static time_point now() { return std::chrono::steady_clock::now(); }
 
   static double elapsed(time_point start, time_point end, bool print_elapsed = true);
 
-  static unsigned rngSeed() { return rngSeed_; }
+  static unsigned get_rng_seed() { return rng_seed_; }
 
-  static void setRngSeed(const unsigned seed);
+  static void set_rng_seed(const unsigned seed);
 
-  static unsigned generateNumber() { return mt_(); }
-
-  // TODO: in C++17 this is a standard function
-  static bool is_directory(const std::string &pathname);
+  static unsigned get_random_number() { return mt_(); }
 
   // TODO: in C++17 this is a standard function
-  static bool exists(const std::string& filename);
+  static bool is_directory(const std::string& pathname);
 
-  static Matrix33 getMatrix(const vtkSmartPointer<vtkMatrix4x4>& mat);
-  static Vector3 getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat);
+  // TODO: in C++17 this is a standard function
+  static bool file_exists(const std::string& filename);
 
-private:
-  static unsigned rngSeed_;
+  static void setup_console_logging(bool show_progress, bool xml_status);
+
+  static void set_progress_callback(void* ptr);
+
+  static void setup_threads();
+
+  static Matrix33 convert_matrix(const vtkSmartPointer<vtkMatrix4x4>& mat);
+  static Vector3 get_offset(const vtkSmartPointer<vtkMatrix4x4>& mat);
+
+ private:
+  static unsigned rng_seed_;
   static std::mt19937 mt_;
 };
 
-} // shapeworks
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

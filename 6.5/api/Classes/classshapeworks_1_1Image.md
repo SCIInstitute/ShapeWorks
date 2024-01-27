@@ -71,6 +71,7 @@ title: shapeworks::Image
 | TransformPtr | **[createRigidRegistrationTransform](../Classes/classshapeworks_1_1Image.md#function-createrigidregistrationtransform)**(const [Image](../Classes/classshapeworks_1_1Image.md) & target_dt, float isoValue =0.0, unsigned iterations =20) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyTransform](../Classes/classshapeworks_1_1Image.md#function-applytransform)**(const TransformPtr transform, InterpolationType interp =Linear)<br>applies the given transformation to the image by using resampling filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyTransform](../Classes/classshapeworks_1_1Image.md#function-applytransform)**(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor) |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyTransform](../Classes/classshapeworks_1_1Image.md#function-applytransform)**(const TransformPtr transform, const [Image](../Classes/classshapeworks_1_1Image.md) & referenceImage, InterpolationType interp =Linear)<br>applies the given transformation to the image by using resampling filter with reference image  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[extractLabel](../Classes/classshapeworks_1_1Image.md#function-extractlabel)**(const PixelType label =1.0) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[closeHoles](../Classes/classshapeworks_1_1Image.md#function-closeholes)**(const PixelType foreground =0.0)<br>closes holes in a given volume, default foreground value assumes a binary volume  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[binarize](../Classes/classshapeworks_1_1Image.md#function-binarize)**(PixelType minVal =0.0, PixelType maxVal =std::numeric_limits< PixelType >::[max](../Classes/classshapeworks_1_1Image.md#function-max)(), PixelType innerVal =1.0, PixelType outerVal =0.0)<br>threholds image into binary label based on upper and lower intensity bounds given by user  |
@@ -612,6 +613,18 @@ Image & applyTransform(
 applies the given transformation to the image by using resampling filter with new origin, dims, spacing and direction values 
 
 
+### function applyTransform
+
+```cpp
+Image & applyTransform(
+    const TransformPtr transform,
+    const Image & referenceImage,
+    InterpolationType interp =Linear
+)
+```
+
+applies the given transformation to the image by using resampling filter with reference image 
+
 ### function extractLabel
 
 ```cpp
@@ -1054,4 +1067,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

@@ -17,7 +17,7 @@ Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.m
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double ) |
+| void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double , QString  ="") |
 | void | **[finished](../Classes/classshapeworks_1_1Job.md#signal-finished)**() |
 
 ## Public Functions
@@ -45,7 +45,8 @@ Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.m
 
 ```cpp
 void progress(
-    double 
+    double ,
+    QString  =""
 )
 ```
 
@@ -181,4 +182,4 @@ get quiet mode
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:26 +0000

@@ -27,24 +27,23 @@ title: Libs/Mesh/MeshUtils.h
 ```cpp
 #pragma once
 
-#include "ShapeworksUtils.h"
-#include "Mesh.h"
 #include "Eigen/Core"
 #include "Eigen/Dense"
+#include "Mesh.h"
+#include "ShapeworksUtils.h"
 
 class vtkActor;
 
 namespace shapeworks {
 
-class MeshUtils
-{
-public:
-
-  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const Mesh source,
-                                                                const Mesh target,
+class MeshUtils {
+ public:
+  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const Mesh source, const Mesh target,
                                                                 Mesh::AlignmentType align,
                                                                 const unsigned iterations = 20,
                                                                 bool meshTransform = false);
+
+  static Mesh create_mesh_from_file(std::string filename, double iso_value = 0.5);
 
   static Mesh threadSafeReadMesh(std::string filename);
 
@@ -54,8 +53,9 @@ public:
 
   static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center = false);
 
-  static size_t findReferenceMesh(std::vector<Mesh> &meshes);
+  static PhysicalRegion boundingBox(const std::vector<Mesh>& meshes, bool center = false);
 
+  static int findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size = -1);
 
   static Mesh boundaryLoopExtractor(Mesh mesh);
 
@@ -70,13 +70,12 @@ public:
   void visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh);
 
   vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
-
 };
 
-} // shapeworks
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

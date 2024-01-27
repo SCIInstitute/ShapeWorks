@@ -49,24 +49,12 @@ class StudioSliceInteractorStyle : public vtkInteractorStyleImage {
 
   void OnLeftButtonDown() override;
   void OnRightButtonDown() override;
-
-  void OnKeyDown() override;
-
-  void WindowLevel() override;
-
-  /*
   void OnMouseWheelForward() override;
   void OnMouseWheelBackward() override;
+  void OnKeyDown() override;
+  void WindowLevel() override;
 
-  void Dolly() override;
-
-  void Rotate() override;
-
-  void OnMouseMove() override;
-*/
  protected:
-//  void Dolly(double factor) override;
-
  private:
   Lightbox* lightbox_;
 };
@@ -77,4 +65,4 @@ class StudioSliceInteractorStyle : public vtkInteractorStyleImage {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:28 +0000

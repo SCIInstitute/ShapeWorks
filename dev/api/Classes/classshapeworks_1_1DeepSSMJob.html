@@ -2407,15 +2407,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#enum-filetype" class="md-nav__link">
-    enum FileType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#enum-splittype" class="md-nav__link">
-    enum SplitType
+  <a href="#enum-prepstep" class="md-nav__link">
+    enum PrepStep
   </a>
   
 </li>
@@ -2462,6 +2455,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-run_prep" class="md-nav__link">
+    function run_prep
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-run_augmentation" class="md-nav__link">
     function run_augmentation
   </a>
@@ -2490,8 +2490,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_list" class="md-nav__link">
-    function get_list
+  <a href="#function-get_prep_message" class="md-nav__link">
+    function get_prep_message
   </a>
   
 </li>
@@ -2533,12 +2533,8 @@
 </thead>
 <tbody>
 <tr>
-<td>enum class</td>
-<td ID_="ID," IMAGE_="IMAGE," PARTICLES="PARTICLES"><strong><a href="classshapeworks_1_1DeepSSMJob.html#enum-filetype">FileType</a></strong></td>
-</tr>
-<tr>
-<td>enum class</td>
-<td TEST="TEST" TRAIN_="TRAIN,"><strong><a href="classshapeworks_1_1DeepSSMJob.html#enum-splittype">SplitType</a></strong></td>
+<td>enum</td>
+<td GROOM_TRAINING="GROOM_TRAINING"><strong><a href="classshapeworks_1_1DeepSSMJob.html#enum-prepstep">PrepStep</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2553,7 +2549,7 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-deepssmjob">DeepSSMJob</a></strong>(ProjectHandle project, DeepSSMTool::ToolMode tool_mode)</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-deepssmjob">DeepSSMJob</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session, DeepSSMTool::ToolMode tool_mode)</td>
 </tr>
 <tr>
 <td></td>
@@ -2566,6 +2562,10 @@
 <tr>
 <td>virtual QString</td>
 <td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-name">name</a></strong>() override<br>get the name of the job</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-run-prep">run_prep</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2584,8 +2584,8 @@
 <td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-python-message">python_message</a></strong>(std::string str)</td>
 </tr>
 <tr>
-<td>std::vector&lt; std::string &gt;</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-get-list">get_list</a></strong>(FileType file_type, SplitType split_type)</td>
+<td>QString</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-get-prep-message">get_prep_message</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -2601,7 +2601,7 @@
 <tbody>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Job.html#signal-progress">progress</a></strong>(double )</td>
+<td><strong><a href="classshapeworks_1_1Job.html#signal-progress">progress</a></strong>(double , QString  ="")</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2674,7 +2674,7 @@
 <p>Qt Wrapper for DeepSSM. </p>
 <p>The <a href="classshapeworks_1_1DeepSSMJob.html">DeepSSMJob</a> class wraps the functionality for DeepSSM as a Studio <a href="classshapeworks_1_1Job.html">Job</a> object </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="enum-filetype">enum FileType</h3>
+<h3 id="enum-prepstep">enum PrepStep</h3>
 <table>
 <thead>
 <tr>
@@ -2685,40 +2685,33 @@
 </thead>
 <tbody>
 <tr>
-<td>ID</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>IMAGE</td>
-<td></td>
+<td>GROOM_TRAINING</td>
+<td>0</td>
 <td></td>
 </tr>
 <tr>
-<td>PARTICLES</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="enum-splittype">enum SplitType</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TRAIN</td>
-<td></td>
+<td>OPTIMIZE_TRAINING</td>
+<td>1</td>
 <td></td>
 </tr>
 <tr>
-<td>TEST</td>
+<td>GROOM_TRAINING_IMAGES</td>
+<td>2</td>
 <td></td>
+</tr>
+<tr>
+<td>GROOM_VAL_IMAGES</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>OPTIMIZE_VALIDATION</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td>DONE</td>
+<td>5</td>
 <td></td>
 </tr>
 </tbody>
@@ -2726,7 +2719,7 @@
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-deepssmjob">function DeepSSMJob</h3>
 <div class="highlight"><pre><span></span><code><span class="n">DeepSSMJob</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span>
 <span class="w">    </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">tool_mode</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2743,6 +2736,9 @@
 </code></pre></div>
 <p>get the name of the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-name">shapeworks::Job::name</a></p>
+<h3 id="function-run_prep">function run_prep</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_prep</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-run_augmentation">function run_augmentation</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_augmentation</span><span class="p">()</span>
 </code></pre></div>
@@ -2757,14 +2753,11 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-get_list">function get_list</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_list</span><span class="p">(</span>
-<span class="w">    </span><span class="n">FileType</span><span class="w"> </span><span class="n">file_type</span><span class="p">,</span>
-<span class="w">    </span><span class="n">SplitType</span><span class="w"> </span><span class="n">split_type</span>
-<span class="p">)</span>
+<h3 id="function-get_prep_message">function get_prep_message</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_prep_message</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:24 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:26 +0000</p>
 
               
             </article>

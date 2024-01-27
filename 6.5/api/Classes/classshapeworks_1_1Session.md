@@ -36,6 +36,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[planes_changed](../Classes/classshapeworks_1_1Session.md#signal-planes-changed)**() |
 | void | **[ffc_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-changed)**() |
 | void | **[update_display](../Classes/classshapeworks_1_1Session.md#signal-update-display)**() |
+| void | **[reset_stats](../Classes/classshapeworks_1_1Session.md#signal-reset-stats)**() |
 | void | **[new_mesh](../Classes/classshapeworks_1_1Session.md#signal-new-mesh)**() |
 | void | **[feature_range_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-range-changed)**() |
 | void | **[update_view_mode](../Classes/classshapeworks_1_1Session.md#signal-update-view-mode)**() |
@@ -44,6 +45,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[repaint](../Classes/classshapeworks_1_1Session.md#signal-repaint)**() |
 | void | **[reinsert_shapes](../Classes/classshapeworks_1_1Session.md#signal-reinsert-shapes)**() |
 | void | **[annotations_changed](../Classes/classshapeworks_1_1Session.md#signal-annotations-changed)**() |
+| void | **[save](../Classes/classshapeworks_1_1Session.md#signal-save)**() |
 
 ## Public Functions
 
@@ -97,6 +99,9 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[trigger_planes_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-planes-changed)**() |
 | void | **[trigger_ffc_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-ffc-changed)**() |
 | void | **[trigger_annotations_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-annotations-changed)**() |
+| void | **[trigger_save](../Classes/classshapeworks_1_1Session.md#function-trigger-save)**() |
+| void | **[trigger_data_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-data-changed)**() |
+| void | **[reload_particles](../Classes/classshapeworks_1_1Session.md#function-reload-particles)**() |
 | void | **[set_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-set-active-landmark-domain)**(int id) |
 | int | **[get_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-get-active-landmark-domain)**() |
 | void | **[set_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-set-placing-landmark)**(int id) |
@@ -275,6 +280,13 @@ void update_display()
 ```
 
 
+### signal reset_stats
+
+```cpp
+void reset_stats()
+```
+
+
 ### signal new_mesh
 
 ```cpp
@@ -328,6 +340,13 @@ void reinsert_shapes()
 
 ```cpp
 void annotations_changed()
+```
+
+
+### signal save
+
+```cpp
+void save()
 ```
 
 
@@ -724,6 +743,27 @@ void trigger_ffc_changed()
 
 ```cpp
 void trigger_annotations_changed()
+```
+
+
+### function trigger_save
+
+```cpp
+void trigger_save()
+```
+
+
+### function trigger_data_changed
+
+```cpp
+void trigger_data_changed()
+```
+
+
+### function reload_particles
+
+```cpp
+void reload_particles()
 ```
 
 
@@ -1279,4 +1319,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

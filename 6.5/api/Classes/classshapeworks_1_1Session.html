@@ -2511,6 +2511,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#signal-reset_stats" class="md-nav__link">
+    signal reset_stats
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#signal-new_mesh" class="md-nav__link">
     signal new_mesh
   </a>
@@ -2562,6 +2569,13 @@
           <li class="md-nav__item">
   <a href="#signal-annotations_changed" class="md-nav__link">
     signal annotations_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-save" class="md-nav__link">
+    signal save
   </a>
   
 </li>
@@ -2911,6 +2925,27 @@
           <li class="md-nav__item">
   <a href="#function-trigger_annotations_changed" class="md-nav__link">
     function trigger_annotations_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-trigger_save" class="md-nav__link">
+    function trigger_save
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-trigger_data_changed" class="md-nav__link">
+    function trigger_data_changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-reload_particles" class="md-nav__link">
+    function reload_particles
   </a>
   
 </li>
@@ -3508,6 +3543,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-reset-stats">reset_stats</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#signal-new-mesh">new_mesh</a></strong>()</td>
 </tr>
 <tr>
@@ -3537,6 +3576,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#signal-annotations-changed">annotations_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-save">save</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3740,6 +3783,18 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-trigger-annotations-changed">trigger_annotations_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-save">trigger_save</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-data-changed">trigger_data_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-reload-particles">reload_particles</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4078,6 +4133,9 @@
 <h3 id="signal-update_display">signal update_display</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_display</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="signal-reset_stats">signal reset_stats</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_stats</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-new_mesh">signal new_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_mesh</span><span class="p">()</span>
 </code></pre></div>
@@ -4101,6 +4159,9 @@
 </code></pre></div>
 <h3 id="signal-annotations_changed">signal annotations_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">annotations_changed</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="signal-save">signal save</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">save</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-session">function Session</h3>
@@ -4304,6 +4365,15 @@
 </code></pre></div>
 <h3 id="function-trigger_annotations_changed">function trigger_annotations_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_annotations_changed</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-trigger_save">function trigger_save</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_save</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-trigger_data_changed">function trigger_data_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_data_changed</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-reload_particles">function reload_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reload_particles</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_active_landmark_domain">function set_active_landmark_domain</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_active_landmark_domain</span><span class="p">(</span>
@@ -4579,7 +4649,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:25 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

@@ -20,6 +20,7 @@ physical bounds of a 3d region of space
 | | **[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md#function-physicalregion)**(const [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & ) =default |
 | | **[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md#function-physicalregion)**(const Point & _min, const Point & _max) |
 | | **[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md#function-physicalregion)**() |
+| | **[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md#function-physicalregion)**(std::string str) |
 | bool | **[operator==](../Classes/classshapeworks_1_1PhysicalRegion.md#function-operator==)**(const [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & other) const |
 | bool | **[valid](../Classes/classshapeworks_1_1PhysicalRegion.md#function-valid)**() const<br>verified min/max do not create an inverted or an empty region  |
 | Point | **[origin](../Classes/classshapeworks_1_1PhysicalRegion.md#function-origin)**() const |
@@ -28,6 +29,7 @@ physical bounds of a 3d region of space
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & | **[expand](../Classes/classshapeworks_1_1PhysicalRegion.md#function-expand)**(const [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & other)<br>expand this region to include the largest portions of both  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & | **[expand](../Classes/classshapeworks_1_1PhysicalRegion.md#function-expand)**(const Point & pt)<br>expand this region to include this point  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & | **[pad](../Classes/classshapeworks_1_1PhysicalRegion.md#function-pad)**(double padding)<br>uniformly grows or shrinks the region by the specified amount  |
+| std::string | **[to_string](../Classes/classshapeworks_1_1PhysicalRegion.md#function-to-string)**() const<br>serialize to a string  |
 
 ## Public Attributes
 
@@ -61,6 +63,15 @@ inline PhysicalRegion(
 
 ```cpp
 inline PhysicalRegion()
+```
+
+
+### function PhysicalRegion
+
+```cpp
+PhysicalRegion(
+    std::string str
+)
 ```
 
 
@@ -135,6 +146,14 @@ PhysicalRegion & pad(
 
 uniformly grows or shrinks the region by the specified amount 
 
+### function to_string
+
+```cpp
+std::string to_string() const
+```
+
+serialize to a string 
+
 ## Public Attributes Documentation
 
 ### variable min
@@ -153,4 +172,4 @@ Point max;
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

@@ -2724,11 +2724,11 @@
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-computeaveragedistancetoneighbors">computeAverageDistanceToNeighbors</a></strong>(Mesh::MeshPoints points, std::vector&lt; int &gt; particlesIndices)</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-computeaveragedistancetoneighbors">computeAverageDistanceToNeighbors</a></strong>(vtkSmartPointer&lt; vtkPoints &gt; points, std::vector&lt; int &gt; particlesIndices)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-checkmapping">checkMapping</a></strong>(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints)</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-checkmapping">checkMapping</a></strong>(TransformTypePtr transform, vtkSmartPointer&lt; vtkPoints &gt; sourcePoints, vtkSmartPointer&lt; vtkPoints &gt; targetPoints)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2739,8 +2739,8 @@
 <td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-getmesh">getMesh</a></strong>(PointArray localPoints)</td>
 </tr>
 <tr>
-<td>Mesh::MeshPoints</td>
-<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-converttoimagecoordinates">convertToImageCoordinates</a></strong>(Mesh::MeshPoints particles, const Vector &amp; spacing, const Point3 &amp; origin)</td>
+<td>vtkSmartPointer&lt; vtkPoints &gt;</td>
+<td><strong><a href="classshapeworks_1_1ReconstructSurface.html#function-converttoimagecoordinates">convertToImageCoordinates</a></strong>(vtkSmartPointer&lt; vtkPoints &gt; particles, const Vector &amp; spacing, const Point3 &amp; origin)</td>
 </tr>
 <tr>
 <td>int</td>
@@ -2871,15 +2871,15 @@
 </code></pre></div>
 <h3 id="function-computeaveragedistancetoneighbors">function computeAverageDistanceToNeighbors</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">computeAverageDistanceToNeighbors</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshPoints</span><span class="w"> </span><span class="n">points</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particlesIndices</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-checkmapping">function checkMapping</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">checkMapping</span><span class="p">(</span>
 <span class="w">    </span><span class="n">TransformTypePtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshPoints</span><span class="w"> </span><span class="n">sourcePoints</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshPoints</span><span class="w"> </span><span class="n">targetPoints</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">sourcePoints</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">targetPoints</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-generatewarpedmeshes">function generateWarpedMeshes</h3>
@@ -2894,8 +2894,8 @@
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-converttoimagecoordinates">function convertToImageCoordinates</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshPoints</span><span class="w"> </span><span class="n">convertToImageCoordinates</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshPoints</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">convertToImageCoordinates</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">origin</span>
 <span class="p">)</span>
@@ -3034,7 +3034,7 @@
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:25 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

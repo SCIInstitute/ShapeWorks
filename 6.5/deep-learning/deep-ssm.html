@@ -2818,8 +2818,8 @@
 <li><code>tf_epochs</code>: The number of epochs to train the T-flank.</li>
 <li><code>joint_epochs</code>: The number of epochs to train the whole model.</li>
 <li><code>alpha</code>: The weight applied to the T-flank with respect to the autoencoder loss when training the whole model.</li>
-<li><code>a_ae</code>: Focal loss parameter when calculating the autoencoder loss.</li>
-<li><code>c_ae</code>: Focal loss parameter when calculating the autoencoder loss.</li>
+<li><code>a_ae</code>: Focal loss parameter when calculating the autoencoder loss. <code>a</code> is a scaling parameter that adjusts the intensity of the loss; higher values accentuate the loss, while lower values dampen it.</li>
+<li><code>c_ae</code>: Focal loss parameter when calculating the autoencoder loss. <code>c</code> is a threshold parameter that modulates the loss contribution of each particle. When the particle difference is below c, the particle's impact on the overall loss is reduced.</li>
 <li><code>a_lat</code>: Focal loss parameter when calculating the T-flank loss.</li>
 <li><code>c_lat</code>: Focal loss parameter when calculating the T-flank loss.</li>
 </ul>

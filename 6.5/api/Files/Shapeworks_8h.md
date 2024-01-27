@@ -70,6 +70,8 @@ using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
 
+TransformPtr convert_to_image_transform(vtkSmartPointer<vtkTransform> vtk_transform);
+
 Plane makePlane(const Point &p, const Vector3 &n);
 Plane makePlane(const Point &p0, const Point &p1, const Point &p2);
 
@@ -298,4 +300,4 @@ T clamp(T value, T min, T max) {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

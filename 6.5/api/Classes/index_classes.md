@@ -234,8 +234,8 @@ title: Classes
     * **class [ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md)** 
     * **class [ShapeScalarPanel](../Classes/classshapeworks_1_1ShapeScalarPanel.md)** 
     * **class [ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window. 
+    * **class [ShapeWorksUtils](../Classes/classshapeworks_1_1ShapeWorksUtils.md)** 
     * **class [ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)** 
-    * **class [ShapeworksUtils](../Classes/classshapeworks_1_1ShapeworksUtils.md)** 
     * **class [ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)** 
     * **struct [SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)** 
     * **class [SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView](). 
@@ -279,4 +279,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:28 +0000

@@ -15,7 +15,8 @@ Inherits from QWidget
 
 |                | Name           |
 | -------------- | -------------- |
-| enum class| **[ToolMode](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-toolmode)** { DeepSSM_SplitType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType} |
+| enum class| **[ToolMode](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-toolmode)** { DeepSSM_PrepType = 0, DeepSSM_AugmentationType = 1, DeepSSM_TrainingType = 2, DeepSSM_TestingType = 3} |
+| enum class| **[SplitType](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-splittype)** { TRAIN, VAL, TEST} |
 
 ## Public Slots
 
@@ -24,7 +25,7 @@ Inherits from QWidget
 | void | **[run_clicked](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-run-clicked)**() |
 | void | **[restore_defaults](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-restore-defaults)**() |
 | void | **[handle_thread_complete](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-handle-thread-complete)**() |
-| void | **[handle_progress](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-handle-progress)**(int val) |
+| void | **[handle_progress](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-handle-progress)**(int val, QString message) |
 | void | **[handle_error](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-handle-error)**(QString msg) |
 | void | **[tab_changed](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-tab-changed)**(int tab) |
 | void | **[update_panels](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-update-panels)**() |
@@ -54,6 +55,7 @@ Inherits from QWidget
 | ShapeList | **[get_shapes](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-shapes)**() |
 | void | **[resizeEvent](../Classes/classshapeworks_1_1DeepSSMTool.md#function-resizeevent)**(QResizeEvent * event) override |
 | std::string | **[get_display_feature](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-display-feature)**() |
+| std::vector< int > | **[get_split](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-split)**(ProjectHandle project, SplitType split_type) |
 
 ## Public Types Documentation
 
@@ -61,10 +63,21 @@ Inherits from QWidget
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
-| DeepSSM_SplitType | |   |
-| DeepSSM_AugmentationType | |   |
-| DeepSSM_TrainingType | |   |
-| DeepSSM_TestingType | |   |
+| DeepSSM_PrepType | 0|   |
+| DeepSSM_AugmentationType | 1|   |
+| DeepSSM_TrainingType | 2|   |
+| DeepSSM_TestingType | 3|   |
+
+
+
+
+### enum SplitType
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| TRAIN | |   |
+| VAL | |   |
+| TEST | |   |
 
 
 
@@ -96,7 +109,8 @@ void handle_thread_complete()
 
 ```cpp
 void handle_progress(
-    int val
+    int val,
+    QString message
 )
 ```
 
@@ -257,6 +271,16 @@ std::string get_display_feature()
 ```
 
 
+### function get_split
+
+```cpp
+static std::vector< int > get_split(
+    ProjectHandle project,
+    SplitType split_type
+)
+```
+
+
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:24 +0000
+Updated on 2024-01-27 at 17:49:26 +0000

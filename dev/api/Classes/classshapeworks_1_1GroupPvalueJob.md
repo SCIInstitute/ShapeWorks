@@ -26,7 +26,7 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double ) |
+| void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double , QString  ="") |
 | void | **[finished](../Classes/classshapeworks_1_1Job.md#signal-finished)**() |
 
 **Public Functions inherited from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**
@@ -89,4 +89,4 @@ Eigen::VectorXd get_group_pvalues()
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:24 +0000
+Updated on 2024-01-27 at 17:49:26 +0000

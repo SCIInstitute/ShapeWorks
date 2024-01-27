@@ -23,11 +23,11 @@ title: shapeworks::ReconstructSurface
 | -------------- | -------------- |
 | | **[ReconstructSurface](../Classes/classshapeworks_1_1ReconstructSurface.md#function-reconstructsurface)**() =default |
 | | **[ReconstructSurface](../Classes/classshapeworks_1_1ReconstructSurface.md#function-reconstructsurface)**(const std::string & denseFile, const std::string & sparseFile, const std::string & goodPointsFile) |
-| double | **[computeAverageDistanceToNeighbors](../Classes/classshapeworks_1_1ReconstructSurface.md#function-computeaveragedistancetoneighbors)**(Mesh::MeshPoints points, std::vector< int > particlesIndices) |
-| void | **[checkMapping](../Classes/classshapeworks_1_1ReconstructSurface.md#function-checkmapping)**(TransformTypePtr transform, Mesh::MeshPoints sourcePoints, Mesh::MeshPoints targetPoints) |
+| double | **[computeAverageDistanceToNeighbors](../Classes/classshapeworks_1_1ReconstructSurface.md#function-computeaveragedistancetoneighbors)**(vtkSmartPointer< vtkPoints > points, std::vector< int > particlesIndices) |
+| void | **[checkMapping](../Classes/classshapeworks_1_1ReconstructSurface.md#function-checkmapping)**(TransformTypePtr transform, vtkSmartPointer< vtkPoints > sourcePoints, vtkSmartPointer< vtkPoints > targetPoints) |
 | void | **[generateWarpedMeshes](../Classes/classshapeworks_1_1ReconstructSurface.md#function-generatewarpedmeshes)**(TransformTypePtr transform, vtkSmartPointer< vtkPolyData > & outputMesh) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[getMesh](../Classes/classshapeworks_1_1ReconstructSurface.md#function-getmesh)**(PointArray localPoints) |
-| Mesh::MeshPoints | **[convertToImageCoordinates](../Classes/classshapeworks_1_1ReconstructSurface.md#function-converttoimagecoordinates)**(Mesh::MeshPoints particles, const Vector & spacing, const Point3 & origin) |
+| vtkSmartPointer< vtkPoints > | **[convertToImageCoordinates](../Classes/classshapeworks_1_1ReconstructSurface.md#function-converttoimagecoordinates)**(vtkSmartPointer< vtkPoints > particles, const Vector & spacing, const Point3 & origin) |
 | int | **[computeMedianShape](../Classes/classshapeworks_1_1ReconstructSurface.md#function-computemedianshape)**(std::vector< Eigen::MatrixXd > & shapeList) |
 | void | **[performKMeansClustering](../Classes/classshapeworks_1_1ReconstructSurface.md#function-performkmeansclustering)**(std::vector< PointArray > worldPoints, int numberOfParticles, std::vector< int > & centroidIndices) |
 | Eigen::MatrixXd | **[computeParticlesNormals](../Classes/classshapeworks_1_1ReconstructSurface.md#function-computeparticlesnormals)**(vtkSmartPointer< vtkPoints > particles, [Image](../Classes/classshapeworks_1_1Image.md) dt) |
@@ -108,7 +108,7 @@ ReconstructSurface(
 
 ```cpp
 double computeAverageDistanceToNeighbors(
-    Mesh::MeshPoints points,
+    vtkSmartPointer< vtkPoints > points,
     std::vector< int > particlesIndices
 )
 ```
@@ -119,8 +119,8 @@ double computeAverageDistanceToNeighbors(
 ```cpp
 void checkMapping(
     TransformTypePtr transform,
-    Mesh::MeshPoints sourcePoints,
-    Mesh::MeshPoints targetPoints
+    vtkSmartPointer< vtkPoints > sourcePoints,
+    vtkSmartPointer< vtkPoints > targetPoints
 )
 ```
 
@@ -147,8 +147,8 @@ Mesh getMesh(
 ### function convertToImageCoordinates
 
 ```cpp
-Mesh::MeshPoints convertToImageCoordinates(
-    Mesh::MeshPoints particles,
+vtkSmartPointer< vtkPoints > convertToImageCoordinates(
+    vtkSmartPointer< vtkPoints > particles,
     const Vector & spacing,
     const Point3 & origin
 )
@@ -390,4 +390,4 @@ inline void setMaxAngleDegrees(
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

@@ -32,7 +32,7 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double ) |
+| void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double , QString  ="") |
 | void | **[finished](../Classes/classshapeworks_1_1Job.md#signal-finished)**() |
 
 **Public Functions inherited from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**
@@ -107,4 +107,4 @@ std::vector< bool > get_good_bad()
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

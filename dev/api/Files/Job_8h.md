@@ -66,7 +66,7 @@ class Job : public QObject {
 
  Q_SIGNALS:
 
-  void progress(double);
+  void progress(double, QString = "");
   void finished();
 
  private:
@@ -82,4 +82,4 @@ class Job : public QObject {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:28 +0000

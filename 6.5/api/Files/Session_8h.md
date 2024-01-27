@@ -41,7 +41,6 @@ title: Studio/Data/Session.h
 
 #include <QSharedPointer>
 #include <QVector>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -170,6 +169,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void trigger_planes_changed();
   void trigger_ffc_changed();
   void trigger_annotations_changed();
+  void trigger_save();
+  void trigger_data_changed();
+  void reload_particles();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
@@ -285,6 +287,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void planes_changed();
   void ffc_changed();
   void update_display();
+  void reset_stats();
   void new_mesh();
   void feature_range_changed();
   void update_view_mode();
@@ -293,6 +296,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void repaint();
   void reinsert_shapes();
   void annotations_changed();
+  void save();
 
  public:
   // constants
@@ -358,4 +362,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:28 +0000

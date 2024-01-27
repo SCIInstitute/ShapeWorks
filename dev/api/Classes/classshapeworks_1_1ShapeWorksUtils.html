@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1ShapeworksUtils.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1ShapeWorksUtils.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>shapeworks::ShapeworksUtils - ShapeWorks</title>
+        <title>shapeworks::ShapeWorksUtils - ShapeWorks</title>
       
     
     
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              shapeworks::ShapeworksUtils
+              shapeworks::ShapeWorksUtils
             
           </span>
         </div>
@@ -2400,22 +2400,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-rngseed" class="md-nav__link">
-    function rngSeed
+  <a href="#function-get_rng_seed" class="md-nav__link">
+    function get_rng_seed
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setrngseed" class="md-nav__link">
-    function setRngSeed
+  <a href="#function-set_rng_seed" class="md-nav__link">
+    function set_rng_seed
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-generatenumber" class="md-nav__link">
-    function generateNumber
+  <a href="#function-get_random_number" class="md-nav__link">
+    function get_random_number
   </a>
   
 </li>
@@ -2428,22 +2428,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-exists" class="md-nav__link">
-    function exists
+  <a href="#function-file_exists" class="md-nav__link">
+    function file_exists
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getmatrix" class="md-nav__link">
-    function getMatrix
+  <a href="#function-setup_console_logging" class="md-nav__link">
+    function setup_console_logging
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getoffset" class="md-nav__link">
-    function getOffset
+  <a href="#function-set_progress_callback" class="md-nav__link">
+    function set_progress_callback
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setup_threads" class="md-nav__link">
+    function setup_threads
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-convert_matrix" class="md-nav__link">
+    function convert_matrix
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_offset" class="md-nav__link">
+    function get_offset
   </a>
   
 </li>
@@ -2465,13 +2486,13 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1ShapeworksUtils.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1ShapeWorksUtils.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="shapeworksshapeworksutils">shapeworks::ShapeworksUtils</h1>
+<h1 id="shapeworksshapeworksutils">shapeworks::ShapeWorksUtils</h1>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2483,39 +2504,51 @@
 <tbody>
 <tr>
 <td>time_point</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-now">now</a></strong>()<br>get the current time</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-now">now</a></strong>()<br>get the current time</td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-elapsed">elapsed</a></strong>(time_point start, time_point end, bool print_elapsed =true)<br>return elapsed time in seconds, optionally printing to console</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-elapsed">elapsed</a></strong>(time_point start, time_point end, bool print_elapsed =true)<br>return elapsed time in seconds, optionally printing to console</td>
 </tr>
 <tr>
 <td>unsigned</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-rngseed">rngSeed</a></strong>()<br>returns random seed</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-get-rng-seed">get_rng_seed</a></strong>()<br>returns random seed</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-setrngseed">setRngSeed</a></strong>(const unsigned seed)<br>sets random seed</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-set-rng-seed">set_rng_seed</a></strong>(const unsigned seed)<br>sets random seed</td>
 </tr>
 <tr>
 <td>unsigned</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-generatenumber">generateNumber</a></strong>()<br>generates random number</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-get-random-number">get_random_number</a></strong>()<br>generates random number</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-is-directory">is_directory</a></strong>(const std::string &amp; pathname)<br>returns true if pathname is a directory</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-is-directory">is_directory</a></strong>(const std::string &amp; pathname)<br>returns true if pathname is a directory</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-exists">exists</a></strong>(const std::string &amp; filename)<br>returns true if filename exists</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-file-exists">file_exists</a></strong>(const std::string &amp; filename)<br>returns true if filename exists</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-setup-console-logging">setup_console_logging</a></strong>(bool show_progress, bool xml_status)<br>Set up the console logging options.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-set-progress-callback">set_progress_callback</a></strong>(void * ptr)<br>Set up a progress callback.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-setup-threads">setup_threads</a></strong>()<br>Set up the number of threads from TBB_NUM_THREADS env variable.</td>
 </tr>
 <tr>
 <td>Matrix33</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-getmatrix">getMatrix</a></strong>(const vtkSmartPointer&lt; vtkMatrix4x4 &gt; &amp; mat)<br>converts a vtkMatrix4x4 to a Matrix33 and corresponding translationVector</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-convert-matrix">convert_matrix</a></strong>(const vtkSmartPointer&lt; vtkMatrix4x4 &gt; &amp; mat)<br>converts a vtkMatrix4x4 to a Matrix33 and corresponding translationVector</td>
 </tr>
 <tr>
 <td>Vector3</td>
-<td><strong><a href="classshapeworks_1_1ShapeworksUtils.html#function-getoffset">getOffset</a></strong>(const vtkSmartPointer&lt; vtkMatrix4x4 &gt; &amp; mat)</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-get-offset">get_offset</a></strong>(const vtkSmartPointer&lt; vtkMatrix4x4 &gt; &amp; mat)</td>
 </tr>
 </tbody>
 </table>
@@ -2532,18 +2565,18 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>return elapsed time in seconds, optionally printing to console </p>
-<h3 id="function-rngseed">function rngSeed</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">rngSeed</span><span class="p">()</span>
+<h3 id="function-get_rng_seed">function get_rng_seed</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">get_rng_seed</span><span class="p">()</span>
 </code></pre></div>
 <p>returns random seed </p>
-<h3 id="function-setrngseed">function setRngSeed</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setRngSeed</span><span class="p">(</span>
+<h3 id="function-set_rng_seed">function set_rng_seed</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_rng_seed</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">seed</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>sets random seed </p>
-<h3 id="function-generatenumber">function generateNumber</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">generateNumber</span><span class="p">()</span>
+<h3 id="function-get_random_number">function get_random_number</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">get_random_number</span><span class="p">()</span>
 </code></pre></div>
 <p>generates random number </p>
 <h3 id="function-is_directory">function is_directory</h3>
@@ -2552,25 +2585,42 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>returns true if pathname is a directory </p>
-<h3 id="function-exists">function exists</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">exists</span><span class="p">(</span>
+<h3 id="function-file_exists">function file_exists</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">file_exists</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>returns true if filename exists </p>
-<h3 id="function-getmatrix">function getMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Matrix33</span><span class="w"> </span><span class="n">getMatrix</span><span class="p">(</span>
+<h3 id="function-setup_console_logging">function setup_console_logging</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setup_console_logging</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_progress</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">xml_status</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set up the console logging options. </p>
+<h3 id="function-set_progress_callback">function set_progress_callback</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_progress_callback</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set up a progress callback. </p>
+<h3 id="function-setup_threads">function setup_threads</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setup_threads</span><span class="p">()</span>
+</code></pre></div>
+<p>Set up the number of threads from TBB_NUM_THREADS env variable. </p>
+<h3 id="function-convert_matrix">function convert_matrix</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Matrix33</span><span class="w"> </span><span class="n">convert_matrix</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkMatrix4x4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mat</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>converts a vtkMatrix4x4 to a Matrix33 and corresponding translationVector </p>
-<h3 id="function-getoffset">function getOffset</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="n">getOffset</span><span class="p">(</span>
+<h3 id="function-get_offset">function get_offset</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="n">get_offset</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkMatrix4x4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mat</span>
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:25 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

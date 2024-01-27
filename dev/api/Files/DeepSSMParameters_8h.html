@@ -2446,15 +2446,9 @@
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMParameters</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">SamplerTypeOption</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">gaussian</span><span class="p">,</span><span class="w"> </span><span class="n">gaussian_mixture</span><span class="p">,</span><span class="w"> </span><span class="n">kde</span><span class="w"> </span><span class="p">};</span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">SamplerTypeOption</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">gaussian</span><span class="p">,</span>
-<span class="w">    </span><span class="n">gaussian_mixture</span><span class="p">,</span>
-<span class="w">    </span><span class="n">kde</span>
-<span class="w">  </span><span class="p">};</span>
-
-<span class="k">public</span><span class="o">:</span>
-
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">DeepSSMParameters</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_to_project</span><span class="p">();</span>
 
@@ -2503,6 +2497,57 @@
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_testing_split</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_testing_split</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_prep_step_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_prep_step_complete</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_prep_message</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_prep_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_aug_step_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_step_complete</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_aug_message</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_training_step_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_step_complete</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_training_message</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_spacing</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_spacing</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">spacing</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_loss_function</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_loss_function</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">loss_function</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_tl_net_enabled</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_enabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_tl_net_ae_epochs</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_ae_epochs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_epochs</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_tl_net_tf_epochs</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_tf_epochs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_epochs</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_tl_net_joint_epochs</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_joint_epochs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_epochs</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_tl_net_alpha</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_alpha</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">alpha</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_tl_net_a_ae</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_a_ae</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a_ae</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_tl_net_c_ae</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_c_ae</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">c_ae</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_tl_net_a_lat</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_a_lat</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a_lat</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_tl_net_c_lat</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_c_lat</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">c_lat</span><span class="p">);</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_split_defaults</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_augmentation_defaults</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_training_defaults</span><span class="p">();</span>
@@ -2514,17 +2559,15 @@
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_SAMPLER_MIXTURE_C</span><span class="p">;</span>
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_SAMPLER_KDE_C</span><span class="p">;</span>
 
-<span class="k">private</span><span class="o">:</span>
-
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
-
 <span class="p">};</span>
 
-<span class="p">}</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:26 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:28 +0000</p>
 
               
             </article>

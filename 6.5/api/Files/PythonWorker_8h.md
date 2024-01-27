@@ -55,7 +55,7 @@ class PythonWorker : public QObject {
   void run_job(QSharedPointer<Job> job);
 
   void incoming_python_message(std::string message_string);
-  void incoming_python_progress(double value);
+  void incoming_python_progress(double value, std::string message);
 
   void end_python();
 
@@ -92,4 +92,4 @@ class PythonWorker : public QObject {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:28 +0000

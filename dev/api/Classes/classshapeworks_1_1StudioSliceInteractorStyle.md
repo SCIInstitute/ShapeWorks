@@ -22,6 +22,8 @@ Inherits from vtkInteractorStyleImage
 | virtual | **[~StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-~studiosliceinteractorstyle)**() |
 | void | **[OnLeftButtonDown](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-onleftbuttondown)**() override |
 | void | **[OnRightButtonDown](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-onrightbuttondown)**() override |
+| void | **[OnMouseWheelForward](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-onmousewheelforward)**() override |
+| void | **[OnMouseWheelBackward](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-onmousewheelbackward)**() override |
 | void | **[OnKeyDown](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-onkeydown)**() override |
 | void | **[WindowLevel](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-windowlevel)**() override |
 
@@ -81,6 +83,20 @@ void OnRightButtonDown() override
 ```
 
 
+### function OnMouseWheelForward
+
+```cpp
+void OnMouseWheelForward() override
+```
+
+
+### function OnMouseWheelBackward
+
+```cpp
+void OnMouseWheelBackward() override
+```
+
+
 ### function OnKeyDown
 
 ```cpp
@@ -97,4 +113,4 @@ void WindowLevel() override
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

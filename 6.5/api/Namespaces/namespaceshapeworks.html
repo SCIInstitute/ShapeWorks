@@ -3442,6 +3442,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-convert_to_image_transform" class="md-nav__link">
+    function convert_to_image_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-makeplane" class="md-nav__link">
     function makePlane
   </a>
@@ -4609,7 +4616,7 @@
 </tr>
 <tr>
 <td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1ShapeworksUtils.html">shapeworks::ShapeworksUtils</a></strong></td>
+<td><strong><a href="../Classes/classshapeworks_1_1ShapeWorksUtils.html">shapeworks::ShapeWorksUtils</a></strong></td>
 </tr>
 <tr>
 <td>class</td>
@@ -5304,6 +5311,10 @@
 <tr>
 <td>TransformPtr</td>
 <td><strong><a href="namespaceshapeworks.html#function-createtransform">createTransform</a></strong>(const Matrix33 &amp; mat, const Vector3 &amp; translate =<a href="namespaceshapeworks.html#function-makevector">makeVector</a>({0, 0, 0}))</td>
+</tr>
+<tr>
+<td>TransformPtr</td>
+<td><strong><a href="namespaceshapeworks.html#function-convert-to-image-transform">convert_to_image_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; vtk_transform)<br>Convert VTK to ITK transform.</td>
 </tr>
 <tr>
 <td>Plane</td>
@@ -6623,6 +6634,12 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">translate</span><span class="w"> </span><span class="o">=</span><span class="n">makeVector</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">})</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-convert_to_image_transform">function convert_to_image_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">TransformPtr</span><span class="w"> </span><span class="n">convert_to_image_transform</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtk_transform</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Convert VTK to ITK transform. </p>
 <h3 id="function-makeplane">function makePlane</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Plane</span><span class="w"> </span><span class="n">makePlane</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
@@ -7118,7 +7135,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:24 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:26 +0000</p>
 
               
             </article>

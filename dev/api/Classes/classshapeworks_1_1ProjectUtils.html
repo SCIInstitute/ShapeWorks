@@ -2434,6 +2434,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-convert_transform_2" class="md-nav__link">
+    function convert_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-determine_domain_names" class="md-nav__link">
     function determine_domain_names
   </a>
@@ -2595,6 +2602,10 @@
 <td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-transform">convert_transform</a></strong>(std::vector&lt; double &gt; list)<br>convert a list of doubles from a spreadsheet to a vtkTransform</td>
 </tr>
 <tr>
+<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-transform">convert_transform</a></strong>(std::string string)<br>convert a string of doubles from to a vtkTransform</td>
+</tr>
+<tr>
 <td>std::vector&lt; double &gt;</td>
 <td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-transform">convert_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)<br>convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)</td>
 </tr>
@@ -2675,6 +2686,12 @@
 </code></pre></div>
 <p>convert a list of doubles from a spreadsheet to a vtkTransform </p>
 <h3 id="function-convert_transform_1">function convert_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_transform</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">string</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>convert a string of doubles from to a vtkTransform </p>
+<h3 id="function-convert_transform_2">function convert_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_transform</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span>
 <span class="p">)</span>
@@ -2771,7 +2788,7 @@
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:25 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

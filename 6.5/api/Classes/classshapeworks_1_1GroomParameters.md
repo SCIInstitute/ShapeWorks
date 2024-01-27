@@ -27,6 +27,12 @@ title: shapeworks::GroomParameters
 | void | **[set_alignment_enabled](../Classes/classshapeworks_1_1GroomParameters.md#function-set-alignment-enabled)**(bool value) |
 | std::string | **[get_alignment_method](../Classes/classshapeworks_1_1GroomParameters.md#function-get-alignment-method)**() |
 | void | **[set_alignment_method](../Classes/classshapeworks_1_1GroomParameters.md#function-set-alignment-method)**(std::string method) |
+| int | **[get_alignment_reference](../Classes/classshapeworks_1_1GroomParameters.md#function-get-alignment-reference)**() |
+| void | **[set_alignment_reference](../Classes/classshapeworks_1_1GroomParameters.md#function-set-alignment-reference)**(int reference) |
+| int | **[get_alignment_reference_chosen](../Classes/classshapeworks_1_1GroomParameters.md#function-get-alignment-reference-chosen)**() |
+| void | **[set_alignment_reference_chosen](../Classes/classshapeworks_1_1GroomParameters.md#function-set-alignment-reference-chosen)**(int reference) |
+| int | **[get_alignment_subset_size](../Classes/classshapeworks_1_1GroomParameters.md#function-get-alignment-subset-size)**() |
+| void | **[set_alignment_subset_size](../Classes/classshapeworks_1_1GroomParameters.md#function-set-alignment-subset-size)**(int size) |
 | bool | **[get_isolate_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-get-isolate-tool)**() |
 | void | **[set_isolate_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-set-isolate-tool)**(bool value) |
 | bool | **[get_fill_holes_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-get-fill-holes-tool)**() |
@@ -203,6 +209,54 @@ std::string get_alignment_method()
 ```cpp
 void set_alignment_method(
     std::string method
+)
+```
+
+
+### function get_alignment_reference
+
+```cpp
+int get_alignment_reference()
+```
+
+
+### function set_alignment_reference
+
+```cpp
+void set_alignment_reference(
+    int reference
+)
+```
+
+
+### function get_alignment_reference_chosen
+
+```cpp
+int get_alignment_reference_chosen()
+```
+
+
+### function set_alignment_reference_chosen
+
+```cpp
+void set_alignment_reference_chosen(
+    int reference
+)
+```
+
+
+### function get_alignment_subset_size
+
+```cpp
+int get_alignment_subset_size()
+```
+
+
+### function set_alignment_subset_size
+
+```cpp
+void set_alignment_subset_size(
+    int size
 )
 ```
 
@@ -786,4 +840,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:24 +0000
+Updated on 2024-01-27 at 17:49:26 +0000

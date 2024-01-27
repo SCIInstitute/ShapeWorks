@@ -45,26 +45,28 @@ class Mesh {
   enum CurvatureType { Principal, Gaussian, Mean };
   enum SubdivisionType { Butterfly, Loop };
 
-  using MeshType = vtkSmartPointer<vtkPolyData>;
-  using MeshPoints = vtkSmartPointer<vtkPoints>;
-
   Mesh(const std::string& pathname);
 
-  Mesh(MeshType meshPtr) : poly_data_(meshPtr) {
+  void set_id(int id) { id_ = id; }
+  int get_id() const { return id_; }
+
+  Mesh(vtkSmartPointer<vtkPolyData> meshPtr) : poly_data_(meshPtr) {
     if (!poly_data_) throw std::invalid_argument("null meshPtr");
     invalidateLocators();
   }
 
-  Mesh(const Mesh& orig) : poly_data_(MeshType::New()) {
+  Mesh(const Mesh& orig) : poly_data_(vtkSmartPointer<vtkPolyData>::New()) {
     poly_data_->DeepCopy(orig.poly_data_);
+    id_ = orig.id_;
     invalidateLocators();
   }
 
-  Mesh(Mesh&& orig) : poly_data_(orig.poly_data_) { orig.poly_data_ = nullptr; }
+  Mesh(Mesh&& orig) : poly_data_(orig.poly_data_), id_{orig.id_} { orig.poly_data_ = nullptr; }
 
   Mesh& operator=(const Mesh& orig) {
-    poly_data_ = MeshType::New();
+    poly_data_ = vtkSmartPointer<vtkPolyData>::New();
     poly_data_->DeepCopy(orig.poly_data_);
+    id_ = orig.id_;
     invalidateLocators();
     return *this;
   }
@@ -73,13 +75,15 @@ class Mesh {
 
   Mesh& operator=(Mesh&& orig) {
     poly_data_ = orig.poly_data_;
+    id_ = orig.id_;
     orig.poly_data_ = nullptr;
+    orig.id_ = -1;
     return *this;
   }
 
   Mesh& operator+=(const Mesh& otherMesh);
 
-  MeshType getVTKMesh() const { return this->poly_data_; }
+  vtkSmartPointer<vtkPolyData> getVTKMesh() const { return this->poly_data_; }
 
   Mesh& write(const std::string& pathname, bool binaryFile = false);
 
@@ -219,7 +223,7 @@ class Mesh {
 
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
 
-  MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
+  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
       const;  // Copied directly from MeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
               // from Meshwrapper. TODO: When refactoring, take this into account.
 
@@ -235,7 +239,6 @@ class Mesh {
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
-
  private:
   friend struct SharedCommandData;
   Mesh()
@@ -243,8 +246,6 @@ class Mesh {
 
   MeshTransform createRegistrationTransform(const Mesh& target, AlignmentType align = Similarity,
                                             unsigned iterations = 10) const;
-
-  MeshType poly_data_;
 
   Mesh& setFieldForFaces(const std::string name, Array array);
 
@@ -258,12 +259,15 @@ class Mesh {
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
+  vtkSmartPointer<vtkPolyData> poly_data_;
+
+  int id_{-1};
 };
 
 std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
 class MeshReader {
-  static Mesh::MeshType read(const std::string& pathname);
+  static vtkSmartPointer<vtkPolyData> read(const std::string& pathname);
   friend Mesh::Mesh(const std::string& pathname);
 };
 
@@ -273,4 +277,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

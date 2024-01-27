@@ -64,6 +64,7 @@ Inherits from QMainWindow
 | void | **[handle_optimize_start](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-optimize-start)**() |
 | void | **[handle_optimize_complete](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-optimize-complete)**() |
 | void | **[handle_reconstruction_complete](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-reconstruction-complete)**() |
+| void | **[handle_reset_stats](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-reset-stats)**() |
 | void | **[handle_display_setting_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-display-setting-changed)**() |
 | void | **[handle_glyph_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-glyph-changed)**() |
 | void | **[handle_opacity_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-opacity-changed)**() |
@@ -449,6 +450,13 @@ void handle_reconstruction_complete()
 ```
 
 
+### slot handle_reset_stats
+
+```cpp
+void handle_reset_stats()
+```
+
+
 ### slot handle_display_setting_changed
 
 ```cpp
@@ -761,4 +769,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

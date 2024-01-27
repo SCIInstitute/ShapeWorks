@@ -53,6 +53,15 @@ class GroomParameters {
   std::string get_alignment_method();
   void set_alignment_method(std::string method);
 
+  int get_alignment_reference();
+  void set_alignment_reference(int reference);
+
+  int get_alignment_reference_chosen();
+  void set_alignment_reference_chosen(int reference);
+
+  int get_alignment_subset_size();
+  void set_alignment_subset_size(int size);
+
   bool get_isolate_tool();
   void set_isolate_tool(bool value);
 
@@ -170,4 +179,4 @@ class GroomParameters {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

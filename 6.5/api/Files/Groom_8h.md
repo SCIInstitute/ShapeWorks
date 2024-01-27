@@ -27,9 +27,10 @@ title: Libs/Groom/Groom.h
 ```cpp
 #pragma once
 
-#include "GroomParameters.h"
 #include <Image/Image.h>
 #include <Project/Project.h>
+
+#include "GroomParameters.h"
 
 namespace shapeworks {
 
@@ -50,7 +51,6 @@ class Groom {
                                                                   vtkSmartPointer<vtkPoints> target);
 
  protected:
-
   std::atomic<float> progress_ = 0;
   std::atomic<int> total_ops_ = 0;
   std::atomic<int> progress_counter_ = 0;
@@ -76,7 +76,7 @@ class Groom {
 
   void assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global = false);
 
-  static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, size_t reference);
+  static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference);
   static std::vector<std::vector<double>> get_landmark_transforms(
       const std::vector<vtkSmartPointer<vtkPoints>> landmarks, size_t reference);
 
@@ -88,7 +88,7 @@ class Groom {
 
   std::vector<vtkSmartPointer<vtkPoints>> get_combined_points();
 
-  Mesh get_mesh(int subject, int domain);
+  Mesh get_mesh(int subject, int domain, bool transformed = false);
 
   vtkSmartPointer<vtkPoints> get_landmarks(int subject, int domain);
 
@@ -112,4 +112,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

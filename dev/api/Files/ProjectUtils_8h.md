@@ -91,6 +91,8 @@ class ProjectUtils {
 
   static vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);
 
+  static vtkSmartPointer<vtkTransform> convert_transform(std::string string);
+
   static std::vector<double> convert_transform(vtkSmartPointer<vtkTransform> transform);
 
   static StringList determine_domain_names(StringList keys);
@@ -129,4 +131,4 @@ class ProjectUtils {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:28 +0000

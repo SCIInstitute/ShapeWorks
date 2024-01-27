@@ -2443,13 +2443,13 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/PreferencesWindow.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Telemetry.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/CustomSlider.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/LogWindow.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/StudioLogger.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/UpdateChecker.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/StudioVtkOutputWindow.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/StudioLogger.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/UpdateChecker.h&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QActionGroup&gt;</span>
@@ -2463,7 +2463,6 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressBar&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSpinBox&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/CustomSlider.h&gt;</span>
 
 <span class="c1">// Forward Qt class declarations</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_ShapeWorksStudioApp</span><span class="p">;</span>
@@ -2482,7 +2481,6 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">StatusBarWidget</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PythonWorker</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CompareWidget</span><span class="p">;</span>
-
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QMainWindow</span><span class="w"> </span><span class="p">{</span>
@@ -2550,6 +2548,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_optimize_start</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_optimize_complete</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_reconstruction_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_reset_stats</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_display_setting_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_glyph_changed</span><span class="p">();</span>
@@ -2710,7 +2709,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:26 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:28 +0000</p>
 
               
             </article>

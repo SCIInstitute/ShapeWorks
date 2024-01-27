@@ -131,6 +131,8 @@ class Image {
   Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
                         const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
+  Image &applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
+
   Image& extractLabel(const PixelType label = 1.0);
 
   Image& closeHoles(const PixelType foreground = 0.0);
@@ -222,7 +224,9 @@ class Image {
 
   Image::PixelType evaluate(Point p);
 
-  static std::vector<std::string> getSupportedTypes() { return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"}; }
+  static std::vector<std::string> getSupportedTypes() {
+    return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
+  }
 
  private:
   friend struct SharedCommandData;
@@ -263,4 +267,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

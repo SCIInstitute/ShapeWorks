@@ -2441,9 +2441,10 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;GroomParameters.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Image/Image.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;GroomParameters.h&quot;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
@@ -2464,7 +2465,6 @@
 <span class="w">                                                                  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">target</span><span class="p">);</span>
 
 <span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">total_ops_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_counter_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -2490,7 +2490,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">assign_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">global</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_icp_transforms</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshes</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">reference</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_icp_transforms</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshes</span><span class="p">,</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="n">reference</span><span class="p">);</span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_landmark_transforms</span><span class="p">(</span>
 <span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">landmarks</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">reference</span><span class="p">);</span>
 
@@ -2502,7 +2502,7 @@
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_combined_points</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">Mesh</span><span class="w"> </span><span class="nf">get_mesh</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Mesh</span><span class="w"> </span><span class="nf">get_mesh</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">transformed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmarks</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
 
@@ -2523,7 +2523,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:26 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

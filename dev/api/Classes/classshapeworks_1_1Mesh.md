@@ -23,22 +23,22 @@ title: shapeworks::Mesh
 | enum| **[DistanceMethod](../Classes/classshapeworks_1_1Mesh.md#enum-distancemethod)** { PointToPoint, PointToCell} |
 | enum| **[CurvatureType](../Classes/classshapeworks_1_1Mesh.md#enum-curvaturetype)** { Principal, Gaussian, Mean} |
 | enum| **[SubdivisionType](../Classes/classshapeworks_1_1Mesh.md#enum-subdivisiontype)** { Butterfly, Loop} |
-| using vtkSmartPointer< vtkPolyData > | **[MeshType](../Classes/classshapeworks_1_1Mesh.md#using-meshtype)**  |
-| using vtkSmartPointer< vtkPoints > | **[MeshPoints](../Classes/classshapeworks_1_1Mesh.md#using-meshpoints)**  |
 
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
 | | **[Mesh](../Classes/classshapeworks_1_1Mesh.md#function-mesh)**(const std::string & pathname) |
-| | **[Mesh](../Classes/classshapeworks_1_1Mesh.md#function-mesh)**(MeshType meshPtr) |
+| void | **[set_id](../Classes/classshapeworks_1_1Mesh.md#function-set-id)**(int id) |
+| int | **[get_id](../Classes/classshapeworks_1_1Mesh.md#function-get-id)**() const |
+| | **[Mesh](../Classes/classshapeworks_1_1Mesh.md#function-mesh)**(vtkSmartPointer< vtkPolyData > meshPtr) |
 | | **[Mesh](../Classes/classshapeworks_1_1Mesh.md#function-mesh)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & orig) |
 | | **[Mesh](../Classes/classshapeworks_1_1Mesh.md#function-mesh)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) && orig) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[operator=](../Classes/classshapeworks_1_1Mesh.md#function-operator=)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & orig) |
 | | **[Mesh](../Classes/classshapeworks_1_1Mesh.md#function-mesh)**(const Eigen::MatrixXd & points, const Eigen::MatrixXi & faces) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[operator=](../Classes/classshapeworks_1_1Mesh.md#function-operator=)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) && orig) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[operator+=](../Classes/classshapeworks_1_1Mesh.md#function-operator+=)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & otherMesh)<br>append two meshes  |
-| MeshType | **[getVTKMesh](../Classes/classshapeworks_1_1Mesh.md#function-getvtkmesh)**() const<br>return the current mesh  |
+| vtkSmartPointer< vtkPolyData > | **[getVTKMesh](../Classes/classshapeworks_1_1Mesh.md#function-getvtkmesh)**() const<br>return the current mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[write](../Classes/classshapeworks_1_1Mesh.md#function-write)**(const std::string & pathname, bool binaryFile =false)<br>writes mesh, format specified by filename extension  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[coverage](../Classes/classshapeworks_1_1Mesh.md#function-coverage)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & otherMesh, bool allowBackIntersections =true, double angleThreshold =0, double backSearchRadius =0)<br>determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head)  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[smooth](../Classes/classshapeworks_1_1Mesh.md#function-smooth)**(int iterations =0, double relaxation =0.0)<br>applies laplacian smoothing  |
@@ -100,7 +100,7 @@ title: shapeworks::Mesh
 | bool | **[operator==](../Classes/classshapeworks_1_1Mesh.md#function-operator==)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other) const<br>compare meshes  |
 | double | **[getFFCValue](../Classes/classshapeworks_1_1Mesh.md#function-getffcvalue)**(Eigen::Vector3d query) const<br>Gets values for FFCs.  |
 | Eigen::Vector3d | **[getFFCGradient](../Classes/classshapeworks_1_1Mesh.md#function-getffcgradient)**(Eigen::Vector3d query) const<br>Gets gradients for FFCs.  |
-| MeshPoints | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
+| vtkSmartPointer< vtkPoints > | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
 | vtkSmartPointer< vtkPolyData > | **[clipByField](../Classes/classshapeworks_1_1Mesh.md#function-clipbyfield)**(const std::string & name, double value)<br>Clips the mesh according to a field value.  |
 | vtkSmartPointer< vtkStaticCellLocator > | **[getCellLocator](../Classes/classshapeworks_1_1Mesh.md#function-getcelllocator)**() const<br>Returns the cell locator.  |
 | int | **[getClosestFace](../Classes/classshapeworks_1_1Mesh.md#function-getclosestface)**(const Point3 & point) const |
@@ -176,20 +176,6 @@ This class encapsulates a [Mesh](../Classes/classshapeworks_1_1Mesh.md) and oper
 
 
 
-### using MeshType
-
-```cpp
-using shapeworks::Mesh::MeshType =  vtkSmartPointer<vtkPolyData>;
-```
-
-
-### using MeshPoints
-
-```cpp
-using shapeworks::Mesh::MeshPoints =  vtkSmartPointer<vtkPoints>;
-```
-
-
 ## Public Functions Documentation
 
 ### function Mesh
@@ -201,11 +187,27 @@ Mesh(
 ```
 
 
+### function set_id
+
+```cpp
+inline void set_id(
+    int id
+)
+```
+
+
+### function get_id
+
+```cpp
+inline int get_id() const
+```
+
+
 ### function Mesh
 
 ```cpp
 inline Mesh(
-    MeshType meshPtr
+    vtkSmartPointer< vtkPolyData > meshPtr
 )
 ```
 
@@ -269,7 +271,7 @@ append two meshes
 ### function getVTKMesh
 
 ```cpp
-inline MeshType getVTKMesh() const
+inline vtkSmartPointer< vtkPolyData > getVTKMesh() const
 ```
 
 return the current mesh 
@@ -904,7 +906,7 @@ Gets gradients for FFCs.
 ### function getIGLMesh
 
 ```cpp
-MeshPoints getIGLMesh(
+vtkSmartPointer< vtkPoints > getIGLMesh(
     Eigen::MatrixXd & V,
     Eigen::MatrixXi & F
 ) const
@@ -972,4 +974,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

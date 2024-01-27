@@ -35,7 +35,7 @@ Inherits from QObject
 | void | **[set_vtk_output_window](../Classes/classshapeworks_1_1PythonWorker.md#function-set-vtk-output-window)**(vtkSmartPointer< [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md) > output_window) |
 | void | **[run_job](../Classes/classshapeworks_1_1PythonWorker.md#function-run-job)**(QSharedPointer< [Job](../Classes/classshapeworks_1_1Job.md) > job) |
 | void | **[incoming_python_message](../Classes/classshapeworks_1_1PythonWorker.md#function-incoming-python-message)**(std::string message_string) |
-| void | **[incoming_python_progress](../Classes/classshapeworks_1_1PythonWorker.md#function-incoming-python-progress)**(double value) |
+| void | **[incoming_python_progress](../Classes/classshapeworks_1_1PythonWorker.md#function-incoming-python-progress)**(double value, std::string message) |
 | void | **[end_python](../Classes/classshapeworks_1_1PythonWorker.md#function-end-python)**() |
 | void | **[abort_job](../Classes/classshapeworks_1_1PythonWorker.md#function-abort-job)**() |
 
@@ -133,7 +133,8 @@ void incoming_python_message(
 
 ```cpp
 void incoming_python_progress(
-    double value
+    double value,
+    std::string message
 )
 ```
 
@@ -163,4 +164,4 @@ static constexpr static const char * python_api_version = "6.5";
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

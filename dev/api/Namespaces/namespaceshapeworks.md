@@ -162,7 +162,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::shapeworks_exception](../Classes/classshapeworks_1_1shapeworks__exception.md)**  |
 | class | **[shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)**  |
 | class | **[shapeworks::ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window.  |
-| class | **[shapeworks::ShapeworksUtils](../Classes/classshapeworks_1_1ShapeworksUtils.md)**  |
+| class | **[shapeworks::ShapeWorksUtils](../Classes/classshapeworks_1_1ShapeWorksUtils.md)**  |
 | class | **[shapeworks::ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)**  |
 | struct | **[shapeworks::SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)**  |
 | class | **[shapeworks::SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView]().  |
@@ -341,6 +341,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | Vector3 | **[makeVector](../Namespaces/namespaceshapeworks.md#function-makevector)**(std::array< double, 3 > && arr)<br>Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)  |
 | PointArray | **[makePointArray](../Namespaces/namespaceshapeworks.md#function-makepointarray)**(int size, Point3 value) |
 | TransformPtr | **[createTransform](../Namespaces/namespaceshapeworks.md#function-createtransform)**(const Matrix33 & mat, const Vector3 & translate =[makeVector](../Namespaces/namespaceshapeworks.md#function-makevector)({0, 0, 0})) |
+| TransformPtr | **[convert_to_image_transform](../Namespaces/namespaceshapeworks.md#function-convert-to-image-transform)**(vtkSmartPointer< vtkTransform > vtk_transform)<br>Convert VTK to ITK transform.  |
 | Plane | **[makePlane](../Namespaces/namespaceshapeworks.md#function-makeplane)**(const Point & p, const Vector3 & n)<br>Make a plane.  |
 | Plane | **[makePlane](../Namespaces/namespaceshapeworks.md#function-makeplane)**(const Point & p0, const Point & p1, const Point & p2) |
 | Point | **[getOrigin](../Namespaces/namespaceshapeworks.md#function-getorigin)**(const Plane plane)<br>Get origin and normal of plane.  |
@@ -1786,6 +1787,16 @@ TransformPtr createTransform(
 ```
 
 
+### function convert_to_image_transform
+
+```cpp
+TransformPtr convert_to_image_transform(
+    vtkSmartPointer< vtkTransform > vtk_transform
+)
+```
+
+Convert VTK to ITK transform. 
+
 ### function makePlane
 
 ```cpp
@@ -2595,4 +2606,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:24 +0000
+Updated on 2024-01-27 at 17:49:26 +0000

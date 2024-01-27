@@ -2413,6 +2413,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#enum-splittype" class="md-nav__link">
+    enum SplitType
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2613,6 +2620,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-get_split" class="md-nav__link">
+    function get_split
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2649,7 +2663,11 @@
 <tbody>
 <tr>
 <td>enum class</td>
-<td DeepSSM_AugmentationType_="DeepSSM_AugmentationType," DeepSSM_SplitType_="DeepSSM_SplitType," DeepSSM_TestingType="DeepSSM_TestingType" DeepSSM_TrainingType_="DeepSSM_TrainingType,"><strong><a href="classshapeworks_1_1DeepSSMTool.html#enum-toolmode">ToolMode</a></strong></td>
+<td DeepSSM_PrepType="DeepSSM_PrepType"><strong><a href="classshapeworks_1_1DeepSSMTool.html#enum-toolmode">ToolMode</a></strong></td>
+</tr>
+<tr>
+<td>enum class</td>
+<td TEST="TEST" TRAIN_="TRAIN," VAL_="VAL,"><strong><a href="classshapeworks_1_1DeepSSMTool.html#enum-splittype">SplitType</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2676,7 +2694,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMTool.html#slot-handle-progress">handle_progress</a></strong>(int val)</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMTool.html#slot-handle-progress">handle_progress</a></strong>(int val, QString message)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2776,6 +2794,10 @@
 <td>std::string</td>
 <td><strong><a href="classshapeworks_1_1DeepSSMTool.html#function-get-display-feature">get_display_feature</a></strong>()</td>
 </tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMTool.html#function-get-split">get_split</a></strong>(ProjectHandle project, SplitType split_type)</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
@@ -2790,22 +2812,49 @@
 </thead>
 <tbody>
 <tr>
-<td>DeepSSM_SplitType</td>
-<td></td>
+<td>DeepSSM_PrepType</td>
+<td>0</td>
 <td></td>
 </tr>
 <tr>
 <td>DeepSSM_AugmentationType</td>
-<td></td>
+<td>1</td>
 <td></td>
 </tr>
 <tr>
 <td>DeepSSM_TrainingType</td>
-<td></td>
+<td>2</td>
 <td></td>
 </tr>
 <tr>
 <td>DeepSSM_TestingType</td>
+<td>3</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-splittype">enum SplitType</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TRAIN</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VAL</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>TEST</td>
 <td></td>
 <td></td>
 </tr>
@@ -2823,7 +2872,8 @@
 </code></pre></div>
 <h3 id="slot-handle_progress">slot handle_progress</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_progress</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="slot-handle_error">slot handle_error</h3>
@@ -2904,8 +2954,14 @@
 <h3 id="function-get_display_feature">function get_display_feature</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_display_feature</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-get_split">function get_split</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_split</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">,</span>
+<span class="w">    </span><span class="n">SplitType</span><span class="w"> </span><span class="n">split_type</span>
+<span class="p">)</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:24 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:26 +0000</p>
 
               
             </article>

@@ -56,16 +56,16 @@ class LandmarkDefinition {
 
 class Project {
  public:
-  using StringMap = std::map<std::string, std::string>;
-
   Project();
   ~Project();
 
   bool load(const std::string& filename);
 
-  bool save(const std::string& filename);
+  bool save(const std::string& filename = "");
 
   void set_project_path(const std::string& path);
+
+  std::string get_project_path();
 
   std::string get_filename();
 
@@ -84,6 +84,8 @@ class Project {
   void set_domain_names(std::vector<std::string> domain_names);
 
   std::vector<std::shared_ptr<Subject>>& get_subjects();
+
+  std::vector<std::shared_ptr<Subject>> get_non_excluded_subjects();
 
   void set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects);
 
@@ -153,8 +155,6 @@ class Project {
 
   std::vector<std::shared_ptr<Subject>> subjects_;
 
-  bool loaded_{false};
-
   std::string filename_;
   std::string project_path_;
 
@@ -186,4 +186,4 @@ class Project {
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:28 +0000

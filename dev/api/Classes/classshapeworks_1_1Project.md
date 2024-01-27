@@ -13,12 +13,6 @@ Representation of a project.  [More...](#detailed-description)
 
 `#include <Project.h>`
 
-## Public Types
-
-|                | Name           |
-| -------------- | -------------- |
-| using std::map< std::string, std::string > | **[StringMap](../Classes/classshapeworks_1_1Project.md#using-stringmap)**  |
-
 ## Public Functions
 
 |                | Name           |
@@ -26,8 +20,9 @@ Representation of a project.  [More...](#detailed-description)
 | | **[Project](../Classes/classshapeworks_1_1Project.md#function-project)**() |
 | | **[~Project](../Classes/classshapeworks_1_1Project.md#function-~project)**() |
 | bool | **[load](../Classes/classshapeworks_1_1Project.md#function-load)**(const std::string & filename)<br>Load from project file.  |
-| bool | **[save](../Classes/classshapeworks_1_1Project.md#function-save)**(const std::string & filename)<br>Save to project file.  |
+| bool | **[save](../Classes/classshapeworks_1_1Project.md#function-save)**(const std::string & filename ="")<br>Save to project file.  |
 | void | **[set_project_path](../Classes/classshapeworks_1_1Project.md#function-set-project-path)**(const std::string & path)<br>Set the project path.  |
+| std::string | **[get_project_path](../Classes/classshapeworks_1_1Project.md#function-get-project-path)**()<br>Return the project path.  |
 | std::string | **[get_filename](../Classes/classshapeworks_1_1Project.md#function-get-filename)**()<br>Return the filename.  |
 | void | **[set_filename](../Classes/classshapeworks_1_1Project.md#function-set-filename)**(std::string filename)<br>Set project filename.  |
 | std::vector< std::string > | **[get_headers](../Classes/classshapeworks_1_1Project.md#function-get-headers)**()<br>Return the headers of the subject sheet.  |
@@ -37,6 +32,7 @@ Representation of a project.  [More...](#detailed-description)
 | std::vector< std::string > | **[get_domain_names](../Classes/classshapeworks_1_1Project.md#function-get-domain-names)**()<br>Return the domain names (e.g. femur, pelvis, etc)  |
 | void | **[set_domain_names](../Classes/classshapeworks_1_1Project.md#function-set-domain-names)**(std::vector< std::string > domain_names)<br>Set the domain names.  |
 | std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > > & | **[get_subjects](../Classes/classshapeworks_1_1Project.md#function-get-subjects)**()<br>Return the Subjects (as a reference)  |
+| std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > > | **[get_non_excluded_subjects](../Classes/classshapeworks_1_1Project.md#function-get-non-excluded-subjects)**()<br>Return the non-excluded Subjects (as a reference)  |
 | void | **[set_subjects](../Classes/classshapeworks_1_1Project.md#function-set-subjects)**(const std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > > & subjects)<br>Set the Subjects.  |
 | void | **[update_subjects](../Classes/classshapeworks_1_1Project.md#function-update-subjects)**() |
 | bool | **[get_originals_present](../Classes/classshapeworks_1_1Project.md#function-get-originals-present)**() const<br>Return if originals are present.  |
@@ -77,15 +73,6 @@ Representation of a project.
 
 The [Project](../Classes/classshapeworks_1_1Project.md) class encapsulates the spreadsheet based file format for storing project data. 
 
-## Public Types Documentation
-
-### using StringMap
-
-```cpp
-using shapeworks::Project::StringMap =  std::map<std::string, std::string>;
-```
-
-
 ## Public Functions Documentation
 
 ### function Project
@@ -116,7 +103,7 @@ Load from project file.
 
 ```cpp
 bool save(
-    const std::string & filename
+    const std::string & filename =""
 )
 ```
 
@@ -131,6 +118,14 @@ void set_project_path(
 ```
 
 Set the project path. 
+
+### function get_project_path
+
+```cpp
+std::string get_project_path()
+```
+
+Return the project path. 
 
 ### function get_filename
 
@@ -209,6 +204,14 @@ std::vector< std::shared_ptr< Subject > > & get_subjects()
 ```
 
 Return the Subjects (as a reference) 
+
+### function get_non_excluded_subjects
+
+```cpp
+std::vector< std::shared_ptr< Subject > > get_non_excluded_subjects()
+```
+
+Return the non-excluded Subjects (as a reference) 
 
 ### function set_subjects
 
@@ -474,4 +477,4 @@ Get the groomed domain types.
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

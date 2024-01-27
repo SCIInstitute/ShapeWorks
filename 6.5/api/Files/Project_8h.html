@@ -2473,16 +2473,16 @@
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="w"> </span><span class="p">{</span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
-
 <span class="w">  </span><span class="n">Project</span><span class="p">();</span>
 <span class="w">  </span><span class="o">~</span><span class="n">Project</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">save</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_project_path</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">path</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_project_path</span><span class="p">();</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_filename</span><span class="p">();</span>
 
@@ -2501,6 +2501,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_domain_names</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_names</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Subject</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">get_subjects</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Subject</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_non_excluded_subjects</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_subjects</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Subject</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">subjects</span><span class="p">);</span>
 
@@ -2570,8 +2572,6 @@
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Subject</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">subjects_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">loaded_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
-
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">project_path_</span><span class="p">;</span>
 
@@ -2600,7 +2600,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:26 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:28 +0000</p>
 
               
             </article>

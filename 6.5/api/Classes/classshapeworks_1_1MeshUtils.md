@@ -19,11 +19,13 @@ title: shapeworks::MeshUtils
 |                | Name           |
 | -------------- | -------------- |
 | const vtkSmartPointer< vtkMatrix4x4 > | **[createICPTransform](../Classes/classshapeworks_1_1MeshUtils.md#function-createicptransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) source, const [Mesh](../Classes/classshapeworks_1_1Mesh.md) target, Mesh::AlignmentType align, const unsigned iterations =20, bool meshTransform =false)<br>computes a rigid transformation from source to target using vtkIterativeClosestPointTransform  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[create_mesh_from_file](../Classes/classshapeworks_1_1MeshUtils.md#function-create-mesh-from-file)**(std::string filename, double iso_value =0.5)<br>[Mesh](../Classes/classshapeworks_1_1Mesh.md) from mesh or image file.  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[threadSafeReadMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-threadsafereadmesh)**(std::string filename)<br>Thread safe reading of a mesh, uses a lock.  |
 | void | **[threadSafeWriteMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-threadsafewritemesh)**(std::string filename, [Mesh](../Classes/classshapeworks_1_1Mesh.md) mesh)<br>Thread safe writing of a mesh, uses a lock.  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< std::string > & filenames, bool center =false)<br>calculate bounding box incrementally for meshes  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes, bool center =false)<br>calculate bounding box incrementally for meshes  |
-| size_t | **[findReferenceMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-findreferencemesh)**(std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes)<br>determine the reference mesh  |
+| [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes, bool center =false)<br>calculate bounding box incrementally for meshes  |
+| int | **[findReferenceMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-findreferencemesh)**(std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes, int random_subset_size =-1)<br>determine the reference mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[boundaryLoopExtractor](../Classes/classshapeworks_1_1MeshUtils.md#function-boundaryloopextractor)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) mesh)<br>boundary loop extractor for a given mesh  |
 | std::array< [Mesh](../Classes/classshapeworks_1_1Mesh.md), 3 > | **[sharedBoundaryExtractor](../Classes/classshapeworks_1_1MeshUtils.md#function-sharedboundaryextractor)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_l, const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_r, double tol)<br>shared boundary extractor for the left and right mesh  |
 | void | **[generateNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-generatenormals)**(const std::vector< std::reference_wrapper< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes, bool forceRegen =false)<br>generates and adds normals for points and faces for each mesh in given set of meshes  |
@@ -56,6 +58,17 @@ static const vtkSmartPointer< vtkMatrix4x4 > createICPTransform(
 ```
 
 computes a rigid transformation from source to target using vtkIterativeClosestPointTransform 
+
+### function create_mesh_from_file
+
+```cpp
+static Mesh create_mesh_from_file(
+    std::string filename,
+    double iso_value =0.5
+)
+```
+
+[Mesh](../Classes/classshapeworks_1_1Mesh.md) from mesh or image file. 
 
 ### function threadSafeReadMesh
 
@@ -100,11 +113,23 @@ static PhysicalRegion boundingBox(
 
 calculate bounding box incrementally for meshes 
 
+### function boundingBox
+
+```cpp
+static PhysicalRegion boundingBox(
+    const std::vector< Mesh > & meshes,
+    bool center =false
+)
+```
+
+calculate bounding box incrementally for meshes 
+
 ### function findReferenceMesh
 
 ```cpp
-static size_t findReferenceMesh(
-    std::vector< Mesh > & meshes
+static int findReferenceMesh(
+    std::vector< Mesh > & meshes,
+    int random_subset_size =-1
 )
 ```
 
@@ -187,4 +212,4 @@ Used as an auxiliary function for vector field visualizations.
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

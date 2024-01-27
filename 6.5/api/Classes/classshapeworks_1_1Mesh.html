@@ -2441,20 +2441,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#using-meshtype" class="md-nav__link">
-    using MeshType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-meshpoints" class="md-nav__link">
-    using MeshPoints
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2471,6 +2457,20 @@
           <li class="md-nav__item">
   <a href="#function-mesh" class="md-nav__link">
     function Mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_id" class="md-nav__link">
+    function set_id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_id" class="md-nav__link">
+    function get_id
   </a>
   
 </li>
@@ -3076,14 +3076,6 @@
 <td>enum</td>
 <td Butterfly_="Butterfly," Loop="Loop"><strong><a href="classshapeworks_1_1Mesh.html#enum-subdivisiontype">SubdivisionType</a></strong></td>
 </tr>
-<tr>
-<td>using vtkSmartPointer&lt; vtkPolyData &gt;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#using-meshtype">MeshType</a></strong></td>
-</tr>
-<tr>
-<td>using vtkSmartPointer&lt; vtkPoints &gt;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#using-meshpoints">MeshPoints</a></strong></td>
-</tr>
 </tbody>
 </table>
 <h2 id="public-functions">Public Functions</h2>
@@ -3100,8 +3092,16 @@
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-mesh">Mesh</a></strong>(const std::string &amp; pathname)</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-set-id">set_id</a></strong>(int id)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-get-id">get_id</a></strong>() const</td>
+</tr>
+<tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-mesh">Mesh</a></strong>(MeshType meshPtr)</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-mesh">Mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; meshPtr)</td>
 </tr>
 <tr>
 <td></td>
@@ -3128,7 +3128,7 @@
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-operator+=">operator+=</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; otherMesh)<br>append two meshes</td>
 </tr>
 <tr>
-<td>MeshType</td>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-getvtkmesh">getVTKMesh</a></strong>() const<br>return the current mesh</td>
 </tr>
 <tr>
@@ -3376,7 +3376,7 @@
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-getffcgradient">getFFCGradient</a></strong>(Eigen::Vector3d query) const<br>Gets gradients for FFCs.</td>
 </tr>
 <tr>
-<td>MeshPoints</td>
+<td>vtkSmartPointer&lt; vtkPoints &gt;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-getiglmesh">getIGLMesh</a></strong>(Eigen::MatrixXd &amp; V, Eigen::MatrixXi &amp; F) const<br>Formats mesh into an IGL format.</td>
 </tr>
 <tr>
@@ -3541,21 +3541,23 @@
 </tr>
 </tbody>
 </table>
-<h3 id="using-meshtype">using MeshType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="using-meshpoints">using MeshPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Mesh</span><span class="o">::</span><span class="n">MeshPoints</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-mesh">function Mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-set_id">function set_id</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_id</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_id">function get_id</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">get_id</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-mesh_1">function Mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">MeshType</span><span class="w"> </span><span class="n">meshPtr</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshPtr</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-mesh_2">function Mesh</h3>
@@ -3591,7 +3593,7 @@
 </code></pre></div>
 <p>append two meshes </p>
 <h3 id="function-getvtkmesh">function getVTKMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">MeshType</span><span class="w"> </span><span class="n">getVTKMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getVTKMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>return the current mesh </p>
 <h3 id="function-write">function write</h3>
@@ -3973,7 +3975,7 @@
 </code></pre></div>
 <p>Gets gradients for FFCs. </p>
 <h3 id="function-getiglmesh">function getIGLMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshPoints</span><span class="w"> </span><span class="n">getIGLMesh</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getIGLMesh</span><span class="p">(</span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
@@ -4013,7 +4015,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:26 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

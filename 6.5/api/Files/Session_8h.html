@@ -2458,7 +2458,6 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
@@ -2587,6 +2586,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_planes_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_ffc_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_annotations_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_save</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_data_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reload_particles</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active_landmark_domain</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_active_landmark_domain</span><span class="p">();</span>
@@ -2702,6 +2704,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">planes_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_display</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_stats</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_mesh</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">feature_range_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_mode</span><span class="p">();</span>
@@ -2710,6 +2713,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">repaint</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reinsert_shapes</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">annotations_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save</span><span class="p">();</span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="c1">// constants</span>
@@ -2772,7 +2776,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:26 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:28 +0000</p>
 
               
             </article>

@@ -100,6 +100,8 @@ public:
     max = Point({-1000000000, -1000000000, -1000000000});
   }
 
+  PhysicalRegion(std::string str);
+
   bool operator==(const PhysicalRegion &other) const {
     return min == other.min && max == other.max;
   }
@@ -121,6 +123,8 @@ public:
 
   PhysicalRegion& pad(double padding);
 
+  std::string to_string() const;
+
 };
 
 std::ostream &operator<<(std::ostream &os, const PhysicalRegion &region);
@@ -131,4 +135,4 @@ std::ostream &operator<<(std::ostream &os, const PhysicalRegion &region);
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:26 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

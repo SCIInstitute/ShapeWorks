@@ -2371,13 +2371,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-types" class="md-nav__link">
-    Public Types
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
@@ -2388,26 +2381,6 @@
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-types-documentation" class="md-nav__link">
-    Public Types Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Types Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-stringmap" class="md-nav__link">
-    using StringMap
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2450,6 +2423,13 @@
           <li class="md-nav__item">
   <a href="#function-set_project_path" class="md-nav__link">
     function set_project_path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_project_path" class="md-nav__link">
+    function get_project_path
   </a>
   
 </li>
@@ -2513,6 +2493,13 @@
           <li class="md-nav__item">
   <a href="#function-get_subjects" class="md-nav__link">
     function get_subjects
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_non_excluded_subjects" class="md-nav__link">
+    function get_non_excluded_subjects
   </a>
   
 </li>
@@ -2746,21 +2733,6 @@
 <h1 id="shapeworksproject">shapeworks::Project</h1>
 <p>Representation of a project.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;Project.h&gt;</code></p>
-<h2 id="public-types">Public Types</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>using std::map&lt; std::string, std::string &gt;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#using-stringmap">StringMap</a></strong></td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2784,11 +2756,15 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-save">save</a></strong>(const std::string &amp; filename)<br>Save to project file.</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-save">save</a></strong>(const std::string &amp; filename ="")<br>Save to project file.</td>
 </tr>
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-set-project-path">set_project_path</a></strong>(const std::string &amp; path)<br>Set the project path.</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-get-project-path">get_project_path</a></strong>()<br>Return the project path.</td>
 </tr>
 <tr>
 <td>std::string</td>
@@ -2825,6 +2801,10 @@
 <tr>
 <td>std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1Subject.html">Subject</a> &gt; &gt; &amp;</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-subjects">get_subjects</a></strong>()<br>Return the Subjects (as a reference)</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1Subject.html">Subject</a> &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-get-non-excluded-subjects">get_non_excluded_subjects</a></strong>()<br>Return the non-excluded Subjects (as a reference)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2949,10 +2929,6 @@
 </code></pre></div>
 <p>Representation of a project. </p>
 <p>The <a href="classshapeworks_1_1Project.html">Project</a> class encapsulates the spreadsheet based file format for storing project data. </p>
-<h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="using-stringmap">using StringMap</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Project</span><span class="o">::</span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-project">function Project</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Project</span><span class="p">()</span>
@@ -2968,7 +2944,7 @@
 <p>Load from project file. </p>
 <h3 id="function-save">function save</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">save</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Save to project file. </p>
@@ -2978,6 +2954,10 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set the project path. </p>
+<h3 id="function-get_project_path">function get_project_path</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_project_path</span><span class="p">()</span>
+</code></pre></div>
+<p>Return the project path. </p>
 <h3 id="function-get_filename">function get_filename</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_filename</span><span class="p">()</span>
 </code></pre></div>
@@ -3020,6 +3000,10 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_subjects</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the Subjects (as a reference) </p>
+<h3 id="function-get_non_excluded_subjects">function get_non_excluded_subjects</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_non_excluded_subjects</span><span class="p">()</span>
+</code></pre></div>
+<p>Return the non-excluded Subjects (as a reference) </p>
 <h3 id="function-set_subjects">function set_subjects</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_subjects</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">subjects</span>
@@ -3167,7 +3151,7 @@
 </code></pre></div>
 <p>Get the groomed domain types. </p>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:25 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

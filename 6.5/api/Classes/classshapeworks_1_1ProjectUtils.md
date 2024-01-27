@@ -21,6 +21,7 @@ title: shapeworks::ProjectUtils
 |                | Name           |
 | -------------- | -------------- |
 | vtkSmartPointer< vtkTransform > | **[convert_transform](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-transform)**(std::vector< double > list)<br>convert a list of doubles from a spreadsheet to a vtkTransform  |
+| vtkSmartPointer< vtkTransform > | **[convert_transform](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-transform)**(std::string string)<br>convert a string of doubles from to a vtkTransform  |
 | std::vector< double > | **[convert_transform](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-transform)**(vtkSmartPointer< vtkTransform > transform)<br>convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)  |
 | StringList | **[determine_domain_names](../Classes/classshapeworks_1_1ProjectUtils.md#function-determine-domain-names)**(StringList keys)<br>determine domain names from a subject's keys  |
 | void | **[determine_domain_types](../Classes/classshapeworks_1_1ProjectUtils.md#function-determine-domain-types)**([Project](../Classes/classshapeworks_1_1Project.md) * project, StringMap key_map)<br>determine and set domain types  |
@@ -65,6 +66,16 @@ static vtkSmartPointer< vtkTransform > convert_transform(
 ```
 
 convert a list of doubles from a spreadsheet to a vtkTransform 
+
+### function convert_transform
+
+```cpp
+static vtkSmartPointer< vtkTransform > convert_transform(
+    std::string string
+)
+```
+
+convert a string of doubles from to a vtkTransform 
 
 ### function convert_transform
 
@@ -228,4 +239,4 @@ static StringMap convert_subject_to_map(
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:25 +0000
+Updated on 2024-01-27 at 17:49:27 +0000

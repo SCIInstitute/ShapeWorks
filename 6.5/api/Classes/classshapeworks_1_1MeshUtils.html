@@ -2400,6 +2400,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-create_mesh_from_file" class="md-nav__link">
+    function create_mesh_from_file
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-threadsafereadmesh" class="md-nav__link">
     function threadSafeReadMesh
   </a>
@@ -2422,6 +2429,13 @@
         
           <li class="md-nav__item">
   <a href="#function-boundingbox_1" class="md-nav__link">
+    function boundingBox
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-boundingbox_2" class="md-nav__link">
     function boundingBox
   </a>
   
@@ -2525,6 +2539,10 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-create-mesh-from-file">create_mesh_from_file</a></strong>(std::string filename, double iso_value =0.5)<br><a href="classshapeworks_1_1Mesh.html">Mesh</a> from mesh or image file.</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-threadsafereadmesh">threadSafeReadMesh</a></strong>(std::string filename)<br>Thread safe reading of a mesh, uses a lock.</td>
 </tr>
 <tr>
@@ -2540,8 +2558,12 @@
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-boundingbox">boundingBox</a></strong>(const std::vector&lt; std::reference_wrapper&lt; const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; &gt; &amp; meshes, bool center =false)<br>calculate bounding box incrementally for meshes</td>
 </tr>
 <tr>
-<td>size_t</td>
-<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-findreferencemesh">findReferenceMesh</a></strong>(std::vector&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; &amp; meshes)<br>determine the reference mesh</td>
+<td><a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a></td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-boundingbox">boundingBox</a></strong>(const std::vector&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; &amp; meshes, bool center =false)<br>calculate bounding box incrementally for meshes</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-findreferencemesh">findReferenceMesh</a></strong>(std::vector&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; &amp; meshes, int random_subset_size =-1)<br>determine the reference mesh</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
@@ -2588,6 +2610,13 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>computes a rigid transformation from source to target using vtkIterativeClosestPointTransform </p>
+<h3 id="function-create_mesh_from_file">function create_mesh_from_file</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="n">create_mesh_from_file</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">iso_value</span><span class="w"> </span><span class="o">=</span><span class="mf">0.5</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><a href="classshapeworks_1_1Mesh.html">Mesh</a> from mesh or image file. </p>
 <h3 id="function-threadsafereadmesh">function threadSafeReadMesh</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="n">threadSafeReadMesh</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
@@ -2615,9 +2644,17 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>calculate bounding box incrementally for meshes </p>
+<h3 id="function-boundingbox_2">function boundingBox</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">center</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>calculate bounding box incrementally for meshes </p>
 <h3 id="function-findreferencemesh">function findReferenceMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">findReferenceMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">meshes</span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">findReferenceMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">random_subset_size</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>determine the reference mesh </p>
@@ -2669,7 +2706,7 @@
 </code></pre></div>
 <p>Used as an auxiliary function for vector field visualizations. </p>
 <hr />
-<p>Updated on 2024-01-25 at 03:19:26 +0000</p>
+<p>Updated on 2024-01-27 at 17:49:27 +0000</p>
 
               
             </article>

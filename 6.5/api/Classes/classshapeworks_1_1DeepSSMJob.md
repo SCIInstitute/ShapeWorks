@@ -19,22 +19,22 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| enum class| **[FileType](../Classes/classshapeworks_1_1DeepSSMJob.md#enum-filetype)** { ID, IMAGE, PARTICLES} |
-| enum class| **[SplitType](../Classes/classshapeworks_1_1DeepSSMJob.md#enum-splittype)** { TRAIN, TEST} |
+| enum| **[PrepStep](../Classes/classshapeworks_1_1DeepSSMJob.md#enum-prepstep)** { GROOM_TRAINING = 0, OPTIMIZE_TRAINING = 1, GROOM_TRAINING_IMAGES = 2, GROOM_VAL_IMAGES = 3, OPTIMIZE_VALIDATION = 4, DONE = 5} |
 
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-deepssmjob)**(ProjectHandle project, DeepSSMTool::ToolMode tool_mode) |
+| | **[DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-deepssmjob)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session, DeepSSMTool::ToolMode tool_mode) |
 | | **[~DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-~deepssmjob)**() |
 | virtual void | **[run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run)**() override<br>run the job  |
 | virtual QString | **[name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name)**() override<br>get the name of the job  |
+| void | **[run_prep](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-prep)**() |
 | void | **[run_augmentation](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-augmentation)**() |
 | void | **[run_training](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-training)**() |
 | void | **[run_testing](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-testing)**() |
 | void | **[python_message](../Classes/classshapeworks_1_1DeepSSMJob.md#function-python-message)**(std::string str) |
-| std::vector< std::string > | **[get_list](../Classes/classshapeworks_1_1DeepSSMJob.md#function-get-list)**(FileType file_type, SplitType split_type) |
+| QString | **[get_prep_message](../Classes/classshapeworks_1_1DeepSSMJob.md#function-get-prep-message)**() |
 
 ## Additional inherited members
 
@@ -42,7 +42,7 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double ) |
+| void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double , QString  ="") |
 | void | **[finished](../Classes/classshapeworks_1_1Job.md#signal-finished)**() |
 
 **Public Functions inherited from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**
@@ -75,23 +75,16 @@ The [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md) class wraps the fu
 
 ## Public Types Documentation
 
-### enum FileType
+### enum PrepStep
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
-| ID | |   |
-| IMAGE | |   |
-| PARTICLES | |   |
-
-
-
-
-### enum SplitType
-
-| Enumerator | Value | Description |
-| ---------- | ----- | ----------- |
-| TRAIN | |   |
-| TEST | |   |
+| GROOM_TRAINING | 0|   |
+| OPTIMIZE_TRAINING | 1|   |
+| GROOM_TRAINING_IMAGES | 2|   |
+| GROOM_VAL_IMAGES | 3|   |
+| OPTIMIZE_VALIDATION | 4|   |
+| DONE | 5|   |
 
 
 
@@ -102,7 +95,7 @@ The [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md) class wraps the fu
 
 ```cpp
 DeepSSMJob(
-    ProjectHandle project,
+    QSharedPointer< Session > session,
     DeepSSMTool::ToolMode tool_mode
 )
 ```
@@ -137,6 +130,13 @@ get the name of the job
 **Reimplements**: [shapeworks::Job::name](../Classes/classshapeworks_1_1Job.md#function-name)
 
 
+### function run_prep
+
+```cpp
+void run_prep()
+```
+
+
 ### function run_augmentation
 
 ```cpp
@@ -167,16 +167,13 @@ void python_message(
 ```
 
 
-### function get_list
+### function get_prep_message
 
 ```cpp
-std::vector< std::string > get_list(
-    FileType file_type,
-    SplitType split_type
-)
+QString get_prep_message()
 ```
 
 
 -------------------------------
 
-Updated on 2024-01-25 at 03:19:24 +0000
+Updated on 2024-01-27 at 17:49:26 +0000
