@@ -763,6 +763,23 @@ int Mesh::closestPointId(const Point3 point) const {
   return closestPointId;
 }
 
+bool Mesh::isPointInside(const Point3 point) const {
+  // create point set
+  auto points = vtkSmartPointer<vtkPoints>::New();
+  points->InsertNextPoint(point.GetDataPointer());
+  auto polydata = vtkSmartPointer<vtkPolyData>::New();
+  polydata->SetPoints(points);
+
+  auto select = vtkSmartPointer<vtkSelectEnclosedPoints>::New();
+
+  select->SetInputData(polydata);
+  select->SetSurfaceData(this->poly_data_);
+  select->SetTolerance(0.0001);
+  select->Update();
+
+  return select->IsInside(0);
+}
+
 double Mesh::geodesicDistance(int source, int target) const {
   if (source < 0 || target < 0 || numPoints() < source || numPoints() < target) {
     throw std::invalid_argument("requested point ids outside range of points available in mesh");
@@ -1066,6 +1083,7 @@ Image Mesh::toImage(PhysicalRegion region, Point3 spacing) const {
 }
 
 Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, const Dims padding) const {
+  invalidateLocators();
   this->updateCellLocator();
 
   // if no region, use mesh bounding box
@@ -1106,6 +1124,8 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   enclosed->SetSurfaceData(this->poly_data_);
   enclosed->Update();
 
+  std::mutex cell_mutex;
+
   tbb::parallel_for(tbb::blocked_range<size_t>(0, indices.size()), [&](const tbb::blocked_range<size_t>& r) {
     for (size_t i = r.begin(); i != r.end(); ++i) {
       Image::ImageType::PointType p;
@@ -1113,7 +1133,11 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
 
       double distance = 0.0;
       vtkIdType face_id = 0;
-      closestPoint(p, distance, face_id);
+
+      {
+        // std::lock_guard<std::mutex> lock(cell_mutex);
+        closestPoint(p, distance, face_id);
+      }
 
       bool outside = !enclosed->IsInside(i);
 
@@ -1125,7 +1149,8 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   return img;
 }
 
-Mesh& Mesh::computeThickness(Image& image, Image* dt, double max_dist, double median_radius, std::string distance_mesh) {
+Mesh& Mesh::computeThickness(Image& image, Image* dt, double max_dist, double median_radius,
+                             std::string distance_mesh) {
   mesh::compute_thickness(*this, image, dt, max_dist, median_radius, distance_mesh);
   return *this;
 }

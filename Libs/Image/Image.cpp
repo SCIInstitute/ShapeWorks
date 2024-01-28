@@ -859,6 +859,11 @@ Image& Image::isolate() {
   return *this;
 }
 
+double Image::get_minimum_spacing() const {
+  auto spacing = this->spacing();
+  return std::min(spacing[0], std::min(spacing[1], spacing[2]));
+}
+
 Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->itk_image_, itk_image_->GetLargestPossibleRegion());
   int numPixels = 0;

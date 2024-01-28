@@ -216,6 +216,9 @@ class Image {
   /// physical spacing of the image
   Vector spacing() const { return itk_image_->GetSpacing(); }
 
+  /// minimum physical spacing of the image
+  double get_minimum_spacing() const;
+
   /// physical coordinates of image origin
   Point3 origin() const { return itk_image_->GetOrigin(); }
 

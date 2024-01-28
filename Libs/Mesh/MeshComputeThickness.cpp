@@ -4,6 +4,7 @@
 #include <itkVectorLinearInterpolateImageFunction.h>
 #include <tbb/parallel_for.h>
 #include <vtkPointData.h>
+#include <vtkSelectEnclosedPoints.h>
 #include <vtkStaticCellLocator.h>
 #include <vtkStaticPointLocator.h>
 
@@ -126,7 +127,9 @@ static std::vector<double> median_smooth_signal_intensities(std::vector<double> 
   for (int i = 0; i < intensities.size(); i++) {
     std::vector<double> local_intensities;
     for (int j = -2; j <= 2; j++) {
-      local_intensities.push_back(intensities[i + j]);
+      if (i + j >= 0 && i + j < intensities.size()) {
+        local_intensities.push_back(intensities[i + j]);
+      }
     }
     // compute median
     std::sort(local_intensities.begin(), local_intensities.end());
@@ -173,6 +176,58 @@ static double get_distance_to_opposite_side(Mesh& mesh, int point_id) {
   double distance = std::sqrt(vtkMath::Distance2BetweenPoints(ray_start, intersectionPoint));
   return distance;
 }
+
+/*
+
+//---------------------------------------------------------------------------
+static void get_distances_to_inner_mesh(Mesh &outer_mesh, int point_id, Mesh &inner_mesh, double &p1, double &p2) {
+// using the surface normal from the points on the outer mesh, find the two intersections of the inner mesh
+
+    vtkSmartPointer<vtkPolyData> poly_data = outer_mesh.getVTKMesh();
+
+    // Get the surface normal from the given point
+    double normal[3];
+    poly_data->GetPointData()->GetNormals()->GetTuple(point_id, normal);
+
+    // Create a ray in the opposite direction of the normal
+    double ray_start[3];
+    double ray_end[3];
+    poly_data->GetPoint(point_id, ray_start);
+    for (int i = 0; i < 3; ++i) {
+        ray_start[i] = ray_start[i] - normal[i] * 0.001;
+        ray_end[i] = ray_start[i] - normal[i] * 100.0;
+    }
+
+    int result = 0;
+    // Find the intersection point with the mesh
+
+
+
+
+}
+
+*/
+
+/*
+//---------------------------------------------------------------------------
+bool is_inside(Mesh &mesh, Point3 start, Point3 current) {
+
+    // use the sign of t to determine if the point is inside or outside the mesh
+
+    // lock mutex (IntersectWithLine is not thread safe)
+    std::lock_guard<std::mutex> lock(cell_mutex);
+    auto cellLocator = mesh.getCellLocator();
+    double t;
+    double intersectionPoint[3];
+    double pcoords[3];
+    int subId;
+    int result = cellLocator->IntersectWithLine(start.GetDataPointer(), current.GetDataPointer(), 0.0, t,
+intersectionPoint, pcoords, subId);
+
+    return result != 0/;
+
+}
+*/
 
 //---------------------------------------------------------------------------
 double compute_thickness_from_signal(const std::vector<double>& intensities_input, double step_size) {
@@ -358,14 +413,7 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
     }
   };
 
-  // get minimum spacing
-  double spacing = image.spacing()[0];
-  for (int i = 1; i < 3; i++) {
-    if (image.spacing()[i] < spacing) {
-      spacing = image.spacing()[i];
-    }
-  }
-
+  double spacing = image.get_minimum_spacing();
   double step_size = spacing / 10.0;
 
   auto step = [&](Point3 point, VectorPixelType gradient, double multiplier) -> Point3 {
@@ -518,6 +566,10 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, dou
 
     d_mesh.write(distance_mesh);
   }
+
+  // compute inner mesh
+  Mesh inner_mesh = compute_inner_mesh(mesh, "thickness");
+  summarize_internal_intensities(mesh, inner_mesh, image);
 }
 
 //---------------------------------------------------------------------------
@@ -562,6 +614,108 @@ Mesh compute_inner_mesh(const Mesh& mesh, std::string array_name) {
     poly_data->GetPoints()->SetPoint(i, point.GetDataPointer());
   }
   return new_mesh;
+}
+
+//---------------------------------------------------------------------------
+void summarize_internal_intensities(Mesh& outer_mesh, Mesh& inner_mesh, Image& image) {
+  outer_mesh.computeNormals();
+  inner_mesh.computeNormals();
+
+  vtkSmartPointer<vtkPolyData> outerMeshWithNormals = outer_mesh.getVTKMesh();
+  vtkSmartPointer<vtkPolyData> innerMesh = inner_mesh.getVTKMesh();
+
+  // Get the normal array
+  vtkDataArray* normalArray = outerMeshWithNormals->GetPointData()->GetNormals();
+
+  double spacing = image.get_minimum_spacing();
+  double step_size = spacing / 10.0;
+
+  const unsigned long num_points = outerMeshWithNormals->GetNumberOfPoints();
+
+  // create arrays for min, max, mean
+  auto values_min = vtkSmartPointer<vtkDoubleArray>::New();
+  values_min->SetNumberOfComponents(1);
+  values_min->SetNumberOfTuples(num_points);
+  values_min->SetName("intensity_min");
+
+  auto values_max = vtkSmartPointer<vtkDoubleArray>::New();
+  values_max->SetNumberOfComponents(1);
+  values_max->SetNumberOfTuples(num_points);
+  values_max->SetName("intensity_max");
+
+  auto values_mean = vtkSmartPointer<vtkDoubleArray>::New();
+  values_mean->SetNumberOfComponents(1);
+  values_mean->SetNumberOfTuples(num_points);
+  values_mean->SetName("intensity_mean");
+
+  auto inner_dt = inner_mesh.toDistanceTransform(PhysicalRegion(), image.spacing(), {1, 1, 1});
+  auto outer_dt = outer_mesh.toDistanceTransform(PhysicalRegion(), image.spacing(), {1, 1, 1});
+
+  // Iterate over each point in the outer mesh
+  for (vtkIdType pointId = 0; pointId < outerMeshWithNormals->GetNumberOfPoints(); ++pointId) {
+    // parallel loop over all points using TBB
+    ////tbb::parallel_for(tbb::blocked_range<size_t>{0, num_points}, [&](const tbb::blocked_range<size_t>& r) {
+    ////for (size_t i = r.begin(); i < r.end(); ++i) {
+    // int pointId = i;
+
+    // Get the surface normal at this point
+    double normal[3];
+    normalArray->GetTuple(pointId, normal);
+
+    // Get the coordinates of the current point
+    double point[3];
+    outerMeshWithNormals->GetPoint(pointId, point);
+
+    // Move to the next voxel along the surface normal by the step_size
+    for (int i = 0; i < 3; ++i) {
+      point[i] -= normal[i] * step_size * 10;
+    }
+
+    double max_value = 0;
+    double min_value = std::numeric_limits<double>::max();
+    double sum = 0;
+    double count = 0;
+
+    while (outer_dt.evaluate(point) > 0) {
+        if (inner_dt.isInside(point) && inner_dt.evaluate(point) > spacing && image.isInside(point)) {
+        double value = image.evaluate(point);
+        max_value = std::max<double>(max_value, value);
+        min_value = std::min<double>(min_value, value);
+        sum += value;
+        count++;
+      }
+
+      // Move to the next voxel along the surface normal by the step_size
+      for (int i = 0; i < 3; ++i) {
+        point[i] -= normal[i] * step_size;
+      }
+    }
+
+    if (count == 0) {
+      min_value = max_value = sum = 0;  // no points found
+      count = 1;
+    }
+
+    // Set the values in the output arrays
+    values_min->SetValue(pointId, min_value);
+    values_max->SetValue(pointId, max_value);
+    values_mean->SetValue(pointId, sum / count);
+
+    // std::cout << "point " << pointId << " min " << min_value << " max " << max_value << " mean " << sum / count
+    //          << std::endl;
+  }
+  //});
+
+  outer_mesh.setField("intensity_min", values_min, Mesh::Point);
+  outer_mesh.setField("intensity_max", values_max, Mesh::Point);
+  outer_mesh.setField("intensity_mean", values_mean, Mesh::Point);
+
+  double average_edge_length = compute_average_edge_length(outer_mesh.getVTKMesh());
+
+  double median_radius = 5.0;
+  median_smooth(outer_mesh.getVTKMesh(), "intensity_min", average_edge_length * median_radius);
+  median_smooth(outer_mesh.getVTKMesh(), "intensity_max", average_edge_length * median_radius);
+  median_smooth(outer_mesh.getVTKMesh(), "intensity_mean", average_edge_length * median_radius);
 }
 
 }  // namespace shapeworks::mesh
