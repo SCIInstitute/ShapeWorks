@@ -140,6 +140,8 @@ class Mesh {
 
   int closestPointId(const Point3 point) const;
 
+  bool isPointInside(const Point3 point) const;
+
   double geodesicDistance(int source, int target) const;
 
   Field geodesicDistance(const Point3 landmark) const;
@@ -277,4 +279,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2024-01-27 at 17:49:27 +0000
+Updated on 2024-01-28 at 01:33:43 +0000

@@ -178,6 +178,8 @@ class Image {
 
   Vector spacing() const { return itk_image_->GetSpacing(); }
 
+  double get_minimum_spacing() const;
+
   Point3 origin() const { return itk_image_->GetOrigin(); }
 
   Point3 center() const { return origin() + size() / 2.0; }
@@ -267,4 +269,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2024-01-27 at 17:49:27 +0000
+Updated on 2024-01-28 at 01:33:43 +0000

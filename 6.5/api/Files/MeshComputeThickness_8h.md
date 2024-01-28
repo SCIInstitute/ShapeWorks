@@ -32,10 +32,12 @@ void compute_thickness(Mesh &mesh, Image &image, Image *dt, double max_dist, dou
 
 Mesh compute_inner_mesh(const Mesh &mesh, std::string array_name);
 
+void summarize_internal_intensities(Mesh &outer_mesh, Mesh &inner_mesh, Image &image);
+
 }  // namespace shapeworks::mesh
 ```
 
 
 -------------------------------
 
-Updated on 2024-01-27 at 17:49:27 +0000
+Updated on 2024-01-28 at 01:33:43 +0000

@@ -93,6 +93,7 @@ title: shapeworks::Image
 | Dims | **[dims](../Classes/classshapeworks_1_1Image.md#function-dims)**() const<br>logical dimensions of the image  |
 | Point3 | **[size](../Classes/classshapeworks_1_1Image.md#function-size)**() const<br>physical dimensions of the image (dims * spacing)  |
 | Vector | **[spacing](../Classes/classshapeworks_1_1Image.md#function-spacing)**() const<br>physical spacing of the image  |
+| double | **[get_minimum_spacing](../Classes/classshapeworks_1_1Image.md#function-get-minimum-spacing)**() const<br>minimum physical spacing of the image  |
 | Point3 | **[origin](../Classes/classshapeworks_1_1Image.md#function-origin)**() const<br>physical coordinates of image origin  |
 | Point3 | **[center](../Classes/classshapeworks_1_1Image.md#function-center)**() const<br>physical coordinates of center of this image  |
 | ImageType::DirectionType | **[coordsys](../Classes/classshapeworks_1_1Image.md#function-coordsys)**() const<br>return coordinate system in which this image lives in physical space  |
@@ -841,6 +842,14 @@ inline Vector spacing() const
 
 physical spacing of the image 
 
+### function get_minimum_spacing
+
+```cpp
+double get_minimum_spacing() const
+```
+
+minimum physical spacing of the image 
+
 ### function origin
 
 ```cpp
@@ -1067,4 +1076,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-01-27 at 17:49:27 +0000
+Updated on 2024-01-28 at 01:33:42 +0000

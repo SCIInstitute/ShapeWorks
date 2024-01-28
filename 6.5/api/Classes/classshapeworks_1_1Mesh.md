@@ -66,6 +66,7 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeNormals](../Classes/classshapeworks_1_1Mesh.md#function-computenormals)**()<br>computes and adds oriented point and cell normals  |
 | Point3 | **[closestPoint](../Classes/classshapeworks_1_1Mesh.md#function-closestpoint)**(const Point3 point, double & distance, vtkIdType & face_id) const |
 | int | **[closestPointId](../Classes/classshapeworks_1_1Mesh.md#function-closestpointid)**(const Point3 point) const<br>returns closest point id in this mesh to the given point in space  |
+| bool | **[isPointInside](../Classes/classshapeworks_1_1Mesh.md#function-ispointinside)**(const Point3 point) const<br>returns if the given point is inside the mesh  |
 | double | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(int source, int target) const<br>computes geodesic distance between two vertices (specified by their indices) on mesh  |
 | Field | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(const Point3 landmark) const<br>computes geodesic distance between a point (landmark) and each vertex on mesh  |
 | Field | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(const std::vector< Point3 > curve) const<br>computes geodesic distance between a set of points (curve) and each vertex on mesh  |
@@ -554,6 +555,16 @@ int closestPointId(
 
 returns closest point id in this mesh to the given point in space 
 
+### function isPointInside
+
+```cpp
+bool isPointInside(
+    const Point3 point
+) const
+```
+
+returns if the given point is inside the mesh 
+
 ### function geodesicDistance
 
 ```cpp
@@ -974,4 +985,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-01-27 at 17:49:27 +0000
+Updated on 2024-01-28 at 01:33:42 +0000
