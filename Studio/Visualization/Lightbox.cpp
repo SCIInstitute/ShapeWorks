@@ -92,7 +92,6 @@ void Lightbox::reset_camera() {
   if (!viewers_.empty()) {
     viewers_[0]->reset_camera();
   }
-  redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -263,8 +262,6 @@ ShapeList Lightbox::get_shapes() { return shapes_; }
 //-----------------------------------------------------------------------------
 void Lightbox::redraw() {
   if (render_window_) {
-    // reset clipping range
-    reset_camera_clipping_range();
     render_window_->Render();
   }
 }
@@ -322,10 +319,6 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
       base_transform->TransformPoint(point.GetDataPointer(), common.GetDataPointer());
 
       for (int i = 1; i < viewers_.size(); i++) {
-        if (!viewers_[i]->get_shape()) {
-          continue;
-        }
-
         // transform from common space to destination space
         auto inverse = viewers_[i]->get_shape()->get_inverse_transform();
 
@@ -339,7 +332,6 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
         viewers_[i]->slice_view().change_slice(change);
       }
     }
-    redraw();
   }
 }
 

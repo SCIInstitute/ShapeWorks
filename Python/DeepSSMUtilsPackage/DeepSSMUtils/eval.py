@@ -74,7 +74,7 @@ def test(config_file, loader="test"):
 		loaders.make_dir(predPath_ft)
 		loaders.make_dir(predPath_pca)
 	predicted_particle_files = []
-	for img, _, mdl, _ in test_loader:
+	for img, _, mdl in test_loader:
 		if sw_check_abort():
 			sw_message("Aborted")
 			return

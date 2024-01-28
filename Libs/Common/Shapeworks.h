@@ -53,9 +53,6 @@ using IdentityTransform  = itk::IdentityTransform<double, 3>;
 using TransformPtr       = GenericTransform::Pointer;
 TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate = makeVector({0,0,0}));
 
-//! Convert VTK to ITK transform
-TransformPtr convert_to_image_transform(vtkSmartPointer<vtkTransform> vtk_transform);
-
 /// Make a plane
 Plane makePlane(const Point &p, const Vector3 &n);
 Plane makePlane(const Point &p0, const Point &p1, const Point &p2);

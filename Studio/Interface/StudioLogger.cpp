@@ -22,17 +22,6 @@ void StudioLogger::register_callbacks() {
 }
 
 //---------------------------------------------------------------------------
-StudioLogger::~StudioLogger() {
-  // unregister callbacks
-  Logging::Instance().set_error_callback(nullptr);
-  Logging::Instance().set_message_callback(nullptr);
-  Logging::Instance().set_warning_callback(nullptr);
-  Logging::Instance().set_debug_callback(nullptr);
-  Logging::Instance().set_status_callback(nullptr);
-  Logging::Instance().set_progress_callback(nullptr);
-}
-
-//---------------------------------------------------------------------------
 void StudioLogger::handle_message(std::string str) { Q_EMIT message(str); }
 //---------------------------------------------------------------------------
 void StudioLogger::handle_error(std::string str) { Q_EMIT error(str); }

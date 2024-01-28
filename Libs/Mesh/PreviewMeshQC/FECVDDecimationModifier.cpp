@@ -137,7 +137,7 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 		// assign the first nc_sel seeds 
 		while (nc < nc_sel)
 		{
-            int n = ShapeWorksUtils::get_random_number()%sel_faces;
+			int n = ShapeworksUtils::generateNumber()%sel_faces;
 			int face_num = selectedFaces[n];
 			if (m_tag[face_num] == 0) m_tag[face_num] = ++nc;
 
@@ -149,7 +149,7 @@ bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 	// assign the remaining seeds
 	while (nc < NC)
 	{
-        int n = ShapeWorksUtils::get_random_number()%T0;
+		int n = ShapeworksUtils::generateNumber()%T0;
 		if (m_tag[n] == 0) m_tag[n] = ++nc;
 
 		ntries++;

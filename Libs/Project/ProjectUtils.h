@@ -62,9 +62,6 @@ class ProjectUtils {
   //! convert a list of doubles from a spreadsheet to a vtkTransform
   static vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);
 
-  //! convert a string of doubles from to a vtkTransform
-  static vtkSmartPointer<vtkTransform> convert_transform(std::string string);
-
   //! convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)
   static std::vector<double> convert_transform(vtkSmartPointer<vtkTransform> transform);
 

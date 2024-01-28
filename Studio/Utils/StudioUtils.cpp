@@ -1,5 +1,3 @@
-#include <Logging.h>
-#include <Mesh/Mesh.h>
 #include <Utils/StudioUtils.h>
 #include <vtkActor2D.h>
 #include <vtkCoordinate.h>
@@ -11,6 +9,9 @@
 #include <vtkReverseSense.h>
 
 #include <QMessageBox>
+
+#include <Mesh/Mesh.h>
+#include <Logging.h>
 
 namespace shapeworks {
 
@@ -147,7 +148,7 @@ bool StudioUtils::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString fil
     Mesh mesh(poly_data);
     mesh.write(filename.toStdString());
   } catch (std::exception& e) {
-    SW_ERROR("{}", e.what());
+    SW_ERROR(e.what());
     return false;
   }
   return true;

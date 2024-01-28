@@ -1,6 +1,5 @@
 #include "ExcelProjectWriter.h"
 
-#include <Logging.h>
 #include <xlnt/workbook/workbook_view.hpp>
 #include <xlnt/xlnt.hpp>
 
@@ -141,12 +140,7 @@ bool ExcelProjectWriter::write_project(Project& project, const std::string& file
 
   store_subjects(project, wb);
 
-  auto groom_parameters = project.get_parameter_map("groom");
-  if (groom_parameters.size() == 1) {
-    create_parameter_sheet(wb, "groom", groom_parameters.begin()->second);
-  } else {
-    create_parameter_map_sheet(wb, "groom", groom_parameters);
-  }
+  create_parameter_map_sheet(wb, "groom", project.get_parameter_map("groom"));
 
   create_parameter_sheet(wb, "optimize", project.get_parameters("optimize"));
   create_parameter_sheet(wb, "studio", project.get_parameters("studio"));

@@ -42,9 +42,6 @@ const std::string MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND = "mesh_smoothing_vt
 
 const std::string ALIGNMENT_METHOD = "alignment_method";
 const std::string ALIGNMENT_ENABLED = "alignment_enabled";
-const std::string ALIGNMENT_REFERENCE = "alignment_reference";
-const std::string ALIGNMENT_REFERENCE_CHOSEN = "alignment_reference_chosen";
-const std::string ALIGNMENT_SUBSET_SIZE = "alignment_subset_size";
 const std::string GROOM_OUTPUT_PREFIX = "groom_output_prefix";
 const std::string REMESH = "remesh";
 const std::string REMESH_PERCENT_MODE = "remesh_percent_mode";
@@ -133,9 +130,6 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
                                          Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND,
                                          Keys::ALIGNMENT_METHOD,
                                          Keys::ALIGNMENT_ENABLED,
-                                         Keys::ALIGNMENT_REFERENCE,
-                                         Keys::ALIGNMENT_REFERENCE_CHOSEN,
-                                         Keys::ALIGNMENT_SUBSET_SIZE,
                                          Keys::GROOM_OUTPUT_PREFIX,
                                          Keys::REMESH,
                                          Keys::REMESH_PERCENT_MODE,
@@ -328,26 +322,6 @@ std::string GroomParameters::get_alignment_method() {
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_alignment_method(std::string method) { params_.set(Keys::ALIGNMENT_METHOD, method); }
-
-//---------------------------------------------------------------------------
-int GroomParameters::get_alignment_reference() { return params_.get(Keys::ALIGNMENT_REFERENCE, -1); }
-
-//---------------------------------------------------------------------------
-void GroomParameters::set_alignment_reference(int reference) { params_.set(Keys::ALIGNMENT_REFERENCE, reference); }
-
-//---------------------------------------------------------------------------
-int GroomParameters::get_alignment_reference_chosen() { return params_.get(Keys::ALIGNMENT_REFERENCE_CHOSEN, -1); }
-
-//---------------------------------------------------------------------------
-void GroomParameters::set_alignment_reference_chosen(int reference) {
-  params_.set(Keys::ALIGNMENT_REFERENCE_CHOSEN, reference);
-}
-
-//---------------------------------------------------------------------------
-int GroomParameters::get_alignment_subset_size() { return params_.get(Keys::ALIGNMENT_SUBSET_SIZE, -1); }
-
-//---------------------------------------------------------------------------
-void GroomParameters::set_alignment_subset_size(int size) { params_.set(Keys::ALIGNMENT_SUBSET_SIZE, size); }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_alignment_enabled() {

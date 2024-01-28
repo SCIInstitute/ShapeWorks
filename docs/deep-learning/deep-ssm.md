@@ -161,8 +161,8 @@ Training requires a JSON config file which defines all model architecture and tr
     * `tf_epochs`: The number of epochs to train the T-flank.
 	* `joint_epochs`: The number of epochs to train the whole model.
 	* `alpha`: The weight applied to the T-flank with respect to the autoencoder loss when training the whole model.
-	* `a_ae`: Focal loss parameter when calculating the autoencoder loss. `a` is a scaling parameter that adjusts the intensity of the loss; higher values accentuate the loss, while lower values dampen it.
-    * `c_ae`: Focal loss parameter when calculating the autoencoder loss. `c` is a threshold parameter that modulates the loss contribution of each particle. When the particle difference is below c, the particle's impact on the overall loss is reduced.
+	* `a_ae`: Focal loss parameter when calculating the autoencoder loss.
+    * `c_ae`: Focal loss parameter when calculating the autoencoder loss.
 	* `a_lat`: Focal loss parameter when calculating the T-flank loss.
 	* `c_lat`: Focal loss parameter when calculating the T-flank loss.
 * `use_best_model`: If true the model from the epoch which achieved the best validation accuracy is used in testing (essentially the early stopping model). If false then the final model after all training epochs is used in testing.

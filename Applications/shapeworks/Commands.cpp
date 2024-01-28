@@ -41,7 +41,31 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
 }
 #endif
 
+static void setup_callbacks(bool show_progress, bool xml_status) {
+  if (show_progress) {
+    auto progress_callback = [](double progress, std::string message) {
+      // show status message and percentage complete
+      std::cout << fmt::format("{} ({:.1f}%)        \r", message, progress);
+      std::cout.flush();
+    };
+    Logging::Instance().set_progress_callback(progress_callback);
+  }
 
+  if (xml_status) {
+    auto progress_callback = [](double progress, std::string message) {
+      // print status message and percentage complete
+      std::cout << fmt::format("<xml><status>{}</status><progress>{:.1f}</progress></xml>\n", message, progress);
+      std::cout.flush();
+    };
+    Logging::Instance().set_progress_callback(progress_callback);
+
+    auto error_callback = [](std::string message) {
+      std::cout << fmt::format("<xml><error>{}</error></xml>\n", message);
+      std::cout.flush();
+    };
+    Logging::Instance().set_error_callback(error_callback);
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Seed
@@ -63,7 +87,7 @@ void Seed::buildParser() {
 bool Seed::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   int value = static_cast<int>(options.get("value"));
 
-  ShapeWorksUtils::set_rng_seed(value);
+  ShapeworksUtils::setRngSeed(value);
 
   return true;
 }
@@ -99,7 +123,7 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
   bool isProject = StringUtils::hasSuffix(projectFile, "xlsx") || StringUtils::hasSuffix(projectFile, "swproj");
 
   Optimize app;
-  ShapeWorksUtils::setup_console_logging(show_progress, xml_status);
+  setup_callbacks(show_progress, xml_status);
 
   if (isProject) {
     try {
@@ -137,7 +161,7 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
 
       return success;
     } catch (std::exception& e) {
-      SW_ERROR("{}", e.what());
+      SW_ERROR(e.what());
       return false;
     }
   } else {
@@ -175,7 +199,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
     return false;
   }
 
-  ShapeWorksUtils::setup_console_logging(show_progress, xml_status);
+  setup_callbacks(show_progress, xml_status);
 
   try {
     ProjectHandle project = std::make_shared<Project>();
@@ -202,7 +226,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
 
     return success;
   } catch (std::exception& e) {
-    SW_ERROR("{}", e.what());
+    SW_ERROR(e.what());
     return false;
   }
 }

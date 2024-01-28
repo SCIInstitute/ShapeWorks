@@ -320,9 +320,6 @@ std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_poi
   std::vector<std::vector<itk::Point<double>>> initial_points;
   for (auto s : subjects) {
     for (int d = 0; d < domains_per_shape; d++) {
-      if (s->is_excluded()) {
-        continue;
-      }
       if (s->is_fixed()) {
         auto filename = s->get_local_particle_filenames()[d];
         auto particles = read_particles_as_vector(filename);
@@ -513,7 +510,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetUseShapeStatisticsAfter(multiscale_particles);
 
   // should add the images last
-  auto subjects = project_->get_non_excluded_subjects();
+  auto subjects = project_->get_subjects();
 
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to optimize");
@@ -585,13 +582,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   std::vector<Constraints> constraints;
   for (auto& s : subjects) {
     auto files = s->get_constraints_filenames();
-    if (s->is_excluded()) {
-      continue;
-    }
     for (int f = 0; f < files.size(); f++) {
       auto file = files[f];
       Constraints constraint;
-      SW_DEBUG("reading constraint: {}", file);
       constraint.read(file);
       constraints.push_back(constraint);
       auto domain_type = project_->get_groomed_domain_types()[f];
@@ -648,11 +641,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
     for (int i = 0; i < files.size(); i++) {
       auto filename = files[i];
-
-      if (!ShapeWorksUtils::file_exists(filename)) {
-        throw std::invalid_argument("Error, file does not exist: " + filename);
-      }
-
       auto domain_type = project_->get_groomed_domain_types()[i];
       filenames.push_back(filename);
 
@@ -661,10 +649,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         if (domain_count < constraints.size()) {
           Constraints constraint = constraints[domain_count];
           constraint.clipMesh(mesh);
-          auto poly_data = mesh.getVTKMesh();
-          if (poly_data->GetNumberOfCells() == 0) {
-            throw std::invalid_argument("Mesh has zero cells after constraint clipping: " + filename);
-          }
         }
 
         if (get_use_geodesics_to_landmarks()) {
@@ -689,9 +673,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         auto poly_data = mesh.getVTKMesh();
 
         if (poly_data) {
-          if (poly_data->GetNumberOfCells() == 0) {
-            throw std::invalid_argument("Error, mesh had zero cells: " + filename);
-          }
           // TODO This is a HACK for detecting contours
           if (poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
             optimize->AddContour(poly_data);

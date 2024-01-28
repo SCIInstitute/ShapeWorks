@@ -1,9 +1,9 @@
 #pragma once
 
+#include "ShapeworksUtils.h"
+#include "Mesh.h"
 #include "Eigen/Core"
 #include "Eigen/Dense"
-#include "Mesh.h"
-#include "ShapeworksUtils.h"
 
 class vtkActor;
 
@@ -16,16 +16,16 @@ namespace shapeworks {
  * This class provides helper functions for meshes
  *
  */
-class MeshUtils {
- public:
+class MeshUtils
+{
+public:
+
   /// computes a rigid transformation from source to target using vtkIterativeClosestPointTransform
-  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const Mesh source, const Mesh target,
+  static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const Mesh source,
+                                                                const Mesh target,
                                                                 Mesh::AlignmentType align,
                                                                 const unsigned iterations = 20,
                                                                 bool meshTransform = false);
-
-  /// Mesh from mesh or image file
-  static Mesh create_mesh_from_file(std::string filename, double iso_value = 0.5);
 
   /// Thread safe reading of a mesh, uses a lock
   static Mesh threadSafeReadMesh(std::string filename);
@@ -39,11 +39,9 @@ class MeshUtils {
   /// calculate bounding box incrementally for meshes
   static PhysicalRegion boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center = false);
 
-  /// calculate bounding box incrementally for meshes
-  static PhysicalRegion boundingBox(const std::vector<Mesh>& meshes, bool center = false);
-
   /// determine the reference mesh
-  static int findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size = -1);
+  static size_t findReferenceMesh(std::vector<Mesh> &meshes);
+
 
   /// boundary loop extractor for a given mesh
   static Mesh boundaryLoopExtractor(Mesh mesh);
@@ -65,6 +63,7 @@ class MeshUtils {
 
   /// Used as an auxiliary function for vector field visualizations
   vtkSmartPointer<vtkActor> getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
+
 };
 
-}  // namespace shapeworks
+} // shapeworks

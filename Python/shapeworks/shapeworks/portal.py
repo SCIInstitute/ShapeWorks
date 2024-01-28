@@ -83,11 +83,11 @@ def login():
     return username, password
 
 
-def download_dataset(datasetName, outputDirectory, force = False):
+def download_dataset(datasetName, outputDirectory):
     """Download a dataset from the ShapeWorks Cloud Data Portal"""
     # check if dataset is already downloaded
     check_file = "Output/" + datasetName + ".downloaded"
-    if (os.path.exists(check_file) and not force):
+    if (os.path.exists(check_file)):
         print(f"Dataset {datasetName} already downloaded ({check_file} exists)")
         # check if env var SW_PORTAL_DOWNLOAD_ONLY is set to 1
         if 'SW_PORTAL_DOWNLOAD_ONLY' in os.environ and os.environ['SW_PORTAL_DOWNLOAD_ONLY'] == '1':

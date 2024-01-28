@@ -101,7 +101,7 @@ def get_relative_paths(files, base):
         path = os.path.relpath(f, base)
         relative_paths.append(path)
     return relative_paths
-
+        
 def find_reference_image_index(inDataList,domains_per_shape=1):
     mesh_list = []
     for img in inDataList:
@@ -114,7 +114,7 @@ def find_reference_mesh_index(mesh_list,domains_per_shape=1):
         return sw.MeshUtils.findReferenceMesh(mesh_list)
     else:
         combined_mesh = sw.data.combine_domains(mesh_list,domains_per_shape)
-        index = sw.MeshUtils.findReferenceMesh(combined_mesh)
+        index = sw.MeshUtils.findReferenceMesh(combined_mesh) 
         return index,combined_mesh
 
 
@@ -170,6 +170,7 @@ def set_sw_logger(log_object):
     global sw_logger
     sw_logger = log_object
 
+
 def sw_message(str):
     """If sw_logger is set, use it to log a message, otherwise print to console"""
     global sw_logger
@@ -186,11 +187,11 @@ def sw_check_abort():
     else:
         return False
 
-def sw_progress(progress, message=""):
+def sw_progress(progress):
     """If sw_logger is set, use it, otherwise do nothing"""
     global sw_logger
     if sw_logger is not None:
-        sw_logger.progress(progress, message)
+        sw_logger.progress(progress)
 
 def test(name, failure=False):
     if failure:
@@ -226,7 +227,7 @@ def expectException(name, etype):
         return False
 
 def getVTKtransform(itkTransform):
-
+    
     flippedITKtransform = np.copy(itkTransform)
     lastColumn = itkTransform[:,-1]
     lastRow = itkTransform[-1,:]
@@ -237,7 +238,7 @@ def getVTKtransform(itkTransform):
     return vtkTransform
 
 def getITKtransform(vtkTransform):
-
+    
     inverseVTKtransform = np.linalg.inv(vtkTransform)
     itkTransform = np.copy(inverseVTKtransform)
     lastColumn = inverseVTKtransform[:,-1]
@@ -318,7 +319,7 @@ def check_results_pattern(args, project_spreadsheet, pattern):
             exit(-1)
         print("Done with test, verification succeeded.")
         exit()
-
+        
 def findMeanShape(shapeModelDir):
     fileList = sorted(glob.glob(shapeModelDir + '/*local.particles'))
     for i in range(len(fileList)):
@@ -338,11 +339,3 @@ def transformParticles(particles, transform, inverse=False):
         transformed_particles.append(np.matmul(transform, np.append(particle, 1))[:3])
     transformed_particles = np.array(transformed_particles)
     return transformed_particles
-
-def load_mesh(filename):
-    accepted_extensions = ['.vtk', '.vtp', '.ply', '.obj', '.stl']
-    extension = os.path.splitext(filename)[1]
-    if extension in accepted_extensions:
-        return sw.Mesh(filename)
-    else:
-        return sw.Image(filename).toMesh(0.5)

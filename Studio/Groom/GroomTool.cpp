@@ -303,30 +303,6 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
 
   auto alignment = params.get_alignment_method();
   ui_->alignment_box->setCurrentText(QString::fromStdString(alignment));
-  int alignment_reference = params.get_alignment_reference();
-  ui_->alignment_reference->setText(alignment_reference < 0 ? "auto" : QString::number(alignment_reference));
-  ui_->alignment_subset_size->setEnabled(ui_->alignment_reference->text() == "auto");
-
-  int alignment_subset_size = params.get_alignment_subset_size();
-  ui_->alignment_subset_size->setText(alignment_subset_size < 0 ? "auto" : QString::number(alignment_subset_size));
-  alignment_option_changed(ui_->alignment_box->currentIndex());
-
-  // when editing ends, if it's not a number zero or greater, reset to auto
-  connect(ui_->alignment_reference, &QLineEdit::editingFinished, this, [=]() {
-    bool ok;
-    int value = ui_->alignment_reference->text().toInt(&ok);
-    if (!ok || value < 0) {
-      ui_->alignment_reference->setText("auto");
-    }
-    ui_->alignment_subset_size->setEnabled(ui_->alignment_reference->text() == "auto");
-  });
-  connect(ui_->alignment_subset_size, &QLineEdit::editingFinished, this, [=]() {
-    bool ok;
-    int value = ui_->alignment_subset_size->text().toInt(&ok);
-    if (!ok || value < 0) {
-      ui_->alignment_subset_size->setText("auto");
-    }
-  });
 
   ui_->antialias_checkbox->setChecked(params.get_antialias_tool());
   ui_->autopad_checkbox->setChecked(params.get_auto_pad_tool());
@@ -387,7 +363,7 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
               params.set_spacing({spacing[0], spacing[1], spacing[2]});
             }
           } catch (std::exception& e) {
-            SW_ERROR("{}", e.what());
+            SW_ERROR(e.what());
           }
         }
       }
@@ -407,16 +383,6 @@ void GroomTool::store_params() {
 
   params.set_alignment_enabled(ui_->alignment_image_checkbox->isChecked());
   params.set_alignment_method(ui_->alignment_box->currentText().toStdString());
-  if (ui_->alignment_reference->text() == "auto") {
-    params.set_alignment_reference(-1);
-  } else {
-    params.set_alignment_reference(ui_->alignment_reference->text().toInt());
-  }
-  if (ui_->alignment_subset_size->text() == "auto") {
-    params.set_alignment_subset_size(-1);
-  } else {
-    params.set_alignment_subset_size(ui_->alignment_subset_size->text().toInt());
-  }
 
   params.set_antialias_tool(ui_->antialias_checkbox->isChecked());
   params.set_auto_pad_tool(ui_->autopad_checkbox->isChecked());
@@ -494,7 +460,7 @@ void GroomTool::on_run_groom_button_clicked() {
     ui_->run_groom_button->setEnabled(true);
     return;
   } else {
-    session_->trigger_save();
+    session_->save_project(session_->get_filename());
   }
 
   store_params();
@@ -633,12 +599,7 @@ void GroomTool::alignment_checkbox_changed(int state) {
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::alignment_option_changed(int index) {
-  ui_->alignment_box->setCurrentIndex(index);
-  bool is_icp = ui_->alignment_box->currentText().toStdString() == GroomParameters::GROOM_ALIGNMENT_ICP_C;
-  ui_->alignment_reference->setEnabled(is_icp);
-  ui_->alignment_subset_size->setEnabled(is_icp);
-}
+void GroomTool::alignment_option_changed(int index) { ui_->alignment_box->setCurrentIndex(index); }
 
 //---------------------------------------------------------------------------
 void GroomTool::reflect_checkbox_changed(int state) {

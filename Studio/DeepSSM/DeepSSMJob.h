@@ -1,10 +1,9 @@
 #pragma once
 
-#include <DeepSSM/DeepSSMTool.h>
-#include <Job/Job.h>
-#include <Project/Project.h>
-
 #include <QObject>
+#include <Project/Project.h>
+#include <Job/Job.h>
+#include <DeepSSM/DeepSSMTool.h>
 
 namespace shapeworks {
 
@@ -14,47 +13,40 @@ namespace shapeworks {
  *
  */
 class DeepSSMJob : public Job {
+
   Q_OBJECT;
 
- public:
+public:
 
-  enum PrepStep {
-    GROOM_TRAINING = 0,
-    OPTIMIZE_TRAINING = 1,
-    GROOM_TRAINING_IMAGES = 2,
-    GROOM_VAL_IMAGES = 3,
-    OPTIMIZE_VALIDATION = 4,
-    DONE = 5
+  enum class FileType {
+    ID,
+    IMAGE,
+    PARTICLES
   };
 
-  DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode);
+  enum class SplitType {
+    TRAIN,
+    TEST
+  };
+
+  DeepSSMJob(ProjectHandle project, DeepSSMTool::ToolMode tool_mode);
   ~DeepSSMJob();
 
   void run() override;
 
   QString name() override;
 
-  void run_prep();
   void run_augmentation();
   void run_training();
   void run_testing();
 
   void python_message(std::string str);
 
-  QString get_prep_message();
+  std::vector<std::string> get_list(FileType file_type, SplitType split_type);
 
- private:
-  void update_prep_message(PrepStep step);
-
-  QSharedPointer<Session> session_;
+private:
   ProjectHandle project_;
 
   DeepSSMTool::ToolMode tool_mode_;
-
-  QString prep_message_;
-  PrepStep prep_step_{GROOM_TRAINING};
-
-  // mutex
-  std::mutex mutex_;
 };
-}  // namespace shapeworks
+}

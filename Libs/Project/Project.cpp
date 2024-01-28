@@ -28,21 +28,12 @@ Project::~Project() = default;
 //---------------------------------------------------------------------------
 bool Project::load(const std::string& filename) {
   filename_ = filename;
-  // get the directory of the project file
-  fs::path path = filename;
-  project_path_ = path.parent_path().string();
-  if (project_path_ == "") {
-    project_path_ = ".";
-  }
-  std::cerr << "Setting Project path: " << project_path_ << std::endl;
-
-  bool return_value = false;
   if (StringUtils::hasSuffix(filename, "swproj")) {
     JsonProjectReader reader(*this);
-    return_value = reader.read_project(filename);
+    return reader.read_project(filename);
   } else if (StringUtils::hasSuffix(filename, "xlsx")) {
     ExcelProjectReader reader(*this);
-    return_value = reader.read_project(filename);
+    return reader.read_project(filename);
   } else {
     throw std::runtime_error("Unsupported project file type: " + filename +
                              ", supported filetypes are xlsx and swproj");
@@ -52,36 +43,22 @@ bool Project::load(const std::string& filename) {
 
   version_ = project_parameters.get("version", -1);
 
-  return return_value;
+  loaded_ = true;
+  return true;
 }
 
 //---------------------------------------------------------------------------
 bool Project::save(const std::string& filename) {
-  if (filename != "") {
-    filename_ = filename;
-  }
-
-  if (filename_.empty()) {
-    throw std::runtime_error("Project filename is empty");
-  }
-
-  // get the directory of the project file
-  fs::path path = filename_;
-  std::string project_path = path.parent_path().string();
-  if (project_path == "") {
-    project_path = ".";
-  }
-
-  set_project_path(project_path);
+  filename_ = filename;
 
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
   project_parameters.set("version", version_);
   set_parameters(Parameters::PROJECT_PARAMS, project_parameters);
   update_subjects();
-  if (StringUtils::hasSuffix(filename_, "swproj")) {
-    return JsonProjectWriter::write_project(*this, filename_);
+  if (StringUtils::hasSuffix(filename, "swproj")) {
+    return JsonProjectWriter::write_project(*this, filename);
   } else {
-    return ExcelProjectWriter::write_project(*this, filename_);
+    return ExcelProjectWriter::write_project(*this, filename);
   }
 }
 
@@ -114,25 +91,16 @@ void Project::set_project_path(const std::string& new_pathname) {
     subject->set_constraints_filenames(fixup(subject->get_constraints_filenames()));
 
     auto features = subject->get_feature_filenames();
-    project::types::StringMap new_features;
+    StringMap new_features;
     for (auto const& x : features) {
       auto canonical = fs::canonical(x.second, old_path);
       new_features[x.first] = fs::relative(canonical, new_path).string();
     }
-    subject->set_feature_filenames(new_features);
   }
-
-  // filename becomes basename
-  filename_ = fs::path(filename_).filename().string();
 
   project_path_ = new_pathname;
-  if (project_path_ != "") {
-    fs::current_path(project_path_);  // chdir
-  }
+  fs::current_path(project_path_);  // chdir
 }
-
-//---------------------------------------------------------------------------
-std::string Project::get_project_path() { return project_path_; }
 
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_headers() {
@@ -170,17 +138,6 @@ int Project::get_number_of_domains_per_subject() { return get_domain_names().siz
 std::vector<std::shared_ptr<Subject>>& Project::get_subjects() { return subjects_; }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<Subject>> Project::get_non_excluded_subjects() {
-  std::vector<std::shared_ptr<Subject>> non_excluded_subjects;
-  for (auto& subject : subjects_) {
-    if (!subject->is_excluded()) {
-      non_excluded_subjects.push_back(subject);
-    }
-  }
-  return non_excluded_subjects;
-}
-
-//---------------------------------------------------------------------------
 void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects) {
   subjects_ = subjects;
   update_subjects();
@@ -204,7 +161,7 @@ void Project::update_subjects() {
   for (auto subject : subjects_) {
     originals_present_ = originals_present_ || !subject->get_original_filenames().empty();
     groomed_present_ = groomed_present_ || !subject->get_groomed_filenames().empty();
-    if (subject->get_groomed_filenames().size() > 0 && subject->get_groomed_filenames()[0] != "") {
+    if (subject->get_groomed_filenames().size() > 0) {
       groomed_subject = subject;
     }
     particles_present_ = particles_present_ || !subject->get_world_particle_filenames().empty();
@@ -403,9 +360,7 @@ Parameters Project::get_parameters(const std::string& name, std::string domain_n
 std::map<std::string, Parameters> Project::get_parameter_map(const std::string& name) {
   std::map<std::string, Parameters> map;
   auto domains = get_domain_names();
-  if (domains.size() > 1) {
-    domains.insert(domains.begin(), 1, "");  // add global parameters
-  }
+  domains.insert(domains.begin(), 1, "");  // add global parameters
   for (int i = 0; i < domains.size(); i++) {
     map[domains[i]] = get_parameters(name, domains[i]);
   }

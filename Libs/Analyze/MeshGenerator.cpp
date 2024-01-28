@@ -1,17 +1,20 @@
+#include <SurfaceReconstructor.h>
+
 #include <ItkToVtk.h>
 #include <LegacyMeshGenerator.h>
+#include <MeshGenerator.h>
+#include <vtkImageImport.h>
+#include <itkImageFileReader.h>
+
+#include <QMeshWarper.h>
+
 #include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshUtils.h>
-#include <MeshGenerator.h>
-#include <QMeshWarper.h>
-#include <SurfaceReconstructor.h>
 #include <Utils/StringUtils.h>
-#include <itkImageFileReader.h>
 #include <itkOrientImageFilter.h>
 #include <itkPoint.h>
 #include <itkVTKImageExport.h>
-#include <vtkImageImport.h>
 #include <vtkMarchingCubes.h>
 #include <vtkPolyDataNormals.h>
 
@@ -181,7 +184,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       }
 
     } catch (itk::ExceptionObject& excep) {
-      SW_ERROR("{}", excep.what());
+      SW_ERROR(excep.what());
       mesh->set_error_message(std::string("Exception: ") + excep.what());
     }
   } else {

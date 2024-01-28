@@ -4,7 +4,6 @@
 #include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshUtils.h>
-#include <Optimize/Constraints/Constraints.h>
 #include <Project/ProjectUtils.h>
 #include <Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
@@ -29,20 +28,16 @@ Groom::Groom(ProjectHandle project) { project_ = project; }
 
 //---------------------------------------------------------------------------
 bool Groom::run() {
-  ShapeWorksUtils::setup_threads();
-
   used_names_.clear();
   progress_ = 0;
   progress_counter_ = 0;
+  total_ops_ = get_total_ops();
 
   auto subjects = project_->get_subjects();
 
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to groom");
   }
-
-  total_ops_ = get_total_ops();
-
   std::atomic<bool> success = true;
 
   tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
@@ -444,6 +439,8 @@ void Groom::fix_origin(Image& image) {
 
 //---------------------------------------------------------------------------
 int Groom::get_total_ops() {
+  int num_subjects = project_->get_subjects().size();
+
   int num_tools = 0;
 
   project_->update_subjects();
@@ -468,22 +465,14 @@ int Groom::get_total_ops() {
                     (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
-      num_tools += params.get_fill_mesh_holes_tool() ? 1 : 0;
+      num_tools += params.get_fill_holes_tool() ? 1 : 0;
       num_tools += params.get_mesh_smooth() ? 1 : 0;
       num_tools += params.get_remesh() ? 1 : 0;
     }
   }
 
-  // count non-excluded subjects
-  int num_non_excluded = 0;
-  for (int i = 0; i < subjects.size(); i++) {
-    if (!subjects[i]->is_excluded()) {
-      num_non_excluded++;
-    }
-  }
-
   // +10 for alignment
-  return num_non_excluded * num_tools + 10;
+  return num_subjects * num_tools + 10;
 }
 
 //---------------------------------------------------------------------------
@@ -509,10 +498,6 @@ bool Groom::run_alignment() {
 
   bool global_icp = false;
   bool global_landmarks = false;
-
-  int reference_index = -1;
-  int subset_size = -1;
-
   // per-domain alignment
   for (size_t domain = 0; domain < num_domains; domain++) {
     if (abort_) {
@@ -526,31 +511,25 @@ bool Groom::run_alignment() {
       std::vector<Mesh> reference_meshes;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
+        auto mesh = get_mesh(i, domain);
 
-        if (!subjects[i]->is_excluded()) {
-          Mesh mesh = get_mesh(i, domain, true);
-          // if fixed subjects are present, only add the fixed subjects
-          if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
+        auto list = subjects[i]->get_groomed_transforms()[domain];
+        vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
+        mesh.applyTransform(transform);
+
+        // if fixed subjects are present, only add the fixed subjects
+        if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
+          if (!subjects[i]->is_excluded()) {
             reference_meshes.push_back(mesh);
           }
-          meshes.push_back(mesh);
         }
+        meshes.push_back(mesh);
       }
 
-      reference_index = params.get_alignment_reference();
-      subset_size = params.get_alignment_subset_size();
-
-      Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
-      if (reference_index < 0 || reference_index >= reference_meshes.size()) {
-        reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
-        reference_index = reference_meshes[reference_index].get_id();
-      }
-      reference_mesh = get_mesh(reference_index, domain, true);
-
-      params.set_alignment_reference_chosen(reference_index);
-      params.save_to_project();
+      size_t reference_mesh = MeshUtils::findReferenceMesh(reference_meshes);
 
       auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
+
       assign_transforms(transforms, domain);
     } else if (params.get_use_landmarks()) {
       global_landmarks = true;
@@ -559,55 +538,36 @@ bool Groom::run_alignment() {
         landmarks.push_back(get_landmarks(i, domain));
       }
 
-      int reference_index = Groom::find_reference_landmarks(landmarks);
-      params.set_alignment_reference_chosen(reference_index);
-      params.save_to_project();
+      size_t reference = Groom::find_reference_landmarks(landmarks);
 
-      auto transforms = Groom::get_landmark_transforms(landmarks, reference_index);
+      auto transforms = Groom::get_landmark_transforms(landmarks, reference);
       assign_transforms(transforms, domain);
     }
   }
 
   if (num_domains > 1) {  // global alignment for multiple domains
-    std::vector<Mesh> reference_meshes;
     std::vector<Mesh> meshes;
 
     for (size_t i = 0; i < subjects.size(); i++) {
-      Mesh mesh = get_mesh(i, 0, true);
+      Mesh mesh = get_mesh(i, 0);
       for (size_t domain = 1; domain < num_domains; domain++) {
-        mesh += get_mesh(i, domain, true);  // combine
+        mesh += get_mesh(i, domain);  // combine
       }
 
       // grab the first domain's initial transform (e.g. potentially reflect) and use before ICP
       auto list = subjects[i]->get_groomed_transforms()[0];
-      auto transform = ProjectUtils::convert_transform(list);
+      vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
       mesh.applyTransform(transform);
-
-      if (!subjects[i]->is_excluded()) {
-        // if fixed subjects are present, only add the fixed subjects
-        if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
-          reference_meshes.push_back(mesh);
+      // if fixed subjects are present, only add the fixed subjects
+      if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
+        if (!subjects[i]->is_excluded()) {
+          meshes.push_back(mesh);
         }
-        meshes.push_back(mesh);
-      } else {
-        // insert blank for each excluded shape
-        meshes.push_back(vtkSmartPointer<vtkPolyData>::New());
       }
     }
 
     if (global_icp) {
-      std::vector<Mesh> reference_meshes;
-
-      Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
-      if (reference_index < 0 || reference_index >= reference_meshes.size()) {
-        reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
-        reference_mesh = reference_meshes[reference_index];
-      } else {
-        reference_mesh = get_mesh(reference_index, 0, true);
-        for (size_t domain = 1; domain < num_domains; domain++) {
-          reference_mesh += get_mesh(reference_index, domain, true);  // combine
-        }
-      }
+      size_t reference_mesh = MeshUtils::findReferenceMesh(meshes);
       auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
       size_t domain = num_domains;  // end
       assign_transforms(transforms, domain, true /* global */);
@@ -640,7 +600,6 @@ bool Groom::run_alignment() {
 void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global) {
   auto subjects = project_->get_subjects();
 
-  int count = 0;
   for (size_t i = 0; i < subjects.size(); i++) {
     if (subjects[i]->is_excluded()) {
       continue;
@@ -652,14 +611,10 @@ void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int d
       base_domain = 0;
     }
 
-    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    transform->Identity();
-    if (base_domain < subjects[i]->get_groomed_transforms().size()) {
-      auto list = subjects[i]->get_groomed_transforms()[base_domain];
-      transform = ProjectUtils::convert_transform(list);
-    }
+    auto list = subjects[i]->get_groomed_transforms()[base_domain];
+    vtkSmartPointer<vtkTransform> transform = ProjectUtils::convert_transform(list);
     transform->PostMultiply();
-    transform->Concatenate(ProjectUtils::convert_transform(transforms[count++]));
+    transform->Concatenate(ProjectUtils::convert_transform(transforms[i]));
 
     // store transform
     if (!subject->is_fixed()) {
@@ -733,48 +688,21 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 }
 
 //---------------------------------------------------------------------------
-Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
+Mesh Groom::get_mesh(int subject, int domain) {
   auto subjects = project_->get_subjects();
-  assert(subject < subjects.size());
-  assert(domain < subjects[subject]->get_original_filenames().size());
   auto path = subjects[subject]->get_original_filenames()[domain];
-
-  auto constraint_filename = subjects[subject]->get_constraints_filenames();
-  Constraints constraint;
-  if (constraint_filename.size() > domain) {
-    constraint.read(constraint_filename[domain]);
-  }
-
-  if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
-    Mesh mesh = MeshUtils::threadSafeReadMesh(path);
-    mesh.set_id(subject);
-    return mesh;
-  }
-
-  Mesh mesh = vtkSmartPointer<vtkPolyData>::New();
 
   if (project_->get_original_domain_types()[domain] == DomainType::Image) {
     Image image(path);
-    mesh = image.toMesh(0.5);
-    constraint.clipMesh(mesh);
+    return image.toMesh(0.5);
   } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
-    mesh = MeshUtils::threadSafeReadMesh(path);
-    constraint.clipMesh(mesh);
-  } else {
-    throw std::invalid_argument("invalid domain type");
+    Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+    return mesh;
+  } else if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
+    Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+    return mesh;
   }
-
-  if (transformed) {
-    auto transforms = subjects[subject]->get_groomed_transforms();
-    if (transforms.size() > domain) {
-      auto list = transforms[domain];
-      auto transform = ProjectUtils::convert_transform(list);
-      mesh.applyTransform(transform);
-    }
-  }
-
-  mesh.set_id(subject);
-  return mesh;
+  throw std::invalid_argument("invalid domain type");
 }
 
 //---------------------------------------------------------------------------
@@ -866,32 +794,33 @@ int Groom::find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> land
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference) {
+std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, size_t reference) {
   std::vector<std::vector<double>> transforms(meshes.size());
 
-  // tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
-  // for (size_t i = r.begin(); i < r.end(); ++i) {
-  for (size_t i = 0; i < meshes.size(); i++) {
-    vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    matrix->Identity();
+  tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i < r.end(); ++i) {
+      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+      matrix->Identity();
 
-    Mesh source = meshes[i];
-    if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
-      // create copies for thread safety
-      auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
-      poly_data1->DeepCopy(source.getVTKMesh());
-      auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
-      poly_data2->DeepCopy(reference.getVTKMesh());
+      Mesh target = meshes[reference];
+      if (i != reference) {
+        Mesh source = meshes[i];
 
-      matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+        // create copies for thread safety
+        auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data1->DeepCopy(source.getVTKMesh());
+        auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data2->DeepCopy(target.getVTKMesh());
+
+        matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+      }
+
+      auto transform = createMeshTransform(matrix);
+      transform->PostMultiply();
+      Groom::add_center_transform(transform, target);
+      transforms[i] = ProjectUtils::convert_transform(transform);
     }
-    auto transform = createMeshTransform(matrix);
-    transform->PostMultiply();
-    Groom::add_center_transform(transform, reference);
-    transforms[i] = ProjectUtils::convert_transform(transform);
-  }
-  //  });
-
+  });
   return transforms;
 }
 

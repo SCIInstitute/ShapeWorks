@@ -11,7 +11,6 @@ target_link_libraries(ImageTests
   Common
   ${ITK_LIBRARIES}
   Testing
-  Project
   )
 
 add_test(NAME ImageTests COMMAND ImageTests)

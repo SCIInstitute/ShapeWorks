@@ -74,11 +74,11 @@
 
 namespace shapeworks {
 
-vtkSmartPointer<vtkPolyData> MeshReader::read(const std::string& pathname) {
+Mesh::MeshType MeshReader::read(const std::string& pathname) {
   if (pathname.empty()) {
     throw std::invalid_argument("Empty pathname");
   }
-  if (!ShapeWorksUtils::file_exists(pathname)) {
+  if (!ShapeworksUtils::exists(pathname)) {
     throw std::invalid_argument(pathname + " does not exist");
   }
 
@@ -126,7 +126,7 @@ vtkSmartPointer<vtkPolyData> MeshReader::read(const std::string& pathname) {
 }
 
 Mesh::Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces) {
-  this->poly_data_ = vtkSmartPointer<vtkPolyData>::New();
+  this->poly_data_ = MeshType::New();
 
   vtkNew<vtkPoints> vertices;
   vtkNew<vtkCellArray> polys;

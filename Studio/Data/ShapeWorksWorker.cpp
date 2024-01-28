@@ -33,13 +33,13 @@ void ShapeworksWorker::process() {
       try {
         this->groom_->run();
       } catch (itk::ExceptionObject& ex) {
-        SW_ERROR("{}", std::string("ITK Exception: ") + ex.GetDescription());
+        SW_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
         return;
       } catch (std::runtime_error& e) {
-        SW_ERROR("{}", e.what());
+        SW_ERROR(e.what());
         return;
       } catch (std::exception& e) {
-        SW_ERROR("{}", e.what());
+        SW_ERROR(e.what());
         return;
       }
       if (this->groom_->get_aborted()) {
@@ -54,17 +54,17 @@ void ShapeworksWorker::process() {
         SW_LOG("Optimizing correspondence...");
         this->optimize_->Run();
       } catch (std::runtime_error e) {
-        SW_ERROR("{}", e.what());
+        SW_ERROR(e.what());
         Q_EMIT failure();
         Q_EMIT finished();
         return;
       } catch (itk::ExceptionObject& ex) {
-        SW_ERROR("{}", std::string("ITK Exception: ") + ex.GetDescription());
+        SW_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
         Q_EMIT failure();
         Q_EMIT finished();
         return;
       } catch (std::exception& e) {
-        SW_ERROR("{}", e.what());
+        SW_ERROR(e.what());
         Q_EMIT failure();
         Q_EMIT finished();
         return;
@@ -99,17 +99,17 @@ void ShapeworksWorker::process() {
         }
       } catch (std::runtime_error e) {
         if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
-          SW_WARN("{}", e.what());
+          SW_WARN(e.what());
         } else {
-          SW_ERROR("{}", e.what());
+          SW_ERROR(e.what());
           Q_EMIT finished();
           return;
         }
       } catch (std::exception& e) {
         if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
-          SW_WARN("{}", e.what());
+          SW_WARN(e.what());
         } else {
-          SW_ERROR("{}", e.what());
+          SW_ERROR(e.what());
           Q_EMIT finished();
           return;
         }

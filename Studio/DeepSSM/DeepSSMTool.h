@@ -1,13 +1,12 @@
 #pragma once
 
 // qt
-#include <QElapsedTimer>
 #include <QSharedPointer>
 #include <QWidget>
+#include <QElapsedTimer>
 
 // studio
 #include <Data/Preferences.h>
-#include <Project.h>
 #include <Shape.h>
 
 class Ui_DeepSSMTool;
@@ -26,14 +25,7 @@ class DeepSSMTool : public QWidget {
   Q_OBJECT;
 
  public:
-  enum class ToolMode {
-    DeepSSM_PrepType = 0,
-    DeepSSM_AugmentationType = 1,
-    DeepSSM_TrainingType = 2,
-    DeepSSM_TestingType = 3
-  };
-
-  enum class SplitType { TRAIN, VAL, TEST };
+  enum class ToolMode { DeepSSM_SplitType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType };
 
   DeepSSMTool(Preferences& prefs);
   ~DeepSSMTool();
@@ -58,8 +50,6 @@ class DeepSSMTool : public QWidget {
 
   std::string get_display_feature();
 
-  static std::vector<int> get_split(ProjectHandle project, SplitType split_type);
-
  public Q_SLOTS:
 
   void run_clicked();
@@ -67,7 +57,7 @@ class DeepSSMTool : public QWidget {
 
   void handle_thread_complete();
 
-  void handle_progress(int val, QString message);
+  void handle_progress(int val);
   void handle_error(QString msg);
 
   void tab_changed(int tab);
@@ -99,8 +89,6 @@ class DeepSSMTool : public QWidget {
 
   void populate_table_from_csv(QTableWidget* table, QString filename, bool header);
 
-  QStringList read_images_from_csv(QString filename);
-
   Preferences& preferences_;
 
   Ui_DeepSSMTool* ui_;
@@ -115,10 +103,6 @@ class DeepSSMTool : public QWidget {
   ShapeList shapes_;
   QPixmap violin_plot_;
   QPixmap training_plot_;
-  // training plots for TL mode
-  QPixmap training_plot_tl1_;
-  QPixmap training_plot_tl2_;
-  QPixmap training_plot_tl3_;
 };
 
 }  // namespace shapeworks

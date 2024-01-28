@@ -177,6 +177,11 @@ bool Session::save_project(QString filename) {
 
     project_->save(filename.toStdString());
 
+    // ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
+    // JsonProjectWriter::write_project(project_, "/tmp/project.json");
+    // auto proj = std::make_shared<Project>();
+    // JsonProjectReader::read_project(proj, "/tmp/project.json");
+
   } catch (std::exception& e) {
     QMessageBox::warning(nullptr, "Error saving project", QString("Error saving project: ") + e.what());
     return false;
@@ -965,33 +970,8 @@ void Session::trigger_planes_changed() { Q_EMIT planes_changed(); }
 
 //---------------------------------------------------------------------------
 void Session::trigger_ffc_changed() { Q_EMIT ffc_changed(); }
-
 //---------------------------------------------------------------------------
 void Session::trigger_annotations_changed() { Q_EMIT annotations_changed(); }
-
-//---------------------------------------------------------------------------
-void Session::trigger_save() { Q_EMIT save(); }
-
-//---------------------------------------------------------------------------
-void Session::trigger_data_changed() { Q_EMIT data_changed(); }
-
-//---------------------------------------------------------------------------
-void Session::reload_particles() {
-  int num_subjects = project_->get_number_of_subjects();
-
-  auto subjects = project_->get_subjects();
-
-  for (int i = 0; i < num_subjects; i++) {
-    auto locals = subjects[i]->get_local_particle_filenames();
-    auto worlds = subjects[i]->get_world_particle_filenames();
-    shapes_[i]->set_subject(subjects[i]);
-
-    shapes_[i]->import_local_point_files(locals);
-    shapes_[i]->import_global_point_files(worlds);
-  }
-  Q_EMIT data_changed();
-  Q_EMIT reset_stats();
-}
 
 //---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }

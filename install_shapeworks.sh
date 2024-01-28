@@ -182,18 +182,6 @@ function install_conda() {
       if ! pip install Python/${package};               then return 1; fi
     fi
   done
-
-
-  echo "Checking for darwin"
-  if [[ "$(uname)" == "Darwin" ]]; then
-    echo "Checking for arm64"
-    if [[ "$(uname -m)" == "arm64" ]]; then
-      echo "copying file to fix!"
-      # fix for broken packages that overwrite itk/__init__.py
-      echo cp Support/itk-arm64-fix $CONDA_PREFIX/lib/python3.9/site-packages/itk/__init__.py
-      cp Support/itk-arm64-fix $CONDA_PREFIX/lib/python3.9/site-packages/itk/__init__.py
-    fi
-  fi
   
   ./Installation/install_python_module.sh   # install python module
   ./Installation/conda_env_setup.sh         # install conda [de]activate scripts

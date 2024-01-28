@@ -1,4 +1,3 @@
-#include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Project/Subject.h>
 #include <Utils/StringUtils.h>
