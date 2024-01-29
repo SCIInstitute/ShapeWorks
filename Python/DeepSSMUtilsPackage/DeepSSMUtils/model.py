@@ -20,7 +20,10 @@ class ConvolutionalBackbone(nn.Module):
 			self.out_fc_dim[0] = net_utils.poolOutDim(self.out_fc_dim[0] - padvals[i], 2)
 			self.out_fc_dim[1] = net_utils.poolOutDim(self.out_fc_dim[1] - padvals[i], 2)
 			self.out_fc_dim[2] = net_utils.poolOutDim(self.out_fc_dim[2] - padvals[i], 2)
-		
+
+		if (self.out_fc_dim[0] < 1) or (self.out_fc_dim[1] < 1) or (self.out_fc_dim[2] < 1):
+			raise Exception("Image dimensions are too small for the network.  Try reducing the image spacing.  ")
+
 		self.features = nn.Sequential(OrderedDict([
 			('conv1', nn.Conv3d(1, 12, 5)),
 			('bn1', nn.BatchNorm3d(12)),
