@@ -511,7 +511,14 @@ void ShapeWorksStudioApp::enable_possible_actions() {
     new_analysis = true;
   }
   ui_->action_analysis_mode->setEnabled(analysis_ready);
-  ui_->action_deepssm_mode->setEnabled(session_->get_project()->get_images_present());
+  ui_->action_deepssm_mode->setEnabled(session_->get_project()->get_images_present() && original_present);
+
+  // verification step for broken projects
+  if (session_->get_tool_state() == Session::DEEPSSM_C && !ui_->action_deepssm_mode->isEnabled()) {
+      session_->set_tool_state(Session::DATA_C);
+      ui_->action_import_mode->setChecked(true);
+  }
+
   // subtools
   data_tool_->enable_actions();
   groom_tool_->enable_actions();
