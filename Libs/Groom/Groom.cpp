@@ -453,6 +453,10 @@ int Groom::get_total_ops() {
   for (int i = 0; i < domains.size(); i++) {
     auto params = GroomParameters(project_, domains[i]);
 
+    if (project_->get_original_domain_types().size() <= i) {
+      throw std::runtime_error("invalid domain, number of original file types does not match number of domains");
+    }
+
     if (project_->get_original_domain_types()[i] == DomainType::Image) {
       num_tools += params.get_isolate_tool() ? 1 : 0;
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
@@ -526,7 +530,6 @@ bool Groom::run_alignment() {
       std::vector<Mesh> reference_meshes;
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
-
         if (!subjects[i]->is_excluded()) {
           Mesh mesh = get_mesh(i, domain, true);
           // if fixed subjects are present, only add the fixed subjects
