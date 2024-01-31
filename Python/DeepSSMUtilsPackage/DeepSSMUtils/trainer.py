@@ -229,7 +229,6 @@ def supervised_train(config_file):
 			t0 = time.time()
 		if decay_lr:
 			scheduler.step()
-	logger.close()
 
 	torch.save(net.state_dict(), os.path.join(model_dir, 'final_model.torch'))
 	parameters['best_model_epochs'] = best_epoch
