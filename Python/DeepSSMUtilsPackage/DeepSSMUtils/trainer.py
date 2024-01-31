@@ -262,12 +262,18 @@ def supervised_train(config_file):
             model_path = os.path.join(model_dir, 'final_model.torch')
         net.load_state_dict(torch.load(model_path))
         net.to(device)
+
         # logger = open(model_dir + "train_log_ft.csv", "w+")
         # log_print(logger, ["Epoch", "Train_Err_mdl", "Train_Rel_Err_mdl", "Val_Err_mdl", "Val_Rel_Err_mdl", "Sec"])
         ft_epochs = parameters['fine_tune']['epochs']
         learning_rate = parameters['fine_tune']['learning_rate']
         eval_freq = parameters['fine_tune']['val_freq']
         loss_func = method_to_call = getattr(losses, parameters['fine_tune']["loss"])
+
+        # Initialize optimizer
+        train_params = net.parameters()
+        opt = torch.optim.Adam(train_params, learning_rate)
+        opt.zero_grad()
 
         # Initialize fine-tuning training plot
         train_plot = plt.figure()
@@ -354,11 +360,8 @@ def supervised_train(config_file):
                 val_mr_MSE = np.mean(np.sqrt(val_losses))
                 train_rel_err = np.mean(train_rel_losses)
                 val_rel_err = np.mean(val_rel_losses)
-                last_learning_rate = learning_rate
-                if decay_lr:
-                    last_learning_rate = scheduler.get_last_lr()[0]
                 log_print(logger,
-                          ["Fine_Tuning", e, last_learning_rate, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err,
+                          ["Fine_Tuning", e, learning_rate, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err,
                            time.time() - t0])
                 # plot
                 epochs.append(e)
