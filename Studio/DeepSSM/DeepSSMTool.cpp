@@ -395,8 +395,16 @@ void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename,
     for (auto item : line.split(',')) {
       item = item.trimmed();
       if (item != "") {
-        QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
-        table->setItem(row, col++, new_item);
+          // if item is parseable as a double, use that and limit precision to 4 digits
+        bool ok;
+        item.toDouble(&ok);
+        if (ok) {
+          QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(item.toDouble(), 'f', 4));
+          table->setItem(row, col++, new_item);
+        } else {
+          QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
+          table->setItem(row, col++, new_item);
+        }
       }
     }
     row++;
