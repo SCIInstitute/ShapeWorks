@@ -181,12 +181,16 @@ void DeepSSMJob::run_prep() {
   /// Step 6. Optimize Validation Particles with Fixed Domains
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::OPTIMIZE_VALIDATION);
-  timer.start();
   py::object prep_project_for_val_particles = py_deep_ssm_utils.attr("prep_project_for_val_particles");
   prep_project_for_val_particles(project_);
 
+  timer.start();
   py::object groom_validation_shapes = py_deep_ssm_utils.attr("groom_validation_shapes");
   groom_validation_shapes(project_);
+  duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+  SW_LOG("DeepSSM: Groom Validation Shapes complete.  Duration: {} seconds", duration.toStdString());
+
+  timer.start();
 
   // run optimize
   Optimize optimize;
