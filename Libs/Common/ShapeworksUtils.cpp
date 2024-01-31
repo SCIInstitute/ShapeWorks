@@ -85,6 +85,7 @@ void ShapeWorksUtils::setup_threads() {
     num_threads = std::max(1, atoi(num_threads_env));
   }
   SW_DEBUG("TBB using {} threads", num_threads);
+  Eigen::setNbThreads(num_threads);
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
 }
 
