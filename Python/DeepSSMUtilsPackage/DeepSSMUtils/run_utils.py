@@ -113,7 +113,8 @@ def prep_project_for_val_particles(project):
     """ Prepare the project for grooming the validation particles. """
     subjects = project.get_subjects()
 
-    # Exclude all except validation
+    # Set training to fixed and
+    # Set test to excluded
     for i in range(len(subjects)):
         extra_values = subjects[i].get_extra_values()
         subjects[i].set_excluded(extra_values["split"] == "test")

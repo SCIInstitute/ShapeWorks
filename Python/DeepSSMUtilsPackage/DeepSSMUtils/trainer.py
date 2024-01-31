@@ -135,7 +135,7 @@ def supervised_train(config_file):
 	print("Beginning training on device = " + device + '\n')
 	# Initialize logger
 	logger = open(model_dir + "train_log.csv", "w+", buffering=1)
-	log_print(logger, ["Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
+	log_print(logger, ["Training_Stage", "Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
 	# Initialize training plot
 	train_plot = plt.figure()
 	axe = train_plot.add_subplot(111)
@@ -211,7 +211,7 @@ def supervised_train(config_file):
 			val_mr_MSE = np.mean(np.sqrt(val_losses))
 			train_rel_err = np.mean(train_rel_losses)
 			val_rel_err =  np.mean(val_rel_losses)
-			log_print(logger, [e, scheduler.get_last_lr()[0], train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
+			log_print(logger, ["Base_Training", e, scheduler.get_last_lr()[0], train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
 			# plot
 			epochs.append(e)
 			plot_train_losses.append(train_mr_MSE)
@@ -247,8 +247,8 @@ def supervised_train(config_file):
 			model_path = os.path.join(model_dir, 'final_model.torch')
 		net.load_state_dict(torch.load(model_path))
 		net.to(device)
-		logger = open(model_dir + "train_log_ft.csv", "w+")
-		log_print(logger, ["Epoch", "Train_Err_mdl", "Train_Rel_Err_mdl", "Val_Err_mdl", "Val_Rel_Err_mdl", "Sec"])
+		#logger = open(model_dir + "train_log_ft.csv", "w+")
+		#log_print(logger, ["Epoch", "Train_Err_mdl", "Train_Rel_Err_mdl", "Val_Err_mdl", "Val_Rel_Err_mdl", "Sec"])
 		ft_epochs = parameters['fine_tune']['epochs']
 		learning_rate = parameters['fine_tune']['learning_rate']
 		eval_freq = parameters['fine_tune']['val_freq']
@@ -320,11 +320,22 @@ def supervised_train(config_file):
 				val_mr_MSE = np.mean(np.sqrt(val_losses))
 				train_rel_err = np.mean(train_rel_losses)
 				val_rel_err =  np.mean(val_rel_losses)
-				log_print(logger, [e, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
+				log_print(logger, ["Fine_Tuning", e, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
 				t0 = time.time()
 		
 		logger.close()
 		torch.save(net.state_dict(), os.path.join(model_dir, 'final_model_ft.torch'))
+
+		# Initialize fine tuning training plot
+		train_plot = plt.figure()
+		axe = train_plot.add_subplot(111)
+		axe.set_title('DeepSSM Fine Tuning')
+		axe.set_xlabel('Epochs')
+		axe.set_xlim(0, ft_epochs+1)
+		axe.set_ylabel('Particle MSE')
+		axe.legend()
+		train_plot.savefig(model_dir + "training_plot_ft.png", dpi=300)
+
 		parameters['best_ft_model_epochs'] = best_ft_epoch
 		with open(config_file, "w") as json_file:
 			json.dump(parameters, json_file, indent=2) 
