@@ -50,10 +50,18 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tl_joint_epochs->setToolTip("Number of epochs to train the whole model");
   ui_->tl_alpha->setToolTip(
       "The weight applied to the T-flank with respect to the autoencoder loss when training the whole model.");
-  ui_->tl_ae_a->setToolTip("Focal loss parameter when calculating the autoencoder loss.");
-  ui_->tl_ae_c->setToolTip("Focal loss parameter when calculating the autoencoder loss.");
-  ui_->tl_lat_a->setToolTip("Focal loss parameter when calculating the T-flank loss.");
-  ui_->tl_lat_c->setToolTip("Focal loss parameter when calculating the T-flank loss.");
+  ui_->tl_ae_a->setToolTip(
+      "The autoencoder focal loss scaling factor adjusts the intensity of the focal loss. Higher values accentuate the "
+      "loss, while lower values dampen it.");
+  ui_->tl_ae_c->setToolTip(
+      "The autoencoder focal loss threshold parameter modulates the loss contribution of each particle. When the "
+      "particle difference is below the threshold, the particle's impact on the overall loss is reduced.");
+  ui_->tl_lat_a->setToolTip(
+      "The T-flank focal loss scaling factor adjusts the intensity of the focal loss. Higher values accentuate the "
+      "loss, while lower values dampen it.");
+  ui_->tl_lat_c->setToolTip(
+      "The T-flank focal loss threshold parameter modulates the loss contribution of each particle. When the particle "
+      "difference is below the threshold, the particle's impact on the overall loss is reduced.");
 
 #ifdef Q_OS_MACOS
   ui_->tab_widget->tabBar()->setMinimumWidth(300);

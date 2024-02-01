@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>438</width>
-    <height>1546</height>
+    <height>1598</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -310,7 +310,7 @@ QWidget#training_panel {
             <item row="0" column="0">
              <widget class="QTabWidget" name="tab_widget">
               <property name="currentIndex">
-               <number>3</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="split_tab">
                <attribute name="title">
@@ -893,7 +893,7 @@ Preserved</string>
                       </sizepolicy>
                      </property>
                      <property name="text">
-                      <string>AE param C</string>
+                      <string>AE Focal Loss Threshold</string>
                      </property>
                     </widget>
                    </item>
@@ -952,7 +952,7 @@ Preserved</string>
                       </sizepolicy>
                      </property>
                      <property name="text">
-                      <string>Latent param A</string>
+                      <string>TF Focal Loss Scaling Factor</string>
                      </property>
                     </widget>
                    </item>
@@ -988,7 +988,7 @@ Preserved</string>
                       </sizepolicy>
                      </property>
                      <property name="text">
-                      <string>AE param A</string>
+                      <string>AE Focal Loss Scaling Factor</string>
                      </property>
                     </widget>
                    </item>
@@ -1021,7 +1021,7 @@ Preserved</string>
                       </sizepolicy>
                      </property>
                      <property name="text">
-                      <string>Latent param C</string>
+                      <string>TF Focal Loss Threshold</string>
                      </property>
                     </widget>
                    </item>
