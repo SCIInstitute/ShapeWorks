@@ -51,16 +51,16 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tl_alpha->setToolTip(
       "The weight applied to the T-flank with respect to the autoencoder loss when training the whole model.");
   ui_->tl_ae_a->setToolTip(
-      "The autoencoder focal loss scaling factor adjusts the intensity of the focal loss. Higher values accentuate the "
-      "loss, while lower values dampen it.");
+      "The autoencoder focal loss scaling factor adjusts the intensity of the focal loss.\nHigher values accentuate "
+      "the loss, while lower values dampen it.");
   ui_->tl_ae_c->setToolTip(
-      "The autoencoder focal loss threshold parameter modulates the loss contribution of each particle. When the "
+      "The autoencoder focal loss threshold parameter modulates the loss contribution of each particle.\nWhen the "
       "particle difference is below the threshold, the particle's impact on the overall loss is reduced.");
   ui_->tl_lat_a->setToolTip(
-      "The T-flank focal loss scaling factor adjusts the intensity of the focal loss. Higher values accentuate the "
+      "The T-flank focal loss scaling factor adjusts the intensity of the focal loss.\nHigher values accentuate the "
       "loss, while lower values dampen it.");
   ui_->tl_lat_c->setToolTip(
-      "The T-flank focal loss threshold parameter modulates the loss contribution of each particle. When the particle "
+      "The T-flank focal loss threshold parameter modulates the loss contribution of each particle.\nWhen the particle "
       "difference is below the threshold, the particle's impact on the overall loss is reduced.");
 
 #ifdef Q_OS_MACOS
@@ -93,8 +93,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->validation_split->setValidator(zero_to_hundred);
   ui_->testing_split->setValidator(zero_to_hundred);
 
-  connect(ui_->validation_split, &QLineEdit::textChanged, this, [=]() { update_split(ui_->validation_split); });
-  connect(ui_->testing_split, &QLineEdit::textChanged, this, [=]() { update_split(ui_->testing_split); });
+  connect(ui_->validation_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
+  connect(ui_->testing_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
 
   ui_->tl_net_options->setVisible(false);
 
@@ -157,7 +157,7 @@ void DeepSSMTool::load_params() {
   ui_->spacing_z->setText(QString::number(spacing[2]));
 
   ui_->num_samples->setText(QString::number(params.get_aug_num_samples()));
-  ui_->percent_variability->setText(QString::number(params.get_aug_percent_variability()));
+  ui_->percent_variability->setText(QString::number(params.get_aug_percent_variability() * 100));
   ui_->sampler_type->setCurrentText(QString::fromStdString(params.get_aug_sampler_type()));
 
   ui_->training_epochs->setText(QString::number(params.get_training_epochs()));
@@ -182,6 +182,7 @@ void DeepSSMTool::load_params() {
   ui_->tl_lat_c->setText(QString::number(params.get_tl_net_c_lat()));
 
   ui_->loss_function->setCurrentText(QString::fromStdString(params.get_loss_function()));
+  update_split();
   update_panels();
   update_meshes();
 }
@@ -197,7 +198,7 @@ void DeepSSMTool::store_params() {
       {ui_->spacing_x->text().toDouble(), ui_->spacing_y->text().toDouble(), ui_->spacing_z->text().toDouble()});
 
   params.set_aug_num_samples(ui_->num_samples->text().toInt());
-  params.set_aug_percent_variability(ui_->percent_variability->text().toDouble());
+  params.set_aug_percent_variability(ui_->percent_variability->text().toDouble() / 100.0);
   params.set_aug_sampler_type(ui_->sampler_type->currentText().toStdString());
 
   params.set_training_epochs(ui_->training_epochs->text().toInt());
@@ -345,7 +346,24 @@ void DeepSSMTool::update_panels() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_split(QLineEdit* source) {}
+void DeepSSMTool::update_split() {
+  double testing = ui_->testing_split->text().toDouble();
+  double validation = ui_->validation_split->text().toDouble();
+  testing = std::max<double>(std::min<double>(testing, 100), 0);
+  validation = std::max<double>(std::min<double>(validation, 100), 0);
+
+  if (testing + validation > 100) {
+    if (testing > validation) {
+      validation = 100 - testing;
+    } else {
+      testing = 100 - validation;
+    }
+  }
+
+  ui_->testing_split->setText(QString::number(testing));
+  ui_->validation_split->setText(QString::number(validation));
+  ui_->training_split->setText(QString::number(100 - testing - validation));
+}
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_new_mesh() {
