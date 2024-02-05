@@ -127,22 +127,23 @@ def get_mesh_distance(pred_particle_files, mesh_list, template_particles, templa
     # Step 1: Get predicted meshes from predicted particles
     pred_mesh_list = get_mesh_from_particles(pred_particle_files, out_dir + "/predicted_meshes/", template_particles,
                                              template_mesh, planes)
-    print(f"pred_mesh_list: {pred_mesh_list}")
+    # print(f"pred_mesh_list: {pred_mesh_list}")
     # Step 2: Get distance between original and predicted mesh
     mean_distances = []
     for index in range(len(mesh_list)):
-        print(f"Getting distance between {mesh_list[index]} and {pred_mesh_list[index]}")
+        print(f"Computing distance between {mesh_list[index]} and {pred_mesh_list[index]}")
         orig_mesh = sw.Mesh(mesh_list[index])
         if planes is not None:
             orig_mesh.clip(planes[index][0], planes[index][1], planes[index][2])
         pred_mesh = sw.Mesh(pred_mesh_list[index])
-        orig_mesh.write("/tmp/orig_mesh.vtk")
-        pred_mesh.write("/tmp/pred_mesh.vtk")
-        val1 = np.mean(orig_mesh.distance(pred_mesh)[0])
-        val2 = np.mean(pred_mesh.distance(orig_mesh)[0])
-        print(f"val1: {val1}")
-        print(f"val2: {val2}")
 
-        mean_distances.append(np.mean(orig_mesh.distance(pred_mesh)[0]))
-        mean_distances.append(np.mean(pred_mesh.distance(orig_mesh)[0]))
+        d1 = orig_mesh.distance(pred_mesh)[0]
+        d2 = pred_mesh.distance(orig_mesh)[0]
+
+        # store the distance field in the mesh
+        pred_mesh.setField("distance", d2, sw.Mesh.Point)
+        pred_mesh.write(pred_mesh_list[index])
+
+        mean_distances.append(np.mean(d1))
+        mean_distances.append(np.mean(d2))
     return np.mean(np.array(mean_distances))
