@@ -520,9 +520,14 @@ void DeepSSMTool::show_training_meshes() {
   auto all_subjects = session_->get_project()->get_subjects();
 
   std::string feature_name = session_->get_image_name();
+  auto image_names = session_->get_project()->get_image_names();
+  if (image_names.size() > 0) {
+    feature_name = image_names[0];
+  }
+
 
   for (int i = 0; i < names.size(); i++) {
-    if (QFileInfo(filenames[i]).exists()) {
+    if (QFileInfo::exists(filenames[i])) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
       shape->set_subject(subject);
@@ -581,7 +586,12 @@ void DeepSSMTool::show_testing_meshes() {
 
   auto subjects = session_->get_project()->get_subjects();
   auto shapes = session_->get_shapes();
+
   std::string feature_name = session_->get_image_name();
+  auto image_names = session_->get_project()->get_image_names();
+  if (image_names.size() > 0) {
+    feature_name = image_names[0];
+  }
 
   for (auto& id : id_list) {
     QString filename =
