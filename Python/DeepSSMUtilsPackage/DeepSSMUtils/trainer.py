@@ -416,7 +416,7 @@ def supervised_train_tl(config_file):
     net = model.DeepSSMNet_TLNet(config_file)
     device = net.device
     net.to(device)
-    # intialize model weights
+    # initialize model weights
     net.apply(weight_init(module=nn.Conv3d, initf=nn.init.xavier_normal_))
     net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
@@ -521,8 +521,11 @@ def supervised_train_tl(config_file):
             train_rel_ae_err = np.mean(ae_train_rel_losses)
             val_ae_err = np.mean(ae_val_losses)
             val_rel_ae_err = np.mean(ae_val_rel_losses)
+            last_learning_rate = learning_rate
+            if decay_lr:
+                last_learning_rate = scheduler.get_last_lr()[0]
             log_print(logger,
-                      ["AE", e, scheduler.get_lr()[0], train_ae_err, train_rel_ae_err, val_ae_err, val_rel_ae_err,
+                      ["AE", e, last_learning_rate, train_ae_err, train_rel_ae_err, val_ae_err, val_rel_ae_err,
                        time.time() - t0])
             # plot
             epochs.append(e)
@@ -544,10 +547,7 @@ def supervised_train_tl(config_file):
 
     # train the t-flank
     tf_epochs = parameters['tl_net']['tf_epochs']
-    # log_print(logger,['##################################'])
-    # log_print(logger,['Training the T-Flank...'])
-    # log_print(logger,['##################################'])
-    # log_print(logger, ["Train", "Epoch", "LR", "Train_Err_TF", "Train_Rel_Err_TF", "Val_Err_TF", "Val_Rel_Err_TF", "Sec"])
+
     # Initialize training plot
     train_plot = plt.figure()
     axe = train_plot.add_subplot(111)
@@ -631,8 +631,11 @@ def supervised_train_tl(config_file):
             train_rel_tf_err = np.mean(tf_train_rel_losses)
             val_tf_err = np.mean(tf_val_losses)
             val_rel_tf_err = np.mean(tf_val_rel_losses)
+            last_learning_rate = learning_rate
+            if decay_lr:
+                last_learning_rate = scheduler.get_last_lr()[0]
             log_print(logger,
-                      ["T-Flank", e, scheduler.get_lr()[0], train_tf_err, train_rel_tf_err, val_tf_err, val_rel_tf_err,
+                      ["T-Flank", e, last_learning_rate, train_tf_err, train_rel_tf_err, val_tf_err, val_rel_tf_err,
                        time.time() - t0])
             # plot
             epochs.append(e)
@@ -655,8 +658,6 @@ def supervised_train_tl(config_file):
     for param in net.CorrespondenceEncoder.parameters():
         param.requires_grad = True
 
-    log_print(logger, ["Training_Stage", "Epoch", "LR", "Train_Rel_Err_AE", "Val_Rel_Err_AE", "Train_Rel_Err_TF",
-                       "Val_Rel_Err_TF", "Sec"])
     # Initialize training plot
     train_plot = plt.figure()
     axe = train_plot.add_subplot(111)
@@ -752,7 +753,10 @@ def supervised_train_tl(config_file):
             val_rel_tf_err = np.mean(tf_val_rel_losses)
             joint_train_losses = np.mean(joint_train_losses)
             joint_val_losses = np.mean(joint_val_losses)
-            log_print(logger, ["Joint", e, scheduler.get_lr()[0], train_rel_ae_err, val_rel_ae_err, train_rel_tf_err,
+            last_learning_rate = learning_rate
+            if decay_lr:
+                last_learning_rate = scheduler.get_last_lr()[0]
+            log_print(logger, ["Joint", e, last_learning_rate, train_rel_ae_err, val_rel_ae_err, train_rel_tf_err,
                                val_rel_tf_err, time.time() - t0])
             # plot
             epochs.append(e)
