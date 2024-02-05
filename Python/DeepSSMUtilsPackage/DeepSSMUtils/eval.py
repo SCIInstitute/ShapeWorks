@@ -13,7 +13,7 @@ from shapeworks.utils import sw_check_abort
 '''
 Network Test Function
 	predicts the PCA scores using the trained networks
-	returns the error measures and saves the predicted and poriginal particles for comparison
+	returns the error measures and saves the predicted and original particles for comparison
 '''
 def test(config_file, loader="test"):
 	with open(config_file) as json_file: 
@@ -35,7 +35,7 @@ def test(config_file, loader="test"):
 	sw_message("Loading "+ loader + " data loader...")
 	test_loader = torch.load(loader_dir + loader)
 	print("Done.\n")
-	# initalizations
+	# initialization
 	sw_message("Loading trained model...")
 	if parameters['tl_net']['enabled']:
 		model_tl = model.DeepSSMNet_TLNet(config_file)
