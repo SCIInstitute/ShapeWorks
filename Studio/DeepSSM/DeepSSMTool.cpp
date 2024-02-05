@@ -1,4 +1,6 @@
 // std
+#include <tbb/parallel_for.h>
+
 #include <iostream>
 
 // qt
@@ -353,6 +355,62 @@ void DeepSSMTool::training_fine_tuning_changed() {
 }
 
 //---------------------------------------------------------------------------
+void DeepSSMTool::update_test_distances() {
+  auto subjects = session_->get_project()->get_subjects();
+  auto id_list = get_split(session_->get_project(), SplitType::TEST);
+
+  if (id_list.size() != test_distances_.size()) {
+    test_distances_.resize(id_list.size(), -1);
+  }
+
+  auto shapes = session_->get_shapes();
+
+  for (int i = 0; i < id_list.size(); i++) {
+    if (test_distances_[i] != -1) {
+      continue;
+    }
+    auto id = id_list[i];
+    auto mesh_group = shapes[id]->get_original_meshes(true);
+    if (!mesh_group.valid()) {
+      test_distances_[i] = -2;
+      continue;
+    }
+    Mesh base(mesh_group.meshes()[0]->get_poly_data());
+
+    // transform base by registration transforms
+    auto extra_values = subjects[id]->get_extra_values();
+    if (extra_values.count("registration_transform")) {
+      std::string transform = extra_values["registration_transform"];
+      // convert to vtkTransform
+      auto transform_matrix = ProjectUtils::convert_transform(transform);
+      base.applyTransform(transform_matrix);
+    }
+
+    std::string filename =
+        "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
+    if (QFileInfo::exists(QString::fromStdString(filename))) {
+      if (i < shapes_.size()) {  // test shapes
+        auto shape = shapes_[i];
+        MeshGroup group = shape->get_reconstructed_meshes();
+        if (group.valid()) {
+          Mesh m(group.meshes()[0]->get_poly_data());
+          auto field = m.distance(base)[0];
+          field->SetName("deepssm_error");
+
+          double average_distance = mean(field);
+          std::cerr << "Average distance: " << average_distance << std::endl;
+
+          group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
+          test_distances_[i] = average_distance;
+        } else {
+          test_distances_[i] = -1;
+        }
+      }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
 void DeepSSMTool::update_tables() {
   populate_table_from_csv(ui_->training_table, "deepssm/model/train_log.csv", true);
   populate_table_from_csv(ui_->table, "deepssm/augmentation/TotalData.csv", false);
@@ -540,7 +598,7 @@ void DeepSSMTool::show_testing_meshes() {
     QString filename =
         QString("deepssm/model/test_predictions/FT_Predictions/predicted_ft_") + QString::number(id) + ".particles";
 
-    if (QFileInfo(filename).exists()) {
+    if (QFileInfo::exists(filename)) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
       subject->set_display_name(shapes[id]->get_display_name());
@@ -554,7 +612,6 @@ void DeepSSMTool::show_testing_meshes() {
       map[feature_name] = image_filename;
       subject->set_feature_filenames(map);
 
-      /// subject->set_feature_filenames(subjects[id]->get_feature_filenames());
       shape->get_reconstructed_meshes();
       std::vector<std::string> list;
       list.push_back(shapes[id]->get_annotations()[0]);
@@ -593,9 +650,12 @@ void DeepSSMTool::update_testing_meshes() {
     table->verticalHeader()->setVisible(false);
     table->setRowCount(id_list.size());
 
-    int idx = -1;
-    for (auto& id : id_list) {
-      idx++;
+    update_test_distances();
+
+    std::vector<double> distances(id_list.size(), -1);
+
+    for (int idx = 0; idx < id_list.size(); idx++) {
+      auto id = id_list[idx];
 
       auto name = QString::fromStdString(subjects[id]->get_display_name());
 
@@ -603,46 +663,15 @@ void DeepSSMTool::update_testing_meshes() {
 
       table->setItem(idx, 0, new_item);
 
-      auto mesh_group = shapes[id]->get_original_meshes(true);
-      if (!mesh_group.valid()) {
-        // SW_WARN("Warning: Couldn't load groomed mesh for " + name.toStdString());
+      if (distances[idx] == -2) {
         QTableWidgetItem* new_item = new QTableWidgetItem("inference");
         table->setItem(idx, 1, new_item);
-        continue;
-      }
-      Mesh base(mesh_group.meshes()[0]->get_poly_data());
-
-      // transform base by registration transforms
-      auto extra_values = subjects[id]->get_extra_values();
-      if (extra_values.count("registration_transform")) {
-        std::string transform = extra_values["registration_transform"];
-        // convert to vtkTransform
-        auto transform_matrix = ProjectUtils::convert_transform(transform);
-        base.applyTransform(transform_matrix);
-      }
-
-      std::string filename =
-          "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
-      if (QFileInfo(QString::fromStdString(filename)).exists()) {
-        if (idx < shapes_.size()) {  // test shapes
-          auto shape = shapes_[idx];
-          MeshGroup group = shape->get_reconstructed_meshes();
-          if (group.valid()) {
-            Mesh m(group.meshes()[0]->get_poly_data());
-            auto field = m.distance(base)[0];
-            field->SetName("deepssm_error");
-
-            double average_distance = mean(field);
-
-            QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
-            table->setItem(idx, 1, new_item);
-
-            group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
-          } else {
-            QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
-            table->setItem(idx, 1, new_item);
-          }
-        }
+      } else if (distances[idx] == -1) {
+        QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
+        table->setItem(idx, 1, new_item);
+      } else {
+        QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(distances[idx]));
+        table->setItem(idx, 1, new_item);
       }
     }
 
@@ -867,6 +896,7 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     ui_->tab_widget->setCurrentIndex(3);
 
+    test_distances_.clear();
     SW_LOG("Please Wait: Running Testing...");
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
     ui_->tab_widget->setCurrentIndex(0);

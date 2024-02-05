@@ -85,6 +85,7 @@ class DeepSSMTool : public QWidget {
   void progress(int);
 
  private:
+  void update_test_distances();
   void update_meshes();
   void run_tool(DeepSSMTool::ToolMode type);
   void show_augmentation_meshes();
@@ -119,6 +120,7 @@ class DeepSSMTool : public QWidget {
   QPixmap training_plot_tl1_;
   QPixmap training_plot_tl2_;
   QPixmap training_plot_tl3_;
+  std::vector<double> test_distances_;
 };
 
 }  // namespace shapeworks
