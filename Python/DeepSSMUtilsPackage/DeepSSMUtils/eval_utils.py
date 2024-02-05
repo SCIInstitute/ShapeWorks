@@ -60,31 +60,30 @@ def get_mesh_from_DT(DT_list, mesh_dir):
 
 
 def get_mesh_from_particles(particle_list, mesh_dir, template_particles, template_mesh, planes=None):
-    num_particles = np.loadtxt(particle_list[0]).shape[0]
-    particle_dir = os.path.dirname(particle_list[0]) + '/'
-    execCommand = ["shapeworks",
-                   "warp-mesh", "--reference_mesh", template_mesh,
-                   "--reference_points", template_particles,
-                   "--target_points"]
-    for fl in particle_list:
-        execCommand.append(fl)
-    execCommand.append('--')
-    print(f"Running: {' '.join(execCommand)}")
-    subprocess.check_call(execCommand)
-
     if not os.path.exists(mesh_dir):
         os.makedirs(mesh_dir)
 
-    outmeshes = []
+    warp = sw.MeshWarper()
+    sw_mesh = sw.Mesh(template_mesh)
+    sw_particles = np.loadtxt(template_particles)
+    warp.generateWarp(sw_mesh, sw_particles)
+
+    particle_dir = os.path.dirname(particle_list[0]) + '/'
+
+    out_mesh_filenames = []
     for i in range(len(particle_list)):
-        infnm = particle_list[i].replace('.particles', '.vtk')
-        outfnm = infnm.replace(particle_dir, mesh_dir)
-        outmeshes.append(outfnm)
-        shutil.move(infnm, outfnm)
+        out_filename = particle_list[i].replace('.particles', '.vtk')
+        out_filename = out_filename.replace(particle_dir, mesh_dir)
+        out_mesh_filenames.append(out_filename)
+        sw_particles = np.loadtxt(particle_list[i])
+        out_mesh = warp.buildMesh(sw_particles)
+        out_mesh.write(out_filename)
+
     if planes is not None:
-        for index in range(len(outmeshes)):
-            sw.Mesh(outmeshes[index]).clip(planes[index][0], planes[index][1], planes[index][2]).write(outmeshes[index])
-    return outmeshes
+        for index in range(len(out_mesh_filenames)):
+            sw.Mesh(out_mesh_filenames[index]).clip(planes[index][0], planes[index][1], planes[index][2]).write(
+                out_mesh_filenames[index])
+    return out_mesh_filenames
 
 
 def surface_to_surface_distance(orig_list, pred_list, out_dir):
