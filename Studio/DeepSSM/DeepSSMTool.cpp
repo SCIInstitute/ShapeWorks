@@ -862,7 +862,6 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     ui_->tab_widget->setCurrentIndex(3);
 
-    test_distances_.clear();
     SW_LOG("Please Wait: Running Testing...");
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
     ui_->tab_widget->setCurrentIndex(0);
