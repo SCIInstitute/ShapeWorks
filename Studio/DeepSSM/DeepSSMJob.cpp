@@ -265,7 +265,6 @@ void DeepSSMJob::run_training() {
   std::string out_dir = "deepssm/";
   std::string aug_dir = out_dir + "augmentation/";
   std::string aug_data_csv = aug_dir + "TotalData.csv";
-
   std::string loader_dir = out_dir + "torch_loaders/";
 
   int epochs = params.get_training_epochs();
@@ -333,6 +332,11 @@ void DeepSSMJob::run_testing() {
   SW_LOG("DeepSSM: Testing");
   py::object test_deep_ssm = py_deep_ssm_utils.attr("testDeepSSM");
   test_deep_ssm(config_file);
+
+  SW_LOG("DeepSSM: Processing Test Results");
+  // Now compute the surface to surface distance and create a csv file and meshes
+  py::object process_test_predictions = py_deep_ssm_utils.attr("process_test_predictions");
+  process_test_predictions(project_, config_file);
 }
 
 //---------------------------------------------------------------------------

@@ -126,9 +126,9 @@ Training requires a JSON config file which defines all model architecture and tr
 
 #### Config File Parameter Descriptions
 
-* `model_name`: The name of the model, typically this matches the name of the JSON conflict file. The model and predictions will be saved in the directory: `out_dir/model_name/`
+* `model_name`: The name of the model, typically this matches the name of the JSON configuration file. The model and predictions will be saved in the directory: `out_dir/model_name/`
 * `num_latent_dim`: The size of the latent dimension.
-* `paths`: A dictionary with all the needded paths.
+* `paths`: A dictionary with all the needed paths.
     * `out_dir`: The directory to which output should be written.
     * `loader_dir`: The directory that has the training, validation, and test torch data loaders.
     * `aug_dir`: The directory that has the augmented data.

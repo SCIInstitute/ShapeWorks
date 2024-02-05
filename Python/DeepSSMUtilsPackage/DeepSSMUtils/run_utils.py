@@ -2,6 +2,7 @@ import random
 import math
 import os
 import numpy as np
+import json
 
 import shapeworks as sw
 from bokeh.util.terminal import trace
@@ -11,6 +12,7 @@ from shapeworks.utils import sw_check_abort
 
 import DataAugmentationUtils
 import DeepSSMUtils
+import DeepSSMUtils.eval_utils as eval_utils
 
 
 def create_split(project, train, val, test):
@@ -463,8 +465,8 @@ def prepare_data_loaders(project, batch_size, split="all"):
     if split == "all" or split == "val":
         val_image_files = []
         val_world_particles = []
-        val_indicies = get_split_indices(project, "val")
-        for i in val_indicies:
+        val_indices = get_split_indices(project, "val")
+        for i in val_indices:
             val_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
             particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
             val_world_particles.append(particle_file)
@@ -477,7 +479,96 @@ def prepare_data_loaders(project, batch_size, split="all"):
 
     if split == "all" or split == "test":
         test_image_files = []
-        test_indicies = get_split_indices(project, "test")
-        for i in test_indicies:
+        test_indices = get_split_indices(project, "test")
+        for i in test_indices:
             test_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
         DeepSSMUtils.getTestLoader(loader_dir, test_image_files)
+
+
+def get_test_alignment_transform(project, index):
+    subjects = project.get_subjects()
+    alignment = subjects[index].get_extra_values()["registration_transform"]
+    # parse alignment from space separated string to 4x4 matrix
+    alignment = alignment.split()
+    alignment = [float(i) for i in alignment]
+    alignment = np.array(alignment)
+    alignment = alignment.reshape(4, 4)
+    return alignment
+
+
+def process_test_predictions(project, config_file):
+    """ Process the test predictions, generate distance meshes and CSV file. """
+    print("Processing test predictions")
+    deepssm_dir = get_deepssm_dir(project)
+    subjects = project.get_subjects()
+    project_path = project.get_project_path() + "/"
+
+    with open(config_file) as json_file:
+        parameters = json.load(json_file)
+        model_dir = parameters["paths"]["out_dir"] + parameters["model_name"] + '/'
+        model_name = parameters["model_name"]
+
+    pred_dir = f"{deepssm_dir}/{model_name}/test_predictions/"
+    world_predictions_dir = f"{pred_dir}/world_predictions/"
+    local_predictions_dir = f"{pred_dir}/local_predictions/"
+    if not os.path.exists(local_predictions_dir):
+        os.makedirs(local_predictions_dir)
+    if not os.path.exists(world_predictions_dir):
+        os.makedirs(world_predictions_dir)
+
+    reference_index = DeepSSMUtils.get_reference_index(project)
+    template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
+    template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
+
+    test_indices = get_split_indices(project, "test")
+
+    predicted_test_local_particles = []
+    predicted_test_world_particles = []
+    test_transforms = []
+    test_mesh_files = []
+
+    for index in test_indices:
+        world_particle_file = f"{world_predictions_dir}/{index}.particles"
+        print(f"world_particle_file: {world_particle_file}")
+        predicted_test_world_particles.append(world_particle_file)
+
+        transform = get_test_alignment_transform(project, index)
+
+        original_filenames = subjects[index].get_original_filenames()
+        if len(original_filenames) > 0:
+            test_mesh_files.append(project_path + subjects[index].get_original_filenames()[0])
+        else:
+            test_mesh_files.append("")
+
+        particles = np.loadtxt(world_particle_file)
+        local_particle_file = world_particle_file.replace("world_predictions/", "local_predictions/")
+        local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
+        np.savetxt(local_particle_file, local_particles)
+        predicted_test_local_particles.append(local_particle_file)
+
+    distances = eval_utils.get_mesh_distances(predicted_test_local_particles, test_mesh_files,
+                                              template_particles, template_mesh, pred_dir)
+
+    print("Distances: ", distances)
+
+    # write to csv file in deepssm_dir
+    csv_file = f"{deepssm_dir}/test_distances.csv"
+    with open(csv_file, "w") as f:
+        f.write("Name,Distance\n")
+        for i in range(len(test_indices)):
+            display_name = subjects[test_indices[i]].get_display_name()
+            distance = distances[i]
+            if display_name == "":
+                display_name = f"{test_indices[i]}"
+            if distance < 0:
+                distance = "N/A"
+            f.write(f"{display_name},{distance}\n")
+
+    # now transform the local meshes to the world space
+    for index in test_indices:
+        local_mesh_file = f"{pred_dir}/local_predictions/{index}.vtk"
+        world_mesh_file = f"{pred_dir}/world_predictions/{index}.vtk"
+        transform = get_test_alignment_transform(project, index)
+        mesh = sw.Mesh(local_mesh_file)
+        mesh.applyTransform(transform)
+        mesh.write(world_mesh_file)

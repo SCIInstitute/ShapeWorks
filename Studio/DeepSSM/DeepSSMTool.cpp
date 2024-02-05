@@ -381,62 +381,6 @@ void DeepSSMTool::training_fine_tuning_changed() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_test_distances() {
-  auto subjects = session_->get_project()->get_subjects();
-  auto id_list = get_split(session_->get_project(), SplitType::TEST);
-
-  if (id_list.size() != test_distances_.size()) {
-    test_distances_.resize(id_list.size(), -1);
-  }
-
-  auto shapes = session_->get_shapes();
-
-  for (int i = 0; i < id_list.size(); i++) {
-    if (test_distances_[i] != -1) {
-      continue;
-    }
-    auto id = id_list[i];
-    auto mesh_group = shapes[id]->get_original_meshes(true);
-    if (!mesh_group.valid()) {
-      test_distances_[i] = -2;
-      continue;
-    }
-    Mesh base(mesh_group.meshes()[0]->get_poly_data());
-
-    // transform base by registration transforms
-    auto extra_values = subjects[id]->get_extra_values();
-    if (extra_values.count("registration_transform")) {
-      std::string transform = extra_values["registration_transform"];
-      // convert to vtkTransform
-      auto transform_matrix = ProjectUtils::convert_transform(transform);
-      base.applyTransform(transform_matrix);
-    }
-
-    std::string filename =
-        "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
-    if (QFileInfo::exists(QString::fromStdString(filename))) {
-      if (i < shapes_.size()) {  // test shapes
-        auto shape = shapes_[i];
-        MeshGroup group = shape->get_reconstructed_meshes();
-        if (group.valid()) {
-          Mesh m(group.meshes()[0]->get_poly_data());
-          auto field = m.distance(base)[0];
-          field->SetName("deepssm_error");
-
-          double average_distance = mean(field);
-          std::cerr << "Average distance: " << average_distance << std::endl;
-
-          group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
-          test_distances_[i] = average_distance;
-        } else {
-          test_distances_[i] = -1;
-        }
-      }
-    }
-  }
-}
-
-//---------------------------------------------------------------------------
 void DeepSSMTool::update_tables() {
   populate_table_from_csv(ui_->training_table, "deepssm/model/train_log.csv", true);
   populate_table_from_csv(ui_->table, "deepssm/augmentation/TotalData.csv", false);
@@ -641,9 +585,11 @@ void DeepSSMTool::show_testing_meshes() {
 
   for (auto& id : id_list) {
     QString filename =
-        QString("deepssm/model/test_predictions/FT_Predictions/predicted_ft_") + QString::number(id) + ".particles";
+        QString("deepssm/model/test_predictions/world_predictions/") + QString::number(id) + ".particles";
 
-    if (QFileInfo::exists(filename)) {
+    QString mesh_filename = "deepssm/model/test_predictions/world_predictions/" + QString::number(id) + ".vtk";
+
+    if (QFileInfo::exists(filename) && QFileInfo::exists(mesh_filename)) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
       subject->set_display_name(shapes[id]->get_display_name());
@@ -651,6 +597,15 @@ void DeepSSMTool::show_testing_meshes() {
       shape->set_mesh_manager(session_->get_mesh_manager());
       shape->import_local_point_files({filename.toStdString()});
       shape->import_global_point_files({filename.toStdString()});
+
+      Mesh mesh(mesh_filename.toStdString());
+      MeshGroup mesh_group;
+      mesh_group.set_number_of_meshes(1);
+      MeshHandle sw_mesh = std::make_shared<StudioMesh>();
+      sw_mesh->set_poly_data(mesh.getVTKMesh());
+
+      mesh_group.set_mesh(0, sw_mesh);
+      shape->set_reconstructed_meshes(mesh_group);
 
       auto image_filename = "deepssm/val_and_test_images/" + std::to_string(id) + ".nrrd";
       project::types::StringMap map;
@@ -683,42 +638,7 @@ void DeepSSMTool::update_testing_meshes() {
     auto subjects = session_->get_project()->get_subjects();
     auto shapes = session_->get_shapes();
 
-    QTableWidget* table = ui_->testing_table;
-
-    table->clear();
-    QStringList headers;
-    headers << "name"
-            << "average distance";
-    table->setColumnCount(headers.size());
-    table->horizontalHeader()->setVisible(true);
-    table->setHorizontalHeaderLabels(headers);
-    table->verticalHeader()->setVisible(false);
-    table->setRowCount(id_list.size());
-
-    update_test_distances();
-
-    std::vector<double> distances(id_list.size(), -1);
-
-    for (int idx = 0; idx < id_list.size(); idx++) {
-      auto id = id_list[idx];
-
-      auto name = QString::fromStdString(subjects[id]->get_display_name());
-
-      QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
-
-      table->setItem(idx, 0, new_item);
-
-      if (distances[idx] == -2) {
-        QTableWidgetItem* new_item = new QTableWidgetItem("inference");
-        table->setItem(idx, 1, new_item);
-      } else if (distances[idx] == -1) {
-        QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
-        table->setItem(idx, 1, new_item);
-      } else {
-        QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(distances[idx]));
-        table->setItem(idx, 1, new_item);
-      }
-    }
+    populate_table_from_csv(ui_->testing_table, "deepssm/test_distances.csv", true);
 
   } catch (std::exception& e) {
     SW_ERROR("{}", e.what());

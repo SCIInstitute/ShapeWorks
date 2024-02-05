@@ -45,6 +45,7 @@ class DeepSSMJob : public Job {
 
  private:
   void update_prep_message(PrepStep step);
+  void process_test_results();
 
   QSharedPointer<Session> session_;
   ProjectHandle project_;

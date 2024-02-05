@@ -123,14 +123,17 @@ def get_MSE(pred_particle_files, true_particle_files):
     return np.mean(MSEs), np.std(MSEs)
 
 
-def get_mesh_distance(pred_particle_files, mesh_list, template_particles, template_mesh, out_dir, planes=None):
+def get_mesh_distances(pred_particle_files, mesh_list, template_particles, template_mesh, out_dir, planes=None):
     # Step 1: Get predicted meshes from predicted particles
-    pred_mesh_list = get_mesh_from_particles(pred_particle_files, out_dir + "/predicted_meshes/", template_particles,
-                                             template_mesh, planes)
+    pred_mesh_list = get_mesh_from_particles(pred_particle_files, out_dir + "/local_predictions/",
+                                             template_particles, template_mesh, planes)
     # print(f"pred_mesh_list: {pred_mesh_list}")
     # Step 2: Get distance between original and predicted mesh
     mean_distances = []
     for index in range(len(mesh_list)):
+        if mesh_list[index] == "":
+            mean_distances.append(-1)
+            continue
         print(f"Computing distance between {mesh_list[index]} and {pred_mesh_list[index]}")
         orig_mesh = sw.Mesh(mesh_list[index])
         if planes is not None:
@@ -141,9 +144,18 @@ def get_mesh_distance(pred_particle_files, mesh_list, template_particles, templa
         d2 = pred_mesh.distance(orig_mesh)[0]
 
         # store the distance field in the mesh
-        pred_mesh.setField("distance", d2, sw.Mesh.Point)
+        pred_mesh.setField("deepssm_error", d2, sw.Mesh.Point)
         pred_mesh.write(pred_mesh_list[index])
 
-        mean_distances.append(np.mean(d1))
-        mean_distances.append(np.mean(d2))
-    return np.mean(np.array(mean_distances))
+        # store the average of the two into mean_distances
+        mean_d1 = np.mean(d1)
+        mean_d2 = np.mean(d2)
+        print(f"mean_d1: {mean_d1}, mean_d2: {mean_d2}")
+        total_mean = (mean_d1 + mean_d2) / 2
+        mean_distances.append(total_mean)
+    return np.array(mean_distances)
+
+
+def get_mesh_distance(pred_particle_files, mesh_list, template_particles, template_mesh, out_dir, planes=None):
+    distances = get_mesh_distances(pred_particle_files, mesh_list, template_particles, template_mesh, out_dir, planes)
+    return np.mean(distances)
