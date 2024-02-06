@@ -29,7 +29,7 @@ Inherits from QWidget
 | void | **[handle_error](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-handle-error)**(QString msg) |
 | void | **[tab_changed](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-tab-changed)**(int tab) |
 | void | **[update_panels](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-update-panels)**() |
-| void | **[update_split](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-update-split)**(QLineEdit * source) |
+| void | **[update_split](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-update-split)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-handle-new-mesh)**() |
 | void | **[training_fine_tuning_changed](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-training-fine-tuning-changed)**() |
 
@@ -143,9 +143,7 @@ void update_panels()
 ### slot update_split
 
 ```cpp
-void update_split(
-    QLineEdit * source
-)
+void update_split()
 ```
 
 
@@ -283,4 +281,4 @@ static std::vector< int > get_split(
 
 -------------------------------
 
-Updated on 2024-01-28 at 01:33:40 +0000
+Updated on 2024-02-06 at 21:07:30 +0000

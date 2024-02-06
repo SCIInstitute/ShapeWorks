@@ -92,6 +92,8 @@ class Shape {
 
   MeshGroup get_reconstructed_meshes(bool wait = false);
 
+  void set_reconstructed_meshes(MeshGroup meshes);
+
   void reset_groomed_mesh();
 
   bool import_global_point_files(std::vector<std::string> filenames);
@@ -232,4 +234,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2024-01-28 at 01:33:42 +0000
+Updated on 2024-02-06 at 21:07:31 +0000

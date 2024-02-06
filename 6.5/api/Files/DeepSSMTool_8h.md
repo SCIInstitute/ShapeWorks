@@ -97,7 +97,7 @@ class DeepSSMTool : public QWidget {
   void tab_changed(int tab);
 
   void update_panels();
-  void update_split(QLineEdit* source);
+  void update_split();
 
   void handle_new_mesh();
 
@@ -139,6 +139,7 @@ class DeepSSMTool : public QWidget {
   ShapeList shapes_;
   QPixmap violin_plot_;
   QPixmap training_plot_;
+  QPixmap training_plot_ft_;
   // training plots for TL mode
   QPixmap training_plot_tl1_;
   QPixmap training_plot_tl2_;
@@ -151,4 +152,4 @@ class DeepSSMTool : public QWidget {
 
 -------------------------------
 
-Updated on 2024-01-28 at 01:33:43 +0000
+Updated on 2024-02-06 at 21:07:31 +0000

@@ -39,6 +39,7 @@ Representation of a single shape/patient/subject.
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_original_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-original-meshes)**(bool wait =false)<br>Retrieve the original meshes.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_groomed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-meshes)**(bool wait =false)<br>Retrieve the groomed meshes.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_reconstructed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-reconstructed-meshes)**(bool wait =false)<br>Retrieve the reconstructed meshes.  |
+| void | **[set_reconstructed_meshes](../Classes/classshapeworks_1_1Shape.md#function-set-reconstructed-meshes)**([MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) meshes)<br>Set the reconstructed meshes.  |
 | void | **[reset_groomed_mesh](../Classes/classshapeworks_1_1Shape.md#function-reset-groomed-mesh)**()<br>Reset the groomed mesh so that it will be re-created.  |
 | bool | **[import_global_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-global-point-files)**(std::vector< std::string > filenames)<br>Import global correspondence point files.  |
 | bool | **[import_local_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-local-point-files)**(std::vector< std::string > filenames)<br>Import local correspondence point files.  |
@@ -230,6 +231,16 @@ MeshGroup get_reconstructed_meshes(
 ```
 
 Retrieve the reconstructed meshes. 
+
+### function set_reconstructed_meshes
+
+```cpp
+void set_reconstructed_meshes(
+    MeshGroup meshes
+)
+```
+
+Set the reconstructed meshes. 
 
 ### function reset_groomed_mesh
 
@@ -660,4 +671,4 @@ std::vector< std::shared_ptr< MeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2024-01-28 at 01:33:41 +0000
+Updated on 2024-02-06 at 21:07:31 +0000
