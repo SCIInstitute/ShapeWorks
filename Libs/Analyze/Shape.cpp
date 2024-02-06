@@ -135,6 +135,9 @@ MeshGroup Shape::get_reconstructed_meshes(bool wait) {
 }
 
 //---------------------------------------------------------------------------
+void Shape::set_reconstructed_meshes(MeshGroup meshes) { reconstructed_meshes_ = meshes; }
+
+//---------------------------------------------------------------------------
 void Shape::reset_groomed_mesh() { groomed_meshes_ = MeshGroup(subject_->get_number_of_domains()); }
 
 //---------------------------------------------------------------------------
@@ -572,7 +575,7 @@ std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
         std::shared_ptr<Image> image = std::make_shared<Image>(filename);
         image_volume_ = image;
         image_volume_filename_ = filename;
-      } catch (std::exception &ex) {
+      } catch (std::exception& ex) {
         SW_ERROR("Unable to open file: {}", filename);
       }
     }

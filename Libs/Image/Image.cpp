@@ -323,7 +323,9 @@ Image& Image::write(const std::string& filename, bool compressed) {
 
   // if the directory doesn't exist, create it
   boost::filesystem::path dir(filename);
-  boost::filesystem::create_directories(dir.parent_path());
+  if (dir.has_parent_path() && !boost::filesystem::exists(dir.parent_path())) {
+    boost::filesystem::create_directories(dir.parent_path());
+  }
 
   using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();

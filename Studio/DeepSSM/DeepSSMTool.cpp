@@ -1,4 +1,6 @@
 // std
+#include <tbb/parallel_for.h>
+
 #include <iostream>
 
 // qt
@@ -50,10 +52,18 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tl_joint_epochs->setToolTip("Number of epochs to train the whole model");
   ui_->tl_alpha->setToolTip(
       "The weight applied to the T-flank with respect to the autoencoder loss when training the whole model.");
-  ui_->tl_ae_a->setToolTip("Focal loss parameter when calculating the autoencoder loss.");
-  ui_->tl_ae_c->setToolTip("Focal loss parameter when calculating the autoencoder loss.");
-  ui_->tl_lat_a->setToolTip("Focal loss parameter when calculating the T-flank loss.");
-  ui_->tl_lat_c->setToolTip("Focal loss parameter when calculating the T-flank loss.");
+  ui_->tl_ae_a->setToolTip(
+      "The autoencoder focal loss scaling factor adjusts the intensity of the focal loss.\nHigher values accentuate "
+      "the loss, while lower values dampen it.");
+  ui_->tl_ae_c->setToolTip(
+      "The autoencoder focal loss threshold parameter modulates the loss contribution of each particle.\nWhen the "
+      "particle difference is below the threshold, the particle's impact on the overall loss is reduced.");
+  ui_->tl_lat_a->setToolTip(
+      "The T-flank focal loss scaling factor adjusts the intensity of the focal loss.\nHigher values accentuate the "
+      "loss, while lower values dampen it.");
+  ui_->tl_lat_c->setToolTip(
+      "The T-flank focal loss threshold parameter modulates the loss contribution of each particle.\nWhen the particle "
+      "difference is below the threshold, the particle's impact on the overall loss is reduced.");
 
 #ifdef Q_OS_MACOS
   ui_->tab_widget->tabBar()->setMinimumWidth(300);
@@ -85,8 +95,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->validation_split->setValidator(zero_to_hundred);
   ui_->testing_split->setValidator(zero_to_hundred);
 
-  connect(ui_->validation_split, &QLineEdit::textChanged, this, [=]() { update_split(ui_->validation_split); });
-  connect(ui_->testing_split, &QLineEdit::textChanged, this, [=]() { update_split(ui_->testing_split); });
+  connect(ui_->validation_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
+  connect(ui_->testing_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
 
   ui_->tl_net_options->setVisible(false);
 
@@ -149,7 +159,7 @@ void DeepSSMTool::load_params() {
   ui_->spacing_z->setText(QString::number(spacing[2]));
 
   ui_->num_samples->setText(QString::number(params.get_aug_num_samples()));
-  ui_->percent_variability->setText(QString::number(params.get_aug_percent_variability()));
+  ui_->percent_variability->setText(QString::number(params.get_aug_percent_variability() * 100));
   ui_->sampler_type->setCurrentText(QString::fromStdString(params.get_aug_sampler_type()));
 
   ui_->training_epochs->setText(QString::number(params.get_training_epochs()));
@@ -174,6 +184,7 @@ void DeepSSMTool::load_params() {
   ui_->tl_lat_c->setText(QString::number(params.get_tl_net_c_lat()));
 
   ui_->loss_function->setCurrentText(QString::fromStdString(params.get_loss_function()));
+  update_split();
   update_panels();
   update_meshes();
 }
@@ -189,7 +200,7 @@ void DeepSSMTool::store_params() {
       {ui_->spacing_x->text().toDouble(), ui_->spacing_y->text().toDouble(), ui_->spacing_z->text().toDouble()});
 
   params.set_aug_num_samples(ui_->num_samples->text().toInt());
-  params.set_aug_percent_variability(ui_->percent_variability->text().toDouble());
+  params.set_aug_percent_variability(ui_->percent_variability->text().toDouble() / 100.0);
   params.set_aug_sampler_type(ui_->sampler_type->currentText().toStdString());
 
   params.set_training_epochs(ui_->training_epochs->text().toInt());
@@ -337,7 +348,24 @@ void DeepSSMTool::update_panels() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_split(QLineEdit* source) {}
+void DeepSSMTool::update_split() {
+  double testing = ui_->testing_split->text().toDouble();
+  double validation = ui_->validation_split->text().toDouble();
+  testing = std::max<double>(std::min<double>(testing, 100), 0);
+  validation = std::max<double>(std::min<double>(validation, 100), 0);
+
+  if (testing + validation > 100) {
+    if (testing > validation) {
+      validation = 100 - testing;
+    } else {
+      testing = 100 - validation;
+    }
+  }
+
+  ui_->testing_split->setText(QString::number(testing));
+  ui_->validation_split->setText(QString::number(validation));
+  ui_->training_split->setText(QString::number(100 - testing - validation));
+}
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_new_mesh() {
@@ -395,6 +423,25 @@ void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename,
     for (auto item : line.split(',')) {
       item = item.trimmed();
       if (item != "") {
+        // if item is an integer, show that
+        // if it's a double, show with 4 significant digits, scientific notation
+        // otherwise, show as is
+
+        bool ok;
+        int i = item.toInt(&ok);
+        if (ok) {
+          QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(i));
+          table->setItem(row, col++, new_item);
+          continue;
+        }
+
+        double d = item.toDouble(&ok);
+        if (ok) {
+          QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(d, 'g', 4));
+          table->setItem(row, col++, new_item);
+          continue;
+        }
+
         QTableWidgetItem* new_item = new QTableWidgetItem(QString(item));
         table->setItem(row, col++, new_item);
       }
@@ -473,9 +520,14 @@ void DeepSSMTool::show_training_meshes() {
   auto all_subjects = session_->get_project()->get_subjects();
 
   std::string feature_name = session_->get_image_name();
+  auto image_names = session_->get_project()->get_image_names();
+  if (image_names.size() > 0) {
+    feature_name = image_names[0];
+  }
+
 
   for (int i = 0; i < names.size(); i++) {
-    if (QFileInfo(filenames[i]).exists()) {
+    if (QFileInfo::exists(filenames[i])) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
       shape->set_subject(subject);
@@ -534,13 +586,20 @@ void DeepSSMTool::show_testing_meshes() {
 
   auto subjects = session_->get_project()->get_subjects();
   auto shapes = session_->get_shapes();
+
   std::string feature_name = session_->get_image_name();
+  auto image_names = session_->get_project()->get_image_names();
+  if (image_names.size() > 0) {
+    feature_name = image_names[0];
+  }
 
   for (auto& id : id_list) {
     QString filename =
-        QString("deepssm/model/test_predictions/FT_Predictions/predicted_ft_") + QString::number(id) + ".particles";
+        QString("deepssm/model/test_predictions/world_predictions/") + QString::number(id) + ".particles";
 
-    if (QFileInfo(filename).exists()) {
+    QString mesh_filename = "deepssm/model/test_predictions/world_predictions/" + QString::number(id) + ".vtk";
+
+    if (QFileInfo::exists(filename) && QFileInfo::exists(mesh_filename)) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
       subject->set_display_name(shapes[id]->get_display_name());
@@ -549,12 +608,20 @@ void DeepSSMTool::show_testing_meshes() {
       shape->import_local_point_files({filename.toStdString()});
       shape->import_global_point_files({filename.toStdString()});
 
+      Mesh mesh(mesh_filename.toStdString());
+      MeshGroup mesh_group;
+      mesh_group.set_number_of_meshes(1);
+      MeshHandle sw_mesh = std::make_shared<StudioMesh>();
+      sw_mesh->set_poly_data(mesh.getVTKMesh());
+
+      mesh_group.set_mesh(0, sw_mesh);
+      shape->set_reconstructed_meshes(mesh_group);
+
       auto image_filename = "deepssm/val_and_test_images/" + std::to_string(id) + ".nrrd";
       project::types::StringMap map;
       map[feature_name] = image_filename;
       subject->set_feature_filenames(map);
 
-      /// subject->set_feature_filenames(subjects[id]->get_feature_filenames());
       shape->get_reconstructed_meshes();
       std::vector<std::string> list;
       list.push_back(shapes[id]->get_annotations()[0]);
@@ -581,70 +648,7 @@ void DeepSSMTool::update_testing_meshes() {
     auto subjects = session_->get_project()->get_subjects();
     auto shapes = session_->get_shapes();
 
-    QTableWidget* table = ui_->testing_table;
-
-    table->clear();
-    QStringList headers;
-    headers << "name"
-            << "average distance";
-    table->setColumnCount(headers.size());
-    table->horizontalHeader()->setVisible(true);
-    table->setHorizontalHeaderLabels(headers);
-    table->verticalHeader()->setVisible(false);
-    table->setRowCount(id_list.size());
-
-    int idx = -1;
-    for (auto& id : id_list) {
-      idx++;
-
-      auto name = QString::fromStdString(subjects[id]->get_display_name());
-
-      QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
-
-      table->setItem(idx, 0, new_item);
-
-      auto mesh_group = shapes[id]->get_original_meshes(true);
-      if (!mesh_group.valid()) {
-        // SW_WARN("Warning: Couldn't load groomed mesh for " + name.toStdString());
-        QTableWidgetItem* new_item = new QTableWidgetItem("inference");
-        table->setItem(idx, 1, new_item);
-        continue;
-      }
-      Mesh base(mesh_group.meshes()[0]->get_poly_data());
-
-      // transform base by registration transforms
-      auto extra_values = subjects[id]->get_extra_values();
-      if (extra_values.count("registration_transform")) {
-        std::string transform = extra_values["registration_transform"];
-        // convert to vtkTransform
-        auto transform_matrix = ProjectUtils::convert_transform(transform);
-        base.applyTransform(transform_matrix);
-      }
-
-      std::string filename =
-          "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + std::to_string(id) + ".particles";
-      if (QFileInfo(QString::fromStdString(filename)).exists()) {
-        if (idx < shapes_.size()) {  // test shapes
-          auto shape = shapes_[idx];
-          MeshGroup group = shape->get_reconstructed_meshes();
-          if (group.valid()) {
-            Mesh m(group.meshes()[0]->get_poly_data());
-            auto field = m.distance(base)[0];
-            field->SetName("deepssm_error");
-
-            double average_distance = mean(field);
-
-            QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
-            table->setItem(idx, 1, new_item);
-
-            group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
-          } else {
-            QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
-            table->setItem(idx, 1, new_item);
-          }
-        }
-      }
-    }
+    populate_table_from_csv(ui_->testing_table, "deepssm/test_distances.csv", true);
 
   } catch (std::exception& e) {
     SW_ERROR("{}", e.what());
@@ -732,6 +736,7 @@ ShapeList DeepSSMTool::get_shapes() { return shapes_; }
 void DeepSSMTool::load_plots() {
   violin_plot_ = load_plot("deepssm/augmentation/violin.png");
   training_plot_ = load_plot("deepssm/model/training_plot.png");
+  training_plot_ft_ = load_plot("deepssm/model/training_plot_ft.png");
   training_plot_tl1_ = load_plot("deepssm/model/training_plot_ae.png");
   training_plot_tl2_ = load_plot("deepssm/model/training_plot_tf.png");
   training_plot_tl3_ = load_plot("deepssm/model/training_plot_joint.png");
@@ -756,7 +761,7 @@ void DeepSSMTool::resize_plots() {
     set_plot(ui_->training_plot, QPixmap{});
   } else {
     set_plot(ui_->training_plot, training_plot_);
-    set_plot(ui_->training_plot_2, QPixmap{});
+    set_plot(ui_->training_plot_2, training_plot_ft_);
     set_plot(ui_->training_plot_3, QPixmap{});
     set_plot(ui_->training_plot_4, QPixmap{});
   }

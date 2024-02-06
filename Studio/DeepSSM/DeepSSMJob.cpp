@@ -115,6 +115,9 @@ void DeepSSMJob::run_prep() {
   update_prep_message(PrepStep::GROOM_TRAINING);
   py::object groom_training_shapes = py_deep_ssm_utils.attr("groom_training_shapes");
 
+  QElapsedTimer timer;
+  timer.start();
+
   // force ICP on to get reference
   GroomParameters groom_params{project_};
   groom_params.set_alignment_method("Iterative Closest Point");
@@ -124,6 +127,9 @@ void DeepSSMJob::run_prep() {
   groom_training_shapes(project_);
   project_->save();
 
+  QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+  SW_LOG("DeepSSM: Grooming Training Shapes complete.  Duration: {} seconds", duration.toStdString());
+
   if (is_aborted()) {
     return;
   }
@@ -132,9 +138,12 @@ void DeepSSMJob::run_prep() {
   /// Step 3. Optimize Training Particles
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::OPTIMIZE_TRAINING);
+  timer.start();
   py::object optimize_training_particles = py_deep_ssm_utils.attr("optimize_training_particles");
   optimize_training_particles(project_);
   project_->save();
+  duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+  SW_LOG("DeepSSM: Optimize Training Particles complete.  Duration: {} seconds", duration.toStdString());
 
   if (is_aborted()) {
     return;
@@ -144,9 +153,12 @@ void DeepSSMJob::run_prep() {
   /////////////////////////////////////////////////////////
 
   update_prep_message(PrepStep::GROOM_TRAINING_IMAGES);
+  timer.start();
   py::object groom_training_images = py_deep_ssm_utils.attr("groom_training_images");
   groom_training_images(project_);
   project_->save();
+  duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+  SW_LOG("DeepSSM: Groom Training Images complete.  Duration: {} seconds", duration.toStdString());
 
   if (is_aborted()) {
     return;
@@ -155,9 +167,12 @@ void DeepSSMJob::run_prep() {
   /// Step 5. Groom Validation Images
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::GROOM_VAL_IMAGES);
+  timer.start();
   py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
   groom_val_test_images(project_, DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::VAL));
   project_->save();
+  duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+  SW_LOG("DeepSSM: Groom Validation Images complete.  Duration: {} seconds", duration.toStdString());
 
   if (is_aborted()) {
     return;
@@ -166,12 +181,16 @@ void DeepSSMJob::run_prep() {
   /// Step 6. Optimize Validation Particles with Fixed Domains
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::OPTIMIZE_VALIDATION);
-
   py::object prep_project_for_val_particles = py_deep_ssm_utils.attr("prep_project_for_val_particles");
   prep_project_for_val_particles(project_);
 
+  timer.start();
   py::object groom_validation_shapes = py_deep_ssm_utils.attr("groom_validation_shapes");
   groom_validation_shapes(project_);
+  duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+  SW_LOG("DeepSSM: Groom Validation Shapes complete.  Duration: {} seconds", duration.toStdString());
+
+  timer.start();
 
   // run optimize
   Optimize optimize;
@@ -180,6 +199,8 @@ void DeepSSMJob::run_prep() {
 
   project_->update_subjects();
   project_->save();
+  duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+  SW_LOG("DeepSSM: Optimize Validation Particles complete.  Duration: {} seconds", duration.toStdString());
 
   /////////////////////////////////////////////////////////
   update_prep_message(PrepStep::DONE);
@@ -244,7 +265,6 @@ void DeepSSMJob::run_training() {
   std::string out_dir = "deepssm/";
   std::string aug_dir = out_dir + "augmentation/";
   std::string aug_data_csv = aug_dir + "TotalData.csv";
-
   std::string loader_dir = out_dir + "torch_loaders/";
 
   int epochs = params.get_training_epochs();
@@ -262,8 +282,7 @@ void DeepSSMJob::run_training() {
                       fine_tune, fine_tune_epochs, fine_tune_learning_rate, params.get_loss_function(),
                       params.get_tl_net_enabled(), params.get_tl_net_ae_epochs(), params.get_tl_net_tf_epochs(),
                       params.get_tl_net_joint_epochs(), params.get_tl_net_alpha(), params.get_tl_net_a_ae(),
-                      params.get_tl_net_c_ae(), params.get_tl_net_a_lat(), params.get_tl_net_c_lat()
-  );
+                      params.get_tl_net_c_ae(), params.get_tl_net_a_lat(), params.get_tl_net_c_lat());
 
   SW_LOG("DeepSSM: Training");
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");
@@ -313,6 +332,11 @@ void DeepSSMJob::run_testing() {
   SW_LOG("DeepSSM: Testing");
   py::object test_deep_ssm = py_deep_ssm_utils.attr("testDeepSSM");
   test_deep_ssm(config_file);
+
+  SW_LOG("DeepSSM: Processing Test Results");
+  // Now compute the surface to surface distance and create a csv file and meshes
+  py::object process_test_predictions = py_deep_ssm_utils.attr("process_test_predictions");
+  process_test_predictions(project_, config_file);
 }
 
 //---------------------------------------------------------------------------

@@ -74,6 +74,9 @@ class Shape {
   //! Retrieve the reconstructed meshes
   MeshGroup get_reconstructed_meshes(bool wait = false);
 
+  //! Set the reconstructed meshes
+  void set_reconstructed_meshes(MeshGroup meshes);
+
   //! Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
 

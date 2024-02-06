@@ -345,7 +345,7 @@ def Run_Pipeline(args):
             "model_name": model_name,
             "num_latent_dim": int(embedded_dim),
             "paths": {
-                "out_dir": output_directory,
+                "out_dir": deepssm_dir,
                 "loader_dir": loader_dir,
                 "aug_dir": aug_dir
             },
@@ -446,7 +446,7 @@ def Run_Pipeline(args):
         predicted_val_local_particles = []
         for particle_file, transform in zip(predicted_val_world_particles, val_transforms):
             particles = np.loadtxt(particle_file)
-            local_particle_file = particle_file.replace("FT_Predictions/", "local_predictions/")
+            local_particle_file = particle_file.replace("world_predictions/", "local_predictions/")
             local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
             np.savetxt(local_particle_file, local_particles)
             predicted_val_local_particles.append(local_particle_file)
@@ -468,8 +468,6 @@ def Run_Pipeline(args):
 
         print("Validation mean mesh surface-to-surface distance: " + str(mean_dist))
 
-        # If tiny test or verify, check results and exit
-        check_results(args, mean_dist)
         open(status_dir + "step_11.txt", 'w').close()
 
     ######################################################################################
@@ -512,7 +510,7 @@ def Run_Pipeline(args):
         predicted_test_local_particles = []
         for particle_file, transform in zip(predicted_test_world_particles, test_transforms):
             particles = np.loadtxt(particle_file)
-            local_particle_file = particle_file.replace("FT_Predictions/", "local_predictions/")
+            local_particle_file = particle_file.replace("world_predictions/", "local_predictions/")
             local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
             np.savetxt(local_particle_file, local_particles)
             predicted_test_local_particles.append(local_particle_file)
@@ -530,6 +528,9 @@ def Run_Pipeline(args):
                                                      template_particles, template_mesh, test_out_dir,
                                                      planes=test_planes)
         print("Test mean mesh surface-to-surface distance: " + str(mean_dist))
+
+        # If tiny test or verify, check results and exit
+        check_results(args, mean_dist)
         open(status_dir + "step_12.txt", 'w').close()
 
     print("All steps complete")

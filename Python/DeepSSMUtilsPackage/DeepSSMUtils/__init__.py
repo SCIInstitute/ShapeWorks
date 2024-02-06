@@ -9,7 +9,7 @@ from DeepSSMUtils import run_utils
 
 from .run_utils import create_split, groom_training_shapes, groom_training_images, get_reference_index, \
     run_data_augmentation, groom_val_test_images, prep_project_for_val_particles, groom_validation_shapes, \
-    prepare_data_loaders, get_deepssm_dir, get_split_indices, optimize_training_particles
+    prepare_data_loaders, get_deepssm_dir, get_split_indices, optimize_training_particles, process_test_predictions
 
 from .config_file import prepare_config_file
 
