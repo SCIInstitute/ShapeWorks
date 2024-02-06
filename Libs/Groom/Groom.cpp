@@ -714,7 +714,9 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
     path = base + "/" + prefix;
 
     try {
-      boost::filesystem::create_directories(path);
+      if (!boost::filesystem::exists(path)) {
+        boost::filesystem::create_directories(path);
+      }
     } catch (std::exception& e) {
       throw std::runtime_error("Unable to create groom output directory: \"" + path + "\"");
     }
