@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>800</height>
+    <height>831</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -300,7 +300,7 @@ QWidget#optimize_panel {
                 </widget>
                </item>
                <item row="21" column="0">
-                <widget class="QLabel" name="label_18">
+                <widget class="QLabel" name="disentangled_label">
                  <property name="text">
                   <string>Disentangled Spatiotemporal SSM</string>
                  </property>
@@ -768,7 +768,7 @@ QWidget#optimize_panel {
                 </widget>
                </item>
                <item row="21" column="2">
-                <widget class="QWidget" name="widget_18" native="true">
+                <widget class="QWidget" name="disentangled_widget" native="true">
                  <layout class="QGridLayout" name="gridLayout_18">
                   <property name="leftMargin">
                    <number>0</number>
