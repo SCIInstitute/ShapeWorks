@@ -441,6 +441,13 @@ bool MeshWarper::generate_warp() {
   // prep points
   this->vertices_ = this->reference_particles_;
 
+  if (reference_mesh_->GetNumberOfPoints() == 0) {
+    SW_ERROR("Unable to warp mesh, no points in surface mesh");
+    update_progress(1.0);
+    warp_available_ = false;
+    return false;
+  }
+
   this->add_particle_vertices(this->vertices_);
 
   if (this->landmarks_points_.size() > 0) {
