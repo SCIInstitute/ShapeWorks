@@ -332,7 +332,7 @@ TEST(pythonTests, pcaTest) {
 }
 
 TEST(pythonTests, pcaEmbedderTest) {
-  run_test("pcaembedder.py")
+  run_test("pcaembedder.py");
 }
 
 TEST(pythonTests, findreferencemeshTest) {
