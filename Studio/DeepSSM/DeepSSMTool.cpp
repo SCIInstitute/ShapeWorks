@@ -525,7 +525,6 @@ void DeepSSMTool::show_training_meshes() {
     feature_name = image_names[0];
   }
 
-
   for (int i = 0; i < names.size(); i++) {
     if (QFileInfo::exists(filenames[i])) {
       ShapeHandle shape = ShapeHandle(new Shape());
@@ -681,52 +680,56 @@ void DeepSSMTool::update_meshes() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::show_augmentation_meshes() {
-  update_tables();
-  shapes_.clear();
+  try {
+    update_tables();
+    shapes_.clear();
 
-  QString filename = "deepssm/augmentation/TotalData.csv";
-  if (QFile(filename).exists()) {
-    QFile file(filename);
+    QString filename = "deepssm/augmentation/TotalData.csv";
+    if (QFile(filename).exists()) {
+      QFile file(filename);
 
-    if (!file.open(QIODevice::ReadOnly)) {
-      SW_ERROR("Unable to open file: " + filename.toStdString());
-      return;
-    }
+      if (!file.open(QIODevice::ReadOnly)) {
+        SW_ERROR("Unable to open file: " + filename.toStdString());
+        return;
+      }
 
-    int row = 0;
-    while (!file.atEnd()) {
-      QByteArray line = file.readLine();
-      bool show_generated = ui_->generated_data_checkbox->isChecked();
-      bool show_original = ui_->original_data_checkbox->isChecked();
-      // this needs to be replaced with it's own column (in all the python code as well)
-      bool is_generated = line.contains("Generated");
-      if ((is_generated && show_generated) || (!is_generated && show_original)) {
-        auto image_file = line.split(',')[0].toStdString();
-        std::string particle_file = (line.split(',')[1]).toStdString();
+      int row = 0;
+      while (!file.atEnd()) {
+        QByteArray line = file.readLine();
+        bool show_generated = ui_->generated_data_checkbox->isChecked();
+        bool show_original = ui_->original_data_checkbox->isChecked();
+        // this needs to be replaced with it's own column (in all the python code as well)
+        bool is_generated = line.contains("Generated");
+        if ((is_generated && show_generated) || (!is_generated && show_original)) {
+          auto image_file = line.split(',')[0].toStdString();
+          std::string particle_file = (line.split(',')[1]).toStdString();
 
-        auto subject = std::make_shared<Subject>();
-        ShapeHandle shape = ShapeHandle(new Shape());
-        shape->set_subject(subject);
-        shape->set_mesh_manager(session_->get_mesh_manager());
-        shape->import_local_point_files({particle_file});
-        shape->import_global_point_files({particle_file});
+          auto subject = std::make_shared<Subject>();
+          ShapeHandle shape = ShapeHandle(new Shape());
+          shape->set_subject(subject);
+          shape->set_mesh_manager(session_->get_mesh_manager());
+          shape->import_local_point_files({particle_file});
+          shape->import_global_point_files({particle_file});
 
-        shape->get_reconstructed_meshes();
+          shape->get_reconstructed_meshes();
 
-        std::vector<std::string> list;
-        list.push_back((QFileInfo(QString::fromStdString(particle_file)).baseName()).toStdString());
-        list.push_back("");
-        list.push_back("");
-        list.push_back("");
-        shape->set_annotations(list);
+          std::vector<std::string> list;
+          list.push_back((QFileInfo(QString::fromStdString(particle_file)).baseName()).toStdString());
+          list.push_back("");
+          list.push_back("");
+          list.push_back("");
+          shape->set_annotations(list);
 
-        shapes_.push_back(shape);
-        row++;
+          shapes_.push_back(shape);
+          row++;
+        }
       }
     }
+    load_plots();
+    Q_EMIT update_view();
+  } catch (std::exception& e) {
+    SW_ERROR("{}", e.what());
   }
-  load_plots();
-  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
