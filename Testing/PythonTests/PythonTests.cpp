@@ -331,6 +331,10 @@ TEST(pythonTests, pcaTest) {
   run_test("pca.py");
 }
 
+TEST(pythonTests, pcaEmbedderTest) {
+  run_test("pcaembedder.py")
+}
+
 TEST(pythonTests, findreferencemeshTest) {
   run_test("findReferenceMesh.py");
 }
