@@ -282,7 +282,7 @@ def run_data_augmentation(project, num_samples, num_dim, percent_variability, sa
     train_image_filenames = []
     train_world_particle_filenames = []
     for i in get_training_indices(project):
-        train_image_filenames.append(deepssm_dir + f"/train_images/{i}.nrrd")
+        train_image_filenames.append(f"deepssm/train_images/{i}.nrrd")
         particle_file = subjects[i].get_world_particle_filenames()[0]
         train_world_particle_filenames.append(particle_file)
 
