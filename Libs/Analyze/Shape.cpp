@@ -148,12 +148,15 @@ bool Shape::import_global_point_files(std::vector<std::string> filenames) {
   global_point_filenames_.clear();
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (filenames[i] != "") {
-      if (!Shape::import_point_file(filenames[i], points)) {
+    auto filename = filenames[i];
+    // replace \ with /
+    filename = StringUtils::replace_string(filename, "\\", "/");
+    if (filename != "") {
+      if (!Shape::import_point_file(filename, points)) {
         throw std::invalid_argument("Unable to import point file: " + filenames[i]);
       }
     }
-    global_point_filenames_.push_back(filenames[i]);
+    global_point_filenames_.push_back(filename);
     particles_.set_world_particles(i, points);
   }
   subject_->set_world_particle_filenames(global_point_filenames_);
@@ -165,12 +168,15 @@ bool Shape::import_local_point_files(std::vector<std::string> filenames) {
   local_point_filenames_.clear();
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (filenames[i] != "") {
-      if (!Shape::import_point_file(filenames[i], points)) {
+    auto filename = filenames[i];
+    // replace \ with /
+    filename = StringUtils::replace_string(filename, "\\", "/");
+    if (filename != "") {
+      if (!Shape::import_point_file(filename, points)) {
         throw std::invalid_argument("Unable to import point file: " + filenames[i]);
       }
     }
-    local_point_filenames_.push_back(filenames[i]);
+    local_point_filenames_.push_back(filename);
     particles_.set_local_particles(i, points);
   }
   subject_->set_local_particle_filenames(local_point_filenames_);
