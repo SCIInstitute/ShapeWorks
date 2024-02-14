@@ -488,7 +488,7 @@ Mesh& Mesh::fixElement() {
   FEMesh* meshFE = import.Load(this->poly_data_);
 
   if (meshFE == nullptr) {
-    throw std::invalid_argument("Unable to read file");
+    throw std::runtime_error("Unable to read mesh file");
   }
 
   FEFixMesh fix;
