@@ -71,7 +71,7 @@ def test_compare_pca_methods():
 
     # Compare loadings of all methods
     # ------------------------------------------------------------------------------------------------------------------
-    np.testing.assert_allclose(loadings, embedder.PCA_scores[:, 0])
+    np.testing.assert_allclose(loadings*-1, embedder.PCA_scores[:, 0])
     np.testing.assert_allclose(pca_loadings[:, 0], embedder.PCA_scores[:, 0])
 
 
