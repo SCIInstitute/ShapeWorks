@@ -66,7 +66,7 @@ def test_compare_pca_methods():
     shape_statistics.PCA(particleSystem=particle_system, domainsPerShape=1)
     shape_statistics.principalComponentProjections()
 
-    loadings = np.flip(np.sort(shape_statistics.pcaLoadings()[:, 0]))
+    loadings = np.sort(shape_statistics.pcaLoadings()[:, 0])
     # This API does not yet have an inverse function
 
     # Compare loadings of all methods
