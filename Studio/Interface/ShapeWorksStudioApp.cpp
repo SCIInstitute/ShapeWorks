@@ -515,8 +515,8 @@ void ShapeWorksStudioApp::enable_possible_actions() {
 
   // verification step for broken projects
   if (session_->get_tool_state() == Session::DEEPSSM_C && !ui_->action_deepssm_mode->isEnabled()) {
-      session_->set_tool_state(Session::DATA_C);
-      ui_->action_import_mode->setChecked(true);
+    session_->set_tool_state(Session::DATA_C);
+    ui_->action_import_mode->setChecked(true);
   }
 
   // subtools
@@ -608,6 +608,7 @@ void ShapeWorksStudioApp::update_table() {
     current_image_list_ = image_list;
   }
   ui_->image_combo_->setCurrentText(QString::fromStdString(session_->get_image_name()));
+  session_->set_image_name(ui_->image_combo_->currentText().toStdString());
   ui_->image_widget->setVisible(!image_names.empty());
 
   ui_->image_axis_->setCurrentText(QString::fromStdString(axisToString(session_->get_image_axis())));
