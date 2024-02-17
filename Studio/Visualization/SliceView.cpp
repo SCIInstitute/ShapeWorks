@@ -15,6 +15,7 @@
 #include <vtkTransformPolyDataFilter.h>
 
 // shapeworks
+#include <Utils/StudioUtils.h>
 #include <Visualization/SliceView.h>
 #include <Visualization/Viewer.h>
 
@@ -74,6 +75,14 @@ void SliceView::set_volume(std::shared_ptr<Image> volume) {
   slice_mapper_->SetInputData(vtk_volume_);
 
   image_slice_->SetMapper(slice_mapper_);
+
+  // reset window and level based on the volume scalar range
+  double range[2];
+  vtk_volume_->GetScalarRange(range);
+  double window = range[1] - range[0];
+  double level = (range[1] + range[0]) / 2.0;
+  image_slice_->GetProperty()->SetColorWindow(window);
+  image_slice_->GetProperty()->SetColorLevel(level);
 
   auto transform = viewer_->get_image_transform();
   image_slice_->SetUserTransform(transform);
@@ -253,7 +262,18 @@ void SliceView::set_slice_position(Point point) {
 }
 
 //-----------------------------------------------------------------------------
-void SliceView::set_window_and_level(double window, double level) {
+void SliceView::set_brightness_and_contrast(double brightness, double contrast) {
+  if (!vtk_volume_) {
+    return;
+  }
+  // get scalar range from image
+  double range[2];
+  vtk_volume_->GetScalarRange(range);
+
+  // convert to window and level
+  double window, level;
+  StudioUtils::brightness_contrast_to_window_width_level(brightness, contrast, range[0], range[1], window, level);
+
   image_slice_->GetProperty()->SetColorWindow(window);
   image_slice_->GetProperty()->SetColorLevel(level);
 }
@@ -362,7 +382,7 @@ void SliceView::update_extent() {
     double near_clip = range - spacing / 2.0 + 0.001;
     double far_clip = range + spacing / 2.0 - 0.001;
 
-    // cam->SetClippingRange( near_clip, far_clip );
+    cam->SetClippingRange(near_clip, far_clip);
   }
 }
 

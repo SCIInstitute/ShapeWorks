@@ -1150,7 +1150,7 @@ void Viewer::set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSm
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_image_volume() {
+void Viewer::update_image_volume(bool force) {
   if (!session_ || !shape_) {
     return;
   }
@@ -1173,7 +1173,7 @@ void Viewer::update_image_volume() {
   slice_view_.update_particles();
 
   auto image_volume_name = session_->get_image_name();
-  if (image_volume_name == current_image_name_) {
+  if (!force && image_volume_name == current_image_name_) {
     return;
   }
   current_image_name_ = image_volume_name;

@@ -198,7 +198,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   // image sync/share window width and level
   void set_image_share_window_and_level(bool enabled);
-  bool get_image_share_window_and_level();
+  bool get_image_share_brightness_contrast();
 
   // image sync slice
   void set_image_sync_slice(bool enabled);

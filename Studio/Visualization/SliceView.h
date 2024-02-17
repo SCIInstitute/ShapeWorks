@@ -51,8 +51,8 @@ class SliceView {
   Point get_slice_position();
 
   void set_slice_position(Point point);
-
-  void set_window_and_level(double window, double level);
+  
+  void set_brightness_and_contrast(double brightness, double contrast);
 
   double get_spacing();
 

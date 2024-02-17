@@ -538,12 +538,12 @@ void Lightbox::update_interactor_style() {
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_shared_window_and_level(double window, double level) {
-  if (!session_->get_image_share_window_and_level()) {
+void Lightbox::set_shared_brightness_and_contrast(double brightness, double contrast) {
+  if (!session_->get_image_share_brightness_contrast()) {
     return;
   }
   for (int i = 0; i < viewers_.size(); i++) {
-    viewers_[i]->slice_view().set_window_and_level(window, level);
+    viewers_[i]->slice_view().set_brightness_and_contrast(brightness, contrast);
   }
 }
 

@@ -152,4 +152,26 @@ bool StudioUtils::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString fil
   }
   return true;
 }
+
+//---------------------------------------------------------------------------
+void StudioUtils::brightness_contrast_to_window_width_level(double brightness, double contrast, double min_intensity,
+                                                            double max_intensity, double& window_width,
+                                                            double& window_level) {
+  // Calculate window width
+  window_width = (contrast / 100.0) * (max_intensity - min_intensity);
+
+  // Calculate window level
+  window_level = min_intensity + (brightness / 100.0) * (max_intensity - min_intensity);
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::window_width_level_to_brightness_contrast(double window_width, double window_level,
+                                                            double min_intensity, double max_intensity,
+                                                            double& brightness, double& contrast) {
+  // Calculate brightness
+  brightness = ((window_level - min_intensity) / (max_intensity - min_intensity)) * 100.0;
+
+  // Calculate contrast
+  contrast = (window_width / (max_intensity - min_intensity)) * 100.0;
+}
 }  // namespace shapeworks

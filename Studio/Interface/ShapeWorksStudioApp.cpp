@@ -613,7 +613,7 @@ void ShapeWorksStudioApp::update_table() {
 
   ui_->image_axis_->setCurrentText(QString::fromStdString(axisToString(session_->get_image_axis())));
   ui_->image_3d_mode_->setChecked(session_->get_image_3d_mode());
-  ui_->image_share_window_and_level_->setChecked(session_->get_image_share_window_and_level());
+  ui_->image_share_window_and_level_->setChecked(session_->get_image_share_brightness_contrast());
 }
 
 //---------------------------------------------------------------------------
