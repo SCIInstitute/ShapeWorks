@@ -49,7 +49,6 @@ def get_mesh_from_DT(DT_list, mesh_dir):
     if not os.path.exists(mesh_dir):
         os.makedirs(mesh_dir)
     mesh_files = []
-    xml_filename = mesh_dir + "temp.xml"
     for input_file in DT_list:
         print('	' + get_prefix(input_file))
         output_vtk = mesh_dir + "original_" + get_prefix(input_file) + ".vtk"
@@ -59,12 +58,22 @@ def get_mesh_from_DT(DT_list, mesh_dir):
     return sorted(mesh_files)
 
 
+def get_mesh(filename, iso_value=0):
+    if filename.endswith('.nrrd'):
+        image = sw.Image(filename)
+        return image.toMesh(iso_value)
+    else:
+        return sw.Mesh(filename)
+
+
 def get_mesh_from_particles(particle_list, mesh_dir, template_particles, template_mesh, planes=None):
     if not os.path.exists(mesh_dir):
         os.makedirs(mesh_dir)
 
     warp = sw.MeshWarper()
-    sw_mesh = sw.Mesh(template_mesh)
+
+    # Create mesh from file (mesh or segmentation)
+    sw_mesh = get_mesh(template_mesh)
     sw_particles = np.loadtxt(template_particles)
     warp.generateWarp(sw_mesh, sw_particles)
 
@@ -135,7 +144,7 @@ def get_mesh_distances(pred_particle_files, mesh_list, template_particles, templ
             mean_distances.append(-1)
             continue
         print(f"Computing distance between {mesh_list[index]} and {pred_mesh_list[index]}")
-        orig_mesh = sw.Mesh(mesh_list[index])
+        orig_mesh = get_mesh(mesh_list[index], iso_value=0.5)
         if planes is not None:
             orig_mesh.clip(planes[index][0], planes[index][1], planes[index][2])
         pred_mesh = sw.Mesh(pred_mesh_list[index])
