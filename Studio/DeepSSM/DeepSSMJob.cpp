@@ -96,7 +96,8 @@ void DeepSSMJob::run_prep() {
   params.set_training_step_complete(false);
   params.save_to_project();
 
-  if (prep_step_ == DeepSSMTool::PrepStep::DONE || prep_step_ == DeepSSMTool::PrepStep::GROOM_TRAINING) {
+  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_TRAINING) {
+    SW_LOG("Creating Split...");
     /////////////////////////////////////////////////////////
     /// Step 1. Create Split
     /////////////////////////////////////////////////////////
