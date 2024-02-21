@@ -130,7 +130,7 @@ class Viewer {
 
   SliceView& slice_view();
 
-  void update_image_volume();
+  void update_image_volume(bool force = false);
 
   vtkSmartPointer<vtkPoints> get_glyph_points();
 

@@ -67,25 +67,33 @@ void Visualizer::display_samples() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples() {
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_points(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_points();
+  }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks() {
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_landmarks(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_landmarks();
+  }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_planes() {
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_planes();
+  }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_ffc_mode() {
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_ffc_mode(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_ffc_mode();
+  }
   lightbox_->redraw();
 }
 
@@ -248,8 +256,13 @@ void Visualizer::handle_image_slice_settings_changed() {
   lightbox_->update_interactor_style();
 
   if (lightbox_) {
-    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) { v->update_image_volume(); }
+    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) {
+      v->update_image_volume(true);
+      v->update_actors();
+      v->reset_camera();
+    }
   }
+  reset_camera();
   lightbox_->redraw();
 }
 
@@ -312,7 +325,9 @@ void Visualizer::update_lut() {
 //-----------------------------------------------------------------------------
 void Visualizer::update_annotations() {
   if (lightbox_) {
-    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) { v->update_annotations(); }
+    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) {
+      v->update_annotations();
+    }
   }
   lightbox_->redraw();
 }
@@ -506,7 +521,9 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> s
 void Visualizer::set_opacities(std::vector<float> opacities) {
   opacities_ = opacities;
   if (lightbox_) {
-    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_opacities(); }
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+      viewer->update_opacities();
+    }
   }
   lightbox_->redraw();
 }
@@ -515,7 +532,9 @@ void Visualizer::set_opacities(std::vector<float> opacities) {
 void Visualizer::set_domain_particle_visibilities(std::vector<bool> visibilities) {
   domain_particle_visibilities_ = visibilities;
   if (lightbox_) {
-    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_points(); }
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+      viewer->update_points();
+    }
   }
   lightbox_->redraw();
 }
@@ -572,7 +591,9 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
   }
 
   if (!show_color_scale) {
-    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->remove_scalar_bar(); }
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+      viewer->remove_scalar_bar();
+    }
   }
 
   vtkRendererCollection* collection = render_window->GetRenderers();
@@ -605,7 +626,9 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
 
   // restore changes
   update_viewer_properties();
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_actors(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_actors();
+  }
 
   return QPixmap::fromImage(qimage);
 }

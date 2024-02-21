@@ -1,5 +1,33 @@
 # Release Notes
 
+## ShapeWorks 6.5.0 - 2024-02
+
+### What is new?
+  * **ShapeWorks Back-end**
+    * DeepSSM variants and losses (TL network and other options) (#1881)
+    * Ability to use mesh scalar fields as correspondence attribute (#2081)
+    * Tool to compute cortical thickness using surface and CT (#2103)
+    * Tool to compute geodesic fields from landmarks (#2102)
+
+  * **ShapeWorks Front-end**
+    * Shape and Scalar Correlation / Prediction (2 Block PLS) (#985)
+    * Particle Area Analysis (#2140)
+    * DeepSSM Phase 2/3 in Studio
+    * Studio fixed domains support
+    * Studio exclude subject support
+    * Ability to propagate Free Form Constraints from one shape to another
+    * Feature to display thickness values for QA on slices #2177 
+
+  * **User's Support**
+    * macOS Silicon (arm64) support
+
+### Fixes
+  * https://github.com/SCIInstitute/ShapeWorks/pull/2118
+  * Fix windows python multiprocessing
+  * https://github.com/SCIInstitute/ShapeWorks/pull/2091
+  * Issue 2072 Fix #2158 
+
+
 ## ShapeWorks 6.4.2 - 2023-07-05
 
 ### Fixes

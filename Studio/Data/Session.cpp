@@ -1102,14 +1102,14 @@ bool Session::get_image_3d_mode() { return params_.get("image_3d_mode", false); 
 
 //---------------------------------------------------------------------------
 void Session::set_image_share_window_and_level(bool enabled) {
-  if (enabled == get_image_share_window_and_level() || is_loading()) {
+  if (enabled == get_image_share_brightness_contrast() || is_loading()) {
     return;
   }
   params_.set("image_share_window_and_level", enabled);
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_image_share_window_and_level() { return params_.get("image_share_window_and_level", true); }
+bool Session::get_image_share_brightness_contrast() { return params_.get("image_share_window_and_level", true); }
 
 //---------------------------------------------------------------------------
 void Session::set_image_sync_slice(bool enabled) {

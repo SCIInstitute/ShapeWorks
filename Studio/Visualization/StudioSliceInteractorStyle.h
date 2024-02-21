@@ -4,6 +4,9 @@
 #include <vtkPropPicker.h>
 #include <vtkRenderWindowInteractor.h>
 
+class vtkImageActor;
+class vtkImageSlice;
+
 namespace shapeworks {
 
 class Lightbox;
@@ -26,10 +29,12 @@ class StudioSliceInteractorStyle : public vtkInteractorStyleImage {
   void OnMouseWheelBackward() override;
   void OnKeyDown() override;
   void WindowLevel() override;
+  void StartWindowLevel() override;
 
  protected:
  private:
   Lightbox* lightbox_;
+  vtkImageSlice* current_image_slice_{nullptr};
 };
 
 }  // namespace shapeworks

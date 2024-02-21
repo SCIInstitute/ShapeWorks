@@ -26,7 +26,7 @@ const std::string TRAIN_FINE_TUNING_EPOCHS = "train_fine_tuning_epochs";
 const std::string TRAIN_FINE_TUNING_LEARNING_RATE = "train_fine_tuning_learning_rate";
 
 const std::string PREP_STEP_COMPLETE = "prep_step_complete";
-const std::string PREP_STEP_MESSAGE = "prep_step_message";
+const std::string PREP_STAGE = "prep_stage";
 const std::string AUG_STEP_COMPLETE = "aug_step_complete";
 const std::string AUG_STEP_MESSAGE = "aug_step_message";
 const std::string TRAIN_STEP_COMPLETE = "train_step_complete";
@@ -73,7 +73,7 @@ const std::string LOSS_FUNCTION = "MSE";
 
 // stage defaults
 const bool PREP_STEP_COMPLETE = false;
-const std::string PREP_STEP_MESSAGE = "";
+const int PREP_STAGE = 0;
 const bool AUG_STEP_COMPLETE = false;
 const std::string AUG_STEP_MESSAGE = "";
 const bool TRAIN_STEP_COMPLETE = false;
@@ -234,12 +234,10 @@ bool DeepSSMParameters::get_prep_step_complete() {
 void DeepSSMParameters::set_prep_step_complete(bool value) { params_.set(Keys::PREP_STEP_COMPLETE, value); }
 
 //---------------------------------------------------------------------------
-std::string DeepSSMParameters::get_prep_message() {
-  return params_.get(Keys::PREP_STEP_MESSAGE, Defaults::PREP_STEP_MESSAGE);
-}
+int DeepSSMParameters::get_prep_stage() { return params_.get(Keys::PREP_STAGE, Defaults::PREP_STAGE); }
 
 //---------------------------------------------------------------------------
-void DeepSSMParameters::set_prep_message(std::string message) { params_.set(Keys::PREP_STEP_MESSAGE, message); }
+void DeepSSMParameters::set_prep_stage(int stage) { params_.set(Keys::PREP_STAGE, stage); }
 
 //---------------------------------------------------------------------------
 bool DeepSSMParameters::get_aug_step_complete() {

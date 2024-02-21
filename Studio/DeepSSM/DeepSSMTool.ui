@@ -317,6 +317,121 @@ QWidget#training_panel {
                 <string>Prep</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_6">
+                <item row="4" column="0" colspan="3">
+                 <widget class="QWidget" name="widget" native="true">
+                  <layout class="QGridLayout" name="gridLayout_7">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_18">
+                     <property name="text">
+                      <string>Image Spacing:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="5">
+                    <widget class="QWidget" name="widget_4" native="true">
+                     <property name="minimumSize">
+                      <size>
+                       <width>50</width>
+                       <height>50</height>
+                      </size>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout">
+                      <item>
+                       <widget class="QLabel" name="label_19">
+                        <property name="text">
+                         <string>X</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="spacing_x">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>50</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_20">
+                        <property name="text">
+                         <string>Y</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="spacing_y">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>50</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_21">
+                        <property name="text">
+                         <string>Z</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="spacing_z">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>50</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="label_22">
                   <property name="sizePolicy">
@@ -331,30 +446,130 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="0" colspan="3">
-                 <widget class="QTextEdit" name="prep_text_edit">
-                  <property name="readOnly">
-                   <bool>true</bool>
+                <item row="5" column="0" colspan="2">
+                 <widget class="QWidget" name="prep_widget" native="true">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>50</height>
+                   </size>
                   </property>
+                  <layout class="QGridLayout" name="gridLayout_15">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_2">
+                     <property name="text">
+                      <string>Groom Training Shapes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_36">
+                     <property name="text">
+                      <string>Optimize Training Shapes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <widget class="QPushButton" name="run_step1">
+                     <property name="text">
+                      <string>Run</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="2">
+                    <widget class="QPushButton" name="run_step2">
+                     <property name="text">
+                      <string>Run</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_38">
+                     <property name="text">
+                      <string>Groom/Optimize Validation Shapes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLabel" name="step1_status">
+                     <property name="text">
+                      <string>☑</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2">
+                    <widget class="QPushButton" name="run_step3">
+                     <property name="text">
+                      <string>Run</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QLabel" name="label_40">
+                     <property name="text">
+                      <string>Groom Images</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLabel" name="step2_status">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QLabel" name="step3_status">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="1">
+                    <widget class="QLabel" name="step4_status">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="2">
+                    <widget class="QPushButton" name="run_step4">
+                     <property name="text">
+                      <string>Run</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                 <item row="3" column="2">
                  <widget class="QLabel" name="label_35">
                   <property name="text">
                    <string>%</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="percent_variability">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -472,119 +687,17 @@ Preserved</string>
                   </layout>
                  </widget>
                 </item>
-                <item row="4" column="0" colspan="3">
-                 <widget class="QWidget" name="widget" native="true">
-                  <layout class="QGridLayout" name="gridLayout_7">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_18">
-                     <property name="text">
-                      <string>Image Spacing:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0" colspan="5">
-                    <widget class="QWidget" name="widget_4" native="true">
-                     <property name="minimumSize">
-                      <size>
-                       <width>50</width>
-                       <height>50</height>
-                      </size>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout">
-                      <item>
-                       <widget class="QLabel" name="label_19">
-                        <property name="text">
-                         <string>X</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="spacing_x">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                         <size>
-                          <width>50</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="label_20">
-                        <property name="text">
-                         <string>Y</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="spacing_y">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                         <size>
-                          <width>50</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="label_21">
-                        <property name="text">
-                         <string>Z</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="spacing_z">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                         <size>
-                          <width>50</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="percent_variability">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -1216,7 +1329,7 @@ Preserved</string>
                   <string>Run Prep, Augmentation, Training and Testing Steps</string>
                  </property>
                  <property name="text">
-                  <string>Run All Steps</string>
+                  <string>Run All Steps (Prep/Aug/Train/Test)</string>
                  </property>
                 </widget>
                </item>
@@ -1658,7 +1771,6 @@ Preserved</string>
   <tabstop>controls_header</tabstop>
   <tabstop>tab_widget</tabstop>
   <tabstop>percent_variability</tabstop>
-  <tabstop>prep_text_edit</tabstop>
   <tabstop>num_samples</tabstop>
   <tabstop>sampler_type</tabstop>
   <tabstop>loss_function</tabstop>
