@@ -35,7 +35,7 @@ summary: SliceView.
 | void | **[change_slice](../Classes/classshapeworks_1_1SliceView.md#function-change-slice)**(SliceChange change) |
 | Point | **[get_slice_position](../Classes/classshapeworks_1_1SliceView.md#function-get-slice-position)**() |
 | void | **[set_slice_position](../Classes/classshapeworks_1_1SliceView.md#function-set-slice-position)**(Point point) |
-| void | **[set_window_and_level](../Classes/classshapeworks_1_1SliceView.md#function-set-window-and-level)**(double window, double level) |
+| void | **[set_brightness_and_contrast](../Classes/classshapeworks_1_1SliceView.md#function-set-brightness-and-contrast)**(double brightness, double contrast) |
 | double | **[get_spacing](../Classes/classshapeworks_1_1SliceView.md#function-get-spacing)**() |
 | int | **[get_orientation_index](../Classes/classshapeworks_1_1SliceView.md#function-get-orientation-index)**() |
 | void | **[update_particles](../Classes/classshapeworks_1_1SliceView.md#function-update-particles)**() |
@@ -164,12 +164,12 @@ void set_slice_position(
 ```
 
 
-### function set_window_and_level
+### function set_brightness_and_contrast
 
 ```cpp
-void set_window_and_level(
-    double window,
-    double level
+void set_brightness_and_contrast(
+    double brightness,
+    double contrast
 )
 ```
 
@@ -215,4 +215,4 @@ bool should_point_show(
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:31 +0000
+Updated on 2024-02-21 at 01:59:10 +0000

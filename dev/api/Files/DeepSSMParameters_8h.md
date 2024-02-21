@@ -86,8 +86,8 @@ class DeepSSMParameters {
   bool get_prep_step_complete();
   void set_prep_step_complete(bool value);
 
-  std::string get_prep_message();
-  void set_prep_message(std::string message);
+  int get_prep_stage();
+  void set_prep_stage(int stage);
 
   bool get_aug_step_complete();
   void set_aug_step_complete(bool value);
@@ -156,4 +156,4 @@ class DeepSSMParameters {
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:31 +0000
+Updated on 2024-02-21 at 01:59:11 +0000

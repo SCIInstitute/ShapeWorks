@@ -56,6 +56,13 @@ class StudioUtils {
   static void add_viewport_border(vtkRenderer* renderer, double* color, double line_width = 6.0);
 
   static bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
+
+  static void brightness_contrast_to_window_width_level(double brightness, double contrast, double min_intensity,
+                                                        double max_intensity, double& window_width,
+                                                        double& window_level);
+
+  static void window_width_level_to_brightness_contrast(double window_width, double window_level, double min_intensity,
+                                                        double max_intensity, double& brightness, double& contrast);
 };
 
 }  // namespace shapeworks
@@ -64,4 +71,4 @@ class StudioUtils {
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:32 +0000
+Updated on 2024-02-21 at 01:59:11 +0000

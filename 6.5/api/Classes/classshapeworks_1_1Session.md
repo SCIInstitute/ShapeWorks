@@ -124,7 +124,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[set_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-set-image-3d-mode)**(bool mode) |
 | bool | **[get_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-get-image-3d-mode)**() |
 | void | **[set_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-set-image-share-window-and-level)**(bool enabled) |
-| bool | **[get_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-get-image-share-window-and-level)**() |
+| bool | **[get_image_share_brightness_contrast](../Classes/classshapeworks_1_1Session.md#function-get-image-share-brightness-contrast)**() |
 | void | **[set_image_sync_slice](../Classes/classshapeworks_1_1Session.md#function-set-image-sync-slice)**(bool enabled) |
 | bool | **[get_image_sync_slice](../Classes/classshapeworks_1_1Session.md#function-get-image-sync-slice)**() |
 | void | **[set_image_thickness_feature](../Classes/classshapeworks_1_1Session.md#function-set-image-thickness-feature)**(bool enabled) |
@@ -943,10 +943,10 @@ void set_image_share_window_and_level(
 ```
 
 
-### function get_image_share_window_and_level
+### function get_image_share_brightness_contrast
 
 ```cpp
-bool get_image_share_window_and_level()
+bool get_image_share_brightness_contrast()
 ```
 
 
@@ -1319,4 +1319,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:31 +0000
+Updated on 2024-02-21 at 01:59:10 +0000

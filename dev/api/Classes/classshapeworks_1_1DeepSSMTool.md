@@ -16,6 +16,7 @@ Inherits from QWidget
 |                | Name           |
 | -------------- | -------------- |
 | enum class| **[ToolMode](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-toolmode)** { DeepSSM_PrepType = 0, DeepSSM_AugmentationType = 1, DeepSSM_TrainingType = 2, DeepSSM_TestingType = 3} |
+| enum| **[PrepStep](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-prepstep)** { NOT_STARTED = 0, GROOM_TRAINING = 1, OPTIMIZE_TRAINING = 2, OPTIMIZE_VALIDATION = 3, GROOM_IMAGES = 4, DONE = 5} |
 | enum class| **[SplitType](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-splittype)** { TRAIN, VAL, TEST} |
 
 ## Public Slots
@@ -23,6 +24,7 @@ Inherits from QWidget
 |                | Name           |
 | -------------- | -------------- |
 | void | **[run_clicked](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-run-clicked)**() |
+| void | **[run_prep_clicked](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-run-prep-clicked)**(int step) |
 | void | **[restore_defaults](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-restore-defaults)**() |
 | void | **[handle_thread_complete](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-handle-thread-complete)**() |
 | void | **[handle_progress](../Classes/classshapeworks_1_1DeepSSMTool.md#slot-handle-progress)**(int val, QString message) |
@@ -71,6 +73,20 @@ Inherits from QWidget
 
 
 
+### enum PrepStep
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| NOT_STARTED | 0|   |
+| GROOM_TRAINING | 1|   |
+| OPTIMIZE_TRAINING | 2|   |
+| OPTIMIZE_VALIDATION | 3|   |
+| GROOM_IMAGES | 4|   |
+| DONE | 5|   |
+
+
+
+
 ### enum SplitType
 
 | Enumerator | Value | Description |
@@ -88,6 +104,15 @@ Inherits from QWidget
 
 ```cpp
 void run_clicked()
+```
+
+
+### slot run_prep_clicked
+
+```cpp
+void run_prep_clicked(
+    int step
+)
 ```
 
 
@@ -281,4 +306,4 @@ static std::vector< int > get_split(
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:30 +0000
+Updated on 2024-02-21 at 01:59:09 +0000

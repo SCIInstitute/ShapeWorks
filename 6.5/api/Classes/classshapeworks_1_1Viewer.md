@@ -60,7 +60,7 @@ summary: 3D Viewer
 | vtkSmartPointer< vtkTransform > | **[get_inverse_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-inverse-landmark-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_image_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-image-transform)**() |
 | [SliceView](../Classes/classshapeworks_1_1SliceView.md) & | **[slice_view](../Classes/classshapeworks_1_1Viewer.md#function-slice-view)**() |
-| void | **[update_image_volume](../Classes/classshapeworks_1_1Viewer.md#function-update-image-volume)**() |
+| void | **[update_image_volume](../Classes/classshapeworks_1_1Viewer.md#function-update-image-volume)**(bool force =false) |
 | vtkSmartPointer< vtkPoints > | **[get_glyph_points](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-points)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-alignment-transform)**() |
 | void | **[update_clipping_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-clipping-planes)**() |
@@ -433,7 +433,9 @@ SliceView & slice_view()
 ### function update_image_volume
 
 ```cpp
-void update_image_volume()
+void update_image_volume(
+    bool force =false
+)
 ```
 
 
@@ -539,4 +541,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:31 +0000
+Updated on 2024-02-21 at 01:59:10 +0000

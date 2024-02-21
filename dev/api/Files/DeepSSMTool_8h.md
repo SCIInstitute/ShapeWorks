@@ -60,6 +60,15 @@ class DeepSSMTool : public QWidget {
     DeepSSM_TestingType = 3
   };
 
+  enum PrepStep {
+    NOT_STARTED = 0,
+    GROOM_TRAINING = 1,
+    OPTIMIZE_TRAINING = 2,
+    OPTIMIZE_VALIDATION = 3,
+    GROOM_IMAGES = 4,
+    DONE = 5
+  };
+
   enum class SplitType { TRAIN, VAL, TEST };
 
   DeepSSMTool(Preferences& prefs);
@@ -87,6 +96,7 @@ class DeepSSMTool : public QWidget {
  public Q_SLOTS:
 
   void run_clicked();
+  void run_prep_clicked(int step);
   void restore_defaults();
 
   void handle_thread_complete();
@@ -130,6 +140,7 @@ class DeepSSMTool : public QWidget {
   Ui_DeepSSMTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
+  PrepStep prep_step_ = PrepStep::NOT_STARTED;
 
   bool tool_is_running_ = false;
   DeepSSMTool::ToolMode current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
@@ -152,4 +163,4 @@ class DeepSSMTool : public QWidget {
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:31 +0000
+Updated on 2024-02-21 at 01:59:11 +0000

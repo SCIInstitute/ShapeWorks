@@ -205,7 +205,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   // image sync/share window width and level
   void set_image_share_window_and_level(bool enabled);
-  bool get_image_share_window_and_level();
+  bool get_image_share_brightness_contrast();
 
   // image sync slice
   void set_image_sync_slice(bool enabled);
@@ -362,4 +362,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:31 +0000
+Updated on 2024-02-21 at 01:59:11 +0000

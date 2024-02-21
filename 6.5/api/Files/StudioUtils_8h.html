@@ -2470,12 +2470,19 @@
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_viewport_border</span><span class="p">(</span><span class="n">vtkRenderer</span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">color</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">line_width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">6.0</span><span class="p">);</span>
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">write_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">brightness_contrast_to_window_width_level</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">brightness</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">contrast</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">min_intensity</span><span class="p">,</span>
+<span class="w">                                                        </span><span class="kt">double</span><span class="w"> </span><span class="n">max_intensity</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">window_width</span><span class="p">,</span>
+<span class="w">                                                        </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">window_level</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">window_width_level_to_brightness_contrast</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">window_width</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">window_level</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">min_intensity</span><span class="p">,</span>
+<span class="w">                                                        </span><span class="kt">double</span><span class="w"> </span><span class="n">max_intensity</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">brightness</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">contrast</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-02-06 at 21:07:32 +0000</p>
+<p>Updated on 2024-02-21 at 01:59:11 +0000</p>
 
               
             </article>

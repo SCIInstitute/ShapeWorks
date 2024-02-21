@@ -24,6 +24,8 @@ Utilities for Studio.
 | QString | **[get_platform_string](../Classes/classshapeworks_1_1StudioUtils.md#function-get-platform-string)**()<br>return platform string  |
 | void | **[add_viewport_border](../Classes/classshapeworks_1_1StudioUtils.md#function-add-viewport-border)**(vtkRenderer * renderer, double * color, double line_width =6.0)<br>add a color border to a viewport  |
 | bool | **[write_mesh](../Classes/classshapeworks_1_1StudioUtils.md#function-write-mesh)**(vtkSmartPointer< vtkPolyData > poly_data, QString filename)<br>write a mesh to file  |
+| void | **[brightness_contrast_to_window_width_level](../Classes/classshapeworks_1_1StudioUtils.md#function-brightness-contrast-to-window-width-level)**(double brightness, double contrast, double min_intensity, double max_intensity, double & window_width, double & window_level)<br>convert brightness and contrast to window width and level  |
+| void | **[window_width_level_to_brightness_contrast](../Classes/classshapeworks_1_1StudioUtils.md#function-window-width-level-to-brightness-contrast)**(double window_width, double window_level, double min_intensity, double max_intensity, double & brightness, double & contrast)<br>convert window width and level to brightness and contrast  |
 
 ## Public Functions Documentation
 
@@ -98,6 +100,36 @@ static bool write_mesh(
 
 write a mesh to file 
 
+### function brightness_contrast_to_window_width_level
+
+```cpp
+static void brightness_contrast_to_window_width_level(
+    double brightness,
+    double contrast,
+    double min_intensity,
+    double max_intensity,
+    double & window_width,
+    double & window_level
+)
+```
+
+convert brightness and contrast to window width and level 
+
+### function window_width_level_to_brightness_contrast
+
+```cpp
+static void window_width_level_to_brightness_contrast(
+    double window_width,
+    double window_level,
+    double min_intensity,
+    double max_intensity,
+    double & brightness,
+    double & contrast
+)
+```
+
+convert window width and level to brightness and contrast 
+
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:31 +0000
+Updated on 2024-02-21 at 01:59:10 +0000

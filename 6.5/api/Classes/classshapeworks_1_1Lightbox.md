@@ -61,7 +61,7 @@ Inherits from QObject
 | void | **[set_orientation_marker_viewport](../Classes/classshapeworks_1_1Lightbox.md#function-set-orientation-marker-viewport)**() |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Lightbox.md#function-update-feature-range)**() |
 | void | **[update_interactor_style](../Classes/classshapeworks_1_1Lightbox.md#function-update-interactor-style)**() |
-| void | **[set_shared_window_and_level](../Classes/classshapeworks_1_1Lightbox.md#function-set-shared-window-and-level)**(double window, double level) |
+| void | **[set_shared_brightness_and_contrast](../Classes/classshapeworks_1_1Lightbox.md#function-set-shared-brightness-and-contrast)**(double brightness, double contrast) |
 | vtkRenderWindow * | **[get_render_window](../Classes/classshapeworks_1_1Lightbox.md#function-get-render-window)**() |
 
 ## Detailed Description
@@ -339,12 +339,12 @@ void update_interactor_style()
 ```
 
 
-### function set_shared_window_and_level
+### function set_shared_brightness_and_contrast
 
 ```cpp
-void set_shared_window_and_level(
-    double window,
-    double level
+void set_shared_brightness_and_contrast(
+    double brightness,
+    double contrast
 )
 ```
 
@@ -358,4 +358,4 @@ vtkRenderWindow * get_render_window()
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:30 +0000
+Updated on 2024-02-21 at 01:59:10 +0000

@@ -47,8 +47,8 @@ title: shapeworks::DeepSSMParameters
 | void | **[set_testing_split](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-set-testing-split)**(double value) |
 | bool | **[get_prep_step_complete](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-get-prep-step-complete)**() |
 | void | **[set_prep_step_complete](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-set-prep-step-complete)**(bool value) |
-| std::string | **[get_prep_message](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-get-prep-message)**() |
-| void | **[set_prep_message](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-set-prep-message)**(std::string message) |
+| int | **[get_prep_stage](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-get-prep-stage)**() |
+| void | **[set_prep_stage](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-set-prep-stage)**(int stage) |
 | bool | **[get_aug_step_complete](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-get-aug-step-complete)**() |
 | void | **[set_aug_step_complete](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-set-aug-step-complete)**(bool value) |
 | std::string | **[get_aug_message](../Classes/classshapeworks_1_1DeepSSMParameters.md#function-get-aug-message)**() |
@@ -366,18 +366,18 @@ void set_prep_step_complete(
 ```
 
 
-### function get_prep_message
+### function get_prep_stage
 
 ```cpp
-std::string get_prep_message()
+int get_prep_stage()
 ```
 
 
-### function set_prep_message
+### function set_prep_stage
 
 ```cpp
-void set_prep_message(
-    std::string message
+void set_prep_stage(
+    int stage
 )
 ```
 
@@ -675,4 +675,4 @@ static const std::string DEEPSSM_SAMPLER_KDE_C;
 
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:30 +0000
+Updated on 2024-02-21 at 01:59:09 +0000

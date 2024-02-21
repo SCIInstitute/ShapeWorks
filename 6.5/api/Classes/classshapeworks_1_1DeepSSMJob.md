@@ -15,17 +15,11 @@ Qt Wrapper for DeepSSM.  [More...](#detailed-description)
 
 Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
-## Public Types
-
-|                | Name           |
-| -------------- | -------------- |
-| enum| **[PrepStep](../Classes/classshapeworks_1_1DeepSSMJob.md#enum-prepstep)** { GROOM_TRAINING = 0, OPTIMIZE_TRAINING = 1, GROOM_TRAINING_IMAGES = 2, GROOM_VAL_IMAGES = 3, OPTIMIZE_VALIDATION = 4, DONE = 5} |
-
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-deepssmjob)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session, DeepSSMTool::ToolMode tool_mode) |
+| | **[DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-deepssmjob)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session, DeepSSMTool::ToolMode tool_mode, DeepSSMTool::PrepStep prep_step =DeepSSMTool::NOT_STARTED) |
 | | **[~DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-~deepssmjob)**() |
 | virtual void | **[run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run)**() override<br>run the job  |
 | virtual QString | **[name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name)**() override<br>get the name of the job  |
@@ -34,7 +28,6 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | void | **[run_training](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-training)**() |
 | void | **[run_testing](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-testing)**() |
 | void | **[python_message](../Classes/classshapeworks_1_1DeepSSMJob.md#function-python-message)**(std::string str) |
-| QString | **[get_prep_message](../Classes/classshapeworks_1_1DeepSSMJob.md#function-get-prep-message)**() |
 
 ## Additional inherited members
 
@@ -73,22 +66,6 @@ Qt Wrapper for DeepSSM.
 
 The [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md) class wraps the functionality for DeepSSM as a Studio [Job](../Classes/classshapeworks_1_1Job.md) object 
 
-## Public Types Documentation
-
-### enum PrepStep
-
-| Enumerator | Value | Description |
-| ---------- | ----- | ----------- |
-| GROOM_TRAINING | 0|   |
-| OPTIMIZE_TRAINING | 1|   |
-| GROOM_TRAINING_IMAGES | 2|   |
-| GROOM_VAL_IMAGES | 3|   |
-| OPTIMIZE_VALIDATION | 4|   |
-| DONE | 5|   |
-
-
-
-
 ## Public Functions Documentation
 
 ### function DeepSSMJob
@@ -96,7 +73,8 @@ The [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md) class wraps the fu
 ```cpp
 DeepSSMJob(
     QSharedPointer< Session > session,
-    DeepSSMTool::ToolMode tool_mode
+    DeepSSMTool::ToolMode tool_mode,
+    DeepSSMTool::PrepStep prep_step =DeepSSMTool::NOT_STARTED
 )
 ```
 
@@ -167,13 +145,6 @@ void python_message(
 ```
 
 
-### function get_prep_message
-
-```cpp
-QString get_prep_message()
-```
-
-
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:30 +0000
+Updated on 2024-02-21 at 01:59:09 +0000

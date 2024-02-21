@@ -26,6 +26,7 @@ Inherits from vtkInteractorStyleImage
 | void | **[OnMouseWheelBackward](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-onmousewheelbackward)**() override |
 | void | **[OnKeyDown](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-onkeydown)**() override |
 | void | **[WindowLevel](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-windowlevel)**() override |
+| void | **[StartWindowLevel](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md#function-startwindowlevel)**() override |
 
 ## Public Functions Documentation
 
@@ -111,6 +112,13 @@ void WindowLevel() override
 ```
 
 
+### function StartWindowLevel
+
+```cpp
+void StartWindowLevel() override
+```
+
+
 -------------------------------
 
-Updated on 2024-02-06 at 21:07:31 +0000
+Updated on 2024-02-21 at 01:59:10 +0000

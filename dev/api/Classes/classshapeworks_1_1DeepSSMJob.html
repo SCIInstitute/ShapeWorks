@@ -2371,13 +2371,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-types" class="md-nav__link">
-    Public Types
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
@@ -2395,26 +2388,6 @@
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-types-documentation" class="md-nav__link">
-    Public Types Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Types Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#enum-prepstep" class="md-nav__link">
-    enum PrepStep
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2489,13 +2462,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-get_prep_message" class="md-nav__link">
-    function get_prep_message
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2523,21 +2489,6 @@
 <p>Qt Wrapper for DeepSSM.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;DeepSSMJob.h&gt;</code></p>
 <p>Inherits from <a href="classshapeworks_1_1Job.html">shapeworks::Job</a>, QObject</p>
-<h2 id="public-types">Public Types</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>enum</td>
-<td GROOM_TRAINING="GROOM_TRAINING"><strong><a href="classshapeworks_1_1DeepSSMJob.html#enum-prepstep">PrepStep</a></strong></td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2549,7 +2500,7 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-deepssmjob">DeepSSMJob</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session, DeepSSMTool::ToolMode tool_mode)</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-deepssmjob">DeepSSMJob</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session, DeepSSMTool::ToolMode tool_mode, DeepSSMTool::PrepStep prep_step =DeepSSMTool::NOT_STARTED)</td>
 </tr>
 <tr>
 <td></td>
@@ -2582,10 +2533,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-python-message">python_message</a></strong>(std::string str)</td>
-</tr>
-<tr>
-<td>QString</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-get-prep-message">get_prep_message</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -2673,54 +2620,12 @@
 </code></pre></div>
 <p>Qt Wrapper for DeepSSM. </p>
 <p>The <a href="classshapeworks_1_1DeepSSMJob.html">DeepSSMJob</a> class wraps the functionality for DeepSSM as a Studio <a href="classshapeworks_1_1Job.html">Job</a> object </p>
-<h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="enum-prepstep">enum PrepStep</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GROOM_TRAINING</td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td>OPTIMIZE_TRAINING</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr>
-<td>GROOM_TRAINING_IMAGES</td>
-<td>2</td>
-<td></td>
-</tr>
-<tr>
-<td>GROOM_VAL_IMAGES</td>
-<td>3</td>
-<td></td>
-</tr>
-<tr>
-<td>OPTIMIZE_VALIDATION</td>
-<td>4</td>
-<td></td>
-</tr>
-<tr>
-<td>DONE</td>
-<td>5</td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-deepssmjob">function DeepSSMJob</h3>
 <div class="highlight"><pre><span></span><code><span class="n">DeepSSMJob</span><span class="p">(</span>
 <span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span>
-<span class="w">    </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">tool_mode</span>
+<span class="w">    </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">tool_mode</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step</span><span class="w"> </span><span class="o">=</span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">NOT_STARTED</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-deepssmjob_1">function ~DeepSSMJob</h3>
@@ -2753,11 +2658,8 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-get_prep_message">function get_prep_message</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_prep_message</span><span class="p">()</span>
-</code></pre></div>
 <hr />
-<p>Updated on 2024-02-06 at 21:07:30 +0000</p>
+<p>Updated on 2024-02-21 at 01:59:09 +0000</p>
 
               
             </article>
