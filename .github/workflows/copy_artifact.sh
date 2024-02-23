@@ -22,6 +22,8 @@ if [[ "$PLATFORM" == "windows" ]]; then
     # https://repo.msys2.org/msys/x86_64/libzstd-1.5.2-1-x86_64.pkg.tar.zst
     # https://repo.msys2.org/msys/x86_64/libxxhash-0.8.1-1-x86_64.pkg.tar.zst
     curl.exe --output windows_rsync.tar.gz http://www.sci.utah.edu/~amorris/windows_rsync.tar.gz
+
+    tar -xzvf windows_rsync.tar.gz
     
     mv usr/bin/* "C:\Program Files\Git\usr\bin\\"
     echo "rsync installed on windows runner"
