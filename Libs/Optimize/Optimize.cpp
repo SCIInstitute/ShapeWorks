@@ -559,13 +559,13 @@ void Optimize::Initialize() {
   m_sampler->SetCorrespondenceOn();
 
   if (m_use_shape_statistics_in_init) {
-    if (m_mesh_based_attributes) {
-      SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
-      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
-    } else {
-      SW_DEBUG("Setting correspondence mode: ensemble entropy");
+    // if (m_mesh_based_attributes) {
+    //   SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
+    //   m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
+    // } else {
+    //   SW_DEBUG("Setting correspondence mode: ensemble entropy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
-    }
+    // }
 
     m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization,
                                                                      m_iterations_per_split);
@@ -577,15 +577,15 @@ void Optimize::Initialize() {
         m_starting_regularization, m_ending_regularization, m_iterations_per_split);
   } else {
     // force to mean
-    if ((m_attributes_per_domain.size() > 0 &&
-         *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
-        m_mesh_based_attributes) {
-      SW_DEBUG("Setting correspondence mode: mesh-based mean energy");
-      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy);
-    } else {
+    // if ((m_attributes_per_domain.size() > 0 &&
+    //      *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
+    //     m_mesh_based_attributes) {
+    //   SW_DEBUG("Setting correspondence mode: mesh-based mean energy");
+    //   m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy);
+    // } else {
       SW_DEBUG("Setting correspondence mode: mean energy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);
-    }
+    // }
   }
 
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
@@ -815,23 +815,24 @@ void Optimize::RunOptimize() {
 
   m_sampler->SetCorrespondenceOn();
 
-  if (m_use_disentangled_ssm) {
-    if (m_starting_regularization == m_ending_regularization)
-      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy);
-    else
-      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy);
-  } else if ((m_attributes_per_domain.size() > 0 &&
-              *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
-             m_mesh_based_attributes) {
-    SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
-    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
-  } else if (m_use_regression == true) {
-    if (m_use_mixed_effects == true) {
-      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy);
-    } else {
-      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleRegressionEntropy);
-    }
-  } else if (m_starting_regularization == m_ending_regularization) {
+  // if (m_use_disentangled_ssm) {
+  //   if (m_starting_regularization == m_ending_regularization)
+  //     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy);
+  //   else
+  //     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy);
+  // } else if ((m_attributes_per_domain.size() > 0 &&
+  //             *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
+  //            m_mesh_based_attributes) {
+  //   SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
+  //   m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
+  // } else if (m_use_regression == true) {
+  //   if (m_use_mixed_effects == true) {
+  //     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy);
+  //   } else {
+  //     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleRegressionEntropy);
+  //   }
+  // } else if (m_starting_regularization == m_ending_regularization) {
+   if (m_starting_regularization == m_ending_regularization) {
     SW_DEBUG("Setting correspondence mode: mean energy");
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);  // mean force
   } else {
