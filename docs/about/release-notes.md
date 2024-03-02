@@ -1,6 +1,6 @@
 # Release Notes
 
-## ShapeWorks 6.5.0 - 2024-02
+## ShapeWorks 6.5.0 - 2024-03
 
 ### What is new?
   * **ShapeWorks Back-end**
@@ -12,20 +12,25 @@
   * **ShapeWorks Front-end**
     * Shape and Scalar Correlation / Prediction (2 Block PLS) (#985)
     * Particle Area Analysis (#2140)
-    * DeepSSM Phase 2/3 in Studio
-    * Studio fixed domains support
-    * Studio exclude subject support
-    * Ability to propagate Free Form Constraints from one shape to another
-    * Feature to display thickness values for QA on slices #2177 
+    * Studio can now run models with fixed domains support
+    * Studio can now exclude subjects from grooming/optimization
+    * Free form constraints can now be applied from one shape to another
+    * Improved Brightness and Contrast control for slice viewer
+    * Cortical thickness values can be displayed as an inner contour for QA on slices #2177 
+    * DeepSSM Enhancements in Studio
+      * Validation and Testing shapes/images are now held out from training grooming/optimization
+      * Image registration is used to align Validation and Testing
+      * Validation shapes have correspondence generated using fixed domains
+      * Inference on new images can now be performed using an existing model
 
   * **User's Support**
     * macOS Silicon (arm64) support
 
 ### Fixes
-  * https://github.com/SCIInstitute/ShapeWorks/pull/2118
+  * Bug fix for very large covariance matrices (https://github.com/SCIInstitute/ShapeWorks/pull/2118
   * Fix windows python multiprocessing
-  * https://github.com/SCIInstitute/ShapeWorks/pull/2091
-  * Issue 2072 Fix #2158 
+  * Fix bug when saving project after defining only 2 points of a plane (https://github.com/SCIInstitute/ShapeWorks/pull/2091)
+  * Improved data augmentation API (https://github.com/SCIInstitute/ShapeWorks/issues/2072)
 
 
 ## ShapeWorks 6.4.2 - 2023-07-05
