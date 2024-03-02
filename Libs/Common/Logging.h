@@ -4,6 +4,7 @@
 
 #include <QString>
 #include <functional>
+#include <iostream>
 
 template <>
 struct fmt::formatter<QString> {
@@ -105,7 +106,7 @@ class Logging {
   void show_progress(double value, const std::string& message);
 
   //! Log a debug message, use SW_DEBUG macro
-  void log_debug(const std::string& message, const int line, const char* file, const char *function) const;
+  void log_debug(const std::string& message, const int line, const char* file, const char* function) const;
 
   //! Log a warning message, use SW_WARN macro
   void log_warning(const std::string& message, const int line, const char* file) const;
@@ -155,8 +156,12 @@ class Logging {
 #define SW_LOG_STACK(message) shapeworks::Logging::Instance().log_stack(message)
 
 //! Log message macro
-#define SW_LOG(message, ...) \
-  shapeworks::Logging::Instance().log_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+#define SW_LOG(message, ...)                                                                              \
+  try {                                                                                                   \
+    shapeworks::Logging::Instance().log_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__); \
+  } catch (std::exception & e) {                                                                          \
+    std::cerr << "Caught exception: " << e.what() << "\n";                                                \
+  }
 
 //! Log warning macro
 #define SW_WARN(message, ...) \
@@ -188,12 +193,12 @@ class Logging {
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();
 
 //! Log once macro, will only log the message once
-#define SW_LOG_ONCE(message, ...) \
-{ \
-    static bool logged = false; \
-    if (!logged) { \
+#define SW_LOG_ONCE(message, ...)     \
+  {                                   \
+    static bool logged = false;       \
+    if (!logged) {                    \
       SW_LOG(message, ##__VA_ARGS__); \
-      logged = true; \
-    } \
-}
+      logged = true;                  \
+    }                                 \
+  }
 }  // namespace shapeworks
