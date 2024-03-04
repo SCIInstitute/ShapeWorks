@@ -556,11 +556,11 @@ Eigen::MatrixXd MeshWarper::extract_landmarks(vtkSmartPointer<vtkPolyData> warpe
 
   for (auto ids : landmarks_map_) {
     auto id_landmark = ids.first;
-    auto id_vertice = ids.second;
+    auto id_vertex = ids.second;
 
-    landmarks(id_landmark, 0) = data_array->GetComponent(id_vertice, 0);
-    landmarks(id_landmark, 1) = data_array->GetComponent(id_vertice, 1);
-    landmarks(id_landmark, 2) = data_array->GetComponent(id_vertice, 2);
+    landmarks(id_landmark, 0) = data_array->GetComponent(id_vertex, 0);
+    landmarks(id_landmark, 1) = data_array->GetComponent(id_vertex, 1);
+    landmarks(id_landmark, 2) = data_array->GetComponent(id_vertex, 2);
   }
 
   return landmarks;
