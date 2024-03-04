@@ -1758,7 +1758,7 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
   stats.principal_component_projections();
 
   try {
-    stats.write_csv_file(filename.toStdString());
+    ExportUtils::write_pca_scores(this, &stats, filename);
   } catch (std::exception& e) {
     handle_error(e.what());
   }

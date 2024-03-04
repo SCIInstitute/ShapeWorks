@@ -1,12 +1,12 @@
 #include "ExportUtils.h"
 
 #include <Data/Session.h>
-#include <Shape.h>
 #include <Interface/ShapeWorksStudioApp.h>
+#include <Logging.h>
+#include <ParticleShapeStatistics.h>
+#include <Shape.h>
 #include <StringUtils.h>
 #include <Utils/StudioUtils.h>
-#include <Logging.h>
-
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 
@@ -182,4 +182,47 @@ bool ExportUtils::write_particle_scalars(ShapeWorksStudioApp* app, std::shared_p
   output.close();
   return true;
 }
+
+//---------------------------------------------------------------------------
+bool ExportUtils::write_pca_scores(ShapeWorksStudioApp* app, ParticleShapeStatistics* stats, QString filename) {
+  if (!stats) {
+    app->handle_error("No statistics to export");
+    return false;
+  }
+
+  std::ofstream output;
+  output.open(filename.toStdString().c_str());
+  if (output.bad()) {
+    SW_ERROR("Error writing to file: " + filename.toStdString());
+    return false;
+  }
+
+  auto pca_loadings = stats->get_pca_loadings();
+  auto num_samples = pca_loadings.rows();
+
+  auto shapes = app->session()->get_shapes();
+
+  output << "name";
+  for (unsigned int i = 0; i < num_samples; i++) {
+    output << ",p" << i;
+  }
+  output << std::endl;
+
+  int s = 0;
+
+  for (unsigned int r = 0; r < num_samples; r++, s++) {
+    while (shapes[s]->is_excluded()) {
+      s++;
+    }
+    output << shapes[s]->get_display_name();
+    for (unsigned int c = 0; c < num_samples; c++) {
+      output << "," << pca_loadings(r, c);
+    }
+    output << std::endl;
+  }
+
+  output.close();
+  return true;
+}
+
 }  // namespace shapeworks
