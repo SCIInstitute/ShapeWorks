@@ -1,3 +1,4 @@
+#include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshWarper.h>
 #include <igl/biharmonic_coordinates.h>
@@ -10,8 +11,6 @@
 #include <vtkPointLocator.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkTriangleFilter.h>
-
-#include <Logging.h>
 
 #include <set>
 
@@ -113,7 +112,6 @@ void MeshWarper::add_particle_vertices(Eigen::MatrixXd& vertices) {
   // with each other.  If multiple particles (new vertices) land on the same triangle, the we will need
   // multiple passes since we will have to make the changes and rebuild the locator.
   while (not_all_done) {
-
     not_all_done = false;
 
     this->reference_mesh_->BuildLinks();
@@ -415,7 +413,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyDa
 
     if (cell->GetCellType() != VTK_EMPTY_CELL) {  // VTK_EMPTY_CELL means it was deleted
       // create an array of vtkIdType
-      vtkIdType *pts = new vtkIdType[cell->GetNumberOfPoints()];
+      vtkIdType* pts = new vtkIdType[cell->GetNumberOfPoints()];
       for (vtkIdType j = 0; j < cell->GetNumberOfPoints(); j++) {
         pts[j] = cell->GetPointId(j);
       }
@@ -556,10 +554,9 @@ Eigen::MatrixXd MeshWarper::extract_landmarks(vtkSmartPointer<vtkPolyData> warpe
 
   vtkSmartPointer<vtkDataArray> data_array = warped_mesh->GetPoints()->GetData();
 
-    for (auto ids : landmarks_map_)
-    {
-        auto id_landmark = ids.first;
-        auto id_vertice = ids.second;
+  for (auto ids : landmarks_map_) {
+    auto id_landmark = ids.first;
+    auto id_vertice = ids.second;
 
     landmarks(id_landmark, 0) = data_array->GetComponent(id_vertice, 0);
     landmarks(id_landmark, 1) = data_array->GetComponent(id_vertice, 1);
