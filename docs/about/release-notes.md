@@ -7,7 +7,8 @@
     * DeepSSM variants and losses (TL network and other options) (#1881)
     * Ability to use mesh scalar fields as correspondence attribute (#2081)
     * Tool to compute cortical thickness using surface and CT (#2103)
-    * Tool to compute geodesic fields from landmarks (#2102)
+    * Tool to compute geodesic fields from landmarks (#2102) and use as a correspondence attribute
+    * Ability to run geodesic distance on a decimated mesh to improve speed
 
   * **ShapeWorks Front-end**
     * Shape and Scalar Correlation / Prediction (2 Block PLS) (#985)
@@ -16,7 +17,8 @@
     * Studio can now exclude subjects from grooming/optimization
     * Free form constraints can now be applied from one shape to another
     * Improved Brightness and Contrast control for slice viewer
-    * Cortical thickness values can be displayed as an inner contour for QA on slices #2177 
+    * Cortical thickness values can be displayed as an inner contour for QA on slices #2177
+    * Network and SPM1D Analysis
     * DeepSSM Enhancements in Studio
       * Validation and Testing shapes/images are now held out from training grooming/optimization
       * Image registration is used to align Validation and Testing
