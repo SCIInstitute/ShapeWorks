@@ -47,6 +47,10 @@ The Network Analysis tool provides a method to statistically analyze data captur
 | Display           | Choose to display Network Analysis output or SPM1D                                                                                                               |
 
 
+After running the Network Analysis, you can enable the display of values with the "Display" checkbox:
+
+![ShapeWorks Studio Network Analysis Display](../img/studio/studio_network_analysis_display.png)
+
 
 ### Samples
 
