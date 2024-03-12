@@ -15,12 +15,14 @@
   * **ShapeWorks Front-end**
     * Shape and Scalar Correlation / Prediction (2 Block PLS) (#985)
     * Particle Area Analysis (#2140)
+      * Compute the mean and standard deviation of the area associated with each particle
     * Studio can now run models with fixed domains support
     * Studio can now exclude subjects from grooming/optimization
-    * Free form constraints can now be applied from one shape to another
+    * Free form constraints can now be applied from one shape to others
     * Improved Brightness and Contrast control for slice viewer
     * Cortical thickness values can be displayed as an inner contour for QA on slices (#2177)
     * Network and SPM1D Analysis
+      * Statistically analyze feature map data using the relative size of the network of connected particles
     * DeepSSM Enhancements in Studio
       * Validation and Testing shapes/images are now held out from training grooming/optimization
       * Image registration is used to align Validation and Testing
