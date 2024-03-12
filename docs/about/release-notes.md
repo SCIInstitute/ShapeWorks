@@ -2,6 +2,8 @@
 
 ## ShapeWorks 6.5.0 - 2024-03
 
+![](../img/about/release6.5.png)
+
 ### What is new?
   * **ShapeWorks Back-end**
     * DeepSSM variants and losses (TL network and other options) (#1881)
@@ -17,7 +19,7 @@
     * Studio can now exclude subjects from grooming/optimization
     * Free form constraints can now be applied from one shape to another
     * Improved Brightness and Contrast control for slice viewer
-    * Cortical thickness values can be displayed as an inner contour for QA on slices #2177
+    * Cortical thickness values can be displayed as an inner contour for QA on slices (#2177)
     * Network and SPM1D Analysis
     * DeepSSM Enhancements in Studio
       * Validation and Testing shapes/images are now held out from training grooming/optimization
@@ -29,10 +31,10 @@
     * macOS Silicon (arm64) support
 
 ### Fixes
-  * Bug fix for very large covariance matrices (https://github.com/SCIInstitute/ShapeWorks/pull/2118
+  * Bug fix for very large covariance matrices (#2118)
   * Fix windows python multiprocessing
-  * Fix bug when saving project after defining only 2 points of a plane (https://github.com/SCIInstitute/ShapeWorks/pull/2091)
-  * Improved data augmentation API (https://github.com/SCIInstitute/ShapeWorks/issues/2072)
+  * Fix bug when saving project after defining only 2 points of a plane (#2091)
+  * Improved data augmentation API (#2072)
 
 
 ## ShapeWorks 6.4.2 - 2023-07-05
