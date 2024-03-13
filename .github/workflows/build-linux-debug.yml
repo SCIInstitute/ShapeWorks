@@ -41,7 +41,7 @@ jobs:
       run: df -h
 
     - name: Free some space 
-      run: cd /__t ; rm -rf CodeQL go
+      run: cd /__t ; rm -rf CodeQL go PyPy Python Ruby
 
     - name: Check usage 
       run: cd /__t ; du -sh *
