@@ -41,6 +41,7 @@ summary: SliceView.
 | void | **[update_particles](../Classes/classshapeworks_1_1SliceView.md#function-update-particles)**() |
 | [Viewer](../Classes/classshapeworks_1_1Viewer.md) * | **[get_viewer](../Classes/classshapeworks_1_1SliceView.md#function-get-viewer)**() |
 | bool | **[should_point_show](../Classes/classshapeworks_1_1SliceView.md#function-should-point-show)**(double x, double y, double z) |
+| int | **[get_slice_number](../Classes/classshapeworks_1_1SliceView.md#function-get-slice-number)**() |
 
 ## Detailed Description
 
@@ -213,6 +214,13 @@ bool should_point_show(
 ```
 
 
+### function get_slice_number
+
+```cpp
+int get_slice_number()
+```
+
+
 -------------------------------
 
-Updated on 2024-02-21 at 01:59:10 +0000
+Updated on 2024-03-13 at 22:27:54 +0000

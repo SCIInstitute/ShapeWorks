@@ -2385,9 +2385,36 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#defines" class="md-nav__link">
     Defines
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions-documentation" class="md-nav__link">
+    Functions Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-safe_format" class="md-nav__link">
+    function safe_format
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2539,6 +2566,21 @@
 </tr>
 </tbody>
 </table>
+<h2 id="functions">Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>template &lt;typename... Args> <br>std::string</td>
+<td><strong><a href="Logging_8h.html#function-safe-format">safe_format</a></strong>(const std::string &amp; fmt_str, const Args &amp;... args)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="defines">Defines</h2>
 <table>
 <thead>
@@ -2594,6 +2636,14 @@
 </tr>
 </tbody>
 </table>
+<h2 id="functions-documentation">Functions Documentation</h2>
+<h3 id="function-safe_format">function safe_format</h3>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">safe_format</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fmt_str</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Args</span><span class="w"> </span><span class="o">&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="macros-documentation">Macros Documentation</h2>
 <h3 id="define-sw_log_stack">define SW_LOG_STACK</h3>
 <div class="highlight"><pre><span></span><code><span class="cp">#define SW_LOG_STACK(</span>
@@ -2607,7 +2657,7 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_message</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_message</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">);</span>
 </code></pre></div>
 <p>Log message macro. </p>
 <h3 id="define-sw_warn">define SW_WARN</h3>
@@ -2615,7 +2665,7 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_warning</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_warning</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
 </code></pre></div>
 <p>Log warning macro. </p>
 <h3 id="define-sw_error">define SW_ERROR</h3>
@@ -2623,7 +2673,7 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_error</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_error</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
 </code></pre></div>
 <p>Log error macro. </p>
 <h3 id="define-sw_debug">define SW_DEBUG</h3>
@@ -2631,7 +2681,7 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_debug</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FUNCTION__</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_debug</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FUNCTION__</span><span class="p">)</span>
 </code></pre></div>
 <p>Log debug macro. </p>
 <h3 id="define-sw_trace">define SW_TRACE</h3>
@@ -2646,7 +2696,7 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_message</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_message</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
 </code></pre></div>
 <p>Log show message macro. </p>
 <h3 id="define-sw_status">define SW_STATUS</h3>
@@ -2654,7 +2704,7 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_status</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_status</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
 </code></pre></div>
 <p>Don't write to log, but set status (e.g. in the Studio statusbar) </p>
 <h3 id="define-sw_progress">define SW_PROGRESS</h3>
@@ -2663,7 +2713,7 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_progress</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">));</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_progress</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">));</span>
 </code></pre></div>
 <h3 id="define-sw_close_log">define SW_CLOSE_LOG</h3>
 <div class="highlight"><pre><span></span><code><span class="cp">#define SW_CLOSE_LOG(</span>
@@ -2677,13 +2727,13 @@
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">)</span>
-<span class="p">{</span><span class="w"> </span>\
-<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">logged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span>\
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">logged</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>\
+<span class="w">  </span><span class="p">{</span><span class="w">                                   </span>\
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">logged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">       </span>\
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">logged</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">                    </span>\
 <span class="w">      </span><span class="n">SW_LOG</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">);</span><span class="w"> </span>\
-<span class="w">      </span><span class="n">logged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span>\
-<span class="w">    </span><span class="p">}</span><span class="w"> </span>\
-<span class="p">}</span>
+<span class="w">      </span><span class="n">logged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">                  </span>\
+<span class="w">    </span><span class="p">}</span><span class="w">                                 </span>\
+<span class="w">  </span><span class="p">}</span>
 </code></pre></div>
 <p>Log once macro, will only log the message once. </p>
 <h2 id="source-code">Source code</h2>
@@ -2693,6 +2743,7 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
 
 <span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
 <span class="k">struct</span><span class="w"> </span><span class="nc">fmt</span><span class="o">::</span><span class="n">formatter</span><span class="o">&lt;</span><span class="n">QString</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
@@ -2703,6 +2754,18 @@
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format_to</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">out</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">qUtf8Printable</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">};</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">safe_format</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fmt_str</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Args</span><span class="o">&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">fmt_str</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">...);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Handle formatting errors here, example:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error formatting string: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">fmt_str</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; : &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
@@ -2728,7 +2791,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_debug</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">function</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_debug</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">function</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_warning</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
@@ -2768,42 +2831,42 @@
 <span class="cp">#define SW_LOG_STACK(message) shapeworks::Logging::Instance().log_stack(message)</span>
 
 <span class="cp">#define SW_LOG(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
+<span class="cp">  shapeworks::Logging::Instance().log_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);</span>
 
 <span class="cp">#define SW_WARN(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_warning(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
+<span class="cp">  shapeworks::Logging::Instance().log_warning(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
 
 <span class="cp">#define SW_ERROR(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_error(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
+<span class="cp">  shapeworks::Logging::Instance().log_error(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
 
 <span class="cp">#define SW_DEBUG(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)</span>
+<span class="cp">  shapeworks::Logging::Instance().log_debug(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)</span>
 
 <span class="cp">#define SW_TRACE(x) SW_DEBUG(#x &quot; = {}&quot;, x);</span>
 
 <span class="cp">#define SW_MESSAGE(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().show_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
+<span class="cp">  shapeworks::Logging::Instance().show_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
 
 <span class="cp">#define SW_STATUS(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().show_status(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
+<span class="cp">  shapeworks::Logging::Instance().show_status(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
 
 <span class="cp">#define SW_PROGRESS(value, message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().show_progress(value, fmt::format(message, ##__VA_ARGS__));</span>
+<span class="cp">  shapeworks::Logging::Instance().show_progress(value, safe_format(message, ##__VA_ARGS__));</span>
 
 <span class="cp">#define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();</span>
 
-<span class="cp">#define SW_LOG_ONCE(message, ...) \</span>
-<span class="cp">{ \</span>
-<span class="cp">    static bool logged = false; \</span>
-<span class="cp">    if (!logged) { \</span>
+<span class="cp">#define SW_LOG_ONCE(message, ...)     \</span>
+<span class="cp">  {                                   \</span>
+<span class="cp">    static bool logged = false;       \</span>
+<span class="cp">    if (!logged) {                    \</span>
 <span class="cp">      SW_LOG(message, ##__VA_ARGS__); \</span>
-<span class="cp">      logged = true; \</span>
-<span class="cp">    } \</span>
-<span class="cp">}</span>
+<span class="cp">      logged = true;                  \</span>
+<span class="cp">    }                                 \</span>
+<span class="cp">  }</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-02-21 at 01:59:11 +0000</p>
+<p>Updated on 2024-03-13 at 22:27:54 +0000</p>
 
               
             </article>

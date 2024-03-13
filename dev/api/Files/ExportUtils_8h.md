@@ -36,6 +36,7 @@ namespace shapeworks {
 class Session;
 class ShapeWorksStudioApp;
 class Shape;
+class ParticleShapeStatistics;
 
 class ExportUtils {
  public:
@@ -46,6 +47,8 @@ class ExportUtils {
   static bool write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 
   static bool write_particle_scalars(ShapeWorksStudioApp* app, std::shared_ptr<Shape> shape, QString filename);
+
+  static bool write_pca_scores(ShapeWorksStudioApp* app, ParticleShapeStatistics* stats, QString filename);
 };
 
 }  // namespace shapeworks
@@ -54,4 +57,4 @@ class ExportUtils {
 
 -------------------------------
 
-Updated on 2024-02-21 at 01:59:11 +0000
+Updated on 2024-03-13 at 22:27:54 +0000

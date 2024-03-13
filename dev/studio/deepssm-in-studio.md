@@ -38,10 +38,9 @@ The next step is to run the prep phase which will perform the following tasks:
 | Task | Description |
 | ---------- | ----------- |
 | Groom Training Shapes | The shapes marked "training" (see split column) will be groomed according to the parameters in the groom tab|
-| Optimize Training Particles | The shapes marked "training" will have correspondence particles generated and optimized according to the parameters in the optimize tab |
-| Groom Training Images | The training images will be aligned and prepped according to the grooming parameters |
-| Groom Validation Images | The validation images will be aligned and prepped using image to image registration with the training images|
-| Optimize Validation Particles | The validation shapes will have correspondence particles generated and optimized according to the parameters  n the optimize tab using the training shapes as fixed domains|
+| Optimize Training Shapes | The shapes marked "training" will have correspondence particles generated and optimized according to the parameters in the optimize tab |
+| Groom/Optimize Validation Shapes | The validation shapes will have correspondence particles generated and optimized according to the parameters  n the optimize tab using the training shapes as fixed domains|
+| Groom Images | The training images will be aligned and prepped according to the grooming parameters. The validation images will be aligned and prepped using image to image registration with the training images. |
 
 After running the prep stage, you should see the following with all five stages done:
 

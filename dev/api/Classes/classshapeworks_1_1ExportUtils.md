@@ -21,6 +21,7 @@ Export utilities for Studio.
 | void | **[export_all_subjects_particle_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-export-all-subjects-particle-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * parent, QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
 | bool | **[write_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-write-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, vtkSmartPointer< vtkPolyData > poly_data, QString filename) |
 | bool | **[write_particle_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-write-particle-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, QString filename) |
+| bool | **[write_pca_scores](../Classes/classshapeworks_1_1ExportUtils.md#function-write-pca-scores)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) * stats, QString filename) |
 
 ## Public Functions Documentation
 
@@ -68,6 +69,17 @@ static bool write_particle_scalars(
 ```
 
 
+### function write_pca_scores
+
+```cpp
+static bool write_pca_scores(
+    ShapeWorksStudioApp * app,
+    ParticleShapeStatistics * stats,
+    QString filename
+)
+```
+
+
 -------------------------------
 
-Updated on 2024-02-21 at 01:59:09 +0000
+Updated on 2024-03-13 at 22:27:53 +0000

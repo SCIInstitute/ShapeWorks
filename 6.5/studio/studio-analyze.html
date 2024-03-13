@@ -878,6 +878,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#lda" class="md-nav__link">
+    LDA
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-particle-p-values" class="md-nav__link">
+    Group Particle P-Values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-analysis" class="md-nav__link">
     Network Analysis
   </a>
@@ -932,8 +946,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#particles-panel" class="md-nav__link">
-    Particles Panel
+  <a href="#goodbad-particles-panel" class="md-nav__link">
+    Good/Bad Particles Panel
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#particle-area-analysis" class="md-nav__link">
+    Particle Area Analysis
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapescalar-correlation" class="md-nav__link">
+    Shape/Scalar Correlation
   </a>
   
 </li>
@@ -2498,6 +2526,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#lda" class="md-nav__link">
+    LDA
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-particle-p-values" class="md-nav__link">
+    Group Particle P-Values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-analysis" class="md-nav__link">
     Network Analysis
   </a>
@@ -2552,8 +2594,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#particles-panel" class="md-nav__link">
-    Particles Panel
+  <a href="#goodbad-particles-panel" class="md-nav__link">
+    Good/Bad Particles Panel
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#particle-area-analysis" class="md-nav__link">
+    Particle Area Analysis
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapescalar-correlation" class="md-nav__link">
+    Shape/Scalar Correlation
   </a>
   
 </li>
@@ -2584,10 +2640,20 @@
 <h3 id="group">Group</h3>
 <p>The Group mode allows for group comparison to quantify and visualize population-level differences.  Each <code>group_&lt;value&gt;</code> column from the project can be selected and the differences between any two values (i.e., group identifiers) in the groups can be displayed by selecting the group values in the left and right dropdown boxes.  A group difference display showing vectors and a colormap of distance can be shown using the "Diff --&gt;" button.</p>
 <p><img alt="ShapeWorks Studio Analysis View Panel Group Display" src="../img/studio/studio_analyze_view_group.png" /></p>
-<p>Additionally an LDA chart is generated for group differences:</p>
+<p>There are three different group analysis options available:</p>
+<ul>
+<li>LDA</li>
+<li>Group Particle P-Values</li>
+<li>Network Analysis</li>
+</ul>
+<h3 id="lda">LDA</h3>
+<p>Selecting LDA from the analysis method dropdown will generate an LDA chart based on the two groups:</p>
 <p><img alt="ShapeWorks Studio LDA Chart" src="../img/studio/studio_lda.png" width="300" /></p>
+<h3 id="group-particle-p-values">Group Particle P-Values</h3>
+<p>Performs per particle p-value computation for each group.  </p>
+<p><img alt="ShapeWorks Studio Group Particle P-Value" src="../img/studio/studio_analyze_group_pvalue.png" width="300" /></p>
 <h3 id="network-analysis">Network Analysis</h3>
-<p><img alt="ShapeWorks Studio Network Analysis" src="../img/studio/studio_network_analysis.png" width="200" /></p>
+<p><img alt="ShapeWorks Studio Network Analysis" src="../img/studio/studio_network_analysis.png" width="300" /></p>
 <p>The Network Analysis tool provides a method to statistically analyze data captured in feature maps. Two implementations have been included: Network Analysis and SPM1D. Statistical parametric mapping (SPM, https://www.fil.ion.ucl.ac.uk/spm/) was introduced for the analysis of brain imaging data and has since been used in statistical analysis of surface-based group differences. The SPM1D option uses this technique without consideration of the connectivity and spatial relationship of the input data. The Network Analysis method uses the relative size of the network of connected correspondence particles to identify significant differences amongst groups, as originally described by Forman and colleagues (Forman SD, et al. Magnetic Resonance in Medicine33:636-647, 1995). Our publication on the specifics of this method and example applications is in review and will be referenced here when available.</p>
 <table>
 <thead>
@@ -2619,6 +2685,8 @@
 </tr>
 </tbody>
 </table>
+<p>After running the Network Analysis, you can enable the display of values with the "Display" checkbox:</p>
+<p><img alt="ShapeWorks Studio Network Analysis Display" src="../img/studio/studio_network_analysis_display.png" /></p>
 <h3 id="samples">Samples</h3>
 <p>The Samples tab of the view panel allows you to view all of the samples in your cohort, view a single sample by index, or view the median sample.</p>
 <p><img alt="ShapeWorks Studio Analysis View Panel Sample Display" src="../img/studio/studio_analyze_view_samples.png" /></p>
@@ -2648,9 +2716,23 @@
 <p><img alt="ShapeWorks Studio Analysis Surface Reconstruction Panel" src="../img/studio/studio_analyze_surface_reconstruction.png" /></p>
 <p>Below is an example of the difference in using this option.</p>
 <p><img alt="ShapeWorks Studio Surface Reconstruction Result" src="../img/studio/studio_analyze_surface_reconstruction_result.png" /></p>
-<h2 id="particles-panel">Particles Panel</h2>
-<p><img alt="ShapeWorks Studio Particles Panel" src="../img/studio/studio_good_bad.png" /></p>
-<p>The <em>Particles Panel</em> enabled the display of "good/bad particles" in ShapeWorks Studio.  A <em>maximum angle</em> parameter is given (default 45 degrees).  When a particle's surface normal across subjects (averaged) exceeds this angle, the particle will be marked "bad" and shown in red.  Good particles are shown in green.  This can help in identifying problems with correspondence as it is typically expected that surface normals for given particles should be similar across subjects.</p>
+<h2 id="goodbad-particles-panel">Good/Bad Particles Panel</h2>
+<p><img alt="ShapeWorks Studio Good/Bad Particles Panel" src="../img/studio/studio_good_bad.png" /></p>
+<p>The <em>Good/Bad Particles Panel</em> enabled the display of "good/bad particles" in ShapeWorks Studio.  A <em>maximum angle</em> parameter is given (default 45 degrees).  When a particle's surface normal across subjects (averaged) exceeds this angle, the particle will be marked "bad" and shown in red.  Good particles are shown in green.  This can help in identifying problems with correspondence as it is typically expected that surface normals for given particles should be similar across subjects.</p>
+<h2 id="particle-area-analysis">Particle Area Analysis</h2>
+<p>The <em>Particle Area Analysis</em> panel allows for the visualization of the area of each particle in the shape model.  This can be useful for identifying areas that are not being captured well by the modell.  There are two options for visualization, mean and standard deviation.</p>
+<p><img alt="ShapeWorks Studio Particle Area Analysis Panel Mean Displat" src="../img/studio/studio_particle_area_analysis_mean.png" /></p>
+<p><img alt="ShapeWorks Studio Particle Area Analysis Panel Standard Deviation Display" src="../img/studio/studio_particle_area_analysis_std.png" /></p>
+<h2 id="shapescalar-correlation">Shape/Scalar Correlation</h2>
+<p>The <em>Shape/Scalar Correlation</em> panel uses 2 block PLS regression to identify the relationship between shape and scalar data. </p>
+<p>To use this panel, you must have scalar values (feature map).  Choose the desired feature map from the dropdown menu.</p>
+<p>Use the "Determine number of components" option to show the mean squared error for each number of components:</p>
+<p><img alt="ShapeWorks Studio Shape/Scalar Correlation Panel - Determine Number of Components" src="../img/studio/studio_shape_scalar_determine_num_components.png" /></p>
+<p>After choosing the desired number of components, you can plot the relationship between shape and scalar data:</p>
+<p><img alt="ShapeWorks Studio Shape/Scalar Correlation Panel - Plot" src="../img/studio/studio_shape_scalar_plot.png" /></p>
+<p>Additionally, you can use the 2 Block PLS regression to predict the scalar value from the shape data and vice versa:</p>
+<p><img alt="ShapeWorks Studio Shape/Scalar Correlation Panel - Predict" src="../img/studio/studio_shape_scalar_predict.png" /></p>
+<p>The options "Shape Only", "Scalar Only", and "Shape and Scalar" are available to choose from and the PCA will be performed accordingly.</p>
 
               
             </article>

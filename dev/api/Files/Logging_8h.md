@@ -20,6 +20,12 @@ title: Libs/Common/Logging.h
 | struct | **[fmt::formatter< QString >](../Classes/structfmt_1_1formatter_3_01QString_01_4.md)**  |
 | class | **[shapeworks::Logging](../Classes/classshapeworks_1_1Logging.md)** <br>ShapeWorks [Logging]() Library.  |
 
+## Functions
+
+|                | Name           |
+| -------------- | -------------- |
+| template <typename... Args\> <br>std::string | **[safe_format](../Files/Logging_8h.md#function-safe-format)**(const std::string & fmt_str, const Args &... args) |
+
 ## Defines
 
 |                | Name           |
@@ -35,6 +41,19 @@ title: Libs/Common/Logging.h
 |  | **[SW_PROGRESS](../Files/Logging_8h.md#define-sw-progress)**(value, message, ...)  |
 |  | **[SW_CLOSE_LOG](../Files/Logging_8h.md#define-sw-close-log)**() <br>Close session macro.  |
 |  | **[SW_LOG_ONCE](../Files/Logging_8h.md#define-sw-log-once)**(message, ...) <br>Log once macro, will only log the message once.  |
+
+
+## Functions Documentation
+
+### function safe_format
+
+```cpp
+template <typename... Args>
+std::string safe_format(
+    const std::string & fmt_str,
+    const Args &... args
+)
+```
 
 
 
@@ -59,7 +78,7 @@ Log stack macro.
     message,
     ...
 )
-shapeworks::Logging::Instance().log_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+shapeworks::Logging::Instance().log_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);
 ```
 
 Log message macro. 
@@ -71,7 +90,7 @@ Log message macro.
     message,
     ...
 )
-shapeworks::Logging::Instance().log_warning(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+shapeworks::Logging::Instance().log_warning(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 ```
 
 Log warning macro. 
@@ -83,7 +102,7 @@ Log warning macro.
     message,
     ...
 )
-shapeworks::Logging::Instance().log_error(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+shapeworks::Logging::Instance().log_error(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 ```
 
 Log error macro. 
@@ -95,7 +114,7 @@ Log error macro.
     message,
     ...
 )
-shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)
+shapeworks::Logging::Instance().log_debug(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)
 ```
 
 Log debug macro. 
@@ -118,7 +137,7 @@ Variable trace macro (e.g. output variable name = <variable value>)
     message,
     ...
 )
-shapeworks::Logging::Instance().show_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+shapeworks::Logging::Instance().show_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 ```
 
 Log show message macro. 
@@ -130,7 +149,7 @@ Log show message macro.
     message,
     ...
 )
-shapeworks::Logging::Instance().show_status(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+shapeworks::Logging::Instance().show_status(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 ```
 
 Don't write to log, but set status (e.g. in the Studio statusbar) 
@@ -143,7 +162,7 @@ Don't write to log, but set status (e.g. in the Studio statusbar)
     message,
     ...
 )
-shapeworks::Logging::Instance().show_progress(value, fmt::format(message, ##__VA_ARGS__));
+shapeworks::Logging::Instance().show_progress(value, safe_format(message, ##__VA_ARGS__));
 ```
 
 
@@ -165,13 +184,13 @@ Close session macro.
     message,
     ...
 )
-{ \
-    static bool logged = false; \
-    if (!logged) { \
+  {                                   \
+    static bool logged = false;       \
+    if (!logged) {                    \
       SW_LOG(message, ##__VA_ARGS__); \
-      logged = true; \
-    } \
-}
+      logged = true;                  \
+    }                                 \
+  }
 ```
 
 Log once macro, will only log the message once. 
@@ -185,6 +204,7 @@ Log once macro, will only log the message once.
 
 #include <QString>
 #include <functional>
+#include <iostream>
 
 template <>
 struct fmt::formatter<QString> {
@@ -195,6 +215,18 @@ struct fmt::formatter<QString> {
     return fmt::format_to(ctx.out(), "{}", qUtf8Printable(str));
   }
 };
+
+template <typename... Args>
+std::string safe_format(const std::string& fmt_str, const Args&... args) {
+  std::string result;
+  try {
+    result = fmt::format(fmt_str, args...);
+  } catch (const std::exception& e) {
+    // Handle formatting errors here, example:
+    std::cerr << "Error formatting string: " << fmt_str << " : " << e.what() << std::endl;
+  }
+  return result;
+}
 
 namespace shapeworks {
 
@@ -220,7 +252,7 @@ class Logging {
 
   void show_progress(double value, const std::string& message);
 
-  void log_debug(const std::string& message, const int line, const char* file, const char *function) const;
+  void log_debug(const std::string& message, const int line, const char* file, const char* function) const;
 
   void log_warning(const std::string& message, const int line, const char* file) const;
 
@@ -260,42 +292,42 @@ class Logging {
 #define SW_LOG_STACK(message) shapeworks::Logging::Instance().log_stack(message)
 
 #define SW_LOG(message, ...) \
-  shapeworks::Logging::Instance().log_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+  shapeworks::Logging::Instance().log_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);
 
 #define SW_WARN(message, ...) \
-  shapeworks::Logging::Instance().log_warning(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+  shapeworks::Logging::Instance().log_warning(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 #define SW_ERROR(message, ...) \
-  shapeworks::Logging::Instance().log_error(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+  shapeworks::Logging::Instance().log_error(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 #define SW_DEBUG(message, ...) \
-  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)
+  shapeworks::Logging::Instance().log_debug(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)
 
 #define SW_TRACE(x) SW_DEBUG(#x " = {}", x);
 
 #define SW_MESSAGE(message, ...) \
-  shapeworks::Logging::Instance().show_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+  shapeworks::Logging::Instance().show_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 #define SW_STATUS(message, ...) \
-  shapeworks::Logging::Instance().show_status(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+  shapeworks::Logging::Instance().show_status(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 #define SW_PROGRESS(value, message, ...) \
-  shapeworks::Logging::Instance().show_progress(value, fmt::format(message, ##__VA_ARGS__));
+  shapeworks::Logging::Instance().show_progress(value, safe_format(message, ##__VA_ARGS__));
 
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();
 
-#define SW_LOG_ONCE(message, ...) \
-{ \
-    static bool logged = false; \
-    if (!logged) { \
+#define SW_LOG_ONCE(message, ...)     \
+  {                                   \
+    static bool logged = false;       \
+    if (!logged) {                    \
       SW_LOG(message, ##__VA_ARGS__); \
-      logged = true; \
-    } \
-}
+      logged = true;                  \
+    }                                 \
+  }
 }  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2024-02-21 at 01:59:11 +0000
+Updated on 2024-03-13 at 22:27:54 +0000

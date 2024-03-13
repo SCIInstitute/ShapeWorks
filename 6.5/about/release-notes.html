@@ -2338,11 +2338,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#shapeworks-650-2024-02" class="md-nav__link">
-    ShapeWorks 6.5.0 - 2024-02
+  <a href="#shapeworks-650-2024-03" class="md-nav__link">
+    ShapeWorks 6.5.0 - 2024-03
   </a>
   
-    <nav class="md-nav" aria-label="ShapeWorks 6.5.0 - 2024-02">
+    <nav class="md-nav" aria-label="ShapeWorks 6.5.0 - 2024-03">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3210,11 +3210,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#shapeworks-650-2024-02" class="md-nav__link">
-    ShapeWorks 6.5.0 - 2024-02
+  <a href="#shapeworks-650-2024-03" class="md-nav__link">
+    ShapeWorks 6.5.0 - 2024-03
   </a>
   
-    <nav class="md-nav" aria-label="ShapeWorks 6.5.0 - 2024-02">
+    <nav class="md-nav" aria-label="ShapeWorks 6.5.0 - 2024-03">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -4031,7 +4031,8 @@
 
 
 <h1 id="release-notes">Release Notes</h1>
-<h2 id="shapeworks-650-2024-02">ShapeWorks 6.5.0 - 2024-02</h2>
+<h2 id="shapeworks-650-2024-03">ShapeWorks 6.5.0 - 2024-03</h2>
+<p><img alt="" src="../img/about/release6.5.png" /></p>
 <h3 id="what-is-new">What is new?</h3>
 <ul>
 <li>
@@ -4040,7 +4041,8 @@
 <li>DeepSSM variants and losses (TL network and other options) (#1881)</li>
 <li>Ability to use mesh scalar fields as correspondence attribute (#2081)</li>
 <li>Tool to compute cortical thickness using surface and CT (#2103)</li>
-<li>Tool to compute geodesic fields from landmarks (#2102)</li>
+<li>Tool to compute geodesic fields from landmarks (#2102) and use as a correspondence attribute</li>
+<li>Ability to run geodesic distance on a decimated mesh to improve speed</li>
 </ul>
 </li>
 <li>
@@ -4048,11 +4050,19 @@
 <ul>
 <li>Shape and Scalar Correlation / Prediction (2 Block PLS) (#985)</li>
 <li>Particle Area Analysis (#2140)</li>
-<li>DeepSSM Phase 2/3 in Studio</li>
-<li>Studio fixed domains support</li>
-<li>Studio exclude subject support</li>
-<li>Ability to propagate Free Form Constraints from one shape to another</li>
-<li>Feature to display thickness values for QA on slices #2177 </li>
+<li>Compute the mean and standard deviation of the area associated with each particle</li>
+<li>Studio can now run models with fixed domains support</li>
+<li>Studio can now exclude subjects from grooming/optimization</li>
+<li>Free form constraints can now be applied from one shape to others</li>
+<li>Improved Brightness and Contrast control for slice viewer</li>
+<li>Cortical thickness values can be displayed as an inner contour for QA on slices (#2177)</li>
+<li>Network and SPM1D Analysis</li>
+<li>Statistically analyze feature map data using the relative size of the network of connected particles</li>
+<li>DeepSSM Enhancements in Studio</li>
+<li>Validation and Testing shapes/images are now held out from training grooming/optimization</li>
+<li>Image registration is used to align Validation and Testing</li>
+<li>Validation shapes have correspondence generated using fixed domains</li>
+<li>Inference on new images can now be performed using an existing model</li>
 </ul>
 </li>
 <li>
@@ -4064,10 +4074,10 @@
 </ul>
 <h3 id="fixes">Fixes</h3>
 <ul>
-<li>https://github.com/SCIInstitute/ShapeWorks/pull/2118</li>
+<li>Bug fix for very large covariance matrices (#2118)</li>
 <li>Fix windows python multiprocessing</li>
-<li>https://github.com/SCIInstitute/ShapeWorks/pull/2091</li>
-<li>Issue 2072 Fix #2158 </li>
+<li>Fix bug when saving project after defining only 2 points of a plane (#2091)</li>
+<li>Improved data augmentation API (#2072)</li>
 </ul>
 <h2 id="shapeworks-642-2023-07-05">ShapeWorks 6.4.2 - 2023-07-05</h2>
 <h3 id="fixes_1">Fixes</h3>
