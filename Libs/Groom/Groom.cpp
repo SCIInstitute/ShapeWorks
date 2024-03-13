@@ -727,13 +727,11 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
   // check for and handle name clashes, e.g. a/foo.vtk, b/foo.vtk (see #1387)
   auto base_name = name;
   int count = 2;
-  while (used_names_.find(name) != used_names_.end()) {
-    name = base_name + std::to_string(count++);
+  while (used_names_.find(name + suffix) != used_names_.end()) {
+    name = base_name + "_" + std::to_string(count++);
   }
-  used_names_.insert(name);
-
   auto output = name + suffix;
-
+  used_names_.insert(output);
   return output;
 }
 

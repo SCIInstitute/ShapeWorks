@@ -64,6 +64,8 @@ class SliceView {
 
   bool should_point_show(double x, double y, double z);
 
+  int get_slice_number();
+
  private:
   void set_slice_number(int slice);
 

@@ -331,7 +331,6 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
 
         Point local;
         inverse->TransformPoint(common.GetDataPointer(), local.GetDataPointer());
-
         viewers_[i]->slice_view().set_slice_position(local);
       }
     } else {

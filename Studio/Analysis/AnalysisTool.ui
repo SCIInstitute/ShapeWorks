@@ -1387,7 +1387,7 @@ QWidget#particles_panel {
                       <item row="2" column="0">
                        <widget class="QRadioButton" name="pca_scalar_only">
                         <property name="toolTip">
-                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
+                         <string>PCA analysis on scalars only</string>
                         </property>
                         <property name="text">
                          <string>Scalar Only</string>
@@ -1412,7 +1412,7 @@ QWidget#particles_panel {
                       <item row="1" column="0">
                        <widget class="QRadioButton" name="pca_scalar_shape_only">
                         <property name="toolTip">
-                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
+                         <string>PCA analysis on shape only</string>
                         </property>
                         <property name="text">
                          <string>Shape Only</string>
@@ -1428,7 +1428,7 @@ QWidget#particles_panel {
                       <item row="3" column="0">
                        <widget class="QRadioButton" name="pca_shape_and_scalar">
                         <property name="toolTip">
-                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
+                         <string>PCA analysis on shape+scalars combined</string>
                         </property>
                         <property name="text">
                          <string>Shape and Scalar</string>
@@ -1450,6 +1450,9 @@ QWidget#particles_panel {
                       </item>
                       <item row="1" column="1">
                        <widget class="QCheckBox" name="pca_predict_scalar">
+                        <property name="toolTip">
+                         <string>Predict scalars from shape using 2 block PLS fit</string>
+                        </property>
                         <property name="text">
                          <string>Predict Scalar</string>
                         </property>
@@ -1457,6 +1460,9 @@ QWidget#particles_panel {
                       </item>
                       <item row="2" column="1">
                        <widget class="QCheckBox" name="pca_predict_shape">
+                        <property name="toolTip">
+                         <string>Predict shape from scalars using 2 block PLS fit</string>
+                        </property>
                         <property name="text">
                          <string>Predict Shape</string>
                         </property>

@@ -141,7 +141,7 @@ python-dateutil==2.8.2
 python-json-logger==2.0.7
 python-markdown-math==0.8
 pytz==2023.3
-pyvista==0.34.1
+pyvista==0.43.4
 pyxdg==0.28
 PyYAML==6.0
 pyyaml_env_tag==0.1
