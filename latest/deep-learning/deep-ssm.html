@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/deep-learning/deep-ssm.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/deep-learning/deep-ssm.html">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
@@ -2364,7 +2364,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/Modules/index_groups.html" class="md-nav__link">
+      <a href="../api/Modules/index_groups.md" class="md-nav__link">
         Groups
       </a>
     </li>
@@ -2378,7 +2378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/Namespaces/index_namespaces.html" class="md-nav__link">
+      <a href="../api/Namespaces/index_namespaces.md" class="md-nav__link">
         Namespaces
       </a>
     </li>
@@ -2392,7 +2392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/Classes/index_classes.html" class="md-nav__link">
+      <a href="../api/Classes/index_classes.md" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -2406,7 +2406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/Files/index_files.html" class="md-nav__link">
+      <a href="../api/Files/index_files.md" class="md-nav__link">
         Files
       </a>
     </li>
@@ -2714,8 +2714,15 @@
 <h3 id="2-creation-of-data-loaders">2. Creation of Data Loaders</h3>
 <p>The next step is to reformat the data (original and augmented) into PyTorch tensors. 80% of the data is randomly selected to be training data, and the remaining 20% of the data is used as a validation set. The input images are whitened and turned into tensors. They can also be optionally downsampled to a smaller size to allow for faster training. The corresponding PCA scores are also normalized or whitened to avoid DeepSSM learning to favor the primary modes of variation and are then turned to tensors. PyTorch data loaders are then created with a batch size specified by the user. </p>
 <h3 id="3-training">3. Training</h3>
-<p>PyTorch is used in constructing and training DeepSSM. The network architecture is defined to have five convolution layers followed by two fully connected layers, as illustrated in the figure below. Parametric ReLU activation is used, and the weights are initialized using Xavier initialization. The network is trained for the specified number of epochs using Adam optimization to minimize the L2 loss function with a learning rate of 0.0001. The average training and validation error are printed and logged each epoch to determine convergence.</p>
+<p>PyTorch is used in constructing and training DeepSSM. We have implemented two different network architectures: </p>
+<ul>
+<li><strong>Base-DeepSSM:</strong> The network architecture is defined to have five convolution layers followed by two fully connected layers, as illustrated in the figure below. Parametric ReLU activation is used, and the weights are initialized using Xavier initialization. The network is trained for the specified number of epochs using Adam optimization to minimize the L2 loss function with a learning rate of 0.0001. The average training and validation error are printed and logged each epoch to determine convergence.</li>
+</ul>
 <p><img alt="DeepSSM Architecture" src="../img/deep-learning/Architecture.png" /></p>
+<ul>
+<li><strong>TL-DeepSSM:</strong> In TL-DeepSSM, the input is an image and correspondence pair. The network architecture of the TL-DeepSSM consists of two parts: (i) the autoencoder that learns the latent dimension for each correspondence, and (ii) the network that learns the latent dimension from the image (this is called the T-flank and it is similar to the Base-DeepSSM architecture). The training routine is broken into three parts. First, the correspondence autoencoder is trained. Next, the T-flank is trained while the correspondence autoencoder weights are kept frozen. Finally, the entire model is trained jointly. For inference using a testing sample, one can directly obtain the correspondences from an image via the T-flank and decoder.</li>
+</ul>
+<p><img alt="DeepSSM Architecture" src="../img/deep-learning/TLNet-DeepSSM.jpg" /></p>
 <h3 id="4-testing">4. Testing</h3>
 <p>The trained model is then used to predict the PCA score from the images in the test set. These PCA scores are then un-whitened and mapped back to the particle coordinates using the eigenvalues and eigenvectors from PCA. Thus a PDM is acquired for each test image.</p>
 <h3 id="5-evaluation">5. Evaluation</h3>
@@ -2762,9 +2769,9 @@
 <p>Training requires a JSON config file which defines all model architecture and training parameters.</p>
 <h4 id="config-file-parameter-descriptions">Config File Parameter Descriptions</h4>
 <ul>
-<li><code>model_name</code>: The name of the model, typically this matches the name of the JSON conflict file. The model and predictions will be saved in the directory: <code>out_dir/model_name/</code></li>
+<li><code>model_name</code>: The name of the model, typically this matches the name of the JSON configuration file. The model and predictions will be saved in the directory: <code>out_dir/model_name/</code></li>
 <li><code>num_latent_dim</code>: The size of the latent dimension.</li>
-<li><code>paths</code>: A dictionary with all the needded paths.<ul>
+<li><code>paths</code>: A dictionary with all the needed paths.<ul>
 <li><code>out_dir</code>: The directory to which output should be written.</li>
 <li><code>loader_dir</code>: The directory that has the training, validation, and test torch data loaders.</li>
 <li><code>aug_dir</code>: The directory that has the augmented data.</li>
@@ -2780,14 +2787,19 @@
 </ul>
 </li>
 <li><code>loss</code>: A dictionary with info about the loss. <ul>
-<li><code>function</code>: The loss function to be used in training.</li>
+<li><code>function</code>: The loss function to be used in training. Options: <code>MSE</code> or <code>Focal</code>. Default: <code>MSE</code>.</li>
 <li><code>supervised_latent</code>:  If true then the latent space is supervised during training. For example, the PCA scores in the original DeepSSM model. If false then the latent space is unsupervised. </li>
 </ul>
 </li>
 <li><code>trainer</code>: A dictionary with info about training.<ul>
 <li><code>epochs</code>: The number of training epochs.</li>
 <li><code>learning_rate</code>: The learning rate to use in training.</li>
-<li><code>decay_lr</code>: If true the learning rate should decay during training. </li>
+<li><code>decay_lr</code>: A dictionary with the information about the learning rate decay during training. <ul>
+<li><code>enabled</code>: If true the learning rate should decay during training. </li>
+<li><code>type</code>: The type of learning rate scheduler to be used.  Options: <code>CosineAnnealing</code> or <code>Step</code>. Default: <code>CosineAnnealing</code>.</li>
+<li><code>parameters</code>: A dictionary with the information about the learning rate scheduler.</li>
+</ul>
+</li>
 <li><code>val_freq</code>: How often to evaluate the error on the validation set in training (i.e., one means every epoch, two means every other, etc.)</li>
 </ul>
 </li>
@@ -2798,6 +2810,18 @@
 <li><code>learning_rate</code>: The learning rate to use in fine tuning.</li>
 <li><code>decay_lr</code>: If true the learning rate should decay during fine tuning.</li>
 <li><code>val_freq</code>: How often to evaluate the error on the validation set in fine tuning (i.e., one means every epoch, two means every other, etc.)</li>
+</ul>
+</li>
+<li><code>tl_net</code>: A dictionary with the information about the TL-DeepSSM model.<ul>
+<li><code>enabled</code>: If true the model will be trained using TL-DeepSSM model. If false the Base DeepSSM will be used.</li>
+<li><code>ae_epochs</code>: The number of epochs to train the autoencoder.</li>
+<li><code>tf_epochs</code>: The number of epochs to train the T-flank.</li>
+<li><code>joint_epochs</code>: The number of epochs to train the whole model.</li>
+<li><code>alpha</code>: The weight applied to the T-flank with respect to the autoencoder loss when training the whole model.</li>
+<li><code>a_ae</code>: Focal loss parameter when calculating the autoencoder loss. <code>a</code> is a scaling parameter that adjusts the intensity of the loss; higher values accentuate the loss, while lower values dampen it.</li>
+<li><code>c_ae</code>: Focal loss parameter when calculating the autoencoder loss. <code>c</code> is a threshold parameter that modulates the loss contribution of each particle. When the particle difference is below c, the particle's impact on the overall loss is reduced.</li>
+<li><code>a_lat</code>: Focal loss parameter when calculating the T-flank loss.</li>
+<li><code>c_lat</code>: Focal loss parameter when calculating the T-flank loss.</li>
 </ul>
 </li>
 <li><code>use_best_model</code>: If true the model from the epoch which achieved the best validation accuracy is used in testing (essentially the early stopping model). If false then the final model after all training epochs is used in testing.</li>

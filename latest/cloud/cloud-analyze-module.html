@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/cloud/cloud-analyze-module.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/cloud/cloud-analyze-module.html">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
@@ -2269,7 +2269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/Modules/index_groups.html" class="md-nav__link">
+      <a href="../api/Modules/index_groups.md" class="md-nav__link">
         Groups
       </a>
     </li>
@@ -2283,7 +2283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/Namespaces/index_namespaces.html" class="md-nav__link">
+      <a href="../api/Namespaces/index_namespaces.md" class="md-nav__link">
         Namespaces
       </a>
     </li>
@@ -2297,7 +2297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/Classes/index_classes.html" class="md-nav__link">
+      <a href="../api/Classes/index_classes.md" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -2311,7 +2311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/Files/index_files.html" class="md-nav__link">
+      <a href="../api/Files/index_files.md" class="md-nav__link">
         Files
       </a>
     </li>
@@ -2499,8 +2499,9 @@
 <p>The analyze module can be viewed after a successful optimization job. There are three panels in the analyze module, <a href="#view-pca">View PCA</a>, <a href="#charts">Charts</a>, <a href="#shape-viewer">Shape Viewer</a>.</p>
 <p><img alt="ShapeWorks Cloud Analyze Module" src="../img/cloud/analyze_module.png" width="400" /></p>
 <h2 id="view-pca">View PCA</h2>
-<p>The View PCA panel shows reconstructed shapes (surface meshes) along PCA modes of variation. Modes of variations are shape parameters learned/discovered from your data that describes shape variations. You can control the location along the PCA mode with the Standard Deviation slider.<br />
-Values displayed:</p>
+<p>The View PCA panel shows reconstructed shapes (surface meshes) along PCA modes of variation. Modes of variations are shape parameters learned/discovered from your data that describes shape variations. You can control the location along the PCA mode with the Standard Deviation slider and/or the animate option.</p>
+<p>The animate option allows for an automatic adjustment of the Standard Deviation slider within a mode of variation. Upon selecting the animate option, the comparison vectors and colormap for each shape in the mode will be calculated. This will only occur the first time that the option is selected for a given mode.</p>
+<p>Values displayed:</p>
 <p><code>Lambda</code> - This shows the PCA loading of current position of the slider.  The middle of the slider, at the mean value, will be 0.  The extent of lambda is defined by the number of standard deviations of the slider as described above.  At standard deviation of 1.0, it will be the square root of the mode's eigenvalue.</p>
 <p><code>Eigenvalue</code> - This shows the eigenvalue of the currently selected mode.  This is a unitless measure of how much variance is explained by this mode.  The modes are sorted in decreasing order of eigenvalue, corresponding to the most variance explained first.</p>
 <h2 id="group-difference">Group Difference</h2>

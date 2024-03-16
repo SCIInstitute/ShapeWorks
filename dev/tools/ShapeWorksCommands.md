@@ -34,36 +34,6 @@
   
 <a href="#top">Back to Top</a>
 
-## Analyze Commands
-
-### analyze
-
-
-**Usage:**
-
-```
-shapeworks  analyze [args]...
-```  
-
-
-**Description:** Offline analysis of a shapeworks project, output json and meshes  
-
-
-**Options:**
-
-**-h, --help:** show this help message and exit
-
-**--name=STRING:** Path to project file.
-
-**--output=STRING:** Path to output file.
-
-**--range=FLOAT:** Standard deviation range for PCA [default: 3.0].
-
-**--steps=INT:** Number of steps to use for PCA [default: 21].  
-  
-<a href="#top">Back to Top</a>
-  
-[Back to Analyze Commands](#analyze-commands)
 ## Groom Commands
 
 ### groom
@@ -83,11 +53,7 @@ shapeworks  groom [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Path to project file.
-
-**--progress:** Show progress [default: false].
-
-**--xmlconsole:** XML console output [default: false].  
+**--name=STRING:** Path to parameter file.  
   
 <a href="#top">Back to Top</a>
   
@@ -1262,36 +1228,6 @@ shapeworks  compute-normals [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
-### compute-thickness
-
-
-**Usage:**
-
-```
-shapeworks  compute-thickness [args]...
-```  
-
-
-**Description:** Computes thickness values each mesh vertex and output vtk meshes with scalar field defined  
-
-
-**Options:**
-
-**-h, --help:** show this help message and exit
-
-**--image=STRING:** Path of image.
-
-**--distance_transform=STRING:**  Path of distance_transform.
-
-**--max_dist=DOUBLE:** Maximum distance to determine thickness
-
-**--median_radius=DOUBLE:**  Median radius for smoothing, multiplier of average edge length
-
-**--distance_mesh=STRING:**  Path to write distance mesh.  
-  
-<a href="#top">Back to Top</a>
-  
-[Back to Mesh Commands](#mesh-commands)
 ### coverage
 
 
@@ -1594,28 +1530,6 @@ shapeworks  invert-normal [args]...
 **Options:**
 
 **-h, --help:** show this help message and exit  
-  
-<a href="#top">Back to Top</a>
-  
-[Back to Mesh Commands](#mesh-commands)
-### landmark-geodesics
-
-
-**Usage:**
-
-```
-shapeworks  landmark-geodesics [args]...
-```  
-
-
-**Description:** Computes geodesic distance to each landmark and store as a field  
-
-
-**Options:**
-
-**-h, --help:** show this help message and exit
-
-**--landmarks=STRING:** Path of landmarks file.  
   
 <a href="#top">Back to Top</a>
   
@@ -2143,11 +2057,7 @@ shapeworks  optimize [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Path to project file.
-
-**--progress:** Show progress [default: false].
-
-**--xmlconsole:** XML console output [default: false].  
+**--name=STRING:** Path to parameter file.  
   
 <a href="#top">Back to Top</a>
   
@@ -2248,32 +2158,6 @@ shapeworks  specificity [args]...
 <a href="#top">Back to Top</a>
   
 [Back to ParticleSystem Commands](#particlesystem-commands)
-## Project Commands
-
-### convert-project
-
-
-**Usage:**
-
-```
-shapeworks  convert-project [args]...
-```  
-
-
-**Description:** convert a shapeworks project (xlsx or swproj)  
-
-
-**Options:**
-
-**-h, --help:** show this help message and exit
-
-**--name=STRING:** Path to input project file (xlsx or swproj).
-
-**--output=STRING:** Path to output project file (xlsx or swproj).  
-  
-<a href="#top">Back to Top</a>
-  
-[Back to Project Commands](#project-commands)
 ## Shapeworks Commands
 
 ### seed
