@@ -515,8 +515,8 @@ void ShapeWorksStudioApp::enable_possible_actions() {
 
   // verification step for broken projects
   if (session_->get_tool_state() == Session::DEEPSSM_C && !ui_->action_deepssm_mode->isEnabled()) {
-      session_->set_tool_state(Session::DATA_C);
-      ui_->action_import_mode->setChecked(true);
+    session_->set_tool_state(Session::DATA_C);
+    ui_->action_import_mode->setChecked(true);
   }
 
   // subtools
@@ -608,11 +608,12 @@ void ShapeWorksStudioApp::update_table() {
     current_image_list_ = image_list;
   }
   ui_->image_combo_->setCurrentText(QString::fromStdString(session_->get_image_name()));
+  session_->set_image_name(ui_->image_combo_->currentText().toStdString());
   ui_->image_widget->setVisible(!image_names.empty());
 
   ui_->image_axis_->setCurrentText(QString::fromStdString(axisToString(session_->get_image_axis())));
   ui_->image_3d_mode_->setChecked(session_->get_image_3d_mode());
-  ui_->image_share_window_and_level_->setChecked(session_->get_image_share_window_and_level());
+  ui_->image_share_window_and_level_->setChecked(session_->get_image_share_brightness_contrast());
 }
 
 //---------------------------------------------------------------------------
@@ -1757,7 +1758,7 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
   stats.principal_component_projections();
 
   try {
-    stats.write_csv_file(filename.toStdString());
+    ExportUtils::write_pca_scores(this, &stats, filename);
   } catch (std::exception& e) {
     handle_error(e.what());
   }

@@ -186,7 +186,7 @@ std::string AnalysisTool::get_analysis_mode() {
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::get_group_difference_mode() { return ui_->difference_button->isChecked(); }
+bool AnalysisTool::get_group_difference_mode() { return groups_active() && ui_->difference_button->isChecked(); }
 
 //---------------------------------------------------------------------------
 std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors() {
@@ -356,6 +356,8 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
   }
+
+  update_difference_particles();
 
   Q_EMIT update_view();
 }
@@ -1463,6 +1465,11 @@ void AnalysisTool::group_changed() {
 
 //---------------------------------------------------------------------------
 bool AnalysisTool::groups_active() {
+  // check that the group tab is active
+  if (ui_->tabWidget->currentWidget() != ui_->mean_tab) {
+    return false;
+  }
+
   std::string group_set = ui_->group_box->currentText().toStdString();
   bool groups_enabled = group_set != "" && group_set != "-None-";
   return groups_enabled;

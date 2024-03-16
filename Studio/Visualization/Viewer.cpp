@@ -194,6 +194,15 @@ void Viewer::set_color_scheme(int scheme) {
     ffc_luts_[i]->SetTableValue(1, rgba);
   }
 
+  // set the compare actors to be the next color
+  for (size_t i = 0; i < compare_actors_.size(); i++) {
+    int scheme = (scheme_ + i + 1) % color_schemes_.size();
+
+    double rgba[4] = {color_schemes_[scheme].foreground.r, color_schemes_[scheme].foreground.g,
+                      color_schemes_[scheme].foreground.b, 1.0};
+    compare_actors_[i]->GetProperty()->SetDiffuseColor(rgba);
+  }
+
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
                            color_schemes_[scheme].background.b);
 
@@ -857,6 +866,7 @@ QSharedPointer<Session> Viewer::get_session() { return session_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_glyph_properties() {
+  double glyph_size = glyph_size_;
   if (renderer_) {
     double bounds[6];
     renderer_->ComputeVisiblePropBounds(bounds);
@@ -865,16 +875,16 @@ void Viewer::update_glyph_properties() {
     sum_range += bounds[5] - bounds[4];
     double average_range = sum_range / 3.0;
     // sanity clamp
-    glyph_size_ = std::max<double>(glyph_size_, average_range * 0.01);
-    glyph_size_ = std::min<double>(glyph_size_, average_range * 0.25);
+    glyph_size = std::max<double>(glyph_size, average_range * 0.01);
+    glyph_size = std::min<double>(glyph_size, average_range * 0.25);
   }
 
   if (session_ && session_->should_difference_vectors_show() && !scale_arrows_) {
     glyphs_->SetScaleFactor(1.0);
     arrow_glyphs_->SetScaleFactor(1.0);
   } else {
-    glyphs_->SetScaleFactor(glyph_size_);
-    arrow_glyphs_->SetScaleFactor(glyph_size_);
+    glyphs_->SetScaleFactor(glyph_size);
+    arrow_glyphs_->SetScaleFactor(glyph_size);
   }
 
   sphere_source_->SetThetaResolution(glyph_quality_);
@@ -932,7 +942,6 @@ void Viewer::update_points() {
   if (domain_visibility.size() != correspondence_points.size()) {
     domain_visibility.resize(correspondence_points.size(), true);
   }
-
   if (num_points > 0) {
     viewer_ready_ = true;
     glyphs_->SetRange(0.0, (double)num_points + 1);
@@ -1097,20 +1106,6 @@ void Viewer::insert_compare_meshes() {
     if (Viewer::is_reverse(transform)) {  // if it's been reflected we need to reverse
       poly_data = StudioUtils::reverse_poly_data(poly_data);
     }
-    /*
-        if (session_->get_display_mode() == DisplayMode::Reconstructed) {
-          auto procrustes_transform = shape_->get_procrustest_transform(i);
-
-          if (procrustes_transform) {
-            std::cerr << "compose transform!\n";
-            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-            vtkMatrix4x4::Multiply4x4(procrustes_transform->GetMatrix(), transform->GetMatrix(), matrix);
-
-            transform = vtkSmartPointer<vtkTransform>::New();
-            transform->SetMatrix(matrix);
-          }
-        }
-        */
 
     if (settings.get_mean_shape_checked()) {
       // mean shape will already be in place and doesn't need the local to global transform
@@ -1150,7 +1145,7 @@ void Viewer::set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSm
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_image_volume() {
+void Viewer::update_image_volume(bool force) {
   if (!session_ || !shape_) {
     return;
   }
@@ -1173,7 +1168,7 @@ void Viewer::update_image_volume() {
   slice_view_.update_particles();
 
   auto image_volume_name = session_->get_image_name();
-  if (image_volume_name == current_image_name_) {
+  if (!force && image_volume_name == current_image_name_) {
     return;
   }
   current_image_name_ = image_volume_name;
@@ -1345,6 +1340,7 @@ void Viewer::initialize_surfaces() {
       unclipped_surface_actors_[i]->SetMapper(unclipped_surface_mappers_[i]);
 
       compare_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
+      compare_mappers_[i]->ScalarVisibilityOff();
       compare_actors_[i] = vtkSmartPointer<vtkActor>::New();
 
       ffc_luts_[i] = vtkSmartPointer<vtkLookupTable>::New();

@@ -63,7 +63,7 @@ Eigen::VectorXd read_particles(std::string filename) {
 
   std::ifstream in(filename);
   if (!in.good()) {
-    throw std::runtime_error("Unable to read file: " + filename);
+    throw std::runtime_error("Unable to read particle file: " + filename);
   }
   Eigen::VectorXd points;
 

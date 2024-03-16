@@ -15,6 +15,7 @@
 #include <vtkTransformPolyDataFilter.h>
 
 // shapeworks
+#include <Utils/StudioUtils.h>
 #include <Visualization/SliceView.h>
 #include <Visualization/Viewer.h>
 
@@ -74,6 +75,14 @@ void SliceView::set_volume(std::shared_ptr<Image> volume) {
   slice_mapper_->SetInputData(vtk_volume_);
 
   image_slice_->SetMapper(slice_mapper_);
+
+  // reset window and level based on the volume scalar range
+  double range[2];
+  vtk_volume_->GetScalarRange(range);
+  double window = range[1] - range[0];
+  double level = (range[1] + range[0]) / 2.0;
+  image_slice_->GetProperty()->SetColorWindow(window);
+  image_slice_->GetProperty()->SetColorLevel(level);
 
   auto transform = viewer_->get_image_transform();
   image_slice_->SetUserTransform(transform);
@@ -230,16 +239,17 @@ Point SliceView::get_slice_position() {
     return Point({0, 0, 0});
   }
 
+  auto plane = slice_mapper_->GetSlicePlane();
   double origin[3];
-  vtk_volume_->GetOrigin(origin);
-  double spacing[3];
-  vtk_volume_->GetSpacing(spacing);
+  plane->GetOrigin(origin);
 
-  Point result = origin;
+  // convert to world coordinates
+  auto transform = viewer_->get_image_transform();
+  transform->Update();
+  transform->Inverse();
+  transform->TransformPoint(origin, origin);
 
-  int i = get_orientation_index();
-  result[i] = origin[i] + spacing[i] * current_slice_number_;
-  return result;
+  return Point({origin[0], origin[1], origin[2]});
 }
 
 //-----------------------------------------------------------------------------
@@ -247,13 +257,25 @@ void SliceView::set_slice_position(Point point) {
   if (!is_image_loaded()) {
     return;
   }
+
   auto index = volume_->getITKImage()->TransformPhysicalPointToIndex(point);
   int slice_number = index[get_orientation_index()];
   set_slice_number(slice_number);
 }
 
 //-----------------------------------------------------------------------------
-void SliceView::set_window_and_level(double window, double level) {
+void SliceView::set_brightness_and_contrast(double brightness, double contrast) {
+  if (!vtk_volume_) {
+    return;
+  }
+  // get scalar range from image
+  double range[2];
+  vtk_volume_->GetScalarRange(range);
+
+  // convert to window and level
+  double window, level;
+  StudioUtils::brightness_contrast_to_window_width_level(brightness, contrast, range[0], range[1], window, level);
+
   image_slice_->GetProperty()->SetColorWindow(window);
   image_slice_->GetProperty()->SetColorLevel(level);
 }
@@ -315,11 +337,18 @@ bool SliceView::should_point_show(double x, double y, double z) {
 }
 
 //-----------------------------------------------------------------------------
+int SliceView::get_slice_number() { return current_slice_number_; }
+
+//-----------------------------------------------------------------------------
 void SliceView::set_slice_number(int slice) {
   current_slice_number_ = slice;
 
   current_slice_number_ = std::min(current_slice_number_, slice_mapper_->GetSliceNumberMaxValue());
   current_slice_number_ = std::max(current_slice_number_, slice_mapper_->GetSliceNumberMinValue());
+
+  if (current_slice_number_ == slice_mapper_->GetSliceNumber()) {
+    return;
+  }
 
   slice_mapper_->SetSliceNumber(current_slice_number_);
   update_extent();
@@ -362,7 +391,7 @@ void SliceView::update_extent() {
     double near_clip = range - spacing / 2.0 + 0.001;
     double far_clip = range + spacing / 2.0 - 0.001;
 
-    // cam->SetClippingRange( near_clip, far_clip );
+    cam->SetClippingRange(near_clip, far_clip);
   }
 }
 

@@ -336,7 +336,7 @@ void PlaneWidget::handle_right_click(int domain, int plane, int point) {
   menu->setAttribute(Qt::WA_DeleteOnClose);
   menu->addAction(actions::FLIP_PLANE)->setProperty("id", (int)1);
   menu->addAction(actions::DELETE_PLANE)->setProperty("id", (int)2);
-  menu->addAction(actions::APPLY_PLANE)->setProperty("id", (int)2);
+  menu->addAction(actions::APPLY_PLANE)->setProperty("id", (int)3);
   menu->popup(QCursor::pos());
 
   auto session = viewer_->get_session();

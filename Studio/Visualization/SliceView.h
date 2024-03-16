@@ -51,8 +51,8 @@ class SliceView {
   Point get_slice_position();
 
   void set_slice_position(Point point);
-
-  void set_window_and_level(double window, double level);
+  
+  void set_brightness_and_contrast(double brightness, double contrast);
 
   double get_spacing();
 
@@ -63,6 +63,8 @@ class SliceView {
   Viewer* get_viewer();
 
   bool should_point_show(double x, double y, double z);
+
+  int get_slice_number();
 
  private:
   void set_slice_number(int slice);

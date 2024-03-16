@@ -94,8 +94,10 @@ void Project::set_project_path(const std::string& new_pathname) {
 
   auto fixup = [&](StringList paths) {
     StringList new_paths;
-    for (const auto& path : paths) {
+    for (auto path : paths) {
       if (fs::exists(path)) {
+        // replace \ with / in path
+        path = StringUtils::replace_string(path, "\\", "/");
         auto canonical = fs::canonical(path, old_path);
         new_paths.push_back(fs::relative(canonical, new_path).string());
       } else {
@@ -116,7 +118,10 @@ void Project::set_project_path(const std::string& new_pathname) {
     auto features = subject->get_feature_filenames();
     project::types::StringMap new_features;
     for (auto const& x : features) {
-      auto canonical = fs::canonical(x.second, old_path);
+      auto path = x.second;
+      // replace \ with / in path
+      path = StringUtils::replace_string(path, "\\", "/");
+      auto canonical = fs::canonical(path, old_path);
       new_features[x.first] = fs::relative(canonical, new_path).string();
     }
     subject->set_feature_filenames(new_features);

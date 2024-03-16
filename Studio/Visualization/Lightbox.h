@@ -89,8 +89,8 @@ class Lightbox : public QObject {
   void update_feature_range();
 
   void update_interactor_style();
-
-  void set_shared_window_and_level(double window, double level);
+  
+  void set_shared_brightness_and_contrast(double brightness, double contrast);
 
   vtkRenderWindow* get_render_window();
 

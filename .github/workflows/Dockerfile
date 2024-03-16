@@ -1,16 +1,19 @@
 # Based on old ubuntu to create more compatible binaries
 
 # To build (e.g. for ShapeWorks 6.5):
-#    docker build --progress=plain -t akenmorris/ubuntu-build-box-sw65 .
+#    docker build --progress=plain -t akenmorris/ubuntu-build-box-focal-sw65 .
 # To publish:
-#    docker push akenmorris/ubuntu-build-box-sw65
+#    docker push akenmorris/ubuntu-build-box-focal-sw65
 
-FROM ubuntu:bionic-20230308 AS env
+FROM ubuntu:focal-20240123 AS env
 MAINTAINER akenmorris@gmail.com
 
 # Set environment variables
 ENV PATH=/opt/conda/bin:/opt/rh/devtoolset-9/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV LDFLAGS=-L/opt/conda/lib
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 
 # Update
 RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get install build-essential software-properties-common -y && add-apt-repository ppa:ubuntu-toolchain-r/test -y && apt-get update -y

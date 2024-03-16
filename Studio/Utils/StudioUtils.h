@@ -36,6 +36,15 @@ class StudioUtils {
 
   //! write a mesh to file
   static bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
+
+  //! convert brightness and contrast to window width and level
+  static void brightness_contrast_to_window_width_level(double brightness, double contrast, double min_intensity,
+                                                        double max_intensity, double& window_width,
+                                                        double& window_level);
+
+  //! convert window width and level to brightness and contrast
+  static void window_width_level_to_brightness_contrast(double window_width, double window_level, double min_intensity,
+                                                        double max_intensity, double& brightness, double& contrast);
 };
 
 }  // namespace shapeworks

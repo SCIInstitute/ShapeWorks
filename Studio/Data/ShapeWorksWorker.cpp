@@ -34,16 +34,23 @@ void ShapeworksWorker::process() {
         this->groom_->run();
       } catch (itk::ExceptionObject& ex) {
         SW_ERROR("{}", std::string("ITK Exception: ") + ex.GetDescription());
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       } catch (std::runtime_error& e) {
         SW_ERROR("{}", e.what());
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       } catch (std::exception& e) {
         SW_ERROR("{}", e.what());
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       }
       if (this->groom_->get_aborted()) {
         SW_LOG("Groom Aborted!");
+        Q_EMIT failure();
         return;
       }
       break;

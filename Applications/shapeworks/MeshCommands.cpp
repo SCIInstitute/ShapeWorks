@@ -1432,6 +1432,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
   try {
     MeshWarper warper;
     Mesh inputMesh(inputMeshFilename);
+    inputMesh.clean();
     targetPointsFilenames.push_back(inputPointsFilename);
     ParticleSystemEvaluation particlesystem(targetPointsFilenames);
     Eigen::MatrixXd landmarks;

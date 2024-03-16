@@ -63,6 +63,10 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "It has no effect on the optimization");
   ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
 
+  // hidden for 6.5 release
+  ui_->disentangled_label->hide();
+  ui_->disentangled_widget->hide();
+
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
 
@@ -146,7 +150,6 @@ void OptimizeTool::handle_optimize_complete() {
 
   telemetry_.record_event("optimize", {{"duration_seconds", duration},
                                        {"num_particles", QVariant::fromValue(session_->get_num_particles())}});
-
 
   session_->trigger_save();
 

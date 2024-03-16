@@ -17,17 +17,8 @@ class DeepSSMJob : public Job {
   Q_OBJECT;
 
  public:
-
-  enum PrepStep {
-    GROOM_TRAINING = 0,
-    OPTIMIZE_TRAINING = 1,
-    GROOM_TRAINING_IMAGES = 2,
-    GROOM_VAL_IMAGES = 3,
-    OPTIMIZE_VALIDATION = 4,
-    DONE = 5
-  };
-
-  DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode);
+  DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode,
+             DeepSSMTool::PrepStep prep_step = DeepSSMTool::NOT_STARTED);
   ~DeepSSMJob();
 
   void run() override;
@@ -41,10 +32,8 @@ class DeepSSMJob : public Job {
 
   void python_message(std::string str);
 
-  QString get_prep_message();
-
  private:
-  void update_prep_message(PrepStep step);
+  void update_prep_stage(DeepSSMTool::PrepStep step);
   void process_test_results();
 
   QSharedPointer<Session> session_;
@@ -53,7 +42,7 @@ class DeepSSMJob : public Job {
   DeepSSMTool::ToolMode tool_mode_;
 
   QString prep_message_;
-  PrepStep prep_step_{GROOM_TRAINING};
+  DeepSSMTool::PrepStep prep_step_{DeepSSMTool::NOT_STARTED};
 
   // mutex
   std::mutex mutex_;

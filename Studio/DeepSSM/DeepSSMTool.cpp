@@ -72,9 +72,6 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tab_widget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
 #endif
 
-  // set to html mode
-  ui_->prep_text_edit->setAcceptRichText(true);
-
   connect(ui_->run_button, &QPushButton::clicked, this, &DeepSSMTool::run_clicked);
   connect(ui_->restore_defaults, &QPushButton::clicked, this, &DeepSSMTool::restore_defaults);
 
@@ -90,6 +87,11 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->training_fine_tuning, &QCheckBox::stateChanged, this, &DeepSSMTool::training_fine_tuning_changed);
 
   connect(ui_->run_all, &QCheckBox::stateChanged, this, &DeepSSMTool::update_panels);
+
+  connect(ui_->run_step1, &QPushButton::clicked, this, [=]() { run_prep_clicked(1); });
+  connect(ui_->run_step2, &QPushButton::clicked, this, [=]() { run_prep_clicked(2); });
+  connect(ui_->run_step3, &QPushButton::clicked, this, [=]() { run_prep_clicked(3); });
+  connect(ui_->run_step4, &QPushButton::clicked, this, [=]() { run_prep_clicked(4); });
 
   QIntValidator* zero_to_hundred = new QIntValidator(0, 100, this);
   ui_->validation_split->setValidator(zero_to_hundred);
@@ -170,8 +172,6 @@ void DeepSSMTool::load_params() {
   ui_->training_batch_size->setText(QString::number(params.get_training_batch_size()));
   ui_->training_fine_tuning_learning_rate->setText(QString::number(params.get_training_fine_tuning_learning_rate()));
 
-  ui_->prep_text_edit->setText(QString::fromStdString(params.get_prep_message()));
-
   ui_->tl_net_enabled->setChecked(params.get_tl_net_enabled());
   ui_->tl_net_options->setVisible(params.get_tl_net_enabled());
   ui_->tl_ae_epochs->setText(QString::number(params.get_tl_net_ae_epochs()));
@@ -250,10 +250,26 @@ void DeepSSMTool::run_clicked() {
 }
 
 //---------------------------------------------------------------------------
+void DeepSSMTool::run_prep_clicked(int step) {
+  prep_step_ = static_cast<DeepSSMTool::PrepStep>(step);
+  run_clicked();
+}
+
+//---------------------------------------------------------------------------
 void DeepSSMTool::handle_thread_complete() {
   try {
-    if (deep_ssm_->is_aborted()) {
-      ui_->prep_text_edit->setText("Aborted");
+    if (!deep_ssm_->is_aborted()) {
+      if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+        auto params = DeepSSMParameters(session_->get_project());
+        params.set_prep_stage(static_cast<int>(prep_step_));
+        if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_IMAGES) {
+          params.set_prep_step_complete(true);
+          params.set_prep_stage(static_cast<int>(DeepSSMTool::PrepStep::DONE));
+        }
+        params.save_to_project();
+        update_panels();
+        prep_step_ = DeepSSMTool::PrepStep::NOT_STARTED;
+      }
     }
     Q_EMIT progress(100);
     update_meshes();
@@ -280,8 +296,8 @@ void DeepSSMTool::handle_thread_complete() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_progress(int val, QString message) {
   if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
-    ui_->prep_text_edit->setText(deep_ssm_->get_prep_message());
-    ui_->prep_text_edit->setEnabled(true);
+    //?? TODO ui_->prep_text_edit->setText(deep_ssm_->get_prep_message());
+    //?? TODO ui_->prep_text_edit->setEnabled(true);
   }
   load_plots();
   update_tables();
@@ -311,7 +327,7 @@ void DeepSSMTool::update_panels() {
   bool enabled = true;
   switch (current_tool_) {
     case DeepSSMTool::ToolMode::DeepSSM_PrepType:
-      string = "Groom and Optimize";
+      string = "All Prep Stages";
       break;
     case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
       string = "Data Augmentation";
@@ -330,7 +346,7 @@ void DeepSSMTool::update_panels() {
   }
 
   if (ui_->run_all->isChecked()) {
-    string = "All Steps";
+    string = "Prep/Aug/Train/Test";
   }
 
   if (tool_is_running_) {
@@ -342,6 +358,18 @@ void DeepSSMTool::update_panels() {
     ui_->run_button->setEnabled(enabled);
     ui_->run_button->setText("Run " + string);
   }
+
+  int prep_stage = params.get_prep_stage();
+
+  ui_->step1_status->setText(prep_stage >= 1 ? "☑" : "...");
+  ui_->step2_status->setText(prep_stage >= 2 ? "☑" : "...");
+  ui_->step3_status->setText(prep_stage >= 3 ? "☑" : "...");
+  ui_->step4_status->setText(prep_stage >= 4 ? "☑" : "...");
+
+  ui_->run_step1->setEnabled(!tool_is_running_);
+  ui_->run_step2->setEnabled(!tool_is_running_ && prep_stage >= 1);
+  ui_->run_step3->setEnabled(!tool_is_running_ && prep_stage >= 2);
+  ui_->run_step4->setEnabled(!tool_is_running_ && prep_stage >= 3);
 
   load_plots();
   update_tables();
@@ -525,7 +553,6 @@ void DeepSSMTool::show_training_meshes() {
     feature_name = image_names[0];
   }
 
-
   for (int i = 0; i < names.size(); i++) {
     if (QFileInfo::exists(filenames[i])) {
       ShapeHandle shape = ShapeHandle(new Shape());
@@ -681,52 +708,56 @@ void DeepSSMTool::update_meshes() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::show_augmentation_meshes() {
-  update_tables();
-  shapes_.clear();
+  try {
+    update_tables();
+    shapes_.clear();
 
-  QString filename = "deepssm/augmentation/TotalData.csv";
-  if (QFile(filename).exists()) {
-    QFile file(filename);
+    QString filename = "deepssm/augmentation/TotalData.csv";
+    if (QFile(filename).exists()) {
+      QFile file(filename);
 
-    if (!file.open(QIODevice::ReadOnly)) {
-      SW_ERROR("Unable to open file: " + filename.toStdString());
-      return;
-    }
+      if (!file.open(QIODevice::ReadOnly)) {
+        SW_ERROR("Unable to open file: " + filename.toStdString());
+        return;
+      }
 
-    int row = 0;
-    while (!file.atEnd()) {
-      QByteArray line = file.readLine();
-      bool show_generated = ui_->generated_data_checkbox->isChecked();
-      bool show_original = ui_->original_data_checkbox->isChecked();
-      // this needs to be replaced with it's own column (in all the python code as well)
-      bool is_generated = line.contains("Generated");
-      if ((is_generated && show_generated) || (!is_generated && show_original)) {
-        auto image_file = line.split(',')[0].toStdString();
-        std::string particle_file = (line.split(',')[1]).toStdString();
+      int row = 0;
+      while (!file.atEnd()) {
+        QByteArray line = file.readLine();
+        bool show_generated = ui_->generated_data_checkbox->isChecked();
+        bool show_original = ui_->original_data_checkbox->isChecked();
+        // this needs to be replaced with it's own column (in all the python code as well)
+        bool is_generated = line.contains("Generated");
+        if ((is_generated && show_generated) || (!is_generated && show_original)) {
+          auto image_file = line.split(',')[0].toStdString();
+          std::string particle_file = (line.split(',')[1]).toStdString();
 
-        auto subject = std::make_shared<Subject>();
-        ShapeHandle shape = ShapeHandle(new Shape());
-        shape->set_subject(subject);
-        shape->set_mesh_manager(session_->get_mesh_manager());
-        shape->import_local_point_files({particle_file});
-        shape->import_global_point_files({particle_file});
+          auto subject = std::make_shared<Subject>();
+          ShapeHandle shape = ShapeHandle(new Shape());
+          shape->set_subject(subject);
+          shape->set_mesh_manager(session_->get_mesh_manager());
+          shape->import_local_point_files({particle_file});
+          shape->import_global_point_files({particle_file});
 
-        shape->get_reconstructed_meshes();
+          shape->get_reconstructed_meshes();
 
-        std::vector<std::string> list;
-        list.push_back((QFileInfo(QString::fromStdString(particle_file)).baseName()).toStdString());
-        list.push_back("");
-        list.push_back("");
-        list.push_back("");
-        shape->set_annotations(list);
+          std::vector<std::string> list;
+          list.push_back((QFileInfo(QString::fromStdString(particle_file)).baseName()).toStdString());
+          list.push_back("");
+          list.push_back("");
+          list.push_back("");
+          shape->set_annotations(list);
 
-        shapes_.push_back(shape);
-        row++;
+          shapes_.push_back(shape);
+          row++;
+        }
       }
     }
+    load_plots();
+    Q_EMIT update_view();
+  } catch (std::exception& e) {
+    SW_ERROR("{}", e.what());
   }
-  load_plots();
-  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -893,7 +924,7 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
 
   store_params();
 
-  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, type);
+  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, type, prep_step_);
   connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
 
