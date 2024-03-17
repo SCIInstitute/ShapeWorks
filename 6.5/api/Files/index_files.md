@@ -1,0 +1,255 @@
+---
+title: Files
+
+---
+
+# Files
+
+
+
+
+* **dir [Applications](../Files/dir_925225c0eef11af96a0fb8df2dcb7a5d.md#dir-applications)** 
+    * **dir [Applications/shapeworks](../Files/dir_ea9658a0b2dcf1e0678dd2881ea8a9f7.md#dir-applications/shapeworks)** 
+        * **file [Applications/shapeworks/Command.h](../Files/Command_8h.md#file-command.h)** 
+        * **file [Applications/shapeworks/Commands.h](../Files/Commands_8h.md#file-commands.h)** 
+        * **file [Applications/shapeworks/Executable.h](../Files/Executable_8h.md#file-executable.h)** 
+        * **file [Applications/shapeworks/SharedCommandData.h](../Files/SharedCommandData_8h.md#file-sharedcommanddata.h)** 
+* **dir [Documentation](../Files/dir_b411e2045bdee07628d0d58438795fa9.md#dir-documentation)** 
+    * **dir [Documentation/Doxygen](../Files/dir_8fed0776758098ce30d5aa2d3debb7a2.md#dir-documentation/doxygen)** 
+* **dir [Libs](../Files/dir_36240504c08e57f076881a3fb4a95f20.md#dir-libs)** 
+    * **dir [Libs/Alignment](../Files/dir_3f2aeec9c7c878ca07fbf4e7262f152c.md#dir-libs/alignment)** 
+        * **dir [Libs/Alignment/Transforms](../Files/dir_63319d77c710ac903ec06d30a495a580.md#dir-libs/alignment/transforms)** 
+            * **file [Libs/Alignment/Transforms/itkAdvancedTransform.h](../Files/itkAdvancedTransform_8h.md#file-itkadvancedtransform.h)** 
+            * **file [Libs/Alignment/Transforms/itkCompactlySupportedRBFSparseKernelTransform.h](../Files/itkCompactlySupportedRBFSparseKernelTransform_8h.md#file-itkcompactlysupportedrbfsparsekerneltransform.h)** 
+            * **file [Libs/Alignment/Transforms/itkKernelTransform2.h](../Files/itkKernelTransform2_8h.md#file-itkkerneltransform2.h)** 
+            * **file [Libs/Alignment/Transforms/itkSparseKernelTransform.h](../Files/itkSparseKernelTransform_8h.md#file-itksparsekerneltransform.h)** 
+            * **file [Libs/Alignment/Transforms/itkThinPlateSplineKernelTransform2.h](../Files/itkThinPlateSplineKernelTransform2_8h.md#file-itkthinplatesplinekerneltransform2.h)** 
+        * **file [Libs/Alignment/Procrustes3D.h](../Files/Procrustes3D_8h.md#file-procrustes3d.h)** 
+    * **dir [Libs/Analyze](../Files/dir_ca024e1e317bddf8f5c3fbf04807e20e.md#dir-libs/analyze)** 
+        * **file [Libs/Analyze/Analyze.h](../Files/Analyze_8h.md#file-analyze.h)** 
+        * **file [Libs/Analyze/CustomSurfaceReconstructionFilter.h](../Files/CustomSurfaceReconstructionFilter_8h.md#file-customsurfacereconstructionfilter.h)** 
+        * **file [Libs/Analyze/ItkToVtk.h](../Files/ItkToVtk_8h.md#file-itktovtk.h)** 
+        * **file [Libs/Analyze/LegacyMeshGenerator.h](../Files/LegacyMeshGenerator_8h.md#file-legacymeshgenerator.h)** <br>Mesh generation. 
+        * **file [Libs/Analyze/MeshCache.h](../Files/MeshCache_8h.md#file-meshcache.h)** 
+        * **file [Libs/Analyze/MeshGenerator.h](../Files/MeshGenerator_8h.md#file-meshgenerator.h)** <br>Mesh generation. 
+        * **file [Libs/Analyze/MeshGroup.h](../Files/MeshGroup_8h.md#file-meshgroup.h)** 
+        * **file [Libs/Analyze/MeshManager.h](../Files/MeshManager_8h.md#file-meshmanager.h)** 
+        * **file [Libs/Analyze/MeshWorkQueue.h](../Files/MeshWorkQueue_8h.md#file-meshworkqueue.h)** 
+        * **file [Libs/Analyze/MeshWorker.h](../Files/MeshWorker_8h.md#file-meshworker.h)** <br>Worker class for parallel mesh reconstruction. 
+        * **file [Libs/Analyze/ParticleArea.h](../Files/ParticleArea_8h.md#file-particlearea.h)** 
+        * **file [Libs/Analyze/Particles.h](../Files/Particles_8h.md#file-particles.h)** 
+        * **file [Libs/Analyze/QMeshWarper.h](../Files/QMeshWarper_8h.md#file-qmeshwarper.h)** 
+        * **file [Libs/Analyze/Reconstruction.h](../Files/Reconstruction_8h.md#file-reconstruction.h)** 
+        * **file [Libs/Analyze/Shape.h](../Files/Shape_8h.md#file-shape.h)** 
+        * **file [Libs/Analyze/StudioEnums.h](../Files/StudioEnums_8h.md#file-studioenums.h)** 
+        * **file [Libs/Analyze/StudioMesh.h](../Files/StudioMesh_8h.md#file-studiomesh.h)** 
+        * **file [Libs/Analyze/SurfaceReconstructor.h](../Files/SurfaceReconstructor_8h.md#file-surfacereconstructor.h)** <br>Surface [Reconstruction](../Classes/classReconstruction.md) Layer. 
+        * **file [Libs/Analyze/vtkPolyDataToImageData.h](../Files/vtkPolyDataToImageData_8h.md#file-vtkpolydatatoimagedata.h)** 
+    * **dir [Libs/Common](../Files/dir_e3a1760e9bf597c410142040ba98286a.md#dir-libs/common)** 
+        * **file [Libs/Common/Exception.h](../Files/Exception_8h.md#file-exception.h)** 
+        * **file [Libs/Common/Logging.h](../Files/Logging_8h.md#file-logging.h)** 
+        * **file [Libs/Common/Region.h](../Files/Region_8h.md#file-region.h)** 
+        * **file [Libs/Common/Shapeworks.h](../Files/Shapeworks_8h.md#file-shapeworks.h)** 
+        * **file [Libs/Common/ShapeworksUtils.h](../Files/ShapeworksUtils_8h.md#file-shapeworksutils.h)** 
+    * **dir [Libs/Groom](../Files/dir_69bd03084155054f5d382ef462099146.md#dir-libs/groom)** 
+        * **file [Libs/Groom/Groom.h](../Files/Groom_8h.md#file-groom.h)** 
+        * **file [Libs/Groom/GroomParameters.h](../Files/GroomParameters_8h.md#file-groomparameters.h)** 
+    * **dir [Libs/Image](../Files/dir_1b9bde9e8bcb867599949113f2bdd2a5.md#dir-libs/image)** 
+        * **file [Libs/Image/Image.h](../Files/Image_8h.md#file-image.h)** 
+        * **file [Libs/Image/ImageUtils.h](../Files/ImageUtils_8h.md#file-imageutils.h)** 
+        * **file [Libs/Image/VectorImage.h](../Files/VectorImage_8h.md#file-vectorimage.h)** 
+        * **file [Libs/Image/itkTPGACLevelSetImageFilter.h](../Files/itkTPGACLevelSetImageFilter_8h.md#file-itktpgaclevelsetimagefilter.h)** 
+    * **dir [Libs/Mesh](../Files/dir_392252d3263d830764b835f935e42d37.md#dir-libs/mesh)** 
+        * **dir [Libs/Mesh/PreviewMeshQC](../Files/dir_720ddc5c113bb27270f3aaf47adf4baa.md#dir-libs/mesh/previewmeshqc)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEAreaCoverage.h](../Files/FEAreaCoverage_8h.md#file-feareacoverage.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEAutoMesher.h](../Files/FEAutoMesher_8h.md#file-feautomesher.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FECVDDecimationModifier.h](../Files/FECVDDecimationModifier_8h.md#file-fecvddecimationmodifier.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FECoreMesh.h](../Files/FECoreMesh_8h.md#file-fecoremesh.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEElement.h](../Files/FEElement_8h.md#file-feelement.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEFillHole.h](../Files/FEFillHole_8h.md#file-fefillhole.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEFixMesh.h](../Files/FEFixMesh_8h.md#file-fefixmesh.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEMesh.h](../Files/FEMesh_8h.md#file-femesh.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEMeshSmoothingModifier.h](../Files/FEMeshSmoothingModifier_8h.md#file-femeshsmoothingmodifier.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FENodeElementList.h](../Files/FENodeElementList_8h.md#file-fenodeelementlist.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FENodeFaceList.h](../Files/FENodeFaceList_8h.md#file-fenodefacelist.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FENodeNodeList.h](../Files/FENodeNodeList_8h.md#file-fenodenodelist.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEVTKExport.h](../Files/FEVTKExport_8h.md#file-fevtkexport.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/FEVTKImport.h](../Files/FEVTKImport_8h.md#file-fevtkimport.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/Intersect.h](../Files/Intersect_8h.md#file-intersect.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/math3d.h](../Files/math3d_8h.md#file-math3d.h)** 
+            * **file [Libs/Mesh/PreviewMeshQC/stdafx.h](../Files/stdafx_8h.md#file-stdafx.h)** 
+        * **file [Libs/Mesh/Mesh.h](../Files/Mesh_8h.md#file-mesh.h)** 
+        * **file [Libs/Mesh/MeshComputeThickness.h](../Files/MeshComputeThickness_8h.md#file-meshcomputethickness.h)** 
+        * **file [Libs/Mesh/MeshUtils.h](../Files/MeshUtils_8h.md#file-meshutils.h)** 
+        * **file [Libs/Mesh/MeshWarper.h](../Files/MeshWarper_8h.md#file-meshwarper.h)** <br>Mesh warping capability. 
+        * **file [Libs/Mesh/itkMultiplyByConstantImageFilter.h](../Files/itkMultiplyByConstantImageFilter_8h.md#file-itkmultiplybyconstantimagefilter.h)** 
+        * **file [Libs/Mesh/meshFIM.h](../Files/meshFIM_8h.md#file-meshfim.h)** 
+    * **dir [Libs/Optimize](../Files/dir_10424771f6a262e50315a09e8b2bd9a3.md#dir-libs/optimize)** 
+        * **file [Libs/Optimize/CorrespondenceMode.h](../Files/CorrespondenceMode_8h.md#file-correspondencemode.h)** 
+        * **file [Libs/Optimize/GradientDescentOptimizer.h](../Files/GradientDescentOptimizer_8h.md#file-gradientdescentoptimizer.h)** 
+        * **dir [Libs/Optimize/Constraints](../Files/dir_2d1c6f9539dcd2b03341b4a9e6e19b8a.md#dir-libs/optimize/constraints)** 
+            * **file [Libs/Optimize/Constraints/Constraint.h](../Files/Constraint_8h.md#file-constraint.h)** 
+            * **file [Libs/Optimize/Constraints/ConstraintType.h](../Files/ConstraintType_8h.md#file-constrainttype.h)** 
+            * **file [Libs/Optimize/Constraints/Constraints.h](../Files/Constraints_8h.md#file-constraints.h)** 
+            * **file [Libs/Optimize/Constraints/FreeFormConstraint.h](../Files/FreeFormConstraint_8h.md#file-freeformconstraint.h)** 
+            * **file [Libs/Optimize/Constraints/PlaneConstraint.h](../Files/PlaneConstraint_8h.md#file-planeconstraint.h)** 
+        * **dir [Libs/Optimize/Container](../Files/dir_5d625cd54f490308dfab17e5b76613c8.md#dir-libs/optimize/container)** 
+            * **file [Libs/Optimize/Container/GenericContainer.h](../Files/GenericContainer_8h.md#file-genericcontainer.h)** 
+            * **file [Libs/Optimize/Container/GenericContainerArray.h](../Files/GenericContainerArray_8h.md#file-genericcontainerarray.h)** 
+            * **file [Libs/Optimize/Container/MeanCurvatureContainer.h](../Files/MeanCurvatureContainer_8h.md#file-meancurvaturecontainer.h)** 
+        * **dir [Libs/Optimize/Domain](../Files/dir_87fe8b1f1e39e55918ee2b29a373e675.md#dir-libs/optimize/domain)** 
+            * **file [Libs/Optimize/Domain/ContourDomain.h](../Files/ContourDomain_8h.md#file-contourdomain.h)** 
+            * **file [Libs/Optimize/Domain/DomainType.h](../Files/DomainType_8h.md#file-domaintype.h)** 
+            * **file [Libs/Optimize/Domain/ImageDomain.h](../Files/ImageDomain_8h.md#file-imagedomain.h)** 
+            * **file [Libs/Optimize/Domain/ImageDomainWithCurvature.h](../Files/ImageDomainWithCurvature_8h.md#file-imagedomainwithcurvature.h)** 
+            * **file [Libs/Optimize/Domain/ImageDomainWithGradN.h](../Files/ImageDomainWithGradN_8h.md#file-imagedomainwithgradn.h)** 
+            * **file [Libs/Optimize/Domain/ImageDomainWithGradients.h](../Files/ImageDomainWithGradients_8h.md#file-imagedomainwithgradients.h)** 
+            * **file [Libs/Optimize/Domain/ImplicitSurfaceDomain.h](../Files/ImplicitSurfaceDomain_8h.md#file-implicitsurfacedomain.h)** 
+            * **file [Libs/Optimize/Domain/MeshDomain.h](../Files/MeshDomain_8h.md#file-meshdomain.h)** 
+            * **file [Libs/Optimize/Domain/MeshGeoEntry.h](../Files/MeshGeoEntry_8h.md#file-meshgeoentry.h)** 
+            * **file [Libs/Optimize/Domain/MeshWrapper.h](../Files/MeshWrapper_8h.md#file-meshwrapper.h)** 
+            * **file [Libs/Optimize/Domain/ParticleDomain.h](../Files/ParticleDomain_8h.md#file-particledomain.h)** 
+            * **file [Libs/Optimize/Domain/ParticleRegionDomain.h](../Files/ParticleRegionDomain_8h.md#file-particleregiondomain.h)** 
+        * **dir [Libs/Optimize/Function](../Files/dir_63c42ca9646c64be763540e8d88cba2f.md#dir-libs/optimize/function)** 
+            * **file [Libs/Optimize/Function/CorrespondenceFunction.h](../Files/CorrespondenceFunction_8h.md#file-correspondencefunction.h)** 
+            * **file [Libs/Optimize/Function/CurvatureSamplingFunction.h](../Files/CurvatureSamplingFunction_8h.md#file-curvaturesamplingfunction.h)** 
+            * **file [Libs/Optimize/Function/DisentangledCorrespondenceFunction.h](../Files/DisentangledCorrespondenceFunction_8h.md#file-disentangledcorrespondencefunction.h)** 
+            * **file [Libs/Optimize/Function/DualVectorFunction.h](../Files/DualVectorFunction_8h.md#file-dualvectorfunction.h)** 
+            * **file [Libs/Optimize/Function/LegacyCorrespondenceFunction.h](../Files/LegacyCorrespondenceFunction_8h.md#file-legacycorrespondencefunction.h)** 
+            * **file [Libs/Optimize/Function/SamplingFunction.h](../Files/SamplingFunction_8h.md#file-samplingfunction.h)** 
+            * **file [Libs/Optimize/Function/VectorFunction.h](../Files/VectorFunction_8h.md#file-vectorfunction.h)** 
+        * **dir [Libs/Optimize/Matrix](../Files/dir_2e2549293e4a55a60cecc5ed069669b8.md#dir-libs/optimize/matrix)** 
+            * **file [Libs/Optimize/Matrix/LegacyShapeMatrix.h](../Files/LegacyShapeMatrix_8h.md#file-legacyshapematrix.h)** 
+            * **file [Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h](../Files/LinearRegressionShapeMatrix_8h.md#file-linearregressionshapematrix.h)** 
+            * **file [Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h](../Files/MixedEffectsShapeMatrix_8h.md#file-mixedeffectsshapematrix.h)** 
+            * **file [Libs/Optimize/Matrix/ShapeGradientMatrix.h](../Files/ShapeGradientMatrix_8h.md#file-shapegradientmatrix.h)** 
+            * **file [Libs/Optimize/Matrix/ShapeMatrix.h](../Files/ShapeMatrix_8h.md#file-shapematrix.h)** 
+        * **dir [Libs/Optimize/Neighborhood](../Files/dir_d9fb5c41c128f29c5984cf69f250ff2f.md#dir-libs/optimize/neighborhood)** 
+            * **file [Libs/Optimize/Neighborhood/ParticleNeighborhood.h](../Files/ParticleNeighborhood_8h.md#file-particleneighborhood.h)** 
+            * **file [Libs/Optimize/Neighborhood/ParticlePointIndexPair.h](../Files/ParticlePointIndexPair_8h.md#file-particlepointindexpair.h)** 
+            * **file [Libs/Optimize/Neighborhood/ParticleRegionNeighborhood.h](../Files/ParticleRegionNeighborhood_8h.md#file-particleregionneighborhood.h)** 
+            * **file [Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h](../Files/ParticleSurfaceNeighborhood_8h.md#file-particlesurfaceneighborhood.h)** 
+            * **file [Libs/Optimize/Neighborhood/PowerOfTwoPointTree.h](../Files/PowerOfTwoPointTree_8h.md#file-poweroftwopointtree.h)** 
+        * **dir [Libs/Optimize/Utils](../Files/dir_a77e1aba01139f012dc0ad8074d88b8b.md#dir-libs/optimize/utils)** 
+            * **file [Libs/Optimize/Utils/MemoryUsage.h](../Files/MemoryUsage_8h.md#file-memoryusage.h)** 
+            * **file [Libs/Optimize/Utils/ObjectReader.h](../Files/ObjectReader_8h.md#file-objectreader.h)** 
+            * **file [Libs/Optimize/Utils/ObjectWriter.h](../Files/ObjectWriter_8h.md#file-objectwriter.h)** 
+            * **file [Libs/Optimize/Utils/OptimizationVisualizer.h](../Files/OptimizationVisualizer_8h.md#file-optimizationvisualizer.h)** 
+            * **file [Libs/Optimize/Utils/ParticleGaussianModeWriter.h](../Files/ParticleGaussianModeWriter_8h.md#file-particlegaussianmodewriter.h)** 
+            * **file [Libs/Optimize/Utils/ParticleGoodBadAssessment.h](../Files/ParticleGoodBadAssessment_8h.md#file-particlegoodbadassessment.h)** 
+        * **file [Libs/Optimize/Observer.h](../Files/Observer_8h.md#file-observer.h)** 
+        * **file [Libs/Optimize/Optimize.h](../Files/Optimize_8h.md#file-optimize.h)** 
+        * **file [Libs/Optimize/OptimizeParameterFile.h](../Files/OptimizeParameterFile_8h.md#file-optimizeparameterfile.h)** 
+        * **file [Libs/Optimize/OptimizeParameters.h](../Files/OptimizeParameters_8h.md#file-optimizeparameters.h)** 
+        * **file [Libs/Optimize/ParticleEvents.h](../Files/ParticleEvents_8h.md#file-particleevents.h)** 
+        * **file [Libs/Optimize/ParticleSystem.h](../Files/ParticleSystem_8h.md#file-particlesystem.h)** 
+        * **file [Libs/Optimize/ProcrustesRegistration.h](../Files/ProcrustesRegistration_8h.md#file-procrustesregistration.h)** 
+        * **file [Libs/Optimize/Sampler.h](../Files/Sampler_8h.md#file-sampler.h)** 
+    * **dir [Libs/Particles](../Files/dir_964794cfbc0200ee98d033e96f05265a.md#dir-libs/particles)** 
+        * **file [Libs/Particles/EvaluationUtil.h](../Files/EvaluationUtil_8h.md#file-evaluationutil.h)** 
+        * **file [Libs/Particles/ParticleFile.h](../Files/ParticleFile_8h.md#file-particlefile.h)** 
+        * **file [Libs/Particles/ParticleNormalEvaluation.h](../Files/ParticleNormalEvaluation_8h.md#file-particlenormalevaluation.h)** 
+        * **file [Libs/Particles/ParticleShapeStatistics.h](../Files/ParticleShapeStatistics_8h.md#file-particleshapestatistics.h)** 
+        * **file [Libs/Particles/ParticleSystemEvaluation.h](../Files/ParticleSystemEvaluation_8h.md#file-particlesystemevaluation.h)** 
+        * **file [Libs/Particles/ReconstructSurface.h](../Files/ReconstructSurface_8h.md#file-reconstructsurface.h)** 
+        * **file [Libs/Particles/ShapeEvaluation.h](../Files/ShapeEvaluation_8h.md#file-shapeevaluation.h)** 
+    * **dir [Libs/Project](../Files/dir_a889af563de662e6568ebda1f8c410f4.md#dir-libs/project)** 
+        * **file [Libs/Project/ExcelProjectReader.h](../Files/ExcelProjectReader_8h.md#file-excelprojectreader.h)** 
+        * **file [Libs/Project/ExcelProjectWriter.h](../Files/ExcelProjectWriter_8h.md#file-excelprojectwriter.h)** 
+        * **file [Libs/Project/JsonProjectReader.h](../Files/JsonProjectReader_8h.md#file-jsonprojectreader.h)** 
+        * **file [Libs/Project/JsonProjectWriter.h](../Files/JsonProjectWriter_8h.md#file-jsonprojectwriter.h)** 
+        * **file [Libs/Project/Parameters.h](../Files/Parameters_8h.md#file-parameters.h)** 
+        * **file [Libs/Project/Project.h](../Files/Project_8h.md#file-project.h)** 
+        * **file [Libs/Project/ProjectReader.h](../Files/ProjectReader_8h.md#file-projectreader.h)** 
+        * **file [Libs/Project/ProjectUtils.h](../Files/ProjectUtils_8h.md#file-projectutils.h)** 
+        * **file [Libs/Project/Subject.h](../Files/Subject_8h.md#file-subject.h)** 
+        * **file [Libs/Project/Variant.h](../Files/Variant_8h.md#file-variant.h)** 
+    * **dir [Libs/Python](../Files/dir_ec75ec4ccaa74e64f2f250059b2be5cf.md#dir-libs/python)** 
+        * **file [Libs/Python/PythonAnalyze.h](../Files/PythonAnalyze_8h.md#file-pythonanalyze.h)** 
+        * **file [Libs/Python/PythonGroom.h](../Files/PythonGroom_8h.md#file-pythongroom.h)** 
+        * **file [Libs/Python/pybind_utils.h](../Files/pybind__utils_8h.md#file-pybind-utils.h)** 
+    * **dir [Libs/Utils](../Files/dir_85437404c76aaafe9c9d27fadf09a713.md#dir-libs/utils)** 
+        * **file [Libs/Utils/EigenUtils.h](../Files/EigenUtils_8h.md#file-eigenutils.h)** 
+        * **file [Libs/Utils/StringUtils.h](../Files/StringUtils_8h.md#file-stringutils.h)** 
+        * **file [Libs/Utils/Utils.h](../Files/Utils_8h.md#file-utils.h)** 
+* **file [Module.dox](../Files/Module_8dox.md#file-module.dox)** 
+* **dir [Studio](../Files/dir_2dba964ac8d35ee2b73d07c3398d03ee.md#dir-studio)** 
+    * **dir [Studio/Analysis](../Files/dir_bb0f563cdbc60d466c69a28ca6e98f8c.md#dir-studio/analysis)** 
+        * **file [Studio/Analysis/AnalysisTool.h](../Files/AnalysisTool_8h.md#file-analysistool.h)** 
+        * **file [Studio/Analysis/ParticleAreaPanel.h](../Files/ParticleAreaPanel_8h.md#file-particleareapanel.h)** 
+        * **file [Studio/Analysis/ShapeEvaluationJob.h](../Files/ShapeEvaluationJob_8h.md#file-shapeevaluationjob.h)** 
+        * **file [Studio/Analysis/ShapeScalarPanel.h](../Files/ShapeScalarPanel_8h.md#file-shapescalarpanel.h)** 
+    * **dir [Studio/Data](../Files/dir_932a3d9fad10a7c14a1474502ee32325.md#dir-studio/data)** 
+        * **file [Studio/Data/DataTool.h](../Files/DataTool_8h.md#file-datatool.h)** 
+        * **file [Studio/Data/ExportUtils.h](../Files/ExportUtils_8h.md#file-exportutils.h)** 
+        * **file [Studio/Data/LandmarkItemDelegate.h](../Files/LandmarkItemDelegate_8h.md#file-landmarkitemdelegate.h)** 
+        * **file [Studio/Data/LandmarkTableModel.h](../Files/LandmarkTableModel_8h.md#file-landmarktablemodel.h)** 
+        * **file [Studio/Data/MeshSettings.h](../Files/MeshSettings_8h.md#file-meshsettings.h)** 
+        * **file [Studio/Data/Preferences.h](../Files/Preferences_8h.md#file-preferences.h)** 
+        * **file [Studio/Data/PreferencesWindow.h](../Files/PreferencesWindow_8h.md#file-preferenceswindow.h)** 
+        * **file [Studio/Data/Session.h](../Files/Session_8h.md#file-session.h)** 
+        * **file [Studio/Data/ShapeWorksWorker.h](../Files/ShapeWorksWorker_8h.md#file-shapeworksworker.h)** 
+        * **file [Studio/Data/Telemetry.h](../Files/Telemetry_8h.md#file-telemetry.h)** 
+        * **file [Studio/Data/Worker.h](../Files/Worker_8h.md#file-worker.h)** 
+    * **dir [Studio/DeepSSM](../Files/dir_e2174c16664f52edc10fd0f0005562f5.md#dir-studio/deepssm)** 
+        * **file [Studio/DeepSSM/DeepSSMJob.h](../Files/DeepSSMJob_8h.md#file-deepssmjob.h)** 
+        * **file [Studio/DeepSSM/DeepSSMParameters.h](../Files/DeepSSMParameters_8h.md#file-deepssmparameters.h)** 
+        * **file [Studio/DeepSSM/DeepSSMTool.h](../Files/DeepSSMTool_8h.md#file-deepssmtool.h)** 
+    * **dir [Studio/Groom](../Files/dir_0fde5acf386720d1b95ee7b088d62fbf.md#dir-studio/groom)** 
+        * **file [Studio/Groom/GroomTool.h](../Files/GroomTool_8h.md#file-groomtool.h)** 
+    * **dir [Studio/Interface](../Files/dir_c4c3ce96d8189b9157378cbb556bc236.md#dir-studio/interface)** 
+        * **file [Studio/Interface/CompareWidget.h](../Files/CompareWidget_8h.md#file-comparewidget.h)** 
+        * **file [Studio/Interface/CustomSlider.h](../Files/CustomSlider_8h.md#file-customslider.h)** 
+        * **file [Studio/Interface/ExportImageDialog.h](../Files/ExportImageDialog_8h.md#file-exportimagedialog.h)** 
+        * **file [Studio/Interface/KeyboardShortcuts.h](../Files/KeyboardShortcuts_8h.md#file-keyboardshortcuts.h)** 
+        * **file [Studio/Interface/LogWindow.h](../Files/LogWindow_8h.md#file-logwindow.h)** 
+        * **file [Studio/Interface/ShapeWorksStudioApp.h](../Files/ShapeWorksStudioApp_8h.md#file-shapeworksstudioapp.h)** 
+        * **file [Studio/Interface/SplashScreen.h](../Files/SplashScreen_8h.md#file-splashscreen.h)** 
+        * **file [Studio/Interface/StatusBarWidget.h](../Files/StatusBarWidget_8h.md#file-statusbarwidget.h)** 
+        * **file [Studio/Interface/StudioLogger.h](../Files/StudioLogger_8h.md#file-studiologger.h)** 
+        * **file [Studio/Interface/Style.h](../Files/Style_8h.md#file-style.h)** 
+        * **file [Studio/Interface/UpdateChecker.h](../Files/UpdateChecker_8h.md#file-updatechecker.h)** 
+        * **file [Studio/Interface/WheelEventForwarder.h](../Files/WheelEventForwarder_8h.md#file-wheeleventforwarder.h)** 
+    * **dir [Studio/Job](../Files/dir_9f0a2355e6c6fc33a7148220eca6ad21.md#dir-studio/job)** 
+        * **file [Studio/Job/GroupPvalueJob.h](../Files/GroupPvalueJob_8h.md#file-grouppvaluejob.h)** 
+        * **file [Studio/Job/Job.h](../Files/Job_8h.md#file-job.h)** 
+        * **file [Studio/Job/NetworkAnalysisJob.h](../Files/NetworkAnalysisJob_8h.md#file-networkanalysisjob.h)** 
+        * **file [Studio/Job/ParticleAreaJob.h](../Files/ParticleAreaJob_8h.md#file-particleareajob.h)** 
+        * **file [Studio/Job/ParticleNormalEvaluationJob.h](../Files/ParticleNormalEvaluationJob_8h.md#file-particlenormalevaluationjob.h)** 
+        * **file [Studio/Job/ShapeScalarJob.h](../Files/ShapeScalarJob_8h.md#file-shapescalarjob.h)** 
+        * **file [Studio/Job/StatsGroupLDAJob.h](../Files/StatsGroupLDAJob_8h.md#file-statsgroupldajob.h)** 
+    * **dir [Studio/Optimize](../Files/dir_6fa6eec745e39848e2eed67efc548ef9.md#dir-studio/optimize)** 
+        * **file [Studio/Optimize/OptimizeTool.h](../Files/OptimizeTool_8h.md#file-optimizetool.h)** 
+        * **file [Studio/Optimize/QOptimize.h](../Files/QOptimize_8h.md#file-qoptimize.h)** 
+    * **dir [Studio/Python](../Files/dir_6cc1d8e9f7cfb85f5b52ead900c09c6e.md#dir-studio/python)** 
+        * **file [Studio/Python/PythonWorker.h](../Files/PythonWorker_8h.md#file-pythonworker.h)** 
+    * **dir [Studio/Resources](../Files/dir_38696ecf092945d71621c0f7dc3d3f9d.md#dir-studio/resources)** 
+        * **file [Studio/Resources/resource.h](../Files/resource_8h.md#file-resource.h)** 
+    * **dir [Studio/Utils](../Files/dir_cf13d778f6e3c916b57b3282dc79688e.md#dir-studio/utils)** 
+        * **file [Studio/Utils/AnalysisUtils.h](../Files/AnalysisUtils_8h.md#file-analysisutils.h)** 
+        * **file [Studio/Utils/ImageLabel.h](../Files/ImageLabel_8h.md#file-imagelabel.h)** 
+        * **file [Studio/Utils/StackWalker.h](../Files/StackWalker_8h.md#file-stackwalker.h)** 
+        * **file [Studio/Utils/StudioUtils.h](../Files/StudioUtils_8h.md#file-studioutils.h)** 
+        * **file [Studio/Utils/WindowsCrashHandler.h](../Files/WindowsCrashHandler_8h.md#file-windowscrashhandler.h)** 
+    * **dir [Studio/Visualization](../Files/dir_d8ffa45732090dcef7309bdfcbc6df6c.md#dir-studio/visualization)** 
+        * **file [Studio/Visualization/ColorMap.h](../Files/ColorMap_8h.md#file-colormap.h)** 
+        * **file [Studio/Visualization/ColorSchemes.h](../Files/ColorSchemes_8h.md#file-colorschemes.h)** 
+        * **file [Studio/Visualization/LandmarkWidget.h](../Files/LandmarkWidget_8h.md#file-landmarkwidget.h)** 
+        * **file [Studio/Visualization/Lightbox.h](../Files/Lightbox_8h.md#file-lightbox.h)** 
+        * **file [Studio/Visualization/MeshSlice.h](../Files/MeshSlice_8h.md#file-meshslice.h)** 
+        * **file [Studio/Visualization/PaintWidget.h](../Files/PaintWidget_8h.md#file-paintwidget.h)** 
+        * **file [Studio/Visualization/ParticleColors.h](../Files/ParticleColors_8h.md#file-particlecolors.h)** 
+        * **file [Studio/Visualization/PlaneWidget.h](../Files/PlaneWidget_8h.md#file-planewidget.h)** 
+        * **file [Studio/Visualization/SliceView.h](../Files/SliceView_8h.md#file-sliceview.h)** 
+        * **file [Studio/Visualization/StudioHandleWidget.h](../Files/StudioHandleWidget_8h.md#file-studiohandlewidget.h)** 
+        * **file [Studio/Visualization/StudioInteractorStyle.h](../Files/StudioInteractorStyle_8h.md#file-studiointeractorstyle.h)** 
+        * **file [Studio/Visualization/StudioSliceInteractorStyle.h](../Files/StudioSliceInteractorStyle_8h.md#file-studiosliceinteractorstyle.h)** 
+        * **file [Studio/Visualization/StudioVtkOutputWindow.h](../Files/StudioVtkOutputWindow_8h.md#file-studiovtkoutputwindow.h)** 
+        * **file [Studio/Visualization/Viewer.h](../Files/Viewer_8h.md#file-viewer.h)** 
+        * **file [Studio/Visualization/Visualizer.h](../Files/Visualizer_8h.md#file-visualizer.h)** 
+
+
+
+-------------------------------
+
+Updated on 2024-03-17 at 12:58:44 -0600
