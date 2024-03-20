@@ -3,12 +3,8 @@
 ## Acknowledgements
 
 If you use ShapeWorks in work that leads to published research, we humbly ask that you to [cite ShapeWorks](#citation), add the following to the 'Acknowledgments' section of your paper: 
-<!--
-"This project was supported by the 
-National Institute of General Medical Sciences of the National Institutes of Health under 
-grant number P41GM103545."
--->
->"The National Institutes of Health supported this work under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545."
+
+>"The National Institutes of Health supported this work under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, and NIBIB-R01EB016701."
 
 and add the following 'disclaimer':
 
