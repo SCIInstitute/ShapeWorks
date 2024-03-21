@@ -34,6 +34,9 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
   if (m_use_normals[dom]) {
     k += idx * 3;
   }
+  if (m_use_intensities[dom]) {
+    k += idx * 3;
+  }
   k += idx * m_AttributesPerDomain[dom];
 
   //static int count = 0;
@@ -66,6 +69,7 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
       k += 3;
     } else {
       vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal, idx);
+      // add sample Intensity at point
       vnl_vector_fixed<float, DIMENSION> normal = gradient.normalize();
       float grad_mag = gradient.magnitude();  // TODO This is always 1.0. Fix when correcting image gradient of
                                               // normals

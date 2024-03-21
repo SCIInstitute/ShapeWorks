@@ -97,7 +97,7 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
       newpoint[i] = point[i] - update[i];
     }
 
-    ApplyConstraints(newpoint, idx);
+    ApplyConstraints(newpoint, idx); //TODO: look 
 
     return newpoint;
   }

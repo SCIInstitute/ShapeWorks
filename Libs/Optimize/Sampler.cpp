@@ -294,6 +294,18 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geod
   m_DomainList.push_back(domain);
 }
 
+void Sampler::AddVolume(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent) {
+  auto domain = std::make_shared<MeshDomain>();
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
+  if (mesh) {
+    this->m_Spacing = 1;
+    domain->SetMesh(mesh, geodesic_remesh_percent);
+    this->m_meshes.push_back(mesh->GetPolydata());
+    m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled());  // disable weighting for geodesics
+  }
+  m_DomainList.push_back(domain);
+}
+
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   auto domain = std::make_shared<ContourDomain>();
   m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
@@ -408,6 +420,29 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
     domain->SetImage(image, narrow_band_world);
 
     // Adding meshes for FFCs
+    vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
+    this->m_meshes.push_back(mesh);
+  }
+
+  domain->SetDomainID(m_DomainList.size());
+  domain->SetDomainName(name);
+  m_DomainList.push_back(domain);
+}
+
+
+void Sampler::AddVolume(ImageType::Pointer image, ImageType::Pointer ct_image, double narrow_band, std::string name) {
+  auto domain = std::make_shared<ImplicitVolumeDomain<ImageType::PixelType>>();
+
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
+
+  if (image) {
+    this->m_Spacing = image->GetSpacing()[0];
+    // convert narrow band (index space) to world space
+    // (e.g. narrow band of 4 means 4 voxels (largest side)
+    double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
+    domain->SetImage(image, narrow_band_world);
+    domain->SetImageCT(ct_image, narrow_band_world);
+
     vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
     this->m_meshes.push_back(mesh);
   }

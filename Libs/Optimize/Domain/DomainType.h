@@ -6,6 +6,7 @@ namespace shapeworks {
   enum class DomainType : char {
     Image = 'I',
     Mesh = 'M',
-    Contour = 'C'
+    Contour = 'C',
+    Volume = 'V'
   };
 }

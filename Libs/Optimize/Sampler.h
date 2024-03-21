@@ -95,6 +95,8 @@ class Sampler {
 
   void AddImage(ImageType::Pointer image, double narrow_band, std::string name = "");
 
+  void AddVolume(ImageType::Pointer image, ImageType::Pointer ct_image, double narrow_band, std::string name = "");
+
   void ApplyConstraintsToZeroCrossing() {
     for (size_t i = 0; i < m_DomainList.size(); i++) {
       this->m_DomainList[i]->UpdateZeroCrossingPoint();
