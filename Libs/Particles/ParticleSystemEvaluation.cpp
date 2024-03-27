@@ -18,11 +18,6 @@ ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string
   const int VDimension = 3;
   assert(N > 0);
 
-  // TODO: We're using the existing particle file reader here. This is not ideal
-  //  since this particle reader loads into a std::vector, which subsequently
-  //  is copied to Eigen. Refactor it to load directly to Eigen. (This is not a
-  //  huge problem for now because the particle files are quite small)
-
   // Read the first file to find dimensions
   auto points0 = particles::read_particles_as_vector(paths_[0]);
   const int D = points0.size() * VDimension;
