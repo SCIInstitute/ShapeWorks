@@ -195,9 +195,6 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void display_mode_shape();
 
-  bool set_feature_map(std::string feature_map);
-  std::string get_feature_map();
-
   bool get_feature_uniform_scale();
   void set_feature_uniform_scale(bool value);
 
