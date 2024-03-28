@@ -87,9 +87,9 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystemEvaluation& pa
     const Eigen::VectorXd rec = epsi * betas + mu;
 
     const int num_particles = d / VDimension;
-    const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(y_test.data(), num_particles, VDimension);
+    const Eigen::Map<const RowMajorMatrix> y_test_reshaped(y_test.data(), num_particles, VDimension);
     const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), num_particles, VDimension);
-    const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / num_particles;
+    const double dist = (rec_reshaped - y_test_reshaped).rowwise().norm().sum() / num_particles;
     total_dist += dist;
 
     reconstructions.push_back({dist, leave, rec_reshaped});
