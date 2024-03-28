@@ -98,7 +98,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
 
   if (num_points != scalar_values.size()) {
     std::cerr << "Warning, mismatch of points and scalar values (num_points = " << num_points
-              << ", scalar_values.size() = " << scalar_values.size() << std::endl;
+              << ", scalar_values.size() = " << scalar_values.size() << ")\n";
     return;
   }
 

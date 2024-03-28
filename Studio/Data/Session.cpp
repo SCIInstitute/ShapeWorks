@@ -1138,11 +1138,23 @@ bool Session::get_image_thickness_feature() { return params_.get("image_thicknes
 void Session::set_feature_map(std::string feature_map) {
   if (feature_map != get_feature_map() || is_loading()) {
     params_.set("feature_map", feature_map);
+    Q_EMIT feature_map_changed();
   }
 }
 
 //---------------------------------------------------------------------------
-std::string Session::get_feature_map() { return params_.get("feature_map", ""); }
+std::string Session::get_feature_map() {
+  std::string feature_map = params_.get("feature_map", "");
+
+  // confirm that this is a valid feature map
+  auto feature_maps = get_project()->get_feature_names();
+  for (const std::string& feature : feature_maps) {
+    if (feature_map == feature) {
+      return feature_map;
+    }
+  }
+  return "";
+}
 
 //---------------------------------------------------------------------------
 bool Session::has_constraints() {
@@ -1280,6 +1292,14 @@ Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
     shapes[i]->load_feature(DisplayMode::Reconstructed, target_feature);
 
     Eigen::VectorXd scalars = shapes[i]->get_point_features(target_feature);
+
+    // check that the scalars are the right size
+    if (scalars.size() != num_particles) {
+      SW_ERROR("scalars.size() : {}", scalars.size());
+      SW_ERROR("num_particles : {}", num_particles);
+      SW_ERROR("Error: scalars size does not match number of particles");
+      return Eigen::MatrixXd();
+    }
 
     // write into all_scalars
     all_scalars.row(i) = scalars.transpose();

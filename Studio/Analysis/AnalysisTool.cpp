@@ -161,6 +161,23 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->group_analysis_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::group_analysis_combo_changed);
+
+  // when one is checked, turn the other off, connect these first
+  connect(ui_->show_difference_to_predicted_scalar, &QPushButton::clicked, this, [this]() {
+    if (ui_->show_difference_to_predicted_scalar->isChecked()) {
+      ui_->show_predicted_scalar->setChecked(false);
+    }
+  });
+  connect(ui_->show_predicted_scalar, &QPushButton::clicked, this, [this]() {
+    if (ui_->show_predicted_scalar->isChecked()) {
+      ui_->show_difference_to_predicted_scalar->setChecked(false);
+    }
+  });
+
+  connect(ui_->show_difference_to_predicted_scalar, &QPushButton::clicked, this,
+          &AnalysisTool::handle_samples_predicted_scalar_options);
+  connect(ui_->show_predicted_scalar, &QPushButton::clicked, this,
+          &AnalysisTool::handle_samples_predicted_scalar_options);
 }
 
 //---------------------------------------------------------------------------
@@ -279,6 +296,9 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
   update_difference_particles();
+
+  ui_->show_predicted_scalar->setChecked(false);
+  ui_->show_difference_to_predicted_scalar->setChecked(false);
 
   connect(ui_->show_good_bad, &QCheckBox::toggled, session_.data(), &Session::set_show_good_bad_particles);
 }
@@ -1091,6 +1111,11 @@ void AnalysisTool::reset_stats() {
       ui_->pca_scalar_combo->addItem(QString::fromStdString(feature));
     }
   }
+  bool has_scalars = ui_->pca_scalar_combo->count() > 0;
+  if (!has_scalars) {
+    ui_->show_difference_to_predicted_scalar->setChecked(false);
+  }
+  ui_->show_difference_to_predicted_scalar->setEnabled(has_scalars);
 
   ui_->shape_scalar_groupbox->setVisible(ui_->pca_scalar_combo->count() > 0);
 }
@@ -1301,6 +1326,15 @@ std::string AnalysisTool::get_display_feature_map() {
     } else {
       return particle_area_panel_->get_computed_value_name();
     }
+  }
+
+  if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C &&
+      ui_->show_difference_to_predicted_scalar->isChecked()) {
+    return "predicted_scalar_diff";
+  }
+
+  if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C && ui_->show_predicted_scalar->isChecked()) {
+    return "predicted_scalar";
   }
 
   return feature_map_;
@@ -1763,6 +1797,11 @@ void AnalysisTool::change_pca_analysis_type() {
   ui_->pca_predict_scalar->setEnabled(ui_->pca_scalar_shape_only->isChecked());
   ui_->pca_predict_shape->setEnabled(ui_->pca_scalar_only->isChecked());
 
+  if (ui_->pca_predict_scalar->isChecked()) {
+    // set the feature map to the target feature
+    session_->set_feature_map(ui_->pca_scalar_combo->currentText().toStdString());
+  }
+
   compute_stats();
   Q_EMIT pca_update();
 }
@@ -1783,6 +1822,30 @@ Eigen::VectorXd AnalysisTool::construct_mean_shape() {
 
   Eigen::VectorXd mean_shape = sum_shape / session_->get_non_excluded_shapes().size();
   return mean_shape;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_samples_predicted_scalar_options() {
+  if (ui_->show_difference_to_predicted_scalar->isChecked() || ui_->show_predicted_scalar->isChecked()) {
+    // iterate over all samples, predict scalars, compute the difference and store as a new scalar field
+    auto shapes = session_->get_non_excluded_shapes();
+    for (auto& shape : shapes) {
+      auto particles = shape->get_particles();
+      auto target_feature = ui_->pca_scalar_combo->currentText();
+      auto predicted =
+          ShapeScalarJob::predict_scalars(session_, target_feature, particles.get_combined_global_particles());
+
+      // load the mesh and feature
+      shape->get_meshes(session_->get_display_mode(), true);
+      shape->load_feature(session_->get_display_mode(), target_feature.toStdString());
+      auto scalars = shape->get_point_features(target_feature.toStdString());
+      // compute difference
+      auto diff = predicted - scalars;
+      shape->set_point_features("predicted_scalar_diff", diff);
+      shape->set_point_features("predicted_scalar", predicted);
+    }
+  }
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------

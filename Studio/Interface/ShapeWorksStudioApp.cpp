@@ -423,7 +423,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
 
     if (first_load) {
       // On first load, we can check if there was an active scalar on loaded meshes
-      set_feature_map(session_->get_default_feature_map());
+      session_->set_feature_map(session_->get_default_feature_map());
     }
   } catch (std::runtime_error& e) {
     handle_error(e.what());
@@ -970,6 +970,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(session_.data(), &Session::reset_stats, this, &ShapeWorksStudioApp::handle_reset_stats);
   connect(session_.data(), &Session::update_display, this, &ShapeWorksStudioApp::handle_display_setting_changed);
   connect(session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
+  connect(session_.data(), &Session::feature_map_changed, this, &ShapeWorksStudioApp::update_view_mode);
   connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
   connect(session_.data(), &Session::reinsert_shapes, this, [&]() { update_display(true); });
   connect(session_.data(), &Session::save, this, &ShapeWorksStudioApp::on_action_save_project_triggered);
@@ -1087,7 +1088,7 @@ void ShapeWorksStudioApp::update_view_mode() {
   ui_->view_mode_combobox->setCurrentText(QString::fromStdString(display_mode_to_string(view_mode)));
   update_view_combo();
 
-  auto feature_map = get_feature_map();
+  auto feature_map = session_->get_feature_map();
   ui_->features->setCurrentText(QString::fromStdString(feature_map));
 
   if (visualizer_) {
@@ -2041,7 +2042,7 @@ QString ShapeWorksStudioApp::get_mesh_file_filter() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_feature_map_selection(int index) {
   QString feature_map = ui_->features->itemText(index);
-  set_feature_map(feature_map.toStdString());
+  session_->set_feature_map(feature_map.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -2063,30 +2064,6 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::image_combo_changed(int index) {
   session_->set_image_name(ui_->image_combo_->itemText(index).toStdString());
-}
-
-//---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::set_feature_map(std::string feature_map) {
-  if (feature_map != get_feature_map()) {
-    session_->set_feature_map(feature_map);
-    update_view_mode();
-    return true;
-  }
-  return false;
-}
-
-//---------------------------------------------------------------------------
-std::string ShapeWorksStudioApp::get_feature_map() {
-  std::string feature_map = session_->get_feature_map();
-
-  // confirm that this is a valid feature map
-  auto feature_maps = session_->get_project()->get_feature_names();
-  for (const std::string& feature : feature_maps) {
-    if (feature_map == feature) {
-      return feature_map;
-    }
-  }
-  return "";
 }
 
 //---------------------------------------------------------------------------
