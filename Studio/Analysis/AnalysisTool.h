@@ -197,6 +197,8 @@ class AnalysisTool : public QWidget {
   //! Compute the mean shape outside of the PCA in case we are using scalars only
   Eigen::VectorXd construct_mean_shape();
 
+  void handle_samples_predicted_scalar_options();
+
  Q_SIGNALS:
 
   void update_view();
