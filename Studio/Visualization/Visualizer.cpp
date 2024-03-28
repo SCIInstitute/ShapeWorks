@@ -305,15 +305,16 @@ void Visualizer::update_lut() {
       }
     }
   } else {
+    glyph_lut_->ForceBuild();
     if (preferences_.get_particle_colors() == ParticleColors::ParticleColorsType::Distinct) {
       auto lut = ParticleColors::construct_distinct();
+
+      glyph_lut_->ForceBuild();
 
       // normal particle coloring mode
       for (int i = 0; i < num_points; i++) {
         glyph_lut_->SetTableValue(i, lut->GetTableValue(i % lut->GetNumberOfTableValues()));
       }
-    } else {
-      glyph_lut_->ForceBuild();
     }
   }
 
