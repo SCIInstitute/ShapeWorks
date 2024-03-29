@@ -14,6 +14,8 @@ title: shapeworks::AnalysisUtils
 |                | Name           |
 | -------------- | -------------- |
 | [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1AnalysisUtils.md#function-get-local-particle-system)**([Session](../Classes/classshapeworks_1_1Session.md) * session, int domain) |
+| void | **[create_plot](../Classes/classshapeworks_1_1AnalysisUtils.md#function-create-plot)**(JKQTPlotter * plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label) |
+| void | **[create_box_plot](../Classes/classshapeworks_1_1AnalysisUtils.md#function-create-box-plot)**(JKQTPlotter * plot, Eigen::VectorXd data, QString title, QString x_label, QColor color =Qt::blue) |
 
 ## Public Functions Documentation
 
@@ -27,6 +29,32 @@ static ParticleSystemEvaluation get_local_particle_system(
 ```
 
 
+### function create_plot
+
+```cpp
+static void create_plot(
+    JKQTPlotter * plot,
+    Eigen::VectorXd data,
+    QString title,
+    QString x_label,
+    QString y_label
+)
+```
+
+
+### function create_box_plot
+
+```cpp
+static void create_box_plot(
+    JKQTPlotter * plot,
+    Eigen::VectorXd data,
+    QString title,
+    QString x_label,
+    QColor color =Qt::blue
+)
+```
+
+
 -------------------------------
 
-Updated on 2024-03-29 at 00:27:04 +0000
+Updated on 2024-03-29 at 08:20:53 +0000

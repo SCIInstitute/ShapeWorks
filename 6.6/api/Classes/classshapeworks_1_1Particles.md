@@ -38,6 +38,7 @@ Representation of correspondence points for a shape including multiple domains. 
 | void | **[set_alignment_type](../Classes/classshapeworks_1_1Particles.md#function-set-alignment-type)**(int alignment) |
 | Eigen::VectorXd | **[get_difference_vectors](../Classes/classshapeworks_1_1Particles.md#function-get-difference-vectors)**(const [Particles](../Classes/classshapeworks_1_1Particles.md) & other) const |
 | int | **[get_number_of_domains](../Classes/classshapeworks_1_1Particles.md#function-get-number-of-domains)**() |
+| int | **[get_total_number_of_particles](../Classes/classshapeworks_1_1Particles.md#function-get-total-number-of-particles)**() |
 | void | **[save_particles_file](../Classes/classshapeworks_1_1Particles.md#function-save-particles-file)**(std::string filename, const Eigen::VectorXd & points) |
 
 ## Detailed Description
@@ -235,6 +236,13 @@ int get_number_of_domains()
 ```
 
 
+### function get_total_number_of_particles
+
+```cpp
+int get_total_number_of_particles()
+```
+
+
 ### function save_particles_file
 
 ```cpp
@@ -247,4 +255,4 @@ static void save_particles_file(
 
 -------------------------------
 
-Updated on 2024-03-29 at 00:27:05 +0000
+Updated on 2024-03-29 at 08:20:53 +0000

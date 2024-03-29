@@ -227,8 +227,6 @@ class AnalysisTool : public QWidget {
   void reconstruction_complete();
 
  private:
-  void create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
-
   void compute_reconstructed_domain_transforms();
 
   bool active_ = false;
@@ -313,4 +311,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2024-03-29 at 00:27:06 +0000
+Updated on 2024-03-29 at 08:20:54 +0000
