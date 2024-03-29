@@ -96,6 +96,7 @@ class PCA_Embbeder(Embedder):
         self.PCA_scores = PCA_scores
         self.eigen_vectors = eigen_vectors
         self.eigen_values = eigen_values
+        self.num_dim = num_dim
         return num_dim
 
     def write_PCA(self, out_dir: Path, score_option="full", suffix="txt"):
@@ -120,10 +121,9 @@ class PCA_Embbeder(Embedder):
             os.makedirs(out_dir)
         if score_option == "full":
             np.savetxt(str(out_dir / f'original_PCA_scores.{suffix}'), self.PCA_scores)
-
         mean = np.mean(self.data_matrix, axis=0)
         np.savetxt(str(out_dir / f'mean.{suffix}'), mean)
-        np.savetxt(str(out_dir / f'eigenvalues.{suffix}'), self.eigen_values)
+        np.savetxt(str(out_dir / f'eigenvalues.txt'), self.eigen_values)
         for i in range(self.data_matrix.shape[0]):
             nm = str(out_dir / f'pcamode{i}.{suffix}')
             data = self.eigen_vectors[:, i]
