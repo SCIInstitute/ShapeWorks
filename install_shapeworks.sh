@@ -52,34 +52,6 @@ fi
 echo "Creating new conda environment for ShapeWorks called \"$CONDAENV\"..."
 
 
-# PyTorch installation
-function install_pytorch() {
-  echo "installing pytorch"
-  if [[ "$(uname)" == "Darwin" ]]; then
-    pip install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0
-  elif ! [ -x "$(command -v nvidia-smi)" ]; then
-    echo 'Could not find nvidia-smi, using cpu-only PyTorch'
-    pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
-  else
-    CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
-    echo "Found CUDA Version: ${CUDA}"
-    if [[ "$CUDA" == "9.2" ]]; then
-        pip install torch==1.11.0+cu92 torchvision==0.12.0+cu92 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
-    elif [[ "$CUDA" == "10.1" ]]; then
-        pip install torch==1.11.0+cu101 torchvision==0.12.0+cu101 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
-    elif [[ "$CUDA" == "10.2" ]]; then
-        pip install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
-    elif [[ "$CUDA" == "11.0" || "$CUDA" == "11.1" || "$CUDA" == "11.2" ]]; then
-        pip install torch==1.11.0+cu110 torchvision==0.12.0+cu110 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
-    elif [[ "$CUDA" == "11.7" || "$CUDA" == "11.8" || "$CUDA" == "12.0" || "$CUDA" == "12.1" ]]; then
-	pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -f https://download.pytorch.org/whl/cu118
-    else
-        echo "CUDA version not compatible, using cpu-only"
-        pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
-    fi
-  fi
-}
-
 function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "Installing Miniconda..."
@@ -159,9 +131,12 @@ function install_conda() {
   conda init
 
   if ! pip install -r python_requirements.txt;          then return 1; fi
-  
+
+  # install pytorch using light-the-torch
+  if ! ltt install torch==1.11.0;                       then return 1; fi 
 
   # for network analysis
+  # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt
   if [[ "$(uname)" == "Linux" ]]; then
       if ! pip install open3d-cpu==0.17.0;              then return 1; fi
   elif [[ "$(uname)" == "Darwin" ]]; then
@@ -233,7 +208,6 @@ function install_conda() {
 }
 
 if install_conda; then
-  install_pytorch
 
   echo "Conda info:"
   conda info

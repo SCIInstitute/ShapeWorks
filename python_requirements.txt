@@ -83,6 +83,7 @@ jupyterlab-pygments==0.2.2
 jupyterlab-widgets==3.0.8
 jupytext==1.14.7
 kiwisolver==1.4.4
+light-the-torch==0.7.5
 lxml==4.9.3
 Markdown==3.3.7
 markdown-it-py==3.0.0
