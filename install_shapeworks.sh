@@ -130,7 +130,7 @@ function install_conda() {
   # install conda into the shell
   conda init
 
-  if ! pip install -r python_requirements.txt;          then return 1; fi
+  if ! python -m pip install -r python_requirements.txt;          then return 1; fi
 
   # install pytorch using light-the-torch
   if ! ltt install torch==1.11.0;                       then return 1; fi 
