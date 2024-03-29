@@ -8,6 +8,7 @@
 #include <QWidget>
 
 // ShapeWorks
+#include <Analyze/Analyze.h>
 #include <ParticleShapeStatistics.h>
 
 // Studio
@@ -27,15 +28,14 @@ class ShapeWorksStudioApp;
 class GroupPvalueJob;
 class NetworkAnalysisJob;
 class StatsGroupLDAJob;
+class ParticleAreaPanel;
+class ShapeScalarPanel;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
 
  public:
-  enum AlignmentType {
-    Global = -2,
-    Local = -1,
-  };
+  using AlignmentType = Analyze::AlignmentType;
 
   enum GroupAnalysisType { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3 };
 
@@ -116,6 +116,10 @@ class AnalysisTool : public QWidget {
 
   GroupAnalysisType get_group_analysis_type();
 
+  bool pca_scalar_only_mode();
+  bool pca_shape_plus_scalar_mode();
+  bool pca_shape_only_mode();
+
  public Q_SLOTS:
 
   // analysis mode
@@ -188,6 +192,12 @@ class AnalysisTool : public QWidget {
 
   void group_analysis_combo_changed();
 
+  void change_pca_analysis_type();
+
+  //! Compute the mean shape outside of the PCA in case we are using scalars only
+  Eigen::VectorXd construct_mean_shape();
+
+  void handle_samples_predicted_scalar_options();
 
  Q_SIGNALS:
 
@@ -221,6 +231,8 @@ class AnalysisTool : public QWidget {
 
   void update_difference_particles();
 
+  Eigen::VectorXd get_mean_shape_particles();
+
   ShapeHandle create_shape_from_points(Particles points);
 
   Preferences& preferences_;
@@ -243,7 +255,9 @@ class AnalysisTool : public QWidget {
   vnl_vector<double> empty_shape_;
   Eigen::VectorXd temp_shape_;
   Eigen::VectorXd temp_shape_mca;
-  std::vector<int> number_of_particles_ar;
+  std::vector<int> number_of_particles_array_;
+
+  Eigen::VectorXd computed_scalars_;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
@@ -272,5 +286,7 @@ class AnalysisTool : public QWidget {
   bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
+  ParticleAreaPanel* particle_area_panel_{nullptr};
+  ShapeScalarPanel* shape_scalar_panel_{nullptr};
 };
 }  // namespace shapeworks

@@ -54,7 +54,7 @@ class StudioMesh {
   void apply_scalars(MeshHandle mesh);
 
   //! Interpolation scalars at positions to this mesh
-  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXf scalar_values);
+  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);
 
   //! Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)
   double get_largest_dimension_size();

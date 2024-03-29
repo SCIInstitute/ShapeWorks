@@ -54,6 +54,7 @@ class Particles {
 
   static void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
+  int get_number_of_domains();
 
  private:
   void transform_global_particles();
@@ -69,7 +70,7 @@ class Particles {
 
   vtkSmartPointer<vtkTransform> transform_;
   std::vector<vtkSmartPointer<vtkTransform>> procrustes_transforms_;
-  int alignment_type_ = -1;
+  int alignment_type_ = -3;  // not a valid value
 
 };
 }  // namespace shapeworks

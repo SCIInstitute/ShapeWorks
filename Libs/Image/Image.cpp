@@ -36,6 +36,7 @@
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
 
+#include <boost/filesystem.hpp>
 #include <cmath>
 #include <exception>
 
@@ -105,7 +106,7 @@ Image::ImageType::Pointer Image::read(const std::string& pathname) {
     throw std::invalid_argument("Empty pathname");
   }
 
-  if (ShapeworksUtils::is_directory(pathname)) return readDICOMImage(pathname);
+  if (ShapeWorksUtils::is_directory(pathname)) return readDICOMImage(pathname);
 
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
@@ -318,6 +319,12 @@ Image& Image::write(const std::string& filename, bool compressed) {
   }
   if (filename.empty()) {
     throw std::invalid_argument("Empty pathname");
+  }
+
+  // if the directory doesn't exist, create it
+  boost::filesystem::path dir(filename);
+  if (dir.has_parent_path() && !boost::filesystem::exists(dir.parent_path())) {
+    boost::filesystem::create_directories(dir.parent_path());
   }
 
   using WriterType = itk::ImageFileWriter<ImageType>;
@@ -570,6 +577,12 @@ Image& Image::applyTransform(const TransformPtr transform, Image::InterpolationT
 Image& Image::applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
                              const ImageType::DirectionType coordsys, Image::InterpolationType interp) {
   return resample(transform, origin, dims, spacing, coordsys, interp);
+}
+
+Image& Image::applyTransform(const TransformPtr transform, const Image& referenceImage,
+                             Image::InterpolationType interp) {
+  return applyTransform(transform, referenceImage.origin(), referenceImage.dims(), referenceImage.spacing(),
+                        referenceImage.coordsys(), interp);
 }
 
 Image& Image::extractLabel(const PixelType label) {
@@ -848,6 +861,11 @@ Image& Image::isolate() {
   return *this;
 }
 
+double Image::get_minimum_spacing() const {
+  auto spacing = this->spacing();
+  return std::min(spacing[0], std::min(spacing[1], spacing[2]));
+}
+
 Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const {
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->itk_image_, itk_image_->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -940,7 +958,7 @@ Point3 Image::logicalToPhysical(const Coord& v) const {
 
 Coord Image::physicalToLogical(const Point3& p) const { return itk_image_->TransformPhysicalPointToIndex(p); }
 
-bool Image::isInside(const Point3 &p) const {
+bool Image::isInside(const Point3& p) const {
   auto itk_image = getITKImage();
   auto region = itk_image->GetLargestPossibleRegion();
   Image::ImageType::IndexType index;
@@ -948,7 +966,7 @@ bool Image::isInside(const Point3 &p) const {
   pitk[0] = p[0];
   pitk[1] = p[1];
   pitk[2] = p[2];
-  itk_image->TransformPhysicalPointToIndex( pitk, index );
+  itk_image->TransformPhysicalPointToIndex(pitk, index);
   return region.IsInside(index);
 }
 
@@ -992,7 +1010,7 @@ TransformPtr Image::createRigidRegistrationTransform(const Image& target_dt, flo
 
   try {
     auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
-    return shapeworks::createTransform(ShapeworksUtils::getMatrix(mat), ShapeworksUtils::getOffset(mat));
+    return shapeworks::createTransform(ShapeWorksUtils::convert_matrix(mat), ShapeWorksUtils::get_offset(mat));
   } catch (std::invalid_argument) {
     std::cerr << "failed to create ICP transform.\n";
     if (sourceContour.numPoints() == 0) {

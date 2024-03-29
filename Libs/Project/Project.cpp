@@ -28,12 +28,21 @@ Project::~Project() = default;
 //---------------------------------------------------------------------------
 bool Project::load(const std::string& filename) {
   filename_ = filename;
+  // get the directory of the project file
+  fs::path path = filename;
+  project_path_ = path.parent_path().string();
+  if (project_path_ == "") {
+    project_path_ = ".";
+  }
+  std::cerr << "Setting Project path: " << project_path_ << std::endl;
+
+  bool return_value = false;
   if (StringUtils::hasSuffix(filename, "swproj")) {
     JsonProjectReader reader(*this);
-    return reader.read_project(filename);
+    return_value = reader.read_project(filename);
   } else if (StringUtils::hasSuffix(filename, "xlsx")) {
     ExcelProjectReader reader(*this);
-    return reader.read_project(filename);
+    return_value = reader.read_project(filename);
   } else {
     throw std::runtime_error("Unsupported project file type: " + filename +
                              ", supported filetypes are xlsx and swproj");
@@ -43,36 +52,52 @@ bool Project::load(const std::string& filename) {
 
   version_ = project_parameters.get("version", -1);
 
-  loaded_ = true;
-  return true;
+  return return_value;
 }
 
 //---------------------------------------------------------------------------
 bool Project::save(const std::string& filename) {
-  filename_ = filename;
+  if (filename != "") {
+    filename_ = filename;
+  }
+
+  if (filename_.empty()) {
+    throw std::runtime_error("Project filename is empty");
+  }
+
+  // get the directory of the project file
+  fs::path path = filename_;
+  std::string project_path = path.parent_path().string();
+  if (project_path == "") {
+    project_path = ".";
+  }
+
+  set_project_path(project_path);
 
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
   project_parameters.set("version", version_);
   set_parameters(Parameters::PROJECT_PARAMS, project_parameters);
   update_subjects();
-  if (StringUtils::hasSuffix(filename, "swproj")) {
-    return JsonProjectWriter::write_project(*this, filename);
+  if (StringUtils::hasSuffix(filename_, "swproj")) {
+    return JsonProjectWriter::write_project(*this, filename_);
   } else {
-    return ExcelProjectWriter::write_project(*this, filename);
+    return ExcelProjectWriter::write_project(*this, filename_);
   }
 }
 
 //---------------------------------------------------------------------------
 void Project::set_project_path(const std::string& new_pathname) {
-  SW_LOG("Setting project path to " + new_pathname);
+  SW_DEBUG("Setting project path to " + new_pathname);
 
   auto old_path = fs::path(project_path_);
   auto new_path = fs::path(new_pathname);
 
   auto fixup = [&](StringList paths) {
     StringList new_paths;
-    for (const auto& path : paths) {
+    for (auto path : paths) {
       if (fs::exists(path)) {
+        // replace \ with / in path
+        path = StringUtils::replace_string(path, "\\", "/");
         auto canonical = fs::canonical(path, old_path);
         new_paths.push_back(fs::relative(canonical, new_path).string());
       } else {
@@ -91,16 +116,28 @@ void Project::set_project_path(const std::string& new_pathname) {
     subject->set_constraints_filenames(fixup(subject->get_constraints_filenames()));
 
     auto features = subject->get_feature_filenames();
-    StringMap new_features;
+    project::types::StringMap new_features;
     for (auto const& x : features) {
-      auto canonical = fs::canonical(x.second, old_path);
+      auto path = x.second;
+      // replace \ with / in path
+      path = StringUtils::replace_string(path, "\\", "/");
+      auto canonical = fs::canonical(path, old_path);
       new_features[x.first] = fs::relative(canonical, new_path).string();
     }
+    subject->set_feature_filenames(new_features);
   }
 
+  // filename becomes basename
+  filename_ = fs::path(filename_).filename().string();
+
   project_path_ = new_pathname;
-  fs::current_path(project_path_);  // chdir
+  if (project_path_ != "") {
+    fs::current_path(project_path_);  // chdir
+  }
 }
+
+//---------------------------------------------------------------------------
+std::string Project::get_project_path() { return project_path_; }
 
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_headers() {
@@ -138,6 +175,17 @@ int Project::get_number_of_domains_per_subject() { return get_domain_names().siz
 std::vector<std::shared_ptr<Subject>>& Project::get_subjects() { return subjects_; }
 
 //---------------------------------------------------------------------------
+std::vector<std::shared_ptr<Subject>> Project::get_non_excluded_subjects() {
+  std::vector<std::shared_ptr<Subject>> non_excluded_subjects;
+  for (auto& subject : subjects_) {
+    if (!subject->is_excluded()) {
+      non_excluded_subjects.push_back(subject);
+    }
+  }
+  return non_excluded_subjects;
+}
+
+//---------------------------------------------------------------------------
 void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects) {
   subjects_ = subjects;
   update_subjects();
@@ -152,21 +200,33 @@ void Project::update_subjects() {
     return;
   }
 
-  auto subject = subjects_[0];
-  originals_present_ = !subject->get_original_filenames().empty();
-  groomed_present_ = !subject->get_groomed_filenames().empty();
-  particles_present_ = !subject->get_world_particle_filenames().empty();
-  images_present_ = !subject->get_feature_filenames().empty();
+  originals_present_ = false;
+  groomed_present_ = false;
+  particles_present_ = false;
+  images_present_ = false;
+
+  auto groomed_subject = subjects_[0];
+  for (auto subject : subjects_) {
+    originals_present_ = originals_present_ || !subject->get_original_filenames().empty();
+    groomed_present_ = groomed_present_ || !subject->get_groomed_filenames().empty();
+    if (subject->get_groomed_filenames().size() > 0 && subject->get_groomed_filenames()[0] != "") {
+      groomed_subject = subject;
+    }
+    particles_present_ = particles_present_ || !subject->get_world_particle_filenames().empty();
+    images_present_ = images_present_ || !subject->get_feature_filenames().empty();
+  }
 
   original_domain_types_.clear();
-  while (original_domain_types_.size() < subject->get_original_filenames().size()) {
+  while (original_domain_types_.size() < subjects_[0]->get_original_filenames().size()) {
     int index = original_domain_types_.size();
-    original_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_original_filenames()[index]));
+    original_domain_types_.push_back(
+        ProjectUtils::determine_domain_type(subjects_[0]->get_original_filenames()[index]));
   }
   groomed_domain_types_.clear();
-  while (groomed_domain_types_.size() < subject->get_groomed_filenames().size()) {
+  while (groomed_domain_types_.size() < groomed_subject->get_groomed_filenames().size()) {
     int index = groomed_domain_types_.size();
-    groomed_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_groomed_filenames()[index]));
+    groomed_domain_types_.push_back(
+        ProjectUtils::determine_domain_type(groomed_subject->get_groomed_filenames()[index]));
   }
   while (domain_names_.size() < original_domain_types_.size()) {
     domain_names_.push_back(std::to_string(domain_names_.size() + 1));
@@ -315,6 +375,16 @@ bool Project::get_particles_present() const { return particles_present_; }
 bool Project::get_images_present() { return images_present_; }
 
 //---------------------------------------------------------------------------
+bool Project::get_fixed_subjects_present() {
+  return std::any_of(subjects_.begin(), subjects_.end(), [](const auto& subject) { return subject->is_fixed(); });
+}
+
+//---------------------------------------------------------------------------
+bool Project::get_excluded_subjects_present() {
+  return std::any_of(subjects_.begin(), subjects_.end(), [](const auto& subject) { return subject->is_excluded(); });
+}
+
+//---------------------------------------------------------------------------
 Parameters Project::get_parameters(const std::string& name, std::string domain_name) {
   Parameters params;
   if (parameters_.find(name) == parameters_.end()) {
@@ -338,7 +408,9 @@ Parameters Project::get_parameters(const std::string& name, std::string domain_n
 std::map<std::string, Parameters> Project::get_parameter_map(const std::string& name) {
   std::map<std::string, Parameters> map;
   auto domains = get_domain_names();
-  domains.insert(domains.begin(), 1, "");  // add global parameters
+  if (domains.size() > 1) {
+    domains.insert(domains.begin(), 1, "");  // add global parameters
+  }
   for (int i = 0; i < domains.size(); i++) {
     map[domains[i]] = get_parameters(name, domains[i]);
   }

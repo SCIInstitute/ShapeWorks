@@ -1,5 +1,6 @@
 #include "ProjectUtils.h"
 
+#include <Logging.h>
 #include <Mesh/MeshUtils.h>
 #include <Project.h>
 #include <StringUtils.h>
@@ -30,6 +31,16 @@ vtkSmartPointer<vtkTransform> shapeworks::ProjectUtils::convert_transform(std::v
     transform->SetMatrix(matrix);
   }
   return transform;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> ProjectUtils::convert_transform(std::string string) {
+  std::istringstream ss(string);
+  std::vector<double> values;
+  for (double value = 0; ss >> value;) {
+    values.push_back(value);
+  }
+  return convert_transform(values);
 }
 
 //---------------------------------------------------------------------------
@@ -183,6 +194,9 @@ StringMap ProjectUtils::get_value_map(std::vector<std::string> prefixes, StringM
 //---------------------------------------------------------------------------
 StringMap ProjectUtils::get_extra_columns(StringMap key_map) {
   StringList prefixes = {"name",
+                         "notes",
+                         "fixed",
+                         "excluded",
                          SEGMENTATION_PREFIX,
                          SHAPE_PREFIX,
                          MESH_PREFIX,
@@ -279,8 +293,13 @@ static void assign_keys(StringMap& j, std::vector<std::string> prefixes, std::ve
   }
   auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {
+    SW_DEBUG("filename size: " + std::to_string(filenames.size()));
+    for (auto& filename : filenames) {
+      SW_DEBUG("filename: " + filename);
+    }
+
     throw std::invalid_argument(prefix + " filenames and number of domains mismatch (" +
-                             std::to_string(filenames.size()) + " vs " + std::to_string(domains.size()) + ")");
+                                std::to_string(filenames.size()) + " vs " + std::to_string(domains.size()) + ")");
   }
   for (int i = 0; i < domains.size(); i++) {
     if (prefixes.size() == domains.size()) {
@@ -300,7 +319,7 @@ static void assign_transforms(StringMap& j, std::string prefix, std::vector<std:
   }
   if (transforms.size() != domains.size() && transforms.size() != domains.size() + 1) {
     throw std::invalid_argument(prefix + " filenames and number of domains mismatch (" +
-                             std::to_string(transforms.size()) + " vs " + std::to_string(domains.size()) + ")");
+                                std::to_string(transforms.size()) + " vs " + std::to_string(domains.size()) + ")");
   }
   for (int i = 0; i < transforms.size(); i++) {
     std::string key = prefix + "_";
@@ -319,6 +338,13 @@ ProjectUtils::StringMap ProjectUtils::convert_subject_to_map(Project* project, S
 
   StringMap j;
   j["name"] = subject->get_display_name();
+  if (project->get_fixed_subjects_present()) {
+    j["fixed"] = subject->is_fixed() ? "true" : "false";
+  }
+  if (project->get_excluded_subjects_present()) {
+    j["excluded"] = subject->is_excluded() ? "true" : "false";
+  }
+  j["notes"] = subject->get_notes();
 
   auto original_prefixes = ProjectUtils::convert_domain_types(project->get_original_domain_types());
   auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project->get_groomed_domain_types());

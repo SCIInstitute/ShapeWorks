@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QMenu>
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QXmlStreamWriter>
@@ -27,15 +28,16 @@
 #include <ExcelProjectWriter.h>
 #include <JsonProjectReader.h>
 #include <JsonProjectWriter.h>
-#include <Project/Project.h>
 #include <Logging.h>
 #include <MeshManager.h>
+#include <Project/Project.h>
 #include <Shape.h>
 #include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
-#include "ExternalLibs/tinyxml/tinyxml.h"
+#include <vtkLookupTable.h>
 
+#include "ExternalLibs/tinyxml/tinyxml.h"
 
 namespace shapeworks {
 
@@ -161,9 +163,11 @@ bool Session::save_project(QString filename) {
         auto local_files = shapes_[i]->get_subject()->get_local_particle_filenames();
         auto world_files = shapes_[i]->get_subject()->get_world_particle_filenames();
         auto particles = shapes_[i]->get_particles();
-        for (int i = 0; i < local_files.size(); i++) {
-          Particles::save_particles_file(local_files[i], particles.get_local_particles(i));
-          Particles::save_particles_file(world_files[i], particles.get_raw_world_particles(i));
+        if (particles.get_number_of_domains() == local_files.size()) {  // un-fixed domains may not have particles
+          for (int i = 0; i < local_files.size(); i++) {
+            Particles::save_particles_file(local_files[i], particles.get_local_particles(i));
+            Particles::save_particles_file(world_files[i], particles.get_raw_world_particles(i));
+          }
         }
       }
       unsaved_particle_files_ = false;
@@ -172,11 +176,6 @@ bool Session::save_project(QString filename) {
     project_->set_parameters(Parameters::STUDIO_PARAMS, params_);
 
     project_->save(filename.toStdString());
-
-    // ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
-    // JsonProjectWriter::write_project(project_, "/tmp/project.json");
-    // auto proj = std::make_shared<Project>();
-    // JsonProjectReader::read_project(proj, "/tmp/project.json");
 
   } catch (std::exception& e) {
     QMessageBox::warning(nullptr, "Error saving project", QString("Error saving project: ") + e.what());
@@ -437,7 +436,6 @@ bool Session::load_xl_project(QString filename) {
       break;
     }
     progress.setValue(progress.value() + 1);
-
   }
 
   groups_available_ = project_->get_group_names().size() > 0;
@@ -446,9 +444,7 @@ bool Session::load_xl_project(QString filename) {
 }
 
 //---------------------------------------------------------------------------
-void Session::set_project_path(QString relative_path) {
-  project_->set_project_path(relative_path.toStdString());
-}
+void Session::set_project_path(QString relative_path) { project_->set_project_path(relative_path.toStdString()); }
 
 //---------------------------------------------------------------------------
 std::shared_ptr<Project> Session::get_project() { return project_; }
@@ -578,10 +574,14 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 
 //---------------------------------------------------------------------------
 bool Session::update_particles(std::vector<Particles> particles) {
+  int s = 0;
   for (int i = 0; i < particles.size(); i++) {
     std::shared_ptr<Shape> shape;
-    if (shapes_.size() > i) {
-      shape = shapes_[i];
+    while (s < shapes_.size() && shapes_[s]->is_excluded()) {
+      s++;
+    }
+    if (s < shapes_.size()) {
+      shape = shapes_[s];
     } else {
       shape = std::shared_ptr<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
@@ -590,7 +590,10 @@ bool Session::update_particles(std::vector<Particles> particles) {
       project_->get_subjects().push_back(subject);
       shapes_.push_back(shape);
     }
-    shape->set_particles(particles[i]);
+    if (!shape->is_fixed()) {  // only update if not fixed
+      shape->set_particles(particles[i]);
+    }
+    s++;
   }
 
   unsaved_particle_files_ = true;
@@ -603,8 +606,13 @@ int Session::get_num_particles() {
   if (shapes_.empty()) {
     return 0;
   }
-  auto particles = shapes_[0]->get_particles();
-  return particles.get_combined_local_particles().size() / 3;
+  for (auto shape : shapes_) {
+    auto particles = shape->get_particles();
+    if (!shape->is_excluded() && particles.get_combined_local_particles().size() > 0) {
+      return particles.get_combined_local_particles().size() / 3;
+    }
+  }
+  return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -682,6 +690,17 @@ bool Session::get_groomed_present() { return project_->get_groomed_present(); }
 ShapeList Session::get_shapes() { return shapes_; }
 
 //---------------------------------------------------------------------------
+ShapeList Session::get_non_excluded_shapes() {
+  ShapeList non_excluded_shapes;
+  for (auto shape : shapes_) {
+    if (!shape->is_excluded()) {
+      non_excluded_shapes.push_back(shape);
+    }
+  }
+  return non_excluded_shapes;
+}
+
+//---------------------------------------------------------------------------
 void Session::remove_shapes(QList<int> list) {
   std::sort(list.begin(), list.end(), std::greater<>());
   Q_FOREACH (int i, list) {
@@ -690,10 +709,10 @@ void Session::remove_shapes(QList<int> list) {
     shapes_.erase(shapes_.begin() + i);
   }
 
-  project_->get_subjects();
   renumber_shapes();
   project_->update_subjects();
   Q_EMIT data_changed();
+  Q_EMIT update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -708,12 +727,13 @@ bool Session::particles_present() {
     return false;
   }
 
-  if (shapes_.size() > 0) {
-    auto shape = shapes_[0];
-    return shape->get_global_correspondence_points().size() > 0;
+  for (auto shape : shapes_) {
+    if (shape->get_global_correspondence_points().size()) {
+      return true;
+    }
   }
 
-  return true;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -884,8 +904,11 @@ double Session::get_auto_glyph_size() { return auto_glyph_size_; }
 
 //---------------------------------------------------------------------------
 void Session::clear_particles() {
-  std::vector<Particles> particles(get_num_shapes());
-  update_particles(particles);
+  for (auto shape : shapes_) {
+    if (!shape->is_fixed()) {
+      shape->set_particles(Particles());
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -942,6 +965,33 @@ void Session::trigger_planes_changed() { Q_EMIT planes_changed(); }
 
 //---------------------------------------------------------------------------
 void Session::trigger_ffc_changed() { Q_EMIT ffc_changed(); }
+
+//---------------------------------------------------------------------------
+void Session::trigger_annotations_changed() { Q_EMIT annotations_changed(); }
+
+//---------------------------------------------------------------------------
+void Session::trigger_save() { Q_EMIT save(); }
+
+//---------------------------------------------------------------------------
+void Session::trigger_data_changed() { Q_EMIT data_changed(); }
+
+//---------------------------------------------------------------------------
+void Session::reload_particles() {
+  int num_subjects = project_->get_number_of_subjects();
+
+  auto subjects = project_->get_subjects();
+
+  for (int i = 0; i < num_subjects; i++) {
+    auto locals = subjects[i]->get_local_particle_filenames();
+    auto worlds = subjects[i]->get_world_particle_filenames();
+    shapes_[i]->set_subject(subjects[i]);
+
+    shapes_[i]->import_local_point_files(locals);
+    shapes_[i]->import_global_point_files(worlds);
+  }
+  Q_EMIT data_changed();
+  Q_EMIT reset_stats();
+}
 
 //---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }
@@ -1052,14 +1102,14 @@ bool Session::get_image_3d_mode() { return params_.get("image_3d_mode", false); 
 
 //---------------------------------------------------------------------------
 void Session::set_image_share_window_and_level(bool enabled) {
-  if (enabled == get_image_share_window_and_level() || is_loading()) {
+  if (enabled == get_image_share_brightness_contrast() || is_loading()) {
     return;
   }
   params_.set("image_share_window_and_level", enabled);
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_image_share_window_and_level() { return params_.get("image_share_window_and_level", true); }
+bool Session::get_image_share_brightness_contrast() { return params_.get("image_share_window_and_level", true); }
 
 //---------------------------------------------------------------------------
 void Session::set_image_sync_slice(bool enabled) {
@@ -1071,6 +1121,40 @@ void Session::set_image_sync_slice(bool enabled) {
 
 //---------------------------------------------------------------------------
 bool Session::get_image_sync_slice() { return params_.get("image_sync_slice", true); }
+
+//---------------------------------------------------------------------------
+void Session::set_image_thickness_feature(bool enabled) {
+  if (enabled == get_image_thickness_feature() || is_loading()) {
+    return;
+  }
+  params_.set("image_thickness_feature", enabled);
+  Q_EMIT image_slice_settings_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_image_thickness_feature() { return params_.get("image_thickness_feature", false); }
+
+//---------------------------------------------------------------------------
+void Session::set_feature_map(std::string feature_map) {
+  if (feature_map != get_feature_map() || is_loading()) {
+    params_.set("feature_map", feature_map);
+    Q_EMIT feature_map_changed();
+  }
+}
+
+//---------------------------------------------------------------------------
+std::string Session::get_feature_map() {
+  std::string feature_map = params_.get("feature_map", "");
+
+  // confirm that this is a valid feature map
+  auto feature_maps = get_project()->get_feature_names();
+  for (const std::string& feature : feature_maps) {
+    if (feature_map == feature) {
+      return feature_map;
+    }
+  }
+  return "";
+}
 
 //---------------------------------------------------------------------------
 bool Session::has_constraints() {
@@ -1164,7 +1248,6 @@ void Session::trigger_repaint() { Q_EMIT repaint(); }
 //---------------------------------------------------------------------------
 void Session::trigger_reinsert_shapes() { Q_EMIT reinsert_shapes(); }
 
-
 //---------------------------------------------------------------------------
 void Session::set_display_mode(DisplayMode mode) {
   if (!is_loading()) {
@@ -1176,6 +1259,53 @@ void Session::set_display_mode(DisplayMode mode) {
 //---------------------------------------------------------------------------
 DisplayMode Session::get_display_mode() {
   return string_to_display_mode(params_.get("view_state", display_mode_to_string(DisplayMode::Original)));
+}
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXd Session::get_all_particles() {
+  int num_particles = get_num_particles();
+  auto shapes = get_shapes();
+  int num_shapes = shapes.size();
+
+  Eigen::MatrixXd all_particles(num_shapes, 3 * num_particles);
+
+  for (int i = 0; i < shapes.size(); i++) {
+    Eigen::VectorXd particles = shapes[i]->get_global_correspondence_points();
+
+    // write as row into all_particles
+    all_particles.row(i) = particles.transpose();
+  }
+
+  return all_particles;
+}
+
+//---------------------------------------------------------------------------
+Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
+  int num_particles = get_num_particles();
+  auto shapes = get_shapes();
+  int num_shapes = shapes.size();
+
+  Eigen::MatrixXd all_scalars(num_shapes, 1 * num_particles);
+
+  for (int i = 0; i < shapes.size(); i++) {
+    shapes[i]->get_reconstructed_meshes(true);
+    shapes[i]->load_feature(DisplayMode::Reconstructed, target_feature);
+
+    Eigen::VectorXd scalars = shapes[i]->get_point_features(target_feature);
+
+    // check that the scalars are the right size
+    if (scalars.size() != num_particles) {
+      SW_ERROR("scalars.size() : {}", scalars.size());
+      SW_ERROR("num_particles : {}", num_particles);
+      SW_ERROR("Error: scalars size does not match number of particles");
+      return Eigen::MatrixXd();
+    }
+
+    // write into all_scalars
+    all_scalars.row(i) = scalars.transpose();
+  }
+
+  return all_scalars;
 }
 
 //---------------------------------------------------------------------------

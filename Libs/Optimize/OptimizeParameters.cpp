@@ -3,16 +3,17 @@
 #include <Image/Image.h>
 #include <Logging.h>
 #include <Mesh/MeshUtils.h>
+#include <Particles/ParticleFile.h>
 #include <Utils/StringUtils.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <functional>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Optimize.h"
 
 using namespace shapeworks;
+using namespace shapeworks::particles;
 
 namespace Keys {
 const std::string number_of_particles = "number_of_particles";
@@ -44,6 +45,12 @@ const std::string checkpointing_interval = "checkpointing_interval";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
 const std::string use_disentangled_ssm = "use_disentangled_ssm";
+const std::string field_attributes = "field_attributes";
+const std::string field_attribute_weights = "field_attribute_weights";
+const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
+const std::string geodesics_to_landmarks_weight = "geodesics_to_landmarks_weight";
+const std::string particle_format = "particle_format";
+const std::string geodesic_remesh_percent = "geodesic_remesh_percent";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -78,15 +85,26 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::checkpointing_interval,
                                          Keys::save_init_splits,
                                          Keys::keep_checkpoints,
-                                         Keys::use_disentangled_ssm
+                                         Keys::field_attributes,
+                                         Keys::field_attribute_weights,
+                                         Keys::use_geodesics_to_landmarks,
+                                         Keys::geodesics_to_landmarks_weight,
+                                         Keys::keep_checkpoints,
+                                         Keys::use_disentangled_ssm,
+                                         Keys::particle_format,
+                                         Keys::geodesic_remesh_percent};
 
-  };
+  std::vector<std::string> to_remove;
 
-  // check if params_ has any unknown keys
+  // check if params_ has any unknown keys, and remove
   for (auto& param : params_.get_map()) {
     if (std::find(all_params.begin(), all_params.end(), param.first) == all_params.end()) {
       SW_WARN("Unknown Optimization parameter: " + param.first);
+      to_remove.push_back(param.first);
     }
+  }
+  for (auto& param : to_remove) {
+    params_.remove_entry(param);
   }
 }
 
@@ -267,6 +285,76 @@ std::string OptimizeParameters::get_output_prefix() {
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_points() {
+  int domains_per_shape = project_->get_number_of_domains_per_subject();
+
+  auto subjects = project_->get_subjects();
+  std::vector<std::vector<itk::Point<double>>> domain_means;
+
+  for (int d = 0; d < domains_per_shape; d++) {
+    std::vector<itk::Point<double>> domain_sum;
+    int count = 0;
+    for (auto s : subjects) {
+      if (s->is_fixed()) {
+        count++;
+        // read the world points that are in the shared coordinate space
+        auto filename = s->get_world_particle_filenames()[d];
+        auto particles = read_particles_as_vector(filename);
+        if (domain_sum.size() == 0) {
+          domain_sum = particles;
+        } else {
+          for (int p = 0; p < particles.size(); p++) {
+            domain_sum[p] += particles[p];
+          }
+        }
+      }
+    }
+    // now divide to find mean
+    for (int p = 0; p < domain_sum.size(); p++) {
+      domain_sum[p] /= count;
+    }
+
+    domain_means.push_back(domain_sum);
+  }
+
+  std::vector<std::vector<itk::Point<double>>> initial_points;
+  for (auto s : subjects) {
+    for (int d = 0; d < domains_per_shape; d++) {
+      if (s->is_excluded()) {
+        continue;
+      }
+      if (s->is_fixed()) {
+        auto filename = s->get_local_particle_filenames()[d];
+        auto particles = read_particles_as_vector(filename);
+        initial_points.push_back(particles);
+      } else {
+        // get alignment transform and invert it
+        auto transforms = s->get_groomed_transforms();
+
+        // create identify transform in case there are no groomed transforms
+        auto transform = vtkSmartPointer<vtkTransform>::New();
+        if (d < transforms.size()) {
+          transform = ProjectUtils::convert_transform(transforms[d]);
+          transform->Inverse();
+        }
+
+        // transform each of the domain mean positions back to the local space of this new shape
+        std::vector<itk::Point<double>> points;
+        for (int i = 0; i < domain_means[d].size(); i++) {
+          itk::Point<double> point;
+          transform->TransformPoint(domain_means[d][i].GetDataPointer(), point.GetDataPointer());
+          points.push_back(point);
+        }
+
+        initial_points.push_back(points);
+      }
+    }
+  }
+
+  return initial_points;
+}
+
+//---------------------------------------------------------------------------
 int OptimizeParameters::get_geodesic_cache_multiplier() { return params_.get(Keys::geodesic_cache_multiplier, 0); }
 
 //---------------------------------------------------------------------------
@@ -335,10 +423,12 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetOptimizationIterations(get_optimization_iterations());
   optimize->SetGeodesicsEnabled(get_use_geodesic_distance());
   optimize->SetGeodesicsCacheSizeMultiplier(get_geodesic_cache_multiplier());
+  optimize->SetGeodesicsRemeshPercent(get_geodesic_remesh_percent());
   optimize->SetNarrowBand(get_narrow_band());
   optimize->SetOutputDir(get_output_prefix());
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
   optimize->SetUseDisentangledSpatiotemporalSSM(get_use_disentangled_ssm());
+  optimize->set_particle_format(get_particle_format());
 
   // TODO Remove this once Studio has controls for shared boundary
   optimize->SetSharedBoundaryEnabled(true);
@@ -348,8 +438,21 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   std::vector<bool> use_xyz;
   std::vector<double> attr_scales;
 
-  // xyz forced
+  auto field_attributes = get_field_attributes();
+  auto field_weights = get_field_attribute_weights();
+
+  if (get_use_geodesics_to_landmarks()) {
+    // for each landmark, add to field attributes
+    auto landmarks = project_->get_landmarks(0);
+    // TODO: per domain???
+    for (int i = 0; i < landmarks.size(); i++) {
+      field_attributes.push_back("geodesic_distance_to_" + std::to_string(i));
+      field_weights.push_back(get_geodesic_to_landmarks_weight());
+    }
+  }
+
   for (int i = 0; i < domains_per_shape; i++) {
+    // xyz forced
     use_xyz.push_back(1);
     attr_scales.push_back(1);
     attr_scales.push_back(1);
@@ -366,16 +469,34 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
   }
 
-  optimize->SetUseNormals(use_normals);
-  optimize->SetUseXYZ(use_xyz);
-  optimize->SetUseMeshBasedAttributes(normals_enabled);
-  optimize->SetAttributeScales(attr_scales);
-
   std::vector<int> attributes_per_domain;
   for (int i = 0; i < domains_per_shape; i++) {
-    attributes_per_domain.push_back(0);
+    attributes_per_domain.push_back(field_attributes.size());
   }
+
+  // check that the number of weights matches the number of attributes
+  if (field_weights.size() != field_attributes.size()) {
+    throw std::runtime_error("The number of field attribute weights does not match the number of field attributes");
+  }
+
+  for (int j = 0; j < field_attributes.size(); j++) {
+    SW_LOG("Using scalar field attribute: {} with weight {}", field_attributes[j], field_weights[j]);
+  }
+
+  for (int i = 0; i < domains_per_shape; i++) {
+    for (int j = 0; j < field_attributes.size(); j++) {
+      attr_scales.push_back(field_weights[j]);
+    }
+  }
+
   optimize->SetAttributesPerDomain(attributes_per_domain);
+  bool use_extra_attributes = normals_enabled || field_attributes.size() > 0;
+
+  optimize->SetUseNormals(use_normals);
+  optimize->SetUseXYZ(use_xyz);
+  optimize->SetUseMeshBasedAttributes(use_extra_attributes);
+  optimize->SetAttributeScales(attr_scales);
+  optimize->SetFieldAttributes(field_attributes);
 
   int procrustes_interval = 0;
   if (get_use_procrustes()) {
@@ -392,15 +513,39 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetUseShapeStatisticsAfter(multiscale_particles);
 
   // should add the images last
-  auto subjects = project_->get_subjects();
+  auto subjects = project_->get_non_excluded_subjects();
 
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to optimize");
   }
 
+  if (project_->get_fixed_subjects_present()) {
+    int idx = 0;
+    std::vector<int> fixed_domains;
+
+    for (auto s : subjects) {
+      if (s->is_fixed()) {
+        for (int i = 0; i < domains_per_shape; i++) {
+          fixed_domains.push_back(idx++);
+        }
+      } else {
+        idx += domains_per_shape;
+      }
+    }
+
+    optimize->SetFixedDomains(fixed_domains);
+    if (!get_use_landmarks()) {  // can't use both initial points and landmarks
+      SW_DEBUG("Setting Initial Points");
+      optimize->SetInitialPoints(get_initial_points());
+    }
+  }
+
   for (auto s : subjects) {
     if (abort_load_) {
       return false;
+    }
+    if (s->is_excluded()) {
+      continue;
     }
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
@@ -416,6 +561,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
     }
     if (!point_files.empty()) {
+      SW_DEBUG("Setting Initial Points as landmarks");
       optimize->SetPointFiles(point_files);
     }
   }
@@ -425,13 +571,13 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     int count = 0;
     for (const auto& subject : subjects) {
       for (int i = 0; i < domains_per_shape; i++) {  // need one flag for each domain
-        if (is_subject_fixed(subject)) {
+        if (subject->is_fixed()) {
           domain_flags.push_back(count);
         }
         count++;
       }
     }
-    optimize->SetDomainFlags(domain_flags);
+    optimize->SetFixedDomains(domain_flags);
   }
 
   // add constraints
@@ -439,9 +585,13 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   std::vector<Constraints> constraints;
   for (auto& s : subjects) {
     auto files = s->get_constraints_filenames();
+    if (s->is_excluded()) {
+      continue;
+    }
     for (int f = 0; f < files.size(); f++) {
       auto file = files[f];
       Constraints constraint;
+      SW_DEBUG("reading constraint: {}", file);
       constraint.read(file);
       constraints.push_back(constraint);
       auto domain_type = project_->get_groomed_domain_types()[f];
@@ -483,6 +633,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     if (abort_load_) {
       return false;
     }
+
+    if (s->is_excluded()) {
+      continue;
+    }
+
     auto files = s->get_groomed_filenames();
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");
@@ -493,6 +648,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
     for (int i = 0; i < files.size(); i++) {
       auto filename = files[i];
+
+      if (!ShapeWorksUtils::file_exists(filename)) {
+        throw std::invalid_argument("Error, file does not exist: " + filename);
+      }
+
       auto domain_type = project_->get_groomed_domain_types()[i];
       filenames.push_back(filename);
 
@@ -501,11 +661,37 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         if (domain_count < constraints.size()) {
           Constraints constraint = constraints[domain_count];
           constraint.clipMesh(mesh);
+          auto poly_data = mesh.getVTKMesh();
+          if (poly_data->GetNumberOfCells() == 0) {
+            throw std::invalid_argument("Mesh has zero cells after constraint clipping: " + filename);
+          }
+        }
+
+        if (get_use_geodesics_to_landmarks()) {
+          auto filenames = s->get_landmarks_filenames();
+          Eigen::VectorXd points;
+          if (!ParticleSystemEvaluation::ReadParticleFile(filenames[0], points)) {
+            SW_ERROR("Unable to read landmark file: {}", filenames[0]);
+          }
+
+          // convert points to landmarks
+          std::vector<Point3> landmarks;
+          for (int i = 0; i < points.size() / 3; ++i) {
+            Point3 p;
+            p[0] = points(3 * i);
+            p[1] = points(3 * i + 1);
+            p[2] = points(3 * i + 2);
+            landmarks.push_back(p);
+          }
+          mesh.computeLandmarkGeodesics(landmarks);
         }
 
         auto poly_data = mesh.getVTKMesh();
 
         if (poly_data) {
+          if (poly_data->GetNumberOfCells() == 0) {
+            throw std::invalid_argument("Error, mesh had zero cells: " + filename);
+          }
           // TODO This is a HACK for detecting contours
           if (poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
             optimize->AddContour(poly_data);
@@ -525,10 +711,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         }
       } else {
         Image image(filename);
-        if (is_subject_fixed(s)) {
-          optimize->AddImage(nullptr);
+        if (s->is_fixed()) {
+          optimize->AddImage(nullptr, filename);
         } else {
-          optimize->AddImage(image);
+          optimize->AddImage(image, filename);
         }
       }
 
@@ -555,9 +741,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
       auto name = StringUtils::getBaseFilenameWithoutExtension(filename);
 
+      auto extension = get_particle_format();
       auto prefix = get_output_prefix();
-      local_particle_filenames.push_back(prefix + name + "_local.particles");
-      world_particle_filenames.push_back(prefix + name + "_world.particles");
+      local_particle_filenames.push_back(prefix + name + "_local." + extension);
+      world_particle_filenames.push_back(prefix + name + "_world." + extension);
     }
     s->set_local_particle_filenames(local_particle_filenames);
     s->set_world_particle_filenames(world_particle_filenames);
@@ -606,5 +793,60 @@ void OptimizeParameters::set_save_init_splits(bool enabled) { params_.set(Keys::
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_keep_checkpoints() { return params_.get(Keys::keep_checkpoints, false); }
+
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_keep_checkpoints(bool enabled) { params_.set(Keys::keep_checkpoints, enabled); }
+
+//---------------------------------------------------------------------------
+std::vector<std::string> OptimizeParameters::get_field_attributes() {
+  return params_.get(Keys::field_attributes, std::vector<std::string>());
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_field_attributes(std::vector<std::string> attributes) {
+  params_.set(Keys::field_attributes, attributes);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> OptimizeParameters::get_field_attribute_weights() {
+  return params_.get(Keys::field_attribute_weights, std::vector<double>());
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_field_attribute_weights(std::vector<double> weights) {
+  params_.set(Keys::field_attribute_weights, weights);
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_geodesics_to_landmarks() {
+  return params_.get(Keys::use_geodesics_to_landmarks, false);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_geodesics_to_landmarks(bool enabled) {
+  params_.set(Keys::use_geodesics_to_landmarks, enabled);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_geodesic_to_landmarks_weight() {
+  return params_.get(Keys::geodesics_to_landmarks_weight, 1.0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_geodesic_to_landmarks_weight(double value) {
+  params_.set(Keys::geodesics_to_landmarks_weight, value);
+}
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_particle_format() { return params_.get(Keys::particle_format, "particles"); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_particle_format(std::string format) { params_.set(Keys::particle_format, format); }
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_geodesic_remesh_percent() { return params_.get(Keys::geodesic_remesh_percent, 100); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_geodesic_remesh_percent(double value) {
+  params_.set(Keys::geodesic_remesh_percent, value);
+}

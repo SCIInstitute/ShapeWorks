@@ -52,6 +52,7 @@ void Visualizer::set_session(SessionHandle session) {
           &Visualizer::handle_image_slice_settings_changed);
   connect(session_.data(), &Session::ffc_paint_mode_changed, this, &Visualizer::update_ffc_mode);
   connect(session_.data(), &Session::repaint, this, &Visualizer::redraw);
+  connect(session_.data(), &Session::annotations_changed, this, &Visualizer::update_annotations);
 }
 
 //-----------------------------------------------------------------------------
@@ -256,9 +257,12 @@ void Visualizer::handle_image_slice_settings_changed() {
 
   if (lightbox_) {
     Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) {
-      v->update_image_volume();
+      v->update_image_volume(true);
+      v->update_actors();
+      v->reset_camera();
     }
   }
+  reset_camera();
   lightbox_->redraw();
 }
 
@@ -301,20 +305,32 @@ void Visualizer::update_lut() {
       }
     }
   } else {
+    glyph_lut_->ForceBuild();
     if (preferences_.get_particle_colors() == ParticleColors::ParticleColorsType::Distinct) {
       auto lut = ParticleColors::construct_distinct();
+
+      glyph_lut_->ForceBuild();
 
       // normal particle coloring mode
       for (int i = 0; i < num_points; i++) {
         glyph_lut_->SetTableValue(i, lut->GetTableValue(i % lut->GetNumberOfTableValues()));
       }
-    } else {
-      glyph_lut_->ForceBuild();
     }
   }
 
   glyph_lut_->Modified();
+  session_->set_glyph_lut(glyph_lut_);
   lightbox_->set_glyph_lut(glyph_lut_);
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_annotations() {
+  if (lightbox_) {
+    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) {
+      v->update_annotations();
+    }
+  }
+  lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------

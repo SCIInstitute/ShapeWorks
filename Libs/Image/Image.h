@@ -144,6 +144,9 @@ class Image {
   Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
                         const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
+  /// applies the given transformation to the image by using resampling filter with reference image
+  Image &applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
+
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary
   /// image
   Image& extractLabel(const PixelType label = 1.0);
@@ -212,6 +215,9 @@ class Image {
 
   /// physical spacing of the image
   Vector spacing() const { return itk_image_->GetSpacing(); }
+
+  /// minimum physical spacing of the image
+  double get_minimum_spacing() const;
 
   /// physical coordinates of image origin
   Point3 origin() const { return itk_image_->GetOrigin(); }
@@ -282,7 +288,9 @@ class Image {
   Image::PixelType evaluate(Point p);
 
   //! Return supported file types
-  static std::vector<std::string> getSupportedTypes() { return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"}; }
+  static std::vector<std::string> getSupportedTypes() {
+    return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
+  }
 
  private:
   friend struct SharedCommandData;

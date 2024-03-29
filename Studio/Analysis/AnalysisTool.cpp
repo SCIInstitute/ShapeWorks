@@ -20,6 +20,9 @@
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
 
+#include "ParticleAreaPanel.h"
+#include "ShapeScalarPanel.h"
+
 namespace shapeworks {
 
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
@@ -29,9 +32,44 @@ const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
 //---------------------------------------------------------------------------
+//! Helper to extract x,y,z from x,y,z,scalar
+static Eigen::VectorXd extract_shape_only(Eigen::VectorXd values) {
+  // need to drop every 4th value
+  Eigen::VectorXd particles(values.size() - values.size() / 4);
+  int j = 0;
+  for (int i = 0; i < values.size(); i++) {
+    if (i % 4 != 3) {
+      particles[j++] = values[i];
+    }
+  }
+  return particles;
+}
+
+//---------------------------------------------------------------------------
+//! Helper to extract scalar from x,y,z,scalar
+static Eigen::VectorXd extract_scalar_only(Eigen::VectorXd values) {
+  Eigen::VectorXd scalars(values.size() / 4);
+  int j = 0;
+  for (int i = 0; i < values.size(); i++) {
+    if (i % 4 == 3) {
+      scalars[j++] = values[i];
+    }
+  }
+  return scalars;
+}
+
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
+
+  particle_area_panel_ = new ParticleAreaPanel(this);
+  layout()->addWidget(particle_area_panel_);
+
+  shape_scalar_panel_ = new ShapeScalarPanel(this);
+  layout()->addWidget(shape_scalar_panel_);
 
   auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
   layout()->addItem(spacer);
@@ -67,6 +105,15 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
   connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
+
+  // shape/scalar
+  connect(ui_->pca_scalar_only, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_scalar_shape_only, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_shape_and_scalar, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_scalar_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_predict_scalar, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
+  connect(ui_->pca_predict_shape, &QCheckBox::clicked, this, &AnalysisTool::change_pca_analysis_type);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -114,6 +161,23 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->group_analysis_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::group_analysis_combo_changed);
+
+  // when one is checked, turn the other off, connect these first
+  connect(ui_->show_difference_to_predicted_scalar, &QPushButton::clicked, this, [this]() {
+    if (ui_->show_difference_to_predicted_scalar->isChecked()) {
+      ui_->show_predicted_scalar->setChecked(false);
+    }
+  });
+  connect(ui_->show_predicted_scalar, &QPushButton::clicked, this, [this]() {
+    if (ui_->show_predicted_scalar->isChecked()) {
+      ui_->show_difference_to_predicted_scalar->setChecked(false);
+    }
+  });
+
+  connect(ui_->show_difference_to_predicted_scalar, &QPushButton::clicked, this,
+          &AnalysisTool::handle_samples_predicted_scalar_options);
+  connect(ui_->show_predicted_scalar, &QPushButton::clicked, this,
+          &AnalysisTool::handle_samples_predicted_scalar_options);
 }
 
 //---------------------------------------------------------------------------
@@ -139,18 +203,18 @@ std::string AnalysisTool::get_analysis_mode() {
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::get_group_difference_mode() { return ui_->difference_button->isChecked(); }
+bool AnalysisTool::get_group_difference_mode() { return groups_active() && ui_->difference_button->isChecked(); }
 
 //---------------------------------------------------------------------------
 std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors() {
   std::vector<Shape::Point> vecs;
 
-  auto num_points = stats_.Mean().size() / 3;
+  auto num_points = stats_.get_mean().size() / 3;
   for (unsigned int i = 0; i < num_points; i++) {
     Shape::Point tmp;
-    tmp.x = stats_.Group2Mean()[i * 3] - stats_.Group1Mean()[i * 3];
-    tmp.y = stats_.Group2Mean()[i * 3 + 1] - stats_.Group1Mean()[i * 3 + 1];
-    tmp.z = stats_.Group2Mean()[i * 3 + 2] - stats_.Group1Mean()[i * 3 + 2];
+    tmp.x = stats_.get_group2_mean()[i * 3] - stats_.get_group1_mean()[i * 3];
+    tmp.y = stats_.get_group2_mean()[i * 3 + 1] - stats_.get_group1_mean()[i * 3 + 1];
+    tmp.z = stats_.get_group2_mean()[i * 3 + 2] - stats_.get_group1_mean()[i * 3 + 2];
     vecs.push_back(tmp);
   }
   return vecs;
@@ -222,6 +286,9 @@ AnalysisTool::~AnalysisTool() {}
 //---------------------------------------------------------------------------
 void AnalysisTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+  particle_area_panel_->set_session(session);
+  shape_scalar_panel_->set_session(session);
+
   // reset to original
   ui_->mesh_warping_radio_button->setChecked(true);
   ui_->difference_button->setChecked(false);
@@ -229,6 +296,9 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
   update_difference_particles();
+
+  ui_->show_predicted_scalar->setChecked(false);
+  ui_->show_difference_to_predicted_scalar->setChecked(false);
 
   connect(ui_->show_good_bad, &QCheckBox::toggled, session_.data(), &Session::set_show_good_bad_particles);
 }
@@ -307,6 +377,8 @@ void AnalysisTool::handle_analysis_options() {
     pca_animate_timer_.stop();
   }
 
+  update_difference_particles();
+
   Q_EMIT update_view();
 }
 
@@ -315,7 +387,7 @@ void AnalysisTool::handle_median() {
   if (!compute_stats()) {
     return;
   }
-  ui_->sampleSpinBox->setValue(stats_.ComputeMedianShape(-32));  //-32 = both groups
+  ui_->sampleSpinBox->setValue(stats_.compute_median_shape(-32));  //-32 = both groups
   Q_EMIT update_view();
 }
 
@@ -419,13 +491,14 @@ bool AnalysisTool::compute_stats() {
     return true;
   }
 
-  if (session_->get_shapes().size() == 0 || !session_->particles_present()) {
+  if (session_->get_non_excluded_shapes().size() == 0 || !session_->particles_present()) {
     return false;
   }
 
+  SW_DEBUG("Compute Stats!");
   compute_reconstructed_domain_transforms();
 
-  ui_->pcaModeSpinBox->setMaximum(std::max<double>(1, session_->get_shapes().size() - 1));
+  ui_->pcaModeSpinBox->setMaximum(std::max<double>(1, session_->get_non_excluded_shapes().size() - 1));
 
   std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
@@ -440,35 +513,67 @@ bool AnalysisTool::compute_stats() {
   group2_list_.clear();
 
   auto domain_names = session_->get_project()->get_domain_names();
-  unsigned int dps = domain_names.size();
-  number_of_particles_ar.resize(dps);
-  bool flag_get_num_part = false;
-  for (auto& shape : session_->get_shapes()) {
+  unsigned int domains_per_shape = domain_names.size();
+  number_of_particles_array_.resize(domains_per_shape);
+
+  for (auto& shape : session_->get_non_excluded_shapes()) {
+    Eigen::VectorXd particles;
+    stats_.set_num_values_per_particle(3);
+    if (pca_shape_only_mode()) {
+      particles = shape->get_global_correspondence_points();
+    } else if (pca_scalar_only_mode()) {
+      stats_.set_num_values_per_particle(1);
+      shape->get_reconstructed_meshes(true);
+      std::string target_feature = ui_->pca_scalar_combo->currentText().toStdString();
+      shape->load_feature(DisplayMode::Reconstructed, target_feature);
+      particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
+    } else {
+      stats_.set_num_values_per_particle(4);
+      std::string target_feature = ui_->pca_scalar_combo->currentText().toStdString();
+      auto positions = shape->get_global_correspondence_points();
+      shape->get_reconstructed_meshes(true);
+      shape->load_feature(DisplayMode::Reconstructed, target_feature);
+      auto scalars = particles = shape->get_point_features(target_feature);
+      // combine positions and scalars, interleave 3 positions for every scalar
+      particles.resize(positions.size() + scalars.size());
+      int num_particles = positions.size() / 3;
+      for (int i = 0; i < num_particles; i++) {
+        particles[i * 4] = positions[i * 3];
+        particles[i * 4 + 1] = positions[i * 3 + 1];
+        particles[i * 4 + 2] = positions[i * 3 + 2];
+      }
+      for (int i = 0; i < scalars.size(); i++) {
+        particles[i * 4 + 3] = scalars[i];
+      }
+    }
+
+    if (particles.size() == 0) {
+      continue;  // skip any that don't have particles
+    }
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {
-        points.push_back(shape->get_global_correspondence_points());
+        points.push_back(particles);
         group_ids.push_back(1);
         group1_list_.push_back(shape);
       } else if (value == right_group) {
-        points.push_back(shape->get_global_correspondence_points());
+        points.push_back(particles);
         group_ids.push_back(2);
         group2_list_.push_back(shape);
       } else {
         // we don't include it
       }
     } else {
-      points.push_back(shape->get_global_correspondence_points());
+      points.push_back(particles);
       group_ids.push_back(1);
     }
-    if (!flag_get_num_part) {
-      auto local_particles_ar = shape->get_particles().get_local_particles();
-      if (local_particles_ar.size() != dps) {
-        SW_ERROR("Inconsistency in number of particles size");
-      }
-      for (unsigned int i = 0; i < dps; i++) {
-        number_of_particles_ar[i] = local_particles_ar[i].size() / 3;
-      }
+
+    auto local_particles = shape->get_particles().get_local_particles();
+    if (local_particles.size() != domains_per_shape) {
+      SW_ERROR("Inconsistency in number of particles size");
+    }
+    for (unsigned int i = 0; i < domains_per_shape; i++) {
+      number_of_particles_array_[i] = local_particles[i].size() / 3;
     }
   }
 
@@ -485,16 +590,16 @@ bool AnalysisTool::compute_stats() {
     }
   }
 
-  stats_.ImportPoints(points, group_ids);
+  stats_.import_points(points, group_ids);
   // MCA needs to know number of particles per domain/object
-  stats_.SetNumberOfParticlesArray(number_of_particles_ar);
-  if (dps > 1) {
-    stats_.ComputeMultiLevelAnalysisStatistics(points, dps);
+  stats_.set_num_particles_per_domain(number_of_particles_array_);
+  if (domains_per_shape > 1) {
+    stats_.compute_multi_level_analysis_statistics(points, domains_per_shape);
   }
-  stats_.ComputeModes();
-  if (dps > 1) {
-    stats_.ComputeRelPoseModesForMca();
-    stats_.ComputeShapeDevModesForMca();
+  stats_.compute_modes();
+  if (domains_per_shape > 1) {
+    stats_.compute_relative_pose_modes_for_mca();
+    stats_.compute_shape_dev_modes_for_mca();
   }
   update_difference_particles();
   if (ui_->metrics_open_button->isChecked()) {
@@ -502,10 +607,14 @@ bool AnalysisTool::compute_stats() {
   }
 
   stats_ready_ = true;
+
+  /*
   std::vector<double> vals;
   for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
     vals.push_back(stats_.Eigenvalues()[i]);
   }
+*/
+
   ////  Uncomment this to write out long format sample data
   /*
   if (groups_enabled) {
@@ -519,7 +628,7 @@ bool AnalysisTool::compute_stats() {
     file << "\n";
 
     int shape_id = 0;
-    Q_FOREACH (ShapeHandle shape, session_->get_shapes()) {
+    Q_FOREACH (ShapeHandle shape, session_->get_non_excluded_shapes()) {
       auto group = shape->get_subject()->get_group_value(group_set);
       auto particles = shape->get_particles();
       auto points = particles.get_world_points(0);
@@ -549,45 +658,49 @@ Particles AnalysisTool::get_mean_shape_points() {
     return Particles();
   }
 
+  if (ui_->pca_scalar_only->isChecked()) {
+    return convert_from_combined(construct_mean_shape());
+  }
+
   if (ui_->group1_button->isChecked() || ui_->difference_button->isChecked()) {
-    return convert_from_combined(stats_.Group1Mean());
+    return convert_from_combined(stats_.get_group1_mean());
   } else if (ui_->group2_button->isChecked()) {
-    return convert_from_combined(stats_.Group2Mean());
+    return convert_from_combined(stats_.get_group2_mean());
   } else if (ui_->mean_button->isChecked()) {
-    return convert_from_combined(stats_.Mean());
+    return convert_from_combined(stats_.get_mean());
   }
 
   if (groups_active()) {
     auto group_ratio = get_group_ratio();
-    temp_shape_ = stats_.Group1Mean() + (stats_.GroupDifference() * group_ratio);
+    temp_shape_ = stats_.get_group1_mean() + (stats_.get_group_difference() * group_ratio);
     return convert_from_combined(temp_shape_);
   }
 
-  return convert_from_combined(stats_.Mean());
+  return convert_from_combined(stats_.get_mean());
 }
 
 //-----------------------------------------------------------------------------
 Particles AnalysisTool::get_shape_points(int mode, double value) {
-  if (!compute_stats() || stats_.Eigenvectors().size() <= 1) {
+  if (!compute_stats() || stats_.get_eigen_vectors().size() <= 1) {
     return Particles();
   }
-  if (mode + 2 > stats_.Eigenvalues().size()) {
-    mode = stats_.Eigenvalues().size() - 2;
+  if (mode + 2 > stats_.get_eigen_values().size()) {
+    mode = stats_.get_eigen_values().size() - 2;
   }
 
-  unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
-  m = std::clamp<unsigned int>(m, 0, stats_.Eigenvectors().cols() - 1);
+  unsigned int m = stats_.get_eigen_vectors().cols() - (mode + 1);
+  m = std::clamp<unsigned int>(m, 0, stats_.get_eigen_vectors().cols() - 1);
 
-  Eigen::VectorXd e = stats_.Eigenvectors().col(m);
+  Eigen::VectorXd e = stats_.get_eigen_vectors().col(m);
 
-  double lambda = sqrt(stats_.Eigenvalues()[m]);
+  double lambda = sqrt(stats_.get_eigen_values()[m]);
 
-  pca_labels_changed(QString::number(value, 'g', 2), QString::number(stats_.Eigenvalues()[m]),
+  pca_labels_changed(QString::number(value, 'g', 2), QString::number(stats_.get_eigen_values()[m]),
                      QString::number(value * lambda));
 
   std::vector<double> vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(stats_.Eigenvalues()[i]);
+  for (int i = stats_.get_eigen_values().size() - 1; i > 0; i--) {
+    vals.push_back(stats_.get_eigen_values()[i]);
   }
   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
   double cumulation = 0;
@@ -602,9 +715,24 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     ui_->cumulative_explained_variance->setText("");
   }
 
-  temp_shape_ = stats_.Mean() + (e * (value * lambda));
+  temp_shape_ = stats_.get_mean() + (e * (value * lambda));
 
-  return convert_from_combined(temp_shape_);
+  auto positions = temp_shape_;
+
+  computed_scalars_ = Eigen::VectorXd();
+  if (pca_shape_plus_scalar_mode()) {
+    positions = extract_shape_only(temp_shape_);
+    computed_scalars_ = extract_scalar_only(temp_shape_);
+  } else if (pca_scalar_only_mode()) {
+    computed_scalars_ = temp_shape_;
+    if (ui_->pca_predict_shape->isChecked()) {
+      positions = ShapeScalarJob::predict_shape(session_, QString::fromStdString(feature_map_), computed_scalars_);
+    } else {
+      positions = construct_mean_shape();
+    }
+  }
+
+  return convert_from_combined(positions);
 }
 
 //---------------------------------------------------------------------------
@@ -613,11 +741,11 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, Mca
   Eigen::MatrixXd eigenvectors;
   std::vector<double> eigenvalues;
   if (level == McaMode::Within) {
-    eigenvectors = stats_.EigenvectorsShapeDev();
-    eigenvalues = stats_.EigenvaluesShapeDev();
+    eigenvectors = stats_.get_eigenvectors_shape_dev();
+    eigenvalues = stats_.get_eigenvalues_shape_dev();
   } else if (level == McaMode::Between) {
-    eigenvectors = stats_.EigenvectorsRelPose();
-    eigenvalues = stats_.EigenvaluesRelPose();
+    eigenvectors = stats_.get_eigenvectors_rel_pos();
+    eigenvalues = stats_.get_eigenvalues_rel_pose();
   }
   if (!compute_stats() || eigenvectors.size() <= 1) {
     return Particles();
@@ -646,20 +774,20 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, Mca
     ui_->cumulative_explained_variance->setText("");
   }
 
-  unsigned int D = stats_.NumberOfObjects();
-  unsigned int sz = stats_.Mean().size();
+  unsigned int D = stats_.get_domains_per_shape();
+  unsigned int sz = stats_.get_mean().size();
   if (level == McaMode::Within) {
     // Morphological Variations
-    temp_shape_mca = stats_.Mean() + (e * (value * lambda));
+    temp_shape_mca = stats_.get_mean() + (e * (value * lambda));
   } else if (level == McaMode::Between) {
     // Relative Pose Variations
     Eigen::VectorXd e_between;
     e_between.resize(sz);
     for (unsigned int i = 0; i < D; i++) {
-      int num_points = number_of_particles_ar[i];
+      int num_points = number_of_particles_array_[i];
       int row = 0;
       for (int idx = 0; idx < i; idx++) {
-        row += (3 * number_of_particles_ar[idx]);
+        row += (3 * number_of_particles_array_[idx]);
       }
       for (unsigned int j = 0; j < num_points; j++) {
         e_between(row + (j * 3)) = e(i * 3);
@@ -667,7 +795,7 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, Mca
         e_between(row + (j * 3) + 2) = e(i * 3 + 2);
       }
     }
-    temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
+    temp_shape_mca = stats_.get_mean() + (e_between * (value * lambda));
   }
   return convert_from_combined(temp_shape_mca);
 }
@@ -814,6 +942,15 @@ AnalysisTool::GroupAnalysisType AnalysisTool::get_group_analysis_type() {
 }
 
 //---------------------------------------------------------------------------
+bool AnalysisTool::pca_scalar_only_mode() { return ui_->pca_scalar_only->isChecked(); }
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::pca_shape_plus_scalar_mode() { return ui_->pca_shape_and_scalar->isChecked(); }
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::pca_shape_only_mode() { return ui_->pca_scalar_shape_only->isChecked(); }
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_tabWidget_currentChanged() { update_analysis_mode(); }
 
 //---------------------------------------------------------------------------
@@ -867,6 +1004,8 @@ void AnalysisTool::handle_pca_timer() {
   }
 
   ui_->pcaSlider->setValue(value);
+
+  QApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
@@ -960,9 +1099,25 @@ void AnalysisTool::reset_stats() {
   ui_->group_analysis_combo->setCurrentIndex(0);
   group_analysis_combo_changed();
 
+  particle_area_panel_->reset();
+  shape_scalar_panel_->reset();
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
+
+  ui_->pca_scalar_combo->clear();
+  if (session_) {
+    for (const auto& feature : session_->get_project()->get_feature_names()) {
+      ui_->pca_scalar_combo->addItem(QString::fromStdString(feature));
+    }
+  }
+  bool has_scalars = ui_->pca_scalar_combo->count() > 0;
+  if (!has_scalars) {
+    ui_->show_difference_to_predicted_scalar->setChecked(false);
+  }
+  ui_->show_difference_to_predicted_scalar->setEnabled(has_scalars);
+
+  ui_->shape_scalar_groupbox->setVisible(ui_->pca_scalar_combo->count() > 0);
 }
 
 //---------------------------------------------------------------------------
@@ -1046,12 +1201,18 @@ ShapeHandle AnalysisTool::get_mean_shape() {
     }
   }
 
+  if (particle_area_panel_->get_display_particle_area()) {
+    shape->set_point_features(particle_area_panel_->get_computed_value_name(),
+                              particle_area_panel_->get_computed_values());
+    shape->set_override_feature(particle_area_panel_->get_computed_value_name());
+  }
+
   int num_points = shape_points.get_combined_global_particles().size() / 3;
-  std::vector<Eigen::VectorXf> values;
+  std::vector<Eigen::VectorXd> values;
 
   if (feature_map_ != "") {
-    auto shapes = session_->get_shapes();
-    Eigen::VectorXf sum(num_points);
+    auto shapes = session_->get_non_excluded_shapes();
+    Eigen::VectorXd sum(num_points);
     sum.setZero();
 
     bool ready = true;
@@ -1067,15 +1228,15 @@ ShapeHandle AnalysisTool::get_mean_shape() {
           sum = sum + value;
         }
       }
-      Eigen::VectorXf mean = sum / values.size();
+      Eigen::VectorXd mean = sum / values.size();
 
       if (ready) {
         shape->set_point_features(feature_map_, mean);
       }
     } else {
-      Eigen::VectorXf sum_left(num_points);
+      Eigen::VectorXd sum_left(num_points);
       sum_left.setZero();
-      Eigen::VectorXf sum_right(num_points);
+      Eigen::VectorXd sum_right(num_points);
       sum_right.setZero();
 
       Q_FOREACH (auto shape, group1_list_) {
@@ -1087,7 +1248,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
           sum_left = sum_left + value;
         }
       }
-      Eigen::VectorXf left_mean = sum_left / static_cast<double>(group1_list_.size());
+      Eigen::VectorXd left_mean = sum_left / static_cast<double>(group1_list_.size());
 
       Q_FOREACH (auto shape, group2_list_) {
         shape->load_feature(DisplayMode::Reconstructed, feature_map_);
@@ -1098,7 +1259,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
           sum_right = sum_right + value;
         }
       }
-      Eigen::VectorXf right_mean = sum_right / static_cast<double>(group2_list_.size());
+      Eigen::VectorXd right_mean = sum_right / static_cast<double>(group2_list_.size());
 
       if (ready) {
         double group_ratio = get_group_ratio();
@@ -1118,6 +1279,16 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   shape->set_particles(points);
   shape->get_reconstructed_meshes();
   shape->set_reconstruction_transforms(reconstruction_transforms_);
+
+  if (feature_map_ != "") {
+    if (ui_->pca_scalar_shape_only->isChecked() && ui_->pca_predict_scalar->isChecked()) {
+      auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
+                                                     points.get_combined_global_particles());
+      shape->set_point_features(feature_map_, scalars);
+    } else {
+      shape->set_point_features(feature_map_, computed_scalars_);
+    }
+  }
   return shape;
 }
 
@@ -1146,6 +1317,24 @@ std::string AnalysisTool::get_display_feature_map() {
         return "spm_values";
       }
     }
+  }
+
+  if (particle_area_panel_->get_display_particle_area()) {
+    if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C ||
+        get_analysis_mode() == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
+      return "particle_area";
+    } else {
+      return particle_area_panel_->get_computed_value_name();
+    }
+  }
+
+  if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C &&
+      ui_->show_difference_to_predicted_scalar->isChecked()) {
+    return "predicted_scalar_diff";
+  }
+
+  if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C && ui_->show_predicted_scalar->isChecked()) {
+    return "predicted_scalar";
   }
 
   return feature_map_;
@@ -1256,17 +1445,27 @@ void AnalysisTool::update_difference_particles() {
     return;
   }
 
-  // start with a copy from the first shape so that the sizes of domains are already filled out
-  Particles target = session_->get_shapes()[0]->get_particles();
-  auto all_particles = target.get_combined_global_particles();
-
-  Eigen::VectorXd mean = stats_.Mean();
-
-  if (get_group_difference_mode()) {
-    mean = stats_.Group2Mean();
+  auto shapes = session_->get_non_excluded_shapes();
+  if (shapes.size() < 1) {
+    SW_ERROR("No shapes available for difference computation");
+    return;
   }
 
-  for (unsigned int i = 0; i < stats_.Mean().size(); i++) {
+  // start with a copy from the first shape so that the sizes of domains are already filled out
+  Particles target = shapes[0]->get_particles();
+  Eigen::VectorXd all_particles = target.get_combined_global_particles();
+  Eigen::VectorXd mean = get_mean_shape_particles();
+
+  if (get_group_difference_mode()) {
+    mean = stats_.get_group2_mean();
+  }
+
+  if (all_particles.size() != mean.size()) {
+    SW_ERROR("Inconsistent number of values in particle vector, {} vs. {}", all_particles.size(), mean.size());
+    return;
+  }
+
+  for (unsigned int i = 0; i < mean.size(); i++) {
     all_particles[i] = mean[i];
   }
 
@@ -1275,6 +1474,16 @@ void AnalysisTool::update_difference_particles() {
   session_->set_show_difference_vectors(get_group_difference_mode() || ui_->show_difference_to_mean->isChecked());
 
   session_->set_difference_particles(target);
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd AnalysisTool::get_mean_shape_particles() {
+  if (pca_shape_plus_scalar_mode()) {
+    return extract_shape_only(stats_.get_mean());
+  } else if (pca_scalar_only_mode()) {
+    return construct_mean_shape();
+  }
+  return stats_.get_mean();
 }
 
 //---------------------------------------------------------------------------
@@ -1290,6 +1499,11 @@ void AnalysisTool::group_changed() {
 
 //---------------------------------------------------------------------------
 bool AnalysisTool::groups_active() {
+  // check that the group tab is active
+  if (ui_->tabWidget->currentWidget() != ui_->mean_tab) {
+    return false;
+  }
+
   std::string group_set = ui_->group_box->currentText().toStdString();
   bool groups_enabled = group_set != "" && group_set != "-None-";
   return groups_enabled;
@@ -1325,7 +1539,7 @@ bool AnalysisTool::is_group_active(int shape_index) {
 
   bool groups_enabled = groups_active();
 
-  auto shapes = session_->get_shapes();
+  auto shapes = session_->get_non_excluded_shapes();
   auto shape = shapes[shape_index];
 
   bool left = false;
@@ -1359,13 +1573,15 @@ bool AnalysisTool::is_group_active(int shape_index) {
 void AnalysisTool::initialize_mesh_warper() {
   if (session_->particles_present() && session_->get_groomed_present()) {
     compute_stats();
-    int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
+    int median = stats_.compute_median_shape(-32);  //-32 = both groups
 
-    if (median < 0 || median >= session_->get_num_shapes()) {
+    auto shapes = session_->get_non_excluded_shapes();
+
+    if (median < 0 || median >= shapes.size()) {
       SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
-    std::shared_ptr<Shape> median_shape = session_->get_shapes()[median];
+    std::shared_ptr<Shape> median_shape = shapes[median];
 
     auto mesh_group = median_shape->get_groomed_meshes(true);
 
@@ -1462,7 +1678,7 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
   }
   current_alignment_ = static_cast<AlignmentType>(new_alignment);
 
-  Q_FOREACH (ShapeHandle shape, session_->get_shapes()) {
+  Q_FOREACH (ShapeHandle shape, session_->get_non_excluded_shapes()) {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     if (current_alignment_ == AlignmentType::Local) {
       transform = nullptr;
@@ -1553,7 +1769,6 @@ void AnalysisTool::show_difference_to_mean_clicked() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::group_analysis_combo_changed() {
-  SW_LOG("Group analysis combo changed: {}", ui_->group_analysis_combo->currentText().toStdString());
   int index = ui_->group_analysis_combo->currentIndex();
   if (!groups_active()) {
     index = 0;
@@ -1567,6 +1782,67 @@ void AnalysisTool::group_analysis_combo_changed() {
     ui_->group_analysis_stacked_widget->setEnabled(true);
     if (ui_->group_analysis_stacked_widget->currentWidget() == ui_->lda_page) {
       update_lda_graph();
+    }
+  }
+  Q_EMIT update_view();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::change_pca_analysis_type() {
+  stats_ready_ = false;
+  evals_ready_ = false;
+  stats_ = ParticleShapeStatistics();
+  ShapeScalarJob::clear_model();
+
+  ui_->pca_predict_scalar->setEnabled(ui_->pca_scalar_shape_only->isChecked());
+  ui_->pca_predict_shape->setEnabled(ui_->pca_scalar_only->isChecked());
+
+  if (ui_->pca_predict_scalar->isChecked()) {
+    // set the feature map to the target feature
+    session_->set_feature_map(ui_->pca_scalar_combo->currentText().toStdString());
+  }
+
+  compute_stats();
+  Q_EMIT pca_update();
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd AnalysisTool::construct_mean_shape() {
+  if (session_->get_non_excluded_shapes().empty()) {
+    return Eigen::VectorXd();
+  }
+
+  Eigen::VectorXd sum_shape =
+      Eigen::VectorXd::Zero(session_->get_non_excluded_shapes()[0]->get_global_correspondence_points().size());
+
+  for (auto& shape : session_->get_non_excluded_shapes()) {
+    Eigen::VectorXd particles = shape->get_global_correspondence_points();
+    sum_shape += particles;
+  }
+
+  Eigen::VectorXd mean_shape = sum_shape / session_->get_non_excluded_shapes().size();
+  return mean_shape;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_samples_predicted_scalar_options() {
+  if (ui_->show_difference_to_predicted_scalar->isChecked() || ui_->show_predicted_scalar->isChecked()) {
+    // iterate over all samples, predict scalars, compute the difference and store as a new scalar field
+    auto shapes = session_->get_non_excluded_shapes();
+    for (auto& shape : shapes) {
+      auto particles = shape->get_particles();
+      auto target_feature = ui_->pca_scalar_combo->currentText();
+      auto predicted =
+          ShapeScalarJob::predict_scalars(session_, target_feature, particles.get_combined_global_particles());
+
+      // load the mesh and feature
+      shape->get_meshes(session_->get_display_mode(), true);
+      shape->load_feature(session_->get_display_mode(), target_feature.toStdString());
+      auto scalars = shape->get_point_features(target_feature.toStdString());
+      // compute difference
+      auto diff = predicted - scalars;
+      shape->set_point_features("predicted_scalar_diff", diff);
+      shape->set_point_features("predicted_scalar", predicted);
     }
   }
   Q_EMIT update_view();
@@ -1600,7 +1876,7 @@ void AnalysisTool::set_active(bool active) {
     ui_->network_feature->clear();
     // convert to QStringList
     QStringList qfeatures;
-    for (auto feature : features) {
+    for (auto& feature : features) {
       qfeatures.append(QString::fromStdString(feature));
     }
     ui_->network_feature->addItems(qfeatures);
@@ -1615,10 +1891,10 @@ bool AnalysisTool::get_active() { return active_; }
 //---------------------------------------------------------------------------
 Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
   Particles particles;
-  if (session_->get_shapes().empty()) {
+  if (session_->get_non_excluded_shapes().empty()) {
     return particles;
   }
-  auto base = session_->get_shapes()[0]->get_particles();
+  auto base = session_->get_non_excluded_shapes()[0]->get_particles();
 
   auto worlds = base.get_world_particles();
   int idx = 0;
@@ -1636,7 +1912,7 @@ Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_reconstructed_domain_transforms() {
-  auto shapes = session_->get_shapes();
+  auto shapes = session_->get_non_excluded_shapes();
   if (current_alignment_ == AlignmentType::Local) {
     reconstruction_transforms_.resize(session_->get_domains_per_shape());
     for (int domain = 0; domain < session_->get_domains_per_shape(); domain++) {

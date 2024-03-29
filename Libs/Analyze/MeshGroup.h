@@ -7,6 +7,7 @@ namespace shapeworks {
 //! Representation of a group of meshes
 /*!
  * The MeshGroup class encapsulates a group of meshes (e.g. from a single subject)
+ * A subject will have one mesh for each anatomy/domain
  *
  */
 class MeshGroup {

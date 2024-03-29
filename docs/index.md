@@ -21,7 +21,8 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
  <!--![](img/about/release6.1.png)-->
  <!--![](img/about/release6.2.png)-->
  <!--![](img/about/release6.3.png)-->
-![](img/about/release6.4.png)
+ <!--![](img/about/release6.4.png)-->
+![](img/about/release6.5.png)
 
 !!! note "Release Notes"    
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
@@ -75,6 +76,9 @@ In particular, ShapeWorks explicitly models the inherent trade-off between the m
 ShapeWorks has been effective in various applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](users/papers.md) and [ShapeWorks Success Stories](getting-started/sw-stories.md). 
 
 Now enjoy some tour videos for different recent software releases.
+
+*ShapeWorks 6.5 tour - Shape / Scalar Correlation, Network Analysis, DeepSSM Improvments, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.5.mp4" autoplay muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.4 tour - Multi-level PCA, Improved Constraints, Python Docs, and more ...*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.4.mp4" autoplay muted loop controls style="width:100%"></p>

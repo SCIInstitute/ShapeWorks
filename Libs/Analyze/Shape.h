@@ -22,7 +22,7 @@ namespace shapeworks {
 class Shape;
 using ShapeHandle = std::shared_ptr<Shape>;
 using ShapeList = std::vector<ShapeHandle>;
-class VtkMeshWrapper;
+class MeshWrapper;
 
 //! Representation of a single shape/patient/subject.
 class Shape {
@@ -50,32 +50,43 @@ class Shape {
 
   void set_subject(std::shared_ptr<shapeworks::Subject> subject);
 
+  //! Is this shape a population subject (e.g. mean/pca constructions are not)
   bool is_subject();
 
+  //! Return the pointer to the subject object
   std::shared_ptr<shapeworks::Subject> get_subject();
 
-  /// Import the original raw mesh or image file
+  //! Helper to ask if this shape is fixed or not
+  bool is_fixed();
+
+  /// Helper to ask if this shape is excluded
+  bool is_excluded();
+
+  //! Import the original raw mesh or image file
   void import_original_file(const std::string& filename);
 
-  /// Retrieve the original meshes
+  //! Retrieve the original meshes
   MeshGroup get_original_meshes(bool wait = false);
 
-  /// Retrieve the groomed meshes
+  //! Retrieve the groomed meshes
   MeshGroup get_groomed_meshes(bool wait = false);
 
-  /// Retrieve the reconstructed meshes
+  //! Retrieve the reconstructed meshes
   MeshGroup get_reconstructed_meshes(bool wait = false);
 
-  /// Reset the groomed mesh so that it will be re-created
+  //! Set the reconstructed meshes
+  void set_reconstructed_meshes(MeshGroup meshes);
+
+  //! Reset the groomed mesh so that it will be re-created
   void reset_groomed_mesh();
 
-  /// Import global correspondence point files
+  //! Import global correspondence point files
   bool import_global_point_files(std::vector<std::string> filenames);
 
-  /// Import local correspondence point files
+  //! Import local correspondence point files
   bool import_local_point_files(std::vector<std::string> filenames);
 
-  /// Import landmarks files
+  //! Import landmarks files
   bool import_landmarks_files(std::vector<std::string> filenames);
 
   //! Store landmarks
@@ -87,7 +98,10 @@ class Shape {
   //! Store constraints
   bool store_constraints();
 
+  //! Set particles
   void set_particles(Particles particles);
+
+  //! Get particles
   Particles get_particles();
 
   //! Set the particle transform (alignment)
@@ -96,22 +110,25 @@ class Shape {
   //! Set the alignment type
   void set_alignment_type(int alignment);
 
-  /// Get the global correspondence points
+  //! Get the global correspondence points
   Eigen::VectorXd get_global_correspondence_points();
 
-  /// Get the global correspondence points for display
+  //! Get the global correspondence points for display
   std::vector<Eigen::VectorXd> get_particles_for_display();
 
-  /// Get the local correspondence points
+  //! Get the local correspondence points
   Eigen::VectorXd get_local_correspondence_points();
 
   void clear_reconstructed_mesh();
 
-  /// Get the id of this shape
+  //! Get the id of this shape
   int get_id();
 
-  /// Set the id of this shape
+  //! Set the id of this shape
   void set_id(int id);
+
+  //! Update the name of this shape
+  void update_annotations();
 
   std::vector<std::string> get_original_filenames();
   std::vector<std::string> get_original_filenames_with_path();
@@ -141,8 +158,8 @@ class Shape {
 
   vtkSmartPointer<vtkTransform> get_groomed_transform(int domain = 0);
 
-  vtkSmartPointer<vtkTransform> get_procrustest_transform(int domain = 0);
-  std::vector<vtkSmartPointer<vtkTransform>> get_procrustest_transforms();
+  vtkSmartPointer<vtkTransform> get_procrustes_transform(int domain = 0);
+  std::vector<vtkSmartPointer<vtkTransform>> get_procrustes_transforms();
 
   vtkSmartPointer<vtkTransform> get_alignment(int domain = 0);
 
@@ -150,9 +167,9 @@ class Shape {
 
   std::shared_ptr<Image> get_image_volume(std::string image_volume_name);
 
-  Eigen::VectorXf get_point_features(std::string feature);
+  Eigen::VectorXd get_point_features(std::string feature);
 
-  void set_point_features(std::string feature, Eigen::VectorXf values);
+  void set_point_features(std::string feature, Eigen::VectorXd values);
 
   void load_feature_from_scalar_file(std::string filename, std::string feature_name);
 
@@ -167,7 +184,7 @@ class Shape {
 
   bool has_planes();
 
-  std::vector<std::shared_ptr<VtkMeshWrapper>> get_groomed_mesh_wrappers();
+  std::vector<std::shared_ptr<MeshWrapper>> get_groomed_mesh_wrappers();
 
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
@@ -183,17 +200,17 @@ class Shape {
   MeshGroup original_meshes_;
   MeshGroup groomed_meshes_;
   MeshGroup reconstructed_meshes_;
-  std::vector<std::shared_ptr<VtkMeshWrapper>> groomed_mesh_wrappers_;
+  std::vector<std::shared_ptr<MeshWrapper>> groomed_mesh_wrappers_;
 
   std::string override_feature_;
 
   std::vector<std::string> global_point_filenames_;
   std::vector<std::string> local_point_filenames_;
 
-  std::map<std::string, Eigen::VectorXf> point_features_;
+  std::map<std::string, Eigen::VectorXd> point_features_;
   Particles particles_;
 
-  std::shared_ptr<shapeworks::Subject> subject_;
+  std::shared_ptr<Subject> subject_;
 
   vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
 

@@ -9,15 +9,16 @@
 #include <StudioEnums.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
+#include <vtkLookupTable.h>
 
 #include <QSharedPointer>
 #include <QVector>
-//#include <cstdlib>
-#include <map>
 #include <string>
 #include <vector>
 
 namespace shapeworks {
+
+class PythonWorker;
 
 class CompareSettings {
  public:
@@ -37,9 +38,7 @@ class CompareSettings {
       return DisplayMode::Reconstructed;
     }
   }
-  bool get_mean_shape_checked() {
-    return mean_shape_checked_;
-  }
+  bool get_mean_shape_checked() { return mean_shape_checked_; }
 };
 
 class Shape;
@@ -108,8 +107,11 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   /// remove shapes
   void remove_shapes(QList<int> list);
 
-  /// return all shapes
+  //! return all shapes
   ShapeList get_shapes();
+
+  //! return all non-excluded shapes
+  ShapeList get_non_excluded_shapes();
 
   void calculate_reconstructed_samples();
 
@@ -159,6 +161,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void trigger_landmarks_changed();
   void trigger_planes_changed();
   void trigger_ffc_changed();
+  void trigger_annotations_changed();
+  void trigger_save();
+  void trigger_data_changed();
+  void reload_particles();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
@@ -192,11 +198,18 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   // image sync/share window width and level
   void set_image_share_window_and_level(bool enabled);
-  bool get_image_share_window_and_level();
+  bool get_image_share_brightness_contrast();
 
   // image sync slice
   void set_image_sync_slice(bool enabled);
   bool get_image_sync_slice();
+
+  // 3D image, thickness feature
+  void set_image_thickness_feature(bool enabled);
+  bool get_image_thickness_feature();
+
+  void set_feature_map(std::string feature_map);
+  std::string get_feature_map();
 
   bool has_constraints();
 
@@ -233,7 +246,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_compare_settings(CompareSettings settings);
   CompareSettings get_compare_settings();
 
-
   void trigger_repaint();
 
   void trigger_reinsert_shapes();
@@ -243,6 +255,17 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   //! return the current display mode
   DisplayMode get_display_mode();
+
+  void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) { glyph_lut_ = lut; }
+  vtkSmartPointer<vtkLookupTable> get_glyph_lut() { return glyph_lut_; }
+
+  void set_py_worker(QSharedPointer<PythonWorker> worker) { py_worker_ = worker; }
+  QSharedPointer<PythonWorker> get_py_worker() { return py_worker_; }
+
+  //! Return all world particles (number of shapes, 3 x num particles)
+  Eigen::MatrixXd get_all_particles();
+  //! Return all scalars for all shapes, given target feature
+  Eigen::MatrixXd get_all_scalars(std::string target_feature);
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -254,7 +277,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void handle_new_mesh();
   void handle_thread_complete();
 
-  Q_SIGNALS:
+ Q_SIGNALS:
   /// signal that the data has changed
   void data_changed();
   void points_changed();
@@ -262,6 +285,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void planes_changed();
   void ffc_changed();
   void update_display();
+  void feature_map_changed();
+  void reset_stats();
   void new_mesh();
   void feature_range_changed();
   void update_view_mode();
@@ -269,6 +294,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void ffc_paint_mode_changed();
   void repaint();
   void reinsert_shapes();
+  void annotations_changed();
+  void save();
 
  public:
   // constants
@@ -279,7 +306,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string DEEPSSM_C;
 
  private:
-
   void renumber_shapes();
 
   void new_landmark(PickResult result);
@@ -325,6 +351,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   bool is_loading_ = false;
   CompareSettings compare_settings_;
+
+  vtkSmartPointer<vtkLookupTable> glyph_lut_;
+
+  QSharedPointer<PythonWorker> py_worker_;
 };
 
 }  // namespace shapeworks

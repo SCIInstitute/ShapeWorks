@@ -3,7 +3,7 @@ import numpy as np
 
 # Writes particles and error scalars for best, median, and worst 
 # pred_particles and true_particles are numpy array with dims: # in set, # of particles, 3 coordinates
-def write_examples(pred_particles, true_particles, out_dir):
+def write_examples(pred_particles, true_particles, filenames, out_dir):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 	# get min, mean, and max errors
@@ -21,3 +21,10 @@ def write_examples(pred_particles, true_particles, out_dir):
 		out_scalar_file = out_dir + names[i] + ".scalars"
 		scalars = np.mean((pred - true_particles[indices[i]])**2, axis=1)
 		np.savetxt(out_scalar_file, scalars)
+		# write index out to file as an integer
+		out_index_file = out_dir + names[i] + ".index"
+		f = open(out_index_file, "w")
+		f.write(filenames[indices[i]])
+		f.close()
+
+		

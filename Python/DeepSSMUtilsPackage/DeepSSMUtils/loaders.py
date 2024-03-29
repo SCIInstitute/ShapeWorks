@@ -14,20 +14,26 @@ random.seed(1)
 ######################## Data loading functions ####################################
 
 '''
+Make folder
+'''
+def make_dir(dirPath):
+    if not os.path.exists(dirPath):
+        os.makedirs(dirPath)
+
+'''
 Reads csv and makes both train and validation data loaders from it
 '''
 def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
 	sw_message("Creating training and validation torch loaders:")
-	if not os.path.exists(loader_dir):
-		os.makedirs(loader_dir)
+	make_dir(loader_dir)
 	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
 	images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
 	# split into train and validation (e.g. 80% vs 20%)
 	cut = int(len(images) * train_split)
 	sw_message("Turning to tensors...")
-	train_data = DeepSSMdataset(images[:cut], scores[:cut], models[:cut])
+	train_data = DeepSSMdataset(images[:cut], scores[:cut], models[:cut], prefixes[:cut])
 	sw_message(str(len(train_data)) + ' in training set')
-	val_data = DeepSSMdataset(images[cut:], scores[cut:], models[cut:])
+	val_data = DeepSSMdataset(images[cut:], scores[cut:], models[cut:], prefixes[cut:])
 	sw_message(str(len(val_data)) + ' in validation set')
 
 	sw_message("Saving data loaders...")
@@ -59,11 +65,10 @@ Reads csv and makes just train data loaders
 def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
 	sw_message("Creating training torch loader...")
 	# Get data
-	if not os.path.exists(loader_dir):
-		os.makedirs(loader_dir)
+	make_dir(loader_dir)
 	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
 	images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
-	train_data = DeepSSMdataset(images, scores, models)
+	train_data = DeepSSMdataset(images, scores, models, prefixes)
 	# Save
 	trainloader = DataLoader(
 			train_data,
@@ -102,7 +107,7 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 	name_file.close()
 	sw_message("Validation names saved to: " + loader_dir + "validation_names.txt")
 	images = get_images(loader_dir, image_paths, down_factor, down_dir)
-	val_data = DeepSSMdataset(images, scores, models)
+	val_data = DeepSSMdataset(images, scores, models, names)
 	# Make loader
 	val_loader = DataLoader(
 			val_data,
@@ -136,7 +141,7 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 		scores.append([1])
 		models.append([1])
 	images = get_images(loader_dir, image_paths, down_factor, down_dir)
-	test_data = DeepSSMdataset(images, scores, models)
+	test_data = DeepSSMdataset(images, scores, models, test_names)
 	# Write test names to file so they are saved somewhere
 	name_file = open(loader_dir + 'test_names.txt', 'w+')
 	name_file.write(str(test_names))
@@ -176,12 +181,12 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 			# add name
 			prefix = get_prefix(image_path)
 			# data error check
-			if prefix not in get_prefix(model_path):
-				print("Error: Images and particles are mismatched in csv.")
-				print(index)
-				print(prefix)
-				print(get_prefix(model_path))
-				exit()
+			# if prefix not in get_prefix(model_path):
+			# 	print("Error: Images and particles are mismatched in csv.")
+			# 	print(f"index: {index}")
+			# 	print(f"prefix: {prefix}")
+			# 	print(f"get_prefix(model_path): {get_prefix(model_path)}}")
+			# 	exit()
 			prefixes.append(prefix)
 			# add image path
 			image_paths.append(image_path)
@@ -209,15 +214,17 @@ def shuffle_data(images, scores, models, prefixes):
 Class for DeepSSM datasets that works with Pytorch DataLoader
 '''
 class DeepSSMdataset():
-	def __init__(self, img, pca_target, mdl_target):
+	def __init__(self, img, pca_target, mdl_target, names):
 		self.img = torch.FloatTensor(np.array(img))
 		self.pca_target = torch.FloatTensor(np.array(pca_target))
 		self.mdl_target = torch.FloatTensor(np.array(mdl_target))
+		self.names = names
 	def __getitem__(self, index):
 		x = self.img[index]
 		y1 = self.pca_target[index]
 		y2 = self.mdl_target[index]
-		return x, y1, y2
+		name = self.names[index]
+		return x, y1, y2, name
 	def __len__(self):
 		return len(self.img)
 
@@ -226,8 +233,7 @@ returns sample prefix from path string
 '''
 def get_prefix(path):
 	file_name = os.path.basename(path)
-	prefix = "_".join(file_name.split("_")[:2])
-	prefix = prefix.split(".")[0]
+	prefix = file_name.split(".")[0]
 	return prefix
 
 '''
@@ -250,8 +256,7 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
 	all_images = []
 	for image_path in image_list:
 		if down_dir is not None:
-			if not os.path.exists(down_dir):
-				os.makedirs(down_dir)
+			make_dir(down_dir)
 			img_name = os.path.basename(image_path)
 			res_img = os.path.join(down_dir, img_name)
 			if not os.path.exists(res_img):
@@ -260,19 +265,16 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
         # for_viewing returns 'F' order, i.e., transpose, needed for this array
 		img = sw.Image(image_path).toArray(copy=True, for_viewing=True)
 		all_images.append(img)
+
 	all_images = np.array(all_images)
 	# get mean and std
 	mean_path = loader_dir + 'mean_img.npy'
 	std_path = loader_dir + 'std_img.npy'
-	if not os.path.exists(mean_path) or not os.path.exists(std_path):
-		mean_image = np.mean(all_images)
-		std_image = np.std(all_images)
-		np.save(mean_path, mean_image)
-		np.save(std_path, std_image)
-	else:
-		mean_image = np.load(mean_path)
-		std_image = np.load(std_path)
-	# normlaize
+	mean_image = np.mean(all_images)
+	std_image = np.std(all_images)
+	np.save(mean_path, mean_image)
+	np.save(std_path, std_image)
+	# normalize
 	norm_images = []
 	for image in all_images:
 		norm_images.append([(image-mean_image)/std_image])

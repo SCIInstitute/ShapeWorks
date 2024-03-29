@@ -1,5 +1,44 @@
 # Release Notes
 
+## ShapeWorks 6.5.0 - 2024-03
+
+![](../img/about/release6.5.png)
+
+### What is new?
+  * **ShapeWorks Back-end**
+    * DeepSSM variants and losses (TL network and other options) (#1881)
+    * Ability to use mesh scalar fields as correspondence attribute (#2081)
+    * Tool to compute cortical thickness using surface and CT (#2103)
+    * Tool to compute geodesic fields from landmarks (#2102) and use as a correspondence attribute
+    * Ability to run geodesic distance on a decimated mesh to improve speed
+
+  * **ShapeWorks Front-end**
+    * Shape and Scalar Correlation / Prediction (2 Block PLS) (#985)
+    * Particle Area Analysis (#2140)
+      * Compute the mean and standard deviation of the area associated with each particle
+    * Studio can now run models with fixed domains support
+    * Studio can now exclude subjects from grooming/optimization
+    * Free form constraints can now be applied from one shape to others
+    * Improved Brightness and Contrast control for slice viewer
+    * Cortical thickness values can be displayed as an inner contour for QA on slices (#2177)
+    * Network and SPM1D Analysis
+      * Statistically analyze feature map data using the relative size of the network of connected particles
+    * DeepSSM Enhancements in Studio
+      * Validation and Testing shapes/images are now held out from training grooming/optimization
+      * Image registration is used to align Validation and Testing
+      * Validation shapes have correspondence generated using fixed domains
+      * Inference on new images can now be performed using an existing model
+
+  * **User's Support**
+    * macOS Silicon (arm64) support
+
+### Fixes
+  * Bug fix for very large covariance matrices (#2118)
+  * Fix windows python multiprocessing
+  * Fix bug when saving project after defining only 2 points of a plane (#2091)
+  * Improved data augmentation API (#2072)
+
+
 ## ShapeWorks 6.4.2 - 2023-07-05
 
 ### Fixes

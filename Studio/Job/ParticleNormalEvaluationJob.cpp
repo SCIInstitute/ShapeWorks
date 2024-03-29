@@ -27,7 +27,7 @@ void ParticleNormalEvaluationJob::run() {
   for (int domain = 0; domain < num_domains; domain++) {
     ParticleSystemEvaluation particles = session_->get_local_particle_system(domain);
 
-    std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
+    std::vector<std::shared_ptr<MeshWrapper>> meshes;
     for (auto& shape : session_->get_shapes()) {
       meshes.push_back(shape->get_groomed_mesh_wrappers()[domain]);
       count++;
@@ -35,16 +35,16 @@ void ParticleNormalEvaluationJob::run() {
     }
 
     auto normals = ParticleNormalEvaluation::compute_particle_normals(particles.Particles(), meshes);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(particles.Particles(), normals);
+    auto domain_good_bad = ParticleNormalEvaluation::threshold_particle_normals(angles, max_angle_degrees_);
 
-    auto domain_good_bad =
-        ParticleNormalEvaluation::evaluate_particle_normals(particles.Particles(), normals, max_angle_degrees_);
     good_bad.insert(good_bad.end(), domain_good_bad.begin(), domain_good_bad.end());
   }
 
   int good_count = std::count(good_bad.begin(), good_bad.end(), true);
 
-  SW_LOG("ParticleNormalEvaluationJob: found " + std::to_string(good_count) + "/" +
-                     std::to_string(good_bad.size()) + " good particles");
+  SW_LOG("ParticleNormalEvaluationJob: found " + std::to_string(good_count) + "/" + std::to_string(good_bad.size()) +
+         " good particles");
 
   Q_EMIT progress(1.0);
 

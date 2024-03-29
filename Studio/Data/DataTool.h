@@ -35,7 +35,7 @@ class DataTool : public QWidget {
 
   void enable_actions();
 
-  void update_table();
+  void update_table(bool clean = true);
 
   void update_landmark_table();
 
@@ -64,6 +64,13 @@ class DataTool : public QWidget {
   void handle_landmark_mode_changed();
   void handle_constraints_mode_changed();
 
+  void constraints_table_right_click(const QPoint &point);
+  void data_table_right_click(const QPoint &point);
+  void copy_ffc_clicked();
+
+  void table_selection_changed();
+  void subject_notes_changed();
+  void table_data_edited();
 
  Q_SIGNALS:
   void import_button_clicked();
@@ -80,5 +87,6 @@ class DataTool : public QWidget {
   QSharedPointer<Session> session_;
 
   std::shared_ptr<LandmarkTableModel> landmark_table_model_;
+  bool block_table_update_{false};
 };
 }  // namespace shapeworks

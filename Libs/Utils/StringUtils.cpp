@@ -2,11 +2,11 @@
 #include "StringUtils.h"
 
 #include <algorithm>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/filesystem.hpp>
 #include <cstdlib>
 #include <cstring>
-
-#include <boost/filesystem.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include <sstream>
 
 namespace {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -69,7 +69,7 @@ std::vector<std::string> StringUtils::getFileNamesFromPaths(const std::vector<st
 }
 
 //---------------------------------------------------------------------------
-std::string StringUtils::getLowerExtension(const std::string &filename) {
+std::string StringUtils::getLowerExtension(const std::string& filename) {
   return boost::algorithm::to_lower_copy(boost::filesystem::extension(filename));
 }
 
@@ -81,6 +81,19 @@ std::string StringUtils::replace_string(std::string str, const std::string& sear
     pos += replace.length();
   }
   return str;
+}
+
+//---------------------------------------------------------------------------
+std::string StringUtils::join(const std::vector<std::string>& strings, const std::string& delimiter) {
+  // join strings with delemeter between
+  std::stringstream ss;
+  for (size_t i = 0; i < strings.size(); i++) {
+    if (i > 0) {
+      ss << delimiter;
+    }
+    ss << strings[i];
+  }
+  return ss.str();
 }
 
 }  // namespace shapeworks

@@ -24,12 +24,12 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-sw65
+    container: akenmorris/ubuntu-build-box-focal-sw65
     
     steps:
 
     - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
+      uses: shimataro/ssh-key-action@v2.7.0
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
@@ -41,7 +41,10 @@ jobs:
       run: df -h
 
     - name: Free some space 
-      run: cd /__t ; rm -rf CodeQL go
+      run: cd /__t ; rm -rf CodeQL go PyPy Python Ruby
+
+    - name: Check usage 
+      run: cd /__t ; du -sh *
       
     - name: Check space2
       run: df -h
@@ -61,35 +64,35 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/restore_caches.sh
 
-    - name: Check space2
+    - name: Check space3
       run: df -h
 
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
-    - name: Check space3
+    - name: Check space4
       run: df -h
 
     - name: Build Dependencies
       shell: bash -l {0}
       run: .github/workflows/gha_deps.sh
 
-    - name: Check space4
+    - name: Check space5
       run: df -h
 
     - name: cmake
       shell: bash -l {0}
       run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DITK_DIR=$HOME/install/lib/cmake/ITK-5.2 -DVTK_DIR=$HOME/install/lib/cmake/vtk-9.1 -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRYCENTRAL_DIR=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DUSE_ORIGIN_RPATH=ON ..
 
-    - name: Check space5
+    - name: Check space6
       run: df -h
 
     - name: make
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make -j2
 
-    - name: Check space6
+    - name: Check space7
       run: df -h
 
     - name: make install

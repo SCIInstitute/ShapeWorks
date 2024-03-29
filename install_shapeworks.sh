@@ -84,9 +84,15 @@ function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "Installing Miniconda..."
     if [[ "$(uname)" == "Darwin" ]]; then
-      curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-      bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh -b
-      rm /tmp/Miniconda3-latest-MacOSX-x86_64.sh
+	if [[ $(uname -m) == 'arm64' ]]; then
+          curl -o /tmp/Miniconda3-latest-MacOSX-arm64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
+          bash /tmp/Miniconda3-latest-MacOSX-arm64.sh -b
+          rm /tmp/Miniconda3-latest-MacOSX-arm64.sh
+	else
+          curl -o /tmp/Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+          bash /tmp/Miniconda3-latest-MacOSX-x86_64.sh -b
+          rm /tmp/Miniconda3-latest-MacOSX-x86_64.sh
+	fi
     elif [[ "$(uname)" == "Linux" ]]; then
       curl -o ./Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
       bash ./Miniconda3-latest-Linux-x86_64.sh -b
@@ -152,11 +158,19 @@ function install_conda() {
   # install conda into the shell
   conda init
 
-  pip install -r python_requirements.txt
+  if ! pip install -r python_requirements.txt;          then return 1; fi
+  
 
   # for network analysis
   if [[ "$(uname)" == "Linux" ]]; then
       if ! pip install open3d-cpu==0.17.0;              then return 1; fi
+  elif [[ "$(uname)" == "Darwin" ]]; then
+      if ! pip install open3d==0.17.0;                  then return 1; fi
+      # fix hard-coded homebrew libomp.dylib
+      pushd $CONDA_PREFIX/lib/python3.9/site-packages/open3d/cpu
+      install_name_tool -change /opt/homebrew/opt/libomp/lib/libomp.dylib @rpath/libomp.dylib pybind.cpython-39-darwin.so
+      install_name_tool -add_rpath @loader_path/../../../ pybind.cpython-39-darwin.so
+      popd
   else
       if ! pip install open3d==0.17.0;                  then return 1; fi
   fi
@@ -168,6 +182,18 @@ function install_conda() {
       if ! pip install Python/${package};               then return 1; fi
     fi
   done
+
+
+  echo "Checking for darwin"
+  if [[ "$(uname)" == "Darwin" ]]; then
+    echo "Checking for arm64"
+    if [[ "$(uname -m)" == "arm64" ]]; then
+      echo "copying file to fix!"
+      # fix for broken packages that overwrite itk/__init__.py
+      echo cp Support/itk-arm64-fix $CONDA_PREFIX/lib/python3.9/site-packages/itk/__init__.py
+      cp Support/itk-arm64-fix $CONDA_PREFIX/lib/python3.9/site-packages/itk/__init__.py
+    fi
+  fi
   
   ./Installation/install_python_module.sh   # install python module
   ./Installation/conda_env_setup.sh         # install conda [de]activate scripts

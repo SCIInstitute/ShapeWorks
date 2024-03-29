@@ -15,29 +15,50 @@
 #include <vtkTransformPolyDataFilter.h>
 
 // shapeworks
+#include <Utils/StudioUtils.h>
 #include <Visualization/SliceView.h>
 #include <Visualization/Viewer.h>
 
 namespace shapeworks {
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkActor> SliceView::create_shape_actor(vtkSmartPointer<vtkPolyData> poly_data, QColor color) {
+  auto cut_transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  auto cutter = vtkSmartPointer<vtkCutter>::New();
+  auto stripper = vtkSmartPointer<vtkStripper>::New();
+  auto cut_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  auto cut_actor = vtkSmartPointer<vtkActor>::New();
+
+  stripper->PassCellDataAsFieldDataOn();
+  cut_mapper->SetScalarVisibility(false);
+  cut_mapper->SetResolveCoincidentTopologyToPolygonOffset();
+  cut_actor->GetProperty()->SetColor(color.redF(), color.greenF(), color.blueF());
+  cut_actor->GetProperty()->SetLineWidth(4);
+  cut_actor->GetProperty()->SetAmbient(1.0);
+  cut_actor->GetProperty()->SetDiffuse(0.0);
+
+  auto transform = viewer_->get_image_transform();
+  cut_transform_filter->SetInputData(poly_data);
+  cut_transform_filter->SetTransform(transform);
+
+  cutter->SetInputConnection(cut_transform_filter->GetOutputPort());
+  cutter->SetCutFunction(slice_mapper_->GetSlicePlane());
+
+  stripper->SetInputConnection(cutter->GetOutputPort());
+  stripper->Update();
+
+  cut_mapper->SetInputConnection(stripper->GetOutputPort());
+
+  cut_actor->SetMapper(cut_mapper);
+
+  return cut_actor;
+}
+
 //-----------------------------------------------------------------------------
 SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
   image_slice_ = vtkSmartPointer<vtkImageActor>::New();
 
   slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
-
-  cut_transform_filter_ = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  cutter_ = vtkSmartPointer<vtkCutter>::New();
-  stripper_ = vtkSmartPointer<vtkStripper>::New();
-  cut_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-  cut_actor_ = vtkSmartPointer<vtkActor>::New();
-
-  stripper_->PassCellDataAsFieldDataOn();
-  cut_mapper_->SetScalarVisibility(false);
-  cut_mapper_->SetResolveCoincidentTopologyToPolygonOffset();
-  cut_actor_->GetProperty()->SetColor(1, 1, 0.25);
-  cut_actor_->GetProperty()->SetLineWidth(3);
-  cut_actor_->GetProperty()->SetAmbient(1.0);
-  cut_actor_->GetProperty()->SetDiffuse(0.0);
 
   placer_ = vtkSmartPointer<vtkImageActorPointPlacer>::New();
   placer_->SetImageActor(image_slice_);
@@ -45,14 +66,23 @@ SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
 
 //-----------------------------------------------------------------------------
 void SliceView::set_volume(std::shared_ptr<Image> volume) {
+  volume_ = volume;
   if (!volume) {
+    update_renderer();
     return;
   }
-  volume_ = volume;
   vtk_volume_ = volume->getVTKImage();
   slice_mapper_->SetInputData(vtk_volume_);
 
   image_slice_->SetMapper(slice_mapper_);
+
+  // reset window and level based on the volume scalar range
+  double range[2];
+  vtk_volume_->GetScalarRange(range);
+  double window = range[1] - range[0];
+  double level = (range[1] + range[0]) / 2.0;
+  image_slice_->GetProperty()->SetColorWindow(window);
+  image_slice_->GetProperty()->SetColorLevel(level);
 
   auto transform = viewer_->get_image_transform();
   image_slice_->SetUserTransform(transform);
@@ -61,9 +91,11 @@ void SliceView::set_volume(std::shared_ptr<Image> volume) {
 }
 
 //-----------------------------------------------------------------------------
-void SliceView::set_mesh(vtkSmartPointer<vtkPolyData> poly_data) {
-  if (poly_data == current_poly_data_) {
-    return;
+void SliceView::add_mesh(vtkSmartPointer<vtkPolyData> poly_data) {
+  for (auto &poly : poly_datas_) {
+    if (poly == poly_data) {
+      return;
+    }
   }
   if (poly_data->GetNumberOfCells() == 0) {
     return;
@@ -72,20 +104,26 @@ void SliceView::set_mesh(vtkSmartPointer<vtkPolyData> poly_data) {
     return;
   }
 
-  current_poly_data_ = poly_data;
-  auto transform = viewer_->get_image_transform();
-  cut_transform_filter_->SetInputData(poly_data);
-  cut_transform_filter_->SetTransform(transform);
+  poly_datas_.push_back(poly_data);
 
-  cutter_->SetInputConnection(cut_transform_filter_->GetOutputPort());
-  cutter_->SetCutFunction(slice_mapper_->GetSlicePlane());
+  static QColor colors[10] = {QColor(255, 0, 0),     QColor(0, 0, 255),   QColor(0, 255, 0),     QColor(255, 255, 0),
+                              QColor(255, 0, 255),   QColor(0, 255, 255), QColor(255, 255, 255), QColor(0, 0, 0),
+                              QColor(128, 128, 128), QColor(128, 0, 0)};
 
-  stripper_->SetInputConnection(cutter_->GetOutputPort());
-  stripper_->Update();
+  int color = cut_actors_.size() % 10;
 
-  cut_mapper_->SetInputConnection(stripper_->GetOutputPort());
+  auto actor = create_shape_actor(poly_data, colors[color]);
+  cut_actors_.push_back(actor);
+  viewer_->get_renderer()->AddActor(actor);
+}
 
-  cut_actor_->SetMapper(cut_mapper_);
+//-----------------------------------------------------------------------------
+void SliceView::clear_meshes() {
+  for (auto &actor : cut_actors_) {
+    viewer_->get_renderer()->RemoveViewProp(actor);
+  }
+  cut_actors_.clear();
+  poly_datas_.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -107,10 +145,14 @@ void SliceView::update_renderer() {
 
   if (is_image_loaded()) {
     renderer->AddActor(image_slice_);
-    renderer->AddActor(cut_actor_);
+    for (auto &actor : cut_actors_) {
+      renderer->AddActor(actor);
+    }
   } else {
     renderer->RemoveViewProp(image_slice_);
-    renderer->RemoveViewProp(cut_actor_);
+    for (auto &actor : cut_actors_) {
+      renderer->RemoveViewProp(actor);
+    }
   }
 }
 
@@ -156,8 +198,8 @@ void SliceView::update_camera() {
   }
 
   renderer->GetActiveCamera()->SetParallelProjection(1);
-  renderer->ResetCameraClippingRange();
   renderer->ResetCamera();
+  renderer->ResetCameraClippingRange();
   update_extent();
 }
 
@@ -197,16 +239,17 @@ Point SliceView::get_slice_position() {
     return Point({0, 0, 0});
   }
 
+  auto plane = slice_mapper_->GetSlicePlane();
   double origin[3];
-  vtk_volume_->GetOrigin(origin);
-  double spacing[3];
-  vtk_volume_->GetSpacing(spacing);
+  plane->GetOrigin(origin);
 
-  Point result = origin;
+  // convert to world coordinates
+  auto transform = viewer_->get_image_transform();
+  transform->Update();
+  transform->Inverse();
+  transform->TransformPoint(origin, origin);
 
-  int i = get_orientation_index();
-  result[i] = origin[i] + spacing[i] * current_slice_number_;
-  return result;
+  return Point({origin[0], origin[1], origin[2]});
 }
 
 //-----------------------------------------------------------------------------
@@ -214,13 +257,25 @@ void SliceView::set_slice_position(Point point) {
   if (!is_image_loaded()) {
     return;
   }
+
   auto index = volume_->getITKImage()->TransformPhysicalPointToIndex(point);
   int slice_number = index[get_orientation_index()];
   set_slice_number(slice_number);
 }
 
 //-----------------------------------------------------------------------------
-void SliceView::set_window_and_level(double window, double level) {
+void SliceView::set_brightness_and_contrast(double brightness, double contrast) {
+  if (!vtk_volume_) {
+    return;
+  }
+  // get scalar range from image
+  double range[2];
+  vtk_volume_->GetScalarRange(range);
+
+  // convert to window and level
+  double window, level;
+  StudioUtils::brightness_contrast_to_window_width_level(brightness, contrast, range[0], range[1], window, level);
+
   image_slice_->GetProperty()->SetColorWindow(window);
   image_slice_->GetProperty()->SetColorLevel(level);
 }
@@ -282,16 +337,23 @@ bool SliceView::should_point_show(double x, double y, double z) {
 }
 
 //-----------------------------------------------------------------------------
+int SliceView::get_slice_number() { return current_slice_number_; }
+
+//-----------------------------------------------------------------------------
 void SliceView::set_slice_number(int slice) {
   current_slice_number_ = slice;
 
   current_slice_number_ = std::min(current_slice_number_, slice_mapper_->GetSliceNumberMaxValue());
   current_slice_number_ = std::max(current_slice_number_, slice_mapper_->GetSliceNumberMinValue());
 
+  if (current_slice_number_ == slice_mapper_->GetSliceNumber()) {
+    return;
+  }
+
   slice_mapper_->SetSliceNumber(current_slice_number_);
-  viewer_->get_renderer()->GetRenderWindow()->Render();
   update_extent();
   viewer_->update_points();
+  viewer_->get_renderer()->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -329,7 +391,7 @@ void SliceView::update_extent() {
     double near_clip = range - spacing / 2.0 + 0.001;
     double far_clip = range + spacing / 2.0 - 0.001;
 
-    // cam->SetClippingRange( near_clip, far_clip );
+    cam->SetClippingRange(near_clip, far_clip);
   }
 }
 

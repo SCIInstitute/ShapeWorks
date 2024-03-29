@@ -15,6 +15,13 @@ namespace shapeworks {
 
 class Analyze {
  public:
+
+  enum AlignmentType {
+    Global = -2,
+    Local = -1,
+  };
+
+
   Analyze(ProjectHandle project);
 
   /// Run offline analysis, saving results to outfile
@@ -50,9 +57,11 @@ class Analyze {
 
   ShapeHandle create_shape_from_points(Particles points);
 
-  Eigen::VectorXf get_subject_features(int subject, std::string feature_name);
+  Eigen::VectorXd get_subject_features(int subject, std::string feature_name);
 
   void set_group_selection(std::string group_name, std::string group1, std::string group2);
+
+  ParticleSystemEvaluation get_local_particle_system(int domain);
 
  private:
   bool update_shapes();

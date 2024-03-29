@@ -61,10 +61,10 @@ void NetworkAnalysisJob::run() {
 QString NetworkAnalysisJob::name() { return "Network Analysis"; }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf NetworkAnalysisJob::get_tvalues() { return tvalues_; }
+Eigen::VectorXd NetworkAnalysisJob::get_tvalues() { return tvalues_; }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf NetworkAnalysisJob::get_spm_values() { return spm_values_; }
+Eigen::VectorXd NetworkAnalysisJob::get_spm_values() { return spm_values_; }
 
 //---------------------------------------------------------------------------
 void NetworkAnalysisJob::set_pvalue_of_interest(double pvalue_of_interest) { pvalue_of_interest_ = pvalue_of_interest; }

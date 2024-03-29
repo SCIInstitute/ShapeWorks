@@ -32,7 +32,9 @@
 #include <vtkUnsignedLongArray.h>
 
 // shapeworks
+#include <Analyze/ParticleArea.h>
 #include <Logging.h>
+#include <Mesh/MeshComputeThickness.h>
 #include <Shape.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/LandmarkWidget.h>
@@ -174,6 +176,7 @@ Viewer::Viewer() {
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
+  corner_annotation_->SetMinimumFontSize(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -189,6 +192,15 @@ void Viewer::set_color_scheme(int scheme) {
 
     ffc_luts_[i]->SetTableValue(0, EXCLUDED_COLOR);
     ffc_luts_[i]->SetTableValue(1, rgba);
+  }
+
+  // set the compare actors to be the next color
+  for (size_t i = 0; i < compare_actors_.size(); i++) {
+    int scheme = (scheme_ + i + 1) % color_schemes_.size();
+
+    double rgba[4] = {color_schemes_[scheme].foreground.r, color_schemes_[scheme].foreground.g,
+                      color_schemes_[scheme].foreground.b, 1.0};
+    compare_actors_[i]->GetProperty()->SetDiffuseColor(rgba);
   }
 
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
@@ -533,7 +545,7 @@ void Viewer::update_clipping_planes() {
 vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
+void Viewer::handle_ffc_paint(double display_pos[2], double world_pos[3]) {
   if (!meshes_.valid()) {
     return;
   }
@@ -608,6 +620,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   visible_ = true;
 
   shape_ = shape;
+  current_image_name_ = "";
 
   meshes_ = shape->get_meshes(session_->get_display_mode());
 
@@ -631,14 +644,18 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   }
   mesh_ready_ = true;
 
-  auto annotations = shape->get_annotations();
-  corner_annotation_->SetText(0, (annotations[0]).c_str());
-  corner_annotation_->SetText(1, (annotations[1]).c_str());
-  corner_annotation_->SetText(2, (annotations[2]).c_str());
-  corner_annotation_->SetText(3, (annotations[3]).c_str());
-  corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
+  update_annotations();
 
   renderer_->RemoveAllViewProps();
+
+  if (shape->is_fixed()) {
+    double color[4] = {0.0, 0.0, 1.0, 1.0};
+    StudioUtils::add_viewport_border(renderer_, color);
+  }
+  if (shape->is_excluded()) {
+    double color[4] = {0.5, 0.5, 0.5, 1.0};
+    StudioUtils::add_viewport_border(renderer_, color);
+  }
 
   number_of_domains_ = session_->get_domains_per_shape();
   if (meshes_.valid()) {
@@ -704,8 +721,8 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         auto compare_poly_data = compare_meshes_.meshes()[i]->get_poly_data();
 
         if (compare_settings.get_mean_shape_checked()) {
-          auto transform =
-              visualizer_->get_transform(shape_, compare_settings.get_display_mode(), visualizer_->get_alignment_domain(), i);
+          auto transform = visualizer_->get_transform(shape_, compare_settings.get_display_mode(),
+                                                      visualizer_->get_alignment_domain(), i);
 
           transform->Inverse();
           auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
@@ -764,6 +781,36 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   update_planes();
   update_ffc_mode();
   renderer_->AddViewProp(corner_annotation_);
+
+  /**************
+  {  // TODO: temporarily here
+    if (meshes_.valid() && glyph_lut_) {
+      // for each domain
+      for (size_t i = 0; i < meshes_.meshes().size(); i++) {
+        auto points = shape_->get_particles().get_local_points(i);
+        auto poly_data = meshes_.meshes()[i]->get_poly_data();
+        if (!poly_data) {
+          continue;
+        }
+        ParticleArea::assign_vertex_particles(poly_data, points);
+        auto colors = ParticleArea::colors_from_lut(glyph_lut_);
+        ParticleArea::assign_vertex_colors(poly_data, colors);
+      }
+    }
+  }
+  **********/
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_annotations() {
+  if (shape_) {
+    auto annotations = shape_->get_annotations();
+    corner_annotation_->SetText(0, (annotations[0]).c_str());
+    corner_annotation_->SetText(1, (annotations[1]).c_str());
+    corner_annotation_->SetText(2, (annotations[2]).c_str());
+    corner_annotation_->SetText(3, (annotations[3]).c_str());
+    corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -783,8 +830,8 @@ void Viewer::reset_camera(std::array<double, 3> c) { renderer_->ResetCamera(); }
 //-----------------------------------------------------------------------------
 void Viewer::reset_camera() {
   slice_view_.update_camera();
-  renderer_->ResetCameraClippingRange();
   renderer_->ResetCamera();
+  renderer_->ResetCameraClippingRange();
   renderer_->GetRenderWindow()->Render();
 }
 
@@ -821,6 +868,7 @@ QSharedPointer<Session> Viewer::get_session() { return session_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_glyph_properties() {
+  double glyph_size = glyph_size_;
   if (renderer_) {
     double bounds[6];
     renderer_->ComputeVisiblePropBounds(bounds);
@@ -829,16 +877,16 @@ void Viewer::update_glyph_properties() {
     sum_range += bounds[5] - bounds[4];
     double average_range = sum_range / 3.0;
     // sanity clamp
-    glyph_size_ = std::max<double>(glyph_size_, average_range * 0.01);
-    glyph_size_ = std::min<double>(glyph_size_, average_range * 0.25);
+    glyph_size = std::max<double>(glyph_size, average_range * 0.01);
+    glyph_size = std::min<double>(glyph_size, average_range * 0.25);
   }
 
   if (session_ && session_->should_difference_vectors_show() && !scale_arrows_) {
     glyphs_->SetScaleFactor(1.0);
     arrow_glyphs_->SetScaleFactor(1.0);
   } else {
-    glyphs_->SetScaleFactor(glyph_size_);
-    arrow_glyphs_->SetScaleFactor(glyph_size_);
+    glyphs_->SetScaleFactor(glyph_size);
+    arrow_glyphs_->SetScaleFactor(glyph_size);
   }
 
   sphere_source_->SetThetaResolution(glyph_quality_);
@@ -885,7 +933,7 @@ void Viewer::update_points() {
 
   vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
 
-  Eigen::VectorXf scalar_values;
+  Eigen::VectorXd scalar_values;
   if (showing_feature_map() && !session_->should_difference_vectors_show()) {
     auto feature_map = get_displayed_feature_map();
     shape_->load_feature(session_->get_display_mode(), feature_map);
@@ -896,7 +944,6 @@ void Viewer::update_points() {
   if (domain_visibility.size() != correspondence_points.size()) {
     domain_visibility.resize(correspondence_points.size(), true);
   }
-
   if (num_points > 0) {
     viewer_ready_ = true;
     glyphs_->SetRange(0.0, (double)num_points + 1);
@@ -1061,20 +1108,6 @@ void Viewer::insert_compare_meshes() {
     if (Viewer::is_reverse(transform)) {  // if it's been reflected we need to reverse
       poly_data = StudioUtils::reverse_poly_data(poly_data);
     }
-    /*
-        if (session_->get_display_mode() == DisplayMode::Reconstructed) {
-          auto procrustes_transform = shape_->get_procrustest_transform(i);
-
-          if (procrustes_transform) {
-            std::cerr << "compose transform!\n";
-            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-            vtkMatrix4x4::Multiply4x4(procrustes_transform->GetMatrix(), transform->GetMatrix(), matrix);
-
-            transform = vtkSmartPointer<vtkTransform>::New();
-            transform->SetMatrix(matrix);
-          }
-        }
-        */
 
     if (settings.get_mean_shape_checked()) {
       // mean shape will already be in place and doesn't need the local to global transform
@@ -1083,7 +1116,6 @@ void Viewer::insert_compare_meshes() {
       actor->SetUserTransform(identity);
     } else {
       actor->SetUserTransform(transform);
-
     }
     mapper->SetInputData(poly_data);
 
@@ -1115,20 +1147,30 @@ void Viewer::set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSm
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_image_volume() {
+void Viewer::update_image_volume(bool force) {
   if (!session_ || !shape_) {
     return;
   }
   slice_view_.set_orientation(session_->get_image_axis());
 
   if (meshes_.valid()) {
-    slice_view_.set_mesh(meshes_.meshes()[0]->get_poly_data());
+    slice_view_.clear_meshes();
+    auto poly_data = meshes_.meshes()[0]->get_poly_data();
+    slice_view_.add_mesh(poly_data);
+
+    if (session_->get_image_thickness_feature()) {
+      auto target_feature = session_->get_feature_map();
+      if (target_feature != "" && target_feature != "-none-") {
+        Mesh inner = mesh::compute_inner_mesh(poly_data, target_feature);
+        slice_view_.add_mesh(inner.getVTKMesh());
+      }
+    }
   }
 
   slice_view_.update_particles();
 
   auto image_volume_name = session_->get_image_name();
-  if (image_volume_name == current_image_name_) {
+  if (!force && image_volume_name == current_image_name_) {
     return;
   }
   current_image_name_ = image_volume_name;
@@ -1300,6 +1342,7 @@ void Viewer::initialize_surfaces() {
       unclipped_surface_actors_[i]->SetMapper(unclipped_surface_mappers_[i]);
 
       compare_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
+      compare_mappers_[i]->ScalarVisibilityOff();
       compare_actors_[i] = vtkSmartPointer<vtkActor>::New();
 
       ffc_luts_[i] = vtkSmartPointer<vtkLookupTable>::New();

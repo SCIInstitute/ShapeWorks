@@ -1,11 +1,11 @@
 
-#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <SurfaceReconstructor.h>
 #include <Groom/Groom.h>
-#include <Optimize/OptimizeParameters.h>
-#include <Optimize/Optimize.h>
 #include <Logging.h>
+#include <Optimize/Optimize.h>
+#include <Optimize/OptimizeParameters.h>
+#include <Shape.h>
+#include <SurfaceReconstructor.h>
 
 namespace shapeworks {
 
@@ -33,17 +33,24 @@ void ShapeworksWorker::process() {
       try {
         this->groom_->run();
       } catch (itk::ExceptionObject& ex) {
-        SW_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
+        SW_ERROR("{}", std::string("ITK Exception: ") + ex.GetDescription());
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       } catch (std::runtime_error& e) {
-        SW_ERROR(e.what());
+        SW_ERROR("{}", e.what());
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       } catch (std::exception& e) {
-        SW_ERROR(e.what());
+        SW_ERROR("{}", e.what());
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       }
       if (this->groom_->get_aborted()) {
         SW_LOG("Groom Aborted!");
+        Q_EMIT failure();
         return;
       }
       break;
@@ -54,19 +61,17 @@ void ShapeworksWorker::process() {
         SW_LOG("Optimizing correspondence...");
         this->optimize_->Run();
       } catch (std::runtime_error e) {
-        std::cerr << "Exception: " << e.what() << "\n";
-        SW_ERROR(std::string("Error: ") + e.what());
+        SW_ERROR("{}", e.what());
         Q_EMIT failure();
         Q_EMIT finished();
         return;
       } catch (itk::ExceptionObject& ex) {
-        std::cerr << "ITK Exception: " << ex << std::endl;
-        SW_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
+        SW_ERROR("{}", std::string("ITK Exception: ") + ex.GetDescription());
         Q_EMIT failure();
         Q_EMIT finished();
         return;
       } catch (std::exception& e) {
-        SW_ERROR(e.what());
+        SW_ERROR("{}", e.what());
         Q_EMIT failure();
         Q_EMIT finished();
         return;
@@ -101,17 +106,17 @@ void ShapeworksWorker::process() {
         }
       } catch (std::runtime_error e) {
         if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
-          SW_WARN(e.what());
+          SW_WARN("{}", e.what());
         } else {
-          SW_ERROR(e.what());
+          SW_ERROR("{}", e.what());
           Q_EMIT finished();
           return;
         }
       } catch (std::exception& e) {
         if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
-          SW_WARN(e.what());
+          SW_WARN("{}", e.what());
         } else {
-          SW_ERROR(e.what());
+          SW_ERROR("{}", e.what());
           Q_EMIT finished();
           return;
         }

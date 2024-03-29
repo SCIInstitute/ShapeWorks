@@ -22,6 +22,8 @@ call pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio===0.11.0 -
 
 call pip install -r python_requirements.txt
 
+call pip install open3d==0.17.0
+
 call pip install Python/DatasetUtilsPackage.tar.gz
 call pip install Python/DocumentationUtilsPackage.tar.gz
 call pip install Python/DataAugmentationUtilsPackage.tar.gz

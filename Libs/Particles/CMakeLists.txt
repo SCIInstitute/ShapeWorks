@@ -1,23 +1,23 @@
 # Particles library
 
 set(Particles_sources
-        ParticleSystemEvaluation.cpp
- ParticleShapeStatistics.cpp
- ShapeEvaluation.cpp
- ReconstructSurface.cpp
- ParticleNormalEvaluation.cpp
- )
+  ParticleSystemEvaluation.cpp
+  ParticleShapeStatistics.cpp
+  ShapeEvaluation.cpp
+  ReconstructSurface.cpp
+  ParticleNormalEvaluation.cpp
+  ParticleFile.cpp
+  )
 
 set(Particles_headers
-        ParticleSystemEvaluation.h
- ParticleShapeStatistics.h
- itkParticlePositionReader.h
- itkParticlePositionWriter.h
- EvaluationUtil.h
- ShapeEvaluation.h
- ReconstructSurface.h
- ParticleNormalEvaluation.h
- )
+  ParticleSystemEvaluation.h
+  ParticleShapeStatistics.h
+  EvaluationUtil.h
+  ShapeEvaluation.h
+  ReconstructSurface.h
+  ParticleNormalEvaluation.h
+  ParticleFile.h
+  )
 
 add_library(Particles STATIC
   ${Particles_sources}

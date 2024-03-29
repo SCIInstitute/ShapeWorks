@@ -97,10 +97,27 @@ class Subject {
   //! Set the display name
   void set_display_name(std::string display_name);
 
+  //! Get if this subject is fixed or not
+  bool is_fixed();
+  //! Set if this subject is fixed or not
+  void set_fixed(bool fixed);
+
+  //! Get if this subject is excluded or not
+  bool is_excluded();
+  //! Set if this subject is excluded or not
+  void set_excluded(bool excluded);
+
+  //! Get the notes
+  std::string get_notes();
+  //! Set the notes
+  void set_notes(std::string notes);
+
  private:
   int number_of_domains_ = 0;
 
   std::string display_name_;
+  bool fixed_ = false;
+  bool excluded_ = false;
   StringList original_filenames_;
   StringList groomed_filenames_;
   StringList local_particle_filenames_;
@@ -114,5 +131,6 @@ class Subject {
   StringMap group_values_;
   StringMap extra_values_;
   StringMap table_values_;
+  std::string notes_;
 };
 }  // namespace shapeworks

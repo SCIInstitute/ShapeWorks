@@ -19,10 +19,8 @@
 #include <Project/Project.h>
 
 #include "Libs/Optimize/Domain/DomainType.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
 #include "Libs/Optimize/Utils/OptimizationVisualizer.h"
-#include "ParticleSystem.h"
 #include "ProcrustesRegistration.h"
 #include "Sampler.h"
 
@@ -66,11 +64,13 @@ class Optimize {
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
 
-  bool SetUpOptimize(ProjectHandle projectFile);
+  //! Set up this Optimize object using a ShapeWorks project
+  bool SetUpOptimize(ProjectHandle project);
 
-  //! Set the Projects
+  //! Set the Project object
   void SetProject(std::shared_ptr<Project> project);
 
+  //! Set an iteration callback function to be called after each iteration
   void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
 
   //! Abort optimization
@@ -174,10 +174,6 @@ class Optimize {
   void SetOptimizationIterationsCompleted(int optimization_iterations_completed);
   //! Set the number of iterations per split
   void SetIterationsPerSplit(int iterations_per_split);
-  //! Set the init criterion (TODO: details)
-  void SetInitializationCriterion(double init_criterion);
-  //! Set the optimization criterion (TODO: details)
-  void SetOptimizationCriterion(double opt_criterion);
   //! Set if shape statistics should be used in initialization
   void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
   //! Set the interval for running procrustes (0 to disable)
@@ -208,9 +204,9 @@ class Optimize {
   //! Set if mixed effects should be used (TODO: details)
   void SetUseMixedEffects(bool use_mixed_effects);
 
-  //! Set if optimization should be done using disentangled spatiotemporal SSM method 
+  //! Set if optimization should be done using disentangled spatiotemporal SSM method
   void SetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm_4d);
-  //! Returns true if optimization is to be done using disentangled spatiotemporal SSM method 
+  //! Returns true if optimization is to be done using disentangled spatiotemporal SSM method
   bool GetUseDisentangledSpatiotemporalSSM();
 
   //! For good/bad analysis, set the normal angle to use (TODO: details)
@@ -230,23 +226,21 @@ class Optimize {
   //! Set starting point files (TODO: details)
   void SetPointFiles(const std::vector<std::string>& point_files);
 
+  //! Set initial particle positions (e.g. for fixed subjects)
+  void SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points);
+
   //! Get number of shapes
   int GetNumShapes();
-  //! Set the mesh files (TODO: details)
-  void SetMeshFiles(const std::vector<std::string>& mesh_files);
   //! Set attribute scales (TODO: details)
   void SetAttributeScales(const std::vector<double>& scales);
-  //! Set FEA files (TODO: details)
-  void SetFeaFiles(const std::vector<std::string>& files);
-  //! Set FEA grad files (TODO: details)
-  void SetFeaGradFiles(const std::vector<std::string>& files);
-  //! Set FIDS files (TODO: details)
-  void SetFidsFiles(const std::vector<std::string>& files);
+
+  //! Set the field attributes
+  void SetFieldAttributes(const std::vector<std::string>& field_attributes);
 
   //! Set Particle Flags (TODO: details)
   void SetParticleFlags(std::vector<int> flags);
   //! Set Domain Flags (TODO: details)
-  void SetDomainFlags(std::vector<int> flags);
+  void SetFixedDomains(std::vector<int> flags);
 
   //! Shared boundary settings
   void SetSharedBoundaryEnabled(bool enabled);
@@ -294,7 +288,10 @@ class Optimize {
   //! n * number_of_triangles
   void SetGeodesicsCacheSizeMultiplier(size_t n);
 
-  shapeworks::OptimizationVisualizer& GetVisualizer();
+  //! Set the remeshing percent for the mesh used for computing geodesics (0-100)
+  void SetGeodesicsRemeshPercent(double percent);
+
+  OptimizationVisualizer& GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
@@ -304,6 +301,8 @@ class Optimize {
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
   void UpdateProgress();
+
+  void set_particle_format(std::string format) { particle_format_ = format; }
 
  protected:
   //! Set the iteration callback. Derived classes should override to set their own callback
@@ -402,8 +401,6 @@ class Optimize {
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
   int m_iterations_per_split = 1000;
-  double m_initialization_criterion = 1e-6;
-  double m_optimization_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
   bool m_procrustes_scaling = true;
@@ -425,7 +422,8 @@ class Optimize {
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
   bool m_geodesics_enabled = false;             // geodesics disabled by default
-  size_t m_geodesic_cache_size_multiplier = 0;  // 0 => VtkMeshWrapper will use a heuristic to determine cache size
+  size_t m_geodesic_cache_size_multiplier = 0;  // 0 => MeshWrapper will use a heuristic to determine cache size
+  double m_geodesic_remesh_percent = 100.0;    // 100% by default (e.g. no remeshing)
 
   // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;
@@ -462,13 +460,13 @@ class Optimize {
   bool show_visualizer_ = false;
   shapeworks::OptimizationVisualizer visualizer_;
 
+  std::string particle_format_ = "particles";
   std::shared_ptr<Project> project_;
 
   std::chrono::system_clock::time_point m_start_time;
   std::chrono::system_clock::time_point m_last_update_time;
   std::chrono::system_clock::time_point m_last_remaining_update_time;
   std::string m_remaining_time_message;
-
 };
 
 }  // namespace shapeworks

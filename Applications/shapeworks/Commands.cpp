@@ -41,31 +41,7 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
 }
 #endif
 
-static void setup_callbacks(bool show_progress, bool xml_status) {
-  if (show_progress) {
-    auto progress_callback = [](double progress, std::string message) {
-      // show status message and percentage complete
-      std::cout << fmt::format("{} ({:.1f}%)        \r", message, progress);
-      std::cout.flush();
-    };
-    Logging::Instance().set_progress_callback(progress_callback);
-  }
 
-  if (xml_status) {
-    auto progress_callback = [](double progress, std::string message) {
-      // print status message and percentage complete
-      std::cout << fmt::format("<xml><status>{}</status><progress>{:.1f}</progress></xml>\n", message, progress);
-      std::cout.flush();
-    };
-    Logging::Instance().set_progress_callback(progress_callback);
-
-    auto error_callback = [](std::string message) {
-      std::cout << fmt::format("<xml><error>{}</error></xml>\n", message);
-      std::cout.flush();
-    };
-    Logging::Instance().set_error_callback(error_callback);
-  }
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Seed
@@ -87,7 +63,7 @@ void Seed::buildParser() {
 bool Seed::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   int value = static_cast<int>(options.get("value"));
 
-  ShapeworksUtils::setRngSeed(value);
+  ShapeWorksUtils::set_rng_seed(value);
 
   return true;
 }
@@ -102,7 +78,10 @@ void OptimizeCommand::buildParser() {
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
   parser.add_option("--progress").action("store_true").set_default(false).help("Show progress [default: false].");
-  parser.add_option("--xmlconsole").action("store_true").set_default(false).help("XML console output [default: false].");
+  parser.add_option("--xmlconsole")
+      .action("store_true")
+      .set_default(false)
+      .help("XML console output [default: false].");
 
   Command::buildParser();
 }
@@ -120,13 +99,18 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
   bool isProject = StringUtils::hasSuffix(projectFile, "xlsx") || StringUtils::hasSuffix(projectFile, "swproj");
 
   Optimize app;
-  setup_callbacks(show_progress, xml_status);
+  ShapeWorksUtils::setup_console_logging(show_progress, xml_status);
 
   if (isProject) {
     try {
       // load spreadsheet project
       ProjectHandle project = std::make_shared<Project>();
-      project->load(projectFile);
+      try {
+        project->load(projectFile);
+      } catch (std::exception& e) {
+        SW_ERROR("Project failed to load: {}", e.what());
+        return false;
+      }
 
       const auto oldBasePath = boost::filesystem::current_path();
       auto base = StringUtils::getPath(projectFile);
@@ -153,7 +137,7 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
 
       return success;
     } catch (std::exception& e) {
-      SW_ERROR(e.what());
+      SW_ERROR("{}", e.what());
       return false;
     }
   } else {
@@ -173,7 +157,10 @@ void GroomCommand::buildParser() {
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
   parser.add_option("--progress").action("store_true").set_default(false).help("Show progress [default: false].");
-  parser.add_option("--xmlconsole").action("store_true").set_default(false).help("XML console output [default: false].");
+  parser.add_option("--xmlconsole")
+      .action("store_true")
+      .set_default(false)
+      .help("XML console output [default: false].");
 
   Command::buildParser();
 }
@@ -188,7 +175,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
     return false;
   }
 
-  setup_callbacks(show_progress, xml_status);
+  ShapeWorksUtils::setup_console_logging(show_progress, xml_status);
 
   try {
     ProjectHandle project = std::make_shared<Project>();
@@ -215,7 +202,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
 
     return success;
   } catch (std::exception& e) {
-    SW_ERROR(e.what());
+    SW_ERROR("{}", e.what());
     return false;
   }
 }
@@ -230,8 +217,10 @@ void AnalyzeCommand::buildParser() {
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
   parser.add_option("--output").action("store").type("string").set_default("").help("Path to output file.");
-  parser.add_option("--range").action("store").type("float").set_default(3.0f).help("Standard deviation range for PCA [default: 3.0].");
-  parser.add_option("--steps").action("store").type("int").set_default(21).help("Number of steps to use for PCA [default: 21].");
+  parser.add_option("--range").action("store").type("float").set_default(3.0f).help(
+      "Standard deviation range for PCA [default: 3.0].");
+  parser.add_option("--steps").action("store").type("int").set_default(21).help(
+      "Number of steps to use for PCA [default: 21].");
 
   Command::buildParser();
 }

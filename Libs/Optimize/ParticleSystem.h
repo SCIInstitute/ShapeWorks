@@ -89,7 +89,7 @@ class ParticleSystem : public itk::DataObject {
       observer of this itk::Object (AddObserver).  Relevant state information
       is passed to objects in particle events.
   */
-  void RegisterObserver(Observer* attr);
+  void RegisterObserver(Observer *attr);
 
   /** Invokes the set event on all particle positions, resetting them to their
       current value.  This method may be called to synchronize positional
@@ -117,7 +117,6 @@ class ParticleSystem : public itk::DataObject {
       m_Transform associated with the given domain.*/
   const PointType &AddPosition(const PointType &, unsigned int d = 0);
   const PointType &SetPosition(const PointType &, unsigned long int k, unsigned int d = 0);
-
 
   void RemovePosition(unsigned long int k, unsigned int d = 0);
 
@@ -362,8 +361,7 @@ class ParticleSystem : public itk::DataObject {
     m_DomainsPerShape = num;
     m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
-  unsigned int GetDomainsPerShape() const
-  { return m_DomainsPerShape; }
+  unsigned int GetDomainsPerShape() const { return m_DomainsPerShape; }
 
   /** Set the number of domains.  This method modifies the size of the
     m_Domains, m_Positions, and m_Transform lists. */
@@ -372,34 +370,14 @@ class ParticleSystem : public itk::DataObject {
   // Returns the maximum distance between nearest neighbors in domain dom
   double ComputeMaxDistNearestNeighbors(size_t dom);
 
+  void SetFieldAttributes(const std::vector<std::string> &field_attributes) { m_FieldAttributes = field_attributes; }
+
+  const std::vector<std::string> &GetFieldAttributes() const { return m_FieldAttributes; }
+
  protected:
   ParticleSystem();
   void PrintSelf(std::ostream &os, itk::Indent indent) const;
   virtual ~ParticleSystem(){};
-
-  /** Return an iterator that points to the first element of the list of the
-      domains. */
-  std::vector<DomainType::Pointer>::iterator GetDomainsBegin() { return m_Domains.begin(); }
-
-  /** Return an iterator that points one position past the last element of the list of the
-      domains. */
-  std::vector<DomainType::Pointer>::iterator GetDomainsEnd() { return m_Domains.end(); }
-
-  /** Return an iterator that points to the first element of the list of the
-      transforms. */
-  std::vector<TransformType>::iterator GetTransformsBegin() { return m_Transforms.begin(); }
-
-  /** Return an iterator that points one position past the last element of the list of the
-      transforms. */
-  std::vector<TransformType>::iterator GetTransformsEnd() { return m_Transforms.end(); }
-
-  /** Return an iterator that points to the first element of the list of the
-      inverse transforms. */
-  std::vector<TransformType>::iterator GetInverseTransformsBegin() { return m_InverseTransforms.begin(); }
-
-  /** Return an iterator that points one position past the last element of the list of the
-      transforms. */
-  std::vector<TransformType>::iterator GetInverseTransformsEnd() { return m_InverseTransforms.end(); }
 
   /** Return the i'th transform object. */
   TransformType &GetInverseTransform(unsigned int i) { return m_InverseTransforms[i]; }
@@ -454,6 +432,8 @@ class ParticleSystem : public itk::DataObject {
   /** An array that indicates which particle indices (in any domain) will
       not respond to SetPosition. */
   std::vector<std::vector<bool>> m_FixedParticleFlags;
+
+  std::vector<std::string> m_FieldAttributes;
 
   std::mt19937 m_rand{42};
 };

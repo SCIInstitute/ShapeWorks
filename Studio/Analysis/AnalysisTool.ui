@@ -535,7 +535,7 @@ QWidget#particles_panel {
             <item row="3" column="0" colspan="2">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="mean_tab">
                <attribute name="title">
@@ -1089,16 +1089,6 @@ QWidget#particles_panel {
                 <string>Samples</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_4">
-                <item row="1" column="1">
-                 <widget class="QSpinBox" name="sampleSpinBox">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="toolTip">
-                   <string>Sample selection</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="1" column="0">
                  <widget class="QRadioButton" name="singleSamplesRadio">
                   <property name="toolTip">
@@ -1106,6 +1096,19 @@ QWidget#particles_panel {
                   </property>
                   <property name="text">
                    <string>Single Sample:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" colspan="2">
+                 <widget class="QPushButton" name="medianButton">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Show median sample</string>
+                  </property>
+                  <property name="text">
+                   <string>Median</string>
                   </property>
                  </widget>
                 </item>
@@ -1122,18 +1125,61 @@ QWidget#particles_panel {
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0" colspan="2">
-                 <widget class="QPushButton" name="medianButton">
+                <item row="3" column="0" colspan="2">
+                 <widget class="QWidget" name="predict_diff_widget" native="true">
+                  <layout class="QGridLayout" name="gridLayout_28">
+                   <item row="0" column="0">
+                    <widget class="QCheckBox" name="show_difference_to_predicted_scalar">
+                     <property name="text">
+                      <string>Show difference to predicted scalar</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <spacer name="horizontalSpacer_9">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QCheckBox" name="show_predicted_scalar">
+                     <property name="text">
+                      <string>Show predicted scalar</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSpinBox" name="sampleSpinBox">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
                   <property name="toolTip">
-                   <string>Show median sample</string>
-                  </property>
-                  <property name="text">
-                   <string>Median</string>
+                   <string>Sample selection</string>
                   </property>
                  </widget>
+                </item>
+                <item row="4" column="0">
+                 <spacer name="verticalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </widget>
@@ -1305,10 +1351,7 @@ QWidget#particles_panel {
                      <property name="title">
                       <string>Mode of Variation </string>
                      </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_mca_box">
-                      <property name="spacing">
-                       <number>6</number>
-                      </property>
+                     <layout class="QGridLayout" name="gridLayout_24">
                       <property name="leftMargin">
                        <number>0</number>
                       </property>
@@ -1321,29 +1364,7 @@ QWidget#particles_panel {
                       <property name="bottomMargin">
                        <number>0</number>
                       </property>
-                      <item>
-                       <widget class="QRadioButton" name="mcaLevelWithinButton">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="toolTip">
-                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
-                        </property>
-                        <property name="text">
-                         <string>Shape Only</string>
-                        </property>
-                        <property name="checkable">
-                         <bool>true</bool>
-                        </property>
-                        <property name="checked">
-                         <bool>false</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
+                      <item row="1" column="0">
                        <widget class="QRadioButton" name="mcaLevelBetweenButton">
                         <property name="toolTip">
                          <string>Multi-Level Component Analysis - Modes of Variation highlighting only alignment changes for the multi-object structure in relative pose subspace.</string>
@@ -1359,16 +1380,137 @@ QWidget#particles_panel {
                         </property>
                        </widget>
                       </item>
-                      <item>
+                      <item row="2" column="0">
                        <widget class="QRadioButton" name="vanillaPCAButton">
                         <property name="toolTip">
                          <string>PCA done on the entire shape structure - Modes of Variation in the shared shape space of pose and morphology.</string>
                         </property>
                         <property name="text">
-                         <string>Both</string>
+                         <string>Shape and Pose</string>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="0">
+                       <widget class="QRadioButton" name="mcaLevelWithinButton">
+                        <property name="toolTip">
+                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
+                        </property>
+                        <property name="text">
+                         <string>Shape Only</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="shape_scalar_groupbox">
+                     <property name="title">
+                      <string>Shape / Scalar</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_27">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item row="2" column="0">
+                       <widget class="QRadioButton" name="pca_scalar_only">
+                        <property name="toolTip">
+                         <string>PCA analysis on scalars only</string>
+                        </property>
+                        <property name="text">
+                         <string>Scalar Only</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QComboBox" name="pca_scalar_combo">
+                        <property name="font">
+                         <font>
+                          <family>.AppleSystemUIFont</family>
+                         </font>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QRadioButton" name="pca_scalar_shape_only">
+                        <property name="toolTip">
+                         <string>PCA analysis on shape only</string>
+                        </property>
+                        <property name="text">
+                         <string>Shape Only</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
                         </property>
                         <property name="checked">
                          <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0">
+                       <widget class="QRadioButton" name="pca_shape_and_scalar">
+                        <property name="toolTip">
+                         <string>PCA analysis on shape+scalars combined</string>
+                        </property>
+                        <property name="text">
+                         <string>Shape and Scalar</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_7">
+                        <property name="text">
+                         <string>Scalar:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QCheckBox" name="pca_predict_scalar">
+                        <property name="toolTip">
+                         <string>Predict scalars from shape using 2 block PLS fit</string>
+                        </property>
+                        <property name="text">
+                         <string>Predict Scalar</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QCheckBox" name="pca_predict_shape">
+                        <property name="toolTip">
+                         <string>Predict shape from scalars using 2 block PLS fit</string>
+                        </property>
+                        <property name="text">
+                         <string>Predict Shape</string>
                         </property>
                        </widget>
                       </item>
@@ -1503,29 +1645,6 @@ QWidget#particles_panel {
               </widget>
              </widget>
             </item>
-            <item row="0" column="0" colspan="2">
-             <widget class="QWidget" name="reference_domain_widget" native="true">
-              <layout class="QGridLayout" name="gridLayout_18">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="reference_domain_label">
-                 <property name="text">
-                  <string>Alignment
-Reference Domain</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QComboBox" name="reference_domain"/>
-               </item>
-              </layout>
-             </widget>
-            </item>
             <item row="4" column="0">
              <widget class="QLabel" name="show_difference_to_mean_label">
               <property name="text">
@@ -1583,6 +1702,29 @@ Reference Domain</string>
                   </size>
                  </property>
                 </spacer>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="2">
+             <widget class="QWidget" name="reference_domain_widget" native="true">
+              <layout class="QGridLayout" name="gridLayout_18">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="reference_domain_label">
+                 <property name="text">
+                  <string>Alignment
+Reference Domain</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="reference_domain"/>
                </item>
               </layout>
              </widget>

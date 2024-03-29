@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "ParticleNormalEvaluation.h"
 #include "ParticleShapeStatistics.h"
 #include "ParticleSystemEvaluation.h"
@@ -62,9 +62,9 @@ TEST(ParticlesTests, pca)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(subFilenames);
   ParticleShapeStatistics stats;
-  stats.DoPCA(ParticleSystemEvaluation);
-  stats.PrincipalComponentProjections();
-  auto pcaVec = stats.PCALoadings();
+  stats.do_pca(ParticleSystemEvaluation);
+  stats.principal_component_projections();
+  auto pcaVec = stats.get_pca_loadings();
 
   Eigen::Matrix<double, 3, 3, Eigen::RowMajor> ground_truth;
   ground_truth << -9.47447, 1.92655, -0.698966,
@@ -266,10 +266,10 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals2_groomed.vtk");
   Mesh mesh3(std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals3_groomed.vtk");
 
-  std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
-  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh1.getVTKMesh()));
-  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh2.getVTKMesh()));
-  meshes.push_back(std::make_shared<VtkMeshWrapper>(mesh3.getVTKMesh()));
+  std::vector<std::shared_ptr<MeshWrapper>> meshes;
+  meshes.push_back(std::make_shared<MeshWrapper>(mesh1.getVTKMesh()));
+  meshes.push_back(std::make_shared<MeshWrapper>(mesh2.getVTKMesh()));
+  meshes.push_back(std::make_shared<MeshWrapper>(mesh3.getVTKMesh()));
 
   std::vector<std::string> particle_files = {
     std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals_particles/particle_normals1_groomed_groomed_local.particles",
@@ -282,7 +282,8 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
 
   auto eval = [&](double angle, int expected_good_count) {
     auto normals = ParticleNormalEvaluation::compute_particle_normals(particles, meshes);
-    auto good_bad = ParticleNormalEvaluation::evaluate_particle_normals(particles, normals, angle);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(particles, normals);
+    auto good_bad = ParticleNormalEvaluation::threshold_particle_normals(angles, angle);
     int good_count = std::count(good_bad.begin(), good_bad.end(), true);
     ASSERT_EQ(good_count, expected_good_count);
   };

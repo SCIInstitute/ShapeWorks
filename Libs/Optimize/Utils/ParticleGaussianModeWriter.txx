@@ -1,9 +1,10 @@
 #pragma once
 
+#include <Particles/ParticleFile.h>
+
 #include <string>
 
-#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
-#include "itkParticlePositionWriter.h"
+//#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 
 namespace shapeworks {
@@ -74,11 +75,7 @@ void ParticleGaussianModeWriter<VDimension>::Update() const {
       meanlist.push_back(p);
     }
 
-    std::string tmpstr = fn + ".mean";
-    ParticlePositionWriter::Pointer writer = ParticlePositionWriter::New();
-    writer->SetFileName(tmpstr.c_str());
-    writer->SetInput(meanlist);
-    writer->Update();
+    particles::write_particles_from_vector(fn + ".mean", meanlist);
 
     int modenum = 0;
     for (int mode = num_samples - 1; mode > num_samples - (m_NumberOfModes + 1); mode--, modenum++) {
@@ -99,10 +96,9 @@ void ParticleGaussianModeWriter<VDimension>::Update() const {
 
         char fp[255];
         ::sprintf(fp, ".%d.%d.mode", s, modenum);
-        tmpstr = fn + fp;
-        writer->SetFileName(tmpstr.c_str());
-        writer->SetInput(modelist);
-        writer->Update();
+        std::string tmpstr = fn + fp;
+
+        particles::write_particles_from_vector(tmpstr, modelist);
       }
     }
   }

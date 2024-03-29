@@ -1,58 +1,54 @@
 #include "ParticleSystemEvaluation.h"
 
+#include <Particles/ParticleFile.h>
+
 #include "ShapeEvaluation.h"
 #include "Shapeworks.h"
 
 namespace shapeworks {
 
-ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string>& _paths) {
-  if (_paths.empty()) {
+//---------------------------------------------------------------------------
+ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string>& paths) {
+  if (paths.empty()) {
     throw std::runtime_error("No filenames passed to readParticleSystemEvaluation");
   }
 
-  this->paths = _paths;
-  const int N = paths.size();
-  const int VDimension = 3;  // TODO Don't hardcode VDimension
+  paths_ = paths;
+  const int N = paths_.size();
+  const int VDimension = 3;
   assert(N > 0);
 
-  // TODO: We're using the existing particle file reader here. This is not ideal
-  //  since this particle reader loads into a std::vector, which subsequently
-  //  is copied to Eigen. Refactor it to load directly to Eigen. (This is not a
-  //  huge problem for now because the particle files are quite small)
-  ParticlePositionReader::Pointer reader0 = ParticlePositionReader::New();
-
   // Read the first file to find dimensions
-  reader0->SetFileName(paths[0]);
-  reader0->Update();
-  const int D = reader0->GetOutput().size() * VDimension;
+  auto points0 = particles::read_particles_as_vector(paths_[0]);
+  const int D = points0.size() * VDimension;
 
-  P.resize(D, N);
-  P.col(0) = Eigen::Map<const Eigen::VectorXd>((double*)reader0->GetOutput().data(), D);
+  matrix_.resize(D, N);
+  matrix_.col(0) = Eigen::Map<const Eigen::VectorXd>((double*)points0.data(), D);
 
   for (int i = 1; i < N; i++) {
-    ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
-    reader->SetFileName(paths[i]);
-    reader->Update();
-    int count = reader->GetOutput().size() * VDimension;
+    auto points = particles::read_particles_as_vector(paths_[i]);
+    int count = points.size() * VDimension;
     if (count != D) {
       throw std::runtime_error("ParticleSystemEvaluation files must have the same number of particles");
     }
-    P.col(i) = Eigen::Map<const Eigen::VectorXd>((double*)reader->GetOutput().data(), D);
+    matrix_.col(i) = Eigen::Map<const Eigen::VectorXd>((double*)points.data(), D);
   }
 }
 
-ParticleSystemEvaluation::ParticleSystemEvaluation(const Eigen::MatrixXd& matrix) { this->P = matrix; }
+//---------------------------------------------------------------------------
+ParticleSystemEvaluation::ParticleSystemEvaluation(const Eigen::MatrixXd& matrix) { matrix_ = matrix; }
 
+//---------------------------------------------------------------------------
 bool ParticleSystemEvaluation::ExactCompare(const ParticleSystemEvaluation& other) const {
-  if (P.rows() != other.P.rows() || P.cols() != other.P.cols()) {
+  if (matrix_.rows() != other.matrix_.rows() || matrix_.cols() != other.matrix_.cols()) {
     std::cerr << "Rows/Columns mismatch\n";
     return false;
   }
   bool same = true;
-  for (int r = 0; r < P.rows(); r++) {
-    for (int c = 0; c < P.cols(); c++) {
-      if (!epsEqual(P(r, c), other.P(r, c), 0.001)) {
-        std::cerr << "(" << r << "," << c << "): " << P(r, c) << " vs " << other.P(r, c) << "\n";
+  for (int r = 0; r < matrix_.rows(); r++) {
+    for (int c = 0; c < matrix_.cols(); c++) {
+      if (!epsEqual(matrix_(r, c), other.matrix_(r, c), 0.001)) {
+        std::cerr << "(" << r << "," << c << "): " << matrix_(r, c) << " vs " << other.matrix_(r, c) << "\n";
         same = false;
       }
     }
@@ -60,6 +56,7 @@ bool ParticleSystemEvaluation::ExactCompare(const ParticleSystemEvaluation& othe
   return same;
 }
 
+//---------------------------------------------------------------------------
 bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation& other) const {
   auto compactness1 = ShapeEvaluation::ComputeFullCompactness(*this);
   auto compactness2 = ShapeEvaluation::ComputeFullCompactness(other);
@@ -115,34 +112,12 @@ bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation&
   return good;
 }
 
+//---------------------------------------------------------------------------
 bool ParticleSystemEvaluation::ReadParticleFile(std::string filename, Eigen::VectorXd& points) {
-  std::ifstream in(filename);
-  if (!in.good()) {
-    return false;
-  }
-  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-  int num_points = 0;
-  while (in.good()) {
-    double x, y, z;
-    in >> x >> y >> z;
-    if (!in.good()) {
-      break;
-    }
-    vtk_points->InsertNextPoint(x, y, z);
-    num_points++;
-  }
-  in.close();
-  points.setZero();
-  points.resize(num_points * 3);
-
-  int idx = 0;
-  for (int i = 0; i < num_points; i++) {
-    double* pos = vtk_points->GetPoint(i);
-    points[idx++] = pos[0];
-    points[idx++] = pos[1];
-    points[idx++] = pos[2];
-  }
+  points = particles::read_particles(filename);
   return true;
 }
+
+//---------------------------------------------------------------------------
 
 }  // namespace shapeworks

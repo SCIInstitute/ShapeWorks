@@ -2,6 +2,7 @@
 
 #include <Logging.h>
 #include <MeshWarper.h>
+#include <Particles/ParticleNormalEvaluation.h>
 #include <StringUtils.h>
 
 #include <boost/filesystem.hpp>
@@ -13,7 +14,7 @@ namespace shapeworks {
 
 //---------------------------------------------------------------------------
 static json get_eigen_vectors(ParticleShapeStatistics* stats) {
-  auto values = stats->Eigenvectors();
+    auto values = stats->get_eigen_vectors();
 
   std::vector<double> vals;
   for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
@@ -62,7 +63,35 @@ static json create_charts(ParticleShapeStatistics* stats) {
 }
 
 //---------------------------------------------------------------------------
-void write_offline_groups(json& json_object, ProjectHandle project, Analyze& analyze, boost::filesystem::path base) {
+static void write_good_bad_angles(json& json_object, ProjectHandle project, Analyze& analyze) {
+  std::vector<double> all_angles;
+
+  std::vector<json> good_bad_angles;
+
+  for (int d = 0; d < project->get_number_of_domains_per_subject(); d++) {
+    std::vector<std::shared_ptr<MeshWrapper>> meshes;
+    for (auto& shape : analyze.get_shapes()) {
+      meshes.push_back(shape->get_groomed_mesh_wrappers()[d]);
+    }
+
+    auto base = analyze.get_local_particle_system(d);
+    auto normals = ParticleNormalEvaluation::compute_particle_normals(base.Particles(), meshes);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(base.Particles(), normals);
+
+    // round angles to 2 decimal places
+    for (auto& angle : angles) {
+      angle = std::round(angle * 100.0) / 100.0;
+    }
+
+    good_bad_angles.push_back(angles);
+  }
+  // write all_angles to json
+  json_object["good_bad_angles"] = good_bad_angles;
+}
+
+//---------------------------------------------------------------------------
+static void write_offline_groups(json& json_object, ProjectHandle project, Analyze& analyze,
+                                 boost::filesystem::path base) {
   auto group_names = project->get_group_names();
 
   std::vector<json> group_jsons;
@@ -144,8 +173,8 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   double increment = range / half_steps;
 
   std::vector<double> eigen_vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    eigen_vals.push_back(stats_.Eigenvalues()[i]);
+  for (int i = stats_.get_eigen_values().size() - 1; i > 0; i--) {
+    eigen_vals.push_back(stats_.get_eigen_values()[i]);
   }
   double sum = std::accumulate(eigen_vals.begin(), eigen_vals.end(), 0.0);
 
@@ -164,14 +193,17 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   for (int d = 0; d < num_domains; d++) {
     std::string domain_id = std::to_string(d);
     auto mesh = meshes.meshes()[d];
-    std::string filename = "mean_shape_" + domain_id + ".vtk";
-    Mesh(mesh->get_poly_data()).write(filename);
-    mean_meshes.push_back(filename);
+    std::string vtk_filename = "mean_shape_" + domain_id + ".vtk";
+    auto filename = base / boost::filesystem::path(vtk_filename);
 
-    filename = "mean_shape_" + domain_id + ".pts";
+    Mesh(mesh->get_poly_data()).write(filename.string());
+    mean_meshes.push_back(vtk_filename);
+
+    std::string particle_filename = "mean_shape_" + domain_id + ".pts";
+    filename = base / boost::filesystem::path(particle_filename);
     auto local_particles = mean_shape->get_particles().get_local_particles(d);
-    Particles::save_particles_file(filename, local_particles);
-    mean_particles.push_back(filename);
+    Particles::save_particles_file(filename.string(), local_particles);
+    mean_particles.push_back(particle_filename);
   }
   json mean_meshes_item;
   mean_meshes_item["meshes"] = mean_meshes;
@@ -181,7 +213,7 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   // export modes
   std::vector<json> modes;
   for (int mode = 0; mode < num_modes; mode++) {
-    unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
+    unsigned int m = stats_.get_eigen_vectors().cols() - (mode + 1);
     json jmode;
     jmode["mode"] = mode + 1;
     double eigen_value = eigen_vals[mode];
@@ -199,8 +231,8 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
     jmode["cumulative_explained_variance"] = cumulative_explained_variance;
     SW_LOG("explained_variance [{}]: {:.2f}", mode, explained_variance);
     SW_LOG("cumulative_explained_variance [{}]: {:.2f}", mode, cumulative_explained_variance);
-
-    double lambda = sqrt(stats_.Eigenvalues()[m]);
+    
+    double lambda = sqrt(stats_.get_eigen_values()[m]);
 
     std::vector<json> jmodes;
     for (int i = 1; i <= half_steps; i++) {
@@ -246,7 +278,7 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   }
 
   j["eigen_vectors"] = get_eigen_vectors(&stats_);
-  j["eigen_values"] = stats_.Eigenvalues();
+  j["eigen_values"] = stats_.get_eigen_values();
   j["modes"] = modes;
   j["charts"] = create_charts(&stats_);
 
@@ -268,6 +300,8 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
 
   write_offline_groups(j, project_, *this, base);
 
+  write_good_bad_angles(j, project_, *this);
+
   std::ofstream file(outfile);
   if (!file.good()) {
     throw std::runtime_error("Unable to open " + outfile + " for writing");
@@ -288,7 +322,7 @@ Particles Analyze::get_mean_shape_points() {
     return Particles();
   }
 
-  return convert_from_combined(stats_.Mean());
+  return convert_from_combined(stats_.get_mean());
 }
 
 //---------------------------------------------------------------------------
@@ -302,22 +336,22 @@ ShapeHandle Analyze::get_mean_shape() {
 
 //---------------------------------------------------------------------------
 Particles Analyze::get_shape_points(int mode, double value) {
-  if (!compute_stats() || stats_.Eigenvectors().size() <= 1) {
+  if (!compute_stats() || stats_.get_eigen_vectors().size() <= 1) {
     return Particles();
   }
-  if (mode + 2 > stats_.Eigenvalues().size()) {
-    mode = stats_.Eigenvalues().size() - 2;
+  if (mode + 2 > stats_.get_eigen_values().size()) {
+    mode = stats_.get_eigen_values().size() - 2;
   }
-
-  unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
-
-  Eigen::VectorXd e = stats_.Eigenvectors().col(m);
-
-  double lambda = sqrt(stats_.Eigenvalues()[m]);
+  
+  unsigned int m = stats_.get_eigen_vectors().cols() - (mode + 1);
+  
+  Eigen::VectorXd e = stats_.get_eigen_vectors().col(m);
+  
+  double lambda = sqrt(stats_.get_eigen_values()[m]);
 
   std::vector<double> vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(stats_.Eigenvalues()[i]);
+  for (int i = stats_.get_eigen_values().size() - 1; i > 0; i--) {
+    vals.push_back(stats_.get_eigen_values()[i]);
   }
   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
   double cumulation = 0;
@@ -325,7 +359,7 @@ Particles Analyze::get_shape_points(int mode, double value) {
     cumulation += vals[i];
   }
 
-  auto temp_shape = stats_.Mean() + (e * (value * lambda));
+  auto temp_shape = stats_.get_mean() + (e * (value * lambda));
 
   return convert_from_combined(temp_shape);
 }
@@ -352,6 +386,8 @@ bool Analyze::update_shapes() {
   auto subjects = project_->get_subjects();
 
   SW_LOG("number of subjects: {}", num_subjects);
+
+  auto domain_names = project_->get_domain_names();
 
   for (int i = 0; i < num_subjects; i++) {
     auto shape = std::make_shared<Shape>();
@@ -387,6 +423,12 @@ bool Analyze::update_shapes() {
         landmark_definitions = project_->get_landmarks(domain_id);
       }
     }
+
+    // set reference domain
+    auto transform = shape->get_groomed_transform(domain_names.size());
+    shape->set_particle_transform(transform);
+    shape->set_alignment_type(AlignmentType::Global);
+
     shapes_.push_back(shape);
   }
 
@@ -447,9 +489,9 @@ bool Analyze::compute_stats() {
       return false;
     }
   }
-
-  stats_.ImportPoints(points, group_ids);
-  stats_.ComputeModes();
+  
+  stats_.import_points(points, group_ids);
+  stats_.compute_modes();
 
   stats_ready_ = true;
   SW_LOG("Computed stats successfully");
@@ -480,7 +522,7 @@ Particles Analyze::convert_from_combined(const Eigen::VectorXd& points) {
 
 //---------------------------------------------------------------------------
 void Analyze::initialize_mesh_warper() {
-  int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
+  int median = stats_.compute_median_shape(-32);  //-32 = both groups
 
   if (median < 0 || median >= get_shapes().size()) {
     SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
@@ -513,9 +555,9 @@ void Analyze::initialize_mesh_warper() {
 int Analyze::get_num_subjects() { return shapes_.size(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf Analyze::get_subject_features(int subject, std::string feature_name) {
+Eigen::VectorXd Analyze::get_subject_features(int subject, std::string feature_name) {
   if (subject >= shapes_.size()) {
-    return Eigen::VectorXf();
+    return Eigen::VectorXd();
   }
 
   auto shape = shapes_[subject];
@@ -547,12 +589,36 @@ void Analyze::set_group_selection(std::string group_name, std::string group1, st
 }
 
 //---------------------------------------------------------------------------
+ParticleSystemEvaluation Analyze::get_local_particle_system(int domain) {
+  Eigen::MatrixXd matrix;
+  int num_shapes = shapes_.size();
+  int num_total_particles = get_num_particles();
+  if (num_shapes == 0 || num_total_particles == 0) {
+    return ParticleSystemEvaluation{matrix};
+  }
+
+  int num_particles_domain = shapes_[0]->get_particles().get_local_particles(domain).size() / 3;
+  matrix.resize(num_particles_domain * 3, num_shapes);
+
+  for (int i = 0; i < num_shapes; i++) {
+    auto particles = shapes_[i]->get_particles().get_local_particles(domain);
+    for (int j = 0; j < num_particles_domain; j++) {
+      matrix(j * 3 + 0, i) = particles[j * 3 + 0];
+      matrix(j * 3 + 1, i) = particles[j * 3 + 1];
+      matrix(j * 3 + 2, i) = particles[j * 3 + 2];
+    }
+  }
+
+  return ParticleSystemEvaluation{matrix};
+}
+
+//---------------------------------------------------------------------------
 Particles Analyze::get_group_shape_particles(double ratio) {
   if (!compute_stats()) {
     return Particles();
   }
-
-  auto particles = stats_.Group1Mean() + (stats_.GroupDifference() * ratio);
+  
+  auto particles = stats_.get_group1_mean() + (stats_.get_group_difference() * ratio);
 
   return convert_from_combined(particles);
 }

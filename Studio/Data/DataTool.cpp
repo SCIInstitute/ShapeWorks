@@ -7,8 +7,11 @@
 #include <Shape.h>
 #include <StudioMesh.h>
 #include <ui_DataTool.h>
+#include <vtkPointData.h>
+#include <vtkTransformPolyDataFilter.h>
 
 #include <QDebug>
+#include <QMenu>
 #include <QMessageBox>
 #include <QThread>
 #include <iostream>
@@ -54,7 +57,10 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->landmark_help->setText("Place landmarks using " + click_message);
   ui_->plane_contraints_instruction_->setText("• Place 3 points to define a plane on a shape using " + click_message +
                                               "\n" + "• Slide plane along normal with shift+click\n" +
-                                              "• Right click plane point to flip normal");
+                                              "• Right click plane point to flip normal or apply to other shapes");
+
+  ui_->ffc_instruction->setText(QString("• Enable painting and draw on the surface with left+click\n") +
+                                "• Right click on a constraint in the table to apply to other shapes");
 
   // start with these off
   ui_->landmarks_open_button->toggle();
@@ -63,6 +69,15 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   // table on
   // ui_->table_open_button->toggle();
+
+  // when the table selection changes
+  connect(ui_->table, &QTableWidget::itemSelectionChanged, this, &DataTool::table_selection_changed);
+
+  // when the subject_notes changes
+  connect(ui_->subject_notes, &QTextEdit::textChanged, this, &DataTool::subject_notes_changed);
+
+  // when the table data changes
+  connect(ui_->table, &QTableWidget::itemChanged, this, &DataTool::table_data_edited);
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   connect(ui_->new_landmark_button, &QPushButton::clicked, landmark_table_model_.get(),
@@ -76,6 +91,14 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
           &LandmarkTableModel::handle_double_click);
   connect(ui_->landmark_table->horizontalHeader(), &QHeaderView::sectionClicked, landmark_table_model_.get(),
           &LandmarkTableModel::handle_header_click);
+
+  // handle right click on constraints QTableWidget (note that the CustomContextMenu property must be set for this table
+  // in the UI file)
+  connect(ui_->ffc_table_, &QTableView::customContextMenuRequested, this, &DataTool::constraints_table_right_click);
+
+  // handle right click on data table (note that the CustomContextMenu property must be set for this table in the UI
+  // file)
+  connect(ui_->table, &QTableView::customContextMenuRequested, this, &DataTool::data_table_right_click);
 
   auto delegate = new LandmarkItemDelegate(ui_->landmark_table);
   delegate->set_model(landmark_table_model_);
@@ -131,13 +154,13 @@ void DataTool::enable_actions() {
 }
 
 //---------------------------------------------------------------------------
-void DataTool::update_table() {
+void DataTool::update_table(bool clean) {
   if (!session_) {
     return;
   }
 
+  block_table_update_ = true;
   auto shapes = session_->get_shapes();
-
   auto project = session_->get_project();
   auto headers = project->get_headers();
   auto& subjects = project->get_subjects();
@@ -147,12 +170,13 @@ void DataTool::update_table() {
     table_headers << QString::fromStdString(header);
   }
 
-  ui_->table->clear();
-  ui_->table->setRowCount(shapes.size());
-  ui_->table->setColumnCount(table_headers.size());
-
-  ui_->table->setHorizontalHeaderLabels(table_headers);
-  ui_->table->verticalHeader()->setVisible(true);
+  if (clean) {
+    ui_->table->clear();
+    ui_->table->setRowCount(shapes.size());
+    ui_->table->setColumnCount(table_headers.size());
+    ui_->table->setHorizontalHeaderLabels(table_headers);
+    ui_->table->verticalHeader()->setVisible(true);
+  }
 
   for (int row = 0; row < subjects.size(); row++) {
     auto values = subjects[row]->get_table_values();
@@ -161,18 +185,27 @@ void DataTool::update_table() {
       if (values.contains(headers[h])) {
         value = values[headers[h]];
       }
-      QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(value));
-      ui_->table->setItem(row, h, new_item);
+      if (clean) {
+        QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(value));
+        ui_->table->setItem(row, h, new_item);
+      } else {
+        // just update the text
+        ui_->table->item(row, h)->setText(QString::fromStdString(value));
+      }
     }
   }
 
-  ui_->table->resizeColumnsToContents();
-  ui_->table->horizontalHeader()->setStretchLastSection(false);
-  ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
+  if (clean) {
+    ui_->table->resizeColumnsToContents();
+    ui_->table->horizontalHeader()->setStretchLastSection(false);
+    ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-  update_landmark_table();
-  update_plane_table();
-  update_ffc_table();
+    update_landmark_table();
+    update_plane_table();
+    update_ffc_table();
+  }
+
+  block_table_update_ = false;
 }
 
 //---------------------------------------------------------------------------
@@ -436,6 +469,220 @@ void DataTool::handle_constraints_mode_changed() {
   }
   if (ui_->landmarks_open_button->isChecked() && ui_->constraints_open_button->isChecked()) {
     ui_->landmarks_open_button->setChecked(false);
+  }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::constraints_table_right_click(const QPoint& point) {
+  // get the item at the position
+  auto item = ui_->ffc_table_->itemAt(point);
+  int row = ui_->ffc_table_->row(item);
+  ui_->ffc_table_->selectRow(row);
+
+  if (!item) {
+    return;
+  }
+
+  QMenu menu(this);
+  QAction* copy_action = new QAction("Copy constraint to other shapes", this);
+  connect(copy_action, &QAction::triggered, this, &DataTool::copy_ffc_clicked);
+  menu.addAction(copy_action);
+  menu.exec(QCursor::pos());
+}
+
+//---------------------------------------------------------------------------
+void DataTool::data_table_right_click(const QPoint& point) {
+  auto selected = ui_->table->selectionModel()->selectedRows();
+  if (selected.size() < 1) {
+    auto item = ui_->table->itemAt(point);
+    if (!item) {
+      return;
+    }
+    int row = ui_->table->row(item);
+    selected.push_back(ui_->table->model()->index(row, 0));
+  }
+
+  auto apply_to_selected = [=](std::function<void(std::shared_ptr<Subject>)> f) {
+    auto shapes = session_->get_shapes();
+    for (auto& index : selected) {
+      int id = index.row();
+      f(shapes[id]->get_subject());
+    }
+    session_->get_project()->update_subjects();
+    update_table();
+    session_->trigger_reinsert_shapes();
+  };
+
+  QMenu menu(this);
+
+  QAction* mark_excluded = new QAction("Mark as excluded", this);
+  connect(mark_excluded, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_excluded(true); }); });
+  menu.addAction(mark_excluded);
+
+  QAction* unmark_excluded = new QAction("Unmark as excluded", this);
+  connect(unmark_excluded, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_excluded(false); }); });
+  menu.addAction(unmark_excluded);
+
+  QAction* mark_fixed_action = new QAction("Mark as fixed", this);
+  connect(mark_fixed_action, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_fixed(true); }); });
+  menu.addAction(mark_fixed_action);
+
+  QAction* unmark_fixed_action = new QAction("Unmark as fixed", this);
+  connect(unmark_fixed_action, &QAction::triggered, this,
+          [=] { apply_to_selected([](std::shared_ptr<Subject> s) { s->set_fixed(false); }); });
+  menu.addAction(unmark_fixed_action);
+
+  menu.exec(QCursor::pos());
+}
+
+//---------------------------------------------------------------------------
+void DataTool::copy_ffc_clicked() {
+  // get the selected row
+  QModelIndexList list = ui_->ffc_table_->selectionModel()->selectedRows();
+  if (list.size() < 1) {
+    return;
+  }
+  int shape_id = list[0].row();
+
+  // for each domain, copy the constraints from the selected shape to all other shapes
+  auto shapes = session_->get_shapes();
+  auto domain_names = session_->get_project()->get_domain_names();
+
+  // get current display mode
+  auto display_mode = session_->get_display_mode();
+
+  for (int d = 0; d < domain_names.size(); d++) {
+    auto constraints = shapes[shape_id]->get_constraints(d);
+    auto ffc = constraints.getFreeformConstraint();
+
+    // transform from source shape to common space
+    auto base_transform = shapes[shape_id]->get_transform(d);
+
+    for (int i = 0; i < shapes.size(); i++) {
+      if (i == shape_id) {
+        continue;
+      }
+
+      // transform from common space to destination space
+      auto inverse = shapes[i]->get_inverse_transform(d);
+
+      // get the polydata, transform and set to the new ffc
+      ffc.createInoutPolyData();
+      auto ffc_poly_data = ffc.getInoutPolyData();
+
+      // apply vtk transforms to poly data
+      auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      transform_filter->SetInputData(ffc_poly_data);
+      transform_filter->SetTransform(base_transform);
+      transform_filter->Update();
+      ffc_poly_data = transform_filter->GetOutput();
+      transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      transform_filter->SetInputData(ffc_poly_data);
+      transform_filter->SetTransform(inverse);
+      transform_filter->Update();
+      ffc_poly_data = transform_filter->GetOutput();
+
+      // apply the new ffc to the destination shape
+      auto meshes = shapes[i]->get_meshes(display_mode, true);
+      MeshHandle mesh = meshes.meshes()[d];
+      auto poly_data = mesh->get_poly_data();
+
+      // create a new FreeFormConstraint with the transformed source definition
+      FreeFormConstraint new_ffc;
+      new_ffc.setInoutPolyData(ffc_poly_data);
+      new_ffc.applyToPolyData(poly_data);
+
+      // store the new ffc
+      auto& this_ffc = shapes[i]->get_constraints(d).getFreeformConstraint();
+      this_ffc.setDefinition(poly_data);
+      this_ffc.setInoutPolyData(poly_data);
+      this_ffc.setPainted(true);
+    }
+  }
+  session_->trigger_ffc_changed();
+  session_->trigger_repaint();
+}
+
+//---------------------------------------------------------------------------
+void DataTool::table_selection_changed() {
+  // if only one row is selected, update the subject_notes, otherwise disable it
+  QModelIndexList list = ui_->table->selectionModel()->selectedRows();
+  if (list.size() == 1) {
+    int row = list[0].row();
+    if (row >= session_->get_shapes().size()) {
+      ui_->subject_notes->setText("");
+      ui_->subject_notes->setEnabled(false);
+      return;
+    }
+    auto shape = session_->get_shapes()[row];
+    ui_->subject_notes->setText(QString::fromStdString(shape->get_subject()->get_notes()));
+    ui_->subject_notes->setEnabled(true);
+  } else {
+    ui_->subject_notes->setText("");
+    ui_->subject_notes->setEnabled(false);
+  }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::subject_notes_changed() {
+  // update the notes for the selected subject
+  QModelIndexList list = ui_->table->selectionModel()->selectedRows();
+  if (list.size() == 1) {
+    int row = list[0].row();
+    auto shape = session_->get_shapes()[row];
+    auto old_notes = shape->get_subject()->get_notes();
+    auto new_notes = ui_->subject_notes->toPlainText().toStdString();
+    if (old_notes != new_notes) {
+      shape->get_subject()->set_notes(new_notes);
+      // update the table
+      update_table(false);
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void DataTool::table_data_edited() {
+  if (block_table_update_) {
+    return;
+  }
+
+  // store all the changes
+
+  if (ui_->table->rowCount() != session_->get_shapes().size() || ui_->table->columnCount() < 2) {
+    return;
+  }
+
+  bool change = false;
+  // iterate over all rows, not just selected
+  for (int row = 0; row < ui_->table->rowCount(); row++) {
+    auto shape = session_->get_shapes()[row];
+    auto old_name = shape->get_subject()->get_display_name();
+    auto old_notes = shape->get_subject()->get_notes();
+    if (ui_->table->item(row, 0) == nullptr) {
+      continue;
+    }
+    auto new_name = ui_->table->item(row, 0)->text().toStdString();
+    if (ui_->table->item(row, 1) == nullptr) {
+      continue;
+    }
+    auto new_notes = ui_->table->item(row, 1)->text().toStdString();
+    if (old_name != new_name) {
+      shape->get_subject()->set_display_name(new_name);
+      shape->update_annotations();
+      session_->trigger_annotations_changed();
+      change = true;
+    }
+    if (old_notes != new_notes) {
+      shape->get_subject()->set_notes(new_notes);
+      change = true;
+    }
+  }
+
+  if (change) {
+    table_selection_changed();
   }
 }
 

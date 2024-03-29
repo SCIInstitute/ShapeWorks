@@ -315,7 +315,52 @@ QWidget#specificity_panel {
          </size>
         </property>
         <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QScrollArea" name="scrollArea">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>464</width>
+              <height>221</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QTableWidget" name="table">
+               <property name="contextMenuPolicy">
+                <enum>Qt::CustomContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
          <item row="1" column="0">
+          <widget class="QLabel" name="subject_notes_label">
+           <property name="text">
+            <string>Subject Notes:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout2">
            <item>
             <widget class="QToolButton" name="delete_button">
@@ -371,38 +416,14 @@ QWidget#specificity_panel {
            </item>
           </layout>
          </item>
-         <item row="0" column="0">
-          <widget class="QScrollArea" name="scrollArea">
-           <property name="widgetResizable">
-            <bool>true</bool>
+         <item row="2" column="0">
+          <widget class="QTextEdit" name="subject_notes">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>75</height>
+            </size>
            </property>
-           <widget class="QWidget" name="scrollAreaWidgetContents">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>464</width>
-              <height>330</height>
-             </rect>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QTableWidget" name="table"/>
-             </item>
-            </layout>
-           </widget>
           </widget>
          </item>
         </layout>
@@ -552,6 +573,9 @@ QWidget#specificity_panel {
          </item>
          <item row="1" column="0" colspan="2">
           <widget class="QTableView" name="landmark_table">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -784,6 +808,9 @@ QWidget#specificity_panel {
             </item>
             <item row="1" column="0">
              <widget class="QTableWidget" name="plane_table_">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
               <property name="alternatingRowColors">
                <bool>true</bool>
               </property>
@@ -827,6 +854,19 @@ QWidget#specificity_panel {
             <property name="bottomMargin">
              <number>0</number>
             </property>
+            <item row="1" column="0" colspan="2">
+             <widget class="QTableWidget" name="ffc_table_">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ContiguousSelection</enum>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
@@ -834,7 +874,7 @@ QWidget#specificity_panel {
               </property>
              </widget>
             </item>
-            <item row="3" column="0" colspan="2">
+            <item row="4" column="0" colspan="2">
              <widget class="QWidget" name="ffc_controls_" native="true">
               <layout class="QGridLayout" name="gridLayout_3">
                <item row="2" column="1">
@@ -904,13 +944,13 @@ QWidget#specificity_panel {
               </property>
              </widget>
             </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QTableWidget" name="ffc_table_">
-              <property name="alternatingRowColors">
-               <bool>true</bool>
+            <item row="3" column="0">
+             <widget class="QLabel" name="ffc_instruction">
+              <property name="text">
+               <string>FFC Instructions</string>
               </property>
-              <property name="selectionMode">
-               <enum>QAbstractItemView::ContiguousSelection</enum>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>

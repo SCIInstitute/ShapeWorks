@@ -1,5 +1,13 @@
+#include <Logging.h>
+#include <Mesh/Mesh.h>
 #include <Utils/StudioUtils.h>
+#include <vtkActor2D.h>
+#include <vtkCoordinate.h>
 #include <vtkImageData.h>
+#include <vtkPolyDataMapper2D.h>
+#include <vtkPolyLine.h>
+#include <vtkProperty2D.h>
+#include <vtkRenderer.h>
 #include <vtkReverseSense.h>
 
 #include <QMessageBox>
@@ -86,5 +94,84 @@ QString StudioUtils::get_platform_string() {
   platform = "linux";
 #endif
   return platform;
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::add_viewport_border(vtkRenderer* renderer, double* color, double line_width) {
+  // points start at upper right and proceed anti-clockwise
+  vtkNew<vtkPoints> points;
+  points->SetNumberOfPoints(4);
+  points->InsertPoint(0, 1, 1, 0);
+  points->InsertPoint(1, 0, 1, 0);
+  points->InsertPoint(2, 0, 0, 0);
+  points->InsertPoint(3, 1, 0, 0);
+
+  vtkNew<vtkCellArray> cells;
+  cells->Initialize();
+  vtkNew<vtkPolyLine> lines;
+
+  lines->GetPointIds()->SetNumberOfIds(5);
+  for (unsigned int i = 0; i < 4; ++i) {
+    lines->GetPointIds()->SetId(i, i);
+  }
+  lines->GetPointIds()->SetId(4, 0);
+  cells->InsertNextCell(lines);
+
+  vtkNew<vtkPolyData> poly;
+  poly->Initialize();
+  poly->SetPoints(points);
+  poly->SetLines(cells);
+
+  // use normalized viewport coordinates since they are independent of window size
+  vtkNew<vtkCoordinate> coordinate;
+  coordinate->SetCoordinateSystemToNormalizedViewport();
+
+  vtkNew<vtkPolyDataMapper2D> mapper;
+  mapper->SetInputData(poly);
+  mapper->SetTransformCoordinate(coordinate);
+
+  vtkNew<vtkActor2D> actor;
+  actor->SetMapper(mapper);
+  actor->GetProperty()->SetColor(color);
+  actor->GetProperty()->SetLineWidth(line_width);
+
+  renderer->AddViewProp(actor);
+}
+
+//---------------------------------------------------------------------------
+bool StudioUtils::write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename) {
+  if (!poly_data) {
+    SW_ERROR("Error exporting mesh: not ready yet");
+  }
+  try {
+    Mesh mesh(poly_data);
+    mesh.write(filename.toStdString());
+  } catch (std::exception& e) {
+    SW_ERROR("{}", e.what());
+    return false;
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::brightness_contrast_to_window_width_level(double brightness, double contrast, double min_intensity,
+                                                            double max_intensity, double& window_width,
+                                                            double& window_level) {
+  // Calculate window width
+  window_width = (contrast / 100.0) * (max_intensity - min_intensity);
+
+  // Calculate window level
+  window_level = min_intensity + (brightness / 100.0) * (max_intensity - min_intensity);
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::window_width_level_to_brightness_contrast(double window_width, double window_level,
+                                                            double min_intensity, double max_intensity,
+                                                            double& brightness, double& contrast) {
+  // Calculate brightness
+  brightness = ((window_level - min_intensity) / (max_intensity - min_intensity)) * 100.0;
+
+  // Calculate contrast
+  contrast = (window_width / (max_intensity - min_intensity)) * 100.0;
 }
 }  // namespace shapeworks

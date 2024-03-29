@@ -1,48 +1,52 @@
 #include "Shapeworks.h"
 
+#include "ShapeworksUtils.h"
+
 namespace shapeworks {
 
-Point toPoint(const Dims &d) { return Point({static_cast<double>(d[0]), static_cast<double>(d[1]), static_cast<double>(d[2])}); }
-Point toPoint(const Coord &c) { return Point({static_cast<double>(c[0]), static_cast<double>(c[1]), static_cast<double>(c[2])}); }
-Vector toVector(const Dims &d) { return makeVector({static_cast<double>(d[0]), static_cast<double>(d[1]), static_cast<double>(d[2])}); }
-Vector toVector(const Point &p) { return makeVector({p[0], p[1], p[2]}); } 
-Vector toVector(const itk::CovariantVector<double, 3> &v) { return makeVector({v[0], v[1], v[2]}); } 
+Point toPoint(const Dims &d) {
+  return Point({static_cast<double>(d[0]), static_cast<double>(d[1]), static_cast<double>(d[2])});
+}
+Point toPoint(const Coord &c) {
+  return Point({static_cast<double>(c[0]), static_cast<double>(c[1]), static_cast<double>(c[2])});
+}
+Vector toVector(const Dims &d) {
+  return makeVector({static_cast<double>(d[0]), static_cast<double>(d[1]), static_cast<double>(d[2])});
+}
+Vector toVector(const Point &p) { return makeVector({p[0], p[1], p[2]}); }
+Vector toVector(const itk::CovariantVector<double, 3> &v) { return makeVector({v[0], v[1], v[2]}); }
 Point toPoint(const Vector &v) { return Point({v[0], v[1], v[2]}); }
 Coord toCoord(const Dims &d) {
-  return Coord({static_cast<itk::IndexValueType>(d[0]),
-                static_cast<itk::IndexValueType>(d[1]),
-                static_cast<itk::IndexValueType>(d[2])}); }
+  return Coord({static_cast<itk::IndexValueType>(d[0]), static_cast<itk::IndexValueType>(d[1]),
+                static_cast<itk::IndexValueType>(d[2])});
+}
 Dims toDims(const Coord &c) {
-  return Dims({
-      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[0]))),
-      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[1]))),
-      static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[2])))
-    });
+  return Dims({static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[0]))),
+               static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[1]))),
+               static_cast<Dims::value_type>(std::max(0.0, std::ceil(c[2])))});
 }
 Dims toDims(const Point &p) {
   return Dims({static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[0]))),
                static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[1]))),
-               static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[2])))}); }
+               static_cast<Dims::value_type>(std::max(0.0, std::ceil(p[2])))});
+}
 Coord toCoord(const Point &p) {
-  return Coord({static_cast<itk::IndexValueType>(p[0]),
-                static_cast<itk::IndexValueType>(p[1]),
-                static_cast<itk::IndexValueType>(p[2])}); }
+  return Coord({static_cast<itk::IndexValueType>(p[0]), static_cast<itk::IndexValueType>(p[1]),
+                static_cast<itk::IndexValueType>(p[2])});
+}
 
 /// Enables construction using an initializer list: `Vector3 f() { return makeVector({1,2,3}); }`
 /// itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
-Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
+Vector3 makeVector(std::array<double, 3> &&arr) { return Vector3(arr.data()); }
 
-PointArray makePointArray(int size, Point3 value)
-{
+PointArray makePointArray(int size, Point3 value) {
   PointArray arr;
-  for (int i = 0; i < size; i++)
-    arr.push_back(value);
-  
+  for (int i = 0; i < size; i++) arr.push_back(value);
+
   return arr;
 }
 
-Plane makePlane(const Point &p, const Vector3 &n)
-{
+Plane makePlane(const Point &p, const Vector3 &n) {
   Plane plane = Plane::New();
   plane->SetOrigin(p[0], p[1], p[2]);
   plane->SetNormal(n[0], n[1], n[2]);
@@ -50,8 +54,7 @@ Plane makePlane(const Point &p, const Vector3 &n)
   return plane;
 }
 
-Plane makePlane(const Point &p0, const Point &p1, const Point &p2)
-{
+Plane makePlane(const Point &p0, const Point &p1, const Point &p2) {
   Plane plane = Plane::New();
   plane->SetOrigin(p0[0], p0[1], p0[2]);
   auto v0 = p1 - p0;
@@ -62,15 +65,13 @@ Plane makePlane(const Point &p0, const Point &p1, const Point &p2)
   return plane;
 }
 
-Point getOrigin(const Plane plane)
-{
+Point getOrigin(const Plane plane) {
   double origin[3];
   plane->GetOrigin(origin);
   return Point({origin[0], origin[1], origin[2]});
 }
 
-Vector3 getNormal(const Plane plane)
-{
+Vector3 getNormal(const Plane plane) {
   double normal[3];
   plane->GetNormal(normal);
   return makeVector({normal[0], normal[1], normal[2]});
@@ -78,85 +79,66 @@ Vector3 getNormal(const Plane plane)
 
 double length(const Vector3 &v) { return v.GetNorm(); }
 
-template<>
-Vector3 negate(const Vector3 &v) { return makeVector({-v[0], -v[1], -v[2]}); }
-
-template<>                                            
-Vector3 invertValue(const Vector3 &v) { return makeVector({1.0/v[0], 1.0/v[1], 1.0/v[2]}); }
-                                                    
-Vector3 crossProduct(const Vector3 &a, const Vector3 &b)
-{
-  return makeVector({a[1]*b[2] - a[2]*b[1], -(a[0]*b[2] - a[2]*b[0]), a[0]*b[1] - a[1]*b[0]});
+template <>
+Vector3 negate(const Vector3 &v) {
+  return makeVector({-v[0], -v[1], -v[2]});
 }
 
-Vector3 dotProduct(const Vector3 &a, const Vector3 &b)
-{
-  return makeVector({a[0]*b[0], a[1]*b[1], a[2]*b[2]});
+template <>
+Vector3 invertValue(const Vector3 &v) {
+  return makeVector({1.0 / v[0], 1.0 / v[1], 1.0 / v[2]});
 }
 
-Point3 operator+(const Point3 &p, const Point3 &q)
-{
+Vector3 crossProduct(const Vector3 &a, const Vector3 &b) {
+  return makeVector({a[1] * b[2] - a[2] * b[1], -(a[0] * b[2] - a[2] * b[0]), a[0] * b[1] - a[1] * b[0]});
+}
+
+Vector3 dotProduct(const Vector3 &a, const Vector3 &b) { return makeVector({a[0] * b[0], a[1] * b[1], a[2] * b[2]}); }
+
+Point3 operator+(const Point3 &p, const Point3 &q) {
   Point3 ret;
-  for (unsigned i = 0; i < 3; i++)
-    ret[i] = p[i] + q[i];
+  for (unsigned i = 0; i < 3; i++) ret[i] = p[i] + q[i];
   return ret;
 }
 
-Point3& operator+=(Point3 &p, const Point3 &q)
-{
-  for (unsigned i = 0; i < 3; i++)
-    p[i] += q[i];
+Point3 &operator+=(Point3 &p, const Point3 &q) {
+  for (unsigned i = 0; i < 3; i++) p[i] += q[i];
   return p;
 }
 
-Point3 operator/(const Point3 &p, const double x)
-{
+Point3 operator/(const Point3 &p, const double x) {
   Point3 ret;
-  for (unsigned i = 0; i < 3; i++)
-    ret[i] = p[i] / x;
+  for (unsigned i = 0; i < 3; i++) ret[i] = p[i] / x;
   return ret;
 }
 
-Point3& operator/=(Point3 &p, const double x)
-{
-  for (unsigned i = 0; i < 3; i++)
-    p[i] /= x;
+Point3 &operator/=(Point3 &p, const double x) {
+  for (unsigned i = 0; i < 3; i++) p[i] /= x;
   return p;
 }
 
-itk::Index<3> toIndex(const IPoint3 &pt) 
-{ 
-  return itk::Index<3>({pt[0], pt[1], pt[2]}); 
+itk::Index<3> toIndex(const IPoint3 &pt) { return itk::Index<3>({pt[0], pt[1], pt[2]}); }
+
+itk::Size<3> toSize(const IPoint3 &pt) {
+  return itk::Size<3>({static_cast<itk::SizeValueType>(pt[0]), static_cast<itk::SizeValueType>(pt[1]),
+                       static_cast<itk::SizeValueType>(pt[2])});
 }
 
-itk::Size<3> toSize(const IPoint3 &pt) 
-{ 
-  return itk::Size<3>({static_cast<itk::SizeValueType>(pt[0]), static_cast<itk::SizeValueType>(pt[1]), static_cast<itk::SizeValueType>(pt[2])}); 
-}
-
-bool axis_is_valid(const Vector3 &axis)
-{
+bool axis_is_valid(const Vector3 &axis) {
   const double eps = 1E-6;
   return axis.GetSquaredNorm() > eps;
 }
 
-bool axis_is_valid(const Axis &axis)
-{
-  return axis >= Axis::X && axis <= Axis::Z;
-}
+bool axis_is_valid(const Axis &axis) { return axis >= Axis::X && axis <= Axis::Z; }
 
-Axis toAxis(const std::string &str)
-{
+Axis toAxis(const std::string &str) {
   if (str == "X" || str == "x") return Axis::X;
   if (str == "Y" || str == "y") return Axis::Y;
   if (str == "Z" || str == "z") return Axis::Z;
   return Axis::invalid;
 }
 
-double degToRad(const double deg)
-{
-  return deg * Pi / 180.0;
-}
+double degToRad(const double deg) { return deg * Pi / 180.0; }
 
 double mean(const Field field) {
   size_t N = field->GetNumberOfTuples();
@@ -164,7 +146,7 @@ double mean(const Field field) {
   for (int i = 0; i < N; i++) {
     // compute running mean to avoid overflow
     auto value = field->GetTuple1(i);
-    mean += (value - mean) / (i+1);
+    mean += (value - mean) / (i + 1);
   }
   return mean;
 }
@@ -186,23 +168,38 @@ std::vector<double> range(const Field field) {
   return r;
 }
 
-TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate) 
-{
+TransformPtr createTransform(const Matrix33 &mat, const Vector3 &translate) {
   AffineTransformPtr xform(AffineTransform::New());
   xform->SetMatrix(mat);
   xform->SetOffset(translate);
   return xform;
 }
 
-MeshTransform createMeshTransform(const vtkSmartPointer<vtkMatrix4x4> &mat)
-{
+MeshTransform createMeshTransform(const vtkSmartPointer<vtkMatrix4x4> &mat) {
   MeshTransform xform(MeshTransform::New());
   xform->SetMatrix(mat);
   return xform;
 }
 
-std::string axisToString(Axis axis)
-{
+TransformPtr convert_to_image_transform(vtkSmartPointer<vtkTransform> vtkTransform) {
+  using TransformType = itk::MatrixOffsetTransformBase<double, 3, 3>;
+  // Extract the matrix from VTK transform
+  vtkSmartPointer<vtkMatrix4x4> vtkMatrix = vtkTransform->GetMatrix();
+
+  // Create an ITK transform
+  TransformType::Pointer itkTransform = TransformType::New();
+  
+  Matrix33 mat = ShapeWorksUtils::convert_matrix(vtkMatrix);
+
+  itkTransform->SetMatrix(mat);
+  // Set the translation vector
+  itkTransform->SetOffset(vtkTransform->GetPosition());
+
+  // Return the ITK transform as GenericTransform::Pointer
+  return GenericTransform::Pointer(itkTransform.GetPointer());
+}
+
+std::string axisToString(Axis axis) {
   switch (axis) {
     case Axis::X:
       return "X";
@@ -216,8 +213,5 @@ std::string axisToString(Axis axis)
   return "Invalid";
 }
 
-bool epsEqual(double a, double b, double eps) {
-  return std::abs(a-b) < eps;
-}
-
-}; //shapeworks
+bool epsEqual(double a, double b, double eps) { return std::abs(a - b) < eps; }
+};  // namespace shapeworks

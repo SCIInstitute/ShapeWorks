@@ -16,7 +16,7 @@
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -71,15 +71,7 @@ void Shape::set_subject(std::shared_ptr<Subject> subject) {
   groomed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
   reconstructed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
 
-  if (!subject_->get_original_filenames().empty()) {
-    /// TODO: Show multiple lines of filenames for multiple domains?
-    std::string filename = subject_->get_original_filenames()[0];
-    corner_annotations_[0] = StringUtils::getFilename(filename);
-  }
-
-  if (subject->get_display_name() != "") {
-    corner_annotations_[0] = subject->get_display_name();
-  }
+  update_annotations();
 }
 
 //---------------------------------------------------------------------------
@@ -87,6 +79,12 @@ bool Shape::is_subject() { return subject_ != nullptr; }
 
 //---------------------------------------------------------------------------
 std::shared_ptr<Subject> Shape::get_subject() { return subject_; }
+
+//---------------------------------------------------------------------------
+bool Shape::is_fixed() { return is_subject() && subject_->is_fixed(); }
+
+//---------------------------------------------------------------------------
+bool Shape::is_excluded() { return is_subject() && subject_->is_excluded(); }
 
 //---------------------------------------------------------------------------
 void Shape::import_original_file(const std::string& filename) {
@@ -137,6 +135,9 @@ MeshGroup Shape::get_reconstructed_meshes(bool wait) {
 }
 
 //---------------------------------------------------------------------------
+void Shape::set_reconstructed_meshes(MeshGroup meshes) { reconstructed_meshes_ = meshes; }
+
+//---------------------------------------------------------------------------
 void Shape::reset_groomed_mesh() { groomed_meshes_ = MeshGroup(subject_->get_number_of_domains()); }
 
 //---------------------------------------------------------------------------
@@ -144,12 +145,18 @@ void Shape::clear_reconstructed_mesh() { reconstructed_meshes_ = MeshGroup(subje
 
 //---------------------------------------------------------------------------
 bool Shape::import_global_point_files(std::vector<std::string> filenames) {
+  global_point_filenames_.clear();
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i], points)) {
-      throw std::invalid_argument("Unable to import point file: " + filenames[i]);
+    auto filename = filenames[i];
+    // replace \ with /
+    filename = StringUtils::replace_string(filename, "\\", "/");
+    if (filename != "") {
+      if (!Shape::import_point_file(filename, points)) {
+        throw std::invalid_argument("Unable to import point file: " + filenames[i]);
+      }
     }
-    global_point_filenames_.push_back(filenames[i]);
+    global_point_filenames_.push_back(filename);
     particles_.set_world_particles(i, points);
   }
   subject_->set_world_particle_filenames(global_point_filenames_);
@@ -158,12 +165,18 @@ bool Shape::import_global_point_files(std::vector<std::string> filenames) {
 
 //---------------------------------------------------------------------------
 bool Shape::import_local_point_files(std::vector<std::string> filenames) {
+  local_point_filenames_.clear();
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i], points)) {
-      throw std::invalid_argument("Unable to import point file: " + filenames[i]);
+    auto filename = filenames[i];
+    // replace \ with /
+    filename = StringUtils::replace_string(filename, "\\", "/");
+    if (filename != "") {
+      if (!Shape::import_point_file(filename, points)) {
+        throw std::invalid_argument("Unable to import point file: " + filenames[i]);
+      }
     }
-    local_point_filenames_.push_back(filenames[i]);
+    local_point_filenames_.push_back(filename);
     particles_.set_local_particles(i, points);
   }
   subject_->set_local_particle_filenames(local_point_filenames_);
@@ -254,7 +267,7 @@ bool Shape::import_constraints(std::vector<std::string> filenames) {
         constraints.read(filenames[i]);
       }
     } catch (std::exception& e) {
-      SW_ERROR(e.what());
+      SW_ERROR("{}", e.what());
       return false;
     }
     constraints_.push_back(constraints);
@@ -296,7 +309,7 @@ bool Shape::store_constraints() {
     try {
       get_constraints(i).write(filenames[i]);
     } catch (std::exception& e) {
-      SW_ERROR(e.what());
+      SW_ERROR("{}", e.what());
       return false;
     }
   }
@@ -307,15 +320,36 @@ bool Shape::store_constraints() {
 Eigen::VectorXd Shape::get_global_correspondence_points() { return particles_.get_combined_global_particles(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_local_correspondence_points() {
-  return particles_.get_combined_local_particles();
-}
+Eigen::VectorXd Shape::get_local_correspondence_points() { return particles_.get_combined_local_particles(); }
 
 //---------------------------------------------------------------------------
 int Shape::get_id() { return id_; }
 
 //---------------------------------------------------------------------------
 void Shape::set_id(int id) { id_ = id; }
+
+//---------------------------------------------------------------------------
+void Shape::update_annotations() {
+  if (!subject_->get_original_filenames().empty()) {
+    /// TODO: Show multiple lines of filenames for multiple domains?
+    std::string filename = subject_->get_original_filenames()[0];
+    corner_annotations_[0] = StringUtils::getFilename(filename);
+  }
+
+  if (subject_->get_display_name() != "") {
+    corner_annotations_[0] = subject_->get_display_name();
+  }
+
+  std::vector<std::string> corner2_items;
+  if (subject_->is_fixed()) {
+    corner2_items.push_back("Fixed");
+  }
+  if (subject_->is_excluded()) {
+    corner2_items.push_back("Excluded");
+  }
+
+  corner_annotations_[2] = StringUtils::join(corner2_items, ", ");
+}
 
 //---------------------------------------------------------------------------
 std::string Shape::get_original_filename() {
@@ -431,6 +465,9 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
   for (int i = 0; i < filenames.size(); i++) {
     auto filename = filenames[i];
+    if (filename == "") {
+      continue;
+    }
     MeshWorkItem item;
     item.filename = filename;
     MeshHandle new_mesh = mesh_manager_->get_mesh(item, wait);
@@ -540,9 +577,13 @@ std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
     auto filename = filenames[image_volume_name];
 
     if (image_volume_filename_ != filename) {
-      std::shared_ptr<Image> image = std::make_shared<Image>(filename);
-      image_volume_ = image;
-      image_volume_filename_ = filename;
+      try {
+        std::shared_ptr<Image> image = std::make_shared<Image>(filename);
+        image_volume_ = image;
+        image_volume_filename_ = filename;
+      } catch (std::exception& ex) {
+        SW_ERROR("Unable to open file: {}", filename);
+      }
     }
 
     return image_volume_;
@@ -563,7 +604,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
 
   int num_points = all_locals.size() / 3;
 
-  Eigen::VectorXf values(num_points);
+  Eigen::VectorXd values(num_points);
 
   int idx = 0;
   for (int i = 0; i < num_points; ++i) {
@@ -606,7 +647,7 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh) {
 
   int num_points = all_locals.size() / 3;
 
-  Eigen::VectorXf values(num_points);
+  Eigen::VectorXd values(num_points);
 
   vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(feature.c_str());
   if (!from_array) {
@@ -630,10 +671,10 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXf Shape::get_point_features(std::string feature) {
+Eigen::VectorXd Shape::get_point_features(std::string feature) {
   auto it = point_features_.find(feature);
   if (it == point_features_.end()) {
-    return Eigen::VectorXf();
+    return Eigen::VectorXd();
   }
 
   return it->second;
@@ -655,7 +696,7 @@ vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Shape::get_procrustest_transform(int domain) {
+vtkSmartPointer<vtkTransform> Shape::get_procrustes_transform(int domain) {
   auto transforms = subject_->get_procrustes_transforms();
   if (domain < transforms.size()) {
     return ProjectUtils::convert_transform(transforms[domain]);
@@ -664,7 +705,7 @@ vtkSmartPointer<vtkTransform> Shape::get_procrustest_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms() {
+std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustes_transforms() {
   auto lists = subject_->get_procrustes_transforms();
   std::vector<vtkSmartPointer<vtkTransform>> transforms;
   for (size_t i = 0; i < lists.size(); i++) {
@@ -674,7 +715,7 @@ std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms() {
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_point_features(std::string feature, Eigen::VectorXf values) {
+void Shape::set_point_features(std::string feature, Eigen::VectorXd values) {
   point_features_[feature] = values;
 
   auto group = get_meshes(DisplayMode::Reconstructed);
@@ -694,14 +735,12 @@ Particles Shape::get_particles() { return particles_; }
 
 //---------------------------------------------------------------------------
 void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform) {
-  particles_.set_procrustes_transforms(get_procrustest_transforms());
+  particles_.set_procrustes_transforms(get_procrustes_transforms());
   particles_.set_transform(transform);
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_alignment_type(int alignment) {
-  particles_.set_alignment_type(alignment);
-}
+void Shape::set_alignment_type(int alignment) { particles_.set_alignment_type(alignment); }
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
@@ -764,16 +803,15 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
     return;
   }
 
-  std::vector<float> floats;
-  while (in.good()) {
-    float line;
-    in >> line;
-    floats.push_back(line);
-  }
-
-  Eigen::VectorXf values(floats.size());
-  for (int i = 0; i < floats.size(); i++) {
-    values[i] = floats[i];
+  Eigen::VectorXd values;
+  // read from file into values
+  std::string line;
+  while (std::getline(in, line)) {
+    std::istringstream iss(line);
+    double value;
+    iss >> value;
+    values.conservativeResize(values.size() + 1);
+    values[values.size() - 1] = value;
   }
 
   set_point_features(feature_name, values);
@@ -812,14 +850,14 @@ bool Shape::has_planes() {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers() {
+std::vector<std::shared_ptr<MeshWrapper>> Shape::get_groomed_mesh_wrappers() {
   if (!groomed_mesh_wrappers_.empty()) {
     return groomed_mesh_wrappers_;
   }
 
   auto group = get_groomed_meshes(true /* wait */);
   for (auto& mesh : group.meshes()) {
-    auto wrapper = std::make_shared<VtkMeshWrapper>(mesh->get_poly_data());
+    auto wrapper = std::make_shared<MeshWrapper>(mesh->get_poly_data());
     groomed_mesh_wrappers_.push_back(wrapper);
   }
   return groomed_mesh_wrappers_;

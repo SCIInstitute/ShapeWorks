@@ -454,19 +454,6 @@ QToolBar QToolButton::checked {
        <property name="bottomMargin">
         <number>3</number>
        </property>
-       <item row="0" column="11">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="0" column="2">
         <widget class="QLineEdit" name="feature_line">
          <property name="alignment">
@@ -474,26 +461,6 @@ QToolBar QToolButton::checked {
          </property>
          <property name="readOnly">
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="QCheckBox" name="feature_uniform_scale">
-         <property name="toolTip">
-          <string>Apply a uniform scale for all viewers</string>
-         </property>
-         <property name="text">
-          <string>Uniform Scale</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -506,6 +473,32 @@ QToolBar QToolButton::checked {
           <enum>QComboBox::AdjustToContents</enum>
          </property>
         </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="QDoubleSpinBox" name="feature_max">
+         <property name="toolTip">
+          <string>Maximum scalar range</string>
+         </property>
+         <property name="minimum">
+          <double>-9999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>9999999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="11">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="0" column="6">
         <widget class="QLabel" name="label_3">
@@ -540,16 +533,30 @@ QToolBar QToolButton::checked {
          </property>
         </widget>
        </item>
-       <item row="0" column="9">
-        <widget class="QDoubleSpinBox" name="feature_max">
+       <item row="0" column="0">
+        <widget class="QLabel" name="feature_map_label">
+         <property name="text">
+          <string>Feature Map</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QCheckBox" name="feature_uniform_scale">
          <property name="toolTip">
-          <string>Maximum scalar range</string>
+          <string>Apply a uniform scale for all viewers</string>
          </property>
-         <property name="minimum">
-          <double>-9999999.000000000000000</double>
+         <property name="text">
+          <string>Uniform Scale</string>
          </property>
-         <property name="maximum">
-          <double>9999999.000000000000000</double>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -557,13 +564,6 @@ QToolBar QToolButton::checked {
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>Max</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="feature_map_label">
-         <property name="text">
-          <string>Feature Map</string>
          </property>
         </widget>
        </item>
@@ -585,84 +585,7 @@ QToolBar QToolButton::checked {
        <property name="bottomMargin">
         <number>3</number>
        </property>
-       <item row="0" column="2">
-        <widget class="QComboBox" name="image_combo_">
-         <property name="toolTip">
-          <string>Select image</string>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>View</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="11">
-        <spacer name="horizontalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="6">
-        <widget class="QCheckBox" name="image_3d_mode_">
-         <property name="toolTip">
-          <string>3D View mode</string>
-         </property>
-         <property name="text">
-          <string>3D Mode</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Image</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="Line" name="line_6">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="8">
-        <widget class="QCheckBox" name="image_share_window_and_level_">
-         <property name="toolTip">
-          <string>Share brightness and contrast of 2D slice between viewers</string>
-         </property>
-         <property name="text">
-          <string>Shared Brightness/Contrast</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="7">
-        <widget class="Line" name="line_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="10">
+       <item row="0" column="9">
         <widget class="QCheckBox" name="image_sync_slices">
          <property name="toolTip">
           <string>Synchronize slices across viewers</string>
@@ -675,7 +598,68 @@ QToolBar QToolButton::checked {
          </property>
         </widget>
        </item>
+       <item row="0" column="7">
+        <widget class="QCheckBox" name="image_share_window_and_level_">
+         <property name="toolTip">
+          <string>Share brightness and contrast of 2D slice between viewers</string>
+         </property>
+         <property name="text">
+          <string>Shared Brightness/Contrast</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="5">
+        <widget class="QCheckBox" name="image_3d_mode_">
+         <property name="toolTip">
+          <string>3D View mode</string>
+         </property>
+         <property name="text">
+          <string>3D Mode</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="Line" name="line_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>View</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="Line" name="line_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <widget class="Line" name="line_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Image</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
         <widget class="QComboBox" name="image_axis_">
          <property name="toolTip">
           <string>Select feature map</string>
@@ -703,10 +687,20 @@ QToolBar QToolButton::checked {
          </item>
         </widget>
        </item>
-       <item row="0" column="9">
-        <widget class="Line" name="line_7">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="image_combo_">
+         <property name="toolTip">
+          <string>Select image</string>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="10">
+        <widget class="QCheckBox" name="image_thickness_feature">
+         <property name="text">
+          <string>Thickness Feature</string>
          </property>
         </widget>
        </item>
@@ -721,7 +715,7 @@ QToolBar QToolButton::checked {
      <x>0</x>
      <y>0</y>
      <width>1243</width>
-     <height>24</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -853,7 +847,7 @@ QToolBar QToolButton::checked {
           <x>0</x>
           <y>0</y>
           <width>398</width>
-          <height>630</height>
+          <height>621</height>
          </rect>
         </property>
         <property name="minimumSize">

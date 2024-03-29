@@ -33,6 +33,8 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   connect(ui_->use_normals, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->procrustes, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->use_geodesics_from_landmarks, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->use_geodesic_distance, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
 
   ui_->number_of_particles->setToolTip("Number of correspondence points to generate");
   ui_->initial_relative_weighting->setToolTip("Relative weighting of correspondence term during initialization");
@@ -44,6 +46,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->use_geodesic_distance->setToolTip(
       "Use geodesic distances for sampling term: may be more effective for capturing thin features. "
       "Requires ~10x more time, and larger memory footprint. Only supported for mesh inputs");
+  ui_->geodesic_remesh_percent->setToolTip("Percent remesh reduction to use for geodesic distance");
   ui_->use_normals->setToolTip("Use surface normals as part of optimization");
   ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
   ui_->procrustes->setToolTip("Use procrustes registration during optimization");
@@ -59,6 +62,10 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "during optimization suggesting that it should be increased.  "
       "It has no effect on the optimization");
   ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
+
+  // hidden for 6.5 release
+  ui_->disentangled_label->hide();
+  ui_->disentangled_widget->hide();
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
@@ -76,6 +83,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->procrustes_interval->setValidator(zero_and_up);
   ui_->multiscale_particles->setValidator(above_zero);
   ui_->narrow_band->setValidator(double_validator);
+  ui_->geodesics_to_landmarks_weight->setValidator(double_validator);
 
   line_edits_.push_back(ui_->number_of_particles);
   line_edits_.push_back(ui_->initial_relative_weighting);
@@ -87,6 +95,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   line_edits_.push_back(ui_->normals_strength);
   line_edits_.push_back(ui_->procrustes_interval);
   line_edits_.push_back(ui_->multiscale_particles);
+  line_edits_.push_back(ui_->geodesics_to_landmarks_weight);
   line_edits_.push_back(ui_->narrow_band);
 
   for (QLineEdit* line_edit : line_edits_) {
@@ -114,8 +123,8 @@ void OptimizeTool::handle_progress(int val, QString progress_message) {
     return;
   }
 
-  //Q_EMIT progress(val);
-  //Q_EMIT status(progress_message.toStdString());
+  // Q_EMIT progress(val);
+  // Q_EMIT status(progress_message.toStdString());
 
   auto particles = optimize_->GetParticles();
   session_->update_particles(particles);
@@ -141,6 +150,8 @@ void OptimizeTool::handle_optimize_complete() {
 
   telemetry_.record_event("optimize", {{"duration_seconds", duration},
                                        {"num_particles", QVariant::fromValue(session_->get_num_particles())}});
+
+  session_->trigger_save();
 
   Q_EMIT optimize_complete();
   update_run_button();
@@ -175,7 +186,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     ui_->run_optimize_button->setEnabled(true);
     return;
   } else {
-    session_->save_project(session_->get_filename());
+    session_->trigger_save();
   }
 
   optimization_is_running_ = true;
@@ -210,7 +221,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
 
   threads_ << thread;
 
-  // re-enable after 2 seconds
+  // re-enable after 1 second
   QTimer::singleShot(1000, this, [&]() { update_run_button(); });
 }
 
@@ -253,8 +264,11 @@ void OptimizeTool::load_params() {
   ui_->optimization_iterations->setText(QString::number(params.get_optimization_iterations()));
 
   ui_->use_geodesic_distance->setChecked(params.get_use_geodesic_distance());
+  ui_->geodesic_remesh_percent->setText(QString::number(params.get_geodesic_remesh_percent()));
   ui_->use_normals->setChecked(params.get_use_normals()[0]);
   ui_->normals_strength->setText(QString::number(params.get_normals_strength()));
+  ui_->use_geodesics_from_landmarks->setChecked(params.get_use_geodesics_to_landmarks());
+  ui_->geodesics_to_landmarks_weight->setText(QString::number(params.get_geodesic_to_landmarks_weight()));
   ui_->use_disentangled_ssm->setChecked(params.get_use_disentangled_ssm());
 
   ui_->procrustes->setChecked(params.get_use_procrustes());
@@ -296,8 +310,11 @@ void OptimizeTool::store_params() {
   params.set_optimization_iterations(ui_->optimization_iterations->text().toDouble());
 
   params.set_use_geodesic_distance(ui_->use_geodesic_distance->isChecked());
+  params.set_geodesic_remesh_percent(ui_->geodesic_remesh_percent->text().toDouble());
   params.set_use_normals({ui_->use_normals->isChecked()});
   params.set_normals_strength(ui_->normals_strength->text().toDouble());
+  params.set_use_geodesics_to_landmarks(ui_->use_geodesics_from_landmarks->isChecked());
+  params.set_geodesic_to_landmarks_weight(ui_->geodesics_to_landmarks_weight->text().toDouble());
   params.set_use_disentangled_ssm(ui_->use_disentangled_ssm->isChecked());
 
   params.set_use_procrustes(ui_->procrustes->isChecked());
@@ -345,6 +362,8 @@ void OptimizeTool::update_ui_elements() {
   ui_->procrustes_rotation_translation->setEnabled(ui_->procrustes->isChecked());
   ui_->procrustes_interval->setEnabled(ui_->procrustes->isChecked());
   ui_->multiscale_particles->setEnabled(ui_->multiscale->isChecked());
+  ui_->geodesics_to_landmarks_weight->setEnabled(ui_->use_geodesics_from_landmarks->isChecked());
+  ui_->geodesic_remesh_percent->setEnabled(ui_->use_geodesic_distance->isChecked());
 }
 
 //---------------------------------------------------------------------------
@@ -437,9 +456,12 @@ void OptimizeTool::setup_domain_boxes() {
   QWidget::setTabOrder(ui_->ending_regularization, ui_->iterations_per_split);
   QWidget::setTabOrder(ui_->iterations_per_split, ui_->optimization_iterations);
   QWidget::setTabOrder(ui_->optimization_iterations, ui_->use_geodesic_distance);
-  QWidget::setTabOrder(ui_->use_geodesic_distance, ui_->use_normals);
+  QWidget::setTabOrder(ui_->use_geodesic_distance, ui_->geodesic_remesh_percent);
+  QWidget::setTabOrder(ui_->geodesic_remesh_percent, ui_->use_normals);
   QWidget::setTabOrder(ui_->use_normals, ui_->normals_strength);
-  QWidget::setTabOrder(ui_->normals_strength, ui_->procrustes);
+  QWidget::setTabOrder(ui_->normals_strength, ui_->use_geodesics_from_landmarks);
+  QWidget::setTabOrder(ui_->use_geodesics_from_landmarks, ui_->geodesics_to_landmarks_weight);
+  QWidget::setTabOrder(ui_->geodesics_to_landmarks_weight, ui_->procrustes);
   QWidget::setTabOrder(ui_->procrustes, ui_->procrustes_scaling);
   QWidget::setTabOrder(ui_->procrustes_scaling, ui_->procrustes_rotation_translation);
   QWidget::setTabOrder(ui_->procrustes_rotation_translation, ui_->procrustes_interval);

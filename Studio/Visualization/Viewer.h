@@ -67,6 +67,7 @@ class Viewer {
   vtkSmartPointer<vtkRenderer> get_renderer();
 
   void display_shape(std::shared_ptr<Shape> shape);
+  void update_annotations();
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
@@ -129,7 +130,7 @@ class Viewer {
 
   SliceView& slice_view();
 
-  void update_image_volume();
+  void update_image_volume(bool force = false);
 
   vtkSmartPointer<vtkPoints> get_glyph_points();
 

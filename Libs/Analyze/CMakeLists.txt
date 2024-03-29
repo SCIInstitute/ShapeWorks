@@ -16,13 +16,13 @@ SET(Analyze_headers
   MeshManager.h
   MeshWorkQueue.h
   MeshWorker.h
+  ParticleArea.h
   Particles.h
   QMeshWarper.h
   Shape.h
   StudioEnums.h
   StudioMesh.h
   SurfaceReconstructor.h
-  Vis.h
   vtkPolyDataToImageData.h
  )
 
@@ -36,13 +36,13 @@ add_library(Analyze STATIC
   MeshManager.cpp
   MeshWorkQueue.cpp
   MeshWorker.cpp
+  ParticleArea.cpp
   Particles.cpp
   QMeshWarper.cpp
   Shape.cpp
   StudioEnums.cpp
   StudioMesh.cpp
   SurfaceReconstructor.cpp
-  Vis.cpp
   vtkPolyDataToImageData.cpp
   ${ANALYZE_MOC_SRCS}
   )

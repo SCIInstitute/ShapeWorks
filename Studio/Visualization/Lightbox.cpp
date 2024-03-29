@@ -92,6 +92,7 @@ void Lightbox::reset_camera() {
   if (!viewers_.empty()) {
     viewers_[0]->reset_camera();
   }
+  redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -262,6 +263,8 @@ ShapeList Lightbox::get_shapes() { return shapes_; }
 //-----------------------------------------------------------------------------
 void Lightbox::redraw() {
   if (render_window_) {
+    // reset clipping range
+    reset_camera_clipping_range();
     render_window_->Render();
   }
 }
@@ -319,12 +322,15 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
       base_transform->TransformPoint(point.GetDataPointer(), common.GetDataPointer());
 
       for (int i = 1; i < viewers_.size(); i++) {
+        if (!viewers_[i]->get_shape()) {
+          continue;
+        }
+
         // transform from common space to destination space
         auto inverse = viewers_[i]->get_shape()->get_inverse_transform();
 
         Point local;
         inverse->TransformPoint(common.GetDataPointer(), local.GetDataPointer());
-
         viewers_[i]->slice_view().set_slice_position(local);
       }
     } else {
@@ -332,6 +338,7 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
         viewers_[i]->slice_view().change_slice(change);
       }
     }
+    redraw();
   }
 }
 
@@ -530,12 +537,12 @@ void Lightbox::update_interactor_style() {
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_shared_window_and_level(double window, double level) {
-  if (!session_->get_image_share_window_and_level()) {
+void Lightbox::set_shared_brightness_and_contrast(double brightness, double contrast) {
+  if (!session_->get_image_share_brightness_contrast()) {
     return;
   }
   for (int i = 0; i < viewers_.size(); i++) {
-    viewers_[i]->slice_view().set_window_and_level(window, level);
+    viewers_[i]->slice_view().set_brightness_and_contrast(brightness, contrast);
   }
 }
 

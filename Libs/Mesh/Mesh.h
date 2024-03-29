@@ -24,26 +24,28 @@ class Mesh {
   enum CurvatureType { Principal, Gaussian, Mean };
   enum SubdivisionType { Butterfly, Loop };
 
-  using MeshType = vtkSmartPointer<vtkPolyData>;
-  using MeshPoints = vtkSmartPointer<vtkPoints>;
-
   Mesh(const std::string& pathname);
 
-  Mesh(MeshType meshPtr) : poly_data_(meshPtr) {
+  void set_id(int id) { id_ = id; }
+  int get_id() const { return id_; }
+
+  Mesh(vtkSmartPointer<vtkPolyData> meshPtr) : poly_data_(meshPtr) {
     if (!poly_data_) throw std::invalid_argument("null meshPtr");
     invalidateLocators();
   }
 
-  Mesh(const Mesh& orig) : poly_data_(MeshType::New()) {
+  Mesh(const Mesh& orig) : poly_data_(vtkSmartPointer<vtkPolyData>::New()) {
     poly_data_->DeepCopy(orig.poly_data_);
+    id_ = orig.id_;
     invalidateLocators();
   }
 
-  Mesh(Mesh&& orig) : poly_data_(orig.poly_data_) { orig.poly_data_ = nullptr; }
+  Mesh(Mesh&& orig) : poly_data_(orig.poly_data_), id_{orig.id_} { orig.poly_data_ = nullptr; }
 
   Mesh& operator=(const Mesh& orig) {
-    poly_data_ = MeshType::New();
+    poly_data_ = vtkSmartPointer<vtkPolyData>::New();
     poly_data_->DeepCopy(orig.poly_data_);
+    id_ = orig.id_;
     invalidateLocators();
     return *this;
   }
@@ -52,7 +54,9 @@ class Mesh {
 
   Mesh& operator=(Mesh&& orig) {
     poly_data_ = orig.poly_data_;
+    id_ = orig.id_;
     orig.poly_data_ = nullptr;
+    orig.id_ = -1;
     return *this;
   }
 
@@ -60,7 +64,7 @@ class Mesh {
   Mesh& operator+=(const Mesh& otherMesh);
 
   /// return the current mesh
-  MeshType getVTKMesh() const { return this->poly_data_; }
+  vtkSmartPointer<vtkPolyData> getVTKMesh() const { return this->poly_data_; }
 
   /// writes mesh, format specified by filename extension
   Mesh& write(const std::string& pathname, bool binaryFile = false);
@@ -150,6 +154,9 @@ class Mesh {
   /// returns closest point id in this mesh to the given point in space
   int closestPointId(const Point3 point) const;
 
+  /// returns if the given point is inside the mesh
+  bool isPointInside(const Point3 point) const;
+
   /// computes geodesic distance between two vertices (specified by their indices) on mesh
   double geodesicDistance(int source, int target) const;
 
@@ -162,6 +169,15 @@ class Mesh {
   /// computes curvature using principal (default) or gaussian or mean algorithms
   Field curvature(const CurvatureType type = Principal) const;
 
+  /// compute the gradient of a scalar field for all vertices
+  void computeFieldGradient(const std::string& field) const;
+
+  /// compute the gradient of a scalar field at a point
+  Eigen::Vector3d computeFieldGradientAtPoint(const std::string& field, const Point3& query) const;
+
+  /// interpolate a scalar field at a given point
+  double interpolateFieldAtPoint(const std::string& field, const Point3& query) const;
+
   /// applies subdivision filter (butterfly (default) or loop)
   Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
@@ -173,7 +189,8 @@ class Mesh {
                             const Dims padding = Dims({1, 1, 1})) const;
 
   /// assign cortical thickness values from mesh points
-  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, std::string distance_mesh = "");
+  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, double median_radius = 5.0,
+                         std::string distance_mesh = "");
 
   /// compute geodesic distances to landmarks and assign as fields
   Mesh& computeLandmarkGeodesics(const std::vector<Point3>& landmarks);
@@ -259,12 +276,24 @@ class Mesh {
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
 
   //! Formats mesh into an IGL format
-  MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
-      const;  // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
+  vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
+      const;  // Copied directly from MeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
               // from Meshwrapper. TODO: When refactoring, take this into account.
 
   //! Clips the mesh according to a field value
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
+
+  //! Returns the cell locator
+  vtkSmartPointer<vtkStaticCellLocator> getCellLocator() const {
+    updateCellLocator();
+    return cellLocator;
+  }
+
+  int getClosestFace(const Point3& point) const;
+
+  /// Computes baricentric coordinates given a query point and a face number
+  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
+      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
  private:
   friend struct SharedCommandData;
@@ -274,8 +303,6 @@ class Mesh {
   /// Creates transform from source mesh to target using ICP registration
   MeshTransform createRegistrationTransform(const Mesh& target, AlignmentType align = Similarity,
                                             unsigned iterations = 10) const;
-
-  MeshType poly_data_;
 
   /// sets the given field for faces with array (*does not copy array's values)
   Mesh& setFieldForFaces(const std::string name, Array array);
@@ -294,9 +321,9 @@ class Mesh {
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
-  /// Computes baricentric coordinates given a query point and a face number
-  Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
-      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+  vtkSmartPointer<vtkPolyData> poly_data_;
+
+  int id_{-1};
 };
 
 /// stream insertion operators for Mesh
@@ -304,7 +331,7 @@ std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
 /// reads mesh (used only by one of the Mesh constructors)
 class MeshReader {
-  static Mesh::MeshType read(const std::string& pathname);
+  static vtkSmartPointer<vtkPolyData> read(const std::string& pathname);
   friend Mesh::Mesh(const std::string& pathname);
 };
 

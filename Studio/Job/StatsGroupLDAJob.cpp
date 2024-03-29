@@ -19,8 +19,8 @@ void StatsGroupLDAJob::set_stats(ParticleShapeStatistics stats) { stats_ = stats
 //---------------------------------------------------------------------------
 void StatsGroupLDAJob::run() {
   Q_EMIT progress(0.1);
-  stats_.PrincipalComponentProjections();
-  auto pca_loadings = stats_.PCALoadings();
+    stats_.principal_component_projections();
+  auto pca_loadings = stats_.get_pca_loadings();
   Q_EMIT progress(0.2);
 
   auto& group_ids = stats_.GroupID();
