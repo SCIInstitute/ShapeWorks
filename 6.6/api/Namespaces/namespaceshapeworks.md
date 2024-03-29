@@ -154,7 +154,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session.  |
 | class | **[shapeworks::Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject.  |
 | class | **[shapeworks::ShapeEvaluation](../Classes/classshapeworks_1_1ShapeEvaluation.md)**  |
-| class | **[shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)**  |
+| class | **[shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)** <br>The [ShapeEvaluationJob]() class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the [Job](../Classes/classshapeworks_1_1Job.md) and [Worker]() interfaces.  |
 | class | **[shapeworks::ShapeGradientMatrix](../Classes/classshapeworks_1_1ShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
 | class | **[shapeworks::ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
 | class | **[shapeworks::ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md)**  |
@@ -2606,4 +2606,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2024-03-20 at 18:08:38 +0000
+Updated on 2024-03-29 at 00:27:04 +0000

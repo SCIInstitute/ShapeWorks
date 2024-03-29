@@ -217,6 +217,8 @@ class AnalysisTool : public QWidget {
 
   Eigen::VectorXd construct_mean_shape();
 
+  void handle_samples_predicted_scalar_options();
+
  Q_SIGNALS:
 
   void update_view();
@@ -311,4 +313,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2024-03-20 at 18:08:40 +0000
+Updated on 2024-03-29 at 00:27:06 +0000

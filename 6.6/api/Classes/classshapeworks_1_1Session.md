@@ -36,6 +36,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[planes_changed](../Classes/classshapeworks_1_1Session.md#signal-planes-changed)**() |
 | void | **[ffc_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-changed)**() |
 | void | **[update_display](../Classes/classshapeworks_1_1Session.md#signal-update-display)**() |
+| void | **[feature_map_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-map-changed)**() |
 | void | **[reset_stats](../Classes/classshapeworks_1_1Session.md#signal-reset-stats)**() |
 | void | **[new_mesh](../Classes/classshapeworks_1_1Session.md#signal-new-mesh)**() |
 | void | **[feature_range_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-range-changed)**() |
@@ -277,6 +278,13 @@ void ffc_changed()
 
 ```cpp
 void update_display()
+```
+
+
+### signal feature_map_changed
+
+```cpp
+void feature_map_changed()
 ```
 
 
@@ -1319,4 +1327,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2024-03-20 at 18:08:39 +0000
+Updated on 2024-03-29 at 00:27:05 +0000

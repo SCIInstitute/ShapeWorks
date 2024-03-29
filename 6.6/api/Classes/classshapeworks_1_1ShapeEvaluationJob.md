@@ -1,5 +1,6 @@
 ---
 title: shapeworks::ShapeEvaluationJob
+summary: The ShapeEvaluationJob class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the Job and Worker interfaces. 
 
 ---
 
@@ -7,7 +8,10 @@ title: shapeworks::ShapeEvaluationJob
 
 
 
+The [ShapeEvaluationJob]() class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the [Job](../Classes/classshapeworks_1_1Job.md) and [Worker]() interfaces. 
 
+
+`#include <ShapeEvaluationJob.h>`
 
 Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
@@ -130,4 +134,4 @@ get the name of the job
 
 -------------------------------
 
-Updated on 2024-03-20 at 18:08:39 +0000
+Updated on 2024-03-29 at 00:27:05 +0000

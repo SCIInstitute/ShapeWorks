@@ -228,7 +228,7 @@ title: Classes
     * **class [Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject. 
         * **class [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md)** <br>TODO: replace this wherever it is used. 
     * **class [ShapeEvaluation](../Classes/classshapeworks_1_1ShapeEvaluation.md)** 
-    * **class [ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)** 
+    * **class [ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)** <br>The [ShapeEvaluationJob]() class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the [Job](../Classes/classshapeworks_1_1Job.md) and [Worker]() interfaces. 
     * **class [ShapeGradientMatrix](../Classes/classshapeworks_1_1ShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
     * **class [ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
     * **class [ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md)** 
@@ -279,4 +279,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2024-03-20 at 18:08:40 +0000
+Updated on 2024-03-29 at 00:27:06 +0000

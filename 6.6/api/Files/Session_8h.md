@@ -287,6 +287,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void planes_changed();
   void ffc_changed();
   void update_display();
+  void feature_map_changed();
   void reset_stats();
   void new_mesh();
   void feature_range_changed();
@@ -362,4 +363,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2024-03-20 at 18:08:40 +0000
+Updated on 2024-03-29 at 00:27:06 +0000

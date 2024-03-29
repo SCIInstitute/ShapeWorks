@@ -39,13 +39,13 @@ class ParticleSystemEvaluation {
   // Initialize particle system from eigen matrix (rows=dimensions, cols=num_samples)
   ParticleSystemEvaluation(const Eigen::MatrixXd& matrix);
 
-  const Eigen::MatrixXd& Particles() const { return P; };
+  const Eigen::MatrixXd& Particles() const { return matrix_; };
 
-  const std::vector<std::string>& Paths() const { return paths; }
+  const std::vector<std::string>& Paths() const { return paths_; }
 
-  int N() const { return P.cols(); }
+  int N() const { return matrix_.cols(); }
 
-  int D() const { return P.rows(); }
+  int D() const { return matrix_.rows(); }
 
   bool ExactCompare(const ParticleSystemEvaluation& other) const;
 
@@ -59,8 +59,8 @@ class ParticleSystemEvaluation {
   ParticleSystemEvaluation() {
   }  // only for use by SharedCommandData since a ParticleSystem should always be valid, never "empty"
 
-  Eigen::MatrixXd P;
-  std::vector<std::string> paths;
+  Eigen::MatrixXd matrix_;
+  std::vector<std::string> paths_;
 };
 }  // namespace shapeworks
 ```
@@ -68,4 +68,4 @@ class ParticleSystemEvaluation {
 
 -------------------------------
 
-Updated on 2024-03-20 at 18:08:40 +0000
+Updated on 2024-03-29 at 00:27:06 +0000

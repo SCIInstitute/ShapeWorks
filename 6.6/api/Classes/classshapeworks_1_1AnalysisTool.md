@@ -67,6 +67,7 @@ Inherits from QWidget
 | void | **[group_analysis_combo_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-analysis-combo-changed)**() |
 | void | **[change_pca_analysis_type](../Classes/classshapeworks_1_1AnalysisTool.md#slot-change-pca-analysis-type)**() |
 | Eigen::VectorXd | **[construct_mean_shape](../Classes/classshapeworks_1_1AnalysisTool.md#slot-construct-mean-shape)**()<br>Compute the mean shape outside of the PCA in case we are using scalars only.  |
+| void | **[handle_samples_predicted_scalar_options](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-samples-predicted-scalar-options)**() |
 
 ## Public Signals
 
@@ -498,6 +499,13 @@ Eigen::VectorXd construct_mean_shape()
 
 Compute the mean shape outside of the PCA in case we are using scalars only. 
 
+### slot handle_samples_predicted_scalar_options
+
+```cpp
+void handle_samples_predicted_scalar_options()
+```
+
+
 ## Public Signals Documentation
 
 ### signal update_view
@@ -887,4 +895,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2024-03-20 at 18:08:38 +0000
+Updated on 2024-03-29 at 00:27:04 +0000
