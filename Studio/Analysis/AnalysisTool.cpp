@@ -16,6 +16,7 @@
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>
+#include <Utils/AnalysisUtils.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
@@ -57,8 +58,6 @@ static Eigen::VectorXd extract_scalar_only(Eigen::VectorXd values) {
   }
   return scalars;
 }
-
-//---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
@@ -150,7 +149,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_->particles_open_button->toggle();
   ui_->particles_progress->hide();
 
-  // ui_->lda_panel->hide();
   ui_->lda_graph->hide();
   ui_->lda_hint_label->hide();
   group_lda_job_ = QSharedPointer<StatsGroupLDAJob>::create();
@@ -164,7 +162,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   // when one is checked, turn the other off, connect these first
   connect(ui_->show_difference_to_predicted_scalar, &QPushButton::clicked, this, [this]() {
-    if (ui_->show_difference_to_predicted_scalar->isChecked()) {
+    bool checked = ui_->show_difference_to_predicted_scalar->isChecked();
+    if (checked) {
       ui_->show_predicted_scalar->setChecked(false);
     }
   });
@@ -177,6 +176,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->show_difference_to_predicted_scalar, &QPushButton::clicked, this,
           &AnalysisTool::handle_samples_predicted_scalar_options);
   connect(ui_->show_predicted_scalar, &QPushButton::clicked, this,
+          &AnalysisTool::handle_samples_predicted_scalar_options);
+  connect(ui_->show_absolute_difference, &QPushButton::clicked, this,
           &AnalysisTool::handle_samples_predicted_scalar_options);
 }
 
@@ -299,6 +300,7 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
 
   ui_->show_predicted_scalar->setChecked(false);
   ui_->show_difference_to_predicted_scalar->setChecked(false);
+  handle_samples_predicted_scalar_options();
 
   connect(ui_->show_good_bad, &QCheckBox::toggled, session_.data(), &Session::set_show_good_bad_particles);
 }
@@ -608,21 +610,15 @@ bool AnalysisTool::compute_stats() {
 
   stats_ready_ = true;
 
-  /*
-  std::vector<double> vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(stats_.Eigenvalues()[i]);
-  }
-*/
+  ///  Set this to true to export long format sample data (e.g. for import into R)
+  const bool export_long_format = false;
 
-  ////  Uncomment this to write out long format sample data
-  /*
-  if (groups_enabled) {
+  if (export_long_format && groups_enabled) {
     auto feature_names = session_->get_project()->get_feature_names();
     std::ofstream file;
     file.open("/tmp/stats.csv");
     file << "subject,group,particle,x,y,z";
-    for (int i=0;i<feature_names.size();i++) {
+    for (int i = 0; i < feature_names.size(); i++) {
       file << "," << feature_names[i];
     }
     file << "\n";
@@ -633,11 +629,11 @@ bool AnalysisTool::compute_stats() {
       auto particles = shape->get_particles();
       auto points = particles.get_world_points(0);
       int point_id = 0;
-      for (int j=0;j<points.size(); j++) {
+      for (int j = 0; j < points.size(); j++) {
         auto point = points[j];
         file << shape_id << "," << group << "," << point_id++ << "," << point[0] << "," << point[1] << "," << point[2];
 
-        for (int i=0;i<feature_names.size();i++) {
+        for (int i = 0; i < feature_names.size(); i++) {
           auto scalars = shape->get_point_features(feature_names[i]);
           file << "," << scalars[j];
         }
@@ -648,7 +644,7 @@ bool AnalysisTool::compute_stats() {
     }
     file.close();
   }
-  */
+
   return true;
 }
 
@@ -1615,18 +1611,19 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_t
     case ShapeEvaluationJob::JobType::CompactnessType:
       SW_DEBUG("compactness go");
       eval_compactness_ = data;
-      create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
+      AnalysisUtils::create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
       ui_->compactness_graph->show();
       ui_->compactness_progress_widget->hide();
       break;
     case ShapeEvaluationJob::JobType::SpecificityType:
-      create_plot(ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
+      AnalysisUtils::create_plot(ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
       eval_specificity_ = data;
       ui_->specificity_graph->show();
       ui_->specificity_progress_widget->hide();
       break;
     case ShapeEvaluationJob::JobType::GeneralizationType:
-      create_plot(ui_->generalization_graph, data, "Generalization", "Number of Modes", "Generalization");
+      AnalysisUtils::create_plot(ui_->generalization_graph, data, "Generalization", "Number of Modes",
+                                 "Generalization");
       eval_generalization_ = data;
       ui_->generalization_graph->show();
       ui_->generalization_progress_widget->hide();
@@ -1826,10 +1823,28 @@ Eigen::VectorXd AnalysisTool::construct_mean_shape() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_samples_predicted_scalar_options() {
+  bool show_difference_to_predicted_scalar = ui_->show_difference_to_predicted_scalar->isChecked();
+  ui_->samples_plot->setVisible(show_difference_to_predicted_scalar);
+  ui_->samples_table->setVisible(show_difference_to_predicted_scalar);
+  ui_->show_absolute_difference->setEnabled(show_difference_to_predicted_scalar);
+
   if (ui_->show_difference_to_predicted_scalar->isChecked() || ui_->show_predicted_scalar->isChecked()) {
     // iterate over all samples, predict scalars, compute the difference and store as a new scalar field
     auto shapes = session_->get_non_excluded_shapes();
-    for (auto& shape : shapes) {
+
+    int num_particles = shapes[0]->get_particles().get_total_number_of_particles();
+
+    Eigen::VectorXd diffs(shapes.size() * num_particles);
+    diffs.setZero();
+
+    ui_->samples_table->clear();
+    ui_->samples_table->setRowCount(shapes.size());
+    QStringList headers = {"subject", "mean_diff", "std_dev", "max_diff", "min_diff"};
+    ui_->samples_table->setColumnCount(headers.size());
+    ui_->samples_table->setHorizontalHeaderLabels(headers);
+
+    for (int i = 0; i < shapes.size(); i++) {
+      auto& shape = shapes[i];
       auto particles = shape->get_particles();
       auto target_feature = ui_->pca_scalar_combo->currentText();
       auto predicted =
@@ -1838,12 +1853,39 @@ void AnalysisTool::handle_samples_predicted_scalar_options() {
       // load the mesh and feature
       shape->get_meshes(session_->get_display_mode(), true);
       shape->load_feature(session_->get_display_mode(), target_feature.toStdString());
-      auto scalars = shape->get_point_features(target_feature.toStdString());
+      Eigen::VectorXd scalars = shape->get_point_features(target_feature.toStdString());
       // compute difference
-      auto diff = predicted - scalars;
+      Eigen::VectorXd diff = predicted - scalars;
+      if (ui_->show_absolute_difference->isChecked()) {
+        diff = diff.array().abs();
+      }
       shape->set_point_features("predicted_scalar_diff", diff);
       shape->set_point_features("predicted_scalar", predicted);
+
+      // now iterate over point values and compute the mean, max, and std deviation
+      double mean = diff.mean();
+      double max = diff.maxCoeff();
+      double min = diff.minCoeff();
+
+      // place in the diffs vector
+      diffs.segment(i * num_particles, num_particles) = diff;
+
+      // Calculate the squared differences
+      diff = diff.array().square();
+      // Calculate the variance
+      double variance = diff.sum() / (predicted.size() - 1);
+      // Calculate the standard deviation
+      double std_dev = sqrt(variance);
+
+      ui_->samples_table->setItem(
+          i, 0, new QTableWidgetItem(QString::fromStdString(shape->get_subject()->get_display_name())));
+      ui_->samples_table->setItem(i, 1, new QTableWidgetItem(QString::number(mean)));
+      ui_->samples_table->setItem(i, 2, new QTableWidgetItem(QString::number(std_dev)));
+      ui_->samples_table->setItem(i, 3, new QTableWidgetItem(QString::number(max)));
+      ui_->samples_table->setItem(i, 4, new QTableWidgetItem(QString::number(min)));
     }
+
+    AnalysisUtils::create_box_plot(ui_->samples_plot, diffs, "Difference to Predicted Scalar", "Sample");
   }
   Q_EMIT update_view();
 }
@@ -1938,48 +1980,6 @@ void AnalysisTool::compute_reconstructed_domain_transforms() {
   for (int s = 0; s < shapes.size(); s++) {
     shapes[s]->set_reconstruction_transforms(reconstruction_transforms_);
   }
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label,
-                               QString y_label) {
-  JKQTPDatastore* ds = plot->getDatastore();
-  ds->clear();
-
-  QVector<double> x, y;
-  for (int i = 0; i < data.size(); i++) {
-    x << i + 1;
-    y << data[i];
-  }
-  size_t column_x = ds->addCopiedColumn(x, x_label);
-  size_t column_y = ds->addCopiedColumn(y, y_label);
-
-  plot->clearGraphs();
-  JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
-  graph->setColor(Qt::blue);
-  graph->setSymbolType(JKQTPNoSymbol);
-  graph->setXColumn(column_x);
-  graph->setYColumn(column_y);
-  graph->setTitle(title);
-
-  plot->getPlotter()->setUseAntiAliasingForGraphs(true);
-  plot->getPlotter()->setUseAntiAliasingForSystem(true);
-  plot->getPlotter()->setUseAntiAliasingForText(true);
-  plot->getPlotter()->setPlotLabelFontSize(18);
-  plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
-  plot->getPlotter()->setDefaultTextSize(14);
-  plot->getPlotter()->setShowKey(false);
-
-  plot->getXAxis()->setAxisLabel(x_label);
-  plot->getXAxis()->setLabelFontSize(14);
-  plot->getYAxis()->setAxisLabel(y_label);
-  plot->getYAxis()->setLabelFontSize(14);
-
-  plot->clearAllMouseWheelActions();
-  plot->setMousePositionShown(false);
-  plot->setMinimumSize(250, 250);
-  plot->addGraph(graph);
-  plot->zoomToFit();
 }
 
 }  // namespace shapeworks
