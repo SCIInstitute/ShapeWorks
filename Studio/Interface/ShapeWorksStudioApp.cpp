@@ -998,8 +998,8 @@ void ShapeWorksStudioApp::new_session() {
   visualizer_->clear_viewers();
 
   data_tool_->set_session(session_);
-  analysis_tool_->set_session(session_);
   visualizer_->set_session(session_);
+  analysis_tool_->set_session(session_);
   groom_tool_->set_session(session_);
   optimize_tool_->set_session(session_);
   deepssm_tool_->set_session(session_);
@@ -1364,7 +1364,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display(bool force) {
-  if (!visualizer_) {
+  if (!visualizer_ || !session_) {
     return;
   }
 

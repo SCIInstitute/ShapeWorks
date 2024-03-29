@@ -16,6 +16,7 @@
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>
+#include <Utils/AnalysisUtils.h>
 #include <jkqtplotter/graphs/jkqtpboxplot.h>
 #include <jkqtplotter/graphs/jkqtpstatisticsadaptors.h>
 #include <jkqtplotter/jkqtplotter.h>
@@ -169,38 +170,7 @@ void ParticleAreaPanel::update_graphs() {
     numbers = job_->get_stddev_areas();
   }
 
-  QVector<double> values;
-  for (int i = 0; i < numbers.size(); ++i) {
-    values.push_back(numbers[i]);
-  }
-
-  // fill in datastore
-  JKQTPDatastore* ds = plot->getDatastore();
-  ds->clear();
-  size_t column_x = ds->addCopiedColumn(values, x_label);
-
-  auto pair = jkqtpstatAddVBoxplotAndOutliers(plot->getPlotter(), ds->begin(column_x), ds->end(column_x), 0, 0.25, 0.75,
-                                              0.03, 0.97, "outliers");
-
-  auto graph = pair.first;
-  auto outliers = pair.second;
-
-  // set color to blue
-  graph->setColor(Qt::blue);
-  outliers->setColor(Qt::blue);
-
-  plot->getPlotter()->setUseAntiAliasingForGraphs(true);
-  plot->getPlotter()->setUseAntiAliasingForSystem(true);
-  plot->getPlotter()->setUseAntiAliasingForText(true);
-  plot->getPlotter()->setPlotLabelFontSize(18);
-  plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
-  plot->getPlotter()->setDefaultTextSize(14);
-  plot->getPlotter()->setShowKey(false);
-
-  plot->clearAllMouseWheelActions();
-  plot->setMousePositionShown(false);
-  plot->setMinimumSize(250, 250);
-  plot->zoomToFit();
+  AnalysisUtils::create_box_plot(plot, numbers, title, x_label);
 }
 
 //---------------------------------------------------------------------------
