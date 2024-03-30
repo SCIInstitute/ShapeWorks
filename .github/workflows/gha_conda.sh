@@ -14,7 +14,7 @@ else
 
     # run install
     source ./install_shapeworks.sh --developer
-    conda clean -p -t
+    conda clean -p -t -y
 
     echo "Create and store cache"
     cd /

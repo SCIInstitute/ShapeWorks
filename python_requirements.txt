@@ -83,6 +83,7 @@ jupyterlab-pygments==0.2.2
 jupyterlab-widgets==3.0.8
 jupytext==1.14.7
 kiwisolver==1.4.4
+light-the-torch==0.7.5
 lxml==4.9.3
 Markdown==3.3.7
 markdown-it-py==3.0.0
@@ -170,9 +171,6 @@ terminado==0.17.1
 threadpoolctl==3.1.0
 tinycss2==1.2.1
 toml==0.10.2
-torch==1.13.1
-torchaudio==0.13.1
-torchvision==0.14.1
 tornado==6.3.3
 tqdm==4.65.0
 traitlets==5.9.0

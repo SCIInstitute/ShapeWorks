@@ -18,10 +18,12 @@ REM reactivate shapeworks environment
 call conda activate base
 call conda activate %CONDAENV%
 
-call pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio===0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
-
 call pip install -r python_requirements.txt
 
+REM install ptorch using light-the-torch
+call ltt install torch==1.11.0
+
+REM different versions of open3d for different OSes, so we install it manually here
 call pip install open3d==0.17.0
 
 call pip install Python/DatasetUtilsPackage.tar.gz
