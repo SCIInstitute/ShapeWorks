@@ -295,6 +295,10 @@ class Mesh {
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
+  //! Interpolates scalar values at points (e.g. correspondence points) to the mesh, assign/create a field with the
+  //! given name
+  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);
+
  private:
   friend struct SharedCommandData;
   Mesh()

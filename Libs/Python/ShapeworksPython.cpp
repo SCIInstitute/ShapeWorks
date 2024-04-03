@@ -20,7 +20,6 @@ using namespace pybind11::literals;
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
 
-#include <bitset>
 #include <boost/filesystem.hpp>
 #include <sstream>
 
