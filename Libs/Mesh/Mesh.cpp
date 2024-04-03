@@ -1697,7 +1697,7 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positio
     // assign scalar value based on a weighted scheme
     float weighted_scalar = 0.0f;
     float distanceSum = 0.0f;
-    float distance[8];
+    float distance[8] = {0.0f};
     bool exactly_on_point = false;
     float exact_scalar = 0.0f;
     for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {

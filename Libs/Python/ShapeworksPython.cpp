@@ -1097,6 +1097,9 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def("computeThickness", &Mesh::computeThickness, "Computes cortical thickness", "ct"_a, "dt"_a = nullptr,
            "maxDist"_a = 10000, "medianRadius"_a = 5.0, "distanceMesh"_a = "")
 
+      .def("interpolate_scalars_to_mesh", &Mesh::interpolate_scalars_to_mesh, "Interpolate scalars to mesh", "name"_a,
+           "positions"_a, "scalar_values"_a)
+
       ;
 
   // MeshWarping
