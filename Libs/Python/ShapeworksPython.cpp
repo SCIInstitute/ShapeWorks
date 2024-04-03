@@ -969,19 +969,17 @@ PYBIND11_MODULE(shapeworks_py, m) {
           },
           "returns closest point id in this mesh to the given point in space", "point"_a)
 
-   .def("interpolateFieldAtPoint",
-       [](Mesh &mesh, const std::string& name, std::vector<double> p) -> decltype(auto) {
-         return mesh.interpolateFieldAtPoint(name, Point({p[0], p[1], p[2]}));
-       },
-       "Interpolate the feature at the location using barycentric coordinate",
-       "field"_a,
-       "point"_a)
+      .def(
+          "interpolateFieldAtPoint",
+          [](Mesh& mesh, const std::string& name, std::vector<double> p) -> decltype(auto) {
+            return mesh.interpolateFieldAtPoint(name, Point({p[0], p[1], p[2]}));
+          },
+          "Interpolate the feature at the location using barycentric coordinate", "field"_a, "point"_a)
 
-  .def("geodesicDistance",
-       static_cast<double (Mesh::*)(int,int) const>(&Mesh::geodesicDistance),
-       //py::overload_cast_const<int, int>(&Mesh::geodesicDistance),
-       "computes geodesic distance between two vertices (specified by their indices) on mesh",
-       "source"_a, "target"_a)
+      .def("geodesicDistance", static_cast<double (Mesh::*)(int, int) const>(&Mesh::geodesicDistance),
+           // py::overload_cast_const<int, int>(&Mesh::geodesicDistance),
+           "computes geodesic distance between two vertices (specified by their indices) on mesh", "source"_a,
+           "target"_a)
 
       .def(
           "geodesicDistance",
