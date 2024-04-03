@@ -106,6 +106,7 @@ title: shapeworks::Mesh
 | vtkSmartPointer< vtkStaticCellLocator > | **[getCellLocator](../Classes/classshapeworks_1_1Mesh.md#function-getcelllocator)**() const<br>Returns the cell locator.  |
 | int | **[getClosestFace](../Classes/classshapeworks_1_1Mesh.md#function-getclosestface)**(const Point3 & point) const |
 | Eigen::Vector3d | **[computeBarycentricCoordinates](../Classes/classshapeworks_1_1Mesh.md#function-computebarycentriccoordinates)**(const Eigen::Vector3d & pt, int face) const<br>Computes baricentric coordinates given a query point and a face number.  |
+| void | **[interpolate_scalars_to_mesh](../Classes/classshapeworks_1_1Mesh.md#function-interpolate-scalars-to-mesh)**(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values) |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Mesh.md#function-getsupportedtypes)**()<br>Return supported file types.  |
 
 ## Friends
@@ -964,6 +965,20 @@ Eigen::Vector3d computeBarycentricCoordinates(
 
 Computes baricentric coordinates given a query point and a face number. 
 
+### function interpolate_scalars_to_mesh
+
+```cpp
+void interpolate_scalars_to_mesh(
+    std::string name,
+    Eigen::VectorXd positions,
+    Eigen::VectorXd scalar_values
+)
+```
+
+
+Interpolates scalar values at points (e.g. correspondence points) to the mesh, assign/create a field with the given name 
+
+
 ### function getSupportedTypes
 
 ```cpp
@@ -985,4 +1000,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-03-30 at 17:25:58 +0000
+Updated on 2024-04-03 at 19:47:52 +0000

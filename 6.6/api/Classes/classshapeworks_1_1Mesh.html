@@ -3001,6 +3001,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-interpolate_scalars_to_mesh" class="md-nav__link">
+    function interpolate_scalars_to_mesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getsupportedtypes" class="md-nav__link">
     function getSupportedTypes
   </a>
@@ -3405,6 +3412,10 @@
 <tr>
 <td>Eigen::Vector3d</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-computebarycentriccoordinates">computeBarycentricCoordinates</a></strong>(const Eigen::Vector3d &amp; pt, int face) const<br>Computes baricentric coordinates given a query point and a face number.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-interpolate-scalars-to-mesh">interpolate_scalars_to_mesh</a></strong>(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values)</td>
 </tr>
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
@@ -4021,6 +4032,14 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Computes baricentric coordinates given a query point and a face number. </p>
+<h3 id="function-interpolate_scalars_to_mesh">function interpolate_scalars_to_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">interpolate_scalars_to_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">scalar_values</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Interpolates scalar values at points (e.g. correspondence points) to the mesh, assign/create a field with the given name </p>
 <h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span>
 </code></pre></div>
@@ -4032,7 +4051,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-03-30 at 17:25:58 +0000</p>
+<p>Updated on 2024-04-03 at 19:47:52 +0000</p>
 
               
             </article>

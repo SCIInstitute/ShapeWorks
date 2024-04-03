@@ -2658,6 +2658,8 @@
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">computeBarycentricCoordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">)</span>
 <span class="w">      </span><span class="k">const</span><span class="p">;</span><span class="w">  </span><span class="c1">// // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">interpolate_scalars_to_mesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">scalar_values</span><span class="p">);</span>
+
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">;</span>
 <span class="w">  </span><span class="n">Mesh</span><span class="p">()</span>
@@ -2693,7 +2695,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-03-30 at 17:25:58 +0000</p>
+<p>Updated on 2024-04-03 at 19:47:52 +0000</p>
 
               
             </article>
