@@ -381,6 +381,7 @@ def initialize_mesh_warper(template_mesh, template_particles):
     None
     """
     global sw_warp
+    sw_warp = sw.MeshWarper()
     sw_warp.generateWarp(template_mesh, template_particles)
 
 

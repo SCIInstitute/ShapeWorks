@@ -47,8 +47,6 @@ def get_mesh_from_particles(particle_list, mesh_dir, template_particles, templat
     if not os.path.exists(mesh_dir):
         os.makedirs(mesh_dir)
 
-    warp = sw.MeshWarper()
-
     # Create mesh from file (mesh or segmentation)
     sw_mesh = get_mesh_from_file(template_mesh)
     sw_particles = np.loadtxt(template_particles)
@@ -62,7 +60,7 @@ def get_mesh_from_particles(particle_list, mesh_dir, template_particles, templat
         out_filename = out_filename.replace(particle_dir, mesh_dir)
         out_mesh_filenames.append(out_filename)
         sw_particles = np.loadtxt(particle_list[i])
-        out_mesh = reconwarp.buildMesh(sw_particles)
+        out_mesh = reconstruct_mesh(sw_particles)
         out_mesh.write(out_filename)
 
     if planes is not None:
