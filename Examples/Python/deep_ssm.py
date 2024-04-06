@@ -402,7 +402,7 @@ def Run_Pipeline(args):
         with open(config_file, "w") as outfile:
             json.dump(model_parameters, outfile, indent=2)
         # Train
-        DeepSSMUtils.trainDeepSSM(config_file)
+        DeepSSMUtils.trainDeepSSM(project, config_file)
         open(status_dir + "step_10.txt", 'w').close()
 
     ######################################################################################
