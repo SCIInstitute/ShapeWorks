@@ -13,9 +13,8 @@ from DeepSSMUtils import model
 from DeepSSMUtils import losses
 from DeepSSMUtils import train_viz
 from DeepSSMUtils import loaders
-from shapeworks.utils import sw_message
-from shapeworks.utils import sw_progress
-from shapeworks.utils import sw_check_abort
+import DeepSSMUtils
+from shapeworks.utils import *
 
 '''
 Train helper
@@ -66,7 +65,14 @@ def set_scheduler(opt, sched_params):
     return scheduler
 
 
-def train(config_file):
+def train(project, config_file):
+    subjects = project.get_subjects()
+    project_path = project.get_project_path() + "/"
+    reference_index = DeepSSMUtils.get_reference_index(project)
+    template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
+    template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
+    initialize_mesh_warper_from_files(template_mesh, template_particles)
+
     with open(config_file) as json_file:
         parameters = json.load(json_file)
     if parameters["tl_net"]["enabled"]:

@@ -34,7 +34,6 @@ bool Project::load(const std::string& filename) {
   if (project_path_ == "") {
     project_path_ = ".";
   }
-  std::cerr << "Setting Project path: " << project_path_ << std::endl;
 
   bool return_value = false;
   if (StringUtils::hasSuffix(filename, "swproj")) {

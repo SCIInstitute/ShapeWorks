@@ -41,9 +41,9 @@ def prepareConfigFile(config_filename, model_name, embedded_dim, out_dir, loader
                                     fine_tune_epochs, fine_tune_learning_rate)
 
 
-def trainDeepSSM(config_file):
+def trainDeepSSM(project, config_file):
     testPytorch()
-    trainer.train(config_file)
+    trainer.train(project, config_file)
     return
 
 

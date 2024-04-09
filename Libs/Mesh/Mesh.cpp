@@ -1643,6 +1643,99 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
   return bary;
 }
 
+void Mesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values) {
+  int num_points = positions.size() / 3;
+  if (num_points == 0) {
+    return;
+  }
+
+  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
+
+  vtk_points->SetNumberOfPoints(num_points);
+
+  unsigned int idx = 0;
+  for (int i = 0; i < num_points; i++) {
+    double x = positions[idx++];
+    double y = positions[idx++];
+    double z = positions[idx++];
+
+    vtk_points->InsertPoint(i, x, y, z);
+  }
+
+  if (num_points != scalar_values.size()) {
+    std::cerr << "Warning, mismatch of points and scalar values (num_points = " << num_points
+              << ", scalar_values.size() = " << scalar_values.size() << ")\n";
+    return;
+  }
+
+  vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
+  point_data->SetPoints(vtk_points);
+
+  vtkSmartPointer<vtkPointLocator> point_locator = vtkPointLocator::New();
+  point_locator->SetDataSet(point_data);
+  point_locator->SetDivisions(100, 100, 100);
+  point_locator->BuildLocator();
+
+  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0) {
+    return;
+  }
+
+  auto points = poly_data_->GetPoints();
+
+  vtkFloatArray* scalars = vtkFloatArray::New();
+  scalars->SetNumberOfValues(points->GetNumberOfPoints());
+  scalars->SetName(name.c_str());
+
+  for (int i = 0; i < points->GetNumberOfPoints(); i++) {
+    double pt[3];
+    points->GetPoint(i, pt);
+
+    // find the 8 closest correspondence points the to current point
+    vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
+    point_locator->FindClosestNPoints(8, pt, closest_points);
+
+    // assign scalar value based on a weighted scheme
+    float weighted_scalar = 0.0f;
+    float distanceSum = 0.0f;
+    float distance[8] = {0.0f};
+    bool exactly_on_point = false;
+    float exact_scalar = 0.0f;
+    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      // get a particle position
+      vtkIdType id = closest_points->GetId(p);
+
+      // compute distance to current particle
+      double x = pt[0] - point_data->GetPoint(id)[0];
+      double y = pt[1] - point_data->GetPoint(id)[1];
+      double z = pt[2] - point_data->GetPoint(id)[2];
+
+      if (x == 0 && y == 0 && z == 0) {
+        distance[p] = 0;
+        exactly_on_point = true;
+        exact_scalar = scalar_values[id];
+      } else {
+        distance[p] = 1.0f / (x * x + y * y + z * z);
+      }
+
+      // multiply scalar value by weight and add to running sum
+      distanceSum += distance[p];
+    }
+
+    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      vtkIdType current_id = closest_points->GetId(p);
+      weighted_scalar += distance[p] / distanceSum * scalar_values[current_id];
+    }
+
+    if (exactly_on_point) {
+      weighted_scalar = exact_scalar;
+    }
+
+    scalars->SetValue(i, weighted_scalar);
+  }
+
+  setField(name, scalars, Mesh::FieldType::Point);
+}
+
 double Mesh::getFFCValue(Eigen::Vector3d query) const {
   Point3 point(query.data());
   return interpolateFieldAtPoint("value", point);

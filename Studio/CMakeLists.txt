@@ -282,6 +282,10 @@ IF(APPLE)
   SET(MACOSX_BUNDLE_ICON_FILE ShapeWorksStudio.icns)
   # set the bundle identifier
   SET(MACOSX_BUNDLE_GUI_IDENTIFIER edu.utah.sci.shapeworks.studio)
+  # set the version ($SHAPEWORKS_VERSION)
+  SET(MACOSX_BUNDLE_SHORT_VERSION_STRING ${SHAPEWORKS_VERSION})
+  SET(MACOSX_BUNDLE_VERSION_STRING_STRING ${SHAPEWORKS_VERSION})
+
   # set where in the bundle to put the icns file
   SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   # include the icns file in the target
