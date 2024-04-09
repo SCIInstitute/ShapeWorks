@@ -66,12 +66,7 @@ def set_scheduler(opt, sched_params):
 
 
 def train(project, config_file):
-    subjects = project.get_subjects()
-    project_path = project.get_project_path() + "/"
-    reference_index = DeepSSMUtils.get_reference_index(project)
-    template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
-    template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
-    initialize_mesh_warper_from_files(template_mesh, template_particles)
+    sw.utils.initialize_project_mesh_warper(project)
 
     with open(config_file) as json_file:
         parameters = json.load(json_file)

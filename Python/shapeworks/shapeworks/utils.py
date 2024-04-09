@@ -401,6 +401,24 @@ def initialize_mesh_warper_from_files(template_mesh_filename, template_particles
     initialize_mesh_warper(sw_mesh, sw_particles)
 
 
+def initialize_project_mesh_warper(project):
+    """
+    This function initializes a MeshWarper object using the template mesh and particles from a given project.
+
+    Parameters:
+    project (shapeworks.Project): The project to be used for mesh warping.
+
+    Returns:
+    None
+    """
+    subjects = project.get_subjects()
+    project_path = project.get_project_path() + "/"
+    reference_index = sw.utils.get_reference_index(project)
+    template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
+    template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
+    initialize_mesh_warper_from_files(template_mesh, template_particles)
+
+
 def reconstruct_mesh(particles):
     """
     This function uses the global MeshWarper object to build a mesh from a given set of particles.
@@ -438,3 +456,18 @@ def get_mesh_from_file(filename, iso_value=0):
         return image.toMesh(iso_value)
     else:
         return sw.Mesh(filename)
+
+
+def get_reference_index(project):
+    """ Get the index of the reference subject chosen by grooming alignment."""
+    params = project.get_parameters("groom")
+    reference_index = params.get("alignment_reference_chosen")
+    return int(reference_index)
+
+
+def get_image_filename(subject):
+    """ Get the image filename for a subject. """
+    image_map = subject.get_feature_filenames()
+    # get the first image
+    image_name = list(image_map.values())[0]
+    return image_name
