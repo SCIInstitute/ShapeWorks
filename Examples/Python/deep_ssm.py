@@ -169,7 +169,7 @@ def Run_Pipeline(args):
         DeepSSMUtils.groom_training_shapes(project)
         project.save(spreadsheet_file)
 
-        reference_index = DeepSSMUtils.get_reference_index(project)
+        reference_index = sw.utils.get_reference_index(project)
         print("Reference index: " + str(reference_index))
         # print reference mesh name
         print("Reference mesh: " + project_path + project.get_subjects()[reference_index].get_original_filenames()[0])
@@ -458,7 +458,7 @@ def Run_Pipeline(args):
         '''
         mean_MSE, std_MSE = DeepSSMUtils.analyzeMSE(predicted_val_world_particles, val_world_particles)
         print("Validation world particle MSE: " + str(mean_MSE) + " +- " + str(std_MSE))
-        reference_index = DeepSSMUtils.get_reference_index(project)
+        reference_index = sw.utils.get_reference_index(project)
         template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
         template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
         # Get distance between clipped true and predicted meshes
@@ -520,7 +520,7 @@ def Run_Pipeline(args):
         clipped true mesh and clipped mesh generated from predicted local particles
         '''
 
-        reference_index = DeepSSMUtils.get_reference_index(project)
+        reference_index = sw.utils.get_reference_index(project)
         template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
         template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
 

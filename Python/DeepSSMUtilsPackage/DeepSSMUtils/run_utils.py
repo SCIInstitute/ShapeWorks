@@ -6,9 +6,7 @@ import json
 
 import shapeworks as sw
 from bokeh.util.terminal import trace
-from shapeworks.utils import sw_message
-from shapeworks.utils import sw_progress
-from shapeworks.utils import sw_check_abort
+from shapeworks.utils import sw_message, sw_progress, sw_check_abort
 
 import DataAugmentationUtils
 import DeepSSMUtils
@@ -125,21 +123,6 @@ def prep_project_for_val_particles(project):
     project.set_subjects(subjects)
 
 
-def get_reference_index(project):
-    """ Get the index of the reference subject chosen by grooming alignment."""
-    params = project.get_parameters("groom")
-    reference_index = params.get("alignment_reference_chosen")
-    return int(reference_index)
-
-
-def get_image_filename(subject):
-    """ Get the image filename for a subject. """
-    image_map = subject.get_feature_filenames()
-    # get the first image
-    image_name = list(image_map.values())[0]
-    return image_name
-
-
 def get_deepssm_dir(project):
     """ Get the directory for deepssm data"""
     project_path = project.get_project_path()
@@ -197,8 +180,8 @@ def groom_training_images(project):
 
     deepssm_dir = get_deepssm_dir(project)
 
-    ref_index = get_reference_index(project)
-    ref_image = sw.Image(get_image_filename(subjects[ref_index]))
+    ref_index = sw.utils.get_reference_index(project)
+    ref_image = sw.Image(sw.utils.get_image_filename(subjects[ref_index]))
     ref_mesh = sw.utils.load_mesh(subjects[ref_index].get_groomed_filenames()[0])
 
     # apply alignment transform
@@ -248,7 +231,7 @@ def groom_training_images(project):
             sw_message("Aborted")
             return
 
-        image_name = get_image_filename(subjects[i])
+        image_name = sw.utils.get_image_filename(subjects[i])
         sw_progress(i / (len(subjects) + 1), f"Grooming Training Image: {image_name}")
         image = sw.Image(image_name)
         subject = subjects[i]
@@ -273,6 +256,7 @@ def groom_training_images(project):
 
 def run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler, mixture_num=0, processes=1):
     """ Run data augmentation on the training images. """
+    sw.utils.initialize_project_mesh_warper(project)
     deepssm_dir = get_deepssm_dir(project)
     aug_dir = deepssm_dir + "augmentation/"
 
@@ -381,7 +365,7 @@ def groom_val_test_images(project, indices):
             sw_message("Aborted")
             return
 
-        image_name = get_image_filename(subjects[i])
+        image_name = sw.utils.get_image_filename(subjects[i])
         sw_progress(count / (len(val_test_indices) + 1),
                     f"Grooming val/test image {image_name} ({count}/{len(val_test_indices)})")
         count = count + 1
