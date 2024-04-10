@@ -38,13 +38,7 @@ def write_examples(pred_particles, true_particles, filenames, out_dir):
 
         # reshape pred to be 1D
         pred = pred.flatten()
-
-        # print type of pred
-        print(f"pred type: {type(pred)}")
-        print(f"pred shape: {pred.shape}")
-        print(f"scalars type: {type(scalars)}")
-        print(f"scalars shape: {scalars.shape}")
-
+        # interpolate scalars to mesh
         mesh.interpolate_scalars_to_mesh("deepssm_error", pred, scalars)
         out_mesh_file = out_dir + names[i] + ".vtk"
         mesh.write(out_mesh_file)

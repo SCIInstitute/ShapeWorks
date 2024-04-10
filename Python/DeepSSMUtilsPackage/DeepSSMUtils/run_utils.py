@@ -500,7 +500,7 @@ def process_test_predictions(project, config_file):
     if not os.path.exists(world_predictions_dir):
         os.makedirs(world_predictions_dir)
 
-    reference_index = DeepSSMUtils.get_reference_index(project)
+    reference_index = sw.utils.get_reference_index(project)
     template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
     template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
 
