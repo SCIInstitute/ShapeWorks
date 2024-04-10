@@ -104,6 +104,10 @@ class DeepSSMTool : public QWidget {
   void update_testing_meshes();
   void load_plots();
   void resize_plots();
+
+  std::string get_feature_name();
+  void set_subject_image_filename(const std::shared_ptr<Subject>& subject, const std::string& filename);
+
   QPixmap load_plot(QString filename);
   void set_plot(QLabel* qlabel, QPixmap pixmap);
 
