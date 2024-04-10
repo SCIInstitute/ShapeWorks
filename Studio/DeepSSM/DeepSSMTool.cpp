@@ -97,6 +97,13 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->validation_split->setValidator(zero_to_hundred);
   ui_->testing_split->setValidator(zero_to_hundred);
 
+  QDoubleValidator* double_validator = new QDoubleValidator(0, 100, 4, this);
+  double_validator->setNotation(QDoubleValidator::StandardNotation);
+  ui_->percent_variability->setValidator(double_validator);
+  ui_->spacing_x->setValidator(double_validator);
+  ui_->spacing_y->setValidator(double_validator);
+  ui_->spacing_z->setValidator(double_validator);
+
   connect(ui_->validation_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
   connect(ui_->testing_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
 
