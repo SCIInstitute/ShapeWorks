@@ -529,8 +529,11 @@ def Run_Pipeline(args):
                                                      planes=test_planes)
         print("Test mean mesh surface-to-surface distance: " + str(mean_dist))
 
+        DeepSSMUtils.process_test_predictions(project, config_file)
+        
         # If tiny test or verify, check results and exit
         check_results(args, mean_dist)
+
         open(status_dir + "step_12.txt", 'w').close()
 
     print("All steps complete")
