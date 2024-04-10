@@ -1,8 +1,6 @@
 // std
 #include <tbb/parallel_for.h>
 
-#include <iostream>
-
 // qt
 #include <QFileDialog>
 #include <QMessageBox>
@@ -96,6 +94,13 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   QIntValidator* zero_to_hundred = new QIntValidator(0, 100, this);
   ui_->validation_split->setValidator(zero_to_hundred);
   ui_->testing_split->setValidator(zero_to_hundred);
+
+  QDoubleValidator* double_validator = new QDoubleValidator(0, 100, 4, this);
+  double_validator->setNotation(QDoubleValidator::StandardNotation);
+  ui_->percent_variability->setValidator(double_validator);
+  ui_->spacing_x->setValidator(double_validator);
+  ui_->spacing_y->setValidator(double_validator);
+  ui_->spacing_z->setValidator(double_validator);
 
   connect(ui_->validation_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
   connect(ui_->testing_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
@@ -547,12 +552,6 @@ void DeepSSMTool::show_training_meshes() {
   auto all_shapes = session_->get_shapes();
   auto all_subjects = session_->get_project()->get_subjects();
 
-  std::string feature_name = session_->get_image_name();
-  auto image_names = session_->get_project()->get_image_names();
-  if (image_names.size() > 0) {
-    feature_name = image_names[0];
-  }
-
   for (int i = 0; i < names.size(); i++) {
     if (QFileInfo::exists(filenames[i])) {
       ShapeHandle shape = ShapeHandle(new Shape());
@@ -582,14 +581,7 @@ void DeepSSMTool::show_training_meshes() {
           }
         }
 
-        // if the filename doesn't exist, print a warning
-        if (!QFileInfo(QString::fromStdString(image_filename)).exists()) {
-          SW_WARN("File doesn't exist: {}", image_filename);
-        } else {
-          project::types::StringMap map;
-          map[feature_name] = image_filename;
-          subject->set_feature_filenames(map);
-        }
+        set_subject_image_filename(subject, image_filename);
       }
 
       std::vector<std::string> list;
@@ -645,9 +637,8 @@ void DeepSSMTool::show_testing_meshes() {
       shape->set_reconstructed_meshes(mesh_group);
 
       auto image_filename = "deepssm/val_and_test_images/" + std::to_string(id) + ".nrrd";
-      project::types::StringMap map;
-      map[feature_name] = image_filename;
-      subject->set_feature_filenames(map);
+
+      set_subject_image_filename(subject, image_filename);
 
       shape->get_reconstructed_meshes();
       std::vector<std::string> list;
@@ -729,7 +720,7 @@ void DeepSSMTool::show_augmentation_meshes() {
         // this needs to be replaced with it's own column (in all the python code as well)
         bool is_generated = line.contains("Generated");
         if ((is_generated && show_generated) || (!is_generated && show_original)) {
-          auto image_file = line.split(',')[0].toStdString();
+          auto image_filename = line.split(',')[0].toStdString();
           std::string particle_file = (line.split(',')[1]).toStdString();
 
           auto subject = std::make_shared<Subject>();
@@ -738,6 +729,8 @@ void DeepSSMTool::show_augmentation_meshes() {
           shape->set_mesh_manager(session_->get_mesh_manager());
           shape->import_local_point_files({particle_file});
           shape->import_global_point_files({particle_file});
+
+          set_subject_image_filename(subject, image_filename);
 
           shape->get_reconstructed_meshes();
 
@@ -795,6 +788,28 @@ void DeepSSMTool::resize_plots() {
     set_plot(ui_->training_plot_2, training_plot_ft_);
     set_plot(ui_->training_plot_3, QPixmap{});
     set_plot(ui_->training_plot_4, QPixmap{});
+  }
+}
+
+//---------------------------------------------------------------------------
+std::string DeepSSMTool::get_feature_name() {
+  std::string feature_name = session_->get_image_name();
+  auto image_names = session_->get_project()->get_image_names();
+  if (image_names.size() > 0) {
+    feature_name = image_names[0];
+  }
+  return feature_name;
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMTool::set_subject_image_filename(const std::shared_ptr<Subject>& subject, const std::string& filename) {
+  // if the filename doesn't exist, print a warning
+  if (!QFileInfo(QString::fromStdString(filename)).exists()) {
+    SW_WARN("File doesn't exist: {}", filename);
+  } else {
+    project::types::StringMap map;
+    map[get_feature_name()] = filename;
+    subject->set_feature_filenames(map);
   }
 }
 
