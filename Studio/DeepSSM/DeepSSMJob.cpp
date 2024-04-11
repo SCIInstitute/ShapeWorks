@@ -298,7 +298,7 @@ void DeepSSMJob::run_training() {
 
   SW_LOG("DeepSSM: Training");
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");
-  train_deep_ssm(config_file);
+  train_deep_ssm(project_, config_file);
 
   if (!is_aborted()) {
     params.set_training_step_complete(true);
