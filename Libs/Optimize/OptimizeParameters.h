@@ -54,6 +54,9 @@ class OptimizeParameters {
   std::vector<bool> get_use_normals();
   void set_use_normals(std::vector<bool> use_normals);
 
+  std::vector<bool> get_use_volumetric_features();
+  void set_use_volumetric_features(std::vector<bool> use_volumetric_features);
+
   double get_normals_strength();
   void set_normals_strength(double value);
 

@@ -26,6 +26,7 @@ const std::string optimization_iterations = "optimization_iterations";
 const std::string use_geodesic_distance = "use_geodesic_distance";
 const std::string geodesic_cache_multiplier = "geodesic_cache_multiplier";
 const std::string use_normals = "use_normals";
+const std::string use_volumetric_features = "use_volumetric_features";
 const std::string normals_strength = "normals_strength";
 const std::string procrustes = "procrustes";
 const std::string procrustes_scaling = "procrustes_scaling";
@@ -175,6 +176,18 @@ std::vector<bool> OptimizeParameters::get_use_normals() {
   }
   return use_normals;
 }
+
+//---------------------------------------------------------------------------
+std::vector<bool> OptimizeParameters::get_use_volumetric_features() {
+  std::vector<bool> use_normals = params_.get(Keys::use_volumetric_features, {false});
+  if (use_volumetric_features.empty()) {
+    use_volumetric_features.push_back(false);
+  }
+  return use_volumetric_features;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_volumetric_features(std::vector<bool> use_volumetric_features) { params_.set(Keys::use_volumetric_features, use_volumetric_features); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) { params_.set(Keys::use_normals, use_normals); }
@@ -413,6 +426,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetVerbosity(get_verbosity());
   int domains_per_shape = project_->get_number_of_domains_per_subject();
   bool normals_enabled = get_use_normals()[0];
+  bool volumetric_features_enabled = get_use_volumetric_features()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(get_number_of_particles());
   optimize->SetInitialRelativeWeighting(get_initial_relative_weighting());

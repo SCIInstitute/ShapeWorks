@@ -116,6 +116,11 @@ class CorrespondenceFunction : public VectorFunction {
     m_UseNormals[i] = val;
   }
 
+  void SetVolumetricFeatures(int i, bool val) {
+    if (m_UseVolumetricFeatures.size() != m_DomainsPerShape) m_UseVolumetricFeatures.resize(m_DomainsPerShape);
+    m_UseVolumetricFeatures[i] = val;
+  }
+
   bool CheckForNans(vnl_matrix_type mat) {
     bool flag = false;
     for (int i = 0; i < mat.rows(); i++) {
@@ -151,6 +156,7 @@ class CorrespondenceFunction : public VectorFunction {
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseNormals = this->m_UseNormals;
+    copy->m_UseVolumetricFeatures = this->m_UseVolumetricFeatures;
     copy->m_UseXYZ = this->m_UseXYZ;
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
 
@@ -171,6 +177,7 @@ class CorrespondenceFunction : public VectorFunction {
     m_Counter = 0;
     m_UseMeanEnergy = true;
     m_UseNormals.clear();
+    m_UseVolumetricFeatures.clear();
     m_UseXYZ.clear();
     num_dims = 0;
     num_samples = 0;
@@ -202,6 +209,7 @@ class CorrespondenceFunction : public VectorFunction {
   bool m_UseMeanEnergy;
   std::vector<bool> m_UseXYZ;
   std::vector<bool> m_UseNormals;
+  std::vector<bool> m_UseVolumetricFeatures;
   std::shared_ptr<vnl_matrix_type> m_points_mean;
   std::shared_ptr<Eigen::MatrixXd> m_InverseCovMatrix;
   int num_dims, num_samples;
