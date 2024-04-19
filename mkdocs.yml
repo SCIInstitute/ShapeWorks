@@ -119,6 +119,7 @@ nav:
    - 'Getting Started with GitHub Actions':  'dev/gh-actions.md'
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
+   - 'Release Process':                      'dev/release-process.md'
 
 - Python API Reference: 'python/python-api.md'
      
