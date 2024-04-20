@@ -1,5 +1,5 @@
 ==========================================
- ShapeWorks v6.4.1 - Released May 2023
+ ShapeWorks
 ==========================================
 
 The ShapeWorks software is an open-source distribution of a new method for

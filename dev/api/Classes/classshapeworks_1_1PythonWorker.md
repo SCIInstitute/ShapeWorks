@@ -158,10 +158,10 @@ void abort_job()
 ### variable python_api_version
 
 ```cpp
-static constexpr static const char * python_api_version = "6.5";
+static constexpr static const char * python_api_version = "6.6";
 ```
 
 
 -------------------------------
 
-Updated on 2024-04-11 at 17:30:14 +0000
+Updated on 2024-04-20 at 15:37:53 +0000
