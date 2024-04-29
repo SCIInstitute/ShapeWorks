@@ -14,10 +14,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # check arch
     if [[ "$(uname -m)" == "arm64" ]]; then
         PLATFORM="mac-arm64"
+	CONDA_PATH="/Users/runner/miniconda3/envs/shapeworks"
     else
         PLATFORM="mac-intel"
+	CONDA_PATH="/usr/local/miniconda/envs/shapeworks"
     fi
-    CONDA_PATH="/usr/local/miniconda/envs/shapeworks"
     DEP_PATH="$HOME/install"
     CCACHE_DIR="/Users/runner/Library/Caches/ccache"
     USE_CCACHE="ON"
