@@ -36,6 +36,10 @@ jobs:
     
     - name: OS Setup
       run: |
+        ls /usr/local
+        ls /usr/local/miniconda
+        uname -m
+        echo $CONDA
         sudo chown -R $UID $CONDA
         conda init zsh
         source ~/.zshrc
