@@ -1,0 +1,127 @@
+name: Mac Arm64 Build
+
+on:
+  push:
+    branches:
+      - master
+      - release_v*
+      - fix_mac_action
+    tags:
+    - '*'
+  pull_request:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+  SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
+  CACHE_HOST: ${{ secrets.SSH_HOST }}
+  GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
+  GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    
+    steps:
+
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3.0.4
+                    
+    - name: OS Setup
+      run: |
+        sudo chown -R $UID $CONDA
+        conda init zsh
+        source ~/.zshrc
+        brew install ccache pigz gnu-tar coreutils
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        lfs: true
+
+    - name: Get tags
+      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
+
+    - name: Restore Caches
+      shell: bash -l {0}
+      run: .github/workflows/restore_caches.sh
+    
+    - name: Conda Installs
+      shell: bash -l {0}
+      run: .github/workflows/gha_conda.sh
+
+    - name: Build Dependencies
+      shell: bash -l {0}
+      run: .github/workflows/gha_deps.sh
+
+    - name: cmake
+      shell: bash -l {0}
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
+
+    - name: make
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && make -j4
+      
+    - name: make install
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && make install
+
+    - name: Build Binary Package
+      shell: bash -l {0}
+      env:
+        PR_NUMBER: ${{ github.event.number }}
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
+      
+    - name: make test
+      shell: bash -l {0}
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: artifact-${{github.sha}}-mac
+        path: ${{runner.workspace}}/ShapeWorks/artifacts
+
+    - name: Deploy
+      id: deploy
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "dev-mac"
+        prerelease: true
+        title: "Development Build for Mac"
+        files: |
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg
+
+    - name: Deploy Docs
+      if: github.ref == 'refs/heads/master'
+      shell: bash -l {0}
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
+      env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             
+    - name: Store ccache
+      shell: bash -l {0}
+      run: .github/workflows/store_ccache.sh
+
+    - name: Copy artifact
+      shell: bash -l {0}
+      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac artifacts
+      
