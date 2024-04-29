@@ -93,7 +93,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: artifact-${{github.sha}}-mac
+        name: artifact-${{github.sha}}-mac-arm64
         path: ${{runner.workspace}}/ShapeWorks/artifacts
 
     - name: Deploy
@@ -102,9 +102,9 @@ jobs:
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "dev-mac"
+        automatic_release_tag: "dev-mac-arm64"
         prerelease: true
-        title: "Development Build for Mac"
+        title: "Development Build for Mac Arm64"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
              ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg
@@ -123,5 +123,5 @@ jobs:
 
     - name: Copy artifact
       shell: bash -l {0}
-      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac artifacts
+      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac-arm64 artifacts
       

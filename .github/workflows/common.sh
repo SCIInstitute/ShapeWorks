@@ -11,7 +11,12 @@ SCRIPT_PATH=`dirname $SCRIPT`
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     source ~/.zshrc
-    PLATFORM="mac"
+    # check arch
+    if [[ "$(uname -m)" == "arm64" ]]; then
+        PLATFORM="mac-arm64"
+    else
+        PLATFORM="mac-intel"
+    fi
     CONDA_PATH="/usr/local/miniconda/envs/shapeworks"
     DEP_PATH="$HOME/install"
     CCACHE_DIR="/Users/runner/Library/Caches/ccache"
