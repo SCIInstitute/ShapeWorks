@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - fix_mac_action
     tags:
     - '*'
   pull_request:
@@ -37,7 +38,6 @@ jobs:
     - name: OS Setup
       run: |
         ls /usr/local
-        ls /usr/local/miniconda
         uname -m
         echo $CONDA
         sudo chown -R $UID $CONDA
