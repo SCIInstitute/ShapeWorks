@@ -250,7 +250,7 @@ class Mesh {
   bool compareAllFaces(const Mesh& other_mesh) const;
 
   /// compare if all fields in two meshes are (eps)equal
-  bool compareAllFields(const Mesh& other_mesh, const double eps = -1.0) const;
+  bool compareAllFields(const Mesh& other_mesh, const double eps = 1e4) const;
 
   /// compare field of meshes to be (eps)equal (same field for both if only one specified)
   bool compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2 = "",

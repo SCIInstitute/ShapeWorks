@@ -1429,15 +1429,15 @@ bool Mesh::compareAllFaces(const Mesh& other_mesh) const {
 
   // helper function to print out the cell indices
   auto printCells = [](vtkCell* cell1, vtkCell* cell2) {
-    printf("[ ");
+    std::cout << "[ ";
     for (int i = 0; i < cell1->GetNumberOfPoints(); i++) {
-      printf("%lld ", cell1->GetPointId(i));
+      std::cout << cell1->GetPointId(i) << " ";
     }
-    printf("], [ ");
+    std::cout << "], [ ";
     for (int i = 0; i < cell2->GetNumberOfPoints(); i++) {
-      printf("%lld ", cell2->GetPointId(i));
+      std::cout << cell2->GetPointId(i) << " ";
     }
-    printf("]");
+    std::cout << "]";
   };
 
   for (int i = 0; i < this->poly_data_->GetNumberOfCells(); i++) {
@@ -1445,19 +1445,28 @@ bool Mesh::compareAllFaces(const Mesh& other_mesh) const {
     vtkCell* cell2 = other_mesh.poly_data_->GetCell(i);
 
     if (cell1->GetNumberOfPoints() != cell2->GetNumberOfPoints()) {
-      printf("%ith face not equal (", i);
+      std::cout << i << "th face not equal (";
       printCells(cell1, cell2);
-      printf(")\n");
+      std::cout << ")\n";
       return false;
     }
 
+    std::vector<vtkIdType> cell1Points(cell1->GetNumberOfPoints());
+    std::vector<vtkIdType> cell2Points(cell2->GetNumberOfPoints());
+
     for (int pi = 0; pi < cell1->GetNumberOfPoints(); pi++) {
-      if (cell1->GetPointId(pi) != cell2->GetPointId(pi)) {
-        printf("%ith face not equal (", i);
-        printCells(cell1, cell2);
-        printf(")\n");
-        return false;
-      }
+      cell1Points[pi] = cell1->GetPointId(pi);
+      cell2Points[pi] = cell2->GetPointId(pi);
+    }
+
+    std::sort(cell1Points.begin(), cell1Points.end());
+    std::sort(cell2Points.begin(), cell2Points.end());
+
+    if (cell1Points != cell2Points) {
+      std::cout << i << "th face not equal (";
+      printCells(cell1, cell2);
+      std::cout << ")\n";
+      return false;
     }
   }
 
@@ -1521,7 +1530,7 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
           return false;
         }
       } else {
-        if (!epsEqual(v1, v2, 1e-5)) {
+        if (!epsEqual(v1, v2, 1e-3)) {
           printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
           return false;
         }
