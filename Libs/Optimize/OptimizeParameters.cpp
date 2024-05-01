@@ -653,6 +653,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
 
     auto files = s->get_groomed_filenames();
+    auto feature_files = s->get_feature_filenames();
+
     if (files.empty()) {
       throw std::invalid_argument("No groomed inputs for optimization");
     }
@@ -730,6 +732,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         } else {
           optimize->AddImage(image, filename);
         }
+        if (get_use_volumetric_features)
       }
 
       using TransformType = vnl_matrix_fixed<double, 4, 4>;

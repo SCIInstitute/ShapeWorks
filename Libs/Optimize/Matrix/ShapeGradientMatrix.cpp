@@ -34,8 +34,8 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
   if (m_use_normals[dom]) {
     k += idx * 3;
   }
-  if (m_use_volumet[dom]) {
-    k += idx * 3;
+  if (m_use_volumetric_features[dom]) {
+    k += idx * 1;
   }
   k += idx * m_AttributesPerDomain[dom];
 
@@ -114,16 +114,17 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
     }
   }
 
-  if (m_use_normals[dom]) {
+  if (m_use_volumetric_features[dom]) {
     if (ps->GetDomainFlag(d)) {
       for (unsigned int c = s; c < s + 3; c++) {
         for (unsigned int vd = 0; vd < 3; vd++) {
           this->operator()(c - s + k, vd + 3 * (d / m_DomainsPerShape)) = 0.0 * m_AttributeScales[num + c];
         }
       }
-      s += 3;
-      k += 3;
+      s += 1;
+      k += 1;
     } else {
+      //TODO: conver 
       vnl_vector_fixed<float, DIMENSION> gradient = ps->GetDomain(d)->SampleGradientAtPoint(posLocal, idx);
       // add sample Intensity at point
       vnl_vector_fixed<float, DIMENSION> normal = gradient.normalize();
