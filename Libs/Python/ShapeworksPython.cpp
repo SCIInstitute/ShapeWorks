@@ -994,7 +994,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
           [](Mesh& mesh, const std::vector<std::vector<double>> p) -> decltype(auto) {
             std::vector<Point> points;
             for (int i = 0; i < p.size(); i++) {
-              points.push_back(Point({p[i][0], p[i][0], p[i][2]}));
+              points.push_back(Point({p[i][0], p[i][1], p[i][2]}));
             }
             auto array = mesh.geodesicDistance(points);
             return arrToPy(array, MOVE_ARRAY);
