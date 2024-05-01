@@ -59,6 +59,11 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
     m_use_normals[i] = val;
   }
 
+  void SetVolumetricFeaturesnt i, bool val) {
+    if (m_use_volumetric_features.size() != m_DomainsPerShape) m_use_volumetric_features.resize(m_DomainsPerShape);
+    m_use_volumetric_features[i] = val;
+  }
+
   virtual void SetMatrix(const vnl_matrix<double>& m) { vnl_matrix<double>::operator=(m); }
 
   virtual void ResizeMatrix(int rs, int cs) {
@@ -97,11 +102,16 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
         k += VDimension * ps->GetNumberOfParticles(i);
         num += VDimension;
       }
+      if (m_use_volumetric_features[i]) {
+        k += 1 * ps->GetNumberOfParticles(i);
+        num += 1;
+      }
       k += m_AttributesPerDomain[i] * ps->GetNumberOfParticles(i);
       num += m_AttributesPerDomain[i];
     }
     if (m_use_xyz[dom]) k += idx * VDimension;
     if (m_use_normals[dom]) k += idx * VDimension;
+    if (m_use_volumetric_features[dom]) k += idx * 1;
     k += idx * m_AttributesPerDomain[dom];
 
     int s = 0;
@@ -113,6 +123,24 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
       s += VDimension;
     }
     if (m_use_normals[dom]) {
+      vnl_vector_fixed<float, DIMENSION> pN = ps->GetDomain(d)->SampleNormalAtPoint(posLocal, idx);
+      ParticleSystem::VectorType tmp;
+      tmp[0] = pN[0];
+      tmp[1] = pN[1];
+      tmp[2] = pN[2];
+      tmp = ps->TransformVector(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+      pN[0] = tmp[0];
+      pN[1] = tmp[1];
+      pN[2] = tmp[2];
+      pN = pN.normalize();  // contains scaling
+      for (unsigned int i = 0; i < VDimension; i++) {
+        this->operator()(i + k, d / m_DomainsPerShape) = pN[i] * m_AttributeScales[num + i + s];
+      }
+      k += VDimension;
+      s += VDimension;
+    }
+
+    if (m_use_volumetric_features[dom]) {
       vnl_vector_fixed<float, DIMENSION> pN = ps->GetDomain(d)->SampleNormalAtPoint(posLocal, idx);
       ParticleSystem::VectorType tmp;
       tmp[0] = pN[0];
@@ -166,6 +194,7 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
     for (int i = 0; i < m_DomainsPerShape; i++) {
       if (m_use_xyz[i]) numRows += VDimension * ps->GetNumberOfParticles(i);
       if (m_use_normals[i]) numRows += VDimension * ps->GetNumberOfParticles(i);
+      if (m_use_volumetric_features[i]) numRows += 1 * ps->GetNumberOfParticles(i);
       numRows += m_AttributesPerDomain[i] * ps->GetNumberOfParticles(i);
     }
 
@@ -232,6 +261,7 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
 
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;
+  std::vector<bool> m_use_volumetric_features;
   std::vector<int> m_AttributesPerDomain;
   std::vector<double> m_AttributeScales;
 

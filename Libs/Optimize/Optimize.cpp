@@ -227,6 +227,16 @@ int Optimize::SetParameters() {
     }
   }
 
+  if (this->m_use_volumetric_features.size() > 0) {
+    for (int i = 0; i < this->m_domains_per_shape; i++) {
+      m_sampler->SetVolumetricFeatures(i, this->m_use_volumetric_features[i]);
+    }
+  } else {
+    for (int i = 0; i < this->m_domains_per_shape; i++) {
+      m_sampler->SetVolumetricFeatures(i, false);
+    }
+  }
+
   // Set up the procrustes registration object.
   this->m_procrustes = std::make_shared<ProcrustesRegistration>();
   this->m_procrustes->SetParticleSystem(m_sampler->GetParticleSystem());
@@ -253,10 +263,24 @@ int Optimize::SetParameters() {
     }
   }
 
+  if (m_use_volumetric_features.size() > 0) {
+    for (int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
+      if (m_use_volumetric_features[i % m_domains_per_shape]) {
+        continue;
+      }
+      m_sampler->GetParticleSystem()->GetDomain(i)->DeletePartialDerivativeImages();
+    }
+  } else {
+    int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
+    for (int i = 0; i < numShapes; i++) {
+      m_sampler->GetParticleSystem()->GetDomain(i)->DeletePartialDerivativeImages();
+    }
+  }
+
   if (m_domain_flags.size() > 0) {
     for (int i = 0; i < m_domain_flags.size(); i++) {
       if (m_use_normals.size() > 0) {
-        if (m_use_normals[i % m_domains_per_shape]) {
+        if (m_use_normals[i % m_domains_per_shape]  || m_use_volumetric_features[i % m_domains_per_shape]) {
           m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeletePartialDerivativeImages();
         } else {
           m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
@@ -358,6 +382,9 @@ void Optimize::SetUseXYZ(std::vector<bool> use_xyz) { this->m_use_xyz = use_xyz;
 
 //---------------------------------------------------------------------------
 void Optimize::SetUseNormals(std::vector<bool> use_normals) { this->m_use_normals = use_normals; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetUseVolumetricFeatures(std::vector<bool> v) { this->m_use_volumetric_features = v; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain) {
@@ -1036,7 +1063,7 @@ void Optimize::PrintParamInfo() {
   if (m_mesh_based_attributes) {
     std::cout << std::endl << std::endl << "*****Using attributes*****" << std::endl;
 
-    std::cout << "Domain(s) using XYZ: ";
+    std::cout << "Domain(s) using XYZm_use_normals: ";
     for (int i = 0; i < m_domains_per_shape; i++) {
       if (m_use_xyz[i]) {
         std::cout << i << " ";
@@ -1949,6 +1976,9 @@ std::vector<bool> Optimize::GetUseXYZ() { return this->m_use_xyz; }
 
 //---------------------------------------------------------------------------
 std::vector<bool> Optimize::GetUseNormals() { return this->m_use_normals; }
+
+//---------------------------------------------------------------------------
+std::vector<bool> Optimize::GetUseVolumetricFeatures() { return this->m_use_volumetric_features; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetNarrowBand(double v) {

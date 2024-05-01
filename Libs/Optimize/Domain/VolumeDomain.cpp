@@ -1,4 +1,4 @@
-#include "MeshDomain.h"
+#include "VolumeDomain.h"
 
 namespace shapeworks {
 

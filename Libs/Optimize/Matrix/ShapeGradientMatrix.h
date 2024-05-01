@@ -60,6 +60,13 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public Observer {
     m_use_normals[i] = val;
   }
 
+  void SetVolumetricFeatures(int i, bool val) {
+    if(m_use_volumetric_features.size() != m_DomainsPerShape) {
+      m_use_volumetric_features.resize(m_DomainsPerShape);
+    }
+    m_use_volumetric_features[i] = val;
+  }
+
   virtual void SetMatrix(const vnl_matrix<double>& m) { vnl_matrix<double>::operator=(m); }
 
   virtual void ResizeMatrix(int rs, int cs) {
@@ -101,6 +108,9 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public Observer {
       }
       if (m_use_normals[i]) {
         numRows += 3 * ps->GetNumberOfParticles(i);
+      }
+      if (m_use_volumetric_features[i]) {
+        numRows += 1 * ps->GetNumberOfParticles(i);
       }
       numRows += m_AttributesPerDomain[i] * ps->GetNumberOfParticles(i);
     }
@@ -147,6 +157,7 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public Observer {
 
   std::vector<bool> m_use_xyz;  // one per anatomy/domain?
   std::vector<bool> m_use_normals;  // one per anatomy/domain?
+  std::vector<bool> m_use_volumetric_features;  // one per anatomy/domain?
   std::vector<int> m_AttributesPerDomain;
   std::vector<double> m_AttributeScales;
 

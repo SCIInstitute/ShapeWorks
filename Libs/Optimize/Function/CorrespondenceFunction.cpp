@@ -89,6 +89,8 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
             num += m_AttributesPerDomain[d - 1] * c->GetNumberOfParticles(d - 1);
             if (m_UseXYZ[d - 1]) num += 3 * c->GetNumberOfParticles(d - 1);
             if (m_UseNormals[d - 1]) num += 3 * c->GetNumberOfParticles(d - 1);
+            if (m_UseVolumetricFeatures[d - 1]) num += 1 * c->GetNumberOfParticles(d - 1);
+
 
             num2 += c->GetNumberOfParticles(d - 1) * VDimension;
           }
@@ -101,7 +103,7 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
             num_attr += 3;
           }
           if (m_UseVolumetricFeatures[d]) {
-            num_attr += 3;
+            num_attr += 1;
           }
 
           Jmatrix.clear();
@@ -158,7 +160,7 @@ CorrespondenceFunction::VectorType CorrespondenceFunction::Evaluate(unsigned int
     sz_Yidx += 3;
   }
   if (m_UseVolumetricFeatures[dom]) {
-    sz_Yidx += 3;
+    sz_Yidx += 1;
   }
   sz_Yidx += m_AttributesPerDomain[dom];
 
@@ -168,7 +170,7 @@ CorrespondenceFunction::VectorType CorrespondenceFunction::Evaluate(unsigned int
     int num1 = 0;
     if (m_UseXYZ[i]) num1 += 3;
     if (m_UseNormals[i]) num1 += 3;
-    if (m_UseVolumetricFeatures[i]) num1 += 3;
+    if (m_UseVolumetricFeatures[i]) num1 += 1;
     num1 += m_AttributesPerDomain[i];
 
     num += num1 * system->GetNumberOfParticles(i);

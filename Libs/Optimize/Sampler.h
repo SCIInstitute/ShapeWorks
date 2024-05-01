@@ -186,6 +186,12 @@ class Sampler {
     m_GeneralShapeGradMatrix->SetNormals(i, flag);
   }
 
+  void SetVolumetricFeatures(int i, bool flag) {
+    m_CorrespondenceFunction->SetVolumetricFeatures(i, flag);
+    m_GeneralShapeMatrix->SetVolumetricFeatures(i, flag);
+    m_GeneralShapeGradMatrix->SetVolumetricFeatures(i, flag);
+  }
+
   void SetAttributesPerDomain(const std::vector<int> s);
 
   LegacyShapeMatrix* GetShapeMatrix() { return m_LegacyShapeMatrix.GetPointer(); }

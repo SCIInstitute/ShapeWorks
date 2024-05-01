@@ -135,6 +135,9 @@ class Optimize {
   //! Set if Normals are being used, one value per domain
   void SetUseNormals(std::vector<bool> use_normals);
 
+  //! Set if Normals are being used, one value per domain
+  void SetVolumetricFeatures(std::vector<bool> v);
+
   //! Set the attributes per domain
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
   //! Get attributes per domain
@@ -256,6 +259,9 @@ class Optimize {
 
   //! Return if Normals are used, per shape
   std::vector<bool> GetUseNormals();
+
+  //! Return if Normals are used, per shape
+  std::vector<bool> GetUseVolumetricFeatures();
 
   //! Set the narrow band used to be +/- the given value as a multiple of the spacing
   void SetNarrowBand(double v);
@@ -386,6 +392,7 @@ class Optimize {
   bool m_mesh_based_attributes = false;
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;
+  std::vector<bool> m_use_volumetric_features;
   std::vector<int> m_attributes_per_domain;
   int m_distribution_domain_id = -1;
   std::string m_output_cutting_plane_file;
