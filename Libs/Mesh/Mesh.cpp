@@ -814,7 +814,9 @@ Field Mesh::geodesicDistance(const std::vector<Point3> curve) const {
   for (int i = 0; i < curve.size(); i++) {
     Field distance = geodesicDistance(curve[i]);
     for (int j = 0; j < numPoints(); j++) {
-      if (distance->GetTuple1(j) < minDistance->GetTuple1(j)) minDistance->SetValue(j, distance->GetTuple1(j));
+      if (distance->GetTuple1(j) < minDistance->GetTuple1(j)) {
+        minDistance->SetValue(j, distance->GetTuple1(j));
+      }
     }
   }
 
