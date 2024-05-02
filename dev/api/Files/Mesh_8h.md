@@ -206,7 +206,7 @@ class Mesh {
 
   bool compareAllFaces(const Mesh& other_mesh) const;
 
-  bool compareAllFields(const Mesh& other_mesh, const double eps = -1.0) const;
+  bool compareAllFields(const Mesh& other_mesh, const double eps = 1e4) const;
 
   bool compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2 = "",
                     const double eps = -1.0) const;
@@ -281,4 +281,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2024-04-20 at 15:37:53 +0000
+Updated on 2024-05-02 at 13:57:28 +0000

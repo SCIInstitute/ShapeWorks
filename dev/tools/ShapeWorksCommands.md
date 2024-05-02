@@ -301,7 +301,7 @@ shapeworks  compare-image [args]...
 
 **--tolerance=DOUBLE:** Allowed percentage of pixel differences [default: 0].
 
-**--precision=DOUBLE:** Allowed difference between two pixels for them to still be considered equal [default: 1e-12].  
+**--precision=DOUBLE:** Allowed difference between two pixels for them to still be considered equal [default: 1e-5].  
   
 <a href="#top">Back to Top</a>
   

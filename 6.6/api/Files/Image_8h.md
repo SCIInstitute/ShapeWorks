@@ -214,7 +214,7 @@ class Image {
 
   ImageIterator iterator();
 
-  bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;
+  bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-6) const;
 
   bool operator==(const Image& other) const { return compare(other); }
 
@@ -269,4 +269,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2024-04-20 at 15:37:53 +0000
+Updated on 2024-05-02 at 13:57:28 +0000

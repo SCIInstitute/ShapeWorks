@@ -95,7 +95,7 @@ title: shapeworks::Mesh
 | Eigen::VectorXd | **[getMultiFieldValue](../Classes/classshapeworks_1_1Mesh.md#function-getmultifieldvalue)**(const std::string & name, int idx) const<br>gets the multi value at the given index of [vertex] field  |
 | bool | **[compareAllPoints](../Classes/classshapeworks_1_1Mesh.md#function-compareallpoints)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh) const<br>compare if values of the points in two (corresponding) meshes are (eps)equal  |
 | bool | **[compareAllFaces](../Classes/classshapeworks_1_1Mesh.md#function-compareallfaces)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh) const<br>compare if face indices in two (corresponding) meshes are equal  |
-| bool | **[compareAllFields](../Classes/classshapeworks_1_1Mesh.md#function-compareallfields)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =-1.0) const<br>compare if all fields in two meshes are (eps)equal  |
+| bool | **[compareAllFields](../Classes/classshapeworks_1_1Mesh.md#function-compareallfields)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =1e4) const<br>compare if all fields in two meshes are (eps)equal  |
 | bool | **[compareField](../Classes/classshapeworks_1_1Mesh.md#function-comparefield)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const std::string & name1, const std::string & name2 ="", const double eps =-1.0) const<br>compare field of meshes to be (eps)equal (same field for both if only one specified)  |
 | bool | **[compare](../Classes/classshapeworks_1_1Mesh.md#function-compare)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =-1.0) const<br>compare meshes  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Mesh.md#function-operator==)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other) const<br>compare meshes  |
@@ -855,7 +855,7 @@ compare if face indices in two (corresponding) meshes are equal
 ```cpp
 bool compareAllFields(
     const Mesh & other_mesh,
-    const double eps =-1.0
+    const double eps =1e4
 ) const
 ```
 
@@ -1000,4 +1000,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-04-20 at 15:37:53 +0000
+Updated on 2024-05-02 at 13:57:28 +0000

@@ -111,7 +111,7 @@ title: shapeworks::Image
 | [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**(const Point3 & p) const<br>converts from a physical coordinate to a logical coordinate  |
 | bool | **[isInside](../Classes/classshapeworks_1_1Image.md#function-isinside)**(const Point3 & p) const<br>checks if a given point is inside the image  |
 | ImageIterator | **[iterator](../Classes/classshapeworks_1_1Image.md#function-iterator)**()<br>creates an image iterator and returns it  |
-| bool | **[compare](../Classes/classshapeworks_1_1Image.md#function-compare)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other, bool verifyall =true, double tolerance =0.0, double precision =1e-12) const<br>compares this with another image using the region of interest filter  |
+| bool | **[compare](../Classes/classshapeworks_1_1Image.md#function-compare)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other, bool verifyall =true, double tolerance =0.0, double precision =1e-6) const<br>compares this with another image using the region of interest filter  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Image.md#function-operator==)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) const<br>compares this with another image using the region of interest filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[write](../Classes/classshapeworks_1_1Image.md#function-write)**(const std::string & filename, bool compressed =true)<br>writes image, format specified by filename extension  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[toMesh](../Classes/classshapeworks_1_1Image.md#function-tomesh)**(PixelType isovalue) const<br>converts image to mesh  |
@@ -1008,7 +1008,7 @@ bool compare(
     const Image & other,
     bool verifyall =true,
     double tolerance =0.0,
-    double precision =1e-12
+    double precision =1e-6
 ) const
 ```
 
@@ -1076,4 +1076,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-04-20 at 15:37:53 +0000
+Updated on 2024-05-02 at 13:57:28 +0000
