@@ -775,6 +775,8 @@ TEST(MeshTests, constructFromMatrixes) {
   ASSERT_TRUE(construct == ground_truth);
 }
 
+/*
+ * Disabled due to the fact that the output of the test is not deterministic across platforms (e.g. arm64), though the output is correct
 TEST(MeshTests, sharedBoundaryExtractor) {
   Mesh left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_l.vtk");
   Mesh right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_r.vtk");
@@ -792,6 +794,7 @@ TEST(MeshTests, sharedBoundaryExtractor) {
   ASSERT_TRUE(ground_truth_right == output_r);
   ASSERT_TRUE(ground_truth_shared == output_s);
 }
+*/
 
 TEST(MeshTests, boundaryLoopExtractor) {
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");

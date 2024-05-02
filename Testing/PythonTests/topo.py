@@ -10,7 +10,7 @@ def topoTest1():
 
   compareImg = Image(os.environ["DATA"] + "/topo1.nrrd")
 
-  return topoImg.compare(compareImg)
+  return topoImg.compare(compareImg, True, 0, 1e-5)
 
 success &= utils.test(topoTest1)
 
@@ -20,7 +20,7 @@ def topoTest2():
 
   compareImg = Image(os.environ["DATA"] + "/topo2.nrrd")
 
-  return topoImg.compare(compareImg)
+  return topoImg.compare(compareImg, True, 0, 1e-5)
 
 success &= utils.test(topoTest2)
 

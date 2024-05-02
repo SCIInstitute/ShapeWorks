@@ -1,4 +1,4 @@
-name: Mac Build
+name: Mac Arm64 Build
 
 on:
   push:
@@ -24,7 +24,7 @@ concurrency:
 jobs:
   build:
 
-    runs-on: macos-12
+    runs-on: macos-latest
     
     steps:
 
@@ -33,22 +33,17 @@ jobs:
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
-    
+
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3.0.4
+                    
     - name: OS Setup
       run: |
-        ls /usr/local
-        uname -m
-        echo $CONDA
         sudo chown -R $UID $CONDA
         conda init zsh
         source ~/.zshrc
         brew install ccache pigz gnu-tar coreutils
 
-    - name: Acquire 10.15 SDK
-      run: |
-        curl -L -o $HOME/MacOSX10.15.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.15.sdk.tar.xz
-        cd $HOME && tar -xJf MacOSX10.15.sdk.tar.xz
-        
     - name: Checkout code
       uses: actions/checkout@v3
       with:
@@ -71,7 +66,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.15.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
 
     - name: make
       shell: bash -l {0}
@@ -97,7 +92,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: artifact-${{github.sha}}-mac
+        name: artifact-${{github.sha}}-mac-arm64
         path: ${{runner.workspace}}/ShapeWorks/artifacts
 
     - name: Deploy
@@ -106,9 +101,9 @@ jobs:
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "dev-mac"
+        automatic_release_tag: "dev-mac-arm64"
         prerelease: true
-        title: "Development Build for Mac"
+        title: "Development Build for Mac Arm64"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
              ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg
@@ -127,5 +122,5 @@ jobs:
 
     - name: Copy artifact
       shell: bash -l {0}
-      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac artifacts
+      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac-arm64 artifacts
       

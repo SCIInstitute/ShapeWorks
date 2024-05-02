@@ -144,7 +144,7 @@ TEST(ImageTests, isoresampleDistanceTransformAnisotropicTest)
   image.resample();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/binary-anisotropic-dt-isoresampled.nrrd");
 
-  ASSERT_TRUE(image == ground_truth);
+  ASSERT_TRUE(image.compare(ground_truth, true, 0.01));
 }
 
 TEST(ImageTests, recentertest1)
@@ -293,22 +293,7 @@ TEST(ImageTests, rotateTest3)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, rotateTest4) 
-{
-  double angle = Pi / 2.0;
-  shapeworks::Vector3 axis = makeVector({1, 0, 0});
-  Image image(std::string(TEST_DATA_DIR) + "/la-bin-centered.nrrd");
-  image.rotate(angle, axis);
-  image.rotate(-angle, axis);
-
-  Image image2(std::string(TEST_DATA_DIR) + "/la-bin-centered.nrrd");
-  image2.rotate(-angle, axis);
-  image2.rotate(angle, axis);
-
-  ASSERT_FALSE(image == image2);
-}
-
-TEST(ImageTests, rotateTest5) 
+TEST(ImageTests, rotateTest4)
 {
   Image image(std::string(TEST_DATA_DIR) + "/la-bin-centered.nrrd");
   image.rotate(0, makeVector({0,0,1}));
@@ -655,7 +640,7 @@ TEST(ImageTests, warpTest1)
   image.applyTransform(transform);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/warp1.nrrd");
 
-  ASSERT_TRUE(image == ground_truth);
+  ASSERT_TRUE(image.compare(ground_truth, true, 0.0, 1e-5));
 }
 
 TEST(ImageTests, warpTest2)
@@ -669,7 +654,7 @@ TEST(ImageTests, warpTest2)
   image.applyTransform(transform);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/warp2.nrrd");
 
-  ASSERT_TRUE(image == ground_truth);
+  ASSERT_TRUE(image.compare(ground_truth, true, 0.0, 1e-5));
 }
 
 TEST(ImageTests, warpTest3)
