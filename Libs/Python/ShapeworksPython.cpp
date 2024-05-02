@@ -464,7 +464,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
           "converts a physical coordinate to a logical (index) space", "p"_a)
 
       .def("compare", &Image::compare, "compares two images", "other"_a, "verifyall"_a = true, "tolerance"_a = 0.0,
-           "precision"_a = 1e-12)
+           "precision"_a = 1e-6)
 
       .def(
           "toArray",
@@ -994,7 +994,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
           [](Mesh& mesh, const std::vector<std::vector<double>> p) -> decltype(auto) {
             std::vector<Point> points;
             for (int i = 0; i < p.size(); i++) {
-              points.push_back(Point({p[i][0], p[i][0], p[i][2]}));
+              points.push_back(Point({p[i][0], p[i][1], p[i][2]}));
             }
             auto array = mesh.geodesicDistance(points);
             return arrToPy(array, MOVE_ARRAY);
@@ -1019,7 +1019,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
           [](Mesh& mesh, PhysicalRegion& region, std::vector<double>& spacing) -> decltype(auto) {
             return mesh.toImage(region, Point({spacing[0], spacing[1], spacing[2]}));
           },
-          "rasterizes specified region to create binary image of desired dims (default: unit spacing)",
+          "rasterize specified region to create binary image of desired dims (default: unit spacing)",
           "region"_a = PhysicalRegion(), "spacing"_a = std::vector<double>({1.0, 1.0, 1.0}))
 
       .def(

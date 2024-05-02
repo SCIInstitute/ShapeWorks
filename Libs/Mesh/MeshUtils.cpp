@@ -253,7 +253,7 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_si
  * Given a .ply mesh, extract the boundary loop and export the boundary loop as a VTK .vtp file
  */
 
-bool is_clockwise(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const std::vector<int>& loop) {
+static bool is_clockwise(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const std::vector<int>& loop) {
   Eigen::RowVector3d centroid{0.0, 0.0, 0.0};
   for (const auto& i : loop) {
     centroid += V.row(i);
@@ -316,7 +316,7 @@ Mesh MeshUtils::boundaryLoopExtractor(Mesh mesh) {
  * defines the threshold for two surfaces to be "close"
  */
 
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> rem_into_eigen_mesh(const std::vector<int>& faces,
+static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> rem_into_eigen_mesh(const std::vector<int>& faces,
                                                                  const Eigen::MatrixXd& src_V,
                                                                  const Eigen::MatrixXi& src_F) {
   Eigen::MatrixXd V;
@@ -337,9 +337,9 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> rem_into_eigen_mesh(const std::vect
   return std::make_tuple(V, F);
 }
 
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> shared_into_eigen_mesh(const std::vector<int>& faces,
-                                                                    const Eigen::MatrixXd& src_V,
-                                                                    const Eigen::MatrixXi& src_F) {
+static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> shared_into_eigen_mesh(const std::vector<int>& faces,
+                                                                           const Eigen::MatrixXd& src_V,
+                                                                           const Eigen::MatrixXi& src_F) {
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
   const std::unordered_set<int> faces_set(faces.begin(), faces.end());
@@ -357,9 +357,9 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> shared_into_eigen_mesh(const std::v
   return std::make_tuple(V, F);
 }
 
-bool is_empty(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) { return V.size() == 0 || F.size() == 0; }
+static bool is_empty(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) { return V.size() == 0 || F.size() == 0; }
 
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi> find_shared_surface(
+static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi> find_shared_surface(
     const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F, const Eigen::MatrixXd& other_V,
     const Eigen::MatrixXi& other_F, double tol = 1e-3) {
   Eigen::MatrixXd out_V;
@@ -401,8 +401,9 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi> f
   return std::make_tuple(out_V, out_F, rem_V, rem_F);
 }
 
-void move_to_boundary(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F, const Eigen::MatrixXd& shared_V,
-                      const Eigen::MatrixXi& shared_F, Eigen::MatrixXd& out_V, Eigen::MatrixXi& out_F) {
+static void move_to_boundary(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F,
+                             const Eigen::MatrixXd& shared_V, const Eigen::MatrixXi& shared_F, Eigen::MatrixXd& out_V,
+                             Eigen::MatrixXi& out_F) {
   std::vector<std::vector<int>> src_loops, shared_loops;
   igl::boundary_loop(src_F, src_loops);
   igl::boundary_loop(shared_F, shared_loops);

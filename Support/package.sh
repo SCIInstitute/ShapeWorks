@@ -14,7 +14,11 @@ INSTALL_DEP_DIR=$3
 ROOT=`pwd`
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    PLATFORM="mac"
+    if [[ "$(uname -m)" == "arm64" ]]; then
+        PLATFORM="mac-arm64"
+    else
+        PLATFORM="mac-intel"
+    fi
 else
     PLATFORM="linux"
 fi
