@@ -133,7 +133,7 @@ ptyprocess==0.7.0
 pure-eval==0.2.2
 pycparser==2.21
 pyct==0.5.0
-pydantic==1.10.7
+pydantic==1.10.13
 Pygments==2.15.1
 pymdown-extensions==10.0
 pyparsing==3.1.0
