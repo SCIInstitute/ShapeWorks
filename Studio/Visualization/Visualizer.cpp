@@ -428,6 +428,9 @@ const std::string& Visualizer::get_feature_map() const { return feature_map_; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_feature_map(const std::string& feature_map) {
+  if (feature_map_ == feature_map) {
+    return;
+  }
   feature_map_ = feature_map;
   reset_feature_range();
 }

@@ -234,7 +234,6 @@ void Viewer::display_vector_field() {
     // restore things to normal
     glyphs_->ScalingOn();
     glyphs_->ClampingOff();
-    glyphs_->SetScaleModeToDataScalingOff();
     glyph_mapper_->SetLookupTable(glyph_lut_);
 
     glyph_points_->SetDataTypeToDouble();
@@ -942,45 +941,47 @@ void Viewer::update_points() {
   if (domain_visibility.size() != correspondence_points.size()) {
     domain_visibility.resize(correspondence_points.size(), true);
   }
-  if (num_points > 0) {
-    viewer_ready_ = true;
-    glyphs_->SetRange(0.0, (double)num_points + 1);
-    glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
-    glyph_points_->Reset();
-    scalars->Reset();
+  if (!arrows_visible_) {
+    if (num_points > 0) {
+      viewer_ready_ = true;
+      glyphs_->SetRange(0.0, (double)num_points + 1);
+      glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
-    int point_index = 0;
-    for (int d = 0; d < correspondence_points.size(); d++) {
-      int num_points_this_domain = correspondence_points[d].size() / 3;
+      glyph_points_->Reset();
+      scalars->Reset();
 
-      int d_index = 0;
-      for (int j = 0; j < num_points_this_domain; j++) {
-        double x = correspondence_points[d][d_index++];
-        double y = correspondence_points[d][d_index++];
-        double z = correspondence_points[d][d_index++];
+      int point_index = 0;
+      for (int d = 0; d < correspondence_points.size(); d++) {
+        int num_points_this_domain = correspondence_points[d].size() / 3;
 
-        if (slice_view_.should_point_show(x, y, z) && domain_visibility[d]) {
-          if (scalar_values.size() > point_index) {
-            scalars->InsertNextValue(scalar_values[point_index]);
-          } else {
-            scalars->InsertNextValue(point_index);
+        int d_index = 0;
+        for (int j = 0; j < num_points_this_domain; j++) {
+          double x = correspondence_points[d][d_index++];
+          double y = correspondence_points[d][d_index++];
+          double z = correspondence_points[d][d_index++];
+
+          if (slice_view_.should_point_show(x, y, z) && domain_visibility[d]) {
+            if (scalar_values.size() > point_index) {
+              scalars->InsertNextValue(scalar_values[point_index]);
+            } else {
+              scalars->InsertNextValue(point_index);
+            }
+            glyph_points_->InsertNextPoint(x, y, z);
           }
-          glyph_points_->InsertNextPoint(x, y, z);
+          point_index++;
         }
-        point_index++;
       }
+    } else {
+      glyph_points_->Reset();
+      scalars->Reset();
     }
-  } else {
-    glyph_points_->Reset();
-    scalars->Reset();
   }
 
   if (showing_feature_map()) {
     glyph_mapper_->SetScalarRange(surface_lut_->GetRange());
     glyph_point_set_->GetPointData()->SetScalars(scalars);
     glyphs_->SetColorModeToColorByScalar();
-    glyphs_->SetScaleModeToDataScalingOff();
     glyph_mapper_->SetColorModeToMapScalars();
     glyph_mapper_->ScalarVisibilityOn();
     glyph_mapper_->SetLookupTable(surface_lut_);
