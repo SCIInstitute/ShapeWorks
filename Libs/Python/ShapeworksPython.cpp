@@ -1254,7 +1254,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
                   "Computes the compactness measure for a particle system", "particleSystem"_a, "nModes"_a,
                   "saveTo"_a = "")
 
-      .def_static("compute_generalization",
+      .def_static("ComputeGeneralization",
                   &ShapeEvaluation::compute_generalization,
                   "Computes the generalization measure for a particle system", "particleSystem"_a, "nModes"_a,
                   "saveTo"_a = "")
