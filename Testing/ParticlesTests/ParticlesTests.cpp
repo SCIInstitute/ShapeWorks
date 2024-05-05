@@ -139,7 +139,7 @@ TEST(ParticlesTests, reconstructsurfaceTestRBFS)
   ParticleSystemEvaluation baselineDenseParticles(baselineDenseParticleFiles);
   ParticleSystemEvaluation denseParticles(denseParticleFiles);
 
-  ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
+  ASSERT_TRUE(baselineSparseParticles.evaluation_compare(sparseParticles) && baselineDenseParticles.evaluation_compare(denseParticles) &&
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
 }
 
@@ -187,7 +187,7 @@ TEST(ParticlesTests, reconstructsurfaceTestThinPlateSpline)
   ParticleSystemEvaluation baselineDenseParticles(baselineDenseParticleFiles);
   ParticleSystemEvaluation denseParticles(denseParticleFiles);
 
-  ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
+  ASSERT_TRUE(baselineSparseParticles.evaluation_compare(sparseParticles) && baselineDenseParticles.evaluation_compare(denseParticles) &&
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
 }
 
@@ -278,7 +278,7 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
   };
 
   ParticleSystemEvaluation system(particle_files);
-  auto particles = system.Particles();
+  auto particles = system.get_matrix();
 
   auto eval = [&](double angle, int expected_good_count) {
     auto normals = ParticleNormalEvaluation::compute_particle_normals(particles, meshes);

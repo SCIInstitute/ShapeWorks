@@ -483,7 +483,7 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
     Eigen::VectorXd particles;
     for (auto& file : world_files) {
       Eigen::VectorXd domain_particles;
-      ParticleSystemEvaluation::ReadParticleFile(file, domain_particles);
+      ParticleSystemEvaluation::read_particle_file(file, domain_particles);
       Eigen::VectorXd combined(particles.size() + domain_particles.size());
       combined << particles, domain_particles;
       particles = combined;
@@ -551,7 +551,7 @@ int ParticleShapeStatistics::do_pca(std::vector<std::vector<Point>> global_pts, 
 
 //---------------------------------------------------------------------------
 int ParticleShapeStatistics::do_pca(ParticleSystemEvaluation ParticleSystemEvaluation, int domainsPerShape) {
-  Eigen::MatrixXd p = ParticleSystemEvaluation.Particles();
+  Eigen::MatrixXd p = ParticleSystemEvaluation.get_matrix();
 
   std::vector<std::vector<Point>> particlePoints;
 

@@ -39,7 +39,7 @@ ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string
 ParticleSystemEvaluation::ParticleSystemEvaluation(const Eigen::MatrixXd& matrix) { matrix_ = matrix; }
 
 //---------------------------------------------------------------------------
-bool ParticleSystemEvaluation::ExactCompare(const ParticleSystemEvaluation& other) const {
+bool ParticleSystemEvaluation::exact_compare(const ParticleSystemEvaluation& other) const {
   if (matrix_.rows() != other.matrix_.rows() || matrix_.cols() != other.matrix_.cols()) {
     std::cerr << "Rows/Columns mismatch\n";
     return false;
@@ -57,7 +57,7 @@ bool ParticleSystemEvaluation::ExactCompare(const ParticleSystemEvaluation& othe
 }
 
 //---------------------------------------------------------------------------
-bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation& other) const {
+bool ParticleSystemEvaluation::evaluation_compare(const ParticleSystemEvaluation& other) const {
   auto compactness1 = ShapeEvaluation::compute_full_compactness(*this);
   auto compactness2 = ShapeEvaluation::compute_full_compactness(other);
   if (compactness1.size() != compactness2.size()) {
@@ -113,7 +113,7 @@ bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation&
 }
 
 //---------------------------------------------------------------------------
-bool ParticleSystemEvaluation::ReadParticleFile(std::string filename, Eigen::VectorXd& points) {
+bool ParticleSystemEvaluation::read_particle_file(std::string filename, Eigen::VectorXd& points) {
   points = particles::read_particles(filename);
   return true;
 }

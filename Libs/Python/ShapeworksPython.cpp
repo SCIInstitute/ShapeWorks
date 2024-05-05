@@ -1228,24 +1228,24 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def(
           "ShapeAsPointSet",
           [](ParticleSystemEvaluation& p, int id_shape) -> decltype(auto) {
-            Eigen::MatrixXd points = p.Particles().col(id_shape);
+            Eigen::MatrixXd points = p.get_matrix().col(id_shape);
             points.resize(3, points.size() / 3);
             points.transposeInPlace();
             return points;
           },
           "Return the particle pointset [Nx3] of the specified shape", "id_shape"_a)
 
-      .def("Particles", &ParticleSystemEvaluation::Particles)
+      .def("Particles", &ParticleSystemEvaluation::get_matrix)
 
-      .def("Paths", &ParticleSystemEvaluation::Paths)
+      .def("Paths", &ParticleSystemEvaluation::get_paths)
 
-      .def("N", &ParticleSystemEvaluation::N)
+      .def("N", &ParticleSystemEvaluation::num_samples)
 
-      .def("D", &ParticleSystemEvaluation::D)
+      .def("D", &ParticleSystemEvaluation::num_dims)
 
-      .def("ExactCompare", &ParticleSystemEvaluation::ExactCompare)
+      .def("ExactCompare", &ParticleSystemEvaluation::exact_compare)
 
-      .def("EvaluationCompare", &ParticleSystemEvaluation::EvaluationCompare);
+      .def("EvaluationCompare", &ParticleSystemEvaluation::evaluation_compare);
 
   // ShapeEvaluation
   py::class_<ShapeEvaluation>(m, "ShapeEvaluation")

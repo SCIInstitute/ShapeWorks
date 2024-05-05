@@ -81,8 +81,8 @@ static void write_good_bad_angles(json& json_object, ProjectHandle project, Anal
     }
 
     auto base = analyze.get_local_particle_system(d);
-    auto normals = ParticleNormalEvaluation::compute_particle_normals(base.Particles(), meshes);
-    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(base.Particles(), normals);
+    auto normals = ParticleNormalEvaluation::compute_particle_normals(base.get_matrix(), meshes);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(base.get_matrix(), normals);
 
     // round angles to 2 decimal places
     for (auto& angle : angles) {
