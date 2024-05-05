@@ -529,7 +529,7 @@ bool AnalysisTool::compute_stats() {
       std::string target_feature = ui_->pca_scalar_combo->currentText().toStdString();
       shape->load_feature(DisplayMode::Reconstructed, target_feature);
       particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
-    } else {
+    } else {  // shape and scalar (x,y,z, and scalar)
       stats_.set_num_values_per_particle(4);
       std::string target_feature = ui_->pca_scalar_combo->currentText().toStdString();
       auto positions = shape->get_global_correspondence_points();

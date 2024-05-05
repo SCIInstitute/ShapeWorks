@@ -15,19 +15,18 @@ ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string
 
   paths_ = paths;
   const int N = paths_.size();
-  const int VDimension = 3;
   assert(N > 0);
 
   // Read the first file to find dimensions
   auto points0 = particles::read_particles_as_vector(paths_[0]);
-  const int D = points0.size() * VDimension;
+  const int D = points0.size() * num_values_per_particle_;
 
   matrix_.resize(D, N);
   matrix_.col(0) = Eigen::Map<const Eigen::VectorXd>((double*)points0.data(), D);
 
   for (int i = 1; i < N; i++) {
     auto points = particles::read_particles_as_vector(paths_[i]);
-    int count = points.size() * VDimension;
+    int count = points.size() * num_values_per_particle_;
     if (count != D) {
       throw std::runtime_error("ParticleSystemEvaluation files must have the same number of particles");
     }
@@ -36,7 +35,8 @@ ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string
 }
 
 //---------------------------------------------------------------------------
-ParticleSystemEvaluation::ParticleSystemEvaluation(const Eigen::MatrixXd& matrix) { matrix_ = matrix; }
+ParticleSystemEvaluation::ParticleSystemEvaluation(const Eigen::MatrixXd& matrix, int num_values_per_particle)
+    : matrix_(matrix), num_values_per_particle_(num_values_per_particle) {}
 
 //---------------------------------------------------------------------------
 bool ParticleSystemEvaluation::exact_compare(const ParticleSystemEvaluation& other) const {

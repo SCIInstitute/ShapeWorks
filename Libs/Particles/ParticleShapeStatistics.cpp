@@ -650,14 +650,14 @@ int ParticleShapeStatistics::write_csv_file(const std::string& s) {
   for (unsigned int i = 0; i < num_samples_; i++) {
     outfile << ",P" << i;
   }
-  outfile << std::endl;
+  outfile << "\n";
 
   for (unsigned int r = 0; r < num_samples_; r++) {
     outfile << group_ids_[r];
     for (unsigned int c = 0; c < num_samples_; c++) {
       outfile << "," << principals_(r, c);
     }
-    outfile << std::endl;
+    outfile << "\n";
   }
 
   outfile.close();
@@ -666,26 +666,26 @@ int ParticleShapeStatistics::write_csv_file(const std::string& s) {
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_compactness(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
+  auto ps = ParticleSystemEvaluation(matrix_);
   return shapeworks::ShapeEvaluation::compute_full_compactness(ps, progress_callback);
 }
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
+  auto ps = ParticleSystemEvaluation(matrix_);
   return shapeworks::ShapeEvaluation::compute_full_specificity(ps, progress_callback);
 }
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
+  auto ps = ParticleSystemEvaluation(matrix_);
   return shapeworks::ShapeEvaluation::compute_full_generalization(ps, progress_callback);
 }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix() const { return this->group1_matrix_; }
+Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix() const { return group1_matrix_; }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix() const { return this->group2_matrix_; }
+Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix() const { return group2_matrix_; }
 
 }  // namespace shapeworks
