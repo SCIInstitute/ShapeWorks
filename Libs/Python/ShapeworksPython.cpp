@@ -1250,27 +1250,28 @@ PYBIND11_MODULE(shapeworks_py, m) {
   // ShapeEvaluation
   py::class_<ShapeEvaluation>(m, "ShapeEvaluation")
 
-      .def_static("ComputeCompactness", &ShapeEvaluation::ComputeCompactness,
+      .def_static("ComputeCompactness", &ShapeEvaluation::compute_compactness,
                   "Computes the compactness measure for a particle system", "particleSystem"_a, "nModes"_a,
                   "saveTo"_a = "")
 
-      .def_static("ComputeGeneralization", &ShapeEvaluation::ComputeGeneralization,
+      .def_static("compute_generalization",
+                  &ShapeEvaluation::compute_generalization,
                   "Computes the generalization measure for a particle system", "particleSystem"_a, "nModes"_a,
                   "saveTo"_a = "")
 
-      .def_static("ComputeSpecificity", &ShapeEvaluation::ComputeSpecificity,
+      .def_static("ComputeSpecificity", &ShapeEvaluation::compute_specificity,
                   "Computes the specificity measure for a particle system", "particleSystem"_a, "nModes"_a,
                   "saveTo"_a = "")
 
-      .def_static("ComputeFullCompactness", &ShapeEvaluation::ComputeFullCompactness,
+      .def_static("ComputeFullCompactness", &ShapeEvaluation::compute_full_compactness,
                   "Computes the compactness measure for a particle system, all modes", "particleSystem"_a,
                   "progress_callback"_a = nullptr)
 
-      .def_static("ComputeFullGeneralization", &ShapeEvaluation::ComputeFullGeneralization,
+      .def_static("ComputeFullGeneralization", &ShapeEvaluation::compute_full_generalization,
                   "Computes the generalization measure for a particle system, all modes", "particleSystem"_a,
                   "progress_callback"_a = nullptr)
 
-      .def_static("ComputeFullSpecificity", &ShapeEvaluation::ComputeFullSpecificity,
+      .def_static("ComputeFullSpecificity", &ShapeEvaluation::compute_full_specificity,
                   "Computes the specificity measure for a particle system, all modes", "particleSystem"_a,
                   "progress_callback"_a = nullptr);
 

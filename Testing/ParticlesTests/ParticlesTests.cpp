@@ -77,21 +77,21 @@ TEST(ParticlesTests, pca)
 TEST(ParticlesTests, compactness)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
-  const double compactness = ShapeEvaluation::ComputeCompactness(ParticleSystemEvaluation, 1);
+  const double compactness = ShapeEvaluation::compute_compactness(ParticleSystemEvaluation, 1);
   ASSERT_DOUBLE_EQ(compactness, 0.99178682878009183);
 }
 
 TEST(ParticlesTests, generalization)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
-  const double generalization = ShapeEvaluation::ComputeGeneralization(ParticleSystemEvaluation, 1);
+  const double generalization = ShapeEvaluation::compute_generalization(ParticleSystemEvaluation, 1);
   ASSERT_DOUBLE_EQ(generalization, 0.19815116412998687);
 }
 
 TEST(ParticlesTests, specificity)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
-  const double specificity = ShapeEvaluation::ComputeSpecificity(ParticleSystemEvaluation, 1);
+  const double specificity = ShapeEvaluation::compute_specificity(ParticleSystemEvaluation, 1);
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }
 

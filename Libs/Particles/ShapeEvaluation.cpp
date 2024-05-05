@@ -11,13 +11,13 @@ typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> R
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeCompactness(const ParticleSystemEvaluation& particle_system, const int num_modes,
+double ShapeEvaluation::compute_compactness(const ParticleSystemEvaluation& particle_system, const int num_modes,
                                            const std::string& save_to) {
   const int n = particle_system.N();
   if (num_modes > n - 1) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
-  Eigen::VectorXd cumsum = ShapeEvaluation::ComputeFullCompactness(particle_system);
+  Eigen::VectorXd cumsum = ShapeEvaluation::compute_full_compactness(particle_system);
 
   if (!save_to.empty()) {
     std::ofstream of(save_to);
@@ -29,7 +29,7 @@ double ShapeEvaluation::ComputeCompactness(const ParticleSystemEvaluation& parti
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystemEvaluation& particle_system,
+Eigen::VectorXd ShapeEvaluation::compute_full_compactness(const ParticleSystemEvaluation& particle_system,
                                                         std::function<void(float)> progress_callback) {
   const int n = particle_system.N();
   const int d = particle_system.D();
@@ -59,8 +59,8 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystemEval
 }
 
 //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeGeneralization(const ParticleSystemEvaluation& particle_system, const int num_modes,
-                                              const std::string& save_to) {
+double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& particle_system, const int num_modes,
+                                               const std::string& save_to) {
   const int n = particle_system.N();
   const int d = particle_system.D();
   const Eigen::MatrixXd& p = particle_system.Particles();
@@ -106,7 +106,7 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystemEvaluation& pa
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystemEvaluation& particle_system,
+Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSystemEvaluation& particle_system,
                                                            std::function<void(float)> progress_callback) {
   const int n = particle_system.N();  // number of samples
   const int d = particle_system.D();  // number of dimensions (e.g. number of particles * 3)
@@ -153,7 +153,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystemE
 }
 
 //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeSpecificity(const ParticleSystemEvaluation& particle_system, const int num_modes,
+double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& particle_system, const int num_modes,
                                            const std::string& save_to) {
   const int n = particle_system.N();
   const int d = particle_system.D();
@@ -232,7 +232,7 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystemEvaluation& parti
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystemEvaluation& particle_system,
+Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEvaluation& particle_system,
                                                         std::function<void(float)> progress_callback) {
   const int n = particle_system.N();
   const int d = particle_system.D();

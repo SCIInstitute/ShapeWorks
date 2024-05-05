@@ -58,8 +58,8 @@ bool ParticleSystemEvaluation::ExactCompare(const ParticleSystemEvaluation& othe
 
 //---------------------------------------------------------------------------
 bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation& other) const {
-  auto compactness1 = ShapeEvaluation::ComputeFullCompactness(*this);
-  auto compactness2 = ShapeEvaluation::ComputeFullCompactness(other);
+  auto compactness1 = ShapeEvaluation::compute_full_compactness(*this);
+  auto compactness2 = ShapeEvaluation::compute_full_compactness(other);
   if (compactness1.size() != compactness2.size()) {
     std::cout << "Shape models have a different number of modes: " << compactness1.size() << " and "
               << compactness2.size() << "\n";
@@ -77,8 +77,8 @@ bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation&
     }
   }
 
-  auto gen1 = ShapeEvaluation::ComputeFullGeneralization(*this);
-  auto gen2 = ShapeEvaluation::ComputeFullGeneralization(other);
+  auto gen1 = ShapeEvaluation::compute_full_generalization(*this);
+  auto gen2 = ShapeEvaluation::compute_full_generalization(other);
   if (gen1.size() != gen2.size()) {
     return false;
   }
@@ -93,8 +93,8 @@ bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation&
     }
   }
 
-  auto spec1 = ShapeEvaluation::ComputeFullSpecificity(*this);
-  auto spec2 = ShapeEvaluation::ComputeFullSpecificity(other);
+  auto spec1 = ShapeEvaluation::compute_full_specificity(*this);
+  auto spec2 = ShapeEvaluation::compute_full_specificity(other);
   if (spec1.size() != spec2.size()) {
     return false;
   }

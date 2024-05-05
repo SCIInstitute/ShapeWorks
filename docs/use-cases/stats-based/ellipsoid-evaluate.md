@@ -30,7 +30,7 @@ To access the metrics at a specified mode of variation:
 nCompactness = sw.ShapeEvaluation.ComputeCompactness(particleSystem=particle_data,Modes=3)
 
 # Get the generalization of a specific mode and saves the reconstructions
-nGeneralization = sw.ShapeEvaluation.ComputeGeneralization(particleSystem=particle_data, nModes=3,saveTo=save_dir)
+nGeneralization = sw.ShapeEvaluation.compute_generalization(particleSystem=particle_data, nModes=3,saveTo=save_dir)
 
 # Calculate specificity of a given mode and saves the reconstructions
 nSpecificity = sw.ShapeEvaluation.ComputeSpecificity(particleSystem=particle_data, nModes=3,saveTo=save_dir)
