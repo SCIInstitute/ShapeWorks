@@ -13,15 +13,16 @@ title: shapeworks::ParticleSystemEvaluation
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-particlesystemevaluation)**(const std::vector< std::string > & paths) |
-| | **[ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-particlesystemevaluation)**(const Eigen::MatrixXd & matrix) |
-| const Eigen::MatrixXd & | **[Particles](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-particles)**() const |
-| const std::vector< std::string > & | **[Paths](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-paths)**() const |
-| int | **[N](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-n)**() const<br>Number of samples.  |
-| int | **[D](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-d)**() const<br>Dimensions (e.g. x/y/z * number of particles)  |
-| bool | **[ExactCompare](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-exactcompare)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & other) const |
-| bool | **[EvaluationCompare](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-evaluationcompare)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & other) const |
-| bool | **[ReadParticleFile](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-readparticlefile)**(std::string filename, Eigen::VectorXd & points) |
+| | **[ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-particlesystemevaluation)**(const std::vector< std::string > & paths)<br>Initialize particle system from a list of paths to particle files.  |
+| | **[ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-particlesystemevaluation)**(const Eigen::MatrixXd & matrix, int num_values_per_particle =3)<br>Initialize particle system from eigen matrix (rows=dimensions, cols=num_samples)  |
+| const Eigen::MatrixXd & | **[get_matrix](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-get-matrix)**() const<br>Get the matrix representation of the particle system.  |
+| int | **[get_num_values_per_particle](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-get-num-values-per-particle)**() const<br>Get the number of values for each particle (e.g. 3 for x/y/z, 4 for x/y/z/scalar)  |
+| const std::vector< std::string > & | **[get_paths](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-get-paths)**() const<br>Get the paths to the particle files.  |
+| long | **[num_samples](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-num-samples)**() const<br>Number of samples.  |
+| long | **[num_dims](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-num-dims)**() const<br>Dimensions (e.g. x/y/z * number of particles)  |
+| bool | **[exact_compare](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-exact-compare)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & other) const<br>Perform an exact comparison of two particle systems.  |
+| bool | **[evaluation_compare](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-evaluation-compare)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & other) const<br>Perform an evaluation comparison of two particle systems.  |
+| bool | **[read_particle_file](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md#function-read-particle-file)**(std::string filename, Eigen::VectorXd & points)<br>Read a particle file into an Eigen vector.  |
 
 ## Friends
 
@@ -34,78 +35,94 @@ title: shapeworks::ParticleSystemEvaluation
 ### function ParticleSystemEvaluation
 
 ```cpp
-ParticleSystemEvaluation(
+explicit ParticleSystemEvaluation(
     const std::vector< std::string > & paths
 )
 ```
 
+Initialize particle system from a list of paths to particle files. 
 
 ### function ParticleSystemEvaluation
 
 ```cpp
-ParticleSystemEvaluation(
-    const Eigen::MatrixXd & matrix
+explicit ParticleSystemEvaluation(
+    const Eigen::MatrixXd & matrix,
+    int num_values_per_particle =3
 )
 ```
 
+Initialize particle system from eigen matrix (rows=dimensions, cols=num_samples) 
 
-### function Particles
+### function get_matrix
 
 ```cpp
-inline const Eigen::MatrixXd & Particles() const
+inline const Eigen::MatrixXd & get_matrix() const
 ```
 
+Get the matrix representation of the particle system. 
 
-### function Paths
+### function get_num_values_per_particle
 
 ```cpp
-inline const std::vector< std::string > & Paths() const
+inline int get_num_values_per_particle() const
 ```
 
+Get the number of values for each particle (e.g. 3 for x/y/z, 4 for x/y/z/scalar) 
 
-### function N
+### function get_paths
 
 ```cpp
-inline int N() const
+inline const std::vector< std::string > & get_paths() const
+```
+
+Get the paths to the particle files. 
+
+### function num_samples
+
+```cpp
+inline long num_samples() const
 ```
 
 Number of samples. 
 
-### function D
+### function num_dims
 
 ```cpp
-inline int D() const
+inline long num_dims() const
 ```
 
 Dimensions (e.g. x/y/z * number of particles) 
 
-### function ExactCompare
+### function exact_compare
 
 ```cpp
-bool ExactCompare(
+bool exact_compare(
     const ParticleSystemEvaluation & other
 ) const
 ```
 
+Perform an exact comparison of two particle systems. 
 
-### function EvaluationCompare
+### function evaluation_compare
 
 ```cpp
-bool EvaluationCompare(
+bool evaluation_compare(
     const ParticleSystemEvaluation & other
 ) const
 ```
 
+Perform an evaluation comparison of two particle systems. 
 
-### function ReadParticleFile
+### function read_particle_file
 
 ```cpp
-static bool ReadParticleFile(
+static bool read_particle_file(
     std::string filename,
     Eigen::VectorXd & points
 )
 ```
 
+Read a particle file into an Eigen vector. 
 
 ## Friends
 
@@ -120,4 +137,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-05-05 at 15:48:31 +0000
+Updated on 2024-05-06 at 07:20:46 +0000

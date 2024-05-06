@@ -14,18 +14,12 @@ title: shapeworks::ShapeEvaluation
 |                | Name           |
 | -------------- | -------------- |
 | | **[ShapeEvaluation](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-shapeevaluation)**() |
-| double | **[ComputeCompactness](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computecompactness)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, const int nModes, const std::string & saveTo ="") |
-| Eigen::VectorXd | **[ComputeFullCompactness](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computefullcompactness)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, std::function< void(float)> progress_callback =nullptr) |
-| double | **[ComputeGeneralization](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computegeneralization)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, const int nModes, const std::string & saveTo ="") |
-| Eigen::VectorXd | **[ComputeFullGeneralization](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computefullgeneralization)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, std::function< void(float)> progress_callback =nullptr) |
-| double | **[ComputeSpecificity](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computespecificity)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, const int nModes, const std::string & saveTo ="") |
-| Eigen::VectorXd | **[ComputeFullSpecificity](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computefullspecificity)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, std::function< void(float)> progress_callback =nullptr) |
-
-## Public Attributes
-
-|                | Name           |
-| -------------- | -------------- |
-| const unsigned | **[VDimension](../Classes/classshapeworks_1_1ShapeEvaluation.md#variable-vdimension)**  |
+| double | **[compute_compactness](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-compute-compactness)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & particle_system, int num_modes, const std::string & save_to ="") |
+| Eigen::VectorXd | **[compute_full_compactness](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-compute-full-compactness)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & particle_system, std::function< void(float)> progress_callback =nullptr) |
+| double | **[compute_generalization](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-compute-generalization)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & particle_system, int num_modes, const std::string & save_to ="") |
+| Eigen::VectorXd | **[compute_full_generalization](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-compute-full-generalization)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & particle_system, std::function< void(float)> progress_callback =nullptr) |
+| double | **[compute_specificity](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-compute-specificity)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & particle_system, int num_mode, const std::string & save_to ="") |
+| Eigen::VectorXd | **[compute_full_specificity](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-compute-full-specificity)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & particle_system, std::function< void(float)> progress_callback =nullptr) |
 
 ## Public Functions Documentation
 
@@ -36,78 +30,69 @@ ShapeEvaluation()
 ```
 
 
-### function ComputeCompactness
+### function compute_compactness
 
 ```cpp
-static double ComputeCompactness(
-    const ParticleSystemEvaluation & ParticleSystemEvaluation,
-    const int nModes,
-    const std::string & saveTo =""
+static double compute_compactness(
+    const ParticleSystemEvaluation & particle_system,
+    int num_modes,
+    const std::string & save_to =""
 )
 ```
 
 
-### function ComputeFullCompactness
+### function compute_full_compactness
 
 ```cpp
-static Eigen::VectorXd ComputeFullCompactness(
-    const ParticleSystemEvaluation & ParticleSystemEvaluation,
+static Eigen::VectorXd compute_full_compactness(
+    const ParticleSystemEvaluation & particle_system,
     std::function< void(float)> progress_callback =nullptr
 )
 ```
 
 
-### function ComputeGeneralization
+### function compute_generalization
 
 ```cpp
-static double ComputeGeneralization(
-    const ParticleSystemEvaluation & ParticleSystemEvaluation,
-    const int nModes,
-    const std::string & saveTo =""
+static double compute_generalization(
+    const ParticleSystemEvaluation & particle_system,
+    int num_modes,
+    const std::string & save_to =""
 )
 ```
 
 
-### function ComputeFullGeneralization
+### function compute_full_generalization
 
 ```cpp
-static Eigen::VectorXd ComputeFullGeneralization(
-    const ParticleSystemEvaluation & ParticleSystemEvaluation,
+static Eigen::VectorXd compute_full_generalization(
+    const ParticleSystemEvaluation & particle_system,
     std::function< void(float)> progress_callback =nullptr
 )
 ```
 
 
-### function ComputeSpecificity
+### function compute_specificity
 
 ```cpp
-static double ComputeSpecificity(
-    const ParticleSystemEvaluation & ParticleSystemEvaluation,
-    const int nModes,
-    const std::string & saveTo =""
+static double compute_specificity(
+    const ParticleSystemEvaluation & particle_system,
+    int num_mode,
+    const std::string & save_to =""
 )
 ```
 
 
-### function ComputeFullSpecificity
+### function compute_full_specificity
 
 ```cpp
-static Eigen::VectorXd ComputeFullSpecificity(
-    const ParticleSystemEvaluation & ParticleSystemEvaluation,
+static Eigen::VectorXd compute_full_specificity(
+    const ParticleSystemEvaluation & particle_system,
     std::function< void(float)> progress_callback =nullptr
 )
-```
-
-
-## Public Attributes Documentation
-
-### variable VDimension
-
-```cpp
-static const unsigned VDimension = 3;
 ```
 
 
 -------------------------------
 
-Updated on 2024-05-05 at 15:48:31 +0000
+Updated on 2024-05-06 at 07:20:46 +0000
