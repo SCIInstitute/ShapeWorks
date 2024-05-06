@@ -15,19 +15,18 @@ ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string
 
   paths_ = paths;
   const int N = paths_.size();
-  const int VDimension = 3;
   assert(N > 0);
 
   // Read the first file to find dimensions
   auto points0 = particles::read_particles_as_vector(paths_[0]);
-  const int D = points0.size() * VDimension;
+  const int D = points0.size() * num_values_per_particle_;
 
   matrix_.resize(D, N);
   matrix_.col(0) = Eigen::Map<const Eigen::VectorXd>((double*)points0.data(), D);
 
   for (int i = 1; i < N; i++) {
     auto points = particles::read_particles_as_vector(paths_[i]);
-    int count = points.size() * VDimension;
+    int count = points.size() * num_values_per_particle_;
     if (count != D) {
       throw std::runtime_error("ParticleSystemEvaluation files must have the same number of particles");
     }
@@ -36,10 +35,11 @@ ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string
 }
 
 //---------------------------------------------------------------------------
-ParticleSystemEvaluation::ParticleSystemEvaluation(const Eigen::MatrixXd& matrix) { matrix_ = matrix; }
+ParticleSystemEvaluation::ParticleSystemEvaluation(const Eigen::MatrixXd& matrix, int num_values_per_particle)
+    : matrix_(matrix), num_values_per_particle_(num_values_per_particle) {}
 
 //---------------------------------------------------------------------------
-bool ParticleSystemEvaluation::ExactCompare(const ParticleSystemEvaluation& other) const {
+bool ParticleSystemEvaluation::exact_compare(const ParticleSystemEvaluation& other) const {
   if (matrix_.rows() != other.matrix_.rows() || matrix_.cols() != other.matrix_.cols()) {
     std::cerr << "Rows/Columns mismatch\n";
     return false;
@@ -57,9 +57,9 @@ bool ParticleSystemEvaluation::ExactCompare(const ParticleSystemEvaluation& othe
 }
 
 //---------------------------------------------------------------------------
-bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation& other) const {
-  auto compactness1 = ShapeEvaluation::ComputeFullCompactness(*this);
-  auto compactness2 = ShapeEvaluation::ComputeFullCompactness(other);
+bool ParticleSystemEvaluation::evaluation_compare(const ParticleSystemEvaluation& other) const {
+  auto compactness1 = ShapeEvaluation::compute_full_compactness(*this);
+  auto compactness2 = ShapeEvaluation::compute_full_compactness(other);
   if (compactness1.size() != compactness2.size()) {
     std::cout << "Shape models have a different number of modes: " << compactness1.size() << " and "
               << compactness2.size() << "\n";
@@ -77,8 +77,8 @@ bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation&
     }
   }
 
-  auto gen1 = ShapeEvaluation::ComputeFullGeneralization(*this);
-  auto gen2 = ShapeEvaluation::ComputeFullGeneralization(other);
+  auto gen1 = ShapeEvaluation::compute_full_generalization(*this);
+  auto gen2 = ShapeEvaluation::compute_full_generalization(other);
   if (gen1.size() != gen2.size()) {
     return false;
   }
@@ -93,8 +93,8 @@ bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation&
     }
   }
 
-  auto spec1 = ShapeEvaluation::ComputeFullSpecificity(*this);
-  auto spec2 = ShapeEvaluation::ComputeFullSpecificity(other);
+  auto spec1 = ShapeEvaluation::compute_full_specificity(*this);
+  auto spec2 = ShapeEvaluation::compute_full_specificity(other);
   if (spec1.size() != spec2.size()) {
     return false;
   }
@@ -113,7 +113,7 @@ bool ParticleSystemEvaluation::EvaluationCompare(const ParticleSystemEvaluation&
 }
 
 //---------------------------------------------------------------------------
-bool ParticleSystemEvaluation::ReadParticleFile(std::string filename, Eigen::VectorXd& points) {
+bool ParticleSystemEvaluation::read_particle_file(std::string filename, Eigen::VectorXd& points) {
   points = particles::read_particles(filename);
   return true;
 }

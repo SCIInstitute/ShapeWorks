@@ -704,7 +704,7 @@ void mesh_warp_test(std::string ref_mesh, std::string ref_particles, std::string
   paths.push_back(staticPath);
   paths.push_back(movingPath);
   ParticleSystemEvaluation particlesystem(paths);
-  Eigen::MatrixXd allPts = particlesystem.Particles();
+  Eigen::MatrixXd allPts = particlesystem.get_matrix();
   Eigen::MatrixXd staticPoints = allPts.col(0);
   Eigen::MatrixXd movingPoints = allPts.col(1);
 

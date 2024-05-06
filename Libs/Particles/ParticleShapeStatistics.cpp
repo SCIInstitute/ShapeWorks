@@ -483,7 +483,7 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
     Eigen::VectorXd particles;
     for (auto& file : world_files) {
       Eigen::VectorXd domain_particles;
-      ParticleSystemEvaluation::ReadParticleFile(file, domain_particles);
+      ParticleSystemEvaluation::read_particle_file(file, domain_particles);
       Eigen::VectorXd combined(particles.size() + domain_particles.size());
       combined << particles, domain_particles;
       particles = combined;
@@ -551,7 +551,7 @@ int ParticleShapeStatistics::do_pca(std::vector<std::vector<Point>> global_pts, 
 
 //---------------------------------------------------------------------------
 int ParticleShapeStatistics::do_pca(ParticleSystemEvaluation ParticleSystemEvaluation, int domainsPerShape) {
-  Eigen::MatrixXd p = ParticleSystemEvaluation.Particles();
+  Eigen::MatrixXd p = ParticleSystemEvaluation.get_matrix();
 
   std::vector<std::vector<Point>> particlePoints;
 
@@ -650,14 +650,14 @@ int ParticleShapeStatistics::write_csv_file(const std::string& s) {
   for (unsigned int i = 0; i < num_samples_; i++) {
     outfile << ",P" << i;
   }
-  outfile << std::endl;
+  outfile << "\n";
 
   for (unsigned int r = 0; r < num_samples_; r++) {
     outfile << group_ids_[r];
     for (unsigned int c = 0; c < num_samples_; c++) {
       outfile << "," << principals_(r, c);
     }
-    outfile << std::endl;
+    outfile << "\n";
   }
 
   outfile.close();
@@ -666,26 +666,26 @@ int ParticleShapeStatistics::write_csv_file(const std::string& s) {
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_compactness(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
-  return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps, progress_callback);
+  auto ps = ParticleSystemEvaluation(matrix_);
+  return shapeworks::ShapeEvaluation::compute_full_compactness(ps, progress_callback);
 }
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
-  return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
+  auto ps = ParticleSystemEvaluation(matrix_);
+  return shapeworks::ShapeEvaluation::compute_full_specificity(ps, progress_callback);
 }
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
-  return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
+  auto ps = ParticleSystemEvaluation(matrix_);
+  return shapeworks::ShapeEvaluation::compute_full_generalization(ps, progress_callback);
 }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix() const { return this->group1_matrix_; }
+Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix() const { return group1_matrix_; }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix() const { return this->group2_matrix_; }
+Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix() const { return group2_matrix_; }
 
 }  // namespace shapeworks

@@ -670,7 +670,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         if (get_use_geodesics_to_landmarks()) {
           auto filenames = s->get_landmarks_filenames();
           Eigen::VectorXd points;
-          if (!ParticleSystemEvaluation::ReadParticleFile(filenames[0], points)) {
+          if (!ParticleSystemEvaluation::read_particle_file(filenames[0], points)) {
             SW_ERROR("Unable to read landmark file: {}", filenames[0]);
           }
 
