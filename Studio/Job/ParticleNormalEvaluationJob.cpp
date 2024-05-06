@@ -34,8 +34,8 @@ void ParticleNormalEvaluationJob::run() {
       Q_EMIT progress(count / total);
     }
 
-    auto normals = ParticleNormalEvaluation::compute_particle_normals(particles.Particles(), meshes);
-    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(particles.Particles(), normals);
+    auto normals = ParticleNormalEvaluation::compute_particle_normals(particles.get_matrix(), meshes);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(particles.get_matrix(), normals);
     auto domain_good_bad = ParticleNormalEvaluation::threshold_particle_normals(angles, max_angle_degrees_);
 
     good_bad.insert(good_bad.end(), domain_good_bad.begin(), domain_good_bad.end());

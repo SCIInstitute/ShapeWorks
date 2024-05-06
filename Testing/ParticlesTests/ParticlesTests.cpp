@@ -77,21 +77,21 @@ TEST(ParticlesTests, pca)
 TEST(ParticlesTests, compactness)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
-  const double compactness = ShapeEvaluation::ComputeCompactness(ParticleSystemEvaluation, 1);
+  const double compactness = ShapeEvaluation::compute_compactness(ParticleSystemEvaluation, 1);
   ASSERT_DOUBLE_EQ(compactness, 0.99178682878009183);
 }
 
 TEST(ParticlesTests, generalization)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
-  const double generalization = ShapeEvaluation::ComputeGeneralization(ParticleSystemEvaluation, 1);
+  const double generalization = ShapeEvaluation::compute_generalization(ParticleSystemEvaluation, 1);
   ASSERT_DOUBLE_EQ(generalization, 0.19815116412998687);
 }
 
 TEST(ParticlesTests, specificity)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
-  const double specificity = ShapeEvaluation::ComputeSpecificity(ParticleSystemEvaluation, 1);
+  const double specificity = ShapeEvaluation::compute_specificity(ParticleSystemEvaluation, 1);
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }
 
@@ -139,7 +139,7 @@ TEST(ParticlesTests, reconstructsurfaceTestRBFS)
   ParticleSystemEvaluation baselineDenseParticles(baselineDenseParticleFiles);
   ParticleSystemEvaluation denseParticles(denseParticleFiles);
 
-  ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
+  ASSERT_TRUE(baselineSparseParticles.evaluation_compare(sparseParticles) && baselineDenseParticles.evaluation_compare(denseParticles) &&
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
 }
 
@@ -187,7 +187,7 @@ TEST(ParticlesTests, reconstructsurfaceTestThinPlateSpline)
   ParticleSystemEvaluation baselineDenseParticles(baselineDenseParticleFiles);
   ParticleSystemEvaluation denseParticles(denseParticleFiles);
 
-  ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
+  ASSERT_TRUE(baselineSparseParticles.evaluation_compare(sparseParticles) && baselineDenseParticles.evaluation_compare(denseParticles) &&
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
 }
 
@@ -278,7 +278,7 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
   };
 
   ParticleSystemEvaluation system(particle_files);
-  auto particles = system.Particles();
+  auto particles = system.get_matrix();
 
   auto eval = [&](double angle, int expected_good_count) {
     auto normals = ParticleNormalEvaluation::compute_particle_normals(particles, meshes);
