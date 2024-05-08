@@ -1891,6 +1891,16 @@ void Optimize::AddImage(ImageType::Pointer image, std::string name) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::AddVolume(ImageType::Pointer image, ImageType::Pointer ct_image, std::string name) {
+  m_sampler->AddVolume(image, ct_image, this->GetNarrowBand(), name);
+  this->m_num_shapes++;
+  if (image) {
+    this->m_spacing = image->GetSpacing()[0] * 5; 
+    // m_spacing is used to scale the random update vector for particle splitting.
+  }
+}
+
+//---------------------------------------------------------------------------
 void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data) {
   if (poly_data == nullptr) {
     // fixed domain

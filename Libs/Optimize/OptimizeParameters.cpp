@@ -725,14 +725,35 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         } else {
           throw std::invalid_argument("Error loading contour: " + filename);
         }
-      } else {
+      }
+      else
+      {
         Image image(filename);
-        if (s->is_fixed()) {
-          optimize->AddImage(nullptr, filename);
-        } else {
-          optimize->AddImage(image, filename);
+        if (get_use_volumetric_features())
+        {
+          if (s->is_fixed())
+          {
+            optimize->AddVolume(nullptr, nullptr, filename);
+          }
+          else
+          {
+            std::cout << "Loading Volume " << std::endl;
+            Image ct_image(feature_files[i]);
+            optimize->AddVolume(image, ct_image);
+            std::cout << "Volume loaded successfully" << std::endl;
+          }
         }
-        if (get_use_volumetric_features)
+        else
+        {
+          if (s->is_fixed())
+          {
+            optimize->AddImage(nullptr, filename);
+          }
+          else
+          {
+            optimize->AddImage(image, filename);
+          }
+        }
       }
 
       using TransformType = vnl_matrix_fixed<double, 4, 4>;

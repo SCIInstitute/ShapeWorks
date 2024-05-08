@@ -221,7 +221,7 @@ class Optimize {
 
   //! Set the shape input images
   void AddImage(ImageType::Pointer image, std::string name = "");
-  void AddVolume(ImageType::Pointer image, std::string name = "");
+  void AddVolume(ImageType::Pointer image, ImageType::Pointer ct_image, std::string name = "");
   void AddMesh(vtkSmartPointer<vtkPolyData> poly_data);
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
