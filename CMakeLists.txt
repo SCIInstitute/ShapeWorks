@@ -23,7 +23,7 @@ find_package(Python3 3.9 EXACT REQUIRED COMPONENTS Interpreter Development)
 if (NOT APPLE)
   option(USE_OPENMP      "Build using OpenMP" ON)
 endif()
-option(BUILD_TESTS     "Build tests"        ON)
+option(BUILD_TESTS     "Build tests"        OFF)
 
 option(USE_PCH "Use pre-compiled headers" OFF)
 
