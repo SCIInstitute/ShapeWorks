@@ -136,7 +136,7 @@ class Optimize {
   void SetUseNormals(std::vector<bool> use_normals);
 
   //! Set if Normals are being used, one value per domain
-  void SetVolumetricFeatures(std::vector<bool> v);
+  void SetUseVolumetricFeatures(std::vector<bool> v);
 
   //! Set the attributes per domain
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
