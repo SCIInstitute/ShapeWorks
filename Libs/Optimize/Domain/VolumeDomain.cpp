@@ -67,9 +67,4 @@ void VolumeDomain::SetVolume(ImageType::Pointer image, ImageType::Pointer ct_ima
   image_->SetImage(image, narrow_band_world);
 }
 
-// //-------------------------------------------------------------------
-// ParticleDomain::PointType VolumeDomain::GetValidLocationNear(PointType p) const {
-//   return image_->GetValidLocationNear(p);
-// }
-
 }  // namespace shapeworks

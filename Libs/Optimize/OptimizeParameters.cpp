@@ -179,7 +179,7 @@ std::vector<bool> OptimizeParameters::get_use_normals() {
 
 //---------------------------------------------------------------------------
 std::vector<bool> OptimizeParameters::get_use_volumetric_features() {
-  std::vector<bool> use_normals = params_.get(Keys::use_volumetric_features, {false});
+  std::vector<bool> use_volumetric_features = params_.get(Keys::use_volumetric_features, {false});
   if (use_volumetric_features.empty()) {
     use_volumetric_features.push_back(false);
   }
@@ -451,6 +451,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
   std::vector<double> attr_scales;
+  std::vector<bool> use_volumetric_features;  
 
   auto field_attributes = get_field_attributes();
   auto field_weights = get_field_attribute_weights();
@@ -481,6 +482,14 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     } else {
       use_normals.push_back(0);
     }
+    if (volumetric_features_enabled)
+    {
+      use_volumetric_features.push_back(1);
+    }
+    else
+    {
+      use_volumetric_features.push_back(0);
+    }
   }
 
   std::vector<int> attributes_per_domain;
@@ -507,6 +516,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   bool use_extra_attributes = normals_enabled || field_attributes.size() > 0;
 
   optimize->SetUseNormals(use_normals);
+  optimize->SetUseVolumetricFeatures(use_volumetric_features);
   optimize->SetUseXYZ(use_xyz);
   optimize->SetUseMeshBasedAttributes(use_extra_attributes);
   optimize->SetAttributeScales(attr_scales);
@@ -729,7 +739,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       else
       {
         Image image(filename);
-        if (get_use_volumetric_features())
+        if (volumetric_features_enabled)
         {
           if (s->is_fixed())
           {
@@ -738,7 +748,12 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           else
           {
             std::cout << "Loading Volume " << std::endl;
-            Image ct_image(feature_files[i]);
+            std::string ct_image_name;
+            for (auto kv : feature_files)
+            {
+                ct_image_name = kv.second;
+            }
+            Image ct_image(ct_image_name);
             optimize->AddVolume(image, ct_image);
             std::cout << "Volume loaded successfully" << std::endl;
           }

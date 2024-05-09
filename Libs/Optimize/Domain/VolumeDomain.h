@@ -43,7 +43,16 @@ class VolumeDomain : public ParticleRegionDomain {
   // const PointType &GetLowerBound() const override { return mesh_wrapper_->GetMeshLowerBound(); }
   // const PointType &GetUpperBound() const override { return mesh_wrapper_->GetMeshUpperBound(); }
 
-  PointType GetValidLocationNear(PointType p) const override;
+
+  inline PointType GetValidLocationNear(PointType p) const override {
+
+    return image_->GetValidLocationNear(p);
+  }
+
+  PointType GetZeroCrossingPoint() const override {
+    PointType p;
+    return p;
+  }
 
   double GetSurfaceArea() const override {
     return 0;
