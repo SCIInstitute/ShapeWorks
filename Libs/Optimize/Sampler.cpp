@@ -426,12 +426,7 @@ void Sampler::AddVolume(ImageType::Pointer image, ImageType::Pointer ct_image, d
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];
-    // convert narrow band (index space) to world space
-    // (e.g. narrow band of 4 means 4 voxels (largest side)
-    double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
-    domain->SetImage(image, narrow_band_world);
-    domain->SetImageCT(ct_image, narrow_band_world);
-
+    domain->SetVolume(image, ct_image, narrow_band);
     vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
     this->m_meshes.push_back(mesh);
   }

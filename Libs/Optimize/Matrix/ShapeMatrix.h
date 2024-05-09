@@ -59,7 +59,7 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
     m_use_normals[i] = val;
   }
 
-  void SetVolumetricFeaturesnt i, bool val) {
+  void SetVolumetricFeatures(int i, bool val) {
     if (m_use_volumetric_features.size() != m_DomainsPerShape) m_use_volumetric_features.resize(m_DomainsPerShape);
     m_use_volumetric_features[i] = val;
   }
