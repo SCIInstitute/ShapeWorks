@@ -13,7 +13,6 @@ using namespace project::types;
 //---------------------------------------------------------------------------
 ProjectReader::ProjectReader(Project& project) : project_(project) {}
 
-//TODO: load volume
 //---------------------------------------------------------------------------
 void ProjectReader::load_subjects(StringMapList list) {
   std::vector<std::shared_ptr<Subject>> subjects;

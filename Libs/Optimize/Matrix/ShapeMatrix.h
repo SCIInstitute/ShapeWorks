@@ -141,18 +141,11 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
     }
 
     if (m_use_volumetric_features[dom]) {
-      vnl_vector_fixed<float, DIMENSION> pN = ps->GetDomain(d)->SampleNormalAtPoint(posLocal, idx);
-      ParticleSystem::VectorType tmp;
-      tmp[0] = pN[0];
-      tmp[1] = pN[1];
-      tmp[2] = pN[2];
-      tmp = ps->TransformVector(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
-      pN[0] = tmp[0];
-      pN[1] = tmp[1];
-      pN[2] = tmp[2];
-      pN = pN.normalize();  // contains scaling
-      for (unsigned int i = 0; i < VDimension; i++) {
-        this->operator()(i + k, d / m_DomainsPerShape) = pN[i] * m_AttributeScales[num + i + s];
+      // static cast domain
+      auto cur_domain = ps->GetDomain(d);
+      PixelType ct_intensity = cur_domain->SampleAtPoint(posLocal);
+      for (unsigned int i = 0; i < 1; i++) {
+        this->operator()(i + k, d / m_DomainsPerShape) = ct_intensity * m_AttributeScales[num + i + s];
       }
       k += VDimension;
       s += VDimension;

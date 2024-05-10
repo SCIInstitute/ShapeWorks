@@ -66,6 +66,11 @@ class VolumeDomain : public ParticleRegionDomain {
   vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override;
   vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint_ct(const PointType &point, int idx) const;
 
+ inline PixelType SampleAtPoint(const PointType &point, int idx) const 
+ {
+  return ct_image_->Sample(point);
+ };
+
   ParticleRegionDomain::GradNType SampleGradNAtPoint(const PointType &p, int idx) const override;
   ParticleRegionDomain::GradNType SampleGradNAtPoint_ct(const PointType &p, int idx) const;
 
