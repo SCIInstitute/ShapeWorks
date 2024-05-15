@@ -605,6 +605,7 @@ void GroomTool::skip_grooming_toggled() {
     groom_ = QSharedPointer<Groom>(new Groom(session_->get_project()));
     groom_->run();
     SW_MESSAGE("Skipped Grooming");
+    SW_PROGRESS(100, "Grooming Skipped");
     Q_EMIT groom_complete();
   }
 }
