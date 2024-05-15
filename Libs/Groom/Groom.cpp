@@ -513,6 +513,7 @@ bool Groom::run_alignment() {
 
   bool global_icp = false;
   bool global_landmarks = false;
+  bool any_alignment = false;
 
   int reference_index = -1;
   int subset_size = -1;
@@ -524,6 +525,9 @@ bool Groom::run_alignment() {
     }
 
     auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
+    if (params.get_alignment_enabled()) {
+      any_alignment = true;
+    }
 
     if (params.get_use_icp()) {
       global_icp = true;
@@ -594,16 +598,17 @@ bool Groom::run_alignment() {
         meshes.push_back(mesh);
       } else {
         // insert blank for each excluded shape
-        meshes.push_back(vtkSmartPointer<vtkPolyData>::New());
+        meshes.emplace_back(vtkSmartPointer<vtkPolyData>::New());
       }
     }
 
     if (global_icp) {
-      std::vector<Mesh> reference_meshes;
-
       Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
       if (reference_index < 0 || reference_index >= reference_meshes.size()) {
         reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
+        if (reference_index < 0 || reference_index >= reference_meshes.size()) {
+          throw std::runtime_error("could not find reference mesh");
+        }
         reference_mesh = reference_meshes[reference_index];
       } else {
         reference_mesh = get_mesh(reference_index, 0, true);
@@ -623,12 +628,14 @@ bool Groom::run_alignment() {
       size_t domain = num_domains;  // end
       assign_transforms(transforms, domain, true /* global */);
 
-    } else {  // just center
+    } else {
       std::vector<std::vector<double>> transforms;
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
         auto transform = vtkSmartPointer<vtkTransform>::New();
-        Groom::add_center_transform(transform, meshes[i]);
+        if (any_alignment) {  // just center
+          Groom::add_center_transform(transform, meshes[i]);
+        }
         transforms.push_back(ProjectUtils::convert_transform(transform));
       }
       size_t domain = num_domains;  // end
