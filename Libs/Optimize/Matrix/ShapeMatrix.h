@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "Domain/MeshDomain.h"
+#include "Domain/VolumeDomain.h"
 #include "Libs/Optimize/Container/GenericContainer.h"
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
@@ -142,8 +143,9 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
 
     if (m_use_volumetric_features[dom]) {
       // static cast domain
-      auto cur_domain = ps->GetDomain(d);
-      PixelType ct_intensity = cur_domain->SampleAtPoint(posLocal);
+      shapeworks::VolumeDomain* cur_domain = dynamic_cast<shapeworks::VolumeDomain*>(const_cast<shapeworks::ParticleSystem*>(ps)->GetDomain(d));
+      float ct_intensity = dynamic_cast<VolumeDomain*>(cur_domain)->SampleAtPoint(posLocal);
+      
       for (unsigned int i = 0; i < 1; i++) {
         this->operator()(i + k, d / m_DomainsPerShape) = ct_intensity * m_AttributeScales[num + i + s];
       }

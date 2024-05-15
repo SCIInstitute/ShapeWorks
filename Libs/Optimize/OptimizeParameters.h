@@ -60,6 +60,9 @@ class OptimizeParameters {
   double get_normals_strength();
   void set_normals_strength(double value);
 
+  double get_volumetric_features_strength();
+  void set_volumetric_features_strength(double value);
+
   bool get_use_disentangled_ssm();
   void set_use_disentangled_ssm(bool value);
 

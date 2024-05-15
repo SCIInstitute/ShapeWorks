@@ -1,6 +1,8 @@
 #include "ShapeGradientMatrix.h"
 
 #include "Domain/MeshDomain.h"
+#include "Domain/VolumeDomain.h"
+
 
 namespace shapeworks {
 
@@ -115,7 +117,8 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
   }
 
   if (m_use_volumetric_features[dom]) {
-      auto domain = ps->GetDomain(d);
+      shapeworks::VolumeDomain* domain = dynamic_cast<shapeworks::VolumeDomain*>(const_cast<shapeworks::ParticleSystem*>(ps)->GetDomain(d));
+
       vnl_vector_fixed<float, DIMENSION> pN = domain->SampleNormalAtPoint_ct(posLocal, idx);
       ParticleSystem::VectorType tmp;
       tmp[0] = pN[0];

@@ -28,6 +28,7 @@ const std::string geodesic_cache_multiplier = "geodesic_cache_multiplier";
 const std::string use_normals = "use_normals";
 const std::string use_volumetric_features = "use_volumetric_features";
 const std::string normals_strength = "normals_strength";
+const std::string volumetric_features_strength = "volumetric_features_strength";
 const std::string procrustes = "procrustes";
 const std::string procrustes_scaling = "procrustes_scaling";
 const std::string procrustes_rotation_translation = "procrustes_rotation_translation";
@@ -194,6 +195,12 @@ void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) { params
 
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_normals_strength() { return params_.get(Keys::normals_strength, 10); }
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_volumetric_features_strength() { return params_.get(Keys::volumetric_features_strength, 1); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_volumetric_features_strength(double value) { params_.set(Keys::volumetric_features_strength, value); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_normals_strength(double value) { params_.set(Keys::normals_strength, value); }
@@ -485,6 +492,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     if (volumetric_features_enabled)
     {
       use_volumetric_features.push_back(1);
+      double vol_strength = get_volumetric_features_strength();
+      attr_scales.push_back(vol_strength);
+
     }
     else
     {
