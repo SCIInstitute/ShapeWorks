@@ -199,6 +199,9 @@ class AnalysisTool : public QWidget {
 
   void handle_samples_predicted_scalar_options();
 
+  void samples_table_context_menu();
+  void samples_table_copy_to_clipboard();
+
  Q_SIGNALS:
 
   void update_view();
