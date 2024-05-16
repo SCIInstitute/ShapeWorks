@@ -45,6 +45,8 @@ const std::string checkpointing_interval = "checkpointing_interval";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
 const std::string use_disentangled_ssm = "use_disentangled_ssm";
+const std::string use_linear_regression = "use_linear_regression";
+const std::string use_mixed_effects_model = "use_mixed_effects_model";
 const std::string field_attributes = "field_attributes";
 const std::string field_attribute_weights = "field_attribute_weights";
 const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
@@ -93,6 +95,8 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::geodesics_to_landmarks_weight,
                                          Keys::keep_checkpoints,
                                          Keys::use_disentangled_ssm,
+                                         Keys::use_linear_regression,
+                                         Keys::use_mixed_effects_model,
                                          Keys::particle_format,
                                          Keys::geodesic_remesh_percent,
                                          Keys::shared_boundary,
@@ -200,6 +204,18 @@ bool OptimizeParameters::get_use_disentangled_ssm() { return params_.get(Keys::u
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_disentangled_ssm(bool value) { params_.set(Keys::use_disentangled_ssm, value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_linear_regression() { return params_.get(Keys::use_linear_regression, false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_linear_regression(bool value) { params_.set(Keys::use_linear_regression, value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_mixed_effects_model() { return params_.get(Keys::use_mixed_effects_model, false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_mixed_effects_model(bool value) { params_.set(Keys::use_mixed_effects_model, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_procrustes_scaling() { return params_.get(Keys::procrustes_scaling, false); }
