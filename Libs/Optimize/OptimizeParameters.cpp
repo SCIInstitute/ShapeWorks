@@ -94,7 +94,9 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::keep_checkpoints,
                                          Keys::use_disentangled_ssm,
                                          Keys::particle_format,
-                                         Keys::geodesic_remesh_percent};
+                                         Keys::geodesic_remesh_percent,
+                                         Keys::use_volumetric_features,
+                                         Keys::volumetric_features_strength};
 
   std::vector<std::string> to_remove;
 
@@ -433,7 +435,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetVerbosity(get_verbosity());
   int domains_per_shape = project_->get_number_of_domains_per_subject();
   bool normals_enabled = get_use_normals()[0];
+  std::cout << "normals  features set to " << normals_enabled << std::endl;
   bool volumetric_features_enabled = get_use_volumetric_features()[0];
+  std::cout << "Volumetric features set to " << volumetric_features_enabled << std::endl;
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(get_number_of_particles());
   optimize->SetInitialRelativeWeighting(get_initial_relative_weighting());
@@ -748,6 +752,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       }
       else
       {
+        std::cout << "Loading file as image" << std::endl;
         Image image(filename);
         if (volumetric_features_enabled)
         {
