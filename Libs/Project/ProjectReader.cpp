@@ -68,12 +68,12 @@ void ProjectReader::load_subjects(StringMapList list) {
     if (contains(item, "excluded")) {
       subject->set_excluded(Variant(item["excluded"]));
     }
-    if (name == "") {
-      if (subject->get_original_filenames().size() != 0) {
+    if (name.empty()) {
+      if (!subject->get_original_filenames().empty()) {
         name = StringUtils::getBaseFilenameWithoutExtension(subject->get_original_filenames()[0]);
-      } else if (subject->get_groomed_filenames().size() != 0) {
+      } else if (!subject->get_groomed_filenames().empty()) {
         name = StringUtils::getBaseFilenameWithoutExtension(subject->get_groomed_filenames()[0]);
-      } else if (subject->get_local_particle_filenames().size() > 0) {
+      } else if (!subject->get_local_particle_filenames().empty()) {
         name = StringUtils::getBaseFilenameWithoutExtension(subject->get_local_particle_filenames()[0]);
       }
     }
