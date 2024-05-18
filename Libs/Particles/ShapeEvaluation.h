@@ -20,8 +20,10 @@ class ShapeEvaluation {
   static double compute_generalization(const ParticleSystemEvaluation& particle_system, int num_modes,
                                        const std::string& save_to = "");
 
-  static Eigen::VectorXd compute_full_generalization(const ParticleSystemEvaluation& particle_system,
-                                                     std::function<void(float)> progress_callback = nullptr);
+  static Eigen::VectorXd extracted();
+  static Eigen::VectorXd compute_full_generalization(
+      const ParticleSystemEvaluation &particle_system,
+      std::function<void(float)> progress_callback = nullptr);
 
   static double compute_specificity(const ParticleSystemEvaluation& particle_system, int num_mode,
                                     const std::string& save_to = "");

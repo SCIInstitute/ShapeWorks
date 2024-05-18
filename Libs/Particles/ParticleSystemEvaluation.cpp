@@ -14,12 +14,12 @@ ParticleSystemEvaluation::ParticleSystemEvaluation(const std::vector<std::string
   }
 
   paths_ = paths;
-  const int N = paths_.size();
+  const size_t N = paths_.size();
   assert(N > 0);
 
   // Read the first file to find dimensions
   auto points0 = particles::read_particles_as_vector(paths_[0]);
-  const int D = points0.size() * num_values_per_particle_;
+  const size_t D = points0.size() * num_values_per_particle_;
 
   matrix_.resize(D, N);
   matrix_.col(0) = Eigen::Map<const Eigen::VectorXd>((double*)points0.data(), D);
