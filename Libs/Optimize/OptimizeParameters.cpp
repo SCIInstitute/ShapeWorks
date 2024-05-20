@@ -46,7 +46,7 @@ const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
 const std::string use_disentangled_ssm = "use_disentangled_ssm";
 const std::string use_linear_regression = "use_linear_regression";
-const std::string use_mixed_effects_model = "use_mixed_effects_model";
+const std::string time_points_per_subject = "time_points_per_subject";
 const std::string field_attributes = "field_attributes";
 const std::string field_attribute_weights = "field_attribute_weights";
 const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
@@ -96,7 +96,7 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::keep_checkpoints,
                                          Keys::use_disentangled_ssm,
                                          Keys::use_linear_regression,
-                                         Keys::use_mixed_effects_model,
+                                         Keys::time_points_per_subject,
                                          Keys::particle_format,
                                          Keys::geodesic_remesh_percent,
                                          Keys::shared_boundary,
@@ -212,10 +212,10 @@ bool OptimizeParameters::get_use_linear_regression() { return params_.get(Keys::
 void OptimizeParameters::set_use_linear_regression(bool value) { params_.set(Keys::use_linear_regression, value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_mixed_effects_model() { return params_.get(Keys::use_mixed_effects_model, false); }
+int OptimizeParameters::get_time_points_per_subject() { return params_.get(Keys::time_points_per_subject, 1); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_mixed_effects_model(bool value) { params_.set(Keys::use_mixed_effects_model, value); }
+void OptimizeParameters::set_time_points_per_subject(int value) { params_.set(Keys::time_points_per_subject, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_procrustes_scaling() { return params_.get(Keys::procrustes_scaling, false); }
@@ -449,6 +449,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
   optimize->SetUseDisentangledSpatiotemporalSSM(get_use_disentangled_ssm());
   optimize->set_particle_format(get_particle_format());
+  optimize->SetTimePtsPerSubject(get_time_points_per_subject());
+  optimize->SetUseRegression(get_use_linear_regression());
+  optimize->SetUseMixedEffects(get_time_points_per_subject() > 1 ? true : false);
   optimize->SetSharedBoundaryEnabled(get_shared_boundary());
   optimize->SetSharedBoundaryWeight(get_shared_boundary_weight());
 
@@ -642,6 +645,21 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
       domain_count++;
     }
+  }
+
+  // get explanatory variables for subjects if used for regression
+  if (get_use_linear_regression())
+  {
+    std::vector<double> exp_vars;
+    for (const auto& s : subjects) {
+      exp_vars.push_back(s->get_explanatory_variable());
+    }
+    dynamic_cast<LinearRegressionShapeMatrix*>(
+      optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
+      ->SetExplanatory(exp_vars);
+    dynamic_cast<MixedEffectsShapeMatrix*>(
+      optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
+      ->SetExplanatory(exp_vars);
   }
 
   std::vector<std::string> filenames;

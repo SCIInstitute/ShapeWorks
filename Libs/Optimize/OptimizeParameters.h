@@ -63,8 +63,8 @@ class OptimizeParameters {
   bool get_use_linear_regression();
   void set_use_linear_regression(bool value);
 
-  bool get_use_mixed_effects_model();
-  void set_use_mixed_effects_model(bool value);
+  int get_time_points_per_subject();
+  void set_time_points_per_subject(int value);
 
   bool get_use_procrustes();
   void set_use_procrustes(bool value);
