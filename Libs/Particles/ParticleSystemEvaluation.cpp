@@ -119,5 +119,8 @@ bool ParticleSystemEvaluation::read_particle_file(std::string filename, Eigen::V
 }
 
 //---------------------------------------------------------------------------
+void ParticleSystemEvaluation::set_meshes(const std::vector<Mesh>& meshes) { meshes_ = meshes; }
+
+//---------------------------------------------------------------------------
 
 }  // namespace shapeworks
