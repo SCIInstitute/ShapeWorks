@@ -656,19 +656,32 @@ void DataTool::table_data_edited() {
   }
 
   bool change = false;
+
+  // find name and notes columns
+  int name_column = -1;
+  int notes_column = -1;
+  for (int i = 0; i < ui_->table->columnCount(); i++) {
+    if (ui_->table->horizontalHeaderItem(i)->text() == "name") {
+      name_column = i;
+    } else if (ui_->table->horizontalHeaderItem(i)->text() == "notes") {
+      notes_column = i;
+    }
+  }
+
   // iterate over all rows, not just selected
   for (int row = 0; row < ui_->table->rowCount(); row++) {
     auto shape = session_->get_shapes()[row];
     auto old_name = shape->get_subject()->get_display_name();
     auto old_notes = shape->get_subject()->get_notes();
-    if (ui_->table->item(row, 0) == nullptr) {
-      continue;
+
+    std::string new_name;
+    if (name_column != -1) {
+      new_name = ui_->table->item(row, name_column)->text().toStdString();
     }
-    auto new_name = ui_->table->item(row, 0)->text().toStdString();
-    if (ui_->table->item(row, 1) == nullptr) {
-      continue;
+    std::string new_notes;
+    if (notes_column != -1) {
+      new_notes = ui_->table->item(row, notes_column)->text().toStdString();
     }
-    auto new_notes = ui_->table->item(row, 1)->text().toStdString();
     if (old_name != new_name) {
       shape->get_subject()->set_display_name(new_name);
       shape->update_annotations();
