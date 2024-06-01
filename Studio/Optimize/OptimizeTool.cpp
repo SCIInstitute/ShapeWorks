@@ -61,7 +61,10 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "This value should only be changed if an error occurs "
       "during optimization suggesting that it should be increased.  "
       "It has no effect on the optimization");
-  ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
+  ui_->use_disentangled_ssm->setToolTip("Use the disentangled optimization technique to build spatiotemporal SSM.");
+  ui_->use_linear_regression->setToolTip("Use the linear regression optimization technique, where correspondence particle optimization is performed by regressing shape against an explanatory variable. Ensure that the explanatory variable is specified in the data tab of the project file.");
+
+
 
   // hidden for 6.5 release
   ui_->disentangled_label->hide();
@@ -270,6 +273,8 @@ void OptimizeTool::load_params() {
   ui_->use_geodesics_from_landmarks->setChecked(params.get_use_geodesics_to_landmarks());
   ui_->geodesics_to_landmarks_weight->setText(QString::number(params.get_geodesic_to_landmarks_weight()));
   ui_->use_disentangled_ssm->setChecked(params.get_use_disentangled_ssm());
+  ui_->use_linear_regression->setChecked(params.get_use_linear_regression());
+
 
   ui_->procrustes->setChecked(params.get_use_procrustes());
   ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
@@ -316,6 +321,7 @@ void OptimizeTool::store_params() {
   params.set_use_geodesics_to_landmarks(ui_->use_geodesics_from_landmarks->isChecked());
   params.set_geodesic_to_landmarks_weight(ui_->geodesics_to_landmarks_weight->text().toDouble());
   params.set_use_disentangled_ssm(ui_->use_disentangled_ssm->isChecked());
+  params.set_use_linear_regression(ui_->use_linear_regression->isChecked());
 
   params.set_use_procrustes(ui_->procrustes->isChecked());
   params.set_use_procrustes_scaling(ui_->procrustes_scaling->isChecked());
