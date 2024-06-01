@@ -63,7 +63,7 @@ void VolumeDomain::SetVolume(ImageType::Pointer image, ImageType::Pointer ct_ima
   image_ = std::make_shared<ImplicitSurfaceDomain<ImageType::PixelType>>();
   double narrow_band_world_ct = ct_image->GetSpacing().GetVnlVector().max_value() * narrow_band;
   ct_image_->SetImage(image, narrow_band_world_ct);
-  double narrow_band_world = ct_image->GetSpacing().GetVnlVector().max_value() * narrow_band;
+  double narrow_band_world = image->GetSpacing().GetVnlVector().max_value() * narrow_band;
   image_->SetImage(image, narrow_band_world);
 }
 

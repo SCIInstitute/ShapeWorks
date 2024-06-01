@@ -76,7 +76,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
 
-    if (domain->GetDomainType() == shapeworks::DomainType::Image) {
+    if (domain->GetDomainType() == shapeworks::DomainType::Image || domain->GetDomainType() == shapeworks::DomainType::Volume) {
       // Adding cutting planes to constraint object
       if (m_CuttingPlanes.size() > i) {
         for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {

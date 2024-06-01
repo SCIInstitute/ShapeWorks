@@ -495,6 +495,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
     if (volumetric_features_enabled)
     {
+      optimize->SetDomainType(shapeworks::DomainType::Volume);
       use_volumetric_features.push_back(1);
       double vol_strength = get_volumetric_features_strength();
       attr_scales.push_back(vol_strength);
