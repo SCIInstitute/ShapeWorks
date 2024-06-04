@@ -33,6 +33,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   connect(ui_->use_normals, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->procrustes, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->use_linear_regression, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->use_geodesics_from_landmarks, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->use_geodesic_distance, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
 
@@ -65,7 +66,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->shared_boundary_weight->setToolTip("Weight of shared boundary optimization");
   ui_->use_disentangled_ssm->setToolTip("Use the disentangled optimization technique to build spatiotemporal SSM.");
   ui_->use_linear_regression->setToolTip("Use the linear regression optimization technique, where correspondence particle optimization is performed by regressing shape against an explanatory variable. Ensure that the explanatory variable is specified in the data tab of the project file.");
-
+  ui_->time_points_per_subject->setToolTip("Number of timepoints/explanatory variables defined for each subject in the data tab. Note: More than 1 timepoint uses a mixed effects model; 1 timepoint uses linear regression. ");
 
 
   // hidden for 6.5 release
@@ -74,6 +75,8 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
+  QIntValidator* one_and_up = new QIntValidator(1, std::numeric_limits<int>::max(), this);
+
 
   QDoubleValidator* double_validator = new QDoubleValidator(0, std::numeric_limits<double>::max(), 1000, this);
 
@@ -89,6 +92,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->multiscale_particles->setValidator(above_zero);
   ui_->narrow_band->setValidator(double_validator);
   ui_->geodesics_to_landmarks_weight->setValidator(double_validator);
+  ui_->time_points_per_subject->setValidator(one_and_up);
   ui_->shared_boundary_weight->setValidator(double_validator);
 
   line_edits_.push_back(ui_->number_of_particles);
@@ -103,7 +107,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   line_edits_.push_back(ui_->multiscale_particles);
   line_edits_.push_back(ui_->geodesics_to_landmarks_weight);
   line_edits_.push_back(ui_->narrow_band);
-  line_edits_.push_back(ui_->shared_boundary_weight);
+
 
   for (QLineEdit* line_edit : line_edits_) {
     connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
@@ -289,8 +293,9 @@ void OptimizeTool::load_params() {
   ui_->use_geodesics_from_landmarks->setChecked(params.get_use_geodesics_to_landmarks());
   ui_->geodesics_to_landmarks_weight->setText(QString::number(params.get_geodesic_to_landmarks_weight()));
   ui_->use_disentangled_ssm->setChecked(params.get_use_disentangled_ssm());
-  ui_->use_linear_regression->setChecked(params.get_use_linear_regression());
 
+  ui_->use_linear_regression->setChecked(params.get_use_linear_regression());
+  ui_->time_points_per_subject->setText(QString::number(params.get_time_points_per_subject()));
 
   ui_->procrustes->setChecked(params.get_use_procrustes());
   ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
@@ -340,6 +345,7 @@ void OptimizeTool::store_params() {
   params.set_geodesic_to_landmarks_weight(ui_->geodesics_to_landmarks_weight->text().toDouble());
   params.set_use_disentangled_ssm(ui_->use_disentangled_ssm->isChecked());
   params.set_use_linear_regression(ui_->use_linear_regression->isChecked());
+  params.set_time_points_per_subject(ui_->time_points_per_subject->text().toDouble());
 
   params.set_use_procrustes(ui_->procrustes->isChecked());
   params.set_use_procrustes_scaling(ui_->procrustes_scaling->isChecked());
@@ -388,6 +394,7 @@ void OptimizeTool::update_ui_elements() {
   ui_->procrustes_rotation_translation->setEnabled(ui_->procrustes->isChecked());
   ui_->procrustes_interval->setEnabled(ui_->procrustes->isChecked());
   ui_->multiscale_particles->setEnabled(ui_->multiscale->isChecked());
+  ui_->time_points_per_subject->setEnabled(ui_->use_linear_regression->isChecked());
   ui_->geodesics_to_landmarks_weight->setEnabled(ui_->use_geodesics_from_landmarks->isChecked());
   ui_->geodesic_remesh_percent->setEnabled(ui_->use_geodesic_distance->isChecked());
 
