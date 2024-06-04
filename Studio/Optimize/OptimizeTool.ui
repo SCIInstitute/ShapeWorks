@@ -439,6 +439,13 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
+               <item row="23" column="0">
+                <widget class="QLabel" name="label_time_points">
+                 <property name="text">
+                  <string>Timepoints defined per subject</string>
+                 </property>
+                </widget>
+               </item>
                <item row="12" column="2">
                 <widget class="QLineEdit" name="geodesics_to_landmarks_weight">
                  <property name="text">
@@ -494,6 +501,16 @@ QWidget#optimize_panel {
                 <widget class="QLineEdit" name="multiscale_particles">
                  <property name="text">
                   <string>32</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="23" column="2">
+                <widget class="QLineEdit" name="time_points_per_subject">
+                 <property name="text">
+                  <string>1</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -1207,6 +1224,7 @@ QWidget#optimize_panel {
   <tabstop>narrow_band</tabstop>
   <tabstop>use_disentangled_ssm</tabstop>
   <tabstop>use_linear_regression</tabstop>
+  <tabstop>time_points_per_subject</tabstop>
 
  </tabstops>
  <resources>
