@@ -1528,6 +1528,14 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   groom_tool_->load_params();
   optimize_tool_->load_params();
+
+  if (optimize_tool_->get_regression_analysis_status())
+  {
+    // Verify if slope and intercept files exist
+    auto particles_dir = session_->get_filename().dir().absolutePath().toStdString();
+    auto slope_filename = session_->get_filename().toStdString()
+  }
+  analysis_tool_->store_settings();
   update_from_preferences();
 
   update_tool_mode();

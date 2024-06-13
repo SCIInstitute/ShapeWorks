@@ -55,6 +55,7 @@ const std::string particle_format = "particle_format";
 const std::string geodesic_remesh_percent = "geodesic_remesh_percent";
 const std::string shared_boundary = "shared_boundary";
 const std::string shared_boundary_weight = "shared_boundary_weight";
+const std::string output_prefix = "output_prefix";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -99,6 +100,7 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::time_points_per_subject,
                                          Keys::particle_format,
                                          Keys::geodesic_remesh_percent,
+                                         Keys::output_prefix,
                                          Keys::shared_boundary,
                                          Keys::shared_boundary_weight};
 
@@ -886,6 +888,9 @@ double OptimizeParameters::get_geodesic_remesh_percent() { return params_.get(Ke
 void OptimizeParameters::set_geodesic_remesh_percent(double value) {
   params_.set(Keys::geodesic_remesh_percent, value);
 }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_output_prefix(std::string value) { params_.set(Keys::output_prefix, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_shared_boundary() { return params_.get(Keys::shared_boundary, false); }

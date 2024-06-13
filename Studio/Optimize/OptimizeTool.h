@@ -37,6 +37,10 @@ public:
   //! Load params from project
   void load_params();
   //! Store params to project
+
+  //! Get flag if regression needs to enabled for analysis in Studio
+  inline bool get_regression_analysis_status() { return regression_analysis_status; }
+
   void store_params();
 
   //! Enable action buttons
@@ -94,5 +98,7 @@ private:
   QElapsedTimer elapsed_timer_;
 
   Ui_OptimizeTool* ui_;
+
+  bool regression_analysis_status_;
 };
 }

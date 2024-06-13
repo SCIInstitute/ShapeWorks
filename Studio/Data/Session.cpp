@@ -837,6 +837,8 @@ void Session::new_plane_point(PickResult result) {
 //---------------------------------------------------------------------------
 QString Session::get_filename() { return filename_; }
 
+QString Session::get_parent_dir()
+
 //---------------------------------------------------------------------------
 int Session::get_num_shapes() { return shapes_.size(); }
 

@@ -138,7 +138,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_->metrics_open_button->setChecked(false);
 
   /// TODO nothing there yet (regression tab)
-  ui_->tabWidget->removeTab(3);
+  // ui_->tabWidget->removeTab(3);
 
   for (auto button : {ui_->distance_transform_radio_button, ui_->mesh_warping_radio_button, ui_->legacy_radio_button}) {
     connect(button, &QRadioButton::clicked, this, &AnalysisTool::reconstruction_method_changed);
@@ -378,8 +378,16 @@ void AnalysisTool::handle_analysis_options() {
       ui_->mcaLevelBetweenButton->setEnabled(true);
       ui_->vanillaPCAButton->setChecked(true);
     }
-  } else {
+  } else if (ui_->tabWidget->currentWidget() == ui_->regression_tab){
     // regression mode
+    ui_->sampleSpinBox->setEnabled(false);
+    ui_->medianButton->setEnabled(false);
+    ui_->pcaSlider->setEnabled(false);
+    ui_->pcaAnimateCheckBox->setEnabled(false);
+    ui_->pcaModeSpinBox->setEnabled(false);
+    pca_animate_timer_.stop();
+    
+  } else {
     ui_->sampleSpinBox->setEnabled(false);
     ui_->medianButton->setEnabled(false);
     ui_->pcaSlider->setEnabled(false);
@@ -860,6 +868,8 @@ void AnalysisTool::store_settings() {
   params.set("network_iterations", ui_->network_iterations->text().toStdString());
   params.set("network_pvalue_of_interest", ui_->network_pvalue_of_interest->text().toStdString());
   params.set("network_pvalue_threshold", ui_->network_pvalue_threshold->text().toStdString());
+
+  params.set("regression_slope", session->)
 
   session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
 }

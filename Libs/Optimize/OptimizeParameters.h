@@ -143,6 +143,7 @@ class OptimizeParameters {
 
   double get_shared_boundary_weight();
   void set_shared_boundary_weight(double value);
+  void set_output_prefix(std::string value);
 
  private:
   std::string get_output_prefix();
