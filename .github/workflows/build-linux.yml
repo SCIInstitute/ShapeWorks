@@ -29,12 +29,6 @@ jobs:
     
     steps:
 
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2.7.0
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
     - name: Conda info
       run: conda info
 
@@ -60,10 +54,6 @@ jobs:
 
     - name: Check space3
       run: df -h
-
-    - name: Restore Caches
-      shell: bash -l {0}
-      run: .github/workflows/restore_caches.sh
 
     - name: Conda Installs
       shell: bash -l {0}
@@ -115,10 +105,6 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
 
-    - name: Copy artifact
-      shell: bash -l {0}
-      run: cd  /__w/ShapeWorks/ShapeWorks/artifacts && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux *
-      
     - uses: actions/upload-artifact@v2
       with:
         name: artifact-${{github.sha}}-linux
@@ -135,9 +121,4 @@ jobs:
         title: "Development Build for Linux"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.tar.gz
-
-    - name: Store ccache
-      shell: bash -l {0}
-      run: .github/workflows/store_ccache.sh
-
       

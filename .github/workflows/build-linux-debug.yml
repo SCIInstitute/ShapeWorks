@@ -28,12 +28,6 @@ jobs:
     
     steps:
 
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2.7.0
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
     - name: Conda info
       run: conda info
 
@@ -59,10 +53,6 @@ jobs:
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
-
-    - name: Restore Caches
-      shell: bash -l {0}
-      run: .github/workflows/restore_caches.sh
 
     - name: Check space3
       run: df -h
@@ -106,9 +96,4 @@ jobs:
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
-  
-    - name: Store ccache
-      shell: bash -l {0}
-      run: .github/workflows/store_ccache.sh
-
       
