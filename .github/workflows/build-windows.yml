@@ -65,12 +65,6 @@ jobs:
     #   with:
     #       miniconda-version: 'latest'
 
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-        
     - name: Checkout code
       uses: actions/checkout@v3
       with:
@@ -85,10 +79,6 @@ jobs:
         curl -o nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
         Expand-Archive -LiteralPath nsis.zip -DestinationPath .
           
-    - name: Restore Caches
-      shell: bash -l {0}
-      run: .github/workflows/restore_caches.sh
-      
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
@@ -174,8 +164,3 @@ jobs:
         title: "Development Build for Windows"
         files: |
              d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe
-
-    - name: Copy artifact
-      shell: bash -l {0}
-      run: cd /d/a/ShapeWorks/ShapeWorks/artifacts && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-windows *
-      
