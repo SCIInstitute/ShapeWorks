@@ -13,12 +13,19 @@ BASE=`pwd`
 # based on root folder
 cd /
 
+WGET="wget"
+
+# if windows
+if [ -f /usr/bin/wget ]; then
+    WGET="C:\msys64\usr\bin\wget.exe"
+fi
+
 
 # Tiny test data downloads
 for run in {1..5}; do
     if [ ! -f /tmp/tiny_test_cache.tar.gz ] ; then
 	cd /tmp
-	wget https://www.sci.utah.edu/~shapeworks/doc-resources/zips/tiny_test_cache.tar.gz || true
+	$WGET https://www.sci.utah.edu/~shapeworks/doc-resources/zips/tiny_test_cache.tar.gz || true
 	sleep 1
     fi
 done
