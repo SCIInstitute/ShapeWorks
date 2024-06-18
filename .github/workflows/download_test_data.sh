@@ -13,11 +13,10 @@ BASE=`pwd`
 # based on root folder
 cd /
 
-# if windows
-if [ -f /usr/bin/wget ]; then
+# if platform is windows, install wget
+if [ "$PLATFORM" == "windows" ]; then
     choco install wget --no-progress
 fi
-
 
 # Tiny test data downloads
 for run in {1..5}; do
