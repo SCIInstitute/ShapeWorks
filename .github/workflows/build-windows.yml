@@ -28,6 +28,10 @@ jobs:
     
     steps:
 
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
+
     - name: Add to path
       shell: bash -l {0}
       run: echo "C:\Miniconda\condabin" >> $GITHUB_PATH

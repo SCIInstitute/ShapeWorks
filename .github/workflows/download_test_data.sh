@@ -13,11 +13,9 @@ BASE=`pwd`
 # based on root folder
 cd /
 
-WGET="wget"
-
 # if windows
 if [ -f /usr/bin/wget ]; then
-    WGET="C:\msys64\usr\bin\wget.exe"
+    choco install wget --no-progress
 fi
 
 
@@ -25,7 +23,7 @@ fi
 for run in {1..5}; do
     if [ ! -f /tmp/tiny_test_cache.tar.gz ] ; then
 	cd /tmp
-	$WGET https://www.sci.utah.edu/~shapeworks/doc-resources/zips/tiny_test_cache.tar.gz || true
+	wget https://www.sci.utah.edu/~shapeworks/doc-resources/zips/tiny_test_cache.tar.gz || true
 	sleep 1
     fi
 done
