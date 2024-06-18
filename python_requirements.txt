@@ -152,7 +152,7 @@ requests-toolbelt==1.0.0
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 rich==13.4.2
-scikit-learn==1.1.1
+scikit-learn==1.5.0
 scipy==1.11.1
 scooby==0.7.2
 seaborn==0.11.2
