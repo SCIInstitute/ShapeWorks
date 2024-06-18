@@ -28,10 +28,6 @@ jobs:
     
     steps:
 
-    - name: Download test data
-      shell: bash -l {0}
-      run: .github/workflows/download_test_data.sh
-
     - name: Add to path
       shell: bash -l {0}
       run: echo "C:\Miniconda\condabin" >> $GITHUB_PATH
@@ -43,7 +39,7 @@ jobs:
     - name: Init conda
       shell: bash -l {0}
       run: /c/Miniconda/condabin/conda.bat init --all
-      
+
     # - name: link
     #   shell: bash -l {0}
     #   run: cd /usr/bin && ln -s /c/Miniconda/condabin/conda.bat conda
@@ -76,6 +72,10 @@ jobs:
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
+
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
 
     - name: Get NSIS
       working-directory: ${{runner.workspace}}
