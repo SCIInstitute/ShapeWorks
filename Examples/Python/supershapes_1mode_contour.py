@@ -9,6 +9,8 @@ import glob
 import shapeworks as sw
 import subprocess
 import numpy as np
+import zipfile
+
 from ShapeCohortGen.CohortGenerator import Supershapes2DCohortGenerator
 
 def Run_Pipeline(args):
@@ -21,8 +23,12 @@ def Run_Pipeline(args):
     output_directory = "Output/supershapes_1mode_contour/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
+
     # See the generate_supershapes() function in this file for how the data is generated
-    sw.download_dataset(dataset_name, output_directory)
+    zip_file = 'Data/supershapes_1mode_contour.zip'
+    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+        zip_ref.extractall("Output/")
+#    sw.download_dataset(dataset_name, output_directory)
     dataset_name = "supershapes2D_1mode"
     contour_files = sorted(glob.glob(output_directory + dataset_name + "/contours/*.vtp"))
     

@@ -23,7 +23,7 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    dataset_name = "ellipsoid_fd"
+    dataset_name = "ellipsoid_fd_multiscale"
     output_directory = "Output/ellipsoid_fd/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
