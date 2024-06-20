@@ -38,10 +38,4 @@ else
 
     ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=$NPROCS --clean-after
     rm -rf $BUILD_DIR
-
-    echo "Create and store cache"
-    cd /
-    compress_file ${FILE} "${DEP_PATH}"
-    scp ${FILE} runner@${CACHE_HOST}:github
-    rm ${FILE}
 fi

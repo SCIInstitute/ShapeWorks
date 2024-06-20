@@ -28,12 +28,6 @@ jobs:
     
     steps:
 
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-    
     - name: OS Setup
       run: |
         ls /usr/local
@@ -57,10 +51,6 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: Restore Caches
-      shell: bash -l {0}
-      run: .github/workflows/restore_caches.sh
-    
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
@@ -120,12 +110,3 @@ jobs:
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-             
-    - name: Store ccache
-      shell: bash -l {0}
-      run: .github/workflows/store_ccache.sh
-
-    - name: Copy artifact
-      shell: bash -l {0}
-      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac artifacts
-      
