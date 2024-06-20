@@ -3,14 +3,18 @@ import shapeworks as sw
 import numpy as np
 import pandas as pd
 import json
+import zipfile
 
 def Run_Pipeline(args):
     output_directory = 'Output/femur_pvalues/'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    dataset_name = 'femur_pvalues'
-    sw.download_dataset(dataset_name, output_directory)
+    # unzip Data/femur_pvalues.zip
+    zip_file = 'Data/femur_pvalues.zip'
+    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+        zip_ref.extractall("Output/")
+
     swproj_file = f'{output_directory}/femur_pvalues.swproj'
     csvfile = convert_swproj_to_csv(swproj_file)
     data = pd.read_csv(csvfile)
