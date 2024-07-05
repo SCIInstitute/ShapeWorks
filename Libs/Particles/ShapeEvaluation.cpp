@@ -60,7 +60,7 @@ Eigen::VectorXd ShapeEvaluation::compute_full_compactness(const ParticleSystemEv
 
 //---------------------------------------------------------------------------
 double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& particle_system, const int num_modes,
-                                               const std::string& save_to) {
+                                               const std::string& save_to, bool surface_distance_mode) {
   const long n = particle_system.num_samples();
   const long d = particle_system.num_dims();
   const Eigen::MatrixXd& p = particle_system.get_matrix();
@@ -73,10 +73,12 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
 
   int num_values = particle_system.get_num_values_per_particle();
 
+  auto meshes = particle_system.get_meshes();
+
   double total_dist = 0.0;
   // leave one out
   for (int leave = 0; leave < n; leave++) {
-    // Create a new matrix \( y \) excluding the `leave`-th column:
+    // Create a new matrix, `y` excluding the column to be left out, `leave`
     Eigen::MatrixXd y(d, n - 1);
     y.leftCols(leave) = p.leftCols(leave);
     y.rightCols(n - leave - 1) = p.rightCols(n - leave - 1);
@@ -86,15 +88,15 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
     // * Subtracts the mean from each column to centralize the data around zero.
     const Eigen::VectorXd mu = y.rowwise().mean();
     y.colwise() -= mu;
-    // Define the test vector as the `leave`-th column of `p`
+    // Define the test vector as the column that was left out (`leave`) of `p`
     const Eigen::VectorXd y_test = p.col(leave);
 
     // Perform Singular Value Decomposition (SVD) on the data
     // Conducts SVD on the centralized matrix `y` to decompose it into its singular vectors and singular values.
-    // `Eigen::ComputeFullU` indicates calculation of the full \(U\) matrix, where \(U\) is an orthogonal matrix
+    // `Eigen::ComputeFullU` indicates calculation of the full `U` matrix, where `U` is an orthogonal matrix
     // containing left singular vectors.
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeFullU);
-    // `epsi` contains the first `num_modes` columns of matrix \(U\) (leading singular vectors).
+    // `epsi` contains the first `num_modes` columns of matrix `U` (leading singular vectors).
     const auto epsi = svd.matrixU().block(0, 0, d, num_modes);
     // * The test vector (`y_test`) is centralized by subtracting the mean (`mu`), then projected onto the subspace
     // spanned by leading singular vectors (`epsi`).
@@ -109,7 +111,28 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
     const long num_particles = d / num_values;
     const Eigen::Map<const RowMajorMatrix> y_test_reshaped(y_test.data(), num_particles, num_values);
     const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), num_particles, num_values);
-    const double dist = (rec_reshaped - y_test_reshaped).rowwise().norm().sum() / static_cast<double>(num_particles);
+
+    double dist = 0;
+    if (surface_distance_mode) {
+      // distance between each particle and the surface
+      auto mesh = meshes[leave];
+      for (int i = 0; i < num_particles; i++) {
+        vtkIdType face_id = 0;
+        double this_dist = 0;
+        Point3 point;
+        point[0] = rec_reshaped(i, 0);
+        point[1] = rec_reshaped(i, 1);
+        point[2] = rec_reshaped(i, 2);
+
+        mesh.closestPoint(point, this_dist, face_id);
+        dist += this_dist;
+      }
+
+    } else {
+      // euclidean distance between the original and reconstructed
+      dist = (rec_reshaped - y_test_reshaped).rowwise().norm().sum() / static_cast<double>(num_particles);
+    }
+
     total_dist += dist;
 
     reconstructions.push_back({dist, leave, rec_reshaped});
