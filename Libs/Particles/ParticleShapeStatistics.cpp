@@ -679,7 +679,8 @@ Eigen::VectorXd ParticleShapeStatistics::get_specificity(const std::function<voi
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(const std::function<void(float)>& progress_callback) const {
   auto ps = ParticleSystemEvaluation(matrix_);
-  return shapeworks::ShapeEvaluation::compute_full_generalization(ps, progress_callback);
+  ps.set_meshes(meshes_);
+  return shapeworks::ShapeEvaluation::compute_full_generalization(ps, progress_callback, particle_to_surface_mode_);
 }
 
 //---------------------------------------------------------------------------

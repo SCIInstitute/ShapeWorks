@@ -188,6 +188,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   // disable editing of the table
   ui_->samples_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+  connect(ui_->distance_method_particle, &QRadioButton::clicked, this, &AnalysisTool::handle_distance_method_changed);
+  connect(ui_->distance_method_surface, &QRadioButton::clicked, this, &AnalysisTool::handle_distance_method_changed);
 }
 
 //---------------------------------------------------------------------------
@@ -877,8 +880,11 @@ void AnalysisTool::compute_shape_evaluations() {
   eval_generalization_ = Eigen::VectorXd();
 
   ui_->compactness_graph->setMinimumSize(QSize(250, 250));
-  ui_->generalization_graph->setMinimumSize(QSize(250, 250));
-  ui_->specificity_graph->setMinimumSize(QSize(250, 250));
+  ui_->compactness_graph->setMaximumSize(QSize(250, 250));
+  ui_->generalization_graph->setMinimumSize(QSize(250, 300));
+  ui_->generalization_graph->setMaximumSize(QSize(250, 300));
+  ui_->specificity_graph->setMinimumSize(QSize(250, 300));
+  ui_->specificity_graph->setMaximumSize(QSize(250, 300));
 
   ui_->compactness_progress_widget->show();
   ui_->generalization_progress_widget->show();
@@ -912,6 +918,10 @@ void AnalysisTool::compute_shape_evaluations() {
     job_types = {ShapeEvaluationJob::JobType::CompactnessType};
   }
 
+  stats_.set_particle_to_surface_mode(ui_->distance_method_surface->isChecked());
+  // set meshes
+  /// stats_.set_meshes(???
+
   for (auto job_type : job_types) {
     switch (job_type) {
       case ShapeEvaluationJob::JobType::CompactnessType:
@@ -928,7 +938,7 @@ void AnalysisTool::compute_shape_evaluations() {
     }
 
     auto worker = Worker::create_worker();
-    auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_);
+    auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_, session_);
     connect(job.data(), &ShapeEvaluationJob::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
     connect(job.data(), &ShapeEvaluationJob::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
     worker->run_job(job);
@@ -1605,9 +1615,7 @@ void AnalysisTool::initialize_mesh_warper() {
       Mesh mesh(poly_data);
       median_shape->get_constraints(i).clipMesh(mesh);
 
-      // std::cerr << "domain: " << i << "\n";
       session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
-      // session_->get_mesh_manager()->get_mesh_warper(i)->generate_warp();
     }
   }
 }
@@ -1702,6 +1710,12 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
   evals_ready_ = false;
   group_changed();
   Q_EMIT update_view();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_distance_method_changed() {
+  evals_ready_ = false;
+  compute_shape_evaluations();
 }
 
 //---------------------------------------------------------------------------

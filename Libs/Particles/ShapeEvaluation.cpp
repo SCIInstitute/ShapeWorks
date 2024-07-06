@@ -123,7 +123,6 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
         point[0] = rec_reshaped(i, 0);
         point[1] = rec_reshaped(i, 1);
         point[2] = rec_reshaped(i, 2);
-
         mesh.closestPoint(point, this_dist, face_id);
         dist += this_dist;
       }
@@ -150,7 +149,8 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSystemEvaluation& particle_system,
-                                                             std::function<void(float)> progress_callback) {
+                                                             std::function<void(float)> progress_callback,
+                                                             bool surface_distance_mode) {
   const long n = particle_system.num_samples();  // number of samples
   const long d = particle_system.num_dims();     // number of dimensions (e.g. number of particles * 3)
   const Eigen::MatrixXd& p = particle_system.get_matrix();
@@ -164,6 +164,8 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
   Eigen::VectorXd total_dists = Eigen::VectorXd::Zero(n - 1);
 
   int num_values = particle_system.get_num_values_per_particle();
+
+  auto meshes = particle_system.get_meshes();
 
   for (int leave = 0; leave < n; leave++) {
     if (progress_callback) {
@@ -187,7 +189,23 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
       const long num_particles = d / num_values;
       const Eigen::Map<const RowMajorMatrix> ytest_reshaped(y_test.data(), num_particles, num_values);
       const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), num_particles, num_values);
-      const double dist = (rec_reshaped - ytest_reshaped).rowwise().norm().sum() / num_particles;
+      double dist = 0;
+      if (surface_distance_mode) {
+        auto mesh = meshes[leave];
+        for (int i = 0; i < num_particles; i++) {
+          vtkIdType face_id = 0;
+          double this_dist = 0;
+          Point3 point;
+          point[0] = rec_reshaped(i, 0);
+          point[1] = rec_reshaped(i, 1);
+          point[2] = rec_reshaped(i, 2);
+          mesh.closestPoint(point, this_dist, face_id);
+          dist += this_dist;
+        }
+        total_dists(mode - 1) += dist;
+      } else {
+        dist = (rec_reshaped - ytest_reshaped).rowwise().norm().sum() / num_particles;
+      }
       total_dists(mode - 1) += dist;
     }
   }

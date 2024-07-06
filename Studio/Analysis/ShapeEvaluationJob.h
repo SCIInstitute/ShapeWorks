@@ -4,7 +4,11 @@
 #include <Job/Job.h>
 #include <ParticleShapeStatistics.h>
 
+#include <QSharedPointer>
+
 namespace shapeworks {
+
+class Session;
 
 /**
  * @brief The ShapeEvaluationJob class is a worker class that computes shape evaluation metrics of compactness,
@@ -15,7 +19,7 @@ class ShapeEvaluationJob : public Job {
  public:
   enum class JobType { CompactnessType, SpecificityType, GeneralizationType };
 
-  ShapeEvaluationJob(JobType job_type, ParticleShapeStatistics stats);
+  ShapeEvaluationJob(JobType job_type, ParticleShapeStatistics stats, QSharedPointer<Session> session);
 
   void run() override;
 
@@ -28,9 +32,11 @@ class ShapeEvaluationJob : public Job {
 
  private:
   void receive_progress(float progress);
+  void prep_meshes();
 
   JobType job_type_;
   ParticleShapeStatistics stats_;
+  QSharedPointer<Session> session_;
 };
 }  // namespace shapeworks
 

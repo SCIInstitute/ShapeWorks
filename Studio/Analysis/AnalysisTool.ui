@@ -1896,7 +1896,7 @@ Reference Domain</string>
               <property name="minimumSize">
                <size>
                 <width>50</width>
-                <height>50</height>
+                <height>300</height>
                </size>
               </property>
              </widget>
@@ -1944,7 +1944,7 @@ Reference Domain</string>
               <property name="minimumSize">
                <size>
                 <width>50</width>
-                <height>50</height>
+                <height>300</height>
                </size>
               </property>
              </widget>
@@ -1992,7 +1992,7 @@ Reference Domain</string>
               <property name="minimumSize">
                <size>
                 <width>50</width>
-                <height>50</height>
+                <height>300</height>
                </size>
               </property>
              </widget>
@@ -2021,6 +2021,32 @@ Reference Domain</string>
                 </widget>
                </item>
               </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QGroupBox" name="distance_method_groupbox">
+           <property name="title">
+            <string>Distance Method</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_29">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="distance_method_particle">
+              <property name="text">
+               <string>Particle to Particle</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="distance_method_surface">
+              <property name="text">
+               <string>Particle to Surface</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
            </layout>

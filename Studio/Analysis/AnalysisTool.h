@@ -180,6 +180,8 @@ class AnalysisTool : public QWidget {
   void handle_group_pvalues_complete();
   void handle_alignment_changed(int new_alignment);
 
+  void handle_distance_method_changed();
+
   void run_good_bad_particles();
 
   void handle_lda_progress(double progress);
@@ -242,7 +244,6 @@ class AnalysisTool : public QWidget {
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
 
-  /// itk particle shape statistics
   ParticleShapeStatistics stats_;
   bool stats_ready_ = false;
   bool evals_ready_ = false;
