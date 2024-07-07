@@ -673,7 +673,8 @@ Eigen::VectorXd ParticleShapeStatistics::get_compactness(const std::function<voi
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(const std::function<void(float)>& progress_callback) const {
   auto ps = ParticleSystemEvaluation(matrix_);
-  return shapeworks::ShapeEvaluation::compute_full_specificity(ps, progress_callback);
+  ps.set_meshes(meshes_);
+  return shapeworks::ShapeEvaluation::compute_full_specificity(ps, progress_callback, particle_to_surface_mode_);
 }
 
 //---------------------------------------------------------------------------

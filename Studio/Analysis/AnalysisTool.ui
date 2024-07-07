@@ -1896,7 +1896,7 @@ Reference Domain</string>
               <property name="minimumSize">
                <size>
                 <width>50</width>
-                <height>300</height>
+                <height>50</height>
                </size>
               </property>
              </widget>
@@ -1944,7 +1944,7 @@ Reference Domain</string>
               <property name="minimumSize">
                <size>
                 <width>50</width>
-                <height>300</height>
+                <height>50</height>
                </size>
               </property>
              </widget>
@@ -1992,7 +1992,7 @@ Reference Domain</string>
               <property name="minimumSize">
                <size>
                 <width>50</width>
-                <height>300</height>
+                <height>50</height>
                </size>
               </property>
              </widget>

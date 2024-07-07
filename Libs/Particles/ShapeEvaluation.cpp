@@ -1,5 +1,7 @@
 #include "ShapeEvaluation.h"
 
+#include <tbb/parallel_for.h>
+
 #include <Eigen/Core>
 #include <Eigen/SVD>
 #include <fstream>
@@ -217,10 +219,11 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
 
 //---------------------------------------------------------------------------
 double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& particle_system, const int num_modes,
-                                            const std::string& save_to) {
+                                            const std::string& save_to, bool surface_distance_mode) {
   const long n = particle_system.num_samples();
   const long d = particle_system.num_dims();
   int num_values = particle_system.get_num_values_per_particle();
+  auto meshes = particle_system.get_meshes();
 
   if (num_modes > n - 1) {
     throw std::invalid_argument("Invalid mode of variation specified");
@@ -263,6 +266,26 @@ double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& part
     for (int i = 0; i < num_samples; i++) {
       Eigen::VectorXd pts_m = sampling_points.col(i);
       Eigen::MatrixXd pts_distance_vec = pts_models.colwise() - pts_m;
+
+      if (surface_distance_mode) {
+        // overwrite the distance calculation with the surface distance
+        pts_distance_vec = Eigen::MatrixXd::Zero(num_particles, num_train);
+
+        for (int j = 0; j < n; j++) {  // for each original subject
+          auto mesh = meshes[j];
+          for (int i = 0; i < num_particles; i++) {
+            vtkIdType face_id = 0;
+            double this_dist = 0;
+            Point3 point;
+            point[0] = pts_m(i, 0);
+            point[1] = pts_m(i, 1);
+            point[2] = pts_m(i, 2);
+            mesh.closestPoint(point, this_dist, face_id);
+            pts_distance_vec(i, j) = this_dist;
+          }
+        }
+      }
+
       Eigen::MatrixXd pts_distance(Eigen::MatrixXd::Constant(1, num_train, 0.0));
 
       for (int j = 0; j < num_train; j++) {
@@ -297,7 +320,8 @@ double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& part
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEvaluation& particle_system,
-                                                          std::function<void(float)> progress_callback) {
+                                                          std::function<void(float)> progress_callback,
+                                                          bool surface_distance_mode) {
   const long n = particle_system.num_samples();
   const long d = particle_system.num_dims();
   const int num_values = particle_system.get_num_values_per_particle();
@@ -314,6 +338,8 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
   y.colwise() -= mu;
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeFullU);
   const auto all_eigen_values = svd.singularValues();
+
+  auto meshes = particle_system.get_meshes();
 
   for (int num_modes = 1; num_modes < n; num_modes++) {
     if (progress_callback) {
@@ -339,6 +365,28 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
     for (int i = 0; i < num_samples; i++) {
       Eigen::VectorXd pts_m = sampling_points.col(i);
       Eigen::MatrixXd pts_distance_vec = pts_models.colwise() - pts_m;
+      if (surface_distance_mode) {
+        // overwrite the distance calculation with the surface distance
+        pts_distance_vec = Eigen::MatrixXd::Zero(num_particles, num_train);
+
+        unsigned long num_meshes = meshes.size();
+        tbb::parallel_for(tbb::blocked_range<size_t>{0, num_meshes}, [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t j = r.begin(); i < r.end(); ++i) {  // for each original subject
+            auto mesh = meshes[j];
+            for (int i = 0; i < num_particles; i++) {
+              vtkIdType face_id = 0;
+              double this_dist = 0;
+              Point3 point;
+              point[0] = pts_m(i, 0);
+              point[1] = pts_m(i, 1);
+              point[2] = pts_m(i, 2);
+              mesh.closestPoint(point, this_dist, face_id);
+              pts_distance_vec(i, j) = this_dist;
+            }
+          }
+        });
+      }
+
       Eigen::MatrixXd pts_distance(Eigen::MatrixXd::Constant(1, num_train, 0.0));
 
       for (int j = 0; j < num_train; j++) {

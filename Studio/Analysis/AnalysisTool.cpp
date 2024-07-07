@@ -880,11 +880,8 @@ void AnalysisTool::compute_shape_evaluations() {
   eval_generalization_ = Eigen::VectorXd();
 
   ui_->compactness_graph->setMinimumSize(QSize(250, 250));
-  ui_->compactness_graph->setMaximumSize(QSize(250, 250));
   ui_->generalization_graph->setMinimumSize(QSize(250, 300));
-  ui_->generalization_graph->setMaximumSize(QSize(250, 300));
   ui_->specificity_graph->setMinimumSize(QSize(250, 300));
-  ui_->specificity_graph->setMaximumSize(QSize(250, 300));
 
   ui_->compactness_progress_widget->show();
   ui_->generalization_progress_widget->show();
