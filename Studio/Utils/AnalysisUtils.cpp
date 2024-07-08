@@ -73,6 +73,9 @@ void AnalysisUtils::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString
   plot->setMinimumSize(250, 250);
   plot->addGraph(graph);
   plot->zoomToFit();
+  plot->update();
+  plot->getPlotter()->redrawPlot();
+  plot->resize(plot->sizeHint());
 }
 
 //---------------------------------------------------------------------------

@@ -287,7 +287,6 @@ class AnalysisTool : public QWidget {
   bool lda_computed_ = false;
   bool block_group_change_ = false;
 
-  AlignmentType current_alignment_{AlignmentType::Local};
   ParticleAreaPanel* particle_area_panel_{nullptr};
   ShapeScalarPanel* shape_scalar_panel_{nullptr};
 };

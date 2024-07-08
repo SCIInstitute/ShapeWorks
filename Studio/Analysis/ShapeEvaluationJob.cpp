@@ -41,7 +41,13 @@ void ShapeEvaluationJob::prep_meshes() {
       (job_type_ == JobType::GeneralizationType || job_type_ == JobType::SpecificityType)) {
     std::vector<Mesh> meshes;
     for (auto& shape : session_->get_shapes()) {
-      meshes.push_back(shape->get_groomed_meshes(true).get_combined_poly_data());
+      Mesh mesh = shape->get_groomed_meshes(true).get_combined_poly_data();
+
+      auto transform = shape->get_alignment(session_->get_current_alignment());
+      // Apply the transform to the mesh
+      mesh.applyTransform(transform);
+
+      meshes.emplace_back(mesh);
     }
     stats_.set_meshes(meshes);
   }

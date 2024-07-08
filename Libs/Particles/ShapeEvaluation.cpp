@@ -1,5 +1,6 @@
 #include "ShapeEvaluation.h"
 
+#include <Logging.h>
 #include <tbb/parallel_for.h>
 
 #include <Eigen/Core>
@@ -202,9 +203,8 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
           point[1] = rec_reshaped(i, 1);
           point[2] = rec_reshaped(i, 2);
           mesh.closestPoint(point, this_dist, face_id);
-          dist += this_dist;
+          dist += this_dist / num_particles;
         }
-        total_dists(mode - 1) += dist;
       } else {
         dist = (rec_reshaped - ytest_reshaped).rowwise().norm().sum() / num_particles;
       }
@@ -365,34 +365,41 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
     for (int i = 0; i < num_samples; i++) {
       Eigen::VectorXd pts_m = sampling_points.col(i);
       Eigen::MatrixXd pts_distance_vec = pts_models.colwise() - pts_m;
+
+      Eigen::MatrixXd pts_distance(Eigen::MatrixXd::Constant(1, num_train, 0.0));
+
       if (surface_distance_mode) {
         // overwrite the distance calculation with the surface distance
         pts_distance_vec = Eigen::MatrixXd::Zero(num_particles, num_train);
 
         unsigned long num_meshes = meshes.size();
+
+        // sum the distances to the surface for each
+
         tbb::parallel_for(tbb::blocked_range<size_t>{0, num_meshes}, [&](const tbb::blocked_range<size_t>& r) {
           for (size_t j = r.begin(); j < r.end(); ++j) {  // for each original subject
             auto mesh = meshes[j];
+            double total_dist = 0.0;
             for (int k = 0; k < num_particles; k++) {
               vtkIdType face_id = 0;
               double this_dist = 0;
               Point3 point;
-              point[0] = pts_m(k*3+0);
-              point[1] = pts_m(k*3+1);
-              point[2] = pts_m(k*3+2);
+              point[0] = pts_m(k * 3 + 0);
+              point[1] = pts_m(k * 3 + 1);
+              point[2] = pts_m(k * 3 + 2);
               mesh.closestPoint(point, this_dist, face_id);
-              pts_distance_vec(i, j) = this_dist;
+              total_dist = total_dist + this_dist;
             }
+            pts_distance(j) = total_dist;
           }
         });
-      }
 
-      Eigen::MatrixXd pts_distance(Eigen::MatrixXd::Constant(1, num_train, 0.0));
-
-      for (int j = 0; j < num_train; j++) {
-        Eigen::Map<const RowMajorMatrix> pts_distance_vec_reshaped(pts_distance_vec.col(j).data(), num_particles,
-                                                                   num_values);
-        pts_distance(j) = (pts_distance_vec_reshaped).rowwise().norm().sum();
+      } else {
+        for (int j = 0; j < num_train; j++) {
+          Eigen::Map<const RowMajorMatrix> pts_distance_vec_reshaped(pts_distance_vec.col(j).data(), num_particles,
+                                                                     num_values);
+          pts_distance(j) = (pts_distance_vec_reshaped).rowwise().norm().sum();
+        }
       }
 
       int closest_idx, r;
