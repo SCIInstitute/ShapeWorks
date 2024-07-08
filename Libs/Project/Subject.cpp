@@ -101,6 +101,12 @@ void Subject::set_fixed(bool fixed) { fixed_ = fixed; }
 bool Subject::is_excluded() { return excluded_; }
 
 //---------------------------------------------------------------------------
+void Subject::set_explanatory_variable(double val) { explanatory_variable_ = val; }
+
+//---------------------------------------------------------------------------
+double Subject::get_explanatory_variable() { return explanatory_variable_; }
+
+//---------------------------------------------------------------------------
 void Subject::set_excluded(bool excluded) { excluded_ = excluded; }
 
 //---------------------------------------------------------------------------
