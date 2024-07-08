@@ -371,15 +371,15 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
 
         unsigned long num_meshes = meshes.size();
         tbb::parallel_for(tbb::blocked_range<size_t>{0, num_meshes}, [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t j = r.begin(); i < r.end(); ++i) {  // for each original subject
+          for (size_t j = r.begin(); j < r.end(); ++j) {  // for each original subject
             auto mesh = meshes[j];
-            for (int i = 0; i < num_particles; i++) {
+            for (int k = 0; k < num_particles; k++) {
               vtkIdType face_id = 0;
               double this_dist = 0;
               Point3 point;
-              point[0] = pts_m(i, 0);
-              point[1] = pts_m(i, 1);
-              point[2] = pts_m(i, 2);
+              point[0] = pts_m(k*3+0);
+              point[1] = pts_m(k*3+1);
+              point[2] = pts_m(k*3+2);
               mesh.closestPoint(point, this_dist, face_id);
               pts_distance_vec(i, j) = this_dist;
             }
