@@ -153,6 +153,7 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSystemEvaluation& particle_system,
                                                              std::function<void(float)> progress_callback,
+                                                             std::function<bool()> check_abort,
                                                              bool surface_distance_mode) {
   const long n = particle_system.num_samples();  // number of samples
   const long d = particle_system.num_dims();     // number of dimensions (e.g. number of particles * 3)
@@ -185,6 +186,9 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeFullU);
 
     for (int mode = 1; mode < n; mode++) {
+      if (check_abort && check_abort()) {
+        return {};
+      }
       const auto epsi = svd.matrixU().block(0, 0, d, mode);
       const auto betas = epsi.transpose() * (y_test - mu);
       const Eigen::VectorXd rec = epsi * betas + mu;
@@ -321,6 +325,7 @@ double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& part
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEvaluation& particle_system,
                                                           std::function<void(float)> progress_callback,
+                                                          std::function<bool()> check_abort,
                                                           bool surface_distance_mode) {
   const long n = particle_system.num_samples();
   const long d = particle_system.num_dims();
@@ -363,6 +368,10 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
     Eigen::VectorXd distance_to_closest_training_sample(num_samples);
 
     for (int i = 0; i < num_samples; i++) {
+      if (check_abort && check_abort()) {
+        return {};
+      }
+
       Eigen::VectorXd pts_m = sampling_points.col(i);
       Eigen::MatrixXd pts_distance_vec = pts_models.colwise() - pts_m;
 
@@ -375,9 +384,12 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
         unsigned long num_meshes = meshes.size();
 
         // sum the distances to the surface for each
-
         tbb::parallel_for(tbb::blocked_range<size_t>{0, num_meshes}, [&](const tbb::blocked_range<size_t>& r) {
           for (size_t j = r.begin(); j < r.end(); ++j) {  // for each original subject
+            if (check_abort && check_abort()) {
+              return;
+            }
+
             auto mesh = meshes[j];
             double total_dist = 0.0;
             for (int k = 0; k < num_particles; k++) {

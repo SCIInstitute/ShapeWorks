@@ -1254,8 +1254,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
                   "Computes the compactness measure for a particle system", "particleSystem"_a, "nModes"_a,
                   "saveTo"_a = "")
 
-      .def_static("ComputeGeneralization",
-                  &ShapeEvaluation::compute_generalization,
+      .def_static("ComputeGeneralization", &ShapeEvaluation::compute_generalization,
                   "Computes the generalization measure for a particle system", "particleSystem"_a, "nModes"_a,
                   "saveTo"_a = "", "surface_distance_mode"_a = false)
 
@@ -1269,11 +1268,11 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def_static("ComputeFullGeneralization", &ShapeEvaluation::compute_full_generalization,
                   "Computes the generalization measure for a particle system, all modes", "particleSystem"_a,
-                  "progress_callback"_a = nullptr, "surface_distance_mode"_a = false)
+                  "progress_callback"_a = nullptr, "check_abort"_a = nullptr, "surface_distance_mode"_a = false)
 
       .def_static("ComputeFullSpecificity", &ShapeEvaluation::compute_full_specificity,
                   "Computes the specificity measure for a particle system, all modes", "particleSystem"_a,
-                  "progress_callback"_a = nullptr, "surface_distance_mode"_a = false);
+                  "progress_callback"_a = nullptr, "check_abort"_a = nullptr, "surface_distance_mode"_a = false);
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
 

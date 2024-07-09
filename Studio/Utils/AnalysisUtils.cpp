@@ -1,6 +1,7 @@
 #include "AnalysisUtils.h"
 
 #include <Data/Session.h>
+#include <Logging.h>
 #include <jkqtplotter/graphs/jkqtpboxplot.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/graphs/jkqtpstatisticsadaptors.h>
@@ -70,12 +71,8 @@ void AnalysisUtils::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString
 
   plot->clearAllMouseWheelActions();
   plot->setMousePositionShown(false);
-  plot->setMinimumSize(250, 250);
   plot->addGraph(graph);
   plot->zoomToFit();
-  plot->update();
-  plot->getPlotter()->redrawPlot();
-  plot->resize(plot->sizeHint());
 }
 
 //---------------------------------------------------------------------------

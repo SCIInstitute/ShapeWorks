@@ -22,6 +22,7 @@ class ShapeEvaluation {
 
   static Eigen::VectorXd compute_full_generalization(const ParticleSystemEvaluation& particle_system,
                                                      std::function<void(float)> progress_callback = nullptr,
+                                                     std::function<bool()> check_abort = nullptr,
                                                      bool surface_distance_mode = false);
 
   static double compute_specificity(const ParticleSystemEvaluation& particle_system, int num_mode,
@@ -29,6 +30,7 @@ class ShapeEvaluation {
 
   static Eigen::VectorXd compute_full_specificity(const ParticleSystemEvaluation& particle_system,
                                                   std::function<void(float)> progress_callback = nullptr,
+                                                  std::function<bool()> check_abort = nullptr,
                                                   bool surface_distance_mode = false);
 };
 }  // namespace shapeworks

@@ -289,5 +289,7 @@ class AnalysisTool : public QWidget {
 
   ParticleAreaPanel* particle_area_panel_{nullptr};
   ShapeScalarPanel* shape_scalar_panel_{nullptr};
+
+  std::vector<QPointer<Worker>> workers_;
 };
 }  // namespace shapeworks

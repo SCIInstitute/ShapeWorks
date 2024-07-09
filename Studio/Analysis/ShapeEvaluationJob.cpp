@@ -15,16 +15,17 @@ ShapeEvaluationJob::ShapeEvaluationJob(JobType job_type, ParticleShapeStatistics
 //-----------------------------------------------------------------------------
 void ShapeEvaluationJob::run() {
   auto callback = std::bind(&ShapeEvaluationJob::receive_progress, this, std::placeholders::_1);
+  auto check_abort = std::bind(&Job::is_aborted, this);
   prep_meshes();
   switch (job_type_) {
     case JobType::CompactnessType:
       Q_EMIT result_ready(job_type_, stats_.get_compactness(callback));
       break;
     case JobType::GeneralizationType:
-      Q_EMIT result_ready(job_type_, stats_.get_generalization(callback));
+      Q_EMIT result_ready(job_type_, stats_.get_generalization(callback, check_abort));
       break;
     case JobType::SpecificityType:
-      Q_EMIT result_ready(job_type_, stats_.get_specificity(callback));
+      Q_EMIT result_ready(job_type_, stats_.get_specificity(callback, check_abort));
       break;
   }
 }

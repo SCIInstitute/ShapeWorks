@@ -189,8 +189,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   // disable editing of the table
   ui_->samples_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-  connect(ui_->distance_method_particle, &QRadioButton::clicked, this, &AnalysisTool::handle_distance_method_changed);
-  connect(ui_->distance_method_surface, &QRadioButton::clicked, this, &AnalysisTool::handle_distance_method_changed);
+  // only connect one so that we only get one signal
+  connect(ui_->distance_method_particle, &QRadioButton::toggled, this, &AnalysisTool::handle_distance_method_changed);
 }
 
 //---------------------------------------------------------------------------
@@ -866,7 +866,15 @@ void AnalysisTool::store_settings() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::shutdown() { pca_animate_timer_.stop(); }
+void AnalysisTool::shutdown() {
+  pca_animate_timer_.stop();
+
+  for (const auto& worker : workers_) {
+    if (worker) {
+      worker->stop();
+    }
+  }
+}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_shape_evaluations() {
@@ -916,7 +924,13 @@ void AnalysisTool::compute_shape_evaluations() {
   }
 
   stats_.set_particle_to_surface_mode(ui_->distance_method_surface->isChecked());
-  // set meshes
+
+  // stop any running jobs
+  for (const auto& worker : workers_) {
+    if (worker) {
+      worker->stop();
+    }
+  }
 
   for (auto job_type : job_types) {
     switch (job_type) {
@@ -933,7 +947,8 @@ void AnalysisTool::compute_shape_evaluations() {
         SW_DEBUG("job type: unknown");
     }
 
-    auto* worker = Worker::create_worker();
+    QPointer<Worker> worker = Worker::create_worker();
+    workers_.push_back(worker);
     auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_, session_);
     connect(job.data(), &ShapeEvaluationJob::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
     connect(job.data(), &ShapeEvaluationJob::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
@@ -1623,24 +1638,22 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_t
   switch (job_type) {
     case ShapeEvaluationJob::JobType::CompactnessType:
       eval_compactness_ = data;
-      AnalysisUtils::create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
       ui_->compactness_progress_widget->hide();
       ui_->compactness_graph->show();
+      AnalysisUtils::create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
       break;
     case ShapeEvaluationJob::JobType::SpecificityType:
-      AnalysisUtils::create_plot(ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
       eval_specificity_ = data;
       ui_->specificity_progress_widget->hide();
       ui_->specificity_graph->show();
-      ui_->specificity_graph->update();
+      AnalysisUtils::create_plot(ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
       break;
     case ShapeEvaluationJob::JobType::GeneralizationType:
-      AnalysisUtils::create_plot(ui_->generalization_graph, data, "Generalization", "Number of Modes",
-                                 "Generalization");
       eval_generalization_ = data;
       ui_->generalization_progress_widget->hide();
       ui_->generalization_graph->show();
-      ui_->generalization_graph->update();
+      AnalysisUtils::create_plot(ui_->generalization_graph, data, "Generalization", "Number of Modes",
+                                 "Generalization");
       break;
   }
 }
@@ -1718,7 +1731,7 @@ void AnalysisTool::handle_distance_method_changed() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::run_good_bad_particles() {
-  auto worker = Worker::create_worker();
+  auto* worker = Worker::create_worker();
   ui_->particles_progress->show();
   ui_->run_good_bad->setEnabled(false);
   auto job = QSharedPointer<ParticleNormalEvaluationJob>::create(session_, ui_->good_bad_max_angle->value());
