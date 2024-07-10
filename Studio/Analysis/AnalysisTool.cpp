@@ -188,6 +188,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   // disable editing of the table
   ui_->samples_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+  // only connect one so that we only get one signal
+  connect(ui_->distance_method_particle, &QRadioButton::toggled, this, &AnalysisTool::handle_distance_method_changed);
 }
 
 //---------------------------------------------------------------------------
@@ -863,7 +866,15 @@ void AnalysisTool::store_settings() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::shutdown() { pca_animate_timer_.stop(); }
+void AnalysisTool::shutdown() {
+  pca_animate_timer_.stop();
+
+  for (const auto& worker : workers_) {
+    if (worker) {
+      worker->stop();
+    }
+  }
+}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_shape_evaluations() {
@@ -912,6 +923,15 @@ void AnalysisTool::compute_shape_evaluations() {
     job_types = {ShapeEvaluationJob::JobType::CompactnessType};
   }
 
+  stats_.set_particle_to_surface_mode(ui_->distance_method_surface->isChecked());
+
+  // stop any running jobs
+  for (const auto& worker : workers_) {
+    if (worker) {
+      worker->stop();
+    }
+  }
+
   for (auto job_type : job_types) {
     switch (job_type) {
       case ShapeEvaluationJob::JobType::CompactnessType:
@@ -927,8 +947,9 @@ void AnalysisTool::compute_shape_evaluations() {
         SW_DEBUG("job type: unknown");
     }
 
-    auto worker = Worker::create_worker();
-    auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_);
+    QPointer<Worker> worker = Worker::create_worker();
+    workers_.push_back(worker);
+    auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_, session_);
     connect(job.data(), &ShapeEvaluationJob::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
     connect(job.data(), &ShapeEvaluationJob::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
     worker->run_job(job);
@@ -1605,9 +1626,7 @@ void AnalysisTool::initialize_mesh_warper() {
       Mesh mesh(poly_data);
       median_shape->get_constraints(i).clipMesh(mesh);
 
-      // std::cerr << "domain: " << i << "\n";
       session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
-      // session_->get_mesh_manager()->get_mesh_warper(i)->generate_warp();
     }
   }
 }
@@ -1618,24 +1637,23 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_t
 
   switch (job_type) {
     case ShapeEvaluationJob::JobType::CompactnessType:
-      SW_DEBUG("compactness go");
       eval_compactness_ = data;
-      AnalysisUtils::create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
-      ui_->compactness_graph->show();
       ui_->compactness_progress_widget->hide();
+      ui_->compactness_graph->show();
+      AnalysisUtils::create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
       break;
     case ShapeEvaluationJob::JobType::SpecificityType:
-      AnalysisUtils::create_plot(ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
       eval_specificity_ = data;
-      ui_->specificity_graph->show();
       ui_->specificity_progress_widget->hide();
+      ui_->specificity_graph->show();
+      AnalysisUtils::create_plot(ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
       break;
     case ShapeEvaluationJob::JobType::GeneralizationType:
+      eval_generalization_ = data;
+      ui_->generalization_progress_widget->hide();
+      ui_->generalization_graph->show();
       AnalysisUtils::create_plot(ui_->generalization_graph, data, "Generalization", "Number of Modes",
                                  "Generalization");
-      eval_generalization_ = data;
-      ui_->generalization_graph->show();
-      ui_->generalization_progress_widget->hide();
       break;
   }
 }
@@ -1679,16 +1697,17 @@ void AnalysisTool::handle_group_pvalues_complete() {
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_alignment_changed(int new_alignment) {
   new_alignment -= 2;  // minus two for local and global that come first (local == -1, global == -2)
-  if (new_alignment == current_alignment_) {
+  if (new_alignment == session_->get_current_alignment()) {
     return;
   }
-  current_alignment_ = static_cast<AlignmentType>(new_alignment);
+
+  session_->set_current_alignment(static_cast<AlignmentType>(new_alignment));
 
   Q_FOREACH (ShapeHandle shape, session_->get_non_excluded_shapes()) {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    if (current_alignment_ == AlignmentType::Local) {
+    if (session_->get_current_alignment() == AlignmentType::Local) {
       transform = nullptr;
-    } else if (current_alignment_ == AlignmentType::Global) {
+    } else if (session_->get_current_alignment() == AlignmentType::Global) {
       auto domain_names = session_->get_project()->get_domain_names();
       transform = shape->get_groomed_transform(domain_names.size());
     } else {
@@ -1705,8 +1724,14 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::handle_distance_method_changed() {
+  evals_ready_ = false;
+  compute_shape_evaluations();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::run_good_bad_particles() {
-  auto worker = Worker::create_worker();
+  auto* worker = Worker::create_worker();
   ui_->particles_progress->show();
   ui_->run_good_bad->setEnabled(false);
   auto job = QSharedPointer<ParticleNormalEvaluationJob>::create(session_, ui_->good_bad_max_angle->value());
@@ -1999,7 +2024,7 @@ Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_reconstructed_domain_transforms() {
   auto shapes = session_->get_non_excluded_shapes();
-  if (current_alignment_ == AlignmentType::Local) {
+  if (session_->get_current_alignment() == AlignmentType::Local) {
     reconstruction_transforms_.resize(session_->get_domains_per_shape());
     for (int domain = 0; domain < session_->get_domains_per_shape(); domain++) {
       int num_shapes = shapes.size();
