@@ -15464,7 +15464,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>ComputeFullGeneralization(particleSystem: shapeworks_py.ParticleSystem, progress_callback: Callable[[float], None] = None) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
+      <p>ComputeFullGeneralization(particleSystem: shapeworks_py.ParticleSystem, progress_callback: Callable[[float], None] = None, check_abort: Callable[[], bool] = None, surface_distance_mode: bool = False) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
 <p>Computes the generalization measure for a particle system, all modes</p>
 
   </div>
@@ -15487,7 +15487,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>ComputeFullSpecificity(particleSystem: shapeworks_py.ParticleSystem, progress_callback: Callable[[float], None] = None) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
+      <p>ComputeFullSpecificity(particleSystem: shapeworks_py.ParticleSystem, progress_callback: Callable[[float], None] = None, check_abort: Callable[[], bool] = None, surface_distance_mode: bool = False) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
 <p>Computes the specificity measure for a particle system, all modes</p>
 
   </div>
@@ -15510,7 +15510,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>ComputeGeneralization(particleSystem: shapeworks_py.ParticleSystem, nModes: int, saveTo: str = '') -&gt; float</p>
+      <p>ComputeGeneralization(particleSystem: shapeworks_py.ParticleSystem, nModes: int, saveTo: str = '', surface_distance_mode: bool = False) -&gt; float</p>
 <p>Computes the generalization measure for a particle system</p>
 
   </div>
@@ -15533,7 +15533,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>ComputeSpecificity(particleSystem: shapeworks_py.ParticleSystem, nModes: int, saveTo: str = '') -&gt; float</p>
+      <p>ComputeSpecificity(particleSystem: shapeworks_py.ParticleSystem, nModes: int, saveTo: str = '', surface_distance_mode: bool = False) -&gt; float</p>
 <p>Computes the specificity measure for a particle system</p>
 
   </div>
@@ -16572,7 +16572,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>seed(seed: int = 1718871198660655) -&gt; None</p>
+      <p>seed(seed: int = 1720632568935463) -&gt; None</p>
 <p>sets the seed for random number generation (internal use)</p>
 
   </div>

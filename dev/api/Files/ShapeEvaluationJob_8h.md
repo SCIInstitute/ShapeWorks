@@ -58,14 +58,18 @@ Q_DECLARE_METATYPE(
 #include <Job/Job.h>
 #include <ParticleShapeStatistics.h>
 
+#include <QSharedPointer>
+
 namespace shapeworks {
+
+class Session;
 
 class ShapeEvaluationJob : public Job {
   Q_OBJECT
  public:
   enum class JobType { CompactnessType, SpecificityType, GeneralizationType };
 
-  ShapeEvaluationJob(JobType job_type, ParticleShapeStatistics stats);
+  ShapeEvaluationJob(JobType job_type, ParticleShapeStatistics stats, QSharedPointer<Session> session);
 
   void run() override;
 
@@ -78,9 +82,11 @@ class ShapeEvaluationJob : public Job {
 
  private:
   void receive_progress(float progress);
+  void prep_meshes();
 
   JobType job_type_;
   ParticleShapeStatistics stats_;
+  QSharedPointer<Session> session_;
 };
 }  // namespace shapeworks
 
@@ -91,4 +97,4 @@ Q_DECLARE_METATYPE(shapeworks::ShapeEvaluationJob::JobType);
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:54 +0000
+Updated on 2024-07-10 at 17:29:14 +0000

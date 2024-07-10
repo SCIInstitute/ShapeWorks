@@ -2459,6 +2459,7 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Analyze.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;MeshManager.h&gt;</span>
@@ -2512,6 +2513,8 @@
 <span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">AlignmentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Analyze</span><span class="o">::</span><span class="n">AlignmentType</span><span class="p">;</span>
+
 <span class="w">  </span><span class="n">Session</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
 
 <span class="w">  </span><span class="o">~</span><span class="n">Session</span><span class="p">();</span>
@@ -2701,6 +2704,9 @@
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_all_particles</span><span class="p">();</span>
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">get_all_scalars</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">target_feature</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_current_alignment</span><span class="p">(</span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">alignment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">current_alignment_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">alignment</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">AlignmentType</span><span class="w"> </span><span class="nf">get_current_alignment</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">current_alignment_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
@@ -2786,12 +2792,14 @@
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">current_alignment_</span><span class="p">{</span><span class="n">AlignmentType</span><span class="o">::</span><span class="n">Local</span><span class="p">};</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-06-20 at 08:12:54 +0000</p>
+<p>Updated on 2024-07-10 at 17:29:14 +0000</p>
 
               
             </article>

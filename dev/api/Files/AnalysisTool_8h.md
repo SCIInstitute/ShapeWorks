@@ -201,6 +201,8 @@ class AnalysisTool : public QWidget {
   void handle_group_pvalues_complete();
   void handle_alignment_changed(int new_alignment);
 
+  void handle_distance_method_changed();
+
   void run_good_bad_particles();
 
   void handle_lda_progress(double progress);
@@ -304,9 +306,10 @@ class AnalysisTool : public QWidget {
   bool lda_computed_ = false;
   bool block_group_change_ = false;
 
-  AlignmentType current_alignment_{AlignmentType::Local};
   ParticleAreaPanel* particle_area_panel_{nullptr};
   ShapeScalarPanel* shape_scalar_panel_{nullptr};
+
+  std::vector<QPointer<Worker>> workers_;
 };
 }  // namespace shapeworks
 ```
@@ -314,4 +317,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:54 +0000
+Updated on 2024-07-10 at 17:29:14 +0000

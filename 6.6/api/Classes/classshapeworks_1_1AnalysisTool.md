@@ -58,6 +58,7 @@ Inherits from QWidget
 | void | **[handle_eval_particle_normals_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-particle-normals-complete)**(std::vector< bool > good_bad) |
 | void | **[handle_group_pvalues_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-group-pvalues-complete)**() |
 | void | **[handle_alignment_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-alignment-changed)**(int new_alignment) |
+| void | **[handle_distance_method_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-distance-method-changed)**() |
 | void | **[run_good_bad_particles](../Classes/classshapeworks_1_1AnalysisTool.md#slot-run-good-bad-particles)**() |
 | void | **[handle_lda_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-progress)**(double progress) |
 | void | **[handle_lda_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-complete)**() |
@@ -430,6 +431,13 @@ void handle_group_pvalues_complete()
 void handle_alignment_changed(
     int new_alignment
 )
+```
+
+
+### slot handle_distance_method_changed
+
+```cpp
+void handle_distance_method_changed()
 ```
 
 
@@ -911,4 +919,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:53 +0000
+Updated on 2024-07-10 at 17:29:13 +0000

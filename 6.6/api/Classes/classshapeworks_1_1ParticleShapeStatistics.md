@@ -56,12 +56,15 @@ title: shapeworks::ParticleShapeStatistics
 | Eigen::MatrixXd & | **[get_pca_loadings](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-pca-loadings)**()<br>Returns the component loadings.  |
 | const std::vector< double > & | **[get_percent_variance_by_mode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-percent-variance-by-mode)**() const |
 | Eigen::VectorXd | **[get_compactness](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-compactness)**(const std::function< void(float)> & progress_callback =nullptr) const |
-| Eigen::VectorXd | **[get_specificity](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-specificity)**(const std::function< void(float)> & progress_callback =nullptr) const |
-| Eigen::VectorXd | **[get_generalization](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-generalization)**(const std::function< void(float)> & progress_callback =nullptr) const |
+| Eigen::VectorXd | **[get_specificity](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-specificity)**(const std::function< void(float)> & progress_callback =nullptr, const std::function< bool()> & check_abort =nullptr) const |
+| Eigen::VectorXd | **[get_generalization](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-generalization)**(const std::function< void(float)> & progress_callback =nullptr, const std::function< bool(void)> & check_abort =nullptr) const |
 | Eigen::MatrixXd | **[get_group1_matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group1-matrix)**() const |
 | Eigen::MatrixXd | **[get_group2_matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group2-matrix)**() const |
 | Eigen::MatrixXd & | **[matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-matrix)**() |
 | void | **[set_num_values_per_particle](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-set-num-values-per-particle)**(int value_per_particle)<br>Set the number of values for each particle (e.g. 3 for x/y/z, 4 for x/y/z/scalar)  |
+| void | **[set_particle_to_surface_mode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-set-particle-to-surface-mode)**(bool value) |
+| bool | **[get_particle_to_surface_mode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-particle-to-surface-mode)**() const |
+| void | **[set_meshes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-set-meshes)**(const std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes)<br>Set the meshes for each sample (used for some evaluation metrics)  |
 | int | **[simple_linear_regression](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-simple-linear-regression)**(const std::vector< double > & y, const std::vector< double > & x, double & a, double & b) |
 
 ## Detailed Description
@@ -415,7 +418,8 @@ Eigen::VectorXd get_compactness(
 
 ```cpp
 Eigen::VectorXd get_specificity(
-    const std::function< void(float)> & progress_callback =nullptr
+    const std::function< void(float)> & progress_callback =nullptr,
+    const std::function< bool()> & check_abort =nullptr
 ) const
 ```
 
@@ -424,7 +428,8 @@ Eigen::VectorXd get_specificity(
 
 ```cpp
 Eigen::VectorXd get_generalization(
-    const std::function< void(float)> & progress_callback =nullptr
+    const std::function< void(float)> & progress_callback =nullptr,
+    const std::function< bool(void)> & check_abort =nullptr
 ) const
 ```
 
@@ -460,6 +465,32 @@ inline void set_num_values_per_particle(
 
 Set the number of values for each particle (e.g. 3 for x/y/z, 4 for x/y/z/scalar) 
 
+### function set_particle_to_surface_mode
+
+```cpp
+inline void set_particle_to_surface_mode(
+    bool value
+)
+```
+
+
+### function get_particle_to_surface_mode
+
+```cpp
+inline bool get_particle_to_surface_mode() const
+```
+
+
+### function set_meshes
+
+```cpp
+inline void set_meshes(
+    const std::vector< Mesh > & meshes
+)
+```
+
+Set the meshes for each sample (used for some evaluation metrics) 
+
 ### function simple_linear_regression
 
 ```cpp
@@ -477,4 +508,4 @@ Computes a simple linear regression of the first list of values with respect to 
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:53 +0000
+Updated on 2024-07-10 at 17:29:14 +0000

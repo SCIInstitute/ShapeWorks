@@ -32,7 +32,7 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-shapeevaluationjob)**(JobType job_type, [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) stats) |
+| | **[ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-shapeevaluationjob)**(JobType job_type, [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) stats, QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
 | virtual void | **[run](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-run)**() override<br>run the job  |
 | virtual QString | **[name](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-name)**() override<br>get the name of the job  |
 
@@ -105,7 +105,8 @@ void result_ready(
 ```cpp
 ShapeEvaluationJob(
     JobType job_type,
-    ParticleShapeStatistics stats
+    ParticleShapeStatistics stats,
+    QSharedPointer< Session > session
 )
 ```
 
@@ -134,4 +135,4 @@ get the name of the job
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:54 +0000
+Updated on 2024-07-10 at 17:29:14 +0000

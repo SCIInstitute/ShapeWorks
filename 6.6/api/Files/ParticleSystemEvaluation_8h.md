@@ -27,6 +27,8 @@ title: Libs/Particles/ParticleSystemEvaluation.h
 ```cpp
 #pragma once
 
+#include <Libs/Mesh/Mesh.h>
+
 #include <Eigen/Core>
 #include <vector>
 
@@ -44,15 +46,19 @@ class ParticleSystemEvaluation {
 
   const std::vector<std::string>& get_paths() const { return paths_; }
 
-  long num_samples() const { return matrix_.cols(); }
+  int num_samples() const { return matrix_.cols(); }
 
-  long num_dims() const { return matrix_.rows(); }
+  int num_dims() const { return matrix_.rows(); }
 
   bool exact_compare(const ParticleSystemEvaluation& other) const;
 
   bool evaluation_compare(const ParticleSystemEvaluation& other) const;
 
   static bool read_particle_file(std::string filename, Eigen::VectorXd& points);
+
+  void set_meshes(const std::vector<Mesh>& meshes);
+
+  const std::vector<Mesh>& get_meshes() const { return meshes_; }
 
  private:
   friend struct SharedCommandData;
@@ -62,6 +68,7 @@ class ParticleSystemEvaluation {
   Eigen::MatrixXd matrix_;
   std::vector<std::string> paths_;
   int num_values_per_particle_ = 3;  // e.g. 3 for x/y/z, 4 for x/y/z/scalar, 1 for scalar-only
+  std::vector<Mesh> meshes_;
 };
 }  // namespace shapeworks
 ```
@@ -69,4 +76,4 @@ class ParticleSystemEvaluation {
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:54 +0000
+Updated on 2024-07-10 at 17:29:14 +0000

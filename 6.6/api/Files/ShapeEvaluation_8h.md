@@ -45,16 +45,20 @@ class ShapeEvaluation {
                                                   std::function<void(float)> progress_callback = nullptr);
 
   static double compute_generalization(const ParticleSystemEvaluation& particle_system, int num_modes,
-                                       const std::string& save_to = "");
+                                       const std::string& save_to = "", bool surface_distance_mode = false);
 
   static Eigen::VectorXd compute_full_generalization(const ParticleSystemEvaluation& particle_system,
-                                                     std::function<void(float)> progress_callback = nullptr);
+                                                     std::function<void(float)> progress_callback = nullptr,
+                                                     std::function<bool()> check_abort = nullptr,
+                                                     bool surface_distance_mode = false);
 
   static double compute_specificity(const ParticleSystemEvaluation& particle_system, int num_mode,
-                                    const std::string& save_to = "");
+                                    const std::string& save_to = "", bool surface_distance_mode = false);
 
   static Eigen::VectorXd compute_full_specificity(const ParticleSystemEvaluation& particle_system,
-                                                  std::function<void(float)> progress_callback = nullptr);
+                                                  std::function<void(float)> progress_callback = nullptr,
+                                                  std::function<bool()> check_abort = nullptr,
+                                                  bool surface_distance_mode = false);
 };
 }  // namespace shapeworks
 ```
@@ -62,4 +66,4 @@ class ShapeEvaluation {
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:54 +0000
+Updated on 2024-07-10 at 17:29:14 +0000

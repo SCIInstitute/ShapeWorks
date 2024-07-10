@@ -2470,6 +2470,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_meshes" class="md-nav__link">
+    function set_meshes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_meshes" class="md-nav__link">
+    function get_meshes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-read_particle_file" class="md-nav__link">
     function read_particle_file
   </a>
@@ -2550,11 +2564,11 @@
 <td><strong><a href="classshapeworks_1_1ParticleSystemEvaluation.html#function-get-paths">get_paths</a></strong>() const<br>Get the paths to the particle files.</td>
 </tr>
 <tr>
-<td>long</td>
+<td>int</td>
 <td><strong><a href="classshapeworks_1_1ParticleSystemEvaluation.html#function-num-samples">num_samples</a></strong>() const<br>Number of samples.</td>
 </tr>
 <tr>
-<td>long</td>
+<td>int</td>
 <td><strong><a href="classshapeworks_1_1ParticleSystemEvaluation.html#function-num-dims">num_dims</a></strong>() const<br>Dimensions (e.g. x/y/z * number of particles)</td>
 </tr>
 <tr>
@@ -2564,6 +2578,14 @@
 <tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1ParticleSystemEvaluation.html#function-evaluation-compare">evaluation_compare</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; other) const<br>Perform an evaluation comparison of two particle systems.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystemEvaluation.html#function-set-meshes">set_meshes</a></strong>(const std::vector&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; &amp; meshes)<br>Set the meshes for each sample (used for some evaluation metrics)</td>
+</tr>
+<tr>
+<td>const std::vector&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; &amp;</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystemEvaluation.html#function-get-meshes">get_meshes</a></strong>() const<br>Get the meshes for each sample.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2613,11 +2635,11 @@
 </code></pre></div>
 <p>Get the paths to the particle files. </p>
 <h3 id="function-num_samples">function num_samples</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">num_samples</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_samples</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Number of samples. </p>
 <h3 id="function-num_dims">function num_dims</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">num_dims</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_dims</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Dimensions (e.g. x/y/z * number of particles) </p>
 <h3 id="function-exact_compare">function exact_compare</h3>
@@ -2632,6 +2654,16 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Perform an evaluation comparison of two particle systems. </p>
+<h3 id="function-set_meshes">function set_meshes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_meshes</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">meshes</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set the meshes for each sample (used for some evaluation metrics) </p>
+<h3 id="function-get_meshes">function get_meshes</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Get the meshes for each sample. </p>
 <h3 id="function-read_particle_file">function read_particle_file</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">read_particle_file</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span>
@@ -2646,7 +2678,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-06-20 at 08:12:53 +0000</p>
+<p>Updated on 2024-07-10 at 17:29:14 +0000</p>
 
               
             </article>

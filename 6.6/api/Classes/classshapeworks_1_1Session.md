@@ -15,6 +15,12 @@ Representation of a session.  [More...](#detailed-description)
 
 Inherits from QObject, QEnableSharedFromThis< Session >
 
+## Public Types
+
+|                | Name           |
+| -------------- | -------------- |
+| using Analyze::AlignmentType | **[AlignmentType](../Classes/classshapeworks_1_1Session.md#using-alignmenttype)**  |
+
 ## Public Slots
 
 |                | Name           |
@@ -165,6 +171,8 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | QSharedPointer< [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md) > | **[get_py_worker](../Classes/classshapeworks_1_1Session.md#function-get-py-worker)**() |
 | Eigen::MatrixXd | **[get_all_particles](../Classes/classshapeworks_1_1Session.md#function-get-all-particles)**()<br>Return all world particles (number of shapes, 3 x num particles)  |
 | Eigen::MatrixXd | **[get_all_scalars](../Classes/classshapeworks_1_1Session.md#function-get-all-scalars)**(std::string target_feature)<br>Return all scalars for all shapes, given target feature.  |
+| void | **[set_current_alignment](../Classes/classshapeworks_1_1Session.md#function-set-current-alignment)**(AlignmentType alignment) |
+| AlignmentType | **[get_current_alignment](../Classes/classshapeworks_1_1Session.md#function-get-current-alignment)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -187,6 +195,15 @@ class shapeworks::Session;
 Representation of a session. 
 
 The [Session](../Classes/classshapeworks_1_1Session.md) class encapsulates everything about a session/project. 
+
+## Public Types Documentation
+
+### using AlignmentType
+
+```cpp
+using shapeworks::Session::AlignmentType =  Analyze::AlignmentType;
+```
+
 
 ## Public Slots Documentation
 
@@ -1269,6 +1286,22 @@ Eigen::MatrixXd get_all_scalars(
 
 Return all scalars for all shapes, given target feature. 
 
+### function set_current_alignment
+
+```cpp
+inline void set_current_alignment(
+    AlignmentType alignment
+)
+```
+
+
+### function get_current_alignment
+
+```cpp
+inline AlignmentType get_current_alignment()
+```
+
+
 ### function is_supported_file_format
 
 ```cpp
@@ -1327,4 +1360,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:54 +0000
+Updated on 2024-07-10 at 17:29:14 +0000

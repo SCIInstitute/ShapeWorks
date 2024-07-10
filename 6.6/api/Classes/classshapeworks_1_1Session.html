@@ -2385,6 +2385,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-types" class="md-nav__link">
+    Public Types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-slots" class="md-nav__link">
     Public Slots
   </a>
@@ -2416,6 +2423,26 @@
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-types-documentation" class="md-nav__link">
+    Public Types Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Types Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-alignmenttype" class="md-nav__link">
+    using AlignmentType
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3406,6 +3433,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_current_alignment" class="md-nav__link">
+    function set_current_alignment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_current_alignment" class="md-nav__link">
+    function get_current_alignment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-is_supported_file_format" class="md-nav__link">
     function is_supported_file_format
   </a>
@@ -3494,6 +3535,21 @@
 <p>Representation of a session.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;Session.h&gt;</code></p>
 <p>Inherits from QObject, QEnableSharedFromThis&lt; Session &gt;</p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>using Analyze::AlignmentType</td>
+<td><strong><a href="classshapeworks_1_1Session.html#using-alignmenttype">AlignmentType</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-slots">Public Slots</h2>
 <table>
 <thead>
@@ -4070,6 +4126,14 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-all-scalars">get_all_scalars</a></strong>(std::string target_feature)<br>Return all scalars for all shapes, given target feature.</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-current-alignment">set_current_alignment</a></strong>(AlignmentType alignment)</td>
+</tr>
+<tr>
+<td>AlignmentType</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-current-alignment">get_current_alignment</a></strong>()</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-is-supported-file-format">is_supported_file_format</a></strong>(std::string filename)</td>
 </tr>
@@ -4115,6 +4179,10 @@
 </code></pre></div>
 <p>Representation of a session. </p>
 <p>The <a href="classshapeworks_1_1Session.html">Session</a> class encapsulates everything about a session/project. </p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="using-alignmenttype">using AlignmentType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="o">::</span><span class="n">AlignmentType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">Analyze</span><span class="o">::</span><span class="n">AlignmentType</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-set_feature_auto_scale">slot set_feature_auto_scale</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span>
@@ -4649,6 +4717,14 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Return all scalars for all shapes, given target feature. </p>
+<h3 id="function-set_current_alignment">function set_current_alignment</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_current_alignment</span><span class="p">(</span>
+<span class="w">    </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">alignment</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_current_alignment">function get_current_alignment</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">get_current_alignment</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
@@ -4677,7 +4753,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-06-20 at 08:12:54 +0000</p>
+<p>Updated on 2024-07-10 at 17:29:14 +0000</p>
 
               
             </article>

@@ -28,6 +28,7 @@ title: Studio/Data/Session.h
 ```cpp
 #pragma once
 
+#include <Analyze/Analyze.h>
 #include <Analyze/Particles.h>
 #include <Data/Preferences.h>
 #include <MeshManager.h>
@@ -81,6 +82,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   Q_OBJECT;
 
  public:
+  using AlignmentType = Analyze::AlignmentType;
+
   Session(QWidget* parent, Preferences& prefs);
 
   ~Session();
@@ -270,6 +273,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   Eigen::MatrixXd get_all_particles();
   Eigen::MatrixXd get_all_scalars(std::string target_feature);
 
+  void set_current_alignment(AlignmentType alignment) { current_alignment_ = alignment; }
+  AlignmentType get_current_alignment() { return current_alignment_; }
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -355,6 +361,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
 
   QSharedPointer<PythonWorker> py_worker_;
+
+  AlignmentType current_alignment_{AlignmentType::Local};
 };
 
 }  // namespace shapeworks
@@ -363,4 +371,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2024-06-20 at 08:12:54 +0000
+Updated on 2024-07-10 at 17:29:14 +0000

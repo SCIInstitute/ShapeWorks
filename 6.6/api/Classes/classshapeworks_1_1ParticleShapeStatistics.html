@@ -2729,6 +2729,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_particle_to_surface_mode" class="md-nav__link">
+    function set_particle_to_surface_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_particle_to_surface_mode" class="md-nav__link">
+    function get_particle_to_surface_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_meshes" class="md-nav__link">
+    function set_meshes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-simple_linear_regression" class="md-nav__link">
     function simple_linear_regression
   </a>
@@ -2932,11 +2953,11 @@
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-specificity">get_specificity</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr) const</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-specificity">get_specificity</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr, const std::function&lt; bool()&gt; &amp; check_abort =nullptr) const</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-generalization">get_generalization</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr) const</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-generalization">get_generalization</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr, const std::function&lt; bool(void)&gt; &amp; check_abort =nullptr) const</td>
 </tr>
 <tr>
 <td>Eigen::MatrixXd</td>
@@ -2953,6 +2974,18 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-set-num-values-per-particle">set_num_values_per_particle</a></strong>(int value_per_particle)<br>Set the number of values for each particle (e.g. 3 for x/y/z, 4 for x/y/z/scalar)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-set-particle-to-surface-mode">set_particle_to_surface_mode</a></strong>(bool value)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-particle-to-surface-mode">get_particle_to_surface_mode</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-set-meshes">set_meshes</a></strong>(const std::vector&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; &amp; meshes)<br>Set the meshes for each sample (used for some evaluation metrics)</td>
 </tr>
 <tr>
 <td>int</td>
@@ -3139,12 +3172,14 @@
 </code></pre></div>
 <h3 id="function-get_specificity">function get_specificity</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_specificity</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-get_generalization">function get_generalization</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_generalization</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-get_group1_matrix">function get_group1_matrix</h3>
@@ -3162,6 +3197,20 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set the number of values for each particle (e.g. 3 for x/y/z, 4 for x/y/z/scalar) </p>
+<h3 id="function-set_particle_to_surface_mode">function set_particle_to_surface_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_to_surface_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_particle_to_surface_mode">function get_particle_to_surface_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">get_particle_to_surface_mode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<h3 id="function-set_meshes">function set_meshes</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_meshes</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">meshes</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set the meshes for each sample (used for some evaluation metrics) </p>
 <h3 id="function-simple_linear_regression">function simple_linear_regression</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">simple_linear_regression</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">y</span><span class="p">,</span>
@@ -3172,7 +3221,7 @@
 </code></pre></div>
 <p>Computes a simple linear regression of the first list of values with respect to the second y=a + bx. Returns the estimated parameters a &amp; b. Returns 0 on success and -1 on fail.*/ </p>
 <hr />
-<p>Updated on 2024-06-20 at 08:12:53 +0000</p>
+<p>Updated on 2024-07-10 at 17:29:14 +0000</p>
 
               
             </article>

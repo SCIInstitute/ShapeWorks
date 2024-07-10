@@ -2629,6 +2629,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_group_pvalues_complete</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_alignment_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">new_alignment</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_distance_method_changed</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_good_bad_particles</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
@@ -2732,14 +2734,15 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">lda_computed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_group_change_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">current_alignment_</span><span class="p">{</span><span class="n">AlignmentType</span><span class="o">::</span><span class="n">Local</span><span class="p">};</span>
 <span class="w">  </span><span class="n">ParticleAreaPanel</span><span class="o">*</span><span class="w"> </span><span class="n">particle_area_panel_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
 <span class="w">  </span><span class="n">ShapeScalarPanel</span><span class="o">*</span><span class="w"> </span><span class="n">shape_scalar_panel_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QPointer</span><span class="o">&lt;</span><span class="n">Worker</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">workers_</span><span class="p">;</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-06-20 at 08:12:54 +0000</p>
+<p>Updated on 2024-07-10 at 17:29:14 +0000</p>
 
               
             </article>
