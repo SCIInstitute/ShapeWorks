@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Analyze/Analyze.h>
 #include <Analyze/Particles.h>
 #include <Data/Preferences.h>
 #include <MeshManager.h>
@@ -58,6 +59,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   Q_OBJECT;
 
  public:
+  using AlignmentType = Analyze::AlignmentType;
+
   /// constructor
   Session(QWidget* parent, Preferences& prefs);
 
@@ -267,6 +270,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   //! Return all scalars for all shapes, given target feature
   Eigen::MatrixXd get_all_scalars(std::string target_feature);
 
+  void set_current_alignment(AlignmentType alignment) { current_alignment_ = alignment; }
+  AlignmentType get_current_alignment() { return current_alignment_; }
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -355,6 +361,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
 
   QSharedPointer<PythonWorker> py_worker_;
+
+  AlignmentType current_alignment_{AlignmentType::Local};
 };
 
 }  // namespace shapeworks

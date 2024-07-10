@@ -3,6 +3,7 @@
 #include <Job/Job.h>
 
 #include <QObject>
+#include <QPointer>
 #include <QSharedPointer>
 
 namespace shapeworks {
@@ -18,6 +19,10 @@ class Worker : public QObject {
 
   void run_job(QSharedPointer<Job> job);
 
+  QPointer<QThread> get_thread() { return thread_; }
+
+  void stop();
+
  public Q_SLOTS:
   void process();
 
@@ -30,5 +35,6 @@ class Worker : public QObject {
 
  private:
   QSharedPointer<Job> job_;
+  QPointer<QThread> thread_;
 };
 }  // namespace shapeworks
