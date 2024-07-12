@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Libs/Mesh/Mesh.h>
+
 #include <Eigen/Core>
 #include <vector>
 
@@ -23,10 +25,10 @@ class ParticleSystemEvaluation {
   const std::vector<std::string>& get_paths() const { return paths_; }
 
   //! Number of samples
-  long num_samples() const { return matrix_.cols(); }
+  int num_samples() const { return matrix_.cols(); }
 
   //! Dimensions (e.g. x/y/z * number of particles)
-  long num_dims() const { return matrix_.rows(); }
+  int num_dims() const { return matrix_.rows(); }
 
   //! Perform an exact comparison of two particle systems
   bool exact_compare(const ParticleSystemEvaluation& other) const;
@@ -37,6 +39,12 @@ class ParticleSystemEvaluation {
   //! Read a particle file into an Eigen vector
   static bool read_particle_file(std::string filename, Eigen::VectorXd& points);
 
+  //! Set the meshes for each sample (used for some evaluation metrics)
+  void set_meshes(const std::vector<Mesh>& meshes);
+
+  //! Get the meshes for each sample
+  const std::vector<Mesh>& get_meshes() const { return meshes_; }
+
  private:
   friend struct SharedCommandData;
 
@@ -46,5 +54,6 @@ class ParticleSystemEvaluation {
   Eigen::MatrixXd matrix_;
   std::vector<std::string> paths_;
   int num_values_per_particle_ = 3;  // e.g. 3 for x/y/z, 4 for x/y/z/scalar, 1 for scalar-only
+  std::vector<Mesh> meshes_;
 };
 }  // namespace shapeworks

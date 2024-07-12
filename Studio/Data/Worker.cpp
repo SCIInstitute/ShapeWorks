@@ -20,15 +20,22 @@ Worker* Worker::create_worker() {
 //---------------------------------------------------------------------------
 void Worker::run_job(QSharedPointer<Job> job) {
   job_ = job;
-  QThread* thread = new QThread;
-  this->moveToThread(thread);
-  job_->moveToThread(thread);
-  connect(thread, &QThread::started, this, &Worker::process);
-  connect(this, &Worker::finished, thread, &QThread::quit);
+  thread_ = new QThread;
+  this->moveToThread(thread_);
+  job_->moveToThread(thread_);
+  connect(thread_, &QThread::started, this, &Worker::process);
+  connect(this, &Worker::finished, thread_, &QThread::quit);
   connect(this, &Worker::finished, this, &Worker::deleteLater);
-  connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+  connect(thread_, &QThread::finished, thread_, &QThread::deleteLater);
+  thread_->start();
+}
 
-  thread->start();
+//---------------------------------------------------------------------------
+void Worker::stop() {
+  if (thread_ != nullptr && job_ != nullptr) {
+    job_->abort();
+    thread_->quit();
+  }
 }
 
 //---------------------------------------------------------------------------
