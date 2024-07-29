@@ -558,8 +558,8 @@ void Shape::load_feature(DisplayMode display_mode, std::string feature) {
             ImageType::Pointer image = reader->GetOutput();
             group.meshes()[d]->apply_feature_map(feature, image);
             apply_feature_to_points(feature, image);
-          } catch (itk::ExceptionObject& excep) {
-            SW_ERROR("Unable to open file: " + filename);
+          } catch (std::exception& ex) {
+            SW_ERROR("Unable to open file \"{}\": {}", filename, ex.what());
           }
         }
       }
@@ -582,7 +582,7 @@ std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
         image_volume_ = image;
         image_volume_filename_ = filename;
       } catch (std::exception& ex) {
-        SW_ERROR("Unable to open file: {}", filename);
+        SW_ERROR("Unable to open file \"{}\": {}", filename, ex.what());
       }
     }
 
