@@ -248,7 +248,7 @@ def groom_training_images(project):
                              sw.InterpolationType.Linear, meshTransform=True)
 
         # apply bounding box
-        image.crop(bounding_box)
+        image.fitRegion(bounding_box)
 
         # write image using the index of the subject
         image.write(deepssm_dir + f"/train_images/{i}.nrrd")
@@ -340,14 +340,14 @@ def groom_val_test_images(project, indices):
     # Slightly cropped ref image
     large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(80)
     large_cropped_ref_image_file = deepssm_dir + 'large_cropped_reference_image.nrrd'
-    large_cropped_ref_image = sw.Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file)
+    large_cropped_ref_image = sw.Image(ref_image_file).fitRegion(large_bb).write(large_cropped_ref_image_file)
     # Further cropped ref image
     medium_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(20)
     medium_cropped_ref_image_file = deepssm_dir + 'medium_cropped_reference_image.nrrd'
-    medium_cropped_ref_image = sw.Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file)
+    medium_cropped_ref_image = sw.Image(ref_image_file).fitRegion(medium_bb).write(medium_cropped_ref_image_file)
     # Fully cropped ref image
     cropped_ref_image_file = deepssm_dir + 'cropped_reference_image.nrrd'
-    cropped_ref_image = sw.Image(ref_image_file).crop(bounding_box).write(cropped_ref_image_file)
+    cropped_ref_image = sw.Image(ref_image_file).fitRegion(bounding_box).write(cropped_ref_image_file)
 
     # Make dirs
     val_test_images_dir = deepssm_dir + 'val_and_test_images/'
@@ -392,7 +392,7 @@ def groom_val_test_images(project, indices):
         transform[:3, -1] += translation
 
         # 3. Translate with respect to slightly cropped ref
-        image = sw.Image(image_file).crop(large_bb).write(image_file)
+        image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
         itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file,
                                                                                   image_file,
                                                                                   transform_type='translation')
@@ -405,7 +405,7 @@ def groom_val_test_images(project, indices):
         transform = np.matmul(vtk_translation_transform, transform)
 
         # 5. Crop with medium bounding box and find rigid transform
-        image.crop(medium_bb).write(image_file)
+        image.fitRegion(medium_bb).write(image_file)
         itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
                                                                             image_file, transform_type='rigid')
 
@@ -418,7 +418,7 @@ def groom_val_test_images(project, indices):
         transform = np.matmul(vtk_rigid_transform, transform)
 
         # 7. Get similarity transform from image registration and apply
-        image.crop(bounding_box).write(image_file)
+        image.fitRegion(bounding_box).write(image_file)
         itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
                                                                                  image_file,
                                                                                  transform_type='similarity')
