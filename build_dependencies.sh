@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #set -v   # verbose execution for debugging
-set -x   # tracing execution for debugging (echos all commands from script)
+#set -x   # tracing execution for debugging (echos all commands from script)
 
 # check to make sure `source` was not used
 (return 0 2>/dev/null) && sourced=1 || sourced=0
@@ -22,8 +22,8 @@ BUILD_TYPE="Release"
 BUILD_LOG="build_dependencies.log"
 VTK_VER="v9.1.0"
 VTK_VER_STR="9.1"
-ITK_VER="v5.2.1"
-ITK_VER_STR="5.2"
+ITK_VER="v5.3.0"
+ITK_VER_STR="5.3"
 QT_MIN_VER="5.15.4"
 XLNT_VER="538f80794c7d736afc0a452d21313606cc5538fc"
 JKQTPLOTTER_VER="v2022.11.30-refix-rpath"
@@ -166,7 +166,7 @@ build_itk()
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -DZLIB_SYMBOL_PREFIX="itkzlib_" -Wno-dev ..
       
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
