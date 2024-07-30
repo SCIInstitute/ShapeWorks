@@ -1,3 +1,4 @@
+
 #include <Optimize/Optimize.h>
 
 #include <Eigen/Eigen>
@@ -342,8 +343,10 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def("gaussianBlur", &Image::gaussianBlur, "applies gaussian blur", "sigma"_a = 0.0)
 
-      .def("crop", &Image::crop, "crops the image down to the given (physica) region, with optional padding",
+      .def("crop", &Image::crop, "crops the image down to the given (physical) region, with optional padding",
            "region"_a, "padding"_a = 0)
+
+      .def("fitRegion", &Image::fitRegion, "crops or pads the image to fit a region", "region"_a)
 
       .def(
           "clip",
