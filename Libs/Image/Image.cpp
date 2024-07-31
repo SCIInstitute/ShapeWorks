@@ -749,6 +749,27 @@ Image& Image::crop(PhysicalRegion region, const int padding) {
   return *this;
 }
 
+Image& Image::fitRegion(PhysicalRegion region) {
+  // first pad to make sure the image is large enough to fit the region
+
+  // convert PhysicalRegion to IndexRegion
+  IndexRegion indexRegion(physicalToLogical(region));
+
+  // pad the image
+  pad(indexRegion, 0);
+
+  // fix origin and indices
+  using RegionFilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
+  RegionFilterType::Pointer region_filter = RegionFilterType::New();
+  region_filter->SetInput(this->itk_image_);
+  region_filter->SetRegionOfInterest(this->itk_image_->GetLargestPossibleRegion());
+  region_filter->UpdateLargestPossibleRegion();
+  this->itk_image_ = region_filter->GetOutput();
+
+  // now crop the image
+  return crop(region);
+}
+
 Image& Image::clip(const Plane plane, const PixelType val) {
   if (!axis_is_valid(getNormal(plane))) {
     throw std::invalid_argument("Invalid clipping plane (zero length normal)");

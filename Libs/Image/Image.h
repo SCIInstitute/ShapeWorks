@@ -186,6 +186,9 @@ class Image {
   /// crops the image down to the given region, with optional padding added
   Image& crop(PhysicalRegion region, const int padding = 0);
 
+  /// crops (or pads) the image to fit the given region
+  Image& fitRegion(PhysicalRegion region);
+
   /// clips an image using a cutting plane
   Image& clip(const Plane plane, const PixelType val = 0.0);
 
