@@ -84,6 +84,7 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyIntensityFilter](../Classes/classshapeworks_1_1Image.md#function-applyintensityfilter)**(double minVal, double maxVal)<br>applies intensity windowing image filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[gaussianBlur](../Classes/classshapeworks_1_1Image.md#function-gaussianblur)**(double sigma =0.0)<br>applies gaussian blur with given sigma  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[crop](../Classes/classshapeworks_1_1Image.md#function-crop)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region, const int padding =0)<br>crops the image down to the given region, with optional padding added  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[fitRegion](../Classes/classshapeworks_1_1Image.md#function-fitregion)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region)<br>crops (or pads) the image to fit the given region  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[clip](../Classes/classshapeworks_1_1Image.md#function-clip)**(const Plane plane, const PixelType val =0.0)<br>clips an image using a cutting plane  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[reflect](../Classes/classshapeworks_1_1Image.md#function-reflect)**(const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) & axis) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setOrigin](../Classes/classshapeworks_1_1Image.md#function-setorigin)**(Point3 origin =Point3({0, 0, 0}))<br>sets the image origin in physical space to the given value  |
@@ -757,6 +758,16 @@ Image & crop(
 
 crops the image down to the given region, with optional padding added 
 
+### function fitRegion
+
+```cpp
+Image & fitRegion(
+    PhysicalRegion region
+)
+```
+
+crops (or pads) the image to fit the given region 
+
 ### function clip
 
 ```cpp
@@ -1076,4 +1087,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-07-31 at 00:59:33 +0000
+Updated on 2024-07-31 at 07:37:37 +0000

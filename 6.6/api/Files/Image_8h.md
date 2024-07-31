@@ -158,6 +158,8 @@ class Image {
 
   Image& crop(PhysicalRegion region, const int padding = 0);
 
+  Image& fitRegion(PhysicalRegion region);
+
   Image& clip(const Plane plane, const PixelType val = 0.0);
 
   Image& reflect(const Axis& axis);
@@ -269,4 +271,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2024-07-31 at 00:59:33 +0000
+Updated on 2024-07-31 at 07:37:37 +0000
