@@ -453,13 +453,12 @@ def get_mesh_from_DT(DT_list, mesh_dir):
 def get_mesh_from_file(filename, iso_value=0):
     mesh_types = ['.vtk', '.vtp', '.ply', '.obj', '.stl']
 
-    filename = filename.lower()
     is_mesh = False
     for ext in mesh_types:
-        if filename.endswith(ext):
+        if filename.lower().endswith(ext):
             is_mesh = True
             break
-    
+
     if is_mesh:
         return sw.Mesh(filename)
 
