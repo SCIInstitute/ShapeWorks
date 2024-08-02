@@ -19,7 +19,7 @@ from itertools import islice
 _LOGIN_FILE_NAME = 'Output/shapeworksCloudLogin.txt'
 
 
-def printDataPortalWelcome():
+def print_cloud_welcome():
     print(' _____    ___      .     ')
     print('|     |  /   \    / \    ')
     print('|  ShapeWorks Cloud  \   ')
@@ -71,11 +71,11 @@ def getLoginDetails():
 
 
 def login():
-    """Login to the ShapeWorks Cloud Data Portal"""
-    printDataPortalWelcome()
+    """Login to ShapeWorks Cloud"""
+    print_cloud_welcome()
     if loadLogin() is None:
         getLoginDetails()
-    print("Login to ShapeWorks Data Portal successful")
+    print("Login to ShapeWorks Cloud successful")
     loginDetails = loadLogin()
     username = loginDetails['username']
     passwordHash = loginDetails['PasswordHash']
@@ -83,12 +83,12 @@ def login():
     return username, password
 
 
-def download_dataset(datasetName, outputDirectory, force = False):
+def download_dataset(dataset_name, output_directory, force = False):
     """Download a dataset from the ShapeWorks Cloud Data Portal"""
     # check if dataset is already downloaded
-    check_file = "Output/" + datasetName + ".downloaded"
+    check_file = "Output/" + dataset_name + ".downloaded"
     if (os.path.exists(check_file) and not force):
-        print(f"Dataset {datasetName} already downloaded ({check_file} exists)")
+        print(f"Dataset {dataset_name} already downloaded ({check_file} exists)")
         # check if env var SW_PORTAL_DOWNLOAD_ONLY is set to 1
         if 'SW_PORTAL_DOWNLOAD_ONLY' in os.environ and os.environ['SW_PORTAL_DOWNLOAD_ONLY'] == '1':
             quit()
@@ -99,16 +99,19 @@ def download_dataset(datasetName, outputDirectory, force = False):
         token = session.login(username, password)
         session = swcc_session(token=token).__enter__()
         # Download a full dataset in bulk
-        print(f"Downloading files to {outputDirectory + datasetName}")
-        dataset = Dataset.from_name(datasetName)
-        download_path = Path(outputDirectory)
+        dataset = Dataset.from_name(dataset_name)
+        if (dataset is None):
+            print(f"\nError: Unable to locate dataset \"{dataset_name}\" on ShapeWorks Cloud\n")
+            quit()
+        print(f"Downloading dataset \"{dataset_name}\" to {output_directory}")
+        download_path = Path(output_directory)
         for project in dataset.projects:
             project.download(Path(download_path))
             break
 
     # Mark as completed
     Path(check_file).touch()
-    print(f"Dataset {datasetName} downloaded to {outputDirectory}")
+    print(f"Dataset {dataset_name} downloaded to {output_directory}")
     
     if 'SW_PORTAL_DOWNLOAD_ONLY' in os.environ:
         quit()

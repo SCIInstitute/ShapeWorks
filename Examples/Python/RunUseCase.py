@@ -54,8 +54,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
     parser.add_argument("use_case", help="Must specify which of these use cases to run.",
                         choices=["ellipsoid", "ellipsoid_evaluate", "ellipsoid_mesh", "ellipsoid_fd", "ellipsoid_cut",
-                                 "ellipsoid_pca", \
-                                 "ellipsoid_multiple_domain", "ellipsoid_multiple_domain_mesh", "lumps", "left_atrium", \
+                                 "ellipsoid_pca",
+                                 "ellipsoid_multiple_domain", "ellipsoid_multiple_domain_mesh", "lumps", "left_atrium",
                                  "femur_cut", "femur_pvalues", "deep_ssm", "supershapes_1mode_contour",
                                  "thin_cavity_bean",
                                  "peanut_shared_boundary", "incremental_supershapes", "hip_multiple_domain"])
@@ -74,6 +74,8 @@ if __name__ == '__main__':
     type = ""
     if args.tiny_test:
         type = "tiny_test_"
+        args.use_single_scale = False
+        args.use_subsample = False
     scale = "multiscale"
     if args.use_single_scale:
         scale = "singlescale"
