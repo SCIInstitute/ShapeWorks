@@ -585,6 +585,7 @@ bool AnalysisTool::compute_stats() {
     auto local_particles = shape->get_particles().get_local_particles();
     if (local_particles.size() != domains_per_shape) {
       SW_ERROR("Inconsistency in number of particles size");
+      return false;
     }
     for (unsigned int i = 0; i < domains_per_shape; i++) {
       number_of_particles_array_[i] = local_particles[i].size() / 3;
