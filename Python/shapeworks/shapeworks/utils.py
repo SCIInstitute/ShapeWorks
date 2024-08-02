@@ -451,11 +451,19 @@ def get_mesh_from_DT(DT_list, mesh_dir):
 
 
 def get_mesh_from_file(filename, iso_value=0):
-    if filename.endswith('.nrrd'):
-        image = sw.Image(filename)
-        return image.toMesh(iso_value)
-    else:
+    mesh_types = ['.vtk', '.vtp', '.ply', '.obj', '.stl']
+
+    is_mesh = False
+    for ext in mesh_types:
+        if filename.lower().endswith(ext):
+            is_mesh = True
+            break
+
+    if is_mesh:
         return sw.Mesh(filename)
+
+    image = sw.Image(filename)
+    return image.toMesh(iso_value)
 
 
 def get_reference_index(project):
