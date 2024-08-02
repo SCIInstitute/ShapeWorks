@@ -50,7 +50,7 @@ rm -rf Post
 
 # Build python package tarballs
 # Pip can't install these otherwise from a read-only area like C:\Program Files\ShapeWorks
-for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+for package in DataAugmentationUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
     cd Python
     tar czvf ${package}.tar.gz $package
     cd ..

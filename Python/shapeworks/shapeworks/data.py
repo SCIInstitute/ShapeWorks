@@ -33,63 +33,6 @@ def generate_download_flag(outputDirectory,folder):
     else:
         download_flag = True        
     return download_flag
-            
-def download_subset(use_case,datasetName,outputDirectory):
-    import DatasetUtils
-    import re
-    fileList = DatasetUtils.getFileList(datasetName)
-    outputDirectory = outputDirectory + datasetName+"/"
-    if(use_case in ["ellipsoid","ellipsoid_cut","left_atrium"]):
-        if(generate_download_flag(outputDirectory,"segmentations")):
-            segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case in ["femur_cut","lumps","thin_cavity_bean","incremental_supershapes"]):
-        if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
-    elif(use_case in ["ellipsoid_mesh"]):
-        if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*vtk$",files)])[:3]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
-    if(use_case in ["femur_cut","left_atrium"]):
-        if(generate_download_flag(outputDirectory,"images")):
-            imageFilelist = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:3]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilelist)
-    elif(use_case=="deep_ssm"):
-        if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:5]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
-        if(generate_download_flag(outputDirectory,"images/")):
-            imageFilesList = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:5]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilesList)
-        if(generate_download_flag(outputDirectory,"constraints")):
-            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:5]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
-    elif(use_case=="ellipsoid_multiple_domain"):
-        if(generate_download_flag(outputDirectory,"segmentations")):
-            segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:6]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case in ["ellipsoid_multiple_domain_mesh","hip_multiple_domain"]):
-        if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*vtk$",files)])[:6]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
-    elif(use_case=="supershapes_1mode_contour"):
-        if(generate_download_flag(outputDirectory,"contours")):
-            contourFilesList = sorted([files for files in fileList if re.search("^contours(?:/|\\\).*vtp$",files)])[:3]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = contourFilesList)
-    if(use_case in ["femur_cut","ellipsoid_cut"]):
-        if(generate_download_flag(outputDirectory,"constraints")):
-            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:3]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
-    if(use_case=="peanut_shared_boundary"):
-        if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*stl$",files)])[:2]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
-    if(use_case in ["hip_multiple_domain"]):
-        if(generate_download_flag(outputDirectory,"constraints")):
-            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:6]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
-
 
 def download_and_unzip_dataset(datasetName, outputDirectory):
     # Check if the unzipped data is present and number of files are more than 3 for full use case
@@ -112,27 +55,6 @@ def get_file_list(directory, ending='', indices=[]):
     if indices:
         file_list = [file_list[i] for i in indices]
     return file_list
-
-def create_cpp_xml(filename, outputfilename):
-    '''
-        This creates a xml for cpp Shape warp binary
-    '''
-    opening_tag = "<"
-    ending_tag = "</"
-    closing_tag = ">"
-    newline = "\n"
-    tree = ET.parse(str(filename))
-    root = tree.getroot()
-    children = {}
-    for child in root:
-        children[child.tag] = child.text
-    tags = children.keys()
-    xml_text = ""
-    for tag in tags:
-        xml_text += opening_tag+tag+closing_tag+children[tag]+ending_tag+tag+closing_tag+newline+newline
-    file = open(outputfilename,"w")
-    file.write(xml_text)
-    file.close()
    
 
 def sample_images(inDataList, num_sample,domains_per_shape=1):

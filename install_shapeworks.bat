@@ -26,7 +26,6 @@ call ltt install torch==1.11.0 || goto :error
 REM different versions of open3d for different OSes, so we install it manually here
 call pip install open3d==0.17.0 || goto :error
 
-call pip install Python/DatasetUtilsPackage.tar.gz || goto :error
 call pip install Python/DocumentationUtilsPackage.tar.gz || goto :error
 call pip install Python/DataAugmentationUtilsPackage.tar.gz || goto :error
 call pip install Python/DeepSSMUtilsPackage.tar.gz || goto :error

@@ -150,7 +150,7 @@ function install_conda() {
       if ! pip install open3d==0.17.0;                  then return 1; fi
   fi
 
-  for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+  for package in DataAugmentationUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
     if [[ -e Python/${package}.tar.gz ]] ; then
       if ! pip install Python/${package}.tar.gz;        then return 1; fi
     else
