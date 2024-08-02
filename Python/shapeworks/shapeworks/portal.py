@@ -83,7 +83,7 @@ def login():
     return username, password
 
 
-def download_dataset(dataset_name, output_directory, force = False):
+def download_dataset(dataset_name, output_directory, force=False):
     """Download a dataset from the ShapeWorks Cloud Data Portal"""
     # check if dataset is already downloaded
     check_file = "Output/" + dataset_name + ".downloaded"
@@ -93,6 +93,10 @@ def download_dataset(dataset_name, output_directory, force = False):
         if 'SW_PORTAL_DOWNLOAD_ONLY' in os.environ and os.environ['SW_PORTAL_DOWNLOAD_ONLY'] == '1':
             quit()
         return
+    
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+
     username, password = login()
     # api as a context manager
     with swcc_session() as session:
@@ -112,6 +116,6 @@ def download_dataset(dataset_name, output_directory, force = False):
     # Mark as completed
     Path(check_file).touch()
     print(f"Dataset {dataset_name} downloaded to {output_directory}")
-    
+
     if 'SW_PORTAL_DOWNLOAD_ONLY' in os.environ:
         quit()

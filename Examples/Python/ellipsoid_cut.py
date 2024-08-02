@@ -12,6 +12,7 @@ import subprocess
 import numpy as np
 import shapeworks as sw
 
+
 def Run_Pipeline(args):
     print("\nStep 1. Acquire Data\n")
     """
@@ -20,35 +21,24 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    output_directory = "Output/ellipsoid_cut/"
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
-
-    # If running a tiny_test, then download subset of the data
+    dataset_name = "ellipsoid_cut"
     if args.tiny_test:
-        dataset_name = "ellipsoid_cut_tiny_test"
-        args.use_single_scale = 1
-        sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_1mode_aligned"
-        file_list = sorted(glob.glob(output_directory +
-                                     dataset_name + "/segmentations/*.nrrd"))[:3]
-        plane_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/constraints/*.json"))[:3]
-    # Else download the entire dataset
-    else:
-        dataset_name = "ellipsoid_cut"
-        sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_1mode_aligned"
-        file_list = sorted(glob.glob(output_directory +
-                                     dataset_name + "/segmentations/*.nrrd"))
-        plane_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/constraints/*.json"))
-        # Select representative data if using subsample
-        if args.use_subsample:
-            inputImages =[sw.Image(filename) for filename in file_list]
-            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
-            file_list = [file_list[i] for i in sample_idx]
-            plane_files = [plane_files[i] for i in sample_idx]
+        dataset_name = dataset_name + "_tiny_test"
+    output_directory = f"Output/{dataset_name}/"
+    sw.download_dataset(dataset_name, output_directory)
+
+    file_list = sorted(glob.glob(output_directory +
+                                 "ellipsoid_1mode_aligned/segmentations/*.nrrd"))
+
+    plane_files = sorted(glob.glob(output_directory +
+                                   "ellipsoid_1mode_aligned/constraints/*.json"))
+
+    # Select representative data if using subsample
+    if args.use_subsample:
+        inputImages = [sw.Image(filename) for filename in file_list]
+        sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
+        file_list = [file_list[i] for i in sample_idx]
+        plane_files = [plane_files[i] for i in sample_idx]
 
     print("\nStep 2. Groom - Create distance transforms\n")
     """
@@ -97,7 +87,7 @@ def Run_Pipeline(args):
         dt_list.append(shape_seg)
     # Save distance transforms
     groomed_files = sw.utils.save_images(groom_dir + 'distance_transforms/', dt_list,
-                                    shape_names, extension='nrrd', compressed=True, verbose=True)
+                                         shape_names, extension='nrrd', compressed=True, verbose=True)
 
     # Get data input (meshes if running in mesh mode, else distance transforms)
     domain_type, groomed_files = sw.data.get_optimize_input(groomed_files, args.mesh_mode)
@@ -113,7 +103,7 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-     # Create project spreadsheet
+    # Create project spreadsheet
     project_location = output_directory
     if not os.path.exists(project_location):
         os.makedirs(project_location)
@@ -127,7 +117,7 @@ def Run_Pipeline(args):
         subject.set_original_filenames(rel_seg_files)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + '/' + groomed_files[i]], project_location)
         subject.set_groomed_filenames(rel_groom_files)
-        transform = [ np.eye(4).flatten() ]
+        transform = [np.eye(4).flatten()]
         subject.set_groomed_transforms(transform)
         rel_plane_files = sw.utils.get_relative_paths([os.getcwd() + '/' + plane_files[i]], project_location)
         subject.set_constraints_filenames(rel_plane_files)
@@ -163,9 +153,9 @@ def Run_Pipeline(args):
 
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
-        parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    project.set_parameters("optimize",parameters)
-    spreadsheet_file = project_location + "/ellipsoid_cut_" + args.option_set+ ".swproj"
+        parameters.set(key, sw.Variant([parameter_dictionary[key]]))
+    project.set_parameters("optimize", parameters)
+    spreadsheet_file = project_location + "/ellipsoid_cut.swproj"
     project.save(spreadsheet_file)
 
     # Run optimization

@@ -21,19 +21,12 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the cloud and the directory to save output from the use case in. 
     """
-
     dataset_name = "ellipsoid"
-
-    # If running a tiny_test, then use the subset of the dataset
     if args.tiny_test:
-        dataset_name = "ellipsoid_tiny_test"
-
+        dataset_name = dataset_name + "_tiny_test"
     output_directory = f"Output/{dataset_name}/"
-
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
-
     sw.download_dataset(dataset_name, output_directory)
+
     file_list = sorted(glob.glob(output_directory +
                                  "ellipsoid_1mode/segmentations/*.nrrd"))
 
@@ -194,7 +187,6 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     project.set_parameters("optimize", parameters)
-#    project_file = output_directory + "ellipsoid_" + args.option_set + ".swproj"
     project_file = output_directory + dataset_name + ".swproj"
     project.save(project_file)
 
