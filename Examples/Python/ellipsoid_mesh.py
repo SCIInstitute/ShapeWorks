@@ -9,6 +9,7 @@ import glob
 import subprocess
 import shapeworks as sw
 
+
 def Run_Pipeline(args):
     print("\nStep 1. Acquire Data\n")
     """
@@ -17,31 +18,18 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     dataset_name = "ellipsoid_mesh"
-    output_directory = "Output/ellipsoid_mesh/"
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
-
-    # If running a tiny_test, then download subset of the data
     if args.tiny_test:
-        dataset_name = "ellipsoid_mesh_tiny_test"
-        args.use_single_scale = 1
-        sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_1mode"
-        mesh_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/meshes/*.vtk"))[:3]
-    # else download the entire dataset
-    else:
-        dataset_name = "ellipsoid_mesh"
-        sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_1mode"
-        mesh_files = sorted(glob.glob(output_directory +
-                            dataset_name + "/meshes/*.vtk"))
-        # Select data if using subsample
-        if args.use_subsample:
-            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
-            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
-            mesh_files = [mesh_files[i] for i in sample_idx]
+        dataset_name = dataset_name + "_tiny_test"
+    output_directory = f"Output/{dataset_name}/"
+    sw.download_dataset(dataset_name, output_directory)
 
+    mesh_files = sorted(glob.glob(output_directory +
+                        "ellipsoid_1mode/meshes/*.vtk"))
+    # Select data if using subsample
+    if args.use_subsample:
+        inputMeshes = [sw.Mesh(filename) for filename in mesh_files]
+        sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
+        mesh_files = [mesh_files[i] for i in sample_idx]
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     """
@@ -81,7 +69,7 @@ def Run_Pipeline(args):
     closest to the mean can be found and selected as the reference. 
     """
     ref_index = sw.find_reference_mesh_index(mesh_list)
-    # Make a copy of the reference segmentation 
+    # Make a copy of the reference segmentation
     ref_mesh = mesh_list[ref_index]
     # Center the reference mesh at 0,0,0
     # ref_mesh.translate(-ref_mesh.center()).write(groom_dir + 'reference.vtk')
@@ -102,7 +90,6 @@ def Run_Pipeline(args):
 
     # Save groomed meshes
     groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
-
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
@@ -129,7 +116,7 @@ def Run_Pipeline(args):
         rel_groom_file = sw.utils.get_relative_paths([os.getcwd() + "/" + groomed_mesh_files[i]], project_location)
         subject.set_groomed_filenames(rel_groom_file)
         transform = Rigid_transforms[i]
-        transforms = [ transform.flatten() ]
+        transforms = [transform.flatten()]
         subject.set_groomed_transforms(transforms)
         subjects.append(subject)
     # Set project
@@ -155,7 +142,7 @@ def Run_Pipeline(args):
         "save_init_splits": 0,
         "verbosity": 0
     }
-     # If running a tiny test, reduce some parameters
+    # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
         parameter_dictionary["optimization_iterations"] = 25
@@ -169,7 +156,7 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = project_location + "ellipsoid_mesh_" + args.option_set+ ".swproj"
+    spreadsheet_file = project_location + dataset_name + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
