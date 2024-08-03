@@ -4,9 +4,8 @@
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
 This example is set to serve as a test case for new ShapeWorks users, and each
-step is explained in the shapeworks including the pre-processing, the 
-optimization and, the post ShapeWorks visualization.
-
+step is explained in the shapeworks documentation including the pre-processing, the 
+optimization and analysis.
 First import the necessary modules
 """
 import os
@@ -16,6 +15,7 @@ import shapeworks as sw
 import AnalyzeUtils
 import subprocess
 
+
 def Run_Pipeline(args):
     print("\nStep 1. Acquire Data\n")
     """
@@ -24,31 +24,19 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    
-    output_directory = "Output/ellipsoid_multiple_domain/"
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
 
-    # If running a tiny_test, then download subset of the data
+    dataset_name = "ellipsoid_multiple_domain"
     if args.tiny_test:
-        dataset_name = "ellipsoid_multiple_domain_tiny_test"
-        sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_joint_rotation"
-        file_list = sorted(glob.glob(output_directory +
-                                     dataset_name + "/segmentations/*.nrrd"))[:6]
-    # Else download the entire dataset
-    else:
-        dataset_name = "ellipsoid_multiple_domain"
-        sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_joint_rotation"
-        file_list = sorted(glob.glob(output_directory +
-                                     dataset_name + "/segmentations/*.nrrd"))
+        dataset_name = dataset_name + "_tiny_test"
+    output_directory = f"Output/{dataset_name}/"
+    sw.download_dataset(dataset_name, output_directory)
 
-        if args.use_subsample:
-            inputImages =[sw.Image(filename) for filename in file_list]
-            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample),domains_per_shape=2)
-            file_list = [file_list[i] for i in sample_idx]
+    file_list = sorted(glob.glob(output_directory + "/segmentations/*.nrrd"))
 
+    if args.use_subsample:
+        inputImages = [sw.Image(filename) for filename in file_list]
+        sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample), domains_per_shape=2)
+        file_list = [file_list[i] for i in sample_idx]
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     """
@@ -87,12 +75,12 @@ def Run_Pipeline(args):
         # get domain identifiers
         name = shape_filename.split('/')[-1].replace('.nrrd', '')
         domain_ids.append(name.split(".")[0].split("_")[-1])
-        
+
         # load segmentation
         shape_seg = sw.Image(shape_filename)
         # do initial grooming steps
         print("Grooming: " + shape_name)
-         # Individually crop each segmentation using a computed bounding box
+        # Individually crop each segmentation using a computed bounding box
         iso_value = 0.5  # voxel value for isosurface
         bounding_box = sw.ImageUtils.boundingBox([shape_seg], iso_value).pad(5)
         shape_seg.crop(bounding_box)
@@ -103,14 +91,12 @@ def Run_Pipeline(args):
 
         # append to the shape list
         shape_seg_list.append(shape_seg)
-    #domain identifiers for all shapes
+    # domain identifiers for all shapes
     domain_ids = np.array(domain_ids)
-    #shape index for all shapes in domain 1 
+    # shape index for all shapes in domain 1
     domain1_indx = list(np.where(domain_ids == 'd1')[0])
-    #shape index for all shapes in domain 2
+    # shape index for all shapes in domain 2
     domain2_indx = list(np.where(domain_ids == 'd2')[0])
-
-
 
     """
     Grooming Step 2: Select a reference
@@ -138,7 +124,7 @@ def Run_Pipeline(args):
 
     domains_per_shape = 2
     domain_1_shapes = []
-    # get domain 1 shapes 
+    # get domain 1 shapes
     for i in range(int(len(shape_seg_list)/domains_per_shape)):
         domain_1_shapes.append(shape_seg_list[i*domains_per_shape])
 
@@ -149,8 +135,8 @@ def Run_Pipeline(args):
     domain2_reference = shape_seg_list[ref_index*domains_per_shape+1].copy()
     domain1_ref_name = shape_names[ref_index*domains_per_shape]
     domain2_ref_name = shape_names[ref_index*domains_per_shape+1]
-    reference = [domain1_reference,domain2_reference]
-    ref_name = [domain1_ref_name,domain2_ref_name]
+    reference = [domain1_reference, domain2_reference]
+    ref_name = [domain1_ref_name, domain2_ref_name]
 
     """
     Grooming Step 3: Rigid alignment
@@ -162,17 +148,16 @@ def Run_Pipeline(args):
     transforms = []
     for i in range(len(domain_1_shapes)):
 
-        
         # get the transformation to each domain(each subject)
         for d in range(domains_per_shape):
             # compute rigid transformation using the domain 1 segmentations
             name = shape_names[i*domains_per_shape+d]
-            print('Aligning ' + name + ' to ' + ref_name[d]) 
+            print('Aligning ' + name + ' to ' + ref_name[d])
             rigidTransform = shape_seg_list[i*domains_per_shape+d].createRigidRegistrationTransform(
-            reference[d], iso_value, icp_iterations)
+                reference[d], iso_value, icp_iterations)
             rigid_transform = sw.utils.getVTKtransform(rigidTransform)
             transforms.append(rigid_transform)
-   
+
     """
     Grooming Step 4: Converting segmentations to smooth signed distance transforms.
     The computeDT API needs an iso_value that defines the foreground-background interface, to create 
@@ -215,7 +200,7 @@ def Run_Pipeline(args):
         os.makedirs(project_location)
     # Set subjects
     subjects = []
-    
+
     for i in range(len(domain_1_shapes)):
         subject = sw.Subject()
         subject.set_number_of_domains(domains_per_shape)
@@ -223,8 +208,10 @@ def Run_Pipeline(args):
         rel_groom_files = []
         transform = []
         for d in range(domains_per_shape):
-            rel_seg_files += sw.utils.get_relative_paths([os.getcwd() + '/' + file_list[i*domains_per_shape+d]], project_location)
-            rel_groom_files += sw.utils.get_relative_paths([os.getcwd() + '/' + dt_files[i*domains_per_shape+d]], project_location)
+            rel_seg_files += sw.utils.get_relative_paths([os.getcwd() +
+                                                         '/' + file_list[i*domains_per_shape+d]], project_location)
+            rel_groom_files += sw.utils.get_relative_paths([os.getcwd() +
+                                                           '/' + dt_files[i*domains_per_shape+d]], project_location)
             transform.append(transforms[i*domains_per_shape+d].flatten())
 
         subject.set_groomed_transforms(transform)
@@ -238,36 +225,36 @@ def Run_Pipeline(args):
 
     # Create a dictionary for all the parameters required by optimization
     parameter_dictionary = {
-        "checkpointing_interval" : 200,
-        "keep_checkpoints" : 0,
-        "iterations_per_split" : 200,
-        "optimization_iterations" : 200,
-        "starting_regularization" :1000,
-        "ending_regularization" : 0.1,
-        "relative_weighting" : 10, 
-        "initial_relative_weighting" : 0.1,
-        "procrustes_interval" : 0,
-        "procrustes_scaling" : 0,
-        "save_init_splits" : 0,
-        "verbosity" : 0
-      }
-    num_particles = [128,128]
+        "checkpointing_interval": 200,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 200,
+        "optimization_iterations": 200,
+        "starting_regularization": 1000,
+        "ending_regularization": 0.1,
+        "relative_weighting": 10,
+        "initial_relative_weighting": 0.1,
+        "procrustes_interval": 0,
+        "procrustes_scaling": 0,
+        "save_init_splits": 0,
+        "verbosity": 0
+    }
+    num_particles = [128, 128]
 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        num_particles = [32,32]
+        num_particles = [32, 32]
         parameter_dictionary["optimization_iterations"] = 30
 
-    #setting the argument to singlescale for the output filename
+    # setting the argument to singlescale for the output filename
     args.use_single_scale = True
-    args.option_set = args.option_set.replace("multiscale","singlescale")
-        
+    args.option_set = args.option_set.replace("multiscale", "singlescale")
+
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("number_of_particles" ,sw.Variant(num_particles))
+    parameters.set("number_of_particles", sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = output_directory + "ellipsoid_multiple_domain_" + args.option_set + ".swproj"
+    spreadsheet_file = output_directory + dataset_name + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
