@@ -128,7 +128,7 @@ Image::ImageType::Pointer Image::read(const std::string& pathname) {
 
   // check if it exists
   if (!boost::filesystem::exists(pathname)) {
-    throw std::invalid_argument("File does not exist: " + pathname);
+    throw std::runtime_error("File does not exist: " + pathname);
   }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
