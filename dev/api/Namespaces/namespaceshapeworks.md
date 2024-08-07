@@ -159,7 +159,6 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
 | class | **[shapeworks::ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md)**  |
 | class | **[shapeworks::ShapeScalarPanel](../Classes/classshapeworks_1_1ShapeScalarPanel.md)**  |
-| class | **[shapeworks::shapeworks_exception](../Classes/classshapeworks_1_1shapeworks__exception.md)**  |
 | class | **[shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)**  |
 | class | **[shapeworks::ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window.  |
 | class | **[shapeworks::ShapeWorksUtils](../Classes/classshapeworks_1_1ShapeWorksUtils.md)**  |
@@ -2606,4 +2605,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2024-08-02 at 05:19:09 +0000
+Updated on 2024-08-07 at 18:43:11 +0000

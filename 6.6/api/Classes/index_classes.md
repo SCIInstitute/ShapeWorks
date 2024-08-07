@@ -267,7 +267,6 @@ title: Classes
     * **namespace [project](../Namespaces/namespaceshapeworks_1_1project.md)** 
         * **namespace [prefixes](../Namespaces/namespaceshapeworks_1_1project_1_1prefixes.md)** 
         * **namespace [types](../Namespaces/namespaceshapeworks_1_1project_1_1types.md)** 
-    * **class [shapeworks_exception](../Classes/classshapeworks_1_1shapeworks__exception.md)** 
 * **namespace [std](../Namespaces/namespacestd.md)** 
 * **namespace [utils](../Namespaces/namespaceutils.md)** 
 * **class [vec2d](../Classes/classvec2d.md)** 
@@ -279,4 +278,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2024-08-02 at 05:19:11 +0000
+Updated on 2024-08-07 at 18:43:13 +0000
