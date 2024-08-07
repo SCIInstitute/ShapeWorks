@@ -124,9 +124,16 @@ void DeepSSMJob::run_prep() {
     GroomParameters groom_params{project_};
     groom_params.set_alignment_method("Iterative Closest Point");
     groom_params.set_alignment_enabled(true);
+    groom_params.set_alignment_reference(-1);
     groom_params.save_to_project();
 
     groom_training_shapes(project_);
+    // re-read parameters after python
+    groom_params = GroomParameters{project_};
+    // store for future steps
+    groom_params.set_alignment_reference(groom_params.get_alignment_reference_chosen());
+    groom_params.save_to_project();
+
     project_->save();
 
     QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);

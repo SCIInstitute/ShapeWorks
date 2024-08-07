@@ -3,14 +3,12 @@ set(Common_sources
   Shapeworks.cpp
   ShapeworksUtils.cpp
   Region.cpp
-  Exception.cpp
   Logging.cpp
   )
 set(Common_headers
   Shapeworks.h
   ShapeworksUtils.h
   Region.h
-  Exception.h
   Logging.h
   )
 add_library(Common STATIC

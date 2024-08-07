@@ -548,7 +548,7 @@ bool Groom::run_alignment() {
       subset_size = params.get_alignment_subset_size();
 
       Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
-      if (reference_index < 0 || reference_index >= reference_meshes.size()) {
+      if (reference_index < 0 || reference_index >= subjects.size()) {
         reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
         reference_index = reference_meshes[reference_index].get_id();
       }

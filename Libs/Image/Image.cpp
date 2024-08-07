@@ -38,14 +38,30 @@
 
 #include <boost/filesystem.hpp>
 #include <cmath>
-#include <exception>
 
-#include "Exception.h"
 #include "MeshUtils.h"
 #include "ShapeworksUtils.h"
 #include "itkTPGACLevelSetImageFilter.h"  // actually a shapeworks class, not itk
 
+// ITK image factories
+#include <itkMetaImageIOFactory.h>
+#include <itkNiftiImageIOFactory.h>
+#include <itkNrrdImageIOFactory.h>
+
 namespace shapeworks {
+
+namespace {
+void register_factories() {
+  static bool registered = false;
+  if (!registered) {
+    // register all the factories
+    itk::NrrdImageIOFactory::RegisterOneFactory();
+    itk::NiftiImageIOFactory::RegisterOneFactory();
+    itk::MetaImageIOFactory::RegisterOneFactory();
+    registered = true;
+  }
+}
+}  // namespace
 
 Image::Image(const Dims dims) : itk_image_(ImageType::New()) {
   ImageType::RegionType region;
@@ -102,11 +118,18 @@ Image& Image::operator=(Image&& img) {
 }
 
 Image::ImageType::Pointer Image::read(const std::string& pathname) {
+  register_factories();
+
   if (pathname.empty()) {
     throw std::invalid_argument("Empty pathname");
   }
 
   if (ShapeWorksUtils::is_directory(pathname)) return readDICOMImage(pathname);
+
+  // check if it exists
+  if (!boost::filesystem::exists(pathname)) {
+    throw std::invalid_argument("File does not exist: " + pathname);
+  }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
@@ -115,7 +138,7 @@ Image::ImageType::Pointer Image::read(const std::string& pathname) {
   try {
     reader->Update();
   } catch (itk::ExceptionObject& exp) {
-    throw shapeworks_exception(std::string(exp.what()));
+    throw std::runtime_error(std::string(exp.what()));
   }
 
   // reorient the image to RAI if it's not already
