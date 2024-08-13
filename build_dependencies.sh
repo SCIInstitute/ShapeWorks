@@ -20,8 +20,8 @@ BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="Release"
 BUILD_LOG="build_dependencies.log"
-VTK_VER="v9.1.0"
-VTK_VER_STR="9.1"
+VTK_VER="v9.3.1"
+VTK_VER_STR="9.3"
 ITK_VER="v5.3.0"
 ITK_VER_STR="5.3"
 QT_MIN_VER="5.15.4"
@@ -134,8 +134,7 @@ build_vtk()
   cd vtk
   git checkout -f tags/${VTK_VER}
 
-  patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.1.patch
-  cat Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+  patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.3.1.patch
   
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
