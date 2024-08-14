@@ -89,6 +89,15 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make install
 
+    - name: Check space8
+      run: df -h
+
+    - name: Clean intermediate files
+      run: find . -name "*.o" -type f -delete
+
+    - name: Check space9
+      run: df -h
+
     - name: Download test data
       shell: bash -l {0}
       run: .github/workflows/download_test_data.sh
