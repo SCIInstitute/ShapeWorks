@@ -42,7 +42,7 @@ project(ShapeWorks)
 
 
 ### vtk
-find_package(VTK 9.1.0)
+find_package(VTK 9.3.1)
 if (NOT VTK_FOUND)
   message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
 endif()
