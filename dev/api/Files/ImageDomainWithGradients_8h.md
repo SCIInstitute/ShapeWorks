@@ -115,4 +115,4 @@ class ImageDomainWithGradients : public ImageDomain<T> {
 
 -------------------------------
 
-Updated on 2024-08-08 at 17:20:00 +0000
+Updated on 2024-08-14 at 19:37:40 +0000
