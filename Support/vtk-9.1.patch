@@ -1,44 +1,8 @@
-diff --git a/Common/Core/SMP/Common/vtkSMPToolsImpl.h b/Common/Core/SMP/Common/vtkSMPToolsImpl.h
-index f3d72b76de..8ed35c982d 100644
---- a/Common/Core/SMP/Common/vtkSMPToolsImpl.h
-+++ b/Common/Core/SMP/Common/vtkSMPToolsImpl.h
-@@ -52,6 +52,9 @@ public:
-   //--------------------------------------------------------------------------------
-   int GetEstimatedNumberOfThreads();
- 
-+  //--------------------------------------------------------------------------------
-+  int GetEstimatedDefaultNumberOfThreads();
-+
-   //--------------------------------------------------------------------------------
-   void SetNestedParallelism(bool isNested) { this->NestedActivated = isNested; }
- 
-@@ -59,7 +62,7 @@ public:
-   bool GetNestedParallelism() { return this->NestedActivated; }
- 
-   //--------------------------------------------------------------------------------
--  bool IsParallelScope() { return this->IsParallel; }
-+  bool IsParallelScope();
- 
-   //--------------------------------------------------------------------------------
-   bool GetSingleThread();
-@@ -115,6 +118,12 @@ private:
-   std::atomic<bool> IsParallel{ false };
- };
- 
-+template <BackendType Backend>
-+bool vtkSMPToolsImpl<Backend>::IsParallelScope()
-+{
-+  return this->IsParallel;
-+}
-+
- using ExecuteFunctorPtrType = void (*)(void*, vtkIdType, vtkIdType, vtkIdType);
- 
- VTK_ABI_NAMESPACE_END
 diff --git a/Common/Core/vtkRandomPool.cxx b/Common/Core/vtkRandomPool.cxx
-index c2bcf67d18..69ca63654a 100644
+index 46f9aff201..273ca74c50 100644
 --- a/Common/Core/vtkRandomPool.cxx
 +++ b/Common/Core/vtkRandomPool.cxx
-@@ -332,6 +332,9 @@ const double* vtkRandomPool::GeneratePool()
+@@ -338,6 +338,9 @@ const double* vtkRandomPool::GeneratePool()
      if (actualThreads < numThreads) // readjust work load
      {
        numThreads = actualThreads;
@@ -49,10 +13,10 @@ index c2bcf67d18..69ca63654a 100644
  
      // Now distribute work
 diff --git a/Filters/Modeling/vtkSelectEnclosedPoints.cxx b/Filters/Modeling/vtkSelectEnclosedPoints.cxx
-index 7d5122297e..7a60c4b62e 100644
+index 0dcae6df7a..2986c1e7fd 100644
 --- a/Filters/Modeling/vtkSelectEnclosedPoints.cxx
 +++ b/Filters/Modeling/vtkSelectEnclosedPoints.cxx
-@@ -79,7 +79,10 @@ struct SelectInOutCheck
+@@ -88,7 +88,10 @@ struct SelectInOutCheck
  
      // Precompute a sufficiently large enough random sequence
      this->Sequence = vtkRandomPool::New();
@@ -73,3 +37,24 @@ index 7d5122297e..7a60c4b62e 100644
  
  int vtkSelectEnclosedPoints::IsInsideSurface(double x[3], vtkPolyData* surface, double bds[6],
    double length, double tolerance, vtkAbstractCellLocator* locator, vtkIdList* cellIds,
+diff --git a/Rendering/OpenGL2/vtkCocoaRenderWindow.mm b/Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+index 0d63d49783..82e6b7c57f 100644
+--- a/Rendering/OpenGL2/vtkCocoaRenderWindow.mm
++++ b/Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+@@ -228,6 +228,16 @@ vtkCocoaRenderWindow::vtkCocoaRenderWindow()
+ //----------------------------------------------------------------------------
+ vtkCocoaRenderWindow::~vtkCocoaRenderWindow()
+ {
++  // If we created a vtkCocoaGLView, clear its reference back to us.
++  if (this->GetViewCreated())
++  {
++    NSView* glView = (NSView*)this->GetWindowId();
++    if ([glView isKindOfClass:[vtkCocoaGLView class]])
++    {
++      [(vtkCocoaGLView*)glView setVTKRenderWindow:nullptr];
++    }
++  }
++
+   if (this->CursorHidden)
+   {
+     this->ShowCursor();

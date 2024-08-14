@@ -15,8 +15,6 @@ else
     # run install
     source ./install_shapeworks.sh --developer
     conda clean -p -t -y
-    pip cache info
-    pip cache purge
 fi
 
 conda init bash
