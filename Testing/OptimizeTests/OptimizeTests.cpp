@@ -19,13 +19,6 @@ using namespace shapeworks;
 static void prep_temp(std::string data, std::string name) {
   TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/shared", "shared");
   TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + data, name);
-
-#ifdef _WIN32
-  _putenv_s("VTK_SMP_BACKEND_IN_USE", "Sequential");
-#else
-  setenv("VTK_SMP_BACKEND_IN_USE", "Sequential", true);
-#endif
-
 }
 
 //---------------------------------------------------------------------------
@@ -419,7 +412,7 @@ TEST(OptimizeTests, procrustes_no_scale_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   ASSERT_GT(values[values.size() - 1], 150.0);
-  ASSERT_LT(values[values.size() - 1], 215.0);
+  ASSERT_LT(values[values.size() - 1], 200.0);
 }
 
 //---------------------------------------------------------------------------
@@ -440,8 +433,6 @@ TEST(OptimizeTests, procrustes_both_enabled_test) {
   bool success = app.Run();
   ASSERT_TRUE(success);
 
-  project->save();
-
   // compute stats
   ParticleShapeStatistics stats(project);
   stats.compute_modes();
@@ -453,7 +444,7 @@ TEST(OptimizeTests, procrustes_both_enabled_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   // should be tiny with all of procrustes enabled
-  ASSERT_LT(values[values.size() - 1], 3.0);
+  ASSERT_LT(values[values.size() - 1], 1.0);
 }
 
 //---------------------------------------------------------------------------
@@ -485,7 +476,7 @@ TEST(OptimizeTests, procrustes_scale_only_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   ASSERT_GT(values[values.size() - 1], 275.0);
-  ASSERT_LT(values[values.size() - 1], 380.0);
+  ASSERT_LT(values[values.size() - 1], 345.0);
 }
 
 // TODO Move this to mesh tests?
