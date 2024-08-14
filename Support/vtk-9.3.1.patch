@@ -1,3 +1,39 @@
+diff --git a/Common/Core/SMP/Common/vtkSMPToolsImpl.h b/Common/Core/SMP/Common/vtkSMPToolsImpl.h
+index f3d72b76de..8ed35c982d 100644
+--- a/Common/Core/SMP/Common/vtkSMPToolsImpl.h
++++ b/Common/Core/SMP/Common/vtkSMPToolsImpl.h
+@@ -52,6 +52,9 @@ public:
+   //--------------------------------------------------------------------------------
+   int GetEstimatedNumberOfThreads();
+ 
++  //--------------------------------------------------------------------------------
++  int GetEstimatedDefaultNumberOfThreads();
++
+   //--------------------------------------------------------------------------------
+   void SetNestedParallelism(bool isNested) { this->NestedActivated = isNested; }
+ 
+@@ -59,7 +62,7 @@ public:
+   bool GetNestedParallelism() { return this->NestedActivated; }
+ 
+   //--------------------------------------------------------------------------------
+-  bool IsParallelScope() { return this->IsParallel; }
++  bool IsParallelScope();
+ 
+   //--------------------------------------------------------------------------------
+   bool GetSingleThread();
+@@ -115,6 +118,12 @@ private:
+   std::atomic<bool> IsParallel{ false };
+ };
+ 
++template <BackendType Backend>
++bool vtkSMPToolsImpl<Backend>::IsParallelScope()
++{
++  return this->IsParallel;
++}
++
+ using ExecuteFunctorPtrType = void (*)(void*, vtkIdType, vtkIdType, vtkIdType);
+ 
+ VTK_ABI_NAMESPACE_END
 diff --git a/Common/Core/vtkRandomPool.cxx b/Common/Core/vtkRandomPool.cxx
 index c2bcf67d18..69ca63654a 100644
 --- a/Common/Core/vtkRandomPool.cxx
