@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Don't run this script if you are not a GitHub Action
 
