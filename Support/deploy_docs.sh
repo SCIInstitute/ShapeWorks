@@ -34,6 +34,7 @@ ${GITHUB_WORKSPACE}/Support/build_docs.sh $INSTALL_DIR
 
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+git config http.postBuffer 524288000
 
 remote_repo="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
