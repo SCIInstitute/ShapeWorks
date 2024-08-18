@@ -1,5 +1,13 @@
 # Release Notes
 
+## ShapeWorks 6.5.1 - 2024-08
+
+### Fixes
+   * Fix VTK Python version for windows (#2308)
+   * Fix some alignment issues in grooming
+   * Fix crash during ICP alignment with multiple domains
+
+
 ## ShapeWorks 6.5.0 - 2024-03
 
 ![](../img/about/release6.5.png)
