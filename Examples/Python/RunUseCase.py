@@ -57,6 +57,7 @@ if __name__ == '__main__':
                                  "ellipsoid_pca", \
                                  "ellipsoid_multiple_domain", "ellipsoid_multiple_domain_mesh", "lumps", "left_atrium", \
                                  "femur_cut", "femur_pvalues", "deep_ssm", "supershapes_1mode_contour",
+                                 "progressive_deep_ssm",
                                  "thin_cavity_bean",
                                  "peanut_shared_boundary", "incremental_supershapes", "hip_multiple_domain"])
     parser.add_argument("--use_subsample", help="Run the pipeline for a subset of data", action="store_true")
