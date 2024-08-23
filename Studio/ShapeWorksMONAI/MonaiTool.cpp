@@ -15,9 +15,9 @@
 #include <Data/Session.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Data/Worker.h>
-#include <DeepSSM/DeepSSMJob.h>
-#include <DeepSSM/DeepSSMParameters.h>
-#include <DeepSSM/DeepSSMTool.h>
+#include <DeepSSM/MonaiJob.h>
+#include <DeepSSM/MonaiParameters.h>
+#include <DeepSSM/MonaiTool.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
 #include <Logging.h>
@@ -27,13 +27,13 @@
 #include <vtkPointData.h>
 
 // ui
-#include <ui_DeepSSMTool.h>
+#include <ui_MonaiTool.h>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
-  ui_ = new Ui_DeepSSMTool;
+MonaiTool::MonaiTool(Preferences& prefs) : preferences_(prefs) {
+  ui_ = new Ui_MonaiTool;
   ui_->setupUi(this);
 
   ui_->loss_function->setToolTip("Loss function for training and fine tuning");
@@ -70,21 +70,21 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tab_widget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
 #endif
 
-  connect(ui_->run_button, &QPushButton::clicked, this, &DeepSSMTool::run_clicked);
-  connect(ui_->restore_defaults, &QPushButton::clicked, this, &DeepSSMTool::restore_defaults);
+  connect(ui_->run_button, &QPushButton::clicked, this, &MonaiTool::run_clicked);
+  connect(ui_->restore_defaults, &QPushButton::clicked, this, &MonaiTool::restore_defaults);
 
-  connect(ui_->data_open_button, &QPushButton::clicked, this, &DeepSSMTool::update_panels);
-  connect(ui_->controls_open_button, &QPushButton::clicked, this, &DeepSSMTool::update_panels);
-  connect(ui_->training_open_button, &QPushButton::clicked, this, &DeepSSMTool::update_panels);
+  connect(ui_->data_open_button, &QPushButton::clicked, this, &MonaiTool::update_panels);
+  connect(ui_->controls_open_button, &QPushButton::clicked, this, &MonaiTool::update_panels);
+  connect(ui_->training_open_button, &QPushButton::clicked, this, &MonaiTool::update_panels);
 
-  connect(ui_->generated_data_checkbox, &QCheckBox::stateChanged, this, &DeepSSMTool::show_augmentation_meshes);
-  connect(ui_->original_data_checkbox, &QCheckBox::stateChanged, this, &DeepSSMTool::show_augmentation_meshes);
+  connect(ui_->generated_data_checkbox, &QCheckBox::stateChanged, this, &MonaiTool::show_augmentation_meshes);
+  connect(ui_->original_data_checkbox, &QCheckBox::stateChanged, this, &MonaiTool::show_augmentation_meshes);
 
-  connect(ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
+  connect(ui_->tab_widget, &QTabWidget::currentChanged, this, &MonaiTool::tab_changed);
 
-  connect(ui_->training_fine_tuning, &QCheckBox::stateChanged, this, &DeepSSMTool::training_fine_tuning_changed);
+  connect(ui_->training_fine_tuning, &QCheckBox::stateChanged, this, &MonaiTool::training_fine_tuning_changed);
 
-  connect(ui_->run_all, &QCheckBox::stateChanged, this, &DeepSSMTool::update_panels);
+  connect(ui_->run_all, &QCheckBox::stateChanged, this, &MonaiTool::update_panels);
 
   connect(ui_->run_step1, &QPushButton::clicked, this, [=]() { run_prep_clicked(1); });
   connect(ui_->run_step2, &QPushButton::clicked, this, [=]() { run_prep_clicked(2); });
@@ -102,8 +102,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->spacing_y->setValidator(double_validator);
   ui_->spacing_z->setValidator(double_validator);
 
-  connect(ui_->validation_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
-  connect(ui_->testing_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
+  connect(ui_->validation_split, &QLineEdit::editingFinished, this, &MonaiTool::update_split);
+  connect(ui_->testing_split, &QLineEdit::editingFinished, this, &MonaiTool::update_split);
 
   ui_->tl_net_options->setVisible(false);
 
@@ -120,19 +120,19 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::tab_changed(int tab) {
+void MonaiTool::tab_changed(int tab) {
   switch (tab) {
     case 0:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_PrepType;
+      current_tool_ = MonaiTool::ToolMode::DeepSSM_PrepType;
       break;
     case 1:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
+      current_tool_ = MonaiTool::ToolMode::DeepSSM_AugmentationType;
       break;
     case 2:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TrainingType;
+      current_tool_ = MonaiTool::ToolMode::DeepSSM_TrainingType;
       break;
     case 3:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TestingType;
+      current_tool_ = MonaiTool::ToolMode::DeepSSM_TestingType;
       break;
   }
   update_panels();
@@ -140,10 +140,10 @@ void DeepSSMTool::tab_changed(int tab) {
 }
 
 //---------------------------------------------------------------------------
-DeepSSMTool::~DeepSSMTool() {}
+MonaiTool::~MonaiTool() {}
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_session(QSharedPointer<Session> session) {
+void MonaiTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   load_params();
   update_panels();
@@ -151,10 +151,10 @@ void DeepSSMTool::set_session(QSharedPointer<Session> session) {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
+void MonaiTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::load_params() {
+void MonaiTool::load_params() {
   auto params = DeepSSMParameters(session_->get_project());
 
   ui_->validation_split->setText(QString::number(params.get_validation_split()));
@@ -195,7 +195,7 @@ void DeepSSMTool::load_params() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::store_params() {
+void MonaiTool::store_params() {
   auto params = DeepSSMParameters(session_->get_project());
 
   params.set_validation_split(ui_->validation_split->text().toDouble());
@@ -232,13 +232,13 @@ void DeepSSMTool::store_params() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::shutdown() { app_->get_py_worker()->abort_job(); }
+void MonaiTool::shutdown() { app_->get_py_worker()->abort_job(); }
 
 //---------------------------------------------------------------------------
-bool DeepSSMTool::is_active() { return session_ && session_->get_tool_state() == Session::DEEPSSM_C; }
+bool MonaiTool::is_active() { return session_ && session_->get_tool_state() == Session::DEEPSSM_C; }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_clicked() {
+void MonaiTool::run_clicked() {
   if (tool_is_running_) {
     ui_->run_button->setText("Aborting...");
     ui_->run_button->setEnabled(false);
@@ -247,7 +247,7 @@ void DeepSSMTool::run_clicked() {
   } else {
     session_->trigger_save();
     if (ui_->run_all->isChecked()) {
-      run_tool(DeepSSMTool::ToolMode::DeepSSM_PrepType);
+      run_tool(MonaiTool::ToolMode::DeepSSM_PrepType);
     } else {
       run_tool(current_tool_);
     }
@@ -255,25 +255,25 @@ void DeepSSMTool::run_clicked() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_prep_clicked(int step) {
-  prep_step_ = static_cast<DeepSSMTool::PrepStep>(step);
+void MonaiTool::run_prep_clicked(int step) {
+  prep_step_ = static_cast<MonaiTool::PrepStep>(step);
   run_clicked();
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_thread_complete() {
+void MonaiTool::handle_thread_complete() {
   try {
     if (!deep_ssm_->is_aborted()) {
-      if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+      if (current_tool_ == MonaiTool::ToolMode::DeepSSM_PrepType) {
         auto params = DeepSSMParameters(session_->get_project());
         params.set_prep_stage(static_cast<int>(prep_step_));
-        if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_IMAGES) {
+        if (prep_step_ == MonaiTool::PrepStep::NOT_STARTED || prep_step_ == MonaiTool::PrepStep::GROOM_IMAGES) {
           params.set_prep_step_complete(true);
-          params.set_prep_stage(static_cast<int>(DeepSSMTool::PrepStep::DONE));
+          params.set_prep_stage(static_cast<int>(MonaiTool::PrepStep::DONE));
         }
         params.save_to_project();
         update_panels();
-        prep_step_ = DeepSSMTool::PrepStep::NOT_STARTED;
+        prep_step_ = MonaiTool::PrepStep::NOT_STARTED;
       }
     }
     Q_EMIT progress(100);
@@ -285,11 +285,11 @@ void DeepSSMTool::handle_thread_complete() {
     if (!deep_ssm_->is_aborted()) {
       if (ui_->run_all->isChecked()) {
         if (current_tool_ == ToolMode::DeepSSM_PrepType) {
-          run_tool(DeepSSMTool::ToolMode::DeepSSM_AugmentationType);
+          run_tool(MonaiTool::ToolMode::DeepSSM_AugmentationType);
         } else if (current_tool_ == ToolMode::DeepSSM_AugmentationType) {
-          run_tool(DeepSSMTool::ToolMode::DeepSSM_TrainingType);
+          run_tool(MonaiTool::ToolMode::DeepSSM_TrainingType);
         } else if (current_tool_ == ToolMode::DeepSSM_TrainingType) {
-          run_tool(DeepSSMTool::ToolMode::DeepSSM_TestingType);
+          run_tool(MonaiTool::ToolMode::DeepSSM_TestingType);
         }
       }
     }
@@ -299,8 +299,8 @@ void DeepSSMTool::handle_thread_complete() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_progress(int val, QString message) {
-  if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+void MonaiTool::handle_progress(int val, QString message) {
+  if (current_tool_ == MonaiTool::ToolMode::DeepSSM_PrepType) {
     //?? TODO ui_->prep_text_edit->setText(deep_ssm_->get_prep_message());
     //?? TODO ui_->prep_text_edit->setEnabled(true);
   }
@@ -311,10 +311,10 @@ void DeepSSMTool::handle_progress(int val, QString message) {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_error(QString msg) {}
+void MonaiTool::handle_error(QString msg) {}
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_panels() {
+void MonaiTool::update_panels() {
   ui_->data_content->setVisible(ui_->data_open_button->isChecked());
   ui_->controls_content->setVisible(ui_->controls_open_button->isChecked());
   ui_->training_content->setVisible(ui_->training_open_button->isChecked());
@@ -331,20 +331,20 @@ void DeepSSMTool::update_panels() {
   ui_->training_panel->hide();
   bool enabled = true;
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+    case MonaiTool::ToolMode::DeepSSM_PrepType:
       string = "All Prep Stages";
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+    case MonaiTool::ToolMode::DeepSSM_AugmentationType:
       string = "Data Augmentation";
       ui_->data_panel->show();
       enabled = params.get_prep_step_complete();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+    case MonaiTool::ToolMode::DeepSSM_TrainingType:
       string = "Training";
       ui_->training_panel->show();
       enabled = params.get_aug_step_complete();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+    case MonaiTool::ToolMode::DeepSSM_TestingType:
       string = "Testing";
       enabled = params.get_training_step_complete();
       break;
@@ -381,7 +381,7 @@ void DeepSSMTool::update_panels() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_split() {
+void MonaiTool::update_split() {
   double testing = ui_->testing_split->text().toDouble();
   double validation = ui_->validation_split->text().toDouble();
   testing = std::max<double>(std::min<double>(testing, 100), 0);
@@ -401,26 +401,26 @@ void DeepSSMTool::update_split() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_new_mesh() {
-  if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
+void MonaiTool::handle_new_mesh() {
+  if (current_tool_ == MonaiTool::ToolMode::DeepSSM_TestingType) {
     update_testing_meshes();
   }
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::training_fine_tuning_changed() {
+void MonaiTool::training_fine_tuning_changed() {
   ui_->training_fine_tuning_epochs->setEnabled(ui_->training_fine_tuning->isChecked());
   ui_->training_fine_tuning_learning_rate->setEnabled(ui_->training_fine_tuning->isChecked());
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_tables() {
+void MonaiTool::update_tables() {
   populate_table_from_csv(ui_->training_table, "deepssm/model/train_log.csv", true);
   populate_table_from_csv(ui_->table, "deepssm/augmentation/TotalData.csv", false);
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename, bool header) {
+void MonaiTool::populate_table_from_csv(QTableWidget* table, QString filename, bool header) {
   table->clear();
   if (!QFile(filename).exists()) {
     return;
@@ -484,7 +484,7 @@ void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename,
 }
 
 //---------------------------------------------------------------------------
-QStringList DeepSSMTool::read_images_from_csv(QString filename) {
+QStringList MonaiTool::read_images_from_csv(QString filename) {
   // first column is image, no header
   QStringList list;
   QFile file(filename);
@@ -512,7 +512,7 @@ QStringList DeepSSMTool::read_images_from_csv(QString filename) {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::show_training_meshes() {
+void MonaiTool::show_training_meshes() {
   shapes_.clear();
 
   QStringList filenames;
@@ -598,9 +598,9 @@ void DeepSSMTool::show_training_meshes() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::show_testing_meshes() {
+void MonaiTool::show_testing_meshes() {
   shapes_.clear();
-  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
+  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, MonaiTool::ToolMode::DeepSSM_TestingType);
   auto id_list = get_split(session_->get_project(), SplitType::TEST);
 
   auto subjects = session_->get_project()->get_subjects();
@@ -658,9 +658,9 @@ void DeepSSMTool::show_testing_meshes() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_testing_meshes() {
+void MonaiTool::update_testing_meshes() {
   try {
-    deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
+    deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, MonaiTool::ToolMode::DeepSSM_TestingType);
     auto id_list = get_split(session_->get_project(), SplitType::TEST);
 
     auto subjects = session_->get_project()->get_subjects();
@@ -676,29 +676,29 @@ void DeepSSMTool::update_testing_meshes() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_meshes() {
+void MonaiTool::update_meshes() {
   if (!is_active()) {
     return;
   }
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+    case MonaiTool::ToolMode::DeepSSM_PrepType:
       shapes_.clear();
       Q_EMIT update_view();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+    case MonaiTool::ToolMode::DeepSSM_AugmentationType:
       show_augmentation_meshes();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+    case MonaiTool::ToolMode::DeepSSM_TrainingType:
       show_training_meshes();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+    case MonaiTool::ToolMode::DeepSSM_TestingType:
       show_testing_meshes();
       break;
   }
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::show_augmentation_meshes() {
+void MonaiTool::show_augmentation_meshes() {
   try {
     update_tables();
     shapes_.clear();
@@ -754,10 +754,10 @@ void DeepSSMTool::show_augmentation_meshes() {
 }
 
 //---------------------------------------------------------------------------
-ShapeList DeepSSMTool::get_shapes() { return shapes_; }
+ShapeList MonaiTool::get_shapes() { return shapes_; }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::load_plots() {
+void MonaiTool::load_plots() {
   violin_plot_ = load_plot("deepssm/augmentation/violin.png");
   training_plot_ = load_plot("deepssm/model/training_plot.png");
   training_plot_ft_ = load_plot("deepssm/model/training_plot_ft.png");
@@ -768,7 +768,7 @@ void DeepSSMTool::load_plots() {
 }
 
 //---------------------------------------------------------------------------
-QPixmap DeepSSMTool::load_plot(QString filename) {
+QPixmap MonaiTool::load_plot(QString filename) {
   if (QFile(filename).exists()) {
     return QPixmap(filename);
   }
@@ -776,7 +776,7 @@ QPixmap DeepSSMTool::load_plot(QString filename) {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::resize_plots() {
+void MonaiTool::resize_plots() {
   set_plot(ui_->violin_plot, violin_plot_);
   if (ui_->tl_net_enabled->isChecked()) {
     set_plot(ui_->training_plot_2, training_plot_tl1_);
@@ -792,7 +792,7 @@ void DeepSSMTool::resize_plots() {
 }
 
 //---------------------------------------------------------------------------
-std::string DeepSSMTool::get_feature_name() {
+std::string MonaiTool::get_feature_name() {
   std::string feature_name = session_->get_image_name();
   auto image_names = session_->get_project()->get_image_names();
   if (image_names.size() > 0) {
@@ -802,7 +802,7 @@ std::string DeepSSMTool::get_feature_name() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_subject_image_filename(const std::shared_ptr<Subject>& subject, const std::string& filename) {
+void MonaiTool::set_subject_image_filename(const std::shared_ptr<Subject>& subject, const std::string& filename) {
   // if the filename doesn't exist, print a warning
   if (!QFileInfo(QString::fromStdString(filename)).exists()) {
     SW_WARN("File doesn't exist: {}", filename);
@@ -814,7 +814,7 @@ void DeepSSMTool::set_subject_image_filename(const std::shared_ptr<Subject>& sub
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_plot(QLabel* qlabel, QPixmap pixmap) {
+void MonaiTool::set_plot(QLabel* qlabel, QPixmap pixmap) {
   if (!pixmap.isNull()) {
     QPixmap resized = pixmap.scaledToWidth(width() * 0.95, Qt::SmoothTransformation);
     qlabel->setPixmap(resized);
@@ -824,22 +824,22 @@ void DeepSSMTool::set_plot(QLabel* qlabel, QPixmap pixmap) {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::resizeEvent(QResizeEvent* event) {
+void MonaiTool::resizeEvent(QResizeEvent* event) {
   QWidget::resizeEvent(event);
   resize_plots();
 }
 
 //---------------------------------------------------------------------------
-std::string DeepSSMTool::get_display_feature() {
-  if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TrainingType ||
-      current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
+std::string MonaiTool::get_display_feature() {
+  if (current_tool_ == MonaiTool::ToolMode::DeepSSM_TrainingType ||
+      current_tool_ == MonaiTool::ToolMode::DeepSSM_TestingType) {
     return "deepssm_error";
   }
   return "";
 }
 
 //---------------------------------------------------------------------------
-std::vector<int> DeepSSMTool::get_split(ProjectHandle project, SplitType split_type) {
+std::vector<int> MonaiTool::get_split(ProjectHandle project, SplitType split_type) {
   auto subjects = project->get_subjects();
 
   std::vector<int> list;
@@ -869,23 +869,23 @@ std::vector<int> DeepSSMTool::get_split(ProjectHandle project, SplitType split_t
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::restore_defaults() {
+void MonaiTool::restore_defaults() {
   // need to save values from the other pages
   store_params();
 
   auto params = DeepSSMParameters(session_->get_project());
 
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+    case MonaiTool::ToolMode::DeepSSM_PrepType:
       params.restore_split_defaults();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+    case MonaiTool::ToolMode::DeepSSM_AugmentationType:
       params.restore_augmentation_defaults();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+    case MonaiTool::ToolMode::DeepSSM_TrainingType:
       params.restore_training_defaults();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+    case MonaiTool::ToolMode::DeepSSM_TestingType:
       // params.restore_inference_defaults();
       break;
   }
@@ -896,17 +896,17 @@ void DeepSSMTool::restore_defaults() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
+void MonaiTool::run_tool(MonaiTool::ToolMode type) {
   current_tool_ = type;
   Q_EMIT progress(-1);
 
-  if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
+  if (type == MonaiTool::ToolMode::DeepSSM_AugmentationType) {
     ui_->tab_widget->setCurrentIndex(1);
 
     SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/augmentation/TotalData.csv").remove();
-  } else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
+  } else if (type == MonaiTool::ToolMode::DeepSSM_TrainingType) {
     ui_->tab_widget->setCurrentIndex(2);
     SW_LOG("Please Wait: Running Training...");
 
@@ -915,11 +915,11 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
     dir.removeRecursively();
 
     show_training_meshes();
-  } else if (type == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
+  } else if (type == MonaiTool::ToolMode::DeepSSM_TestingType) {
     ui_->tab_widget->setCurrentIndex(3);
 
     SW_LOG("Please Wait: Running Testing...");
-  } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+  } else if (type == MonaiTool::ToolMode::DeepSSM_PrepType) {
     ui_->tab_widget->setCurrentIndex(0);
 
     SW_LOG("Please Wait: Running Groom/Optimize...");
@@ -940,8 +940,8 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   store_params();
 
   deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, type, prep_step_);
-  connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
-  connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
+  connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &MonaiTool::handle_progress);
+  connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &MonaiTool::handle_thread_complete);
 
   app_->get_py_worker()->run_job(deep_ssm_);
 
