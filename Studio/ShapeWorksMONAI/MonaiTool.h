@@ -10,7 +10,7 @@
 #include <Project.h>
 #include <Shape.h>
 
-class Ui_DeepSSMTool;
+class Ui_MonaiTool;
 class QLabel;
 class QTableWidget;
 class QLineEdit;
@@ -22,7 +22,7 @@ class Lightbox;
 class DeepSSMJob;
 class ShapeWorksStudioApp;
 
-class DeepSSMTool : public QWidget {
+class MonaiTool : public QWidget {
   Q_OBJECT;
 
  public:
@@ -44,8 +44,8 @@ class DeepSSMTool : public QWidget {
 
   enum class SplitType { TRAIN, VAL, TEST };
 
-  DeepSSMTool(Preferences& prefs);
-  ~DeepSSMTool();
+  MonaiTool(Preferences& prefs);
+  ~MonaiTool();
 
   /// set the pointer to the session
   void set_session(QSharedPointer<Session> session);
@@ -96,7 +96,7 @@ class DeepSSMTool : public QWidget {
 
  private:
   void update_meshes();
-  void run_tool(DeepSSMTool::ToolMode type);
+  void run_tool(MonaiTool::ToolMode type);
   void show_augmentation_meshes();
   void update_tables();
   void show_training_meshes();
@@ -117,13 +117,13 @@ class DeepSSMTool : public QWidget {
 
   Preferences& preferences_;
 
-  Ui_DeepSSMTool* ui_;
+  Ui_MonaiTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
   PrepStep prep_step_ = PrepStep::NOT_STARTED;
 
   bool tool_is_running_ = false;
-  DeepSSMTool::ToolMode current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
+  MonaiTool::ToolMode current_tool_ = MonaiTool::ToolMode::DeepSSM_AugmentationType;
   QSharedPointer<DeepSSMJob> deep_ssm_;
   QElapsedTimer timer_;
 
