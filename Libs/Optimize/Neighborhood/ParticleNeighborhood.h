@@ -20,6 +20,46 @@ namespace shapeworks {
  * FindNeighborhoodPoints is called.
  */
 
+class ParticleSystem;
+class ParticleNeighborhoodTwo {
+ public:
+  ParticleNeighborhoodTwo(ParticleSystem* ps, int domain_id = -1) : ps_(ps), domain_id_(domain_id) {}
+
+  std::vector<ParticlePointIndexPair> find_neighborhood_points(const itk::Point<double, 3>& position, int id,
+                                                               std::vector<double>& weights,
+                                                               std::vector<double>& distances, double radius);
+
+  std::vector<ParticlePointIndexPair> find_neighborhood_points(const itk::Point<double, 3>& position, int id,
+                                                               std::vector<double>& weights, double radius);
+
+  std::vector<ParticlePointIndexPair> find_neighborhood_points(const itk::Point<double, 3>& position, int id,
+                                                               double radius);
+
+  void SetWeightingEnabled(bool is_enabled) { weighting_enabled_ = is_enabled; }
+
+  bool IsWeightingEnabled() const { return weighting_enabled_; }
+
+  void SetForceEuclidean(bool is_enabled) { force_euclidean_ = is_enabled; }
+
+  bool IsForceEuclidean() const { return force_euclidean_; }
+
+  void SetDomain(ParticleDomain::Pointer domain) { domain_ = domain; };
+  ParticleDomain::Pointer GetDomain() const { return domain_; };
+
+  void set_domain_id(int id) { domain_id_ = id; }
+
+ private:
+  std::vector<ParticlePointIndexPair> get_points_in_sphere(const itk::Point<double, 3>& position, int id,
+                                                           double radius);
+
+  ParticleSystem* ps_;
+  ParticleDomain::Pointer domain_;
+  int domain_id_{-1};
+  double flat_cutoff_{0.3};
+  bool weighting_enabled_{true};
+  bool force_euclidean_{false};
+};
+
 class ParticleNeighborhood : public itk::DataObject {
  public:
   constexpr static unsigned int VDimension = 3;

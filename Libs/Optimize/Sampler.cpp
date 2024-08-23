@@ -74,6 +74,8 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   // Here, the Constraints actually get added to the constraints class
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
+    m_ParticleSystem->AddDomain(domain);
+    m_ParticleSystem->GetNeighborhood(i)->SetDomain(domain);
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
       // Adding cutting planes to constraint object
@@ -90,7 +92,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       }
 
       // Adding free-form constraints to constraint object
-      // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
       if (m_FFCs.size() > i) {
         SW_LOG("Initializing FFCs for domain {} / {}", i, m_DomainList.size());
         initialize_ffcs(i);
@@ -99,7 +100,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
     } else if (domain->GetDomainType() == shapeworks::DomainType::Mesh) {
       if (m_meshFFCMode == 1) {
         // Adding free-form constraints to constraint object
-        // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
         if (m_FFCs.size() > i) {
           initialize_ffcs(i);
         }
@@ -117,11 +117,11 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
           }
         }
       }
-    }
+      // cast to MeshDomain
+      auto mesh_domain = std::dynamic_pointer_cast<MeshDomain>(domain);
 
-    // END TEST CUTTING PLANE
-    m_ParticleSystem->AddDomain(domain);
-    m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
+      m_ParticleSystem->GetNeighborhood(i)->SetWeightingEnabled(!mesh_domain->GetMeshWrapper()->IsGeodesicsEnabled());
+    }
   }
 }
 
@@ -284,24 +284,23 @@ void Sampler::ReInitialize() {
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent) {
   auto domain = std::make_shared<MeshDomain>();
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
+
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh, geodesic_remesh_percent);
     this->m_meshes.push_back(mesh->GetPolydata());
-    m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled());  // disable weighting for geodesics
   }
   m_DomainList.push_back(domain);
 }
 
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   auto domain = std::make_shared<ContourDomain>();
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
+
   if (poly_data != nullptr) {
     this->m_Spacing = 1;
     domain->SetPolyLine(poly_data);
   }
-  m_NeighborhoodList.back()->SetWeightingEnabled(false);
+
   m_DomainList.push_back(domain);
 }
 
@@ -397,8 +396,6 @@ void Sampler::AddFreeFormConstraint(int domain, const FreeFormConstraint& ffc) {
 
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
   auto domain = std::make_shared<ImplicitSurfaceDomain<ImageType::PixelType>>();
-
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];

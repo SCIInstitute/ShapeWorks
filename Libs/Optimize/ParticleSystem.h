@@ -61,14 +61,8 @@ class ParticleSystem : public itk::DataObject {
   /** Point type used to store particle locations. */
   typedef itk::Point<double, VDimension> PointType;
 
-  /** Class used to compute neighborhoods of points. One is associated with
-      each domain.*/
-  typedef ParticleNeighborhood NeighborhoodType;
-
   /** Point container type.  One is associated with each domain.*/
   typedef GenericContainer<PointType> PointContainerType;
-
-  typedef NeighborhoodType::PointVectorType PointVectorType;
 
   /** Defines a transform class type.  One is associated with each
       domain. Transforms are affine for simplicity.  This could be extended by
@@ -148,36 +142,38 @@ class ParticleSystem : public itk::DataObject {
   void PrintParticleSystem();
 
   /** Set/Get the neighborhood object associated with domain k. */
-  void SetNeighborhood(unsigned int, NeighborhoodType *);
-  void SetNeighborhood(NeighborhoodType *n) { this->SetNeighborhood(0, n); }
-  NeighborhoodType::ConstPointer GetNeighborhood(unsigned int k) const { return m_Neighborhoods[k]; }
+  void SetNeighborhood(unsigned int, std::shared_ptr<ParticleNeighborhoodTwo> neighborhood);
+  void SetNeighborhood(std::shared_ptr<ParticleNeighborhoodTwo> neighborhood) { SetNeighborhood(0, neighborhood); }
+  std::shared_ptr<ParticleNeighborhoodTwo> GetNeighborhood(unsigned int k) const { return m_Neighborhoods[k]; }
+
+  using PointVectorType = std::vector<ParticlePointIndexPair>;
 
   /** Return the neighborhood of points with radius r around point p in domain
       k.  This is just a convenience method to avoid exposing the underlying
       Neighborhood objects. FindTransformedNeighborhoodPoints returns the list
       with all points transformed by the transform associated with the given
       domain.*/
-  inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx, double r, unsigned int d = 0) const {
-    return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, r);
+  PointVectorType FindNeighborhoodPoints(const PointType &p, int idx, double r, unsigned int d = 0) const {
+    return m_Neighborhoods[d]->find_neighborhood_points(p, idx, r);
   }
   inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx, std::vector<double> &w,
                                                 std::vector<double> &distances, double r, unsigned int d = 0) const {
-    return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, w, distances, r);
+    return m_Neighborhoods[d]->find_neighborhood_points(p, idx, w, distances, r);
   }
   inline PointVectorType FindNeighborhoodPoints(const PointType &p, int idx, std::vector<double> &w, double r,
                                                 unsigned int d = 0) const {
-    return m_Neighborhoods[d]->FindNeighborhoodPoints(p, idx, w, r);
+    return m_Neighborhoods[d]->find_neighborhood_points(p, idx, w, r);
   }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx, double r, unsigned int d = 0) const {
-    return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx, d), idx, r);
+    return m_Neighborhoods[d]->find_neighborhood_points(GetPosition(idx, d), idx, r);
   }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx, std::vector<double> &w,
                                                 std::vector<double> &distances, double r, unsigned int d = 0) const {
-    return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx, d), idx, w, distances, r);
+    return m_Neighborhoods[d]->find_neighborhood_points(GetPosition(idx, d), idx, w, distances, r);
   }
   inline PointVectorType FindNeighborhoodPoints(unsigned int idx, std::vector<double> &w, double r,
                                                 unsigned int d = 0) const {
-    return m_Neighborhoods[d]->FindNeighborhoodPoints(this->GetPosition(idx, d), idx, w, r);
+    return m_Neighborhoods[d]->find_neighborhood_points(GetPosition(idx, d), idx, w, r);
   }
 
   //  inline int FindNeighborhoodPoints(const PointType &p,  double r, PointVectorType &vec, unsigned int d = 0) const
@@ -406,7 +402,7 @@ class ParticleSystem : public itk::DataObject {
   unsigned int m_DomainsPerShape;
 
   /** The set of domain neighborhood objects. */
-  std::vector<NeighborhoodType::Pointer> m_Neighborhoods;
+  std::vector<std::shared_ptr<ParticleNeighborhoodTwo>> m_Neighborhoods;
 
   /** The set of domain transform objects */
   std::vector<TransformType> m_Transforms;
