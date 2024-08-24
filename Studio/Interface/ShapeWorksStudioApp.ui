@@ -919,6 +919,7 @@ QToolBar QToolButton::checked {
    <addaction name="action_optimize_mode"/>
    <addaction name="action_analysis_mode"/>
    <addaction name="action_deepssm_mode"/>
+   <addaction name="action_monai_mode"/>
   </widget>
   <action name="action_quit">
    <property name="text">
@@ -1168,6 +1169,18 @@ QToolBar QToolButton::checked {
    <property name="text">
     <string>DeepSSM</string>
    </property>
+  </action>
+  <action name="action_monai_mode">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="../Resources/ShapeWorksStudio.qrc">
+      <normaloff>:/Studio/Images/MONAI-Label.png</normaloff>:/Studio/Images/MONAI-Label.png</iconset>
+    </property>
+    <property name="text">
+     <string>MONAI</string>
+    </property>
   </action>
   <action name="action_export_pca_montage">
    <property name="text">

@@ -33,6 +33,7 @@ class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
 class DeepSSMTool;
+class MonaiTool;
 class Session;
 class Visualizer;
 class SplashScreen;
@@ -78,6 +79,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_optimize_mode_triggered();
   void on_action_analysis_mode_triggered();
   void on_action_deepssm_mode_triggered();
+  void on_action_monai_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
   void on_actionExport_Eigenvalues_triggered();
@@ -222,6 +224,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<DeepSSMTool> deepssm_tool_;
+  QSharedPointer<MonaiTool> monai_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   CompareWidget* compare_widget_ = nullptr;
