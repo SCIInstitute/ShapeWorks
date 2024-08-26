@@ -273,15 +273,15 @@ void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFuncti
     } else {
       // cross domain
 
-      bool weighting_state = neighborhood->IsWeightingEnabled();
+      bool weighting_state = neighborhood->is_weighting_enabled();
       // Disable cosine-falloff weighting for cross-domain sampling term. Contours don't have normals.
-      neighborhood->SetWeightingEnabled(false);
-      neighborhood->SetForceEuclidean(true);
+      neighborhood->set_weighting_enabled(false);
+      neighborhood->set_force_euclidean(true);
 
       res = neighborhood->find_neighborhood_points(pos, -1, weights, distances, radius);
 
-      neighborhood->SetForceEuclidean(false);
-      neighborhood->SetWeightingEnabled(weighting_state);
+      neighborhood->set_force_euclidean(false);
+      neighborhood->set_weighting_enabled(weighting_state);
     }
 
     assert(weights.size() == distances.size() && res.size() == weights.size());

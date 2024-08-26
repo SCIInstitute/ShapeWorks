@@ -75,7 +75,7 @@ void ParticleSystem::AddDomain(DomainType::Pointer input) {
   m_Domains[domain_id] = input;
   m_Positions[domain_id] = PointContainerType::New();
   m_IndexCounters[domain_id] = 0;
-  auto neighborhood = std::make_shared<ParticleNeighborhoodTwo>(this, domain_id);
+  auto neighborhood = std::make_shared<ParticleNeighborhood>(this, domain_id);
   m_Neighborhoods[domain_id] = neighborhood;
   m_Transforms[domain_id].set_identity();
   m_InverseTransforms[domain_id].set_identity();
@@ -124,13 +124,15 @@ void ParticleSystem::SetPrefixTransform(unsigned int i, const TransformType& T) 
   this->InvokeEvent(e);
 }
 
-void ParticleSystem::SetNeighborhood(unsigned int i, std::shared_ptr<ParticleNeighborhoodTwo> N) {
+/*
+void ParticleSystem::SetNeighborhood(unsigned int i, std::shared_ptr<ParticleNeighborhood> N) {
   if (m_DomainFlags[i] == true) {
     return;
   }
   m_Neighborhoods[i] = N;
-  m_Neighborhoods[i]->SetDomain(m_Domains[i]);
+  m_Neighborhoods[i]->set_domain(m_Domains[i]);
 }
+*/
 
 const ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d) {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;

@@ -75,7 +75,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
     m_ParticleSystem->AddDomain(domain);
-    m_ParticleSystem->GetNeighborhood(i)->SetDomain(domain);
+    m_ParticleSystem->GetNeighborhood(i)->set_domain(domain);
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
       // Adding cutting planes to constraint object
@@ -120,7 +120,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       // cast to MeshDomain
       auto mesh_domain = std::dynamic_pointer_cast<MeshDomain>(domain);
 
-      m_ParticleSystem->GetNeighborhood(i)->SetWeightingEnabled(!mesh_domain->GetMeshWrapper()->IsGeodesicsEnabled());
+      m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(!mesh_domain->GetMeshWrapper()->IsGeodesicsEnabled());
     }
   }
 }

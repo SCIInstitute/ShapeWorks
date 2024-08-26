@@ -15,9 +15,9 @@ class ParticleSystem;
  * the ParticleNeighborhood returns a list of points that are neighbors of that
  * point.
  */
-class ParticleNeighborhoodTwo {
+class ParticleNeighborhood {
  public:
-  ParticleNeighborhoodTwo(ParticleSystem* ps, int domain_id = -1) : ps_(ps), domain_id_(domain_id) {}
+  explicit ParticleNeighborhood(ParticleSystem* ps, int domain_id = -1) : ps_(ps), domain_id_(domain_id) {}
 
   std::vector<ParticlePointIndexPair> find_neighborhood_points(const itk::Point<double, 3>& position, int id,
                                                                std::vector<double>& weights,
@@ -29,16 +29,16 @@ class ParticleNeighborhoodTwo {
   std::vector<ParticlePointIndexPair> find_neighborhood_points(const itk::Point<double, 3>& position, int id,
                                                                double radius);
 
-  void SetWeightingEnabled(bool is_enabled) { weighting_enabled_ = is_enabled; }
+  void set_weighting_enabled(bool is_enabled) { weighting_enabled_ = is_enabled; }
 
-  bool IsWeightingEnabled() const { return weighting_enabled_; }
+  bool is_weighting_enabled() const { return weighting_enabled_; }
 
-  void SetForceEuclidean(bool is_enabled) { force_euclidean_ = is_enabled; }
+  void set_force_euclidean(bool is_enabled) { force_euclidean_ = is_enabled; }
 
-  bool IsForceEuclidean() const { return force_euclidean_; }
+  bool is_force_euclidean() const { return force_euclidean_; }
 
-  void SetDomain(ParticleDomain::Pointer domain) { domain_ = domain; };
-  ParticleDomain::Pointer GetDomain() const { return domain_; };
+  void set_domain(ParticleDomain::Pointer domain) { domain_ = domain; };
+  ParticleDomain::Pointer get_domain() const { return domain_; };
 
   void set_domain_id(int id) { domain_id_ = id; }
 

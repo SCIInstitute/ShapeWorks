@@ -5,7 +5,7 @@
 namespace shapeworks {
 
 //--------------------------------------------------------------------------------------------------
-std::vector<ParticlePointIndexPair> ParticleNeighborhoodTwo::get_points_in_sphere(const itk::Point<double, 3>& position,
+std::vector<ParticlePointIndexPair> ParticleNeighborhood::get_points_in_sphere(const itk::Point<double, 3>& position,
                                                                                   int id, double radius) {
   // iterate over all particles in the system for this domain, return those within radius
   std::vector<ParticlePointIndexPair> neighbors;
@@ -28,18 +28,17 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhoodTwo::get_points_in_spher
 
 //--------------------------------------------------------------------------------------------------
 
-std::vector<ParticlePointIndexPair> ParticleNeighborhoodTwo::find_neighborhood_points(
+std::vector<ParticlePointIndexPair> ParticleNeighborhood::find_neighborhood_points(
     const itk::Point<double, 3>& position, int id, std::vector<double>& weights, std::vector<double>& distances,
     double radius) {
   auto neighbors = get_points_in_sphere(position, id, radius);
 
   using GradientVectorType = vnl_vector_fixed<float, 3>;
   using PointType = itk::Point<double, 3>;
-  const int Dimension = 3;
 
-  GradientVectorType posnormal;
+  GradientVectorType normal;
   if (weighting_enabled_) {  // uninitialized otherwise, but we're trying to avoid looking up the normal if we can
-    posnormal = domain_->SampleNormalAtPoint(position, id);
+    normal = domain_->SampleNormalAtPoint(position, id);
   }
 
   weights.clear();
@@ -79,7 +78,7 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhoodTwo::find_neighborhood_p
       }
 
       const GradientVectorType pn = domain_->SampleNormalAtPoint(it->Point, it->Index);
-      const double cosine = dot_product(posnormal, pn);  // normals already normalized
+      const double cosine = dot_product(normal, pn);  // normals already normalized
       if (cosine >= flat_cutoff_) {
         weights.push_back(1.0);
       } else {
@@ -94,14 +93,14 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhoodTwo::find_neighborhood_p
 }
 
 //--------------------------------------------------------------------------------------------------
-std::vector<ParticlePointIndexPair> ParticleNeighborhoodTwo::find_neighborhood_points(
+std::vector<ParticlePointIndexPair> ParticleNeighborhood::find_neighborhood_points(
     const itk::Point<double, 3>& position, int id, std::vector<double>& weights, double radius) {
   std::vector<double> distances;
   return find_neighborhood_points(position, id, weights, distances, radius);
 }
 
 //--------------------------------------------------------------------------------------------------
-std::vector<ParticlePointIndexPair> ParticleNeighborhoodTwo::find_neighborhood_points(
+std::vector<ParticlePointIndexPair> ParticleNeighborhood::find_neighborhood_points(
     const itk::Point<double, 3>& position, int id, double radius) {
   std::vector<double> weights;
   std::vector<double> distances;

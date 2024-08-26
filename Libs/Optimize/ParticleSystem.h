@@ -141,10 +141,8 @@ class ParticleSystem : public itk::DataObject {
   // Debug function
   void PrintParticleSystem();
 
-  /** Set/Get the neighborhood object associated with domain k. */
-  void SetNeighborhood(unsigned int, std::shared_ptr<ParticleNeighborhoodTwo> neighborhood);
-  void SetNeighborhood(std::shared_ptr<ParticleNeighborhoodTwo> neighborhood) { SetNeighborhood(0, neighborhood); }
-  std::shared_ptr<ParticleNeighborhoodTwo> GetNeighborhood(unsigned int k) const { return m_Neighborhoods[k]; }
+  //! Get the neighborhood object associated with domain k
+  std::shared_ptr<ParticleNeighborhood> GetNeighborhood(unsigned int k) const { return m_Neighborhoods[k]; }
 
   using PointVectorType = std::vector<ParticlePointIndexPair>;
 
@@ -402,7 +400,7 @@ class ParticleSystem : public itk::DataObject {
   unsigned int m_DomainsPerShape;
 
   /** The set of domain neighborhood objects. */
-  std::vector<std::shared_ptr<ParticleNeighborhoodTwo>> m_Neighborhoods;
+  std::vector<std::shared_ptr<ParticleNeighborhood>> m_Neighborhoods;
 
   /** The set of domain transform objects */
   std::vector<TransformType> m_Transforms;
