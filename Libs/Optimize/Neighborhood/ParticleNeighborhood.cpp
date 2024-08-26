@@ -1,14 +1,17 @@
 #include "ParticleNeighborhood.h"
 
+#include <Libs/Optimize/Domain/MeshDomain.h>
+
 #include "ParticleSystem.h"
 
 namespace shapeworks {
 
 //--------------------------------------------------------------------------------------------------
-std::vector<ParticlePointIndexPair> ParticleNeighborhood::get_points_in_sphere(const itk::Point<double, 3>& position,
-                                                                                  int id, double radius) {
+std::pair<std::vector<ParticlePointIndexPair>, std::vector<double>> ParticleNeighborhood::get_points_in_sphere(
+    const itk::Point<double, 3>& position, int id, double radius) {
   // iterate over all particles in the system for this domain, return those within radius
   std::vector<ParticlePointIndexPair> neighbors;
+  std::vector<double> distances;
 
   auto num_particles = ps_->GetNumberOfParticles(domain_id_);
 
@@ -20,10 +23,11 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhood::get_points_in_sphere(c
     double distance = (p - position).GetNorm();
     if (distance < radius) {
       neighbors.push_back(ParticlePointIndexPair(p, i));
+      distances.push_back(distance);
     }
   }
 
-  return neighbors;
+  return {neighbors, distances};
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -31,7 +35,7 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhood::get_points_in_sphere(c
 std::vector<ParticlePointIndexPair> ParticleNeighborhood::find_neighborhood_points(
     const itk::Point<double, 3>& position, int id, std::vector<double>& weights, std::vector<double>& distances,
     double radius) {
-  auto neighbors = get_points_in_sphere(position, id, radius);
+  auto [pointlist, neighbor_distance] = get_points_in_sphere(position, id, radius);
 
   using GradientVectorType = vnl_vector_fixed<float, 3>;
   using PointType = itk::Point<double, 3>;
@@ -44,31 +48,29 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhood::find_neighborhood_poin
   weights.clear();
   distances.clear();
 
-  // Grab the list of points in this bounding box.
-  auto pointlist = get_points_in_sphere(position, id, radius);
+  bool use_euclidean = true;
 
-  // Allocate return vector.  Reserve ensures no extra copies occur.
+  if (domain_->GetDomainType() == DomainType::Mesh) {
+    // cast to MeshDomain to ask if geodesics are enabled
+    auto mesh_domain = std::dynamic_pointer_cast<MeshDomain>(domain_);
+    use_euclidean = !mesh_domain->GetMeshWrapper()->IsGeodesicsEnabled() || force_euclidean_;
+  }
+
   std::vector<ParticlePointIndexPair> ret;
-  ret.reserve(pointlist.size());  // todo investigate performance here: does it actually help?
-  weights.reserve(pointlist.size());
 
-  // Add any point whose distance from center is less than radius to the return list
-  for (auto it = pointlist.begin(); it != pointlist.end(); it++) {
-    const auto& pt_b = it->Point;
-    const auto& idx_b = it->Index;
+  for (int i = 0; i < pointlist.size(); i++) {
+    const auto& pt_b = pointlist[i].Point;
+    const auto& idx_b = pointlist[i].Index;
 
-    double distance;
-    bool is_within_distance;
+    double distance = neighbor_distance[i];
+    bool is_within_distance = true;
 
-    if (force_euclidean_) {
-      distance = position.EuclideanDistanceTo(pt_b);
-      is_within_distance = distance < radius;
-    } else {
+    if (!use_euclidean) {
       is_within_distance = domain_->IsWithinDistance(position, id, pt_b, idx_b, radius, distance);
     }
 
     if (is_within_distance) {
-      ret.push_back(*it);
+      ret.push_back(pointlist[i]);
       distances.push_back(distance);
 
       // todo change the APIs so don't have to pass a std::vector<double> of 1s whenever weighting is disabled
@@ -77,7 +79,7 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhood::find_neighborhood_poin
         continue;
       }
 
-      const GradientVectorType pn = domain_->SampleNormalAtPoint(it->Point, it->Index);
+      const GradientVectorType pn = domain_->SampleNormalAtPoint(pointlist[i].Point, pointlist[i].Index);
       const double cosine = dot_product(normal, pn);  // normals already normalized
       if (cosine >= flat_cutoff_) {
         weights.push_back(1.0);
@@ -88,8 +90,6 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhood::find_neighborhood_poin
     }
   }
   return ret;
-
-  return neighbors;
 }
 
 //--------------------------------------------------------------------------------------------------

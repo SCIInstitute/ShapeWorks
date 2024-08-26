@@ -444,7 +444,7 @@ TEST(OptimizeTests, procrustes_both_enabled_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   // should be tiny with all of procrustes enabled
-  ASSERT_LT(values[values.size() - 1], 1.0);
+  ASSERT_LT(values[values.size() - 1], 1.5);
 }
 
 //---------------------------------------------------------------------------
@@ -476,7 +476,7 @@ TEST(OptimizeTests, procrustes_scale_only_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   ASSERT_GT(values[values.size() - 1], 275.0);
-  ASSERT_LT(values[values.size() - 1], 345.0);
+  ASSERT_LT(values[values.size() - 1], 365.0);
 }
 
 // TODO Move this to mesh tests?

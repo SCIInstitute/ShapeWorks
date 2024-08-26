@@ -43,8 +43,8 @@ class ParticleNeighborhood {
   void set_domain_id(int id) { domain_id_ = id; }
 
  private:
-  std::vector<ParticlePointIndexPair> get_points_in_sphere(const itk::Point<double, 3>& position, int id,
-                                                           double radius);
+  std::pair<std::vector<ParticlePointIndexPair>, std::vector<double>> get_points_in_sphere(
+      const itk::Point<double, 3>& position, int id, double radius);
 
   ParticleSystem* ps_;
   ParticleDomain::Pointer domain_;
