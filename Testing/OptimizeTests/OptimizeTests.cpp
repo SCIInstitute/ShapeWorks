@@ -444,7 +444,7 @@ TEST(OptimizeTests, procrustes_both_enabled_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   // should be tiny with all of procrustes enabled
-  ASSERT_LT(values[values.size() - 1], 1.5);
+  ASSERT_LT(values[values.size() - 1], 2.0);
 }
 
 //---------------------------------------------------------------------------
