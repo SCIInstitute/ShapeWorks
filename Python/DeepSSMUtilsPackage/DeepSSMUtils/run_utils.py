@@ -12,6 +12,10 @@ import DataAugmentationUtils
 import DeepSSMUtils
 import DeepSSMUtils.eval_utils as eval_utils
 
+import itk
+# this is here to cause the ITK libraries to be loaded at a safe time when other threads won't be doing file I/O
+# See #2315
+temporary_parameter_object = itk.ParameterObject.New()
 
 def create_split(project, train, val, test):
     # Create split
