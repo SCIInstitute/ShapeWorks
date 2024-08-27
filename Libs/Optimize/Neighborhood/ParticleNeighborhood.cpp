@@ -53,9 +53,13 @@ std::vector<ParticlePointIndexPair> ParticleNeighborhood::find_neighborhood_poin
   if (domain_->GetDomainType() == DomainType::Mesh) {
     // cast to MeshDomain to ask if geodesics are enabled
     auto mesh_domain = std::dynamic_pointer_cast<MeshDomain>(domain_);
-    use_euclidean = !mesh_domain->GetMeshWrapper()->IsGeodesicsEnabled() || force_euclidean_;
+    use_euclidean = !mesh_domain->GetMeshWrapper()->IsGeodesicsEnabled();
   } else if (domain_->GetDomainType() == DomainType::Contour) {
     use_euclidean = false;
+  }
+
+  if (force_euclidean_) {
+    use_euclidean = true;
   }
 
   std::vector<ParticlePointIndexPair> ret;
