@@ -106,6 +106,8 @@ class MeshDomain : public ParticleDomain {
 
   void UpdateZeroCrossingPoint() override {}
 
+  std::shared_ptr<MeshWrapper> GetMeshWrapper() const { return mesh_wrapper_; }
+
  private:
   std::shared_ptr<MeshWrapper> mesh_wrapper_;
   std::shared_ptr<MeshWrapper> geodesics_mesh_;
@@ -119,4 +121,4 @@ class MeshDomain : public ParticleDomain {
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:15 +0000
+Updated on 2024-08-27 at 15:15:14 +0000

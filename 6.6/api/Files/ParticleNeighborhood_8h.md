@@ -29,78 +29,49 @@ title: Libs/Optimize/Neighborhood/ParticleNeighborhood.h
 
 #include <vector>
 
-#include "Libs/Optimize/Container/GenericContainer.h"
 #include "Libs/Optimize/Domain/ParticleDomain.h"
 #include "ParticlePointIndexPair.h"
-#include "itkDataObject.h"
-#include "itkPoint.h"
-#include "itkWeakPointer.h"
 
 namespace shapeworks {
-class ParticleNeighborhood : public itk::DataObject {
+class ParticleSystem;
+
+class ParticleNeighborhood {
  public:
-  constexpr static unsigned int VDimension = 3;
-  typedef ParticleNeighborhood Self;
-  typedef DataObject Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef itk::WeakPointer<const Self> ConstWeakPointer;
+  explicit ParticleNeighborhood(ParticleSystem* ps, int domain_id = -1) : ps_(ps), domain_id_(domain_id) {}
 
-  itkNewMacro(Self);
+  std::vector<ParticlePointIndexPair> find_neighborhood_points(const itk::Point<double, 3>& position, int id,
+                                                               std::vector<double>& weights,
+                                                               std::vector<double>& distances, double radius);
 
-  itkTypeMacro(ParticleNeighborhood, DataObject);
+  std::vector<ParticlePointIndexPair> find_neighborhood_points(const itk::Point<double, 3>& position, int id,
+                                                               std::vector<double>& weights, double radius);
 
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  std::vector<ParticlePointIndexPair> find_neighborhood_points(const itk::Point<double, 3>& position, int id,
+                                                               double radius);
 
-  typedef itk::Point<double, VDimension> PointType;
+  void set_weighting_enabled(bool is_enabled) { weighting_enabled_ = is_enabled; }
 
-  using DomainType = shapeworks::ParticleDomain;
+  bool is_weighting_enabled() const { return weighting_enabled_; }
 
-  typedef GenericContainer<PointType> PointContainerType;
+  void set_force_euclidean(bool is_enabled) { force_euclidean_ = is_enabled; }
 
-  typedef std::vector<ParticlePointIndexPair> PointVectorType;
+  bool is_force_euclidean() const { return force_euclidean_; }
 
-  itkSetObjectMacro(PointContainer, PointContainerType);
-  itkGetConstObjectMacro(PointContainer, PointContainerType);
+  void set_domain(ParticleDomain::Pointer domain) { domain_ = domain; };
+  ParticleDomain::Pointer get_domain() const { return domain_; };
 
-  virtual PointVectorType FindNeighborhoodPoints(const PointType&, int idx, double) const {
-    itkExceptionMacro("No algorithm for finding neighbors has been specified.");
-  }
-  virtual PointVectorType FindNeighborhoodPoints(const PointType&, int idx, std::vector<double>&, double) const {
-    itkExceptionMacro("No algorithm for finding neighbors has been specified.");
-  }
-  virtual PointVectorType FindNeighborhoodPoints(const PointType&, int idx, std::vector<double>&, std::vector<double>&,
-                                                 double) const {
-    itkExceptionMacro("No algorithm for finding neighbors has been specified.");
-  }
-  virtual unsigned int FindNeighborhoodPoints(const PointType&, int idx, double, PointVectorType&) const {
-    itkExceptionMacro("No algorithm for finding neighbors has been specified.");
-    return 0;
-  }
-
-  // itkSetObjectMacro(Domain, DomainType);
-  // itkGetConstObjectMacro(Domain, DomainType);
-  virtual void SetDomain(DomainType::Pointer domain) {
-    m_Domain = domain;
-    this->Modified();
-  };
-  DomainType::Pointer GetDomain() const { return m_Domain; };
-
-  virtual void AddPosition(const PointType& p, unsigned int idx, int threadId = 0) {}
-  virtual void SetPosition(const PointType& p, unsigned int idx, int threadId = 0) {}
-  virtual void RemovePosition(unsigned int idx, int threadId = 0) {}
-
- protected:
-  ParticleNeighborhood() {}
-  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
-  virtual ~ParticleNeighborhood(){};
+  void set_domain_id(int id) { domain_id_ = id; }
 
  private:
-  ParticleNeighborhood(const Self&);  // purposely not implemented
-  void operator=(const Self&);        // purposely not implemented
+  std::pair<std::vector<ParticlePointIndexPair>, std::vector<double>> get_points_in_sphere(
+      const itk::Point<double, 3>& position, int id, double radius);
 
-  typename PointContainerType::Pointer m_PointContainer;
-  typename DomainType::Pointer m_Domain;
+  ParticleSystem* ps_;
+  ParticleDomain::Pointer domain_;
+  int domain_id_{-1};
+  double flat_cutoff_{0.3};
+  bool weighting_enabled_{true};
+  bool force_euclidean_{false};
 };
 
 }  // end namespace shapeworks
@@ -109,4 +80,4 @@ class ParticleNeighborhood : public itk::DataObject {
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:15 +0000
+Updated on 2024-08-27 at 15:15:14 +0000

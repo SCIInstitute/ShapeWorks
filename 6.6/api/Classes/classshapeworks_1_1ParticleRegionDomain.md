@@ -143,7 +143,7 @@ inline virtual const PointType & GetUpperBound() const
 **Reimplements**: [shapeworks::ParticleDomain::GetUpperBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getupperbound)
 
 
-Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function GetLowerBound
@@ -156,7 +156,7 @@ inline virtual const PointType & GetLowerBound() const
 **Reimplements**: [shapeworks::ParticleDomain::GetLowerBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getlowerbound)
 
 
-Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function SetUpperBound
@@ -227,4 +227,4 @@ Check whether the point p may be sampled in this domain.
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:14 +0000

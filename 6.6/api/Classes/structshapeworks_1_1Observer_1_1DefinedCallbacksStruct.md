@@ -25,7 +25,6 @@ title: shapeworks::Observer::DefinedCallbacksStruct
 | bool | **[DomainAddEvent](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md#variable-domainaddevent)**  |
 | bool | **[TransformSetEvent](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md#variable-transformsetevent)**  |
 | bool | **[PrefixTransformSetEvent](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md#variable-prefixtransformsetevent)**  |
-| bool | **[NeighborhoodSetEvent](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md#variable-neighborhoodsetevent)**  |
 | bool | **[PositionSetEvent](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md#variable-positionsetevent)**  |
 | bool | **[PositionAddEvent](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md#variable-positionaddevent)**  |
 | bool | **[PositionRemoveEvent](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md#variable-positionremoveevent)**  |
@@ -71,13 +70,6 @@ bool PrefixTransformSetEvent;
 ```
 
 
-### variable NeighborhoodSetEvent
-
-```cpp
-bool NeighborhoodSetEvent;
-```
-
-
 ### variable PositionSetEvent
 
 ```cpp
@@ -101,4 +93,4 @@ bool PositionRemoveEvent;
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:13 +0000

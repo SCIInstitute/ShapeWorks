@@ -42,7 +42,6 @@ Inherited by [shapeworks::GenericContainerArray< TNumericType >](../Classes/clas
 | virtual void | **[DomainAddEventCallback](../Classes/classshapeworks_1_1Observer.md#function-domainaddeventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[TransformSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-transformseteventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[PrefixTransformSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-prefixtransformseteventcallback)**(Object * , const itk::EventObject & ) |
-| virtual void | **[NeighborhoodSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-neighborhoodseteventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[PositionSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-positionseteventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[PositionAddEventCallback](../Classes/classshapeworks_1_1Observer.md#function-positionaddeventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[PositionRemoveEventCallback](../Classes/classshapeworks_1_1Observer.md#function-positionremoveeventcallback)**(Object * , const itk::EventObject & ) |
@@ -164,16 +163,6 @@ inline virtual void PrefixTransformSetEventCallback(
 ```
 
 
-### function NeighborhoodSetEventCallback
-
-```cpp
-inline virtual void NeighborhoodSetEventCallback(
-    Object * ,
-    const itk::EventObject & 
-)
-```
-
-
 ### function PositionSetEventCallback
 
 ```cpp
@@ -250,4 +239,4 @@ DefinedCallbacksStruct m_DefinedCallbacks;
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:13 +0000

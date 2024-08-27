@@ -347,7 +347,7 @@ inline virtual const PointType & GetLowerBound() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetLowerBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getlowerbound)
 
 
-Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function GetUpperBound
@@ -360,7 +360,7 @@ inline virtual const PointType & GetUpperBound() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetUpperBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getupperbound)
 
 
-Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function GetZeroCrossingPoint
@@ -438,4 +438,4 @@ virtual PointType GetPositionAfterSplit(
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:13 +0000

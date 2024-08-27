@@ -214,6 +214,7 @@ class Optimize {
   void SetPythonFile(std::string filename);
 
   void SetGeodesicsEnabled(bool is_enabled);
+  bool GetGeodesicsEnabled() const { return m_geodesics_enabled; }
 
   void SetGeodesicsCacheSizeMultiplier(size_t n);
 
@@ -349,7 +350,7 @@ class Optimize {
   std::string m_python_filename;
   bool m_geodesics_enabled = false;             // geodesics disabled by default
   size_t m_geodesic_cache_size_multiplier = 0;  // 0 => MeshWrapper will use a heuristic to determine cache size
-  double m_geodesic_remesh_percent = 100.0;    // 100% by default (e.g. no remeshing)
+  double m_geodesic_remesh_percent = 100.0;     // 100% by default (e.g. no remeshing)
 
   // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;
@@ -401,4 +402,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:15 +0000
+Updated on 2024-08-27 at 15:15:14 +0000

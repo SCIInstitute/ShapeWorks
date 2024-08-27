@@ -47,6 +47,7 @@ Inherits from [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1Particl
 | void | **[SetMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-setmesh)**(std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh_, double geodesic_remesh_percent) |
 | std::shared_ptr< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > | **[GetSWMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-getswmesh)**() const |
 | virtual void | **[UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-updatezerocrossingpoint)**() override |
+| std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > | **[GetMeshWrapper](../Classes/classshapeworks_1_1MeshDomain.md#function-getmeshwrapper)**() const |
 
 ## Additional inherited members
 
@@ -232,7 +233,7 @@ inline virtual const PointType & GetLowerBound() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetLowerBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getlowerbound)
 
 
-Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function GetUpperBound
@@ -245,7 +246,7 @@ inline virtual const PointType & GetUpperBound() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetUpperBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getupperbound)
 
 
-Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function GetZeroCrossingPoint
@@ -439,6 +440,13 @@ inline virtual void UpdateZeroCrossingPoint() override
 **Reimplements**: [shapeworks::ParticleDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1ParticleDomain.md#function-updatezerocrossingpoint)
 
 
+### function GetMeshWrapper
+
+```cpp
+inline std::shared_ptr< MeshWrapper > GetMeshWrapper() const
+```
+
+
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:13 +0000

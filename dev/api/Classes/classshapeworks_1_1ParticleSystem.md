@@ -26,12 +26,11 @@ Inherits from itk::DataObject
 | typedef itk::WeakPointer< const [Self](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-self) > | **[ConstWeakPointer](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-constweakpointer)**  |
 | using [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md) | **[DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype)**  |
 | typedef itk::Point< double, VDimension > | **[PointType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-pointtype)**  |
-| typedef [ParticleNeighborhood](../Classes/classshapeworks_1_1ParticleNeighborhood.md) | **[NeighborhoodType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-neighborhoodtype)**  |
 | typedef [GenericContainer](../Classes/classshapeworks_1_1GenericContainer.md)< [PointType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-pointtype) > | **[PointContainerType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-pointcontainertype)**  |
-| typedef [NeighborhoodType::PointVectorType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[PointVectorType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-pointvectortype)**  |
 | typedef vnl_matrix_fixed< double, VDimension+1, VDimension+1 > | **[TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype)**  |
 | typedef vnl_vector_fixed< double, VDimension > | **[VectorType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-vectortype)**  |
 | typedef vnl_matrix< double > | **[VnlMatrixType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-vnlmatrixtype)**  |
+| using std::vector< [ParticlePointIndexPair](../Classes/structshapeworks_1_1ParticlePointIndexPair.md) > | **[PointVectorType](../Classes/classshapeworks_1_1ParticleSystem.md#using-pointvectortype)**  |
 
 ## Public Functions
 
@@ -54,9 +53,7 @@ Inherits from itk::DataObject
 | void | **[SplitParticle](../Classes/classshapeworks_1_1ParticleSystem.md#function-splitparticle)**(double epsilon, unsigned int idx, unsigned int d =0) |
 | void | **[AdvancedAllParticleSplitting](../Classes/classshapeworks_1_1ParticleSystem.md#function-advancedallparticlesplitting)**(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process) |
 | void | **[PrintParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md#function-printparticlesystem)**() |
-| void | **[SetNeighborhood](../Classes/classshapeworks_1_1ParticleSystem.md#function-setneighborhood)**(unsigned int , [NeighborhoodType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-neighborhoodtype) * ) |
-| void | **[SetNeighborhood](../Classes/classshapeworks_1_1ParticleSystem.md#function-setneighborhood)**([NeighborhoodType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-neighborhoodtype) * n) |
-| NeighborhoodType::ConstPointer | **[GetNeighborhood](../Classes/classshapeworks_1_1ParticleSystem.md#function-getneighborhood)**(unsigned int k) const |
+| std::shared_ptr< [ParticleNeighborhood](../Classes/classshapeworks_1_1ParticleNeighborhood.md) > | **[GetNeighborhood](../Classes/classshapeworks_1_1ParticleSystem.md#function-getneighborhood)**(unsigned int k) const<br>Get the neighborhood object associated with domain k.  |
 | PointVectorType | **[FindNeighborhoodPoints](../Classes/classshapeworks_1_1ParticleSystem.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-pointtype) & p, int idx, double r, unsigned int d =0) const |
 | PointVectorType | **[FindNeighborhoodPoints](../Classes/classshapeworks_1_1ParticleSystem.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-pointtype) & p, int idx, std::vector< double > & w, std::vector< double > & distances, double r, unsigned int d =0) const |
 | PointVectorType | **[FindNeighborhoodPoints](../Classes/classshapeworks_1_1ParticleSystem.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-pointtype) & p, int idx, std::vector< double > & w, double r, unsigned int d =0) const |
@@ -203,16 +200,6 @@ typedef itk::Point<double, VDimension> shapeworks::ParticleSystem::PointType;
 Point type used to store particle locations. 
 
 
-### typedef NeighborhoodType
-
-```cpp
-typedef ParticleNeighborhood shapeworks::ParticleSystem::NeighborhoodType;
-```
-
-
-Class used to compute neighborhoods of points. One is associated with each domain. 
-
-
 ### typedef PointContainerType
 
 ```cpp
@@ -221,13 +208,6 @@ typedef GenericContainer<PointType> shapeworks::ParticleSystem::PointContainerTy
 
 
 Point container type. One is associated with each domain. 
-
-
-### typedef PointVectorType
-
-```cpp
-typedef NeighborhoodType::PointVectorType shapeworks::ParticleSystem::PointVectorType;
-```
 
 
 ### typedef TransformType
@@ -251,6 +231,13 @@ typedef vnl_vector_fixed<double, VDimension> shapeworks::ParticleSystem::VectorT
 
 ```cpp
 typedef vnl_matrix<double> shapeworks::ParticleSystem::VnlMatrixType;
+```
+
+
+### using PointVectorType
+
+```cpp
+using shapeworks::ParticleSystem::PointVectorType =  std::vector<ParticlePointIndexPair>;
 ```
 
 
@@ -447,36 +434,15 @@ void PrintParticleSystem()
 ```
 
 
-### function SetNeighborhood
-
-```cpp
-void SetNeighborhood(
-    unsigned int ,
-    NeighborhoodType * 
-)
-```
-
-
-Set/Get the neighborhood object associated with domain k. 
-
-
-### function SetNeighborhood
-
-```cpp
-inline void SetNeighborhood(
-    NeighborhoodType * n
-)
-```
-
-
 ### function GetNeighborhood
 
 ```cpp
-inline NeighborhoodType::ConstPointer GetNeighborhood(
+inline std::shared_ptr< ParticleNeighborhood > GetNeighborhood(
     unsigned int k
 ) const
 ```
 
+Get the neighborhood object associated with domain k. 
 
 ### function FindNeighborhoodPoints
 
@@ -1163,4 +1129,4 @@ static constexpr int VDimension = 3;
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:14 +0000

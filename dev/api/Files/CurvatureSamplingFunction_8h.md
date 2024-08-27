@@ -30,7 +30,6 @@ title: Libs/Optimize/Function/CurvatureSamplingFunction.h
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "Libs/Optimize/Domain/ImageDomainWithCurvature.h"
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
-#include "Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h"
 #include "SamplingFunction.h"
 #include "itkCommand.h"
 
@@ -167,4 +166,4 @@ class CurvatureSamplingFunction : public SamplingFunction {
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:15 +0000
+Updated on 2024-08-27 at 15:15:14 +0000

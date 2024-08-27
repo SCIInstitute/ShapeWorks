@@ -123,10 +123,8 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)**  |
 | struct | **[shapeworks::ParticlePointIndexPair](../Classes/structshapeworks_1_1ParticlePointIndexPair.md)**  |
 | class | **[shapeworks::ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)**  |
-| class | **[shapeworks::ParticleRegionNeighborhood](../Classes/classshapeworks_1_1ParticleRegionNeighborhood.md)**  |
 | class | **[shapeworks::Particles](../Classes/classshapeworks_1_1Particles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
 | class | **[shapeworks::ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)**  |
-| class | **[shapeworks::ParticleSurfaceNeighborhood](../Classes/classshapeworks_1_1ParticleSurfaceNeighborhood.md)**  |
 | class | **[shapeworks::ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** <br>A facade class managing interactions with a particle system.  |
 | class | **[shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)**  |
 | class | **[shapeworks::ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md)**  |
@@ -134,10 +132,6 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::PickResult](../Classes/classshapeworks_1_1PickResult.md)**  |
 | class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)**  |
 | class | **[shapeworks::PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget]().  |
-| class | **[shapeworks::PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md)**  |
-| class | **[shapeworks::PowerOfTwoPointTreeNode](../Classes/classshapeworks_1_1PowerOfTwoPointTreeNode.md)**  |
-| struct | **[shapeworks::powstruct](../Classes/structshapeworks_1_1powstruct.md)**  |
-| struct | **[shapeworks::powstruct< a, 0 >](../Classes/structshapeworks_1_1powstruct_3_01a_00_010_01_4.md)**  |
 | class | **[shapeworks::PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
 | class | **[shapeworks::ProcrustesRegistration](../Classes/classshapeworks_1_1ProcrustesRegistration.md)**  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
@@ -394,7 +388,6 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticleDomainAddEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
 | | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticleTransformSetEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
 | | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticlePrefixTransformSetEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
-| | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticleNeighborhoodSetEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
 | | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticlePositionSetEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
 | | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticlePositionAddEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
 | | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticlePositionRemoveEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
@@ -2352,16 +2345,6 @@ itkEventMacro(
 
 ```cpp
 itkEventMacro(
-    ParticleNeighborhoodSetEvent ,
-    ParticleEvent 
-)
-```
-
-
-### function itkEventMacro
-
-```cpp
-itkEventMacro(
     ParticlePositionSetEvent ,
     ParticleEvent 
 )
@@ -2605,4 +2588,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:13 +0000

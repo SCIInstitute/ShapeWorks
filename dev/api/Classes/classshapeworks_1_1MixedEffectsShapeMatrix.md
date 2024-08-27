@@ -102,7 +102,6 @@ Inherits from [shapeworks::LegacyShapeMatrix](../Classes/classshapeworks_1_1Lega
 | -------------- | -------------- |
 | virtual void | **[TransformSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-transformseteventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[PrefixTransformSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-prefixtransformseteventcallback)**(Object * , const itk::EventObject & ) |
-| virtual void | **[NeighborhoodSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-neighborhoodseteventcallback)**(Object * , const itk::EventObject & ) |
 
 **Protected Functions inherited from [shapeworks::Observer](../Classes/classshapeworks_1_1Observer.md)**
 
@@ -477,4 +476,4 @@ inline void PrintSelf(
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:13 +0000

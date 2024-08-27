@@ -117,6 +117,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | [MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md) | **[GetParticleSystem](../Classes/classshapeworks_1_1Optimize.md#function-getparticlesystem)**()<br>Return the particle system as a matrix.  |
 | void | **[SetPythonFile](../Classes/classshapeworks_1_1Optimize.md#function-setpythonfile)**(std::string filename)<br>Set the python file to run at startup.  |
 | void | **[SetGeodesicsEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicsenabled)**(bool is_enabled)<br>Set whether or not geodesics are enabled.  |
+| bool | **[GetGeodesicsEnabled](../Classes/classshapeworks_1_1Optimize.md#function-getgeodesicsenabled)**() const |
 | void | **[SetGeodesicsCacheSizeMultiplier](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicscachesizemultiplier)**(size_t n) |
 | void | **[SetGeodesicsRemeshPercent](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicsremeshpercent)**(double percent)<br>Set the remeshing percent for the mesh used for computing geodesics (0-100)  |
 | [OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) & | **[GetVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getvisualizer)**() |
@@ -1161,6 +1162,13 @@ void SetGeodesicsEnabled(
 
 Set whether or not geodesics are enabled. 
 
+### function GetGeodesicsEnabled
+
+```cpp
+inline bool GetGeodesicsEnabled() const
+```
+
+
 ### function SetGeodesicsCacheSizeMultiplier
 
 ```cpp
@@ -2152,4 +2160,4 @@ std::string m_remaining_time_message;
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:14 +0000
+Updated on 2024-08-27 at 15:15:13 +0000

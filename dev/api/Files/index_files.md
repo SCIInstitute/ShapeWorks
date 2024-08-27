@@ -126,9 +126,6 @@ title: Files
         * **dir [Libs/Optimize/Neighborhood](../Files/dir_37dfc33913c47c48c20c22cdbf1559c0.md#dir-libs/optimize/neighborhood)** 
             * **file [Libs/Optimize/Neighborhood/ParticleNeighborhood.h](../Files/ParticleNeighborhood_8h.md#file-particleneighborhood.h)** 
             * **file [Libs/Optimize/Neighborhood/ParticlePointIndexPair.h](../Files/ParticlePointIndexPair_8h.md#file-particlepointindexpair.h)** 
-            * **file [Libs/Optimize/Neighborhood/ParticleRegionNeighborhood.h](../Files/ParticleRegionNeighborhood_8h.md#file-particleregionneighborhood.h)** 
-            * **file [Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h](../Files/ParticleSurfaceNeighborhood_8h.md#file-particlesurfaceneighborhood.h)** 
-            * **file [Libs/Optimize/Neighborhood/PowerOfTwoPointTree.h](../Files/PowerOfTwoPointTree_8h.md#file-poweroftwopointtree.h)** 
         * **dir [Libs/Optimize/Utils](../Files/dir_85653c7ab6d0c0e003ea454a8b2baba9.md#dir-libs/optimize/utils)** 
             * **file [Libs/Optimize/Utils/MemoryUsage.h](../Files/MemoryUsage_8h.md#file-memoryusage.h)** 
             * **file [Libs/Optimize/Utils/ObjectReader.h](../Files/ObjectReader_8h.md#file-objectreader.h)** 
@@ -251,4 +248,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2024-08-18 at 15:46:15 +0000
+Updated on 2024-08-27 at 15:15:14 +0000
