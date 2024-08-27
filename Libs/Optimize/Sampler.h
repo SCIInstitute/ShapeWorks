@@ -16,7 +16,7 @@
 #include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"
 #include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
-#include "Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h"
+#include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"
 #include "ParticleSystem.h"
 #include "vnl/vnl_matrix_fixed.h"
 
@@ -317,7 +317,6 @@ class Sampler {
 
   std::vector<ParticleDomain::Pointer> m_DomainList;
 
-  std::vector<ParticleSurfaceNeighborhood::Pointer> m_NeighborhoodList;
 
   int m_pairwise_potential_type;
 

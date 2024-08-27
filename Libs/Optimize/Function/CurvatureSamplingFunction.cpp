@@ -245,12 +245,8 @@ void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFuncti
   m_CurrentNeighborhood.clear();
   for (int offset = 0; offset < domains_per_shape; offset++) {
     const auto domain_t = domain_base * domains_per_shape + offset;
-    const auto neighborhood_ = system->GetNeighborhood(domain_t).GetPointer();
+    auto neighborhood = system->GetNeighborhood(domain_t);
     using ImageType = itk::Image<float, Dimension>;
-    auto neighborhood__ = dynamic_cast<const ParticleSurfaceNeighborhood*>(neighborhood_);
-
-    // unfortunately required because we need to mutate the cosine weighting state
-    auto neighborhood = const_cast<ParticleSurfaceNeighborhood*>(neighborhood__);
 
     if (!m_IsSharedBoundaryEnabled && domain_t != d) {
       continue;
@@ -273,19 +269,19 @@ void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFuncti
     std::vector<ParticlePointIndexPair> res;
     if (domain_t == d) {
       // same domain
-      res = neighborhood->FindNeighborhoodPoints(pos, idx, weights, distances, radius);
+      res = neighborhood->find_neighborhood_points(pos, idx, weights, distances, radius);
     } else {
       // cross domain
 
-      bool weighting_state = neighborhood->IsWeightingEnabled();
+      bool weighting_state = neighborhood->is_weighting_enabled();
       // Disable cosine-falloff weighting for cross-domain sampling term. Contours don't have normals.
-      neighborhood->SetWeightingEnabled(false);
-      neighborhood->SetForceEuclidean(true);
+      neighborhood->set_weighting_enabled(false);
+      neighborhood->set_force_euclidean(true);
 
-      res = neighborhood->FindNeighborhoodPoints(pos, -1, weights, distances, radius);
+      res = neighborhood->find_neighborhood_points(pos, -1, weights, distances, radius);
 
-      neighborhood->SetForceEuclidean(false);
-      neighborhood->SetWeightingEnabled(weighting_state);
+      neighborhood->set_force_euclidean(false);
+      neighborhood->set_weighting_enabled(weighting_state);
     }
 
     assert(weights.size() == distances.size() && res.size() == weights.size());
