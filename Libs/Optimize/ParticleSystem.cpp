@@ -68,13 +68,17 @@ void ParticleSystem::AddDomain(DomainType::Pointer input) {
     }
   }
 
-  this->SetNumberOfDomains(static_cast<int>(m_Domains.size() + 1));
-  m_Domains[static_cast<int>(m_Domains.size()) - 1] = input;
-  m_Positions[static_cast<int>(m_Domains.size()) - 1] = PointContainerType::New();
-  m_IndexCounters[static_cast<int>(m_Domains.size() - 1)] = 0;
-  m_Neighborhoods[static_cast<int>(m_Domains.size() - 1)] = NeighborhoodType::New();
-  m_Transforms[static_cast<int>(m_Domains.size() - 1)].set_identity();
-  m_InverseTransforms[static_cast<int>(m_Domains.size() - 1)].set_identity();
+  int domain_id = static_cast<int>(m_Domains.size());
+
+  SetNumberOfDomains(domain_id + 1);
+
+  m_Domains[domain_id] = input;
+  m_Positions[domain_id] = PointContainerType::New();
+  m_IndexCounters[domain_id] = 0;
+  auto neighborhood = std::make_shared<ParticleNeighborhood>(this, domain_id);
+  m_Neighborhoods[domain_id] = neighborhood;
+  m_Transforms[domain_id].set_identity();
+  m_InverseTransforms[domain_id].set_identity();
 
   // Notify any observers.
   ParticleDomainAddEvent e;
@@ -120,17 +124,15 @@ void ParticleSystem::SetPrefixTransform(unsigned int i, const TransformType& T) 
   this->InvokeEvent(e);
 }
 
-void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType* N) {
-  if (m_DomainFlags[i] == true) return;
+/*
+void ParticleSystem::SetNeighborhood(unsigned int i, std::shared_ptr<ParticleNeighborhood> N) {
+  if (m_DomainFlags[i] == true) {
+    return;
+  }
   m_Neighborhoods[i] = N;
-  m_Neighborhoods[i]->SetDomain(m_Domains[i]);
-  m_Neighborhoods[i]->SetPointContainer(m_Positions[i]);
-
-  // Notify any observers.
-  ParticleNeighborhoodSetEvent e;
-  e.SetDomainIndex(i);
-  this->InvokeEvent(e);
+  m_Neighborhoods[i]->set_domain(m_Domains[i]);
 }
+*/
 
 const ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d) {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
@@ -139,7 +141,6 @@ const ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p,
   if (m_DomainFlags[d] == false) {  // Not a fixed domain.  Fixed domains won't load the image
     const auto idx = m_IndexCounters[d];
     m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](idx), idx);
-    m_Neighborhoods[d]->AddPosition(m_Positions[d]->operator[](idx), idx);
   }
 
   // Increase the FixedParticleFlag list size if necessary.
@@ -163,7 +164,6 @@ const ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p,
     if (m_DomainFlags[d] == false) {
       m_Positions[d]->operator[](k) = p;
       m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](k), k);
-      m_Neighborhoods[d]->SetPosition(m_Positions[d]->operator[](k), k);
     }
   }
 
@@ -343,11 +343,6 @@ void ParticleSystem::RegisterObserver(Observer* attr) {
     itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
     tmpcmd->SetCallbackFunction(attr, &Observer::PrefixTransformSetEventCallback);
     this->AddObserver(ParticlePrefixTransformSetEvent(), tmpcmd);
-  }
-  if (attr->m_DefinedCallbacks.NeighborhoodSetEvent == true) {
-    itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
-    tmpcmd->SetCallbackFunction(attr, &Observer::NeighborhoodSetEventCallback);
-    this->AddObserver(ParticleNeighborhoodSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionSetEvent == true) {
     itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();

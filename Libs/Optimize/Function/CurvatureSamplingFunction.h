@@ -3,7 +3,6 @@
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "Libs/Optimize/Domain/ImageDomainWithCurvature.h"
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
-#include "Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h"
 #include "SamplingFunction.h"
 #include "itkCommand.h"
 

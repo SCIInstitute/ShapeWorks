@@ -54,7 +54,6 @@ class ParticleEvent : public itk::EventObject {
 itkEventMacro(ParticleDomainAddEvent, ParticleEvent);
 itkEventMacro(ParticleTransformSetEvent, ParticleEvent);
 itkEventMacro(ParticlePrefixTransformSetEvent, ParticleEvent);
-itkEventMacro(ParticleNeighborhoodSetEvent, ParticleEvent);
 itkEventMacro(ParticlePositionSetEvent, ParticleEvent);
 itkEventMacro(ParticlePositionAddEvent, ParticleEvent);
 itkEventMacro(ParticlePositionRemoveEvent, ParticleEvent);
