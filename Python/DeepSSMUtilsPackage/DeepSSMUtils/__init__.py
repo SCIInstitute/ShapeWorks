@@ -70,7 +70,7 @@ def analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
 
 def get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid'):
     itk_transform = image_utils.get_image_registration_transform(fixed_image_file, moving_image_file,
-                                                                 transform_type='rigid')
+                                                                 transform_type=transform_type)
     return itk_transform
 
 
