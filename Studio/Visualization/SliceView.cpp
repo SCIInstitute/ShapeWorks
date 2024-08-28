@@ -6,6 +6,7 @@
 #include <vtkImageActorPointPlacer.h>
 #include <vtkImageProperty.h>
 #include <vtkImageSliceMapper.h>
+#include <vtkLookupTable.h>
 #include <vtkNamedColors.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
@@ -30,8 +31,10 @@ vtkSmartPointer<vtkActor> SliceView::create_shape_actor(vtkSmartPointer<vtkPolyD
   auto cut_actor = vtkSmartPointer<vtkActor>::New();
 
   stripper->PassCellDataAsFieldDataOn();
-  cut_mapper->SetScalarVisibility(false);
+  cut_mapper->SetScalarVisibility(true);
+  cut_mapper->SetColorModeToMapScalars();
   cut_mapper->SetResolveCoincidentTopologyToPolygonOffset();
+  cut_mapper->SetLookupTable(viewer_->get_surface_lut());
   cut_actor->GetProperty()->SetColor(color.redF(), color.greenF(), color.blueF());
   cut_actor->GetProperty()->SetLineWidth(4);
   cut_actor->GetProperty()->SetAmbient(1.0);
