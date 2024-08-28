@@ -1285,6 +1285,7 @@ void Viewer::update_difference_lut(float r0, float r1) {
   arrow_glyph_mapper_->SetScalarRange(range);
   glyph_mapper_->SetScalarRange(range);
   scalar_bar_actor_->SetLookupTable(surface_lut_);
+  slice_view_.update_colormap();
   if (rd > 100) {
     scalar_bar_actor_->SetLabelFormat("%.0f");
   } else if (rd > 1) {

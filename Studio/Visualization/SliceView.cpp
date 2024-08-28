@@ -34,7 +34,7 @@ vtkSmartPointer<vtkActor> SliceView::create_shape_actor(vtkSmartPointer<vtkPolyD
   cut_mapper->SetScalarVisibility(true);
   cut_mapper->SetColorModeToMapScalars();
   cut_mapper->SetResolveCoincidentTopologyToPolygonOffset();
-  cut_mapper->SetLookupTable(viewer_->get_surface_lut());
+  update_colormap();
   cut_actor->GetProperty()->SetColor(color.redF(), color.greenF(), color.blueF());
   cut_actor->GetProperty()->SetLineWidth(4);
   cut_actor->GetProperty()->SetAmbient(1.0);
@@ -60,9 +60,7 @@ vtkSmartPointer<vtkActor> SliceView::create_shape_actor(vtkSmartPointer<vtkPolyD
 //-----------------------------------------------------------------------------
 SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
   image_slice_ = vtkSmartPointer<vtkImageActor>::New();
-
   slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
-
   placer_ = vtkSmartPointer<vtkImageActorPointPlacer>::New();
   placer_->SetImageActor(image_slice_);
 }
@@ -141,6 +139,15 @@ void SliceView::set_orientation(int orientation) {
 
 //-----------------------------------------------------------------------------
 bool SliceView::is_image_loaded() { return volume_ != nullptr; }
+
+//-----------------------------------------------------------------------------
+void SliceView::update_colormap() {
+  for (auto &actor : cut_actors_) {
+    auto mapper = actor->GetMapper();
+    mapper->SetLookupTable(viewer_->get_surface_lut());
+    mapper->SetScalarRange(viewer_->get_surface_lut()->GetTableRange());
+  }
+}
 
 //-----------------------------------------------------------------------------
 void SliceView::update_renderer() {

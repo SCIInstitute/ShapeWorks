@@ -40,6 +40,7 @@ class SliceView {
 
   bool is_image_loaded();
 
+  void update_colormap();
   void update_renderer();
 
   void update_camera();
@@ -84,6 +85,7 @@ class SliceView {
   int current_slice_number_ = 0;
 
   std::vector<vtkSmartPointer<vtkActor>> cut_actors_;
+  ///std::vector<vtkSmartPointer<vtkPolyDataMapper>>
 
   std::vector<vtkSmartPointer<vtkPolyData>> poly_datas_;
 };
