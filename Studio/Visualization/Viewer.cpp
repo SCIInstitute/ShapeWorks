@@ -1038,16 +1038,14 @@ void Viewer::update_actors() {
     renderer_->RemoveActor(compare_actors_[i]);
   }
 
+  // now add back
+
   if (show_glyphs_) {
     renderer_->AddActor(glyph_actor_);
 
     if (arrows_visible_) {
       renderer_->AddActor(arrow_glyph_actor_);
     }
-  }
-
-  if ((show_glyphs_ && arrows_visible_) || showing_feature_map()) {
-    renderer_->AddActor(scalar_bar_actor_);
   }
 
   if (show_surface_ && meshes_.valid()) {
@@ -1069,6 +1067,10 @@ void Viewer::update_actors() {
         point_placer_->GetPolys()->AddItem(poly_data);
       }
     }
+  }
+
+  if ((show_glyphs_ && arrows_visible_) || showing_feature_map()) {
+    renderer_->AddActor(scalar_bar_actor_);
   }
 
   slice_view_.update_renderer();
