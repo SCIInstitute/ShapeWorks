@@ -324,9 +324,6 @@ QSharedPointer<Session> AnalysisTool::get_session() { return session_; }
 void AnalysisTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::update_analysis_mode() { handle_analysis_options(); }
-
-//---------------------------------------------------------------------------
 void AnalysisTool::update_interface() {
   ui_->show_good_bad->setEnabled(session_->get_good_bad_particles().size() == session_->get_num_particles());
   ui_->show_good_bad->setChecked(ui_->show_good_bad->isEnabled() && session_->get_show_good_bad_particles());
@@ -393,6 +390,7 @@ void AnalysisTool::handle_analysis_options() {
 
   update_difference_particles();
 
+  Q_EMIT analysis_mode_changed();
   Q_EMIT update_view();
 }
 
@@ -978,7 +976,7 @@ bool AnalysisTool::pca_shape_plus_scalar_mode() { return ui_->pca_shape_and_scal
 bool AnalysisTool::pca_shape_only_mode() { return ui_->pca_scalar_shape_only->isChecked(); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_tabWidget_currentChanged() { update_analysis_mode(); }
+void AnalysisTool::on_tabWidget_currentChanged() { handle_analysis_options(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_pcaSlider_valueChanged() {

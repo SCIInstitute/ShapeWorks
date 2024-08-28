@@ -286,6 +286,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
  Q_SIGNALS:
   /// signal that the data has changed
   void data_changed();
+  void tool_state_changed();
   void points_changed();
   void landmarks_changed();
   void planes_changed();

@@ -1174,11 +1174,17 @@ bool Session::is_loading() { return is_loading_; }
 
 //---------------------------------------------------------------------------
 void Session::set_tool_state(std::string state) {
+  std::string current_state = get_tool_state();
+  if (state == current_state) {
+    return;
+  }
+
   parameters().set("tool_state", state);
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
   trigger_planes_changed();
   Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT tool_state_changed();
 }
 
 //---------------------------------------------------------------------------
