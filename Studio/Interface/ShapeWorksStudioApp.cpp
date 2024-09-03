@@ -2038,6 +2038,7 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
   bool auto_mode = ui_->feature_auto_scale->isChecked();
   ui_->feature_min->setEnabled(!auto_mode);
   ui_->feature_max->setEnabled(!auto_mode);
+  ui_->feature_auto_scale->setEnabled(ui_->feature_uniform_scale->isChecked());
   if (!auto_mode) {
     if (session_->get_feature_range_min() == 0 && session_->get_feature_range_max() == 0) {
       if (visualizer_->get_feature_range_valid()) {
@@ -2056,15 +2057,13 @@ void ShapeWorksStudioApp::image_combo_changed(int index) {
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::get_feature_uniform_scale() {
-  return session_->parameters().get("feature_uniform_scale", true);
+  return session_->get_feature_uniform_scale();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::set_feature_uniform_scale(bool value) {
-  if (!session_->is_loading()) {
-    session_->parameters().set("feature_uniform_scale", value);
-    update_view_mode();
-  }
+  session_->set_feature_uniform_scale(value);
+  update_feature_map_scale();
 }
 
 //---------------------------------------------------------------------------

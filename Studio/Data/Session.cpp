@@ -945,6 +945,17 @@ void Session::set_feature_range_max(double value) {
 }
 
 //---------------------------------------------------------------------------
+void Session::set_feature_uniform_scale(bool value) {
+  if (!is_loading()) {
+    params_.set("feature_uniform_scale", value);
+    Q_EMIT feature_range_changed();
+  }
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_feature_uniform_scale() { return params_.get("feature_uniform_scale", true); }
+
+//---------------------------------------------------------------------------
 void Session::handle_ctrl_click(PickResult result) {
   if (get_tool_state() != Session::DATA_C) {
     return;

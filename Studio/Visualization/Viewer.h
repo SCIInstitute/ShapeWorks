@@ -106,6 +106,7 @@ class Viewer {
   void set_visualizer(Visualizer* visualizer);
 
   void update_feature_range(double* range);
+  void reset_feature_range();
 
   void update_opacities();
 
@@ -239,6 +240,8 @@ class Viewer {
   Visualizer* visualizer_{nullptr};
 
   int number_of_domains_ = 0;
+  double lut_min_ = 0;
+  double lut_max_ = 0;
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   std::shared_ptr<PlaneWidget> plane_widget_;

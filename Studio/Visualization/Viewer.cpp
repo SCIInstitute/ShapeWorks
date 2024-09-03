@@ -1141,6 +1141,8 @@ void Viewer::set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSm
   if (scalars) {
     double range[2];
     scalars->GetRange(range);
+    lut_min_ = range[0];
+    lut_max_ = range[1];
     update_difference_lut(range[0], range[1]);
     mapper->SetScalarRange(range[0], range[1]);
     visualizer_->update_feature_range(range);
@@ -1305,6 +1307,9 @@ bool Viewer::showing_feature_map() {
 
 //-----------------------------------------------------------------------------
 void Viewer::update_feature_range(double* range) { update_difference_lut(range[0], range[1]); }
+
+//-----------------------------------------------------------------------------
+void Viewer::reset_feature_range() { update_difference_lut(lut_min_, lut_max_); }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_opacities() {

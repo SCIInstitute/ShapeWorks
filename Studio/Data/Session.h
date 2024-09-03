@@ -159,6 +159,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_feature_range_min(double value);
   void set_feature_range_max(double value);
 
+  void set_feature_uniform_scale(bool value);
+  bool get_feature_uniform_scale();
+
   void handle_ctrl_click(PickResult result);
 
   void trigger_landmarks_changed();
