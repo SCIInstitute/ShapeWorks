@@ -31,10 +31,8 @@ vtkSmartPointer<vtkActor> SliceView::create_shape_actor(vtkSmartPointer<vtkPolyD
   auto cut_actor = vtkSmartPointer<vtkActor>::New();
 
   stripper->PassCellDataAsFieldDataOn();
-  cut_mapper->SetScalarVisibility(true);
-  cut_mapper->SetColorModeToMapScalars();
+  cut_mapper->SetScalarVisibility(false);
   cut_mapper->SetResolveCoincidentTopologyToPolygonOffset();
-  update_colormap();
   cut_actor->GetProperty()->SetColor(color.redF(), color.greenF(), color.blueF());
   cut_actor->GetProperty()->SetLineWidth(4);
   cut_actor->GetProperty()->SetAmbient(1.0);
