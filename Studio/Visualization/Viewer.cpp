@@ -1158,14 +1158,16 @@ void Viewer::update_image_volume(bool force) {
 
   if (meshes_.valid()) {
     slice_view_.clear_meshes();
-    auto poly_data = meshes_.meshes()[0]->get_poly_data();
-    slice_view_.add_mesh(poly_data);
+    for (size_t i = 0; i < meshes_.meshes().size(); i++) {
+      auto poly_data = meshes_.meshes()[i]->get_poly_data();
+      slice_view_.add_mesh(poly_data);
 
-    if (session_->get_image_thickness_feature()) {
-      auto target_feature = session_->get_feature_map();
-      if (target_feature != "" && target_feature != "-none-") {
-        Mesh inner = mesh::compute_inner_mesh(poly_data, target_feature);
-        slice_view_.add_mesh(inner.getVTKMesh());
+      if (session_->get_image_thickness_feature()) {
+        auto target_feature = session_->get_feature_map();
+        if (target_feature != "" && target_feature != "-none-") {
+          Mesh inner = mesh::compute_inner_mesh(poly_data, target_feature);
+          slice_view_.add_mesh(inner.getVTKMesh());
+        }
       }
     }
   }
