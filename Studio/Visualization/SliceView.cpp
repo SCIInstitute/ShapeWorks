@@ -144,8 +144,15 @@ bool SliceView::is_image_loaded() { return volume_ != nullptr; }
 void SliceView::update_colormap() {
   for (auto &actor : cut_actors_) {
     auto mapper = actor->GetMapper();
-    mapper->SetLookupTable(viewer_->get_surface_lut());
-    mapper->SetScalarRange(viewer_->get_surface_lut()->GetTableRange());
+    if (viewer_->showing_feature_map()) {
+      mapper->SetScalarVisibility(true);
+      mapper->SetColorModeToMapScalars();
+      mapper->SetLookupTable(viewer_->get_surface_lut());
+      mapper->SetScalarRange(viewer_->get_surface_lut()->GetTableRange());
+    } else{
+      mapper->SetScalarVisibility(false);
+      mapper->SetScalarModeToDefault();
+    }
   }
 }
 

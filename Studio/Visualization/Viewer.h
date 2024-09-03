@@ -162,6 +162,8 @@ class Viewer {
 
   vtkSmartPointer<vtkLookupTable> get_surface_lut() { return surface_lut_; }
 
+  bool showing_feature_map();
+
  private:
   void initialize_surfaces();
 
@@ -174,7 +176,6 @@ class Viewer {
 
   void update_difference_lut(float r0, float r1);
 
-  bool showing_feature_map();
   std::string get_displayed_feature_map();
 
   vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
