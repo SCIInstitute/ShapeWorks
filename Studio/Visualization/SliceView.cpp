@@ -262,9 +262,13 @@ Point SliceView::get_slice_position() {
 
   // convert to world coordinates
   auto transform = viewer_->get_image_transform();
-  transform->Update();
-  transform->Inverse();
-  transform->TransformPoint(origin, origin);
+
+  // make a local copy
+  vtkSmartPointer<vtkTransform> transform_copy = vtkSmartPointer<vtkTransform>::New();
+  transform_copy->SetMatrix(transform->GetMatrix());
+  transform_copy->Update();
+  transform_copy->Inverse();
+  transform_copy->TransformPoint(origin, origin);
 
   return Point({origin[0], origin[1], origin[2]});
 }
