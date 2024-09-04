@@ -130,6 +130,7 @@ class Viewer {
   void set_visualizer(Visualizer* visualizer);
 
   void update_feature_range(double* range);
+  void reset_feature_range();
 
   void update_opacities();
 
@@ -180,7 +181,12 @@ class Viewer {
 
   void insert_compare_meshes();
 
-  void set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSmartPointer<vtkPolyDataMapper> mapper, std::string scalar);
+  void set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSmartPointer<vtkPolyDataMapper> mapper,
+                             std::string scalar);
+
+  vtkSmartPointer<vtkLookupTable> get_surface_lut() { return surface_lut_; }
+
+  bool showing_feature_map();
 
  private:
   void initialize_surfaces();
@@ -194,7 +200,6 @@ class Viewer {
 
   void update_difference_lut(float r0, float r1);
 
-  bool showing_feature_map();
   std::string get_displayed_feature_map();
 
   vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
@@ -260,6 +265,8 @@ class Viewer {
   Visualizer* visualizer_{nullptr};
 
   int number_of_domains_ = 0;
+  double lut_min_ = 0;
+  double lut_max_ = 0;
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   std::shared_ptr<PlaneWidget> plane_widget_;
@@ -282,4 +289,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2024-08-28 at 22:41:21 +0000
+Updated on 2024-09-04 at 22:59:23 +0000

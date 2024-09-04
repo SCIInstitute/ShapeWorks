@@ -166,6 +166,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_feature_range_min(double value);
   void set_feature_range_max(double value);
 
+  void set_feature_uniform_scale(bool value);
+  bool get_feature_uniform_scale();
+
   void handle_ctrl_click(PickResult result);
 
   void trigger_landmarks_changed();
@@ -288,6 +291,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
  Q_SIGNALS:
   void data_changed();
+  void tool_state_changed();
   void points_changed();
   void landmarks_changed();
   void planes_changed();
@@ -371,4 +375,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2024-08-28 at 22:41:21 +0000
+Updated on 2024-09-04 at 22:59:23 +0000

@@ -29,6 +29,7 @@ summary: SliceView.
 | void | **[clear_meshes](../Classes/classshapeworks_1_1SliceView.md#function-clear-meshes)**() |
 | void | **[set_orientation](../Classes/classshapeworks_1_1SliceView.md#function-set-orientation)**(int orientation) |
 | bool | **[is_image_loaded](../Classes/classshapeworks_1_1SliceView.md#function-is-image-loaded)**() |
+| void | **[update_colormap](../Classes/classshapeworks_1_1SliceView.md#function-update-colormap)**() |
 | void | **[update_renderer](../Classes/classshapeworks_1_1SliceView.md#function-update-renderer)**() |
 | void | **[update_camera](../Classes/classshapeworks_1_1SliceView.md#function-update-camera)**() |
 | Point | **[handle_key](../Classes/classshapeworks_1_1SliceView.md#function-handle-key)**(std::string key) |
@@ -114,6 +115,13 @@ void set_orientation(
 
 ```cpp
 bool is_image_loaded()
+```
+
+
+### function update_colormap
+
+```cpp
+void update_colormap()
 ```
 
 
@@ -223,4 +231,4 @@ int get_slice_number()
 
 -------------------------------
 
-Updated on 2024-08-28 at 22:41:20 +0000
+Updated on 2024-09-04 at 22:59:23 +0000

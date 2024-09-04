@@ -227,6 +227,7 @@ class AnalysisTool : public QWidget {
  Q_SIGNALS:
 
   void update_view();
+  void analysis_mode_changed();
   void pca_update();
   void progress(int);
   void reconstruction_complete();
@@ -237,7 +238,7 @@ class AnalysisTool : public QWidget {
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
-  void update_analysis_mode();
+
   void update_interface();
 
   bool group_pvalues_valid();
@@ -317,4 +318,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2024-08-28 at 22:41:21 +0000
+Updated on 2024-09-04 at 22:59:23 +0000

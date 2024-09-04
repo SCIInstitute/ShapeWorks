@@ -77,6 +77,7 @@ Inherits from QWidget
 |                | Name           |
 | -------------- | -------------- |
 | void | **[update_view](../Classes/classshapeworks_1_1AnalysisTool.md#signal-update-view)**() |
+| void | **[analysis_mode_changed](../Classes/classshapeworks_1_1AnalysisTool.md#signal-analysis-mode-changed)**() |
 | void | **[pca_update](../Classes/classshapeworks_1_1AnalysisTool.md#signal-pca-update)**() |
 | void | **[progress](../Classes/classshapeworks_1_1AnalysisTool.md#signal-progress)**(int ) |
 | void | **[reconstruction_complete](../Classes/classshapeworks_1_1AnalysisTool.md#signal-reconstruction-complete)**() |
@@ -539,6 +540,13 @@ void update_view()
 ```
 
 
+### signal analysis_mode_changed
+
+```cpp
+void analysis_mode_changed()
+```
+
+
 ### signal pca_update
 
 ```cpp
@@ -919,4 +927,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2024-08-28 at 22:41:20 +0000
+Updated on 2024-09-04 at 22:59:22 +0000

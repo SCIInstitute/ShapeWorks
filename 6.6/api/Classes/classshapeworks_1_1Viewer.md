@@ -47,6 +47,7 @@ summary: 3D Viewer
 | bool | **[is_viewer_ready](../Classes/classshapeworks_1_1Viewer.md#function-is-viewer-ready)**() |
 | void | **[set_visualizer](../Classes/classshapeworks_1_1Viewer.md#function-set-visualizer)**([Visualizer](../Classes/classshapeworks_1_1Visualizer.md) * visualizer) |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Viewer.md#function-update-feature-range)**(double * range) |
+| void | **[reset_feature_range](../Classes/classshapeworks_1_1Viewer.md#function-reset-feature-range)**() |
 | void | **[update_opacities](../Classes/classshapeworks_1_1Viewer.md#function-update-opacities)**() |
 | std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
 | void | **[update_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-update-landmarks)**() |
@@ -73,6 +74,8 @@ summary: 3D Viewer
 | vtkSmartPointer< vtkPolyData > | **[get_particle_poly_data](../Classes/classshapeworks_1_1Viewer.md#function-get-particle-poly-data)**() |
 | void | **[insert_compare_meshes](../Classes/classshapeworks_1_1Viewer.md#function-insert-compare-meshes)**() |
 | void | **[set_scalar_visibility](../Classes/classshapeworks_1_1Viewer.md#function-set-scalar-visibility)**(vtkSmartPointer< vtkPolyData > poly_data, vtkSmartPointer< vtkPolyDataMapper > mapper, std::string scalar) |
+| vtkSmartPointer< vtkLookupTable > | **[get_surface_lut](../Classes/classshapeworks_1_1Viewer.md#function-get-surface-lut)**() |
+| bool | **[showing_feature_map](../Classes/classshapeworks_1_1Viewer.md#function-showing-feature-map)**() |
 | bool | **[is_reverse](../Classes/classshapeworks_1_1Viewer.md#function-is-reverse)**(vtkSmartPointer< vtkTransform > transform) |
 
 ## Detailed Description
@@ -332,6 +335,13 @@ void update_feature_range(
 ```
 
 
+### function reset_feature_range
+
+```cpp
+void reset_feature_range()
+```
+
+
 ### function update_opacities
 
 ```cpp
@@ -530,6 +540,20 @@ void set_scalar_visibility(
 ```
 
 
+### function get_surface_lut
+
+```cpp
+inline vtkSmartPointer< vtkLookupTable > get_surface_lut()
+```
+
+
+### function showing_feature_map
+
+```cpp
+bool showing_feature_map()
+```
+
+
 ### function is_reverse
 
 ```cpp
@@ -541,4 +565,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2024-08-28 at 22:41:20 +0000
+Updated on 2024-09-04 at 22:59:23 +0000

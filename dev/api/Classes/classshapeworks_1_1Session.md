@@ -37,6 +37,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 |                | Name           |
 | -------------- | -------------- |
 | void | **[data_changed](../Classes/classshapeworks_1_1Session.md#signal-data-changed)**()<br>signal that the data has changed  |
+| void | **[tool_state_changed](../Classes/classshapeworks_1_1Session.md#signal-tool-state-changed)**() |
 | void | **[points_changed](../Classes/classshapeworks_1_1Session.md#signal-points-changed)**() |
 | void | **[landmarks_changed](../Classes/classshapeworks_1_1Session.md#signal-landmarks-changed)**() |
 | void | **[planes_changed](../Classes/classshapeworks_1_1Session.md#signal-planes-changed)**() |
@@ -101,6 +102,8 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[set_feature_range](../Classes/classshapeworks_1_1Session.md#function-set-feature-range)**(double min, double max) |
 | void | **[set_feature_range_min](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-min)**(double value) |
 | void | **[set_feature_range_max](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-max)**(double value) |
+| void | **[set_feature_uniform_scale](../Classes/classshapeworks_1_1Session.md#function-set-feature-uniform-scale)**(bool value) |
+| bool | **[get_feature_uniform_scale](../Classes/classshapeworks_1_1Session.md#function-get-feature-uniform-scale)**() |
 | void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Session.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result) |
 | void | **[trigger_landmarks_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-landmarks-changed)**() |
 | void | **[trigger_planes_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-planes-changed)**() |
@@ -262,6 +265,13 @@ void data_changed()
 ```
 
 signal that the data has changed 
+
+### signal tool_state_changed
+
+```cpp
+void tool_state_changed()
+```
+
 
 ### signal points_changed
 
@@ -731,6 +741,22 @@ void set_feature_range_min(
 void set_feature_range_max(
     double value
 )
+```
+
+
+### function set_feature_uniform_scale
+
+```cpp
+void set_feature_uniform_scale(
+    bool value
+)
+```
+
+
+### function get_feature_uniform_scale
+
+```cpp
+bool get_feature_uniform_scale()
 ```
 
 
@@ -1360,4 +1386,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2024-08-28 at 22:41:20 +0000
+Updated on 2024-09-04 at 22:59:23 +0000
