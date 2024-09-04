@@ -1038,16 +1038,14 @@ void Viewer::update_actors() {
     renderer_->RemoveActor(compare_actors_[i]);
   }
 
+  // now add back
+
   if (show_glyphs_) {
     renderer_->AddActor(glyph_actor_);
 
     if (arrows_visible_) {
       renderer_->AddActor(arrow_glyph_actor_);
     }
-  }
-
-  if ((show_glyphs_ && arrows_visible_) || showing_feature_map()) {
-    renderer_->AddActor(scalar_bar_actor_);
   }
 
   if (show_surface_ && meshes_.valid()) {
@@ -1069,6 +1067,10 @@ void Viewer::update_actors() {
         point_placer_->GetPolys()->AddItem(poly_data);
       }
     }
+  }
+
+  if ((show_glyphs_ && arrows_visible_) || showing_feature_map()) {
+    renderer_->AddActor(scalar_bar_actor_);
   }
 
   slice_view_.update_renderer();
@@ -1139,6 +1141,8 @@ void Viewer::set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSm
   if (scalars) {
     double range[2];
     scalars->GetRange(range);
+    lut_min_ = range[0];
+    lut_max_ = range[1];
     update_difference_lut(range[0], range[1]);
     mapper->SetScalarRange(range[0], range[1]);
     visualizer_->update_feature_range(range);
@@ -1154,14 +1158,16 @@ void Viewer::update_image_volume(bool force) {
 
   if (meshes_.valid()) {
     slice_view_.clear_meshes();
-    auto poly_data = meshes_.meshes()[0]->get_poly_data();
-    slice_view_.add_mesh(poly_data);
+    for (size_t i = 0; i < meshes_.meshes().size(); i++) {
+      auto poly_data = meshes_.meshes()[i]->get_poly_data();
+      slice_view_.add_mesh(poly_data);
 
-    if (session_->get_image_thickness_feature()) {
-      auto target_feature = session_->get_feature_map();
-      if (target_feature != "" && target_feature != "-none-") {
-        Mesh inner = mesh::compute_inner_mesh(poly_data, target_feature);
-        slice_view_.add_mesh(inner.getVTKMesh());
+      if (session_->get_image_thickness_feature()) {
+        auto target_feature = session_->get_feature_map();
+        if (target_feature != "" && target_feature != "-none-") {
+          Mesh inner = mesh::compute_inner_mesh(poly_data, target_feature);
+          slice_view_.add_mesh(inner.getVTKMesh());
+        }
       }
     }
   }
@@ -1283,6 +1289,7 @@ void Viewer::update_difference_lut(float r0, float r1) {
   arrow_glyph_mapper_->SetScalarRange(range);
   glyph_mapper_->SetScalarRange(range);
   scalar_bar_actor_->SetLookupTable(surface_lut_);
+  slice_view_.update_colormap();
   if (rd > 100) {
     scalar_bar_actor_->SetLabelFormat("%.0f");
   } else if (rd > 1) {
@@ -1302,6 +1309,9 @@ bool Viewer::showing_feature_map() {
 
 //-----------------------------------------------------------------------------
 void Viewer::update_feature_range(double* range) { update_difference_lut(range[0], range[1]); }
+
+//-----------------------------------------------------------------------------
+void Viewer::reset_feature_range() { update_difference_lut(lut_min_, lut_max_); }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_opacities() {

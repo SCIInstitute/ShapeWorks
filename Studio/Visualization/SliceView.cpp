@@ -6,6 +6,7 @@
 #include <vtkImageActorPointPlacer.h>
 #include <vtkImageProperty.h>
 #include <vtkImageSliceMapper.h>
+#include <vtkLookupTable.h>
 #include <vtkNamedColors.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
@@ -57,9 +58,7 @@ vtkSmartPointer<vtkActor> SliceView::create_shape_actor(vtkSmartPointer<vtkPolyD
 //-----------------------------------------------------------------------------
 SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
   image_slice_ = vtkSmartPointer<vtkImageActor>::New();
-
   slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
-
   placer_ = vtkSmartPointer<vtkImageActorPointPlacer>::New();
   placer_->SetImageActor(image_slice_);
 }
@@ -138,6 +137,22 @@ void SliceView::set_orientation(int orientation) {
 
 //-----------------------------------------------------------------------------
 bool SliceView::is_image_loaded() { return volume_ != nullptr; }
+
+//-----------------------------------------------------------------------------
+void SliceView::update_colormap() {
+  for (auto &actor : cut_actors_) {
+    auto mapper = actor->GetMapper();
+    if (viewer_->showing_feature_map()) {
+      mapper->SetScalarVisibility(true);
+      mapper->SetColorModeToMapScalars();
+      mapper->SetLookupTable(viewer_->get_surface_lut());
+      mapper->SetScalarRange(viewer_->get_surface_lut()->GetTableRange());
+    } else{
+      mapper->SetScalarVisibility(false);
+      mapper->SetScalarModeToDefault();
+    }
+  }
+}
 
 //-----------------------------------------------------------------------------
 void SliceView::update_renderer() {
@@ -245,9 +260,13 @@ Point SliceView::get_slice_position() {
 
   // convert to world coordinates
   auto transform = viewer_->get_image_transform();
-  transform->Update();
-  transform->Inverse();
-  transform->TransformPoint(origin, origin);
+
+  // make a local copy
+  vtkSmartPointer<vtkTransform> transform_copy = vtkSmartPointer<vtkTransform>::New();
+  transform_copy->SetMatrix(transform->GetMatrix());
+  transform_copy->Update();
+  transform_copy->Inverse();
+  transform_copy->TransformPoint(origin, origin);
 
   return Point({origin[0], origin[1], origin[2]});
 }

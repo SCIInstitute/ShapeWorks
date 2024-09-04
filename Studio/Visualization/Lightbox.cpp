@@ -509,9 +509,14 @@ void Lightbox::set_orientation_marker_viewport() {
 
 //-----------------------------------------------------------------------------
 void Lightbox::update_feature_range() {
-  if (visualizer_->get_feature_map() != "" && visualizer_->get_uniform_feature_range()) {
-    for (int i = 0; i < viewers_.size(); i++) {
+  if (visualizer_->get_feature_map() == "") {
+    return;
+  }
+  for (int i = 0; i < viewers_.size(); i++) {
+    if (visualizer_->get_uniform_feature_range()) {
       viewers_[i]->update_feature_range(visualizer_->get_feature_range());
+    } else {
+      viewers_[i]->reset_feature_range();
     }
   }
 }

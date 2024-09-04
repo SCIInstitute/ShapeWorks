@@ -245,6 +245,8 @@ void Visualizer::update_viewer_properties() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_feature_range_changed() {
+  set_uniform_feature_range(session_->get_feature_uniform_scale());
+
   feature_manual_range_[0] = session_->get_feature_range_min();
   feature_manual_range_[1] = std::max<double>(feature_manual_range_[0], session_->get_feature_range_max());
   lightbox_->update_feature_range();

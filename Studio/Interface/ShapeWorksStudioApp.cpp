@@ -116,6 +116,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->stacked_widget->addWidget(analysis_tool_.data());
   connect(analysis_tool_.data(), &AnalysisTool::update_view, this,
           &ShapeWorksStudioApp::handle_display_setting_changed);
+  connect(analysis_tool_.data(), &AnalysisTool::analysis_mode_changed, this, &ShapeWorksStudioApp::reset_num_viewers);
   connect(analysis_tool_.data(), &AnalysisTool::pca_update, this, &ShapeWorksStudioApp::handle_pca_update);
   connect(analysis_tool_.data(), &AnalysisTool::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(analysis_tool_.data(), &AnalysisTool::reconstruction_complete, this,
@@ -974,6 +975,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
   connect(session_.data(), &Session::reinsert_shapes, this, [&]() { update_display(true); });
   connect(session_.data(), &Session::save, this, &ShapeWorksStudioApp::on_action_save_project_triggered);
+  connect(session_.data(), &Session::tool_state_changed, this, &ShapeWorksStudioApp::update_tool_mode);
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
@@ -1077,6 +1079,9 @@ void ShapeWorksStudioApp::update_tool_mode() {
       ->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   ui_->stacked_widget->adjustSize();
 
+  reset_num_viewers();
+  visualizer_->reset_camera();
+
   update_view_combo();
 
   on_actionShow_Tool_Window_triggered();
@@ -1148,37 +1153,19 @@ bool ShapeWorksStudioApp::is_view_combo_item_enabled(int item) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_import_mode_triggered() {
-  session_->set_tool_state(Session::DATA_C);
-  update_tool_mode();
-}
+void ShapeWorksStudioApp::on_action_import_mode_triggered() { session_->set_tool_state(Session::DATA_C); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_groom_mode_triggered() {
-  session_->set_tool_state(Session::GROOM_C);
-  update_tool_mode();
-}
+void ShapeWorksStudioApp::on_action_groom_mode_triggered() { session_->set_tool_state(Session::GROOM_C); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_optimize_mode_triggered() {
-  session_->set_tool_state(Session::OPTIMIZE_C);
-  update_tool_mode();
-  visualizer_->reset_camera();
-}
+void ShapeWorksStudioApp::on_action_optimize_mode_triggered() { session_->set_tool_state(Session::OPTIMIZE_C); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_analysis_mode_triggered() {
-  session_->set_tool_state(Session::ANALYSIS_C);
-  update_tool_mode();
-  visualizer_->reset_camera();
-}
+void ShapeWorksStudioApp::on_action_analysis_mode_triggered() { session_->set_tool_state(Session::ANALYSIS_C); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_deepssm_mode_triggered() {
-  session_->set_tool_state(Session::DEEPSSM_C);
-  update_tool_mode();
-  visualizer_->reset_camera();
-}
+void ShapeWorksStudioApp::on_action_deepssm_mode_triggered() { session_->set_tool_state(Session::DEEPSSM_C); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed() {
@@ -1429,8 +1416,9 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   lightbox_->update_interactor_style();
 
-  if ((force || change) && !session_->is_loading()) {  // do not override if loading
-    reset_num_viewers();
+  //  if ((force || change) && !session_->is_loading()) {  // do not override if loading
+  if (change && !session_->is_loading()) {  // do not override if loading
+    // reset_num_viewers();
   }
 
   update_scrollbar();
@@ -2050,6 +2038,7 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
   bool auto_mode = ui_->feature_auto_scale->isChecked();
   ui_->feature_min->setEnabled(!auto_mode);
   ui_->feature_max->setEnabled(!auto_mode);
+  ui_->feature_auto_scale->setEnabled(ui_->feature_uniform_scale->isChecked());
   if (!auto_mode) {
     if (session_->get_feature_range_min() == 0 && session_->get_feature_range_max() == 0) {
       if (visualizer_->get_feature_range_valid()) {
@@ -2068,15 +2057,13 @@ void ShapeWorksStudioApp::image_combo_changed(int index) {
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::get_feature_uniform_scale() {
-  return session_->parameters().get("feature_uniform_scale", true);
+  return session_->get_feature_uniform_scale();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::set_feature_uniform_scale(bool value) {
-  if (!session_->is_loading()) {
-    session_->parameters().set("feature_uniform_scale", value);
-    update_view_mode();
-  }
+  session_->set_feature_uniform_scale(value);
+  update_feature_map_scale();
 }
 
 //---------------------------------------------------------------------------
