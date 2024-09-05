@@ -72,6 +72,8 @@ class DataTool : public QWidget {
   void subject_notes_changed();
   void table_data_edited();
 
+  void shared_boundary_generate_clicked();
+
  Q_SIGNALS:
   void import_button_clicked();
 
@@ -80,6 +82,7 @@ class DataTool : public QWidget {
 
   void update_plane_table();
   void update_ffc_table();
+  void update_shared_boundary_panel();
 
   Preferences& preferences_;
 
