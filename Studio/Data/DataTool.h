@@ -17,6 +17,7 @@ namespace shapeworks {
 
 class Session;
 class LandmarkTableModel;
+class SharedBoundaryPanel;
 
 class DataTool : public QWidget {
   Q_OBJECT;
@@ -64,25 +65,20 @@ class DataTool : public QWidget {
   void handle_landmark_mode_changed();
   void handle_constraints_mode_changed();
 
-  void constraints_table_right_click(const QPoint &point);
-  void data_table_right_click(const QPoint &point);
+  void constraints_table_right_click(const QPoint& point);
+  void data_table_right_click(const QPoint& point);
   void copy_ffc_clicked();
 
   void table_selection_changed();
   void subject_notes_changed();
   void table_data_edited();
 
-  void shared_boundary_generate_clicked();
-
  Q_SIGNALS:
   void import_button_clicked();
 
  private:
-  void update_domain_box(QComboBox* box);
-
   void update_plane_table();
   void update_ffc_table();
-  void update_shared_boundary_panel();
 
   Preferences& preferences_;
 
@@ -91,5 +87,7 @@ class DataTool : public QWidget {
 
   std::shared_ptr<LandmarkTableModel> landmark_table_model_;
   bool block_table_update_{false};
+
+  SharedBoundaryPanel* shared_boundary_panel_{nullptr};
 };
 }  // namespace shapeworks

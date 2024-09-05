@@ -11,8 +11,11 @@ class QWidget;
 
 class vtkImageData;
 class vtkRenderer;
+class QComboBox;
 
 namespace shapeworks {
+
+class Session;
 
 //! Utilities for Studio
 class StudioUtils {
@@ -45,6 +48,9 @@ class StudioUtils {
   //! convert window width and level to brightness and contrast
   static void window_width_level_to_brightness_contrast(double window_width, double window_level, double min_intensity,
                                                         double max_intensity, double& brightness, double& contrast);
+
+  //! update a combobox with domain names
+  static void update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session);
 };
 
 }  // namespace shapeworks

@@ -3,9 +3,11 @@
 #include <Data/LandmarkTableModel.h>
 #include <Data/Session.h>
 #include <Data/ShapeWorksWorker.h>
+#include <Interface/Style.h>
 #include <Logging.h>
 #include <Shape.h>
 #include <StudioMesh.h>
+#include <Utils/StudioUtils.h>
 #include <ui_DataTool.h>
 #include <vtkPointData.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -14,7 +16,8 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QThread>
-#include <iostream>
+
+#include "SharedBoundaryPanel.h"
 
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
@@ -43,15 +46,11 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->notes_open_button, &QPushButton::toggled, ui_->notes_content, &QWidget::setVisible);
   connect(ui_->notes_header, &QPushButton::clicked, ui_->notes_open_button, &QPushButton::toggle);
 
-  connect(ui_->shared_boundary_open_button, &QPushButton::toggled, ui_->shared_boundary_content, &QWidget::setVisible);
-  connect(ui_->shared_boundary_header, &QPushButton::clicked, ui_->shared_boundary_open_button, &QPushButton::toggle);
-
   connect(ui_->landmark_domain_box_, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &DataTool::landmark_domain_changed);
 
   connect(ui_->delete_plane_, &QPushButton::clicked, this, &DataTool::delete_planes_clicked);
   connect(ui_->delete_ffc_, &QPushButton::clicked, this, &DataTool::delete_ffc_clicked);
-  connect(ui_->shared_boundary_generate, &QPushButton::clicked, this, &DataTool::shared_boundary_generate_clicked);
 
   ui_->table_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->landmarks_label->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -70,7 +69,6 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->landmarks_open_button->toggle();
   ui_->constraints_open_button->toggle();
   ui_->notes_open_button->toggle();
-  ui_->shared_boundary_open_button->toggle();
 
   // table on
   // ui_->table_open_button->toggle();
@@ -115,6 +113,12 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->landmark_table->verticalHeader()->setVisible(true);
   ui_->landmark_table->horizontalHeader()->setVisible(true);
   ui_->landmark_table->resizeColumnsToContents();
+
+  shared_boundary_panel_ = new SharedBoundaryPanel(this);
+  layout()->addWidget(shared_boundary_panel_);
+
+  auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  layout()->addItem(spacer);
 }
 
 //---------------------------------------------------------------------------
@@ -144,7 +148,7 @@ void DataTool::set_session(QSharedPointer<Session> session) {
   update_table();
   handle_landmark_mode_changed();
   handle_constraints_mode_changed();
-  update_shared_boundary_panel();
+  shared_boundary_panel_->set_session(session);
 }
 
 //---------------------------------------------------------------------------
@@ -209,7 +213,7 @@ void DataTool::update_table(bool clean) {
     update_landmark_table();
     update_plane_table();
     update_ffc_table();
-    update_shared_boundary_panel();
+    shared_boundary_panel_->update_panel();
   }
 
   block_table_update_ = false;
@@ -217,7 +221,7 @@ void DataTool::update_table(bool clean) {
 
 //---------------------------------------------------------------------------
 void DataTool::update_landmark_table() {
-  update_domain_box(ui_->landmark_domain_box_);
+  StudioUtils::update_domain_combobox(ui_->landmark_domain_box_, session_);
 
   auto domain_names = session_->get_project()->get_domain_names();
   ui_->landmark_domain_widget_->setVisible(domain_names.size() > 1);
@@ -275,25 +279,6 @@ void DataTool::delete_ffc_clicked() {
   session_->trigger_ffc_changed();
   session_->trigger_reinsert_shapes();
   session_->trigger_repaint();
-}
-
-//---------------------------------------------------------------------------
-void DataTool::update_domain_box(QComboBox* box) {
-  auto domain_names = session_->get_project()->get_domain_names();
-
-  int currentIndex = box->currentIndex();
-  if (domain_names.size() != box->count()) {
-    box->clear();
-    for (auto&& item : domain_names) {
-      box->addItem(QString::fromStdString(item));
-    }
-  }
-  if (currentIndex < 0) {
-    currentIndex = 0;
-  }
-  if (currentIndex < box->count()) {
-    box->setCurrentIndex(currentIndex);
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -431,19 +416,6 @@ void DataTool::update_ffc_table() {
   table->resizeColumnsToContents();
   table->horizontalHeader()->setStretchLastSection(false);
   table->setSelectionBehavior(QAbstractItemView::SelectRows);
-}
-
-//---------------------------------------------------------------------------
-void DataTool::update_shared_boundary_panel() {
-  auto domain_names = session_->get_project()->get_domain_names();
-  // only show when there are at least two domains
-  ui_->shared_boundary_panel->setVisible(domain_names.size() > 1);
-  update_domain_box(ui_->shared_boundary_first_domain);
-  update_domain_box(ui_->shared_boundary_second_domain);
-  if (ui_->shared_boundary_first_domain->currentIndex() == 0 &&
-      ui_->shared_boundary_second_domain->currentIndex() == 0) {
-    ui_->shared_boundary_second_domain->setCurrentIndex(1);
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -718,9 +690,6 @@ void DataTool::table_data_edited() {
     table_selection_changed();
   }
 }
-
-//---------------------------------------------------------------------------
-void DataTool::shared_boundary_generate_clicked() { SW_MESSAGE("Generating shared boundary"); }
 
 //---------------------------------------------------------------------------
 void DataTool::delete_button_clicked() {

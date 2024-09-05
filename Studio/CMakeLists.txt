@@ -81,6 +81,7 @@ SET(STUDIO_DATA_SRCS
   Data/MeshSettings.cpp
   Data/Preferences.cpp
   Data/PreferencesWindow.cpp
+  Data/SharedBoundaryPanel.cpp
   Data/Session.cpp
   Data/ShapeWorksWorker.cpp
   Data/Telemetry.cpp
@@ -93,6 +94,7 @@ SET(STUDIO_DATA_MOC_HDRS
   Data/DataTool.h
   Data/Preferences.h
   Data/PreferencesWindow.h
+  Data/SharedBoundaryPanel.h
   Data/Session.h
   Data/ShapeWorksWorker.h
   Data/Telemetry.h
@@ -107,6 +109,7 @@ SET(STUDIO_JOB_SRCS
   Job/ParticleNormalEvaluationJob.cpp
   Job/StatsGroupLDAJob.cpp
   Job/ShapeScalarJob.cpp
+  Job/SharedBoundaryJob.cpp
   )
 
 SET(STUDIO_JOB_MOC_HDRS
@@ -117,6 +120,7 @@ SET(STUDIO_JOB_MOC_HDRS
   Job/ParticleNormalEvaluationJob.h
   Job/StatsGroupLDAJob.h
   Job/ShapeScalarJob.h
+  Job/SharedBoundaryJob.h
   )
 
 SET(STUDIO_GROOM_SRCS
