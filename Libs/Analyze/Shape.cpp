@@ -100,7 +100,8 @@ MeshGroup Shape::get_original_meshes(bool wait) {
     return original_meshes_;
   }
 
-  if (!original_meshes_.valid()) {
+  if (!original_meshes_.valid() || original_meshes_.meshes().size() != subject_->get_number_of_domains()) {
+    original_meshes_ = MeshGroup(subject_->get_number_of_domains());
     generate_meshes(subject_->get_original_filenames(), original_meshes_, true, wait);
   }
   return original_meshes_;
@@ -113,7 +114,8 @@ MeshGroup Shape::get_groomed_meshes(bool wait) {
     assert(0);
   }
 
-  if (!groomed_meshes_.valid()) {
+  if (!groomed_meshes_.valid() || groomed_meshes_.meshes().size() != subject_->get_number_of_domains()) {
+    groomed_meshes_ = MeshGroup(subject_->get_number_of_domains());
     generate_meshes(subject_->get_groomed_filenames(), groomed_meshes_, true, wait);
   }
   return groomed_meshes_;

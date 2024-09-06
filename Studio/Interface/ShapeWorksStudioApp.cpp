@@ -1277,6 +1277,10 @@ void ShapeWorksStudioApp::handle_groom_complete() {
   update_display(true);
   visualizer_->reset_camera();
   enable_possible_actions();
+
+  // domains may have changed (shared boundary)
+  create_iso_submenu();
+  create_glyph_submenu();
 }
 
 //---------------------------------------------------------------------------
