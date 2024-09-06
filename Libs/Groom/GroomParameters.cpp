@@ -58,6 +58,11 @@ const std::string SKIP_GROOMING = "skip_grooming";
 const std::string CENTER = "center";
 const std::string ICP = "icp";
 
+const std::string SHARED_BOUNDARY = "shared_boundary";
+const std::string SHARED_BOUNDARY_FIRST_DOMAIN = "shared_boundary_first_domain";
+const std::string SHARED_BOUNDARY_SECOND_DOMAIN = "shared_boundary_second_domain";
+const std::string SHARED_BOUNDARY_TOLERANCE = "shared_boundary_tolerance";
+
 }  // namespace Keys
 
 namespace Defaults {
@@ -98,6 +103,11 @@ const double remesh_gradation = 1.0;
 const bool groom_all_domains_the_same = true;
 
 const bool skip_grooming = false;
+const bool shared_boundary = false;
+const std::string shared_boundary_first_domain = "";
+const std::string shared_boundary_second_domain = "";
+const double shared_boundary_tolerance = 1e-1;
+
 }  // namespace Defaults
 
 //---------------------------------------------------------------------------
@@ -145,7 +155,11 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
                                          Keys::GROOM_ALL_DOMAINS_THE_SAME,
                                          Keys::SKIP_GROOMING,
                                          Keys::CENTER,
-                                         Keys::ICP};
+                                         Keys::ICP,
+                                         Keys::SHARED_BOUNDARY,
+                                         Keys::SHARED_BOUNDARY_FIRST_DOMAIN,
+                                         Keys::SHARED_BOUNDARY_SECOND_DOMAIN,
+                                         Keys::SHARED_BOUNDARY_TOLERANCE};
 
   std::vector<std::string> to_remove;
 
@@ -481,6 +495,42 @@ bool GroomParameters::get_skip_grooming() { return params_.get(Keys::SKIP_GROOMI
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_skip_grooming(bool skip) { params_.set(Keys::SKIP_GROOMING, skip); }
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_shared_boundary() { return params_.get(Keys::SHARED_BOUNDARY, Defaults::shared_boundary); }
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_shared_boundary(bool shared_boundary) { params_.set(Keys::SHARED_BOUNDARY, shared_boundary); }
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_shared_boundary_first_domain() {
+  return params_.get(Keys::SHARED_BOUNDARY_FIRST_DOMAIN, Defaults::shared_boundary_first_domain);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_shared_boundary_first_domain(const std::string& domain_name) {
+  params_.set(Keys::SHARED_BOUNDARY_FIRST_DOMAIN, domain_name);
+}
+
+//---------------------------------------------------------------------------
+std::string GroomParameters::get_shared_boundary_second_domain() {
+  return params_.get(Keys::SHARED_BOUNDARY_SECOND_DOMAIN, Defaults::shared_boundary_second_domain);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_shared_boundary_second_domain(const std::string& domain_name) {
+  params_.set(Keys::SHARED_BOUNDARY_SECOND_DOMAIN, domain_name);
+}
+
+//---------------------------------------------------------------------------
+double GroomParameters::get_shared_boundary_tolerance() {
+  return params_.get(Keys::SHARED_BOUNDARY_TOLERANCE, Defaults::shared_boundary_tolerance);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_shared_boundary_tolerance(double tolerance) {
+  params_.set(Keys::SHARED_BOUNDARY_TOLERANCE, tolerance);
+}
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

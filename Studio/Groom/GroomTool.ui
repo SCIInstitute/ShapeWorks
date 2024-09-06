@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>1136</height>
+    <height>1262</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -299,9 +299,6 @@ QWidget#domain_panel {
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item row="1" column="1">
-             <widget class="QComboBox" name="domain_box"/>
-            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="current_domain_label">
               <property name="text">
@@ -317,6 +314,87 @@ QWidget#domain_panel {
               <property name="checked">
                <bool>true</bool>
               </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="shared_boundary">
+              <property name="text">
+               <string>Shared Boundary</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="domain_box"/>
+            </item>
+            <item row="4" column="1">
+             <widget class="QWidget" name="widget" native="true">
+              <layout class="QGridLayout" name="gridLayout_9"/>
+             </widget>
+            </item>
+            <item row="3" column="0" colspan="2">
+             <widget class="QGroupBox" name="shared_boundary_panel">
+              <property name="font">
+               <font>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_21">
+               <property name="topMargin">
+                <number>6</number>
+               </property>
+               <property name="bottomMargin">
+                <number>6</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="shared_boundary_first_domain"/>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="shared_boundary_tolerance">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximum">
+                  <double>99999.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.100000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="shared_boundary_tolerance_label">
+                 <property name="text">
+                  <string>Tolerance</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="shared_boundary_first_domain_label">
+                 <property name="text">
+                  <string>First Domain</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="shared_boundary_second_domain_label">
+                 <property name="text">
+                  <string>Second Domain</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="shared_boundary_second_domain"/>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
