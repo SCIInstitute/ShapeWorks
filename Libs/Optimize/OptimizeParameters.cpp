@@ -51,6 +51,8 @@ const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
 const std::string geodesics_to_landmarks_weight = "geodesics_to_landmarks_weight";
 const std::string particle_format = "particle_format";
 const std::string geodesic_remesh_percent = "geodesic_remesh_percent";
+const std::string shared_boundary = "shared_boundary";
+const std::string shared_boundary_weight = "shared_boundary_weight";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -92,7 +94,9 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::keep_checkpoints,
                                          Keys::use_disentangled_ssm,
                                          Keys::particle_format,
-                                         Keys::geodesic_remesh_percent};
+                                         Keys::geodesic_remesh_percent,
+                                         Keys::shared_boundary,
+                                         Keys::shared_boundary_weight};
 
   std::vector<std::string> to_remove;
 
@@ -429,10 +433,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
   optimize->SetUseDisentangledSpatiotemporalSSM(get_use_disentangled_ssm());
   optimize->set_particle_format(get_particle_format());
-
-  // TODO Remove this once Studio has controls for shared boundary
-  optimize->SetSharedBoundaryEnabled(true);
-  optimize->SetSharedBoundaryWeight(0.5);
+  optimize->SetSharedBoundaryEnabled(get_shared_boundary());
+  optimize->SetSharedBoundaryWeight(get_shared_boundary_weight());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -850,3 +852,15 @@ double OptimizeParameters::get_geodesic_remesh_percent() { return params_.get(Ke
 void OptimizeParameters::set_geodesic_remesh_percent(double value) {
   params_.set(Keys::geodesic_remesh_percent, value);
 }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_shared_boundary() { return params_.get(Keys::shared_boundary, false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_shared_boundary(bool value) { params_.set(Keys::shared_boundary, value); }
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_shared_boundary_weight() { return params_.get(Keys::shared_boundary_weight, 0.5); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_shared_boundary_weight(double value) { params_.set(Keys::shared_boundary_weight, value); }

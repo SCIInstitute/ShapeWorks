@@ -61,6 +61,8 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "This value should only be changed if an error occurs "
       "during optimization suggesting that it should be increased.  "
       "It has no effect on the optimization");
+  ui_->shared_boundary->setToolTip("Use shared boundary optimization");
+  ui_->shared_boundary_weight->setToolTip("Weight of shared boundary optimization");
   ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
 
   // hidden for 6.5 release
@@ -84,6 +86,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->multiscale_particles->setValidator(above_zero);
   ui_->narrow_band->setValidator(double_validator);
   ui_->geodesics_to_landmarks_weight->setValidator(double_validator);
+  ui_->shared_boundary_weight->setValidator(double_validator);
 
   line_edits_.push_back(ui_->number_of_particles);
   line_edits_.push_back(ui_->initial_relative_weighting);
@@ -97,6 +100,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   line_edits_.push_back(ui_->multiscale_particles);
   line_edits_.push_back(ui_->geodesics_to_landmarks_weight);
   line_edits_.push_back(ui_->narrow_band);
+  line_edits_.push_back(ui_->shared_boundary_weight);
 
   for (QLineEdit* line_edit : line_edits_) {
     connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
@@ -280,6 +284,8 @@ void OptimizeTool::load_params() {
   ui_->multiscale_particles->setText(QString::number(params.get_multiscale_particles()));
   ui_->use_landmarks->setChecked(params.get_use_landmarks());
   ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
+  ui_->shared_boundary->setChecked(params.get_shared_boundary());
+  ui_->shared_boundary_weight->setText(QString::number(params.get_shared_boundary_weight()));
 
   update_ui_elements();
 }
@@ -331,6 +337,8 @@ void OptimizeTool::store_params() {
   params.set_optimize_output_prefix(preferences_.get_optimize_file_template().toStdString());
 
   params.set_narrow_band(ui_->narrow_band->text().toDouble());
+  params.set_shared_boundary(ui_->shared_boundary->isChecked());
+  params.set_shared_boundary_weight(ui_->shared_boundary_weight->text().toDouble());
 
   params.save_to_project();
 }
@@ -364,6 +372,12 @@ void OptimizeTool::update_ui_elements() {
   ui_->multiscale_particles->setEnabled(ui_->multiscale->isChecked());
   ui_->geodesics_to_landmarks_weight->setEnabled(ui_->use_geodesics_from_landmarks->isChecked());
   ui_->geodesic_remesh_percent->setEnabled(ui_->use_geodesic_distance->isChecked());
+
+  bool shared_boundary_available = session_->get_project()->get_domain_names().size() > 1;
+  ui_->shared_boundary->setVisible(shared_boundary_available);
+  ui_->shared_boundary_label->setVisible(shared_boundary_available);
+  ui_->shared_boundary_weight->setVisible(shared_boundary_available);
+  ui_->shared_boundary_weight_label->setVisible(shared_boundary_available);
 }
 
 //---------------------------------------------------------------------------
@@ -470,5 +484,8 @@ void OptimizeTool::setup_domain_boxes() {
   QWidget::setTabOrder(ui_->multiscale_particles, ui_->use_landmarks);
   QWidget::setTabOrder(ui_->use_landmarks, ui_->narrow_band);
   QWidget::setTabOrder(ui_->narrow_band, ui_->run_optimize_button);
+  QWidget::setTabOrder(ui_->shared_boundary, ui_->shared_boundary_weight);
+  QWidget::setTabOrder(ui_->shared_boundary_weight, ui_->use_disentangled_ssm);
+  QWidget::setTabOrder(ui_->use_disentangled_ssm, ui_->run_optimize_button);
   QWidget::setTabOrder(ui_->run_optimize_button, ui_->restoreDefaults);
 }
