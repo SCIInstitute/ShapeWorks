@@ -82,15 +82,15 @@
         </DataArray>
       </Lines>
       <Strips>
-        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="0" RangeMax="49">
+        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="1e+299" RangeMax="-1e+299">
         </DataArray>
-        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="2" RangeMax="100">
+        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="1e+299" RangeMax="-1e+299">
         </DataArray>
       </Strips>
       <Polys>
-        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="0" RangeMax="49">
+        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="1e+299" RangeMax="-1e+299">
         </DataArray>
-        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="2" RangeMax="100">
+        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="1e+299" RangeMax="-1e+299">
         </DataArray>
       </Polys>
     </Piece>
