@@ -17,8 +17,6 @@
 #include <QMessageBox>
 #include <QThread>
 
-#include "SharedBoundaryPanel.h"
-
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
 #else
@@ -114,9 +112,6 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->landmark_table->horizontalHeader()->setVisible(true);
   ui_->landmark_table->resizeColumnsToContents();
 
-  shared_boundary_panel_ = new SharedBoundaryPanel(this);
-  layout()->addWidget(shared_boundary_panel_);
-
   auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
   layout()->addItem(spacer);
 }
@@ -148,7 +143,6 @@ void DataTool::set_session(QSharedPointer<Session> session) {
   update_table();
   handle_landmark_mode_changed();
   handle_constraints_mode_changed();
-  shared_boundary_panel_->set_session(session);
 }
 
 //---------------------------------------------------------------------------
@@ -213,7 +207,6 @@ void DataTool::update_table(bool clean) {
     update_landmark_table();
     update_plane_table();
     update_ffc_table();
-    shared_boundary_panel_->update_panel();
   }
 
   block_table_update_ = false;

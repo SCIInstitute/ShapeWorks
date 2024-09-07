@@ -17,7 +17,6 @@ namespace shapeworks {
 
 class Session;
 class LandmarkTableModel;
-class SharedBoundaryPanel;
 
 class DataTool : public QWidget {
   Q_OBJECT;
@@ -87,7 +86,5 @@ class DataTool : public QWidget {
 
   std::shared_ptr<LandmarkTableModel> landmark_table_model_;
   bool block_table_update_{false};
-
-  SharedBoundaryPanel* shared_boundary_panel_{nullptr};
 };
 }  // namespace shapeworks
