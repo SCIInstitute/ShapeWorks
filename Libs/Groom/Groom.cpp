@@ -652,6 +652,7 @@ bool Groom::run_alignment() {
 
 //---------------------------------------------------------------------------
 bool Groom::run_shared_boundaries() {
+  SW_LOG("Processing shared boundaries...");
   // only need to check on one domain
   auto params = GroomParameters(project_, project_->get_domain_names()[0]);
   if (!params.get_shared_boundary()) {
@@ -704,8 +705,16 @@ bool Groom::run_shared_boundaries() {
   project_->set_groomed_domain_types(groomed_domain_types);
 
   auto subjects = project_->get_subjects();
+
+  std::mutex progress_mutex;
+  int progress = 0;
+
   tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
     for (size_t i = r.begin(); i < r.end(); ++i) {
+      if (abort_) {
+        return;
+      }
+
       auto subject = subjects[i];
 
       Mesh first_mesh = get_mesh(i, first_domain, false);
@@ -713,6 +722,9 @@ bool Groom::run_shared_boundaries() {
 
       auto [extracted_l, extracted_r, extracted_s] =
           MeshUtils::sharedBoundaryExtractor(first_mesh, second_mesh, params.get_shared_boundary_tolerance());
+
+      extracted_l.remeshPercent(.99, 1.0);
+      extracted_r.remeshPercent(.99, 1.0);
 
       auto output_contour = MeshUtils::boundaryLoopExtractor(extracted_s);
 
@@ -757,6 +769,14 @@ bool Groom::run_shared_boundaries() {
       original_filenames[shared_domain_index] = shared_surface_filename;
       original_filenames[shared_boundary_index] = shared_boundary_filename;
       subject->set_original_filenames(original_filenames);
+
+      {
+        // lock
+        std::scoped_lock lock(progress_mutex);
+        progress++;
+        progress_ = static_cast<float>(progress) / static_cast<float>(subjects.size()) * 100.0;
+        SW_PROGRESS(progress_, fmt::format("Processing shared boundaries ({}/{})", progress, subjects.size()));
+      }
     }
   });
 
