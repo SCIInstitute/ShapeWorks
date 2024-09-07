@@ -52,6 +52,11 @@ bool Groom::run() {
           success = false;
           continue;
         }
+        // skip "shared_surface" and "shared_boundary"
+        if (project_->get_domain_names()[domain] == "shared_surface" ||
+            project_->get_domain_names()[domain] == "shared_boundary") {
+          continue;
+        }
 
         if (subjects[i]->is_fixed()) {
           continue;
