@@ -1281,6 +1281,9 @@ void ShapeWorksStudioApp::handle_groom_complete() {
   // domains may have changed (shared boundary)
   create_iso_submenu();
   create_glyph_submenu();
+
+  // force optimize tool to reload since there are potentially more domains now
+  optimize_tool_->load_params();
 }
 
 //---------------------------------------------------------------------------
@@ -2060,9 +2063,7 @@ void ShapeWorksStudioApp::image_combo_changed(int index) {
 }
 
 //---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::get_feature_uniform_scale() {
-  return session_->get_feature_uniform_scale();
-}
+bool ShapeWorksStudioApp::get_feature_uniform_scale() { return session_->get_feature_uniform_scale(); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::set_feature_uniform_scale(bool value) {

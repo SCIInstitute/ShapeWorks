@@ -126,10 +126,6 @@ void OptimizeTool::handle_progress(int val, QString progress_message) {
   if (!optimization_is_running_) {
     return;
   }
-
-  // Q_EMIT progress(val);
-  // Q_EMIT status(progress_message.toStdString());
-
   auto particles = optimize_->GetParticles();
   session_->update_particles(particles);
 }
