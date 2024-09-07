@@ -652,12 +652,13 @@ bool Groom::run_alignment() {
 
 //---------------------------------------------------------------------------
 bool Groom::run_shared_boundaries() {
-  SW_LOG("Processing shared boundaries...");
   // only need to check on one domain
   auto params = GroomParameters(project_, project_->get_domain_names()[0]);
   if (!params.get_shared_boundary()) {
-    return false;
+    return true;
   }
+
+  SW_LOG("Processing shared boundaries...");
 
   auto domain_names = project_->get_domain_names();
   auto original_domain_types = project_->get_original_domain_types();
