@@ -704,59 +704,62 @@ bool Groom::run_shared_boundaries() {
   project_->set_groomed_domain_types(groomed_domain_types);
 
   auto subjects = project_->get_subjects();
-  for (int i = 0; i < subjects.size(); i++) {
-    auto subject = subjects[i];
+  tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i < r.end(); ++i) {
+      auto subject = subjects[i];
 
-    Mesh first_mesh = get_mesh(i, first_domain, false);
-    Mesh second_mesh = get_mesh(i, second_domain, false);
+      Mesh first_mesh = get_mesh(i, first_domain, false);
+      Mesh second_mesh = get_mesh(i, second_domain, false);
 
-    auto [extracted_l, extracted_r, extracted_s] =
-        MeshUtils::sharedBoundaryExtractor(first_mesh, second_mesh, params.get_shared_boundary_tolerance());
+      auto [extracted_l, extracted_r, extracted_s] =
+          MeshUtils::sharedBoundaryExtractor(first_mesh, second_mesh, params.get_shared_boundary_tolerance());
 
-    auto output_contour = MeshUtils::boundaryLoopExtractor(extracted_s);
+      auto output_contour = MeshUtils::boundaryLoopExtractor(extracted_s);
 
-    // overwrite groomed filename for first and second with extracted_l and extracted_r
-    auto first_filename = subject->get_groomed_filenames()[first_domain];
-    auto second_filename = subject->get_groomed_filenames()[second_domain];
-    // change file extension to .vtk if it's not already
-    first_filename = StringUtils::removeExtension(first_filename) + "_extracted.vtk";
-    second_filename = StringUtils::removeExtension(second_filename) + "_extracted.vtk";
-    MeshUtils::threadSafeWriteMesh(first_filename, extracted_l);
-    MeshUtils::threadSafeWriteMesh(second_filename, extracted_r);
+      // overwrite groomed filename for first and second with extracted_l and extracted_r
+      auto first_filename = subject->get_groomed_filenames()[first_domain];
+      auto second_filename = subject->get_groomed_filenames()[second_domain];
+      // change file extension to .vtk if it's not already
+      first_filename = StringUtils::removeExtension(first_filename) + "_extracted.vtk";
+      second_filename = StringUtils::removeExtension(second_filename) + "_extracted.vtk";
+      MeshUtils::threadSafeWriteMesh(first_filename, extracted_l);
+      MeshUtils::threadSafeWriteMesh(second_filename, extracted_r);
 
-    auto shared_surface_filename = get_output_filename("shared_surface", DomainType::Mesh);
-    auto shared_boundary_filename = get_output_filename("shared_boundary", DomainType::Contour);
+      auto shared_surface_filename = get_output_filename("shared_surface", DomainType::Mesh);
+      auto shared_boundary_filename = get_output_filename("shared_boundary", DomainType::Contour);
 
-    extracted_s.write(shared_surface_filename);
-    output_contour.write(shared_boundary_filename);
+      extracted_s.write(shared_surface_filename);
+      output_contour.write(shared_boundary_filename);
 
-    // store filenames
-    auto groomed_filenames = subject->get_groomed_filenames();
-    groomed_filenames[first_domain] = first_filename;
-    groomed_filenames[second_domain] = second_filename;
-    if (shared_domain_index >= groomed_filenames.size()) {
-      groomed_filenames.resize(shared_domain_index + 1);
+      // store filenames
+      auto groomed_filenames = subject->get_groomed_filenames();
+      groomed_filenames[first_domain] = first_filename;
+      groomed_filenames[second_domain] = second_filename;
+      if (shared_domain_index >= groomed_filenames.size()) {
+        groomed_filenames.resize(shared_domain_index + 1);
+      }
+      if (shared_boundary_index >= groomed_filenames.size()) {
+        groomed_filenames.resize(shared_boundary_index + 1);
+      }
+      groomed_filenames[shared_domain_index] = shared_surface_filename;
+      groomed_filenames[shared_boundary_index] = shared_boundary_filename;
+      subject->set_groomed_filenames(groomed_filenames);
+      subject->set_number_of_domains(domain_names.size());
+
+      // also store the two new ones as original
+      auto original_filenames = subject->get_original_filenames();
+      if (original_filenames.size() <= shared_domain_index) {
+        original_filenames.resize(shared_domain_index + 1);
+      }
+      if (original_filenames.size() <= shared_boundary_index) {
+        original_filenames.resize(shared_boundary_index + 1);
+      }
+      original_filenames[shared_domain_index] = shared_surface_filename;
+      original_filenames[shared_boundary_index] = shared_boundary_filename;
+      subject->set_original_filenames(original_filenames);
     }
-    if (shared_boundary_index >= groomed_filenames.size()) {
-      groomed_filenames.resize(shared_boundary_index + 1);
-    }
-    groomed_filenames[shared_domain_index] = shared_surface_filename;
-    groomed_filenames[shared_boundary_index] = shared_boundary_filename;
-    subject->set_groomed_filenames(groomed_filenames);
-    subject->set_number_of_domains(domain_names.size());
+  });
 
-    // also store the two new ones as original
-    auto original_filenames = subject->get_original_filenames();
-    if (original_filenames.size() <= shared_domain_index) {
-      original_filenames.resize(shared_domain_index + 1);
-    }
-    if (original_filenames.size() <= shared_boundary_index) {
-      original_filenames.resize(shared_boundary_index + 1);
-    }
-    original_filenames[shared_domain_index] = shared_surface_filename;
-    original_filenames[shared_boundary_index] = shared_boundary_filename;
-    subject->set_original_filenames(original_filenames);
-  }
   return true;
 }
 
@@ -997,28 +1000,28 @@ int Groom::find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> land
 std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference) {
   std::vector<std::vector<double>> transforms(meshes.size());
 
-  // tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
-  // for (size_t i = r.begin(); i < r.end(); ++i) {
-  for (size_t i = 0; i < meshes.size(); i++) {
-    vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    matrix->Identity();
+  tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i < r.end(); ++i) {
+      // for (size_t i = 0; i < meshes.size(); i++) {
+      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+      matrix->Identity();
 
-    Mesh source = meshes[i];
-    if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
-      // create copies for thread safety
-      auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
-      poly_data1->DeepCopy(source.getVTKMesh());
-      auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
-      poly_data2->DeepCopy(reference.getVTKMesh());
+      Mesh source = meshes[i];
+      if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
+        // create copies for thread safety
+        auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data1->DeepCopy(source.getVTKMesh());
+        auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data2->DeepCopy(reference.getVTKMesh());
 
-      matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+        matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+      }
+      auto transform = createMeshTransform(matrix);
+      transform->PostMultiply();
+      Groom::add_center_transform(transform, reference);
+      transforms[i] = ProjectUtils::convert_transform(transform);
     }
-    auto transform = createMeshTransform(matrix);
-    transform->PostMultiply();
-    Groom::add_center_transform(transform, reference);
-    transforms[i] = ProjectUtils::convert_transform(transform);
-  }
-  //  });
+  });
 
   return transforms;
 }
