@@ -30,6 +30,7 @@ Representation of a single mesh.  [More...](#detailed-description)
 | vtkFloatArray * | **[get_or_create_array](../Classes/classshapeworks_1_1StudioMesh.md#function-get-or-create-array)**(std::string name, float default_value)<br>Get or create and return an array with a given name.  |
 | void | **[paint_ffc](../Classes/classshapeworks_1_1StudioMesh.md#function-paint-ffc)**(double world_pos[], double radius, bool inclusive)<br>Paint free form constraint.  |
 | bool | **[has_ffc_paint](../Classes/classshapeworks_1_1StudioMesh.md#function-has-ffc-paint)**()<br>Does this mesh have free form constraint paint?  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[get_sw_mesh](../Classes/classshapeworks_1_1StudioMesh.md#function-get-sw-mesh)**()<br>Return a shapeworks [Mesh](../Classes/classshapeworks_1_1Mesh.md) library class mesh.  |
 
 ## Public Attributes
 
@@ -175,6 +176,14 @@ bool has_ffc_paint()
 
 Does this mesh have free form constraint paint? 
 
+### function get_sw_mesh
+
+```cpp
+Mesh get_sw_mesh()
+```
+
+Return a shapeworks [Mesh](../Classes/classshapeworks_1_1Mesh.md) library class mesh. 
+
 ## Public Attributes Documentation
 
 ### variable FFC_PAINT
@@ -186,4 +195,4 @@ static constexpr const char *const FFC_PAINT = "ffc_paint";
 
 -------------------------------
 
-Updated on 2024-09-04 at 22:59:23 +0000
+Updated on 2024-09-10 at 03:33:07 +0000

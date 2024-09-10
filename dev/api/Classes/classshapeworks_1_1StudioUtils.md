@@ -26,6 +26,7 @@ Utilities for Studio.
 | bool | **[write_mesh](../Classes/classshapeworks_1_1StudioUtils.md#function-write-mesh)**(vtkSmartPointer< vtkPolyData > poly_data, QString filename)<br>write a mesh to file  |
 | void | **[brightness_contrast_to_window_width_level](../Classes/classshapeworks_1_1StudioUtils.md#function-brightness-contrast-to-window-width-level)**(double brightness, double contrast, double min_intensity, double max_intensity, double & window_width, double & window_level)<br>convert brightness and contrast to window width and level  |
 | void | **[window_width_level_to_brightness_contrast](../Classes/classshapeworks_1_1StudioUtils.md#function-window-width-level-to-brightness-contrast)**(double window_width, double window_level, double min_intensity, double max_intensity, double & brightness, double & contrast)<br>convert window width and level to brightness and contrast  |
+| void | **[update_domain_combobox](../Classes/classshapeworks_1_1StudioUtils.md#function-update-domain-combobox)**(QComboBox * combobox, QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>update a combobox with domain names  |
 
 ## Public Functions Documentation
 
@@ -130,6 +131,17 @@ static void window_width_level_to_brightness_contrast(
 
 convert window width and level to brightness and contrast 
 
+### function update_domain_combobox
+
+```cpp
+static void update_domain_combobox(
+    QComboBox * combobox,
+    QSharedPointer< Session > session
+)
+```
+
+update a combobox with domain names 
+
 -------------------------------
 
-Updated on 2024-09-04 at 22:59:23 +0000
+Updated on 2024-09-10 at 03:33:07 +0000

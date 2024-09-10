@@ -50,6 +50,7 @@ using ImageType =  itk::Image<PixelType, 3>;
 ```cpp
 #pragma once
 
+#include <Libs/Mesh/Mesh.h>
 #include <itkImage.h>
 #include <vnl/vnl_vector.h>
 #include <vtkPolyData.h>
@@ -99,6 +100,8 @@ class StudioMesh {
 
   bool has_ffc_paint();
 
+  Mesh get_sw_mesh();
+
   static constexpr const char* const FFC_PAINT = "ffc_paint";
 
  private:
@@ -115,4 +118,4 @@ class StudioMesh {
 
 -------------------------------
 
-Updated on 2024-09-04 at 22:59:23 +0000
+Updated on 2024-09-10 at 03:33:07 +0000

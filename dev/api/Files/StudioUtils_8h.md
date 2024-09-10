@@ -38,8 +38,11 @@ class QWidget;
 
 class vtkImageData;
 class vtkRenderer;
+class QComboBox;
 
 namespace shapeworks {
+
+class Session;
 
 class StudioUtils {
  public:
@@ -63,6 +66,8 @@ class StudioUtils {
 
   static void window_width_level_to_brightness_contrast(double window_width, double window_level, double min_intensity,
                                                         double max_intensity, double& brightness, double& contrast);
+
+  static void update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session);
 };
 
 }  // namespace shapeworks
@@ -71,4 +76,4 @@ class StudioUtils {
 
 -------------------------------
 
-Updated on 2024-09-04 at 22:59:23 +0000
+Updated on 2024-09-10 at 03:33:08 +0000
