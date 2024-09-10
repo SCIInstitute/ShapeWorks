@@ -64,8 +64,8 @@ class DataTool : public QWidget {
   void handle_landmark_mode_changed();
   void handle_constraints_mode_changed();
 
-  void constraints_table_right_click(const QPoint &point);
-  void data_table_right_click(const QPoint &point);
+  void constraints_table_right_click(const QPoint& point);
+  void data_table_right_click(const QPoint& point);
   void copy_ffc_clicked();
 
   void table_selection_changed();
@@ -76,8 +76,6 @@ class DataTool : public QWidget {
   void import_button_clicked();
 
  private:
-  void update_domain_box(QComboBox* box);
-
   void update_plane_table();
   void update_ffc_table();
 

@@ -144,6 +144,9 @@ bool StudioMesh::has_ffc_paint() {
 }
 
 //---------------------------------------------------------------------------
+Mesh StudioMesh::get_sw_mesh() { return Mesh(poly_data_); }
+
+//---------------------------------------------------------------------------
 void StudioMesh::apply_scalars(MeshHandle mesh) {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
   vtkSmartPointer<vtkPolyData> to_mesh = get_poly_data();

@@ -47,6 +47,7 @@ nav:
    - 'Analyze Module':                       'studio/studio-analyze.md'
    - 'DeepSSM Module':                       'studio/deepssm-in-studio.md'
    - 'Multiple Domains SSM':                 'studio/multiple-domains.md'
+   - 'Shared Boundaries':                    'studio/studio-shared-boundary.md'
 - ShapeWorks Cloud:
    - 'Getting Started':                      'cloud/getting-started-with-cloud.md'
    - 'Datasets':                             'cloud/cloud-dataset.md'

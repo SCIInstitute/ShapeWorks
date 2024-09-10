@@ -3,9 +3,11 @@
 #include <Data/LandmarkTableModel.h>
 #include <Data/Session.h>
 #include <Data/ShapeWorksWorker.h>
+#include <Interface/Style.h>
 #include <Logging.h>
 #include <Shape.h>
 #include <StudioMesh.h>
+#include <Utils/StudioUtils.h>
 #include <ui_DataTool.h>
 #include <vtkPointData.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -14,7 +16,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QThread>
-#include <iostream>
 
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
@@ -110,6 +111,9 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->landmark_table->verticalHeader()->setVisible(true);
   ui_->landmark_table->horizontalHeader()->setVisible(true);
   ui_->landmark_table->resizeColumnsToContents();
+
+  auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  layout()->addItem(spacer);
 }
 
 //---------------------------------------------------------------------------
@@ -210,7 +214,7 @@ void DataTool::update_table(bool clean) {
 
 //---------------------------------------------------------------------------
 void DataTool::update_landmark_table() {
-  update_domain_box(ui_->landmark_domain_box_);
+  StudioUtils::update_domain_combobox(ui_->landmark_domain_box_, session_);
 
   auto domain_names = session_->get_project()->get_domain_names();
   ui_->landmark_domain_widget_->setVisible(domain_names.size() > 1);
@@ -268,25 +272,6 @@ void DataTool::delete_ffc_clicked() {
   session_->trigger_ffc_changed();
   session_->trigger_reinsert_shapes();
   session_->trigger_repaint();
-}
-
-//---------------------------------------------------------------------------
-void DataTool::update_domain_box(QComboBox* box) {
-  auto domain_names = session_->get_project()->get_domain_names();
-
-  int currentIndex = box->currentIndex();
-  if (domain_names.size() != box->count()) {
-    box->clear();
-    for (auto&& item : domain_names) {
-      box->addItem(QString::fromStdString(item));
-    }
-  }
-  if (currentIndex < 0) {
-    currentIndex = 0;
-  }
-  if (currentIndex < box->count()) {
-    box->setCurrentIndex(currentIndex);
-  }
 }
 
 //---------------------------------------------------------------------------
