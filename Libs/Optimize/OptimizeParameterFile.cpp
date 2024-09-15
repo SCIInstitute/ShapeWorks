@@ -303,21 +303,6 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, Optimize* optimize) {
   TiXmlElement* elem = nullptr;
 
-  elem = docHandle->FirstChild("processing_mode").Element();
-  if (elem) {
-    optimize->SetProcessingMode(atoi(elem->GetText()));
-  }
-
-  elem = docHandle->FirstChild("adaptivity_mode").Element();
-  if (elem) {
-    optimize->SetAdaptivityMode(atoi(elem->GetText()));
-  }
-
-  elem = docHandle->FirstChild("adaptivity_strength").Element();
-  if (elem) {
-    optimize->SetAdaptivityStrength(atof(elem->GetText()));
-  }
-
   elem = docHandle->FirstChild("timepts_per_subject").Element();
   if (elem) {
     optimize->SetTimePtsPerSubject(atoi(elem->GetText()));
