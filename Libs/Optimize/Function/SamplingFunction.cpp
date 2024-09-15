@@ -30,7 +30,9 @@ double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom, const
     double sigma22 = sigma2 * 2.0;
 
     for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-      if (m_CurrentNeighborhood[i].weight < epsilon) continue;
+      if (m_CurrentNeighborhood[i].weight < epsilon) {
+        continue;
+      }
 
       double kappa = 1.0;
       avgKappa += kappa;
@@ -79,23 +81,23 @@ double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom, const
 //---------------------------------------------------------------------------
 VectorFunction::Pointer SamplingFunction::Clone() {
   SamplingFunction::Pointer copy = SamplingFunction::New();
-  copy->SetParticleSystem(this->GetParticleSystem());
-  copy->m_Counter = this->m_Counter;
-  copy->m_avgKappa = this->m_avgKappa;
-  copy->m_IsSharedBoundaryEnabled = this->m_IsSharedBoundaryEnabled;
-  copy->m_SharedBoundaryWeight = this->m_SharedBoundaryWeight;
-  copy->m_CurrentSigma = this->m_CurrentSigma;
-  copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
+  copy->m_ParticleSystem = m_ParticleSystem;
+  copy->m_Counter = m_Counter;
+  copy->m_avgKappa = m_avgKappa;
+  copy->m_IsSharedBoundaryEnabled = m_IsSharedBoundaryEnabled;
+  copy->m_SharedBoundaryWeight = m_SharedBoundaryWeight;
+  copy->m_CurrentSigma = m_CurrentSigma;
+  copy->m_CurrentNeighborhood = m_CurrentNeighborhood;
 
-  copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
-  copy->m_MaximumNeighborhoodRadius = this->m_MaximumNeighborhoodRadius;
-  copy->m_FlatCutoff = this->m_FlatCutoff;
-  copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
+  copy->m_MinimumNeighborhoodRadius = m_MinimumNeighborhoodRadius;
+  copy->m_MaximumNeighborhoodRadius = m_MaximumNeighborhoodRadius;
+  copy->m_FlatCutoff = m_FlatCutoff;
+  copy->m_NeighborhoodToSigmaRatio = m_NeighborhoodToSigmaRatio;
 
-  copy->m_SpatialSigmaCache = this->m_SpatialSigmaCache;
+  copy->m_SpatialSigmaCache = m_SpatialSigmaCache;
 
-  copy->m_DomainNumber = this->m_DomainNumber;
-  copy->m_ParticleSystem = this->m_ParticleSystem;
+  copy->m_DomainNumber = m_DomainNumber;
+  copy->m_ParticleSystem = m_ParticleSystem;
 
   return (VectorFunction::Pointer)copy;
 }
@@ -117,20 +119,20 @@ void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const Pa
   // Retrieve the previous optimal sigma value for this point.  If the value is
   // tiny (i.e. initialized) then use a fraction of the maximum allowed
   // neighborhood radius.
-  m_CurrentSigma = this->GetSpatialSigmaCache()->operator[](d)->operator[](idx);
+  m_CurrentSigma = GetSpatialSigmaCache()->operator[](d)->operator[](idx);
 
   if (m_CurrentSigma < epsilon) {
-    m_CurrentSigma = this->GetMinimumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
+    m_CurrentSigma = GetMinimumNeighborhoodRadius() / GetNeighborhoodToSigmaRatio();
   }
 
   // Determine the extent of the neighborhood that will be used in the Parzen
   // windowing estimation.  The neighborhood extent is based on the optimal
   // sigma calculation and limited to a user supplied maximum radius (probably
   // the size of the domain).
-  double neighborhood_radius = m_CurrentSigma * 1.3 * this->GetNeighborhoodToSigmaRatio();
+  double neighborhood_radius = m_CurrentSigma * 1.3 * GetNeighborhoodToSigmaRatio();
 
-  if (neighborhood_radius > this->GetMaximumNeighborhoodRadius()) {
-    neighborhood_radius = this->GetMaximumNeighborhoodRadius();
+  if (neighborhood_radius > GetMaximumNeighborhoodRadius()) {
+    neighborhood_radius = GetMaximumNeighborhoodRadius();
   }
 
   // Get the neighborhood surrounding the point "pos".
@@ -148,12 +150,12 @@ void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const Pa
 
     // Constrain the neighborhood size.  If we have reached a maximum
     // possible neighborhood size, we'll just go with that.
-    if (neighborhood_radius > this->GetMaximumNeighborhoodRadius()) {
-      m_CurrentSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
-      neighborhood_radius = this->GetMaximumNeighborhoodRadius();
+    if (neighborhood_radius > GetMaximumNeighborhoodRadius()) {
+      m_CurrentSigma = GetMaximumNeighborhoodRadius() / GetNeighborhoodToSigmaRatio();
+      neighborhood_radius = GetMaximumNeighborhoodRadius();
       break;
     } else {
-      m_CurrentSigma = neighborhood_radius / this->GetNeighborhoodToSigmaRatio();
+      m_CurrentSigma = neighborhood_radius / GetNeighborhoodToSigmaRatio();
     }
 
     UpdateNeighborhood(pos, idx, d, neighborhood_radius, system);
@@ -163,18 +165,18 @@ void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const Pa
 
   // Constrain sigma to a maximum reasonable size based on the user-supplied
   // limit to neighborhood size.
-  if (m_CurrentSigma > this->GetMaximumNeighborhoodRadius()) {
-    m_CurrentSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
-    neighborhood_radius = this->GetMaximumNeighborhoodRadius();
+  if (m_CurrentSigma > GetMaximumNeighborhoodRadius()) {
+    m_CurrentSigma = GetMaximumNeighborhoodRadius() / GetNeighborhoodToSigmaRatio();
+    neighborhood_radius = GetMaximumNeighborhoodRadius();
     UpdateNeighborhood(pos, idx, d, neighborhood_radius, system);
   }
 
   // Make sure sigma doesn't change too quickly!
-  m_CurrentSigma = (this->GetSpatialSigmaCache()->operator[](d)->operator[](idx) + m_CurrentSigma) / 2.0;
+  m_CurrentSigma = (GetSpatialSigmaCache()->operator[](d)->operator[](idx) + m_CurrentSigma) / 2.0;
 
   // We are done with the sigma estimation step.  Cache the sigma value for
   // next time.
-  this->GetSpatialSigmaCache()->operator[](d)->operator[](idx) = m_CurrentSigma;
+  GetSpatialSigmaCache()->operator[](d)->operator[](idx) = m_CurrentSigma;
 }
 
 //---------------------------------------------------------------------------

@@ -20,7 +20,6 @@ class SamplingFunction : public VectorFunction {
   typedef SamplingFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
-  itkTypeMacro(CurvatureSamplingFunction, SamplingFunction);
   itkNewMacro(Self);
 
   using VectorType = vnl_vector_fixed<double, 3>;
