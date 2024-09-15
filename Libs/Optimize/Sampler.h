@@ -68,7 +68,7 @@ class Sampler {
   ParticleSystem* GetParticleSystem() { return m_ParticleSystem; }
   const ParticleSystem* GetParticleSystem() const { return m_ParticleSystem.GetPointer(); }
 
-  CurvatureSamplingFunction* GetCurvatureGradientFunction() { return m_CurvatureGradientFunction; }
+  SamplingFunction* GetCurvatureGradientFunction() { return m_CurvatureGradientFunction; }
 
   //! Return a pointer to the optimizer object
   OptimizerType* GetOptimizer() { return m_Optimizer; }
@@ -282,7 +282,7 @@ class Sampler {
 
   OptimizerType::Pointer m_Optimizer;
 
-  CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
+  SamplingFunction::Pointer m_CurvatureGradientFunction;
 
   GenericContainerArray<double>::Pointer m_Sigma1Cache;
   GenericContainerArray<double>::Pointer m_Sigma2Cache;

@@ -6,63 +6,51 @@
 
 namespace shapeworks {
 
-/// Please note: This is the sampling function currently being used
-
 /**
- * \class CurvatureSamplingFunction
+ * \class SamplingFunction
  *
- * This function returns an estimate of the gradient of the entropy of a
- * particle distribution with respect to change in position of a specific
- * particle in that distribution.  The change in normals associated with the
- * position is also taken into account, providing an adaptive sampling of the
- * surface with respect to both position and extrinsic surface curvature.
+ * This function is responsible for the sampling term of the optimization.
+ * E.g. the repulsion force between particles on a single shape
  *
  */
-class CurvatureSamplingFunction : public VectorFunction {
+class SamplingFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
   /** Standard class typedefs. */
-  typedef CurvatureSamplingFunction Self;
+  typedef SamplingFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
   itkTypeMacro(CurvatureSamplingFunction, SamplingFunction);
-
-  /** Inherit some parent typedefs. */
-  typedef float GradientNumericType;
-  typedef vnl_vector_fixed<double, 3> VectorType;
-  typedef typename ParticleSystem::PointType PointType;
-  typedef vnl_vector_fixed<float, 3> GradientVectorType;
-
-  /** Cache type for the sigma values. */
-  typedef GenericContainerArray<double> SigmaCacheType;
-
-  /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  inline virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
+  using VectorType = vnl_vector_fixed<double, 3>;
+  using PointType = ParticleSystem::PointType;
+  using GradientVectorType = vnl_vector_fixed<float, 3>;
+  using SigmaCacheType = GenericContainerArray<double>;
+
+  inline VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const override {
     double e;
     return this->Evaluate(a, b, c, d, e);
   }
 
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
+  VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const override;
 
-  virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystem*);
+  void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystem*) override;
 
-  inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
+  double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const override {
     double d, e;
     this->Evaluate(a, b, c, d, e);
     return e;
   }
 
-  virtual void AfterIteration() {}
+  void AfterIteration() override {}
 
-  virtual void BeforeIteration() {}
+  void BeforeIteration() override {}
 
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma(unsigned int idx, unsigned int dom, const shapeworks::ParticleDomain* domain,
-                               const PointType& pos, double initial_sigma, double precision, int& err,
-                               double& avgKappa) const;
+  double EstimateSigma(unsigned int idx, unsigned int dom, const shapeworks::ParticleDomain* domain,
+                       const PointType& pos, double initial_sigma, double precision, int& err, double& avgKappa) const;
 
   void SetSharedBoundaryWeight(double w) { m_SharedBoundaryWeight = w; }
   double GetSharedBoundaryWeight() const { return m_SharedBoundaryWeight; }
@@ -95,12 +83,12 @@ class CurvatureSamplingFunction : public VectorFunction {
   void SetNeighborhoodToSigmaRatio(double s) { m_NeighborhoodToSigmaRatio = s; }
   double GetNeighborhoodToSigmaRatio() const { return m_NeighborhoodToSigmaRatio; }
 
-  virtual void ResetBuffers() { m_SpatialSigmaCache->ZeroAllValues(); }
+  void ResetBuffers() override { m_SpatialSigmaCache->ZeroAllValues(); }
 
-  virtual VectorFunction::Pointer Clone() {
+  VectorFunction::Pointer Clone() override {
     // todo Do we really need to clone all of this?
 
-    CurvatureSamplingFunction::Pointer copy = CurvatureSamplingFunction::New();
+    SamplingFunction::Pointer copy = SamplingFunction::New();
     copy->SetParticleSystem(this->GetParticleSystem());
     copy->m_Counter = this->m_Counter;
     copy->m_avgKappa = this->m_avgKappa;
@@ -123,10 +111,10 @@ class CurvatureSamplingFunction : public VectorFunction {
   }
 
  protected:
-  CurvatureSamplingFunction() {}
-  virtual ~CurvatureSamplingFunction() {}
-  void operator=(const CurvatureSamplingFunction&);
-  CurvatureSamplingFunction(const CurvatureSamplingFunction&);
+  SamplingFunction() {}
+  virtual ~SamplingFunction() {}
+  void operator=(const SamplingFunction&);
+  SamplingFunction(const SamplingFunction&);
 
   unsigned int m_Counter{0};
 

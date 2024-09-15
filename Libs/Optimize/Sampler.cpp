@@ -12,7 +12,7 @@ namespace shapeworks {
 Sampler::Sampler() {
   m_ParticleSystem = ParticleSystem::New();
 
-  m_CurvatureGradientFunction = CurvatureSamplingFunction::New();
+  m_CurvatureGradientFunction = SamplingFunction::New();
 
   m_Optimizer = OptimizerType::New();
 

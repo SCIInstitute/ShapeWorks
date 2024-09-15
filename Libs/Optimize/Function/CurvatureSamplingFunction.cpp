@@ -2,16 +2,13 @@
 #include "CurvatureSamplingFunction.h"
 
 #include "Libs/Common/Logging.h"
-//#include "Libs/Optimize/Domain/ContourDomain.h"
 #include "Libs/Optimize/Domain/DomainType.h"
-//#include "vnl/vnl_matrix.h"
-//#include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom,
+double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom,
                                                 const shapeworks::ParticleDomain* domain, const PointType& pos,
                                                 double initial_sigma, double precision, int& err,
                                                 double& avgKappa) const {
@@ -81,7 +78,7 @@ double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int d
 }
 
 //---------------------------------------------------------------------------
-void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
+void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
   m_MaxMoveFactor = 0.1;
 
   // Compute the neighborhood size and the optimal sigma.
@@ -161,7 +158,7 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
 }
 
 //---------------------------------------------------------------------------
-CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsigned int idx, unsigned int d,
+SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsigned int d,
                                                                           const ParticleSystem* system, double& maxmove,
                                                                           double& energy) const {
   const double epsilon = 1.0e-6;
@@ -231,7 +228,7 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
 }
 
 //---------------------------------------------------------------------------
-void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFunction::PointType& pos, int idx, int d,
+void SamplingFunction::UpdateNeighborhood(const SamplingFunction::PointType& pos, int idx, int d,
                                                    double radius, const ParticleSystem* system) {
   const auto domains_per_shape = system->GetDomainsPerShape();
   const auto domain_base = d / domains_per_shape;
