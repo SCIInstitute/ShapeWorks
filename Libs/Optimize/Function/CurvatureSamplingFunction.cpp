@@ -37,9 +37,6 @@ double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int d
     for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
       if (m_CurrentNeighborhood[i].weight < epsilon) continue;
 
-      double mc =
-          m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
-      double Dij = (mymc + mc) * 0.5;  // average my curvature with my neighbors
       double kappa = 1.0;
 
       avgKappa += kappa;
@@ -183,8 +180,6 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
   double A = 0.0;
 
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-    double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
-    double Dij = (mymc + mc) * 0.5;  // average my curvature with my neighbors
     double kappa = 1.0;
 
     VectorType r;

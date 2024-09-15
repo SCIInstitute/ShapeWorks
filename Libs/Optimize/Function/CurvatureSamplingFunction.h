@@ -65,9 +65,7 @@ class CurvatureSamplingFunction : public SamplingFunction {
 
   virtual void AfterIteration() {}
 
-  virtual void BeforeIteration() {
-    //  this->ComputeKappaValues();
-  }
+  virtual void BeforeIteration() {}
 
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
