@@ -59,11 +59,6 @@ void Sampler::AllocateDataCaches() {
 
   m_Sigma2Cache = GenericContainerArray<double>::New();
   m_ParticleSystem->RegisterObserver(m_Sigma2Cache);
-
-  m_MeanCurvatureCache = MeanCurvatureContainer<ImageType::PixelType, Dimension>::New();
-  m_MeanCurvatureCache->SetVerbosity(m_verbosity);
-  m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
-  m_ParticleSystem->RegisterObserver(m_MeanCurvatureCache);
 }
 
 //---------------------------------------------------------------------------
@@ -281,7 +276,6 @@ void Sampler::ReInitialize() {
   this->InitializeOptimizationFunctions();
   this->m_Sigma1Cache->ZeroAllValues();
   this->m_Sigma2Cache->ZeroAllValues();
-  this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent) {

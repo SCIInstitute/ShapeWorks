@@ -1,10 +1,8 @@
 #pragma once
 
-#include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "Libs/Optimize/Domain/ImageDomainWithCurvature.h"
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "SamplingFunction.h"
-#include "itkCommand.h"
 
 namespace shapeworks {
 
@@ -37,8 +35,6 @@ class CurvatureSamplingFunction : public SamplingFunction {
   typedef Superclass::VectorType VectorType;
   typedef Superclass::PointType PointType;
   typedef Superclass::GradientVectorType GradientVectorType;
-
-  typedef MeanCurvatureContainer<TGradientNumericType, VDimension> MeanCurvatureCacheType;
 
   typedef shapeworks::ImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
@@ -73,15 +69,6 @@ class CurvatureSamplingFunction : public SamplingFunction {
                                const PointType& pos, double initial_sigma, double precision, int& err,
                                double& avgKappa) const;
 
-  // Access the cache of curvature-based weight values for each particle position
-  void SetMeanCurvatureCache(MeanCurvatureCacheType* s) { m_MeanCurvatureCache = s; }
-  MeanCurvatureCacheType* GetMeanCurvatureCache() { return m_MeanCurvatureCache.GetPointer(); }
-
-  const MeanCurvatureCacheType* GetMeanCurvatureCache() const { return m_MeanCurvatureCache.GetPointer(); }
-
-  void SetRho(double g) { m_Rho = g; }
-  double GetRho() const { return m_Rho; }
-
   void SetSharedBoundaryWeight(double w) { m_SharedBoundaryWeight = w; }
   double GetSharedBoundaryWeight() const { return m_SharedBoundaryWeight; }
 
@@ -94,7 +81,6 @@ class CurvatureSamplingFunction : public SamplingFunction {
     CurvatureSamplingFunction::Pointer copy = CurvatureSamplingFunction::New();
     copy->SetParticleSystem(this->GetParticleSystem());
     copy->m_Counter = this->m_Counter;
-    copy->m_Rho = this->m_Rho;
     copy->m_avgKappa = this->m_avgKappa;
     copy->m_IsSharedBoundaryEnabled = this->m_IsSharedBoundaryEnabled;
     copy->m_SharedBoundaryWeight = this->m_SharedBoundaryWeight;
@@ -107,7 +93,6 @@ class CurvatureSamplingFunction : public SamplingFunction {
     copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
 
     copy->m_SpatialSigmaCache = this->m_SpatialSigmaCache;
-    copy->m_MeanCurvatureCache = this->m_MeanCurvatureCache;
 
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
@@ -120,7 +105,6 @@ class CurvatureSamplingFunction : public SamplingFunction {
   virtual ~CurvatureSamplingFunction() {}
   void operator=(const CurvatureSamplingFunction&);
   CurvatureSamplingFunction(const CurvatureSamplingFunction&);
-  MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
   unsigned int m_Counter;
   double m_Rho;

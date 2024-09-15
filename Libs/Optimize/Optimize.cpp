@@ -514,8 +514,6 @@ void Optimize::Initialize() {
 
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
-  m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
-
   m_sampler->SetCorrespondenceOn();
 
   if (m_use_shape_statistics_in_init) {
@@ -700,7 +698,6 @@ void Optimize::RunOptimize() {
   }
 
   m_optimizing = true;
-  m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
 
@@ -823,30 +820,6 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&) {
 
   if (this->GetShowVisualizer()) {
     this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
-  }
-
-  if (m_perform_good_bad == true) {
-    std::vector<std::vector<int>> tmp;
-    tmp = m_good_bad->run_assessment(m_sampler->GetParticleSystem(), m_sampler->GetMeanCurvatureCache());
-
-    if (!tmp.empty()) {
-      if (this->m_bad_ids.empty()) {
-        this->m_bad_ids.resize(m_domains_per_shape);
-      }
-
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        for (int j = 0; j < tmp[i].size(); j++) {
-          if (m_bad_ids[i].empty()) {
-            this->m_bad_ids[i].push_back(tmp[i][j]);
-          } else {
-            if (std::count(m_bad_ids[i].begin(), m_bad_ids[i].end(), tmp[i][j]) == 0) {
-              this->m_bad_ids[i].push_back(tmp[i][j]);
-            }
-          }
-        }
-      }
-    }
-    ReportBadParticles();
   }
 
   this->ComputeEnergyAfterIteration();

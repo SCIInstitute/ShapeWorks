@@ -178,7 +178,6 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
     gradE[n] = 0.0;
   }
 
-  double mymc = m_MeanCurvatureCache->operator[](d)->operator[](idx);
   double A = 0.0;
 
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {

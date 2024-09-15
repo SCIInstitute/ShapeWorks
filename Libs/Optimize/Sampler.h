@@ -129,9 +129,7 @@ class Sampler {
   /** Optionally add spheres that may be used as constraints to the domain. */
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-  void SetAdaptivityMode() {
-    m_LinkingFunction->SetFunctionA(GetCurvatureGradientFunction());
-  }
+  void SetAdaptivityMode() { m_LinkingFunction->SetFunctionA(GetCurvatureGradientFunction()); }
 
   void SetCorrespondenceOn() { m_LinkingFunction->SetBOn(); }
 
@@ -241,8 +239,6 @@ class Sampler {
 
   unsigned int GetVerbosity() { return m_verbosity; }
 
-  MeanCurvatureCacheType* GetMeanCurvatureCache() { return m_MeanCurvatureCache.GetPointer(); }
-
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }
 
@@ -277,7 +273,6 @@ class Sampler {
   void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }
 
  private:
-
   bool GetInitialized() { return this->m_Initialized; }
 
   void SetInitialized(bool value) { this->m_Initialized = value; }
@@ -297,12 +292,9 @@ class Sampler {
   GenericContainerArray<double>::Pointer m_Sigma1Cache;
   GenericContainerArray<double>::Pointer m_Sigma2Cache;
 
-  MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
-
   ParticleSystem::Pointer m_ParticleSystem;
 
   std::vector<ParticleDomain::Pointer> m_DomainList;
-
 
   int m_pairwise_potential_type;
 
