@@ -63,8 +63,6 @@ class CurvatureSamplingFunction : public SamplingFunction {
     return e;
   }
 
-  inline double ComputeKappa(double mc, unsigned int d) const;
-
   virtual void AfterIteration() {}
 
   virtual void BeforeIteration() {

@@ -40,7 +40,7 @@ double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int d
       double mc =
           m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
       double Dij = (mymc + mc) * 0.5;  // average my curvature with my neighbors
-      double kappa = this->ComputeKappa(Dij, dom);
+      double kappa = 1.0;
 
       avgKappa += kappa;
 
@@ -99,7 +99,7 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
   // tiny (i.e. initialized) then use a fraction of the maximum allowed
   // neighborhood radius.
   m_CurrentSigma = this->GetSpatialSigmaCache()->operator[](d)->operator[](idx);
-  double myKappa = this->ComputeKappa(m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](idx), d);
+  double myKappa = 1.0;
 
   if (m_CurrentSigma < epsilon) {
     m_CurrentSigma = this->GetMinimumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
@@ -185,7 +185,7 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
     double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
     double Dij = (mymc + mc) * 0.5;  // average my curvature with my neighbors
-    double kappa = this->ComputeKappa(Dij, d);
+    double kappa = 1.0;
 
     VectorType r;
 
@@ -292,13 +292,6 @@ void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFuncti
       m_CurrentNeighborhood.emplace_back(res[i], weight, distances[i], domain_t);
     }
   }
-}
-double CurvatureSamplingFunction::ComputeKappa(double mc, unsigned int d) const {
-  double mean = m_MeanCurvatureCache->GetMeanCurvature(d);
-  double std = m_MeanCurvatureCache->GetCurvatureStandardDeviation(d);
-  double max_mc = mean + 2.0 * std;
-  double min_mc = mean - 2.0 * std;
-  return 1.0 + m_Rho * (mc - min_mc) / (max_mc - min_mc);
 }
 
 }  // namespace shapeworks
