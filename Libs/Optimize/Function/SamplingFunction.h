@@ -28,9 +28,9 @@ class SamplingFunction : public VectorFunction {
   using GradientVectorType = vnl_vector_fixed<float, 3>;
   using SigmaCacheType = GenericContainerArray<double>;
 
-  inline VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const override {
+  VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const override {
     double e;
-    return this->Evaluate(a, b, c, d, e);
+    return Evaluate(a, b, c, d, e);
   }
 
   VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const override;
@@ -39,13 +39,9 @@ class SamplingFunction : public VectorFunction {
 
   double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const override {
     double d, e;
-    this->Evaluate(a, b, c, d, e);
+    Evaluate(a, b, c, d, e);
     return e;
   }
-
-  void AfterIteration() override {}
-
-  void BeforeIteration() override {}
 
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
@@ -85,44 +81,13 @@ class SamplingFunction : public VectorFunction {
 
   void ResetBuffers() override { m_SpatialSigmaCache->ZeroAllValues(); }
 
-  VectorFunction::Pointer Clone() override {
-    // todo Do we really need to clone all of this?
+  VectorFunction::Pointer Clone() override;
 
-    SamplingFunction::Pointer copy = SamplingFunction::New();
-    copy->SetParticleSystem(this->GetParticleSystem());
-    copy->m_Counter = this->m_Counter;
-    copy->m_avgKappa = this->m_avgKappa;
-    copy->m_IsSharedBoundaryEnabled = this->m_IsSharedBoundaryEnabled;
-    copy->m_SharedBoundaryWeight = this->m_SharedBoundaryWeight;
-    copy->m_CurrentSigma = this->m_CurrentSigma;
-    copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
-
-    copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
-    copy->m_MaximumNeighborhoodRadius = this->m_MaximumNeighborhoodRadius;
-    copy->m_FlatCutoff = this->m_FlatCutoff;
-    copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
-
-    copy->m_SpatialSigmaCache = this->m_SpatialSigmaCache;
-
-    copy->m_DomainNumber = this->m_DomainNumber;
-    copy->m_ParticleSystem = this->m_ParticleSystem;
-
-    return (VectorFunction::Pointer)copy;
-  }
-
- protected:
+ private:
   SamplingFunction() {}
   virtual ~SamplingFunction() {}
   void operator=(const SamplingFunction&);
   SamplingFunction(const SamplingFunction&);
-
-  unsigned int m_Counter{0};
-
-  double m_avgKappa{0};
-  bool m_IsSharedBoundaryEnabled{false};
-  double m_SharedBoundaryWeight{1.0};
-
-  double m_CurrentSigma;
 
   struct CrossDomainNeighborhood {
     ParticlePointIndexPair pi_pair;
@@ -136,14 +101,18 @@ class SamplingFunction : public VectorFunction {
   std::vector<CrossDomainNeighborhood> m_CurrentNeighborhood;
   void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystem* system);
 
+  unsigned int m_Counter{0};
+  double m_avgKappa{0};
+  bool m_IsSharedBoundaryEnabled{false};
+  double m_SharedBoundaryWeight{1.0};
+  double m_CurrentSigma{0.0};
   float m_MaxMoveFactor{0};
-
-  typename SigmaCacheType::Pointer m_SpatialSigmaCache;
-
   double m_MinimumNeighborhoodRadius{0};
   double m_MaximumNeighborhoodRadius{0};
   double m_FlatCutoff{0.05};
   double m_NeighborhoodToSigmaRatio{3.0};
+
+  SigmaCacheType::Pointer m_SpatialSigmaCache;
 };
 
 }  // namespace shapeworks

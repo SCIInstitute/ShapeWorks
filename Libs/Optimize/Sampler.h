@@ -9,7 +9,7 @@
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
-#include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
+#include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
@@ -68,7 +68,7 @@ class Sampler {
   ParticleSystem* GetParticleSystem() { return m_ParticleSystem; }
   const ParticleSystem* GetParticleSystem() const { return m_ParticleSystem.GetPointer(); }
 
-  SamplingFunction* GetCurvatureGradientFunction() { return m_CurvatureGradientFunction; }
+  SamplingFunction* GetCurvatureGradientFunction() { return m_SamplingFunction; }
 
   //! Return a pointer to the optimizer object
   OptimizerType* GetOptimizer() { return m_Optimizer; }
@@ -282,10 +282,9 @@ class Sampler {
 
   OptimizerType::Pointer m_Optimizer;
 
-  SamplingFunction::Pointer m_CurvatureGradientFunction;
+  SamplingFunction::Pointer m_SamplingFunction;
 
   GenericContainerArray<double>::Pointer m_Sigma1Cache;
-  GenericContainerArray<double>::Pointer m_Sigma2Cache;
 
   ParticleSystem::Pointer m_ParticleSystem;
 

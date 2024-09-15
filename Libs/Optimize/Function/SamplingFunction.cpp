@@ -1,5 +1,5 @@
 
-#include "CurvatureSamplingFunction.h"
+#include "SamplingFunction.h"
 
 #include "Libs/Common/Logging.h"
 #include "Libs/Optimize/Domain/DomainType.h"
@@ -8,10 +8,9 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom,
-                                                const shapeworks::ParticleDomain* domain, const PointType& pos,
-                                                double initial_sigma, double precision, int& err,
-                                                double& avgKappa) const {
+double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom, const shapeworks::ParticleDomain* domain,
+                                       const PointType& pos, double initial_sigma, double precision, int& err,
+                                       double& avgKappa) const {
   avgKappa = 0.0;
   const double min_sigma = 1.0e-4;
   const double epsilon = 1.0e-5;
@@ -78,6 +77,30 @@ double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom,
 }
 
 //---------------------------------------------------------------------------
+VectorFunction::Pointer SamplingFunction::Clone() {
+  SamplingFunction::Pointer copy = SamplingFunction::New();
+  copy->SetParticleSystem(this->GetParticleSystem());
+  copy->m_Counter = this->m_Counter;
+  copy->m_avgKappa = this->m_avgKappa;
+  copy->m_IsSharedBoundaryEnabled = this->m_IsSharedBoundaryEnabled;
+  copy->m_SharedBoundaryWeight = this->m_SharedBoundaryWeight;
+  copy->m_CurrentSigma = this->m_CurrentSigma;
+  copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
+
+  copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
+  copy->m_MaximumNeighborhoodRadius = this->m_MaximumNeighborhoodRadius;
+  copy->m_FlatCutoff = this->m_FlatCutoff;
+  copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
+
+  copy->m_SpatialSigmaCache = this->m_SpatialSigmaCache;
+
+  copy->m_DomainNumber = this->m_DomainNumber;
+  copy->m_ParticleSystem = this->m_ParticleSystem;
+
+  return (VectorFunction::Pointer)copy;
+}
+
+//---------------------------------------------------------------------------
 void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
   m_MaxMoveFactor = 0.1;
 
@@ -112,9 +135,6 @@ void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const Pa
 
   // Get the neighborhood surrounding the point "pos".
   UpdateNeighborhood(pos, idx, d, neighborhood_radius, system);
-
-  // Compute the weights based on angle between the neighbors and the center.
-  //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain, m_CurrentWeights);
 
   // Estimate the best sigma for Parzen windowing.  In some cases, such as when
   // the neighborhood does not include enough points, the value will be bogus.
@@ -158,9 +178,8 @@ void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const Pa
 }
 
 //---------------------------------------------------------------------------
-SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsigned int d,
-                                                                          const ParticleSystem* system, double& maxmove,
-                                                                          double& energy) const {
+SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system,
+                                                        double& maxmove, double& energy) const {
   const double epsilon = 1.0e-6;
 
   // Get the position for which we are computing the gradient.
@@ -228,8 +247,8 @@ SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsign
 }
 
 //---------------------------------------------------------------------------
-void SamplingFunction::UpdateNeighborhood(const SamplingFunction::PointType& pos, int idx, int d,
-                                                   double radius, const ParticleSystem* system) {
+void SamplingFunction::UpdateNeighborhood(const SamplingFunction::PointType& pos, int idx, int d, double radius,
+                                          const ParticleSystem* system) {
   const auto domains_per_shape = system->GetDomainsPerShape();
   const auto domain_base = d / domains_per_shape;
 

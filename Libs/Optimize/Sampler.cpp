@@ -12,7 +12,7 @@ namespace shapeworks {
 Sampler::Sampler() {
   m_ParticleSystem = ParticleSystem::New();
 
-  m_CurvatureGradientFunction = SamplingFunction::New();
+  m_SamplingFunction = SamplingFunction::New();
 
   m_Optimizer = OptimizerType::New();
 
@@ -53,10 +53,7 @@ void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
   m_Sigma1Cache = GenericContainerArray<double>::New();
   m_ParticleSystem->RegisterObserver(m_Sigma1Cache);
-  m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-
-  m_Sigma2Cache = GenericContainerArray<double>::New();
-  m_ParticleSystem->RegisterObserver(m_Sigma2Cache);
+  m_SamplingFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 }
 
 //---------------------------------------------------------------------------
@@ -156,13 +153,13 @@ void Sampler::InitializeOptimizationFunctions() {
     }
   }
 
-  m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_CurvatureGradientFunction->SetParticleSystem(m_ParticleSystem);
-  m_CurvatureGradientFunction->SetDomainNumber(0);
+  m_SamplingFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
+  m_SamplingFunction->SetMaximumNeighborhoodRadius(maxradius);
+  m_SamplingFunction->SetParticleSystem(m_ParticleSystem);
+  m_SamplingFunction->SetDomainNumber(0);
   if (m_IsSharedBoundaryEnabled) {
-    m_CurvatureGradientFunction->SetSharedBoundaryEnabled(true);
-    m_CurvatureGradientFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
+    m_SamplingFunction->SetSharedBoundaryEnabled(true);
+    m_SamplingFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
   }
 
   m_LinearRegressionShapeMatrix->Initialize();
@@ -270,7 +267,6 @@ void Sampler::ReInitialize() {
   this->m_LinkingFunction->SetBOn();
   this->InitializeOptimizationFunctions();
   this->m_Sigma1Cache->ZeroAllValues();
-  this->m_Sigma2Cache->ZeroAllValues();
 }
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent) {
