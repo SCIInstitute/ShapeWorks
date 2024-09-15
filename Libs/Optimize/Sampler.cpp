@@ -187,7 +187,7 @@ void Sampler::InitializeOptimizationFunctions() {
 void Sampler::Execute() {
   if (this->GetInitialized() == false) {
     this->AllocateDataCaches();
-    this->SetAdaptivityMode(m_AdaptivityMode);
+    this->SetAdaptivityMode();
     this->SetCorrespondenceMode(m_CorrespondenceMode);
     this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
     m_LinkingFunction->SetAOn();
@@ -273,7 +273,7 @@ void Sampler::ReadTransforms() {
 }
 
 void Sampler::ReInitialize() {
-  this->SetAdaptivityMode(m_AdaptivityMode);
+  this->SetAdaptivityMode();
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
   this->m_LinkingFunction->SetAOn();

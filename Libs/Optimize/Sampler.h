@@ -129,22 +129,9 @@ class Sampler {
   /** Optionally add spheres that may be used as constraints to the domain. */
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-  /** This method sets the optimization function for the sampling.
-      mode 0 = isotropic adaptivity
-      mode 1 = no adaptivity
-  */
-  void SetAdaptivityMode(int mode) {
-    // SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
-    if (mode == 0) {
-      m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
-    } else if (mode == 1) {
-      m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
-    }
-
-    this->m_AdaptivityMode = mode;
+  void SetAdaptivityMode() {
+    m_LinkingFunction->SetFunctionA(GetCurvatureGradientFunction());
   }
-
-  int GetAdaptivityMode() const { return m_AdaptivityMode; }
 
   void SetCorrespondenceOn() { m_LinkingFunction->SetBOn(); }
 
@@ -300,7 +287,6 @@ class Sampler {
   void SetInitializing(bool value) { this->m_Initializing = value; }
 
   bool m_Initialized{false};
-  int m_AdaptivityMode{0};
   bool m_Initializing{false};
 
   OptimizerType::Pointer m_Optimizer;

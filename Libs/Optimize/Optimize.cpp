@@ -431,7 +431,7 @@ void Optimize::InitializeSampler() {
 
   m_sampler->SetCorrespondenceOn();
 
-  m_sampler->SetAdaptivityMode(0);
+  m_sampler->SetAdaptivityMode();
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(
       m_recompute_regularization_interval);
