@@ -96,7 +96,6 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
   // tiny (i.e. initialized) then use a fraction of the maximum allowed
   // neighborhood radius.
   m_CurrentSigma = this->GetSpatialSigmaCache()->operator[](d)->operator[](idx);
-  double myKappa = 1.0;
 
   if (m_CurrentSigma < epsilon) {
     m_CurrentSigma = this->GetMinimumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
@@ -106,7 +105,7 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
   // windowing estimation.  The neighborhood extent is based on the optimal
   // sigma calculation and limited to a user supplied maximum radius (probably
   // the size of the domain).
-  double neighborhood_radius = (m_CurrentSigma / myKappa) * 1.3 * this->GetNeighborhoodToSigmaRatio();
+  double neighborhood_radius = m_CurrentSigma * 1.3 * this->GetNeighborhoodToSigmaRatio();
 
   if (neighborhood_radius > this->GetMaximumNeighborhoodRadius()) {
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
@@ -180,8 +179,6 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
   double A = 0.0;
 
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-    double kappa = 1.0;
-
     VectorType r;
 
     // Use the domain distance metric only if the two domains are the same
@@ -193,12 +190,11 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
       for (unsigned int n = 0; n < VDimension; n++) {
         // Note that the Neighborhood object has already filtered the
         // neighborhood for points whose normals differ by > 90 degrees.
-        r[n] = (pos[n] - m_CurrentNeighborhood[i].pi_pair.Point[n]) * kappa;
+        r[n] = (pos[n] - m_CurrentNeighborhood[i].pi_pair.Point[n]);
       }
     }
-    r *= kappa;
 
-    double q = kappa * exp(-dot_product(r, r) * sigma2inv);
+    double q = exp(-dot_product(r, r) * sigma2inv);
     A += q;
 
     for (unsigned int n = 0; n < VDimension; n++) {
