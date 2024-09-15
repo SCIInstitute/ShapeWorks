@@ -12,7 +12,6 @@ namespace shapeworks {
 Sampler::Sampler() {
   m_ParticleSystem = ParticleSystem::New();
 
-  m_GradientFunction = SamplingFunction::New();
   m_CurvatureGradientFunction = CurvatureSamplingFunction::New();
 
   m_Optimizer = OptimizerType::New();
@@ -54,7 +53,6 @@ void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
   m_Sigma1Cache = GenericContainerArray<double>::New();
   m_ParticleSystem->RegisterObserver(m_Sigma1Cache);
-  m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
   m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
   m_Sigma2Cache = GenericContainerArray<double>::New();
@@ -157,9 +155,6 @@ void Sampler::InitializeOptimizationFunctions() {
       maxradius = radius > maxradius ? radius : maxradius;
     }
   }
-
-  m_GradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_GradientFunction->SetMaximumNeighborhoodRadius(maxradius);
 
   m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);

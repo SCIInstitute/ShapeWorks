@@ -400,9 +400,7 @@ void Optimize::InitializeSampler() {
   float nbhd_to_sigma = 3.0;  // 3.0 -> 1.0
   float flat_cutoff = 0.3;    // 0.3 -> 0.85
 
-  m_sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
   m_sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
