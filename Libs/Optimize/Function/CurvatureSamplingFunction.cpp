@@ -10,6 +10,7 @@
 
 namespace shapeworks {
 
+//---------------------------------------------------------------------------
 double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom,
                                                 const shapeworks::ParticleDomain* domain, const PointType& pos,
                                                 double initial_sigma, double precision, int& err,
@@ -32,17 +33,13 @@ double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int d
     double sigma2 = sigma * sigma;
     double sigma22 = sigma2 * 2.0;
 
-    double mymc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](idx);
-
     for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
       if (m_CurrentNeighborhood[i].weight < epsilon) continue;
 
       double kappa = 1.0;
-
       avgKappa += kappa;
 
       double sqrdistance = m_CurrentNeighborhood[i].distance * m_CurrentNeighborhood[i].distance;
-      sqrdistance = sqrdistance * kappa * kappa;
 
       double alpha = exp(-sqrdistance / sigma22) * m_CurrentNeighborhood[i].weight;
       A += alpha;
@@ -50,6 +47,9 @@ double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int d
       C += sqrdistance * sqrdistance * alpha;
     }  // end for i
 
+    // Alan : Even though the actual average kappa is always 1.0, this avgKappa can vary
+    // depending on the number of times the while loop is executed.  This seems to be a bug, but
+    // I am leaving it for now as it changes the results if I fix it.
     avgKappa /= static_cast<double>(m_CurrentNeighborhood.size());
 
     prev_sigma = sigma;
@@ -70,15 +70,17 @@ double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int d
       sigma = min_sigma;
       error = precision;  // we are done if sigma has vanished
     } else {
-      if (sigma < 0.0) sigma = min_sigma;
+      if (sigma < 0.0) {
+        sigma = min_sigma;
+      }
     }
-
   }  // end while (error > precision)
 
   err = 0;
   return sigma;
 }
 
+//---------------------------------------------------------------------------
 void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
   m_MaxMoveFactor = 0.1;
 
@@ -158,6 +160,7 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
   this->GetSpatialSigmaCache()->operator[](d)->operator[](idx) = m_CurrentSigma;
 }
 
+//---------------------------------------------------------------------------
 CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsigned int idx, unsigned int d,
                                                                           const ParticleSystem* system, double& maxmove,
                                                                           double& energy) const {
@@ -227,6 +230,8 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
   gradE = gradE / m_avgKappa;
   return gradE;
 }
+
+//---------------------------------------------------------------------------
 void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFunction::PointType& pos, int idx, int d,
                                                    double radius, const ParticleSystem* system) {
   const auto domains_per_shape = system->GetDomainsPerShape();
