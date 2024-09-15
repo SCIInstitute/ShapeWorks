@@ -10,17 +10,14 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom, const shapeworks::ParticleDomain* domain,
                                        const PointType& pos, double initial_sigma, double precision, int& err,
-                                       double& avgKappa) const {
-  avgKappa = 0.0;
-  const double min_sigma = 1.0e-4;
-  const double epsilon = 1.0e-5;
-
-  const double M = static_cast<double>(VDimension);
-  const double MM = M * M * 2.0 + M;
+                                       double& avg_kappa) const {
+  avg_kappa = 0.0;
+  constexpr double min_sigma = 1.0e-4;
+  constexpr double epsilon = 1.0e-5;
 
   double error = 1.0e6;
-  double sigma, prev_sigma;
-  sigma = initial_sigma;
+  double sigma = initial_sigma;
+  double prev_sigma = 0;
 
   while (error > precision) {
     double A = 0.0;
@@ -35,7 +32,7 @@ double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom, const
       }
 
       double kappa = 1.0;
-      avgKappa += kappa;
+      avg_kappa += kappa;
 
       double sqrdistance = m_CurrentNeighborhood[i].distance * m_CurrentNeighborhood[i].distance;
 
@@ -48,16 +45,18 @@ double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom, const
     // Alan : Even though the actual average kappa is always 1.0, this avgKappa can vary
     // depending on the number of times the while loop is executed.  This seems to be a bug, but
     // I am leaving it for now as it changes the results if I fix it.
-    avgKappa /= static_cast<double>(m_CurrentNeighborhood.size());
+    avg_kappa /= static_cast<double>(m_CurrentNeighborhood.size());
 
     prev_sigma = sigma;
 
     if (A < epsilon) {
       err = 1;
-      avgKappa = 1.0;
+      avg_kappa = 1.0;
       return sigma;
     };  // results are not meaningful
 
+    constexpr double M = 3.0;               // 3D
+    constexpr double MM = M * M * 2.0 + M;  // e.g. 21.0
     sigma -= (A * (B - A * sigma2 * M)) / ((-MM * A * A * sigma) - 3.0 * A * B * (1.0 / (sigma + epsilon)) -
                                            (A * C + B * B) * (1.0 / (sigma2 * sigma + epsilon)) + epsilon);
 
