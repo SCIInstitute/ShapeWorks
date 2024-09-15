@@ -13,7 +13,6 @@
 #include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
-#include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"
 #include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
 #include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"

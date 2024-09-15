@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Libs/Optimize/Domain/ImageDomainWithCurvature.h"
-#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "SamplingFunction.h"
 
 namespace shapeworks {
@@ -18,7 +16,7 @@ namespace shapeworks {
  * surface with respect to both position and extrinsic surface curvature.
  *
  */
-class CurvatureSamplingFunction : public SamplingFunction {
+class CurvatureSamplingFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
   typedef float
@@ -31,12 +29,13 @@ class CurvatureSamplingFunction : public SamplingFunction {
   itkTypeMacro(CurvatureSamplingFunction, SamplingFunction);
 
   /** Inherit some parent typedefs. */
-  typedef Superclass::GradientNumericType GradientNumericType;
-  typedef Superclass::VectorType VectorType;
-  typedef Superclass::PointType PointType;
-  typedef Superclass::GradientVectorType GradientVectorType;
+  typedef float GradientNumericType;
+  typedef vnl_vector_fixed<double, 3> VectorType;
+  typedef typename ParticleSystem::PointType PointType;
+  typedef vnl_vector_fixed<float, 3> GradientVectorType;
 
-  typedef shapeworks::ImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+  /** Cache type for the sigma values. */
+  typedef GenericContainerArray<double> SigmaCacheType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -74,6 +73,33 @@ class CurvatureSamplingFunction : public SamplingFunction {
 
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   bool GetSharedBoundaryEnabled() const { return m_IsSharedBoundaryEnabled; }
+
+  /**Access the cache of sigma values for each particle position.  This cache
+     is populated by registering this object as an observer of the correct
+     particle system (see SetParticleSystem).*/
+  void SetSpatialSigmaCache(SigmaCacheType* s) { m_SpatialSigmaCache = s; }
+  SigmaCacheType* GetSpatialSigmaCache() { return m_SpatialSigmaCache.GetPointer(); }
+  const SigmaCacheType* GetSpatialSigmaCache() const { return m_SpatialSigmaCache.GetPointer(); }
+
+  /** Minimum radius of the neighborhood of points that are considered in the
+      calculation. The neighborhood is a spherical radius in 3D space. The
+      actual radius used in a calculation may exceed this value, but will not
+      exceed the MaximumNeighborhoodRadius. */
+  void SetMinimumNeighborhoodRadius(double s) { m_MinimumNeighborhoodRadius = s; }
+  double GetMinimumNeighborhoodRadius() const { return m_MinimumNeighborhoodRadius; }
+
+  /** Maximum radius of the neighborhood of points that are considered in the
+      calculation. The neighborhood is a spherical radius in 3D space. */
+  void SetMaximumNeighborhoodRadius(double s) { m_MaximumNeighborhoodRadius = s; }
+  double GetMaximumNeighborhoodRadius() const { return m_MaximumNeighborhoodRadius; }
+
+  /** Numerical parameters*/
+  void SetFlatCutoff(double s) { m_FlatCutoff = s; }
+  double GetFlatCutoff() const { return m_FlatCutoff; }
+  void SetNeighborhoodToSigmaRatio(double s) { m_NeighborhoodToSigmaRatio = s; }
+  double GetNeighborhoodToSigmaRatio() const { return m_NeighborhoodToSigmaRatio; }
+
+  virtual void ResetBuffers() { m_SpatialSigmaCache->ZeroAllValues(); }
 
   virtual VectorFunction::Pointer Clone() {
     // todo Do we really need to clone all of this?
@@ -127,6 +153,13 @@ class CurvatureSamplingFunction : public SamplingFunction {
   void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystem* system);
 
   float m_MaxMoveFactor = 0;
+
+  typename SigmaCacheType::Pointer m_SpatialSigmaCache;
+
+  double m_MinimumNeighborhoodRadius;
+  double m_MaximumNeighborhoodRadius;
+  double m_FlatCutoff{0.05};
+  double m_NeighborhoodToSigmaRatio{3.0};
 };
 
 }  // namespace shapeworks
