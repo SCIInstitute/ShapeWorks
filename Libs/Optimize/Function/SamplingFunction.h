@@ -8,7 +8,6 @@
 
 namespace shapeworks {
 
-
 /// Please note that CurvatureSamplingFunction is currently being used in all cases
 /// the curvature part is generally disabled though as the Rho value is always set to 0
 
@@ -92,7 +91,9 @@ class SamplingFunction : public VectorFunction {
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxdt) const;
+  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxdt) const {
+    return {};
+  };
 
   virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxdt,
                               double& energy) const {
@@ -110,12 +111,9 @@ class SamplingFunction : public VectorFunction {
       The best sigma is the sigma that maximizes probability at the given point  */
   virtual double EstimateSigma(unsigned int idx, const typename ParticleSystem::PointVectorType& neighborhood,
                                const shapeworks::ParticleDomain* domain, const std::vector<double>& weights,
-                               const PointType& pos, double initial_sigma, double precision, int& err) const;
-
-  /** Returns a weighting coefficient based on the angle between two
-     vectors. Weights smoothly approach zero as the angle between two
-     normals approaches 90 degrees. */
-  TGradientNumericType AngleCoefficient(const GradientVectorType&, const GradientVectorType&) const;
+                               const PointType& pos, double initial_sigma, double precision, int& err) const {
+    return 0.0;
+  };
 
   /** Minimum radius of the neighborhood of points that are considered in the
       calculation. The neighborhood is a spherical radius in 3D space. The
@@ -141,14 +139,6 @@ class SamplingFunction : public VectorFunction {
   void SetSpatialSigmaCache(SigmaCacheType* s) { m_SpatialSigmaCache = s; }
   SigmaCacheType* GetSpatialSigmaCache() { return m_SpatialSigmaCache.GetPointer(); }
   const SigmaCacheType* GetSpatialSigmaCache() const { return m_SpatialSigmaCache.GetPointer(); }
-
-  /** Compute a set of weights based on the difference in the normals of a
-      central point and each of its neighbors.  Difference of > 90 degrees
-      results in a weight of 0. */
-  void ComputeAngularWeights(const PointType&, int, const typename ParticleSystem::PointVectorType&,
-                             const shapeworks::ParticleDomain*, std::vector<double>&) const;
-
-  //  void ComputeNeighborho0d();
 
   virtual VectorFunction::Pointer Clone() {
     SamplingFunction::Pointer copy = SamplingFunction::New();

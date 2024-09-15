@@ -101,13 +101,12 @@ class CurvatureSamplingFunction : public SamplingFunction {
   }
 
  protected:
-  CurvatureSamplingFunction() : m_Counter(0), m_Rho(1.0) {}
+  CurvatureSamplingFunction() {}
   virtual ~CurvatureSamplingFunction() {}
   void operator=(const CurvatureSamplingFunction&);
   CurvatureSamplingFunction(const CurvatureSamplingFunction&);
 
-  unsigned int m_Counter;
-  double m_Rho;
+  unsigned int m_Counter{0};
 
   double m_avgKappa;
   bool m_IsSharedBoundaryEnabled{false};
