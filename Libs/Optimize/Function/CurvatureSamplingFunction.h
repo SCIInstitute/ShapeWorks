@@ -1,6 +1,8 @@
 #pragma once
 
-#include "SamplingFunction.h"
+#include <Libs/Optimize/Container/GenericContainerArray.h>
+
+#include "VectorFunction.h"
 
 namespace shapeworks {
 
@@ -19,13 +21,10 @@ namespace shapeworks {
 class CurvatureSamplingFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
-  typedef float
-      TGradientNumericType;  // This has always been used on float images, so the curvature cache is also float
   /** Standard class typedefs. */
   typedef CurvatureSamplingFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef SamplingFunction Superclass;
   itkTypeMacro(CurvatureSamplingFunction, SamplingFunction);
 
   /** Inherit some parent typedefs. */
@@ -39,9 +38,6 @@ class CurvatureSamplingFunction : public VectorFunction {
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   inline virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
     double e;
@@ -134,7 +130,7 @@ class CurvatureSamplingFunction : public VectorFunction {
 
   unsigned int m_Counter{0};
 
-  double m_avgKappa;
+  double m_avgKappa{0};
   bool m_IsSharedBoundaryEnabled{false};
   double m_SharedBoundaryWeight{1.0};
 
@@ -152,12 +148,12 @@ class CurvatureSamplingFunction : public VectorFunction {
   std::vector<CrossDomainNeighborhood> m_CurrentNeighborhood;
   void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystem* system);
 
-  float m_MaxMoveFactor = 0;
+  float m_MaxMoveFactor{0};
 
   typename SigmaCacheType::Pointer m_SpatialSigmaCache;
 
-  double m_MinimumNeighborhoodRadius;
-  double m_MaximumNeighborhoodRadius;
+  double m_MinimumNeighborhoodRadius{0};
+  double m_MaximumNeighborhoodRadius{0};
   double m_FlatCutoff{0.05};
   double m_NeighborhoodToSigmaRatio{3.0};
 };

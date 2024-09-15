@@ -2,10 +2,10 @@
 #include "CurvatureSamplingFunction.h"
 
 #include "Libs/Common/Logging.h"
-#include "Libs/Optimize/Domain/ContourDomain.h"
+//#include "Libs/Optimize/Domain/ContourDomain.h"
 #include "Libs/Optimize/Domain/DomainType.h"
-#include "vnl/vnl_matrix.h"
-#include "vnl/vnl_matrix_fixed.h"
+//#include "vnl/vnl_matrix.h"
+//#include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
 
 namespace shapeworks {
@@ -235,7 +235,6 @@ void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFuncti
                                                    double radius, const ParticleSystem* system) {
   const auto domains_per_shape = system->GetDomainsPerShape();
   const auto domain_base = d / domains_per_shape;
-  const auto domain_sub = d % domains_per_shape;
 
   m_CurrentNeighborhood.clear();
   for (int offset = 0; offset < domains_per_shape; offset++) {
