@@ -9,11 +9,10 @@
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
-#include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
+#include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
-#include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"
 #include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
 #include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"
@@ -69,10 +68,7 @@ class Sampler {
   ParticleSystem* GetParticleSystem() { return m_ParticleSystem; }
   const ParticleSystem* GetParticleSystem() const { return m_ParticleSystem.GetPointer(); }
 
-  /** Returns a pointer to the gradient function used. */
-  SamplingFunction* GetGradientFunction() { return m_GradientFunction; }
-
-  CurvatureSamplingFunction* GetCurvatureGradientFunction() { return m_CurvatureGradientFunction; }
+  SamplingFunction* GetCurvatureGradientFunction() { return m_SamplingFunction; }
 
   //! Return a pointer to the optimizer object
   OptimizerType* GetOptimizer() { return m_Optimizer; }
@@ -129,22 +125,7 @@ class Sampler {
   /** Optionally add spheres that may be used as constraints to the domain. */
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-  /** This method sets the optimization function for the sampling.
-      mode 0 = isotropic adaptivity
-      mode 1 = no adaptivity
-  */
-  void SetAdaptivityMode(int mode) {
-    // SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
-    if (mode == 0) {
-      m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
-    } else if (mode == 1) {
-      m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
-    }
-
-    this->m_AdaptivityMode = mode;
-  }
-
-  int GetAdaptivityMode() const { return m_AdaptivityMode; }
+  void SetAdaptivityMode() { m_LinkingFunction->SetFunctionA(GetCurvatureGradientFunction()); }
 
   void SetCorrespondenceOn() { m_LinkingFunction->SetBOn(); }
 
@@ -254,8 +235,6 @@ class Sampler {
 
   unsigned int GetVerbosity() { return m_verbosity; }
 
-  MeanCurvatureCacheType* GetMeanCurvatureCache() { return m_MeanCurvatureCache.GetPointer(); }
-
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }
 
@@ -290,7 +269,6 @@ class Sampler {
   void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }
 
  private:
-
   bool GetInitialized() { return this->m_Initialized; }
 
   void SetInitialized(bool value) { this->m_Initialized = value; }
@@ -300,23 +278,17 @@ class Sampler {
   void SetInitializing(bool value) { this->m_Initializing = value; }
 
   bool m_Initialized{false};
-  int m_AdaptivityMode{0};
   bool m_Initializing{false};
 
   OptimizerType::Pointer m_Optimizer;
 
-  SamplingFunction::Pointer m_GradientFunction;
-  CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
+  SamplingFunction::Pointer m_SamplingFunction;
 
   GenericContainerArray<double>::Pointer m_Sigma1Cache;
-  GenericContainerArray<double>::Pointer m_Sigma2Cache;
-
-  MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
   ParticleSystem::Pointer m_ParticleSystem;
 
   std::vector<ParticleDomain::Pointer> m_DomainList;
-
 
   int m_pairwise_potential_type;
 

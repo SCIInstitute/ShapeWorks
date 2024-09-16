@@ -153,17 +153,11 @@ class Optimize {
   void SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3>& va, const vnl_vector_fixed<double, 3>& vb,
                        const vnl_vector_fixed<double, 3>& vc);
 
-  //! Set processing mode (TODO: details)
-  void SetProcessingMode(int mode);
-  //! Set adaptivity mode (TODO: details)
-  void SetAdaptivityMode(int adaptivity_mode);
   //! Set Mesh FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode
   void SetMeshFFCMode(int mesh_ffc_mode) {
     m_mesh_ffc_mode = mesh_ffc_mode;
     m_sampler->SetMeshFFCMode(mesh_ffc_mode);
   }
-  //! Set adaptivity strength (TODO: details)
-  void SetAdaptivityStrength(double adaptivity_strength);
   //! Set the number of time points per subject (TODO: details)
   void SetTimePtsPerSubject(int time_pts_per_subject);
   //! Get the number of time points per subject (TODO: details)
@@ -320,7 +314,6 @@ class Optimize {
   double GetMinNeighborhoodRadius();
   void AddSinglePoint();
   void Initialize();
-  void AddAdaptivity();
   void RunOptimize();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject&);
@@ -392,10 +385,6 @@ class Optimize {
   std::string m_output_cutting_plane_file;
 
   // Optimization Parameters
-  int m_processing_mode = 3;
-  int m_adaptivity_mode = 0;
-  double m_adaptivity_strength = 0.0;
-
   bool m_mesh_ffc_mode = 0;
 
   unsigned int m_timepts_per_subject = 1;

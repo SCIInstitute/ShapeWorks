@@ -12,8 +12,7 @@ namespace shapeworks {
 Sampler::Sampler() {
   m_ParticleSystem = ParticleSystem::New();
 
-  m_GradientFunction = SamplingFunction::New();
-  m_CurvatureGradientFunction = CurvatureSamplingFunction::New();
+  m_SamplingFunction = SamplingFunction::New();
 
   m_Optimizer = OptimizerType::New();
 
@@ -54,16 +53,7 @@ void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
   m_Sigma1Cache = GenericContainerArray<double>::New();
   m_ParticleSystem->RegisterObserver(m_Sigma1Cache);
-  m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-  m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-
-  m_Sigma2Cache = GenericContainerArray<double>::New();
-  m_ParticleSystem->RegisterObserver(m_Sigma2Cache);
-
-  m_MeanCurvatureCache = MeanCurvatureContainer<ImageType::PixelType, Dimension>::New();
-  m_MeanCurvatureCache->SetVerbosity(m_verbosity);
-  m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
-  m_ParticleSystem->RegisterObserver(m_MeanCurvatureCache);
+  m_SamplingFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 }
 
 //---------------------------------------------------------------------------
@@ -163,16 +153,13 @@ void Sampler::InitializeOptimizationFunctions() {
     }
   }
 
-  m_GradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_GradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-
-  m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_CurvatureGradientFunction->SetParticleSystem(m_ParticleSystem);
-  m_CurvatureGradientFunction->SetDomainNumber(0);
+  m_SamplingFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
+  m_SamplingFunction->SetMaximumNeighborhoodRadius(maxradius);
+  m_SamplingFunction->SetParticleSystem(m_ParticleSystem);
+  m_SamplingFunction->SetDomainNumber(0);
   if (m_IsSharedBoundaryEnabled) {
-    m_CurvatureGradientFunction->SetSharedBoundaryEnabled(true);
-    m_CurvatureGradientFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
+    m_SamplingFunction->SetSharedBoundaryEnabled(true);
+    m_SamplingFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
   }
 
   m_LinearRegressionShapeMatrix->Initialize();
@@ -187,7 +174,7 @@ void Sampler::InitializeOptimizationFunctions() {
 void Sampler::Execute() {
   if (this->GetInitialized() == false) {
     this->AllocateDataCaches();
-    this->SetAdaptivityMode(m_AdaptivityMode);
+    this->SetAdaptivityMode();
     this->SetCorrespondenceMode(m_CorrespondenceMode);
     this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
     m_LinkingFunction->SetAOn();
@@ -273,15 +260,13 @@ void Sampler::ReadTransforms() {
 }
 
 void Sampler::ReInitialize() {
-  this->SetAdaptivityMode(m_AdaptivityMode);
+  this->SetAdaptivityMode();
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
   this->m_LinkingFunction->SetAOn();
   this->m_LinkingFunction->SetBOn();
   this->InitializeOptimizationFunctions();
   this->m_Sigma1Cache->ZeroAllValues();
-  this->m_Sigma2Cache->ZeroAllValues();
-  this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent) {
