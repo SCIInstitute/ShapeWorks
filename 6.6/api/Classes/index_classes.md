@@ -103,8 +103,6 @@ title: Classes
     * **class [Constraints](../Classes/classshapeworks_1_1Constraints.md)** 
     * **class [ContourDomain](../Classes/classshapeworks_1_1ContourDomain.md)** 
     * **class [CorrespondenceFunction](../Classes/classshapeworks_1_1CorrespondenceFunction.md)** <br>Correspondence term. 
-    * **class [CurvatureSamplingFunction](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md)** <br>Please note: This is the sampling function currently being used. 
-        * **struct [CrossDomainNeighborhood](../Classes/structshapeworks_1_1CurvatureSamplingFunction_1_1CrossDomainNeighborhood.md)** 
     * **class [DataTool](../Classes/classshapeworks_1_1DataTool.md)** 
     * **class [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM. 
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
@@ -218,7 +216,8 @@ title: Classes
     * **class [Sampler](../Classes/classshapeworks_1_1Sampler.md)** 
         * **struct [CuttingPlaneType](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md)** 
         * **struct [SphereType](../Classes/structshapeworks_1_1Sampler_1_1SphereType.md)** 
-    * **class [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. 
+    * **class [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** 
+        * **struct [CrossDomainNeighborhood](../Classes/structshapeworks_1_1SamplingFunction_1_1CrossDomainNeighborhood.md)** 
     * **class [Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session. 
     * **class [Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject. 
         * **class [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md)** <br>TODO: replace this wherever it is used. 
@@ -271,4 +270,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2024-09-10 at 03:33:08 +0000
+Updated on 2024-09-16 at 07:25:46 +0000

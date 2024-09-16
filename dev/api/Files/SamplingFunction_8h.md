@@ -17,7 +17,7 @@ title: Libs/Optimize/Function/SamplingFunction.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution.  |
+| class | **[shapeworks::SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)**  |
 
 
 
@@ -27,59 +27,52 @@ title: Libs/Optimize/Function/SamplingFunction.h
 ```cpp
 #pragma once
 
-#include <vector>
+#include <Libs/Optimize/Container/GenericContainerArray.h>
 
-#include "Libs/Optimize/Container/GenericContainerArray.h"
-#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "VectorFunction.h"
 
 namespace shapeworks {
 
-
-
 class SamplingFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
-  typedef float
-      TGradientNumericType;  // This has always been used on float images, so the curvature cache is also float
-
   typedef SamplingFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef VectorFunction Superclass;
-  itkTypeMacro(SamplingFunction, VectorFunction);
-
-  typedef TGradientNumericType GradientNumericType;
-
-  typedef GenericContainerArray<double> SigmaCacheType;
-
-  typedef typename Superclass::VectorType VectorType;
-  typedef typename ParticleSystem::PointType PointType;
-  typedef vnl_vector_fixed<TGradientNumericType, VDimension> GradientVectorType;
-
   itkNewMacro(Self);
 
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  using VectorType = vnl_vector_fixed<double, 3>;
+  using PointType = ParticleSystem::PointType;
+  using GradientVectorType = vnl_vector_fixed<float, 3>;
+  using SigmaCacheType = GenericContainerArray<double>;
 
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxdt) const;
-
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxdt,
-                              double& energy) const {
-    itkExceptionMacro("This method not implemented");
-    return VectorType();
-  }
-  virtual double Energy(unsigned int, unsigned int, const ParticleSystem*) const {
-    itkExceptionMacro("This method not implemented");
-    return 0.0;
+  VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const override {
+    double e;
+    return Evaluate(a, b, c, d, e);
   }
 
-  virtual void ResetBuffers() { m_SpatialSigmaCache->ZeroAllValues(); }
+  VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const override;
 
-  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystem::PointVectorType& neighborhood,
-                               const shapeworks::ParticleDomain* domain, const std::vector<double>& weights,
-                               const PointType& pos, double initial_sigma, double precision, int& err) const;
+  void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystem*) override;
 
-  TGradientNumericType AngleCoefficient(const GradientVectorType&, const GradientVectorType&) const;
+  double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const override {
+    double d, e;
+    Evaluate(a, b, c, d, e);
+    return e;
+  }
+
+  double EstimateSigma(unsigned int idx, unsigned int dom, const shapeworks::ParticleDomain* domain,
+                       const PointType& pos, double initial_sigma, double precision, int& err, double& avg_kappa) const;
+
+  void SetSharedBoundaryWeight(double w) { m_SharedBoundaryWeight = w; }
+  double GetSharedBoundaryWeight() const { return m_SharedBoundaryWeight; }
+
+  void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
+  bool GetSharedBoundaryEnabled() const { return m_IsSharedBoundaryEnabled; }
+
+  void SetSpatialSigmaCache(SigmaCacheType* s) { m_SpatialSigmaCache = s; }
+  SigmaCacheType* GetSpatialSigmaCache() { return m_SpatialSigmaCache.GetPointer(); }
+  const SigmaCacheType* GetSpatialSigmaCache() const { return m_SpatialSigmaCache.GetPointer(); }
 
   void SetMinimumNeighborhoodRadius(double s) { m_MinimumNeighborhoodRadius = s; }
   double GetMinimumNeighborhoodRadius() const { return m_MinimumNeighborhoodRadius; }
@@ -92,43 +85,40 @@ class SamplingFunction : public VectorFunction {
   void SetNeighborhoodToSigmaRatio(double s) { m_NeighborhoodToSigmaRatio = s; }
   double GetNeighborhoodToSigmaRatio() const { return m_NeighborhoodToSigmaRatio; }
 
-  void SetSpatialSigmaCache(SigmaCacheType* s) { m_SpatialSigmaCache = s; }
-  SigmaCacheType* GetSpatialSigmaCache() { return m_SpatialSigmaCache.GetPointer(); }
-  const SigmaCacheType* GetSpatialSigmaCache() const { return m_SpatialSigmaCache.GetPointer(); }
+  void ResetBuffers() override { m_SpatialSigmaCache->ZeroAllValues(); }
 
-  void ComputeAngularWeights(const PointType&, int, const typename ParticleSystem::PointVectorType&,
-                             const shapeworks::ParticleDomain*, std::vector<double>&) const;
+  VectorFunction::Pointer Clone() override;
 
-  //  void ComputeNeighborho0d();
-
-  virtual VectorFunction::Pointer Clone() {
-    SamplingFunction::Pointer copy = SamplingFunction::New();
-
-    // from itkParticleVectorFunction
-    copy->m_DomainNumber = this->m_DomainNumber;
-    copy->m_ParticleSystem = this->m_ParticleSystem;
-
-    // local
-    copy->m_FlatCutoff = this->m_FlatCutoff;
-    copy->m_MaximumNeighborhoodRadius = this->m_MaximumNeighborhoodRadius;
-    copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
-    copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
-    copy->m_SpatialSigmaCache = this->m_SpatialSigmaCache;
-
-    return (typename VectorFunction::Pointer)copy;
-  }
-
- protected:
-  SamplingFunction() : m_FlatCutoff(0.05), m_NeighborhoodToSigmaRatio(3.0) {}
+ private:
+  SamplingFunction() {}
   virtual ~SamplingFunction() {}
   void operator=(const SamplingFunction&);
   SamplingFunction(const SamplingFunction&);
 
-  double m_MinimumNeighborhoodRadius;
-  double m_MaximumNeighborhoodRadius;
-  double m_FlatCutoff;
-  double m_NeighborhoodToSigmaRatio;
-  typename SigmaCacheType::Pointer m_SpatialSigmaCache;
+  struct CrossDomainNeighborhood {
+    ParticlePointIndexPair pi_pair;
+    double weight;
+    double distance;
+    int dom;
+
+    CrossDomainNeighborhood(const ParticlePointIndexPair& pi_pair_, double weight_, double distance_, int dom_)
+        : pi_pair(pi_pair_), weight(weight_), distance(distance_), dom(dom_) {}
+  };
+  std::vector<CrossDomainNeighborhood> m_CurrentNeighborhood;
+  void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystem* system);
+
+  unsigned int m_Counter{0};
+  double m_avgKappa{0};
+  bool m_IsSharedBoundaryEnabled{false};
+  double m_SharedBoundaryWeight{1.0};
+  double m_CurrentSigma{0.0};
+  float m_MaxMoveFactor{0};
+  double m_MinimumNeighborhoodRadius{0};
+  double m_MaximumNeighborhoodRadius{0};
+  double m_FlatCutoff{0.05};
+  double m_NeighborhoodToSigmaRatio{3.0};
+
+  SigmaCacheType::Pointer m_SpatialSigmaCache;
 };
 
 }  // namespace shapeworks
@@ -137,4 +127,4 @@ class SamplingFunction : public VectorFunction {
 
 -------------------------------
 
-Updated on 2024-09-10 at 03:33:07 +0000
+Updated on 2024-09-16 at 07:25:46 +0000

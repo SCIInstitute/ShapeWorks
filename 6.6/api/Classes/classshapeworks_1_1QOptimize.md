@@ -89,10 +89,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetOutputCuttingPlaneFile](../Classes/classshapeworks_1_1Optimize.md#function-setoutputcuttingplanefile)**(std::string output_cutting_plane_file)<br>Set the output cutting plane file.  |
 | void | **[SetUseCuttingPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setusecuttingplanes)**(bool use_cutting_planes)<br>Set if using cutting planes.  |
 | void | **[SetCuttingPlane](../Classes/classshapeworks_1_1Optimize.md#function-setcuttingplane)**(unsigned int i, const vnl_vector_fixed< double, 3 > & va, const vnl_vector_fixed< double, 3 > & vb, const vnl_vector_fixed< double, 3 > & vc)<br>Set a given cutting plane for a shape.  |
-| void | **[SetProcessingMode](../Classes/classshapeworks_1_1Optimize.md#function-setprocessingmode)**(int mode)<br>Set processing mode (TODO: details)  |
-| void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitymode)**(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)  |
 | void | **[SetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-setmeshffcmode)**(int mesh_ffc_mode)<br>Set [Mesh](../Classes/classshapeworks_1_1Mesh.md) FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.  |
-| void | **[SetAdaptivityStrength](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitystrength)**(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)  |
 | void | **[SetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-settimeptspersubject)**(int time_pts_per_subject)<br>Set the number of time points per subject (TODO: details)  |
 | int | **[GetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-gettimeptspersubject)**()<br>Get the number of time points per subject (TODO: details)  |
 | void | **[SetOptimizationIterations](../Classes/classshapeworks_1_1Optimize.md#function-setoptimizationiterations)**(int optimization_iterations)<br>Set the number of optimization iterations.  |
@@ -166,7 +163,6 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | double | **[GetMinNeighborhoodRadius](../Classes/classshapeworks_1_1Optimize.md#function-getminneighborhoodradius)**() |
 | void | **[AddSinglePoint](../Classes/classshapeworks_1_1Optimize.md#function-addsinglepoint)**() |
 | void | **[Initialize](../Classes/classshapeworks_1_1Optimize.md#function-initialize)**() |
-| void | **[AddAdaptivity](../Classes/classshapeworks_1_1Optimize.md#function-addadaptivity)**() |
 | void | **[RunOptimize](../Classes/classshapeworks_1_1Optimize.md#function-runoptimize)**() |
 | void | **[ComputeEnergyAfterIteration](../Classes/classshapeworks_1_1Optimize.md#function-computeenergyafteriteration)**() |
 | void | **[SetCotanSigma](../Classes/classshapeworks_1_1Optimize.md#function-setcotansigma)**() |
@@ -221,9 +217,6 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | std::vector< int > | **[m_attributes_per_domain](../Classes/classshapeworks_1_1Optimize.md#variable-m-attributes-per-domain)**  |
 | int | **[m_distribution_domain_id](../Classes/classshapeworks_1_1Optimize.md#variable-m-distribution-domain-id)**  |
 | std::string | **[m_output_cutting_plane_file](../Classes/classshapeworks_1_1Optimize.md#variable-m-output-cutting-plane-file)**  |
-| int | **[m_processing_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-processing-mode)**  |
-| int | **[m_adaptivity_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-mode)**  |
-| double | **[m_adaptivity_strength](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-strength)**  |
 | bool | **[m_mesh_ffc_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-mesh-ffc-mode)**  |
 | unsigned int | **[m_timepts_per_subject](../Classes/classshapeworks_1_1Optimize.md#variable-m-timepts-per-subject)**  |
 | int | **[m_optimization_iterations](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-iterations)**  |
@@ -391,4 +384,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2024-09-10 at 03:33:07 +0000
+Updated on 2024-09-16 at 07:25:46 +0000

@@ -111,7 +111,6 @@ title: Files
             * **file [Libs/Optimize/Domain/ParticleRegionDomain.h](../Files/ParticleRegionDomain_8h.md#file-particleregiondomain.h)** 
         * **dir [Libs/Optimize/Function](../Files/dir_0e4564af99249380ef1f30404400c0a3.md#dir-libs/optimize/function)** 
             * **file [Libs/Optimize/Function/CorrespondenceFunction.h](../Files/CorrespondenceFunction_8h.md#file-correspondencefunction.h)** 
-            * **file [Libs/Optimize/Function/CurvatureSamplingFunction.h](../Files/CurvatureSamplingFunction_8h.md#file-curvaturesamplingfunction.h)** 
             * **file [Libs/Optimize/Function/DisentangledCorrespondenceFunction.h](../Files/DisentangledCorrespondenceFunction_8h.md#file-disentangledcorrespondencefunction.h)** 
             * **file [Libs/Optimize/Function/DualVectorFunction.h](../Files/DualVectorFunction_8h.md#file-dualvectorfunction.h)** 
             * **file [Libs/Optimize/Function/LegacyCorrespondenceFunction.h](../Files/LegacyCorrespondenceFunction_8h.md#file-legacycorrespondencefunction.h)** 
@@ -248,4 +247,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2024-09-10 at 03:33:08 +0000
+Updated on 2024-09-16 at 07:25:46 +0000

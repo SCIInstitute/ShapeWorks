@@ -134,13 +134,10 @@ class Optimize {
   void SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3>& va, const vnl_vector_fixed<double, 3>& vb,
                        const vnl_vector_fixed<double, 3>& vc);
 
-  void SetProcessingMode(int mode);
-  void SetAdaptivityMode(int adaptivity_mode);
   void SetMeshFFCMode(int mesh_ffc_mode) {
     m_mesh_ffc_mode = mesh_ffc_mode;
     m_sampler->SetMeshFFCMode(mesh_ffc_mode);
   }
-  void SetAdaptivityStrength(double adaptivity_strength);
   void SetTimePtsPerSubject(int time_pts_per_subject);
   int GetTimePtsPerSubject();
   void SetOptimizationIterations(int optimization_iterations);
@@ -246,7 +243,6 @@ class Optimize {
   double GetMinNeighborhoodRadius();
   void AddSinglePoint();
   void Initialize();
-  void AddAdaptivity();
   void RunOptimize();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject&);
@@ -318,10 +314,6 @@ class Optimize {
   std::string m_output_cutting_plane_file;
 
   // Optimization Parameters
-  int m_processing_mode = 3;
-  int m_adaptivity_mode = 0;
-  double m_adaptivity_strength = 0.0;
-
   bool m_mesh_ffc_mode = 0;
 
   unsigned int m_timepts_per_subject = 1;
@@ -402,4 +394,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2024-09-10 at 03:33:07 +0000
+Updated on 2024-09-16 at 07:25:46 +0000
