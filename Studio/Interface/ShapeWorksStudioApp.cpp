@@ -32,7 +32,7 @@
 #include <Data/Session.h>
 #include <Data/Telemetry.h>
 #include <DeepSSM/DeepSSMTool.h>
-#include <ShapeWorksMONAI/MonaiTool.h>
+#include <ShapeWorksMONAI/MonaiLabelTool.h>
 #include <Groom/GroomTool.h>
 #include <Interface/CompareWidget.h>
 #include <Interface/ExportImageDialog.h>
@@ -531,7 +531,6 @@ void ShapeWorksStudioApp::enable_possible_actions() {
     ui_->action_import_mode->setChecked(true);
   }
 
-  // verification step for broken projects
   if (session_->get_tool_state() == Session::MONAI_C && !ui_->action_monai_mode->isEnabled()) {
     session_->set_tool_state(Session::DATA_C);
     ui_->action_import_mode->setChecked(true);
@@ -621,6 +620,7 @@ void ShapeWorksStudioApp::update_table() {
     item = item.replace("feature_", "");
     image_list << item;
   }
+  // TODO: figure out how to handle MONAI labels prediction
   if (image_list != current_image_list_) {
     ui_->image_combo_->clear();
     ui_->image_combo_->addItems(image_list);
@@ -1141,11 +1141,6 @@ void ShapeWorksStudioApp::update_view_mode() {
       }
     }
 
-    else if (session_->get_tool_state() == Session::MONAI_C) {
-      if (monai_tool_->get_display_feature() != "") {
-        feature_map_override = monai_tool_->get_display_feature();
-      }
-    
      else if (session_->get_tool_state() == Session::ANALYSIS_C) {
       if (analysis_tool_->get_display_feature_map() != feature_map) {
         feature_map_override = analysis_tool_->get_display_feature_map();
@@ -1441,11 +1436,12 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   update_view_mode();
   update_view_combo();
-  // TODO: see links here
-  if (session_->get_tool_state() == Session::MONAI_C) {
-    visualizer_->display_shapes(monai_tool_->get_shapes());
-  }
-  else if (session_->get_tool_state() == Session::DEEPSSM_C) {
+
+  // if (session_->get_tool_state() == Session::MONAI_C) {
+  //   visualizer_->display_shapes(monai_tool_->get_shapes());
+  // }
+  // disable for now, enable when monai prediction works alright
+  if (session_->get_tool_state() == Session::DEEPSSM_C) {
     visualizer_->display_shapes(deepssm_tool_->get_shapes());
   } else {
     current_display_mode_ = mode;
@@ -2212,9 +2208,9 @@ void ShapeWorksStudioApp::update_view_combo() {
     set_view_combo_item_enabled(DisplayMode::Reconstructed, true);
   }
   if (tool_state == Session::MONAI_C {
-    set_view_combo_item_enabled(DisplayMode::Original, true);
-    set_view_combo_item_enabled(DisplayMode::Groomed, false);
-    set_view_combo_item_enabled(DisplayMode::Reconstructed, false);
+    set_view_combo_item_enabled(DisplayMode::Original, session_->original_present());
+    set_view_combo_item_enabled(DisplayMode::Groomed, session_->groomed_present());
+    set_view_combo_item_enabled(DisplayMode::Reconstructed, should_reconstruct_view_show());
   }
 
 
