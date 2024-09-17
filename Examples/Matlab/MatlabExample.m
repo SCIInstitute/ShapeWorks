@@ -1,6 +1,5 @@
 % ShapeWorks Matlab Example
 
-
 % Add the required directory to MATLAB's dynamic class path
 javaaddpath('/path/to/shapeworks/Java');
 
@@ -14,12 +13,22 @@ import edu.utah.sci.shapeworks.ShapeWorksProject;
 % Create a new ShapeWorksProject object
 project = ShapeWorksProject();
 
-% Define the list of shapes to be processed (using ArrayList)
+% Create a set of ellipsoid meshes to be processed, save as STL files
+for i=0:3
+    % vary radius using i for one of the ellipsoids directions
+    [x,y,z]=ellipsoid(0,0,0,50+i*10,50,50);
+    fv = surf2patch(x, y, z, 'triangles');
+    TR = triangulation(fv.faces, fv.vertices);
+    stlwrite(TR, sprintf('ellipsoid_%02d.stl', i));
+end
+
+
+% Define the list of shapes to be processed
 filenames = ArrayList();
-filenames.add('meshes/ellipsoid_00.vtk');
-filenames.add('meshes/ellipsoid_01.vtk');
-filenames.add('meshes/ellipsoid_02.vtk');
-filenames.add('meshes/ellipsoid_03.vtk');
+filenames.add('ellipsoid_00.stl');
+filenames.add('ellipsoid_01.stl');
+filenames.add('ellipsoid_02.stl');
+filenames.add('ellipsoid_03.stl');
 project.setShapes(filenames);
 
 % Define grooming parameters (using HashMap)
