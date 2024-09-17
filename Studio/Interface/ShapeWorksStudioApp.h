@@ -33,7 +33,7 @@ class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
 class DeepSSMTool;
-class MonaiTool;
+class MonaiLabelTool;
 class Session;
 class Visualizer;
 class SplashScreen;
@@ -226,7 +226,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<DeepSSMTool> deepssm_tool_;
-  QSharedPointer<MonaiTool> monai_tool_;
+  QSharedPointer<MonaiLabelTool> monai_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   CompareWidget* compare_widget_ = nullptr;
