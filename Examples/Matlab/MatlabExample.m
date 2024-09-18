@@ -1,10 +1,11 @@
 % ShapeWorks Matlab Example
 
 % Add the required directory to MATLAB's dynamic class path
-javaaddpath('/path/to/shapeworks/Java');
+javaaddpath('/Users/amorris/sci/shapeworks/code/Java');
 
 % Add the shapeworks binary directory to the system path
-setenv('PATH', [getenv('PATH') ':/path/to/shapeworks/bin']);
+setenv('PATH', [getenv('PATH') ':/Users/amorris/sci/shapeworks/bin/bin']);
+
 
 import java.util.ArrayList;
 import java.util.HashMap;

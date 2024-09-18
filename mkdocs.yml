@@ -131,6 +131,10 @@ nav:
    - Classes:    'api/Classes/index_classes.md'
    - Files:      'api/Files/index_files.md'
 
+- Java/Matlab Interface:
+   - Java Interface: 'java/java.md'
+   - Matlab Interface: 'java/matlab.md'
+     
 - About:
    - 'Meet ShapeWorkers!':  'about/team.md'
    - 'Release Notes':      'about/release-notes.md'
