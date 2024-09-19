@@ -133,7 +133,7 @@ bool Session::save_project(QString filename) {
 
     set_project_path(QFileInfo(filename).absolutePath());
 
-    preferences_.set_saved();
+    modified_ = false;
 
     progress.setValue(5);
     QApplication::processEvents();
@@ -188,6 +188,8 @@ bool Session::save_project(QString filename) {
 
 //---------------------------------------------------------------------------
 bool Session::load_project(QString filename) {
+  modified_ = false;
+
   if (!QFile::exists(filename)) {
     QMessageBox::critical(nullptr, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
     return false;

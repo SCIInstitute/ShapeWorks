@@ -3,6 +3,7 @@
 #include <Analyze/Analyze.h>
 #include <Analyze/Particles.h>
 #include <Data/Preferences.h>
+#include <Logging.h>
 #include <MeshManager.h>
 #include <Particles/ParticleSystemEvaluation.h>
 #include <Project/Project.h>
@@ -276,6 +277,12 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_current_alignment(AlignmentType alignment) { current_alignment_ = alignment; }
   AlignmentType get_current_alignment() { return current_alignment_; }
 
+  bool is_modified() { return modified_; }
+  void set_modified(bool modified) {
+    SW_LOG("modified: {}", modified);
+    modified_ = modified;
+  }
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -367,6 +374,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   QSharedPointer<PythonWorker> py_worker_;
 
   AlignmentType current_alignment_{AlignmentType::Local};
+
+  bool modified_{true};
 };
 
 }  // namespace shapeworks
