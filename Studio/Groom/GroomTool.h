@@ -105,5 +105,7 @@ class GroomTool : public QWidget {
   std::string current_domain_;
 
   QStringList reflect_columns_;
+
+  bool block_signals_ = false;
 };
 }  // namespace shapeworks
