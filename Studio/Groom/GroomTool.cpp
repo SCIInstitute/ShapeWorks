@@ -194,6 +194,7 @@ void GroomTool::update_page() {
 
 //---------------------------------------------------------------------------
 void GroomTool::update_domain_box() {
+  block_signals_ = true;
   auto domain_names = session_->get_project()->get_domain_names();
   ui_->domain_panel->setVisible(domain_names.size() > 1);
 
@@ -218,6 +219,7 @@ void GroomTool::update_domain_box() {
       ui_->shared_boundary_second_domain->setCurrentIndex(ui_->shared_boundary_second_domain->currentIndex() + 1);
     }
   }
+  block_signals_ = false;
 }
 
 //---------------------------------------------------------------------------
@@ -709,6 +711,10 @@ void GroomTool::shutdown_threads() {
 
 //---------------------------------------------------------------------------
 void GroomTool::domain_changed() {
+  if (block_signals_) {
+    return;
+  }
+
   if (current_domain_ != "") {
     store_params();
   }
@@ -719,6 +725,7 @@ void GroomTool::domain_changed() {
     current_domain_ = ui_->domain_box->currentText().toStdString();
   }
 
+  std::cerr << "calling load_params3\n";
   load_params();
 
   /*
