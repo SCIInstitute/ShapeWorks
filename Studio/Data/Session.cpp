@@ -953,6 +953,7 @@ void Session::set_feature_range_max(double value) {
 //---------------------------------------------------------------------------
 void Session::set_feature_uniform_scale(bool value) {
   if (!is_loading()) {
+    set_modified(true);
     params_.set("feature_uniform_scale", value);
     Q_EMIT feature_range_changed();
   }
@@ -969,8 +970,10 @@ void Session::handle_ctrl_click(PickResult result) {
 
   if (landmarks_active_) {
     new_landmark(result);
+    set_modified(true);
   } else if (planes_active_) {
     new_plane_point(result);
+    set_modified(true);
   }
 }
 

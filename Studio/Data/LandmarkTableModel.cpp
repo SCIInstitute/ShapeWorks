@@ -37,7 +37,10 @@ void LandmarkTableModel::set_session(QSharedPointer<Session> session) {
 }
 
 //---------------------------------------------------------------------------
-void LandmarkTableModel::store_landmarks() { this->project_->set_landmarks(active_domain_, landmarks_); }
+void LandmarkTableModel::store_landmarks() {
+  project_->set_landmarks(active_domain_, landmarks_);
+  session_->set_modified(true);
+}
 
 //---------------------------------------------------------------------------
 void LandmarkTableModel::set_active_domain(int domain) { active_domain_ = domain; }
@@ -45,6 +48,7 @@ void LandmarkTableModel::set_active_domain(int domain) { active_domain_ = domain
 //---------------------------------------------------------------------------
 void LandmarkTableModel::new_landmark() {
   project_->new_landmark(active_domain_);
+  session_->set_modified(true);
   update_table();
 }
 

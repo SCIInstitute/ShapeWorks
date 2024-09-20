@@ -574,6 +574,7 @@ void Viewer::handle_ffc_paint(double display_pos[2], double world_pos[3]) {
     ffc.setPainted(true);
     session_->trigger_ffc_changed();
   }
+  session_->set_modified(true);
 }
 
 //-----------------------------------------------------------------------------
