@@ -845,6 +845,10 @@ QString Session::get_display_name() {
     name = name + " (read-only)";
   }
 
+  if (modified_) {
+    name = name + "*";
+  }
+
   return name;
 }
 
@@ -1325,6 +1329,15 @@ Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
   }
 
   return all_scalars;
+}
+
+//---------------------------------------------------------------------------
+void Session::set_modified(bool modified) {
+  if (modified == modified_) {
+    return;
+  }
+  modified_ = modified;
+  Q_EMIT session_title_changed();
 }
 
 //---------------------------------------------------------------------------

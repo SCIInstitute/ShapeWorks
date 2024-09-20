@@ -278,10 +278,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   AlignmentType get_current_alignment() { return current_alignment_; }
 
   bool is_modified() { return modified_; }
-  void set_modified(bool modified) {
-    SW_LOG("modified: {}", modified);
-    modified_ = modified;
-  }
+  void set_modified(bool modified);
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -313,6 +310,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void reinsert_shapes();
   void annotations_changed();
   void save();
+  void session_title_changed();
 
  public:
   // constants

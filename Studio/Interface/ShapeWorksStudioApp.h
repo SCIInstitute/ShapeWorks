@@ -211,6 +211,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   void create_iso_submenu();
   void create_compare_submenu();
 
+  void update_window_title();
+
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 

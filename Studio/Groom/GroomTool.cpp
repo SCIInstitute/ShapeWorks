@@ -123,7 +123,7 @@ GroomTool::GroomTool(Preferences& prefs, Telemetry& telemetry) : preferences_(pr
 
   auto line_edits = findChildren<QLineEdit*>();
   for (auto line_edit : line_edits) {
-    connect(line_edit, &QLineEdit::editingFinished, this, &GroomTool::set_session_modified);
+    connect(line_edit, &QLineEdit::textChanged, this, &GroomTool::set_session_modified);
   }
   auto spin_boxes = findChildren<QSpinBox*>();
   for (auto spin_box : spin_boxes) {

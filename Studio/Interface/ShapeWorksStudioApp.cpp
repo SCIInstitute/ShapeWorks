@@ -875,6 +875,15 @@ void ShapeWorksStudioApp::create_compare_submenu() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_window_title() {
+  if (!session_) {
+    return;
+  }
+
+  setWindowTitle(session_->get_display_name());
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_new_mesh() {
   visualizer_->handle_new_mesh();
 
@@ -961,7 +970,7 @@ void ShapeWorksStudioApp::new_session() {
   session_ = QSharedPointer<Session>::create(this, preferences_);
   session_->set_parent(this);
   session_->set_py_worker(get_py_worker());
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 
   connect(session_->get_mesh_manager().get(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(session_->get_mesh_manager().get(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
@@ -976,6 +985,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(session_.data(), &Session::reinsert_shapes, this, [&]() { update_display(true); });
   connect(session_.data(), &Session::save, this, &ShapeWorksStudioApp::on_action_save_project_triggered);
   connect(session_.data(), &Session::tool_state_changed, this, &ShapeWorksStudioApp::update_tool_mode);
+  connect(session_.data(), &Session::session_title_changed, this, &ShapeWorksStudioApp::update_window_title);
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
@@ -1483,7 +1493,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   update_tool_mode();
 
-
   visualizer_->update_lut();
   enable_possible_actions();
   visualizer_->reset_camera();
@@ -1527,7 +1536,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   session_->update_auto_glyph_size();
 
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 
   // final check after loading that the view mode isn't set to something invalid
   if (!is_view_combo_item_enabled(ui_->view_mode_combobox->currentIndex())) {
@@ -1856,7 +1865,7 @@ void ShapeWorksStudioApp::save_project(QString filename) {
   }
 
   update_table();
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 }
 
 //---------------------------------------------------------------------------
