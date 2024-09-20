@@ -136,12 +136,6 @@ bool Preferences::get_center_checked() { return settings_.value("Studio/center_c
 void Preferences::set_center_checked(bool value) { settings_.setValue("Studio/center_checked", value); }
 
 //-----------------------------------------------------------------------------
-bool Preferences::not_saved() { return !saved_; }
-
-//-----------------------------------------------------------------------------
-void Preferences::set_saved(bool saved) { saved_ = saved; }
-
-//-----------------------------------------------------------------------------
 QStringList Preferences::get_recent_files() {
   update_recent_files();
   return recent_files_;

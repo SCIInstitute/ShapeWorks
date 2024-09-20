@@ -50,6 +50,8 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->delete_plane_, &QPushButton::clicked, this, &DataTool::delete_planes_clicked);
   connect(ui_->delete_ffc_, &QPushButton::clicked, this, &DataTool::delete_ffc_clicked);
 
+  connect(ui_->notes, &QTextEdit::textChanged, this, [this] { session_->set_modified(true); });
+
   ui_->table_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->landmarks_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->constraints_label->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -624,6 +626,7 @@ void DataTool::subject_notes_changed() {
       shape->get_subject()->set_notes(new_notes);
       // update the table
       update_table(false);
+      session_->set_modified(true);
     }
   }
 }

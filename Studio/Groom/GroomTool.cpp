@@ -121,6 +121,27 @@ GroomTool::GroomTool(Preferences& prefs, Telemetry& telemetry) : preferences_(pr
   ui_->sinc_iterations->setValidator(zero_and_up);
   ui_->sinc_passband->setValidator(double_validator);
 
+  auto line_edits = findChildren<QLineEdit*>();
+  for (auto line_edit : line_edits) {
+    connect(line_edit, &QLineEdit::textChanged, this, &GroomTool::set_session_modified);
+  }
+  auto spin_boxes = findChildren<QSpinBox*>();
+  for (auto spin_box : spin_boxes) {
+    connect(spin_box, qOverload<int>(&QSpinBox::valueChanged), this, &GroomTool::set_session_modified);
+  }
+  auto double_spin_boxes = findChildren<QDoubleSpinBox*>();
+  for (auto double_spin_box : double_spin_boxes) {
+    connect(double_spin_box, qOverload<double>(&QDoubleSpinBox::valueChanged), this, &GroomTool::set_session_modified);
+  }
+  auto check_boxes = findChildren<QCheckBox*>();
+  for (auto check_box : check_boxes) {
+    connect(check_box, &QCheckBox::toggled, this, &GroomTool::set_session_modified);
+  }
+  auto combo_boxes = findChildren<QComboBox*>();
+  for (auto combo_box : combo_boxes) {
+    connect(combo_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &GroomTool::set_session_modified);
+  }
+
   update_ui();
 }
 
@@ -280,6 +301,13 @@ void GroomTool::update_reflect_choices() {
   list.removeDuplicates();
   Q_FOREACH (auto item, list) {
     ui_->reflect_choice->addItem(item);
+  }
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::set_session_modified() {
+  if (session_) {
+    session_->set_modified(true);
   }
 }
 
