@@ -373,7 +373,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   AlignmentType current_alignment_{AlignmentType::Local};
 
-  bool modified_{true};
+  bool modified_{false};
 };
 
 }  // namespace shapeworks

@@ -256,8 +256,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered() {
   if (needs_save && ui_->action_save_project->isEnabled()) {
     // save the size of the window to preferences
     QMessageBox msgBox;
-    msgBox.setText("Do you want to save your changes as a project file?");
-    msgBox.setInformativeText("This will reload generated files and changed settings.");
+    msgBox.setText("Do you want to save your changes?");
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
@@ -1035,6 +1034,7 @@ void ShapeWorksStudioApp::new_session() {
   visualizer_->update_viewer_properties();
 
   ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Original);
+  session_->set_modified(false);
 }
 
 //---------------------------------------------------------------------------
@@ -1785,8 +1785,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   bool needs_save = session_ ? session_->is_modified() : false;
   if (needs_save && ui_->action_save_project->isEnabled()) {
     QMessageBox msgBox;
-    msgBox.setText("Do you want to save your changes as a project file?");
-    msgBox.setInformativeText("This will reload generated files and changed settings.");
+    msgBox.setText("Do you want to save your changes?");
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();

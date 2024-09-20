@@ -1336,6 +1336,7 @@ void Session::set_modified(bool modified) {
   if (modified == modified_) {
     return;
   }
+  SW_LOG("Project has been modified: {}", modified);
   modified_ = modified;
   Q_EMIT session_title_changed();
 }
