@@ -88,6 +88,8 @@ class GroomTool : public QWidget {
   void update_reflect_columns();
   void update_reflect_choices();
 
+  void set_session_modified();
+
   Preferences& preferences_;
   Telemetry& telemetry_;
 
@@ -105,5 +107,9 @@ class GroomTool : public QWidget {
   std::string current_domain_;
 
   QStringList reflect_columns_;
+
+  bool block_signals_ = false;
+
+  bool block_session_modify_ = false;
 };
 }  // namespace shapeworks

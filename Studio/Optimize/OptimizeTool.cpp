@@ -106,6 +106,22 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
     connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
   }
 
+  auto set_session_modified = [this]() {
+    if (!session_) {
+      return;
+    }
+    session_->set_modified(true);
+  };
+
+  auto line_edits = findChildren<QLineEdit*>();
+  for (auto line_edit : line_edits) {
+    connect(line_edit, &QLineEdit::textChanged, this, set_session_modified);
+  }
+  auto check_boxes = findChildren<QCheckBox*>();
+  for (auto check_box : check_boxes) {
+    connect(check_box, &QCheckBox::toggled, this, set_session_modified);
+  }
+
   Style::apply_normal_button_style(ui_->restoreDefaults);
 }
 

@@ -26,9 +26,6 @@ class Preferences : public QObject {
   QStringList get_recent_files();
   QStringList get_recent_paths();
 
-  bool not_saved();
-  void set_saved(bool saved = true);
-
   QByteArray get_window_geometry();
   void set_window_geometry(QByteArray geometry);
 
@@ -146,5 +143,4 @@ class Preferences : public QObject {
   QStringList recent_paths_;
 
   QSettings settings_;
-  bool saved_ = true;
 };

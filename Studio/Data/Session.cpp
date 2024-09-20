@@ -133,7 +133,7 @@ bool Session::save_project(QString filename) {
 
     set_project_path(QFileInfo(filename).absolutePath());
 
-    preferences_.set_saved();
+    modified_ = false;
 
     progress.setValue(5);
     QApplication::processEvents();
@@ -188,6 +188,8 @@ bool Session::save_project(QString filename) {
 
 //---------------------------------------------------------------------------
 bool Session::load_project(QString filename) {
+  modified_ = false;
+
   if (!QFile::exists(filename)) {
     QMessageBox::critical(nullptr, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
     return false;
@@ -843,6 +845,10 @@ QString Session::get_display_name() {
     name = name + " (read-only)";
   }
 
+  if (modified_) {
+    name = name + "*";
+  }
+
   return name;
 }
 
@@ -947,6 +953,7 @@ void Session::set_feature_range_max(double value) {
 //---------------------------------------------------------------------------
 void Session::set_feature_uniform_scale(bool value) {
   if (!is_loading()) {
+    set_modified(true);
     params_.set("feature_uniform_scale", value);
     Q_EMIT feature_range_changed();
   }
@@ -963,8 +970,10 @@ void Session::handle_ctrl_click(PickResult result) {
 
   if (landmarks_active_) {
     new_landmark(result);
+    set_modified(true);
   } else if (planes_active_) {
     new_plane_point(result);
+    set_modified(true);
   }
 }
 
@@ -1323,6 +1332,16 @@ Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
   }
 
   return all_scalars;
+}
+
+//---------------------------------------------------------------------------
+void Session::set_modified(bool modified) {
+  if (modified == modified_) {
+    return;
+  }
+  SW_LOG("Project has been modified: {}", modified);
+  modified_ = modified;
+  Q_EMIT session_title_changed();
 }
 
 //---------------------------------------------------------------------------

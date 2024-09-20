@@ -214,7 +214,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->glyphs_visible_button, &QPushButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(ui_->surface_visible_button, &QPushButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
 
-  preferences_.set_saved();
   enable_possible_actions();
 
   connect(ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
@@ -253,11 +252,11 @@ void ShapeWorksStudioApp::initialize_vtk() { lightbox_->set_render_window(ui_->q
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered() {
-  if (preferences_.not_saved() && ui_->action_save_project->isEnabled()) {
+  bool needs_save = session_ ? session_->is_modified() : false;
+  if (needs_save && ui_->action_save_project->isEnabled()) {
     // save the size of the window to preferences
     QMessageBox msgBox;
-    msgBox.setText("Do you want to save your changes as a project file?");
-    msgBox.setInformativeText("This will reload generated files and changed settings.");
+    msgBox.setText("Do you want to save your changes?");
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
@@ -875,6 +874,15 @@ void ShapeWorksStudioApp::create_compare_submenu() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_window_title() {
+  if (!session_) {
+    return;
+  }
+
+  setWindowTitle(session_->get_display_name());
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_new_mesh() {
   visualizer_->handle_new_mesh();
 
@@ -961,7 +969,7 @@ void ShapeWorksStudioApp::new_session() {
   session_ = QSharedPointer<Session>::create(this, preferences_);
   session_->set_parent(this);
   session_->set_py_worker(get_py_worker());
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 
   connect(session_->get_mesh_manager().get(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(session_->get_mesh_manager().get(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
@@ -976,6 +984,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(session_.data(), &Session::reinsert_shapes, this, [&]() { update_display(true); });
   connect(session_.data(), &Session::save, this, &ShapeWorksStudioApp::on_action_save_project_triggered);
   connect(session_.data(), &Session::tool_state_changed, this, &ShapeWorksStudioApp::update_tool_mode);
+  connect(session_.data(), &Session::session_title_changed, this, &ShapeWorksStudioApp::update_window_title);
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
@@ -1020,12 +1029,12 @@ void ShapeWorksStudioApp::new_session() {
   ui_->action_analysis_mode->setChecked(false);
   ui_->stacked_widget->setCurrentWidget(data_tool_.data());
   ui_->controlsDock->setWindowTitle("Data");
-  preferences_.set_saved();
   enable_possible_actions();
   update_display(true);
   visualizer_->update_viewer_properties();
 
   ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Original);
+  session_->set_modified(false);
 }
 
 //---------------------------------------------------------------------------
@@ -1484,12 +1493,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   update_tool_mode();
 
-  // set the zoom state
-  // ui_->thumbnail_size_slider->setValue(
-  //  preferences_.get_preference("zoom_state", 1));
-
   visualizer_->update_lut();
-  preferences_.set_saved();
   enable_possible_actions();
   visualizer_->reset_camera();
 
@@ -1532,7 +1536,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   session_->update_auto_glyph_size();
 
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 
   // final check after loading that the view mode isn't set to something invalid
   if (!is_view_combo_item_enabled(ui_->view_mode_combobox->currentIndex())) {
@@ -1546,6 +1550,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   handle_glyph_changed();
   update_display(true);
   handle_progress(100);
+  session_->set_modified(false);
   SW_LOG("Project loaded: " + filename.toStdString());
 }
 
@@ -1777,10 +1782,10 @@ void ShapeWorksStudioApp::action_export_screenshot_triggered() {
 void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   // close the preferences window in case it is open
   preferences_window_->close();
-  if (preferences_.not_saved() && ui_->action_save_project->isEnabled()) {
+  bool needs_save = session_ ? session_->is_modified() : false;
+  if (needs_save && ui_->action_save_project->isEnabled()) {
     QMessageBox msgBox;
-    msgBox.setText("Do you want to save your changes as a project file?");
-    msgBox.setInformativeText("This will reload generated files and changed settings.");
+    msgBox.setText("Do you want to save your changes?");
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
@@ -1859,7 +1864,7 @@ void ShapeWorksStudioApp::save_project(QString filename) {
   }
 
   update_table();
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 }
 
 //---------------------------------------------------------------------------
