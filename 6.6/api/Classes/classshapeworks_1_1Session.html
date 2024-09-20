@@ -2649,6 +2649,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#signal-session_title_changed" class="md-nav__link">
+    signal session_title_changed
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3482,6 +3489,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-is_modified" class="md-nav__link">
+    function is_modified
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_modified" class="md-nav__link">
+    function set_modified
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-is_supported_file_format" class="md-nav__link">
     function is_supported_file_format
   </a>
@@ -3700,6 +3721,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#signal-save">save</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-session-title-changed">session_title_changed</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -4182,6 +4207,14 @@
 </tr>
 <tr>
 <td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-is-modified">is_modified</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-modified">set_modified</a></strong>(bool modified)</td>
+</tr>
+<tr>
+<td>bool</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-is-supported-file-format">is_supported_file_format</a></strong>(std::string filename)</td>
 </tr>
 <tr>
@@ -4308,6 +4341,9 @@
 </code></pre></div>
 <h3 id="signal-save">signal save</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">save</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="signal-session_title_changed">signal session_title_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">session_title_changed</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-session">function Session</h3>
@@ -4783,6 +4819,14 @@
 <h3 id="function-get_current_alignment">function get_current_alignment</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">get_current_alignment</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-is_modified">function is_modified</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_modified</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_modified">function set_modified</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_modified</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">modified</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
@@ -4811,7 +4855,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-09-19 at 07:07:11 +0000</p>
+<p>Updated on 2024-09-20 at 07:18:40 +0000</p>
 
               
             </article>

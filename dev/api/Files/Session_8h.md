@@ -31,6 +31,7 @@ title: Studio/Data/Session.h
 #include <Analyze/Analyze.h>
 #include <Analyze/Particles.h>
 #include <Data/Preferences.h>
+#include <Logging.h>
 #include <MeshManager.h>
 #include <Particles/ParticleSystemEvaluation.h>
 #include <Project/Project.h>
@@ -279,6 +280,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_current_alignment(AlignmentType alignment) { current_alignment_ = alignment; }
   AlignmentType get_current_alignment() { return current_alignment_; }
 
+  bool is_modified() { return modified_; }
+  void set_modified(bool modified);
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -308,6 +312,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void reinsert_shapes();
   void annotations_changed();
   void save();
+  void session_title_changed();
 
  public:
   // constants
@@ -367,6 +372,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   QSharedPointer<PythonWorker> py_worker_;
 
   AlignmentType current_alignment_{AlignmentType::Local};
+
+  bool modified_{false};
 };
 
 }  // namespace shapeworks
@@ -375,4 +382,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2024-09-19 at 07:07:12 +0000
+Updated on 2024-09-20 at 07:18:40 +0000

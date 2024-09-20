@@ -2476,6 +2476,7 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Analyze.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Logging.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;MeshManager.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Particles/ParticleSystemEvaluation.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
@@ -2724,6 +2725,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_current_alignment</span><span class="p">(</span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">alignment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">current_alignment_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">alignment</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="n">AlignmentType</span><span class="w"> </span><span class="nf">get_current_alignment</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">current_alignment_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_modified</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">modified_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_modified</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">modified</span><span class="p">);</span>
+
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
@@ -2753,6 +2757,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reinsert_shapes</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">annotations_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">session_title_changed</span><span class="p">();</span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="c1">// constants</span>
@@ -2812,12 +2817,14 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">current_alignment_</span><span class="p">{</span><span class="n">AlignmentType</span><span class="o">::</span><span class="n">Local</span><span class="p">};</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">modified_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-09-19 at 07:07:12 +0000</p>
+<p>Updated on 2024-09-20 at 07:18:40 +0000</p>
 
               
             </article>

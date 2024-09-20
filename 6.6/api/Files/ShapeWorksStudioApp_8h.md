@@ -235,6 +235,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   void create_iso_submenu();
   void create_compare_submenu();
 
+  void update_window_title();
+
   Ui_ShapeWorksStudioApp* ui_;
 
   QActionGroup* action_group_ = nullptr;
@@ -295,4 +297,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2024-09-19 at 07:07:12 +0000
+Updated on 2024-09-20 at 07:18:40 +0000

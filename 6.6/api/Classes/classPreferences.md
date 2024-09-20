@@ -41,8 +41,6 @@ Inherits from QObject
 | void | **[add_recent_file](../Classes/classPreferences.md#function-add-recent-file)**(QString file, QString path) |
 | QStringList | **[get_recent_files](../Classes/classPreferences.md#function-get-recent-files)**() |
 | QStringList | **[get_recent_paths](../Classes/classPreferences.md#function-get-recent-paths)**() |
-| bool | **[not_saved](../Classes/classPreferences.md#function-not-saved)**() |
-| void | **[set_saved](../Classes/classPreferences.md#function-set-saved)**(bool saved =true) |
 | QByteArray | **[get_window_geometry](../Classes/classPreferences.md#function-get-window-geometry)**() |
 | void | **[set_window_geometry](../Classes/classPreferences.md#function-set-window-geometry)**(QByteArray geometry) |
 | QByteArray | **[get_window_state](../Classes/classPreferences.md#function-get-window-state)**() |
@@ -230,22 +228,6 @@ QStringList get_recent_files()
 
 ```cpp
 QStringList get_recent_paths()
-```
-
-
-### function not_saved
-
-```cpp
-bool not_saved()
-```
-
-
-### function set_saved
-
-```cpp
-void set_saved(
-    bool saved =true
-)
 ```
 
 
@@ -834,4 +816,4 @@ void set_pending_telemetry_events(
 
 -------------------------------
 
-Updated on 2024-09-19 at 07:07:11 +0000
+Updated on 2024-09-20 at 07:18:40 +0000

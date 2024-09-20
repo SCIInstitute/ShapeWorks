@@ -54,6 +54,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[reinsert_shapes](../Classes/classshapeworks_1_1Session.md#signal-reinsert-shapes)**() |
 | void | **[annotations_changed](../Classes/classshapeworks_1_1Session.md#signal-annotations-changed)**() |
 | void | **[save](../Classes/classshapeworks_1_1Session.md#signal-save)**() |
+| void | **[session_title_changed](../Classes/classshapeworks_1_1Session.md#signal-session-title-changed)**() |
 
 ## Public Functions
 
@@ -176,6 +177,8 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | Eigen::MatrixXd | **[get_all_scalars](../Classes/classshapeworks_1_1Session.md#function-get-all-scalars)**(std::string target_feature)<br>Return all scalars for all shapes, given target feature.  |
 | void | **[set_current_alignment](../Classes/classshapeworks_1_1Session.md#function-set-current-alignment)**(AlignmentType alignment) |
 | AlignmentType | **[get_current_alignment](../Classes/classshapeworks_1_1Session.md#function-get-current-alignment)**() |
+| bool | **[is_modified](../Classes/classshapeworks_1_1Session.md#function-is-modified)**() |
+| void | **[set_modified](../Classes/classshapeworks_1_1Session.md#function-set-modified)**(bool modified) |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -382,6 +385,13 @@ void annotations_changed()
 
 ```cpp
 void save()
+```
+
+
+### signal session_title_changed
+
+```cpp
+void session_title_changed()
 ```
 
 
@@ -1328,6 +1338,22 @@ inline AlignmentType get_current_alignment()
 ```
 
 
+### function is_modified
+
+```cpp
+inline bool is_modified()
+```
+
+
+### function set_modified
+
+```cpp
+void set_modified(
+    bool modified
+)
+```
+
+
 ### function is_supported_file_format
 
 ```cpp
@@ -1386,4 +1412,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2024-09-19 at 07:07:11 +0000
+Updated on 2024-09-20 at 07:18:40 +0000
