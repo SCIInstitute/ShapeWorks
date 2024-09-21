@@ -38,19 +38,19 @@
                 font: bold;
                 }
 
-                QPushButton#monai_params_header {
+                QPushButton#monai_label_header {
                 background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227,
                 stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
                 border-radius: 3px;
                 }
 
-                QWidget#monai_params_header_background {
+                QWidget#monai_label_header_background {
                 background-color: rgb( 192, 92, 0);
                 border-radius: 3px;
                 border: 1px solid rgb(90, 90, 90);
                 }
 
-                QWidget#optimize_panel {
+                QWidget#monai_params_panel {
                 border-radius: 4px;
                 border: 1px solid rgb(60, 60, 60);
                 color: rgb(90, 90, 90);
@@ -120,7 +120,7 @@
        <number>2</number>
       </property>
       <item>
-       <widget class="QWidget" name="monai_params_header_background" native="true">
+       <widget class="QWidget" name="monai_label_header_background" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_21">
          <property name="leftMargin">
           <number>0</number>
@@ -135,7 +135,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="monai_params_header">
+          <widget class="QPushButton" name="monai_label_header">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -165,7 +165,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QToolButton" name="monai_params_open_button">
+             <widget class="QToolButton" name="monai_label_open_button">
               <property name="minimumSize">
                <size>
                 <width>21</width>
@@ -195,9 +195,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="monai_params_label">
+             <widget class="QLabel" name="monai_top_label">
               <property name="text">
-               <string>MONAI Label Settings</string>
+               <string>MONAI Label</string>
               </property>
              </widget>
             </item>
@@ -208,7 +208,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="monai_params_content" native="true">
+       <widget class="QWidget" name="monai_panel_content" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_11">
          <property name="spacing">
           <number>3</number>
@@ -226,7 +226,7 @@
           <number>3</number>
          </property>
          <item>
-          <widget class="QWidget" name="optimize_panel_contents" native="true">
+          <widget class="QWidget" name="monai_panel_contents" native="true">
            <property name="minimumSize">
             <size>
              <width>50</width>
@@ -265,12 +265,12 @@
                <item row="0" column="0">
                 <widget class="QLabel" name="server_address_label">
                  <property name="text">
-                  <string>Server Address</string>
+                  <string>MONAI Label Server</string>
                  </property>
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="server_address">
+                <widget class="QLineEdit" name="serverAddressField">
                  <property name="text">
                   <string>http://localhost:8080</string>
                  </property>
@@ -281,7 +281,7 @@
                </item>
 
                <item row="1" column="0">
-                <widget class="QLabel" name="label_4">
+                <widget class="QLabel" name="monai_model_type_label">
                  <property name="text">
                   <string>Model</string>
                  </property>
@@ -289,14 +289,14 @@
                </item>
 
                <item row="1" column="1">
-                <widget class="QComboBox" name="monai_model_type">
+                <widget class="QComboBox" name="monaiModelTypeCombo">
                  <item>
                   <property name="text">
                    <string>Segmentation</string>
                   </property>
                  </item>
-                 <item>
-                  <property name="text">
+                 <!-- <item> -->
+                  <!-- <property name="text">
                    <string>DeepEdit</string>
                   </property>
                  </item>
@@ -304,12 +304,12 @@
                   <property name="text">
                    <string>DeepGrow</string>
                   </property>
-                 </item>
+                 </item> -->
                 </widget>
                </item>
 
                <item row="2" column="1">
-                <widget class="QPushButton" name="load_server_button">
+                <widget class="QPushButton" name="connectServerButton">
                  <property name="minimumSize">
                   <size>
                    <width>10</width>
@@ -319,11 +319,16 @@
                  <property name="text">
                   <string>Load Server</string>
                  </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/refresh-icon.png</normaloff>
+                  </iconset>
+                 </property>
                 </widget>
                </item>
 
-               <item row="3" column="1">
-                <widget class="QPushButton" name="restore_defaults_button">
+               <item row="3" column="0">
+                <widget class="QPushButton" name="nextSampleButton">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -331,7 +336,50 @@
                   </size>
                  </property>
                  <property name="text">
-                  <string>Restore Defaults</string>
+                  <string>Next Sample</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/segment.png</normaloff>
+                  </iconset>
+                 </property>
+                </widget>
+               </item>
+
+               <item row="3" column="1">
+                <widget class="QPushButton" name="submitLabelButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Submit Label</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                    <normaloff>:/Studio/Images/save.png</normaloff>
+                  </iconset>
+                 </property>
+                </widget>
+               </item>
+
+               <item row="4" column="1">
+                <widget class="QPushButton" name="runSegmentationButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Run Segmentation</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/segment.png</normaloff>
+                  </iconset>
                  </property>
                 </widget>
                </item>
@@ -350,7 +398,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <!-- <item>
     <widget class="QWidget" name="edit_panel" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -623,7 +671,7 @@
       </item>
      </layout>
     </widget>
-   </item>
+   </item> -->
    <!-- <item>
     <widget class="QWidget" name="buttons_widget" native="true">
      <layout class="QGridLayout" name="gridLayout_11">
