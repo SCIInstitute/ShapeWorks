@@ -52,7 +52,7 @@ mkdir -p "package/$VERSION"
 
 # Build python package tarballs
 # Pip can't install these otherwise from a read-only area like /Applications
-for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+for package in DataAugmentationUtilsPackage DatasetUtilsPackage MONAILabelPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
     cd Python
     tar czvf ${package}.tar.gz $package
     cd ..

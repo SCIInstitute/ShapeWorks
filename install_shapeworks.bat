@@ -29,6 +29,7 @@ call pip install open3d==0.17.0 || goto :error
 call pip install Python/DatasetUtilsPackage.tar.gz || goto :error
 call pip install Python/DocumentationUtilsPackage.tar.gz || goto :error
 call pip install Python/DataAugmentationUtilsPackage.tar.gz || goto :error
+call pip install Python/MONAILabelPackage.tar.gz || goto :error
 call pip install Python/DeepSSMUtilsPackage.tar.gz || goto :error
 call pip install Python/ShapeCohortGenPackage.tar.gz || goto :error
 call pip install Python/shapeworks.tar.gz || goto :error
