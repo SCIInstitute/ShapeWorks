@@ -1,79 +1,92 @@
 #pragma once
 
-#include <QElapsedTimer>
-#include <QSharedPointer>
-#include <QWidget>
-
 #include <Data/Preferences.h>
+#include <Data/Session.h>
 #include <Project.h>
 #include <Shape.h>
+#include <ShapeWorksMONAI/MonaiLabelJob.h>
+#include <Interface/ShapeWorksStudioApp.h>
+
+#include <QElapsedTimer>
+#include <QObject>
+#include <QSharedPointer>
+#include <QWidget>
 
 class Ui_MonaiLabelTool;
 class QLabel;
 class QTableWidget;
 class QLineEdit;
+class Preferences;
 
 namespace shapeworks {
-
-class Session;
-class Lightbox;
 class ShapeWorksStudioApp;
+class Session;
+}
+
+namespace monailabel {
+
+class MonaiLabelJob;
+using shapeworks::ShapeList;
+using shapeworks::ShapeWorksStudioApp;
+using shapeworks::Session;
+
+
 
 class MonaiLabelTool : public QWidget {
-  
-  using PointList = std::shared_ptr<Eigen::Matrix<float, Eigen::Dynamic, 3>>;
   Q_OBJECT;
 
  public:
+  const static std::string MONAI_MODE_SEGMENTATION;
+  const static std::string MONAI_MODE_DEEPGROW;
+  const static std::string MONAI_MODE_DEEPEDIT;
+
   MonaiLabelTool(Preferences& prefs);
-  ~MonaiLabelTool() {
-    // clean temp dirs
-  };
+  ~MonaiLabelTool();
+
   void set_session(QSharedPointer<Session> session);
   void set_app(ShapeWorksStudioApp* app);
   bool is_active();
   void load_params();
-  void store_params();
+  void loadParamsFromUi();
   void shutdown();
-  ShapeList get_shapes();
+  void runSegmentationTool();
   void resizeEvent(QResizeEvent* event) override;
-
-  std::string get_display_feature();
+  int getCurrentSampleNumber();
+  void enable_actions();
 
  public Q_SLOTS:
-  void loadServer();
-  void restoreDefaults();
-  void monitorTraining();
-  void onEditControlPoints(std::vector<std::vector<double>>& pointListNode, std::string tagName);
-  void onTraining(); 
-  void onStopTraining();
-  bool isTrainingRunning(bool check_only);
-  void onNextSampleButton(); // handle later
-  void onUploadImage();
-  void onImportLabel();
-  void onSaveLabel();
-  void onClickSegmentation();
-  void onUpdateDeepGrow();
-  void onClickDeepGrow(); // not a slot
-  void updateParameterNodeFromGUI();
+  void handle_error(QString msg);
+  void onConnectServer();
+  void updateDisplayPanels();
+  // void updateUiElements();
+  void onServerAddressChanged();
+  void onModelTypeChanged(int index);
+  void triggerUpdateView();
+  void update_panels();
+  void handle_thread_complete();
+  void handle_progress(int val, QString message);
+  void handleSampleView();
+
  Q_SIGNALS:
   void update_view();
   void progress(int);
+  void sampleChanged();
+
 
  private:
-  std::string getSessionId();
   Preferences& preferences_;
-  Ui_MonaiTool* ui_;
+  Ui_MonaiLabelTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
   bool tool_is_running_ = false;
-  MonaiTool::ToolMode current_tool_ = MonaiTool::ToolMode::DeepSSM_AugmentationType;
-  QSharedPointer<MONAILabelJob> monai_label_logic_;
-  QElapsedTimer timer_; // link with monitorTrraining
+  QSharedPointer<MonaiLabelJob> monai_label_logic_;
+  QElapsedTimer timer_;
   ShapeList shapes_;
-  PointList positiveList; // write make_shared in constructor /?TODO:
-  PointList negativeList;
 
+  std::string server_address_;
+  std::string model_type_;
+  std::string strategy_;
+  std::string client_id_;
 };
 
-}  // namespace shapeworks
+}  // namespace monailabel
