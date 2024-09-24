@@ -169,7 +169,9 @@ SET(STUDIO_DEEPSSM_MOC_HDRS
 SET(STUDIO_MONAILABEL_SRCS
 ShapeWorksMONAI/MonaiLabelTool.cpp
 ShapeWorksMONAI/MonaiLabelJob.cpp
+ShapeWorksMONAI/MonaiLabelUtils.cpp
 )
+
 SET(STUDIO_MONAILABEL_MOC_HDRS
   ShapeWorksMONAI/MonaiLabelTool.h
   ShapeWorksMONAI/MonaiLabelJob.h
