@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SegmentationToolPanel</class>
+ <widget class="QWidget" name="SegmentationToolPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>339</width>
+    <height>510</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+
+
+QWidget#widget {
+ background-color: rgba(0,0,255,255);
+}
+
+QToolButton{
+	border: 1px solid rgba( 0, 0, 0, 0 );
+	margin: 0, 0, 0, 0;
+	padding: 0, 0, 0, 0;
+}
+
+QToolButton:hover{
+	background-color: rgba( 140, 140, 140, 50 );
+}
+
+QToolButton:pressed{
+	border: 1px solid rgba( 100, 100, 100, 120 );
+	background-color: rgba( 100, 100, 100, 200 );
+}
+
+
+/************************************************************************/
+
+
+
+
+QLabel#header_label {
+    color: white;
+    font: bold;
+}
+
+QPushButton#header {
+    background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
+    border-radius: 3px;
+}
+
+QWidget#header_background {
+    background-color: rgb( 192, 92, 0);
+    border-radius: 3px;
+    border: 1px solid rgb(90 90, 90);
+}
+
+QWidget#panel {
+    border-radius: 4px;
+    border: 1px solid rgb(60, 60, 60);
+    color: rgb(90, 90, 90);
+}
+
+/*********************************************/
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="panel" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_10">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="header_background" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="header">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>215</width>
+             <height>21</height>
+            </size>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QToolButton" name="open_button">
+              <property name="minimumSize">
+               <size>
+                <width>21</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>21</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                <normaloff>:/Studio/Images/RightArrowWhite.png</normaloff>
+                <normalon>:/Studio/Images/DownArrowWhite.png</normalon>:/Studio/Images/RightArrowWhite.png</iconset>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="header_label">
+              <property name="text">
+               <string>Segmentation Tool</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="content" native="true">
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="1" column="1" colspan="2">
+          <widget class="CustomSlider" name="ffc_brush_size_">
+           <property name="minimum">
+            <number>5</number>
+           </property>
+           <property name="maximum">
+            <number>200</number>
+           </property>
+           <property name="value">
+            <number>80</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QRadioButton" name="ffc_included_mode_">
+           <property name="text">
+            <string>Included</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="ffc_active_">
+           <property name="text">
+            <string>Painting Enabled</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Paint Type</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Brush Size</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QRadioButton" name="ffc_excluded_mode_">
+           <property name="text">
+            <string>Excluded</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomSlider</class>
+   <extends>QSlider</extends>
+   <header>Interface/CustomSlider.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../Resources/ShapeWorksStudio.qrc"/>
+ </resources>
+ <connections/>
+</ui>

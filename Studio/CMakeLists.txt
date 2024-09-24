@@ -85,6 +85,7 @@ SET(STUDIO_DATA_SRCS
   Data/ShapeWorksWorker.cpp
   Data/Telemetry.cpp
   Data/Worker.cpp
+  Data/SegmentationToolPanel.cpp
   )
 
 SET(STUDIO_DATA_MOC_HDRS
@@ -97,6 +98,7 @@ SET(STUDIO_DATA_MOC_HDRS
   Data/ShapeWorksWorker.h
   Data/Telemetry.h
   Data/Worker.h
+  Data/SegmentationToolPanel.h
   )
 
 SET(STUDIO_JOB_SRCS
