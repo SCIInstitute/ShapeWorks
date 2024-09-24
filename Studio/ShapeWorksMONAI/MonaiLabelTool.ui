@@ -272,7 +272,7 @@
                <item row="0" column="1">
                 <widget class="QLineEdit" name="serverAddressField">
                  <property name="text">
-                  <string>http://localhost:8080</string>
+                  <string>http://0.0.0.0:8000</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -280,15 +280,15 @@
                 </widget>
                </item>
 
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="monai_model_type_label">
                  <property name="text">
-                  <string>Model</string>
+                  <string>Model Type</string>
                  </property>
                 </widget>
                </item>
 
-               <item row="1" column="1">
+               <item row="2" column="1">
                 <widget class="QComboBox" name="monaiModelTypeCombo">
                  <item>
                   <property name="text">
@@ -308,52 +308,43 @@
                 </widget>
                </item>
 
-               <item row="2" column="1">
-                <widget class="QPushButton" name="connectServerButton">
-                 <property name="minimumSize">
-                  <size>
-                   <width>10</width>
-                   <height>22</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Load Server</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
-                   <normaloff>:/Studio/Images/refresh-icon.png</normaloff>
-                  </iconset>
-                 </property>
-                </widget>
-               </item>
-
                <item row="3" column="0">
-                <widget class="QPushButton" name="nextSampleButton">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>22</height>
-                  </size>
-                 </property>
+                <widget class="QLabel" name="monai_model_name_label">
                  <property name="text">
-                  <string>Next Sample</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
-                   <normaloff>:/Studio/Images/segment.png</normaloff>
-                  </iconset>
+                  <string>Model Name</string>
                  </property>
                 </widget>
                </item>
 
                <item row="3" column="1">
-                <widget class="QPushButton" name="submitLabelButton">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>22</height>
-                  </size>
+                <widget class="QComboBox" name="monaiModelNameCombo">
+                 <item>
+                  <property name="text">
+                   <string>--Model Name--</string>
+                  </property>
+                  <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                 </item>
+                </widget>
+               </item>
+
+               <item row="1" column="1">
+                <widget class="QPushButton" name="connectServerButton">
+                 <property name="text">
+                  <string>Connect Server</string>
                  </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/connection.png</normaloff>
+                  </iconset>
+                 </property>
+                </widget>
+               </item>
+
+
+               <item row="6" column="1">
+                <widget class="QPushButton" name="submitLabelButton">
                  <property name="text">
                   <string>Submit Label</string>
                  </property>
@@ -362,11 +353,56 @@
                     <normaloff>:/Studio/Images/save.png</normaloff>
                   </iconset>
                  </property>
+
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
                 </widget>
                </item>
 
-               <item row="4" column="1">
+               <item row="6" column="0">
                 <widget class="QPushButton" name="runSegmentationButton">
+                 <property name="text">
+                  <string>Run</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/segment.png</normaloff>
+                  </iconset>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                </widget>
+               </item>
+
+               <item row="4" column="0">
+                <widget class="QLabel" name="monai_sample_number_label">
+                 <property name="text">
+                  <string> Source Volume</string>
+                 </property>
+                </widget>
+               </item>
+
+
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="currentSampleSpinBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Sample selection</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QPushButton" name="uploadSampleButton">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -374,16 +410,16 @@
                   </size>
                  </property>
                  <property name="text">
-                  <string>Run Segmentation</string>
+                  <string>Upload Sample</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../Resources/ShapeWorksStudio.qrc">
-                   <normaloff>:/Studio/Images/segment.png</normaloff>
+                   <normaloff>:/Studio/Images/upload.png</normaloff>
                   </iconset>
                  </property>
                 </widget>
                </item>
-               
+
 
 
               </layout>
@@ -746,9 +782,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CustomSlider</class>
    <extends>QWidget</extends>
-   <header>customslider.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
