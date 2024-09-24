@@ -594,6 +594,33 @@ std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
 }
 
 //---------------------------------------------------------------------------
+std::shared_ptr<Image> Shape::get_segmentation() {
+  if (segmentation_) {
+    return segmentation_;
+  }
+  if (!subject_) {
+    return nullptr;
+  }
+  auto filenames = subject_->get_original_filenames();
+  if (filenames.empty()) {
+    return nullptr;
+  }
+  auto filename = filenames[0];
+
+  if (Image::isSupportedType(filename)) {
+    try {
+      std::shared_ptr<Image> image = std::make_shared<Image>(filename);
+      segmentation_ = image;
+      segmentation_filename_ = filename;
+    } catch (std::exception& ex) {
+      SW_ERROR("Unable to open file \"{}\": {}", filename, ex.what());
+    }
+  }
+
+  return segmentation_;
+}
+
+//---------------------------------------------------------------------------
 void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer image) {
   using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
 

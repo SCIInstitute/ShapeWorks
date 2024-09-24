@@ -1173,6 +1173,8 @@ void Viewer::update_image_volume(bool force) {
     }
   }
 
+  slice_view_.add_mask(shape_->get_segmentation());
+
   slice_view_.update_particles();
 
   auto image_volume_name = session_->get_image_name();

@@ -17,6 +17,8 @@
 #include <QMessageBox>
 #include <QThread>
 
+#include "SegmentationToolPanel.h"
+
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
 #else
@@ -29,6 +31,8 @@ namespace shapeworks {
 DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_DataTool;
   ui_->setupUi(this);
+  segmentation_tool_panel_ = new SegmentationToolPanel(this);
+  layout()->addWidget(segmentation_tool_panel_);
 
   connect(ui_->add_button, &QPushButton::clicked, this, &DataTool::import_button_clicked);
   connect(ui_->delete_button, &QPushButton::clicked, this, &DataTool::delete_button_clicked);

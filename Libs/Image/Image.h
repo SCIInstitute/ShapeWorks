@@ -1,5 +1,6 @@
 #pragma once
 
+#include <StringUtils.h>
 #include <itkImage.h>
 #include <itkImageRegionIterator.h>
 #include <itkLinearInterpolateImageFunction.h>
@@ -145,7 +146,7 @@ class Image {
                         const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// applies the given transformation to the image by using resampling filter with reference image
-  Image &applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
+  Image& applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary
   /// image
@@ -293,6 +294,16 @@ class Image {
   //! Return supported file types
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
+  }
+
+  //! Return if the file type is supported
+  static bool isSupportedType(const std::string& filename) {
+    for (const auto& type : Image::getSupportedTypes()) {
+      if (StringUtils::hasSuffix(filename, type)) {
+        return true;
+      }
+    }
+    return false;
   }
 
  private:

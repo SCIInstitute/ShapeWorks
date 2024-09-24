@@ -167,6 +167,8 @@ class Shape {
 
   std::shared_ptr<Image> get_image_volume(std::string image_volume_name);
 
+  std::shared_ptr<Image> get_segmentation();
+
   Eigen::VectorXd get_point_features(std::string feature);
 
   void set_point_features(std::string feature, Eigen::VectorXd values);
@@ -224,6 +226,9 @@ class Shape {
 
   std::shared_ptr<Image> image_volume_;
   std::string image_volume_filename_;
+
+  std::shared_ptr<Image> segmentation_;
+  std::string segmentation_filename_;
 
   std::vector<Constraints> constraints_;  // one set for each domain
   int alignment_type_;
