@@ -601,6 +601,8 @@ void Viewer::update_paint_mode() {
   paint_widget_->SetEnabled(0);
   paint_widget_->SetEnabled(session_->get_ffc_paint_active() || session_->get_seg_paint_active());
 
+  paint_widget_->set_circle_mode(session_->get_seg_paint_active());
+
   double paint_size = session_->get_ffc_paint_size() * 0.10;
 
   // scale based on dimension of data

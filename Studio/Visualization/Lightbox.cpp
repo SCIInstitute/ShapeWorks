@@ -103,7 +103,7 @@ void Lightbox::reset_camera_clipping_range() {
   }
   double bounds[6];
   bbox.GetBounds(bounds);
-  SW_LOG("computed bbox: {} {} {} {} {} {}", bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
+  ///SW_LOG("computed bbox: {} {} {} {} {} {}", bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
   renderer_->ResetCameraClippingRange(bounds);
 }
 

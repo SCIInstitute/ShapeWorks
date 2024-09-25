@@ -1,12 +1,16 @@
 
 #include "PaintWidget.h"
 
+#include <Logging.h>
+
 #include <QCursor>
 
 #include "Viewer.h"
 #include "vtkCallbackCommand.h"
 #include "vtkCommand.h"
 #include "vtkEvent.h"
+#include "vtkImageActor.h"
+#include "vtkImageActorPointPlacer.h"
 #include "vtkObjectFactory.h"
 #include "vtkOrientedGlyphContourRepresentation.h"
 #include "vtkPointPlacer.h"
@@ -21,10 +25,6 @@
 #include "vtkSphereSource.h"
 #include "vtkWidgetCallbackMapper.h"
 #include "vtkWidgetEvent.h"
-#include "vtkImageActorPointPlacer.h"
-#include "vtkImageActor.h"
-
-#include <Logging.h>
 
 namespace shapeworks {
 
@@ -94,6 +94,19 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
   }
 
   //----------------------------------------------------------------------
+  void set_circle_mode(bool circle_mode) {
+    if (circle_mode) {
+
+      this->property_->SetOpacity( 1.0 );
+      this->property_->LightingOff();
+      this->property_->SetLineWidth( 3.0 );
+      //property_->SetRepresentationToWireframe();
+    } else {
+      property_->SetRepresentationToSurface();
+    }
+  }
+
+  //----------------------------------------------------------------------
   void set_size(double size) { sphere_source_->SetRadius(size); }
 
   //----------------------------------------------------------------------
@@ -134,19 +147,17 @@ PaintWidget::PaintWidget() {
 
   // These are the event callbacks supported by this widget
   CallbackMapper->SetCallbackMethod(vtkCommand::LeftButtonPressEvent, vtkWidgetEvent::Select, this,
-                                          PaintWidget::StartPaintAction);
+                                    PaintWidget::StartPaintAction);
   CallbackMapper->SetCallbackMethod(vtkCommand::LeftButtonReleaseEvent, vtkWidgetEvent::EndSelect, this,
-                                          PaintWidget::EndPaintAction);
-  CallbackMapper->SetCallbackMethod(vtkCommand::MouseMoveEvent, vtkWidgetEvent::Move, this,
-                                          PaintWidget::MoveAction);
+                                    PaintWidget::EndPaintAction);
+  CallbackMapper->SetCallbackMethod(vtkCommand::MouseMoveEvent, vtkWidgetEvent::Move, this, PaintWidget::MoveAction);
 
   CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonPressEvent, vtkWidgetEvent::Translate, this,
-                                          PaintWidget::StartEraseAction);
+                                    PaintWidget::StartEraseAction);
   CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonReleaseEvent, vtkWidgetEvent::EndTranslate, this,
-                                          PaintWidget::EndEraseAction);
+                                    PaintWidget::EndEraseAction);
 
-  CallbackMapper->SetCallbackMethod(vtkCommand::LeaveEvent, vtkWidgetEvent::Scale, this,
-                                          PaintWidget::LeaveAction);
+  CallbackMapper->SetCallbackMethod(vtkCommand::LeaveEvent, vtkWidgetEvent::Scale, this, PaintWidget::LeaveAction);
 
   CallbackMapper->SetCallbackMethod(vtkCommand::KeyPressEvent, 100, this, PaintWidget::KeyPressAction);
 
@@ -184,10 +195,7 @@ bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
     if (!input) {
       SW_DEBUG("no input!?!!?!?");
     }
-
-
   }
-
 
   if (!PointPlacer->ComputeWorldPosition(Renderer, displayPos, worldPos, worldOrient)) {
     SW_DEBUG("point placer: leaving");
@@ -332,6 +340,9 @@ void PaintWidget::PrintSelf(ostream& os, vtkIndent indent) {
 
 //----------------------------------------------------------------------
 void PaintWidget::set_viewer(Viewer* viewer) { viewer_ = viewer; }
+
+//----------------------------------------------------------------------
+void PaintWidget::set_circle_mode(bool circle_mode) { sphere_cursor_->set_circle_mode(circle_mode); }
 
 //----------------------------------------------------------------------
 void PaintWidget::set_brush_size(double size) { sphere_cursor_->set_size(size); }
