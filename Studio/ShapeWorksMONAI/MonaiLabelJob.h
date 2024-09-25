@@ -14,6 +14,7 @@
 #include <string>
 
 namespace py = pybind11;
+
 namespace shapeworks {
     class ShapeWorksStudioApp;
     class Session;
@@ -101,7 +102,6 @@ class MonaiLabelJob : public Job {
   bool waitingForUpload;
   bool waitingForSegmentation;
   bool waitingForLabelSubmission;
-
 
   // Current subjects
   int sample_number_;

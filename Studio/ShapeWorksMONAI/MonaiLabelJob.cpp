@@ -20,7 +20,7 @@ namespace py = pybind11;
 using namespace shapeworks;
 
 namespace monailabel {
-  
+
 const std::string MonaiLabelJob::MONAI_RESULT_EXTENSION(".nrrd");
 const std::string MonaiLabelJob::MONAI_RESULT_DTYPE("uint8");
 
@@ -233,7 +233,7 @@ py::dict MonaiLabelJob::uploadImage(std::string image_in,
             .attr("upload_image")(
                 image_in, image_id.empty() ? py::none() : py::cast(image_id));
     // SW_DEBUG("Upload sample response: " +
-            //  py::repr(response).cast<std::string>());
+    //  py::repr(response).cast<std::string>());
 
   } catch (const py::error_already_set &e) {
     SW_ERROR("Python error: {}", e.what());

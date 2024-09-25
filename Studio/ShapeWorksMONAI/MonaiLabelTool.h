@@ -22,15 +22,11 @@ namespace shapeworks {
 class ShapeWorksStudioApp;
 class Session;
 }
-
 namespace monailabel {
 
 class MonaiLabelJob;
 using shapeworks::ShapeWorksStudioApp;
 using shapeworks::Session;
-
-
-
 class MonaiLabelTool : public QWidget {
   Q_OBJECT;
 
