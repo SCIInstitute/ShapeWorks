@@ -197,7 +197,7 @@
             <item>
              <widget class="QLabel" name="monai_top_label">
               <property name="text">
-               <string>MONAI Label</string>
+               <string>AI Assisted Segmentation</string>
               </property>
              </widget>
             </item>
@@ -336,7 +336,7 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../Resources/ShapeWorksStudio.qrc">
-                   <normaloff>:/Studio/Images/connection.png</normaloff>
+                   <normaloff>:/Studio/Images/connect.png</normaloff>
                   </iconset>
                  </property>
                 </widget>
