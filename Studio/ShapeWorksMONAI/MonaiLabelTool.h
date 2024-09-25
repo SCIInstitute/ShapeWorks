@@ -26,7 +26,6 @@ class Session;
 namespace monailabel {
 
 class MonaiLabelJob;
-using shapeworks::ShapeList;
 using shapeworks::ShapeWorksStudioApp;
 using shapeworks::Session;
 
@@ -39,6 +38,8 @@ class MonaiLabelTool : public QWidget {
   const static std::string MONAI_MODE_SEGMENTATION;
   const static std::string MONAI_MODE_DEEPGROW;
   const static std::string MONAI_MODE_DEEPEDIT;
+  const static std::string MONAI_SAMPLE_STRATEGY_RANDOM;
+
 
   MonaiLabelTool(Preferences& prefs);
   ~MonaiLabelTool();
@@ -46,7 +47,6 @@ class MonaiLabelTool : public QWidget {
   void set_session(QSharedPointer<Session> session);
   void set_app(ShapeWorksStudioApp* app);
   bool is_active();
-  void load_params();
   void loadParamsFromUi();
   void shutdown();
   void runSegmentationTool();
@@ -57,21 +57,20 @@ class MonaiLabelTool : public QWidget {
  public Q_SLOTS:
   void handle_error(QString msg);
   void onConnectServer();
-  void updateDisplayPanels();
-  // void updateUiElements();
   void onServerAddressChanged();
   void onModelTypeChanged(int index);
   void triggerUpdateView();
-  void update_panels();
-  void handle_thread_complete();
   void handle_progress(int val, QString message);
-  void handleSampleView();
+  void handleSampleNumberChanged();
+  void handleClientInitialized();
+  void handleUploadSampleCompleted();
+  void handleSegmentationCompleted();
+  void handleSubmitLabelCompleted();
 
  Q_SIGNALS:
   void update_view();
   void progress(int);
   void sampleChanged();
-
 
  private:
   Preferences& preferences_;
@@ -81,12 +80,13 @@ class MonaiLabelTool : public QWidget {
   bool tool_is_running_ = false;
   QSharedPointer<MonaiLabelJob> monai_label_logic_;
   QElapsedTimer timer_;
-  ShapeList shapes_;
 
   std::string server_address_;
   std::string model_type_;
   std::string strategy_;
   std::string client_id_;
+  int samples_processed_ = 0;
+  
 };
 
 }  // namespace monailabel
