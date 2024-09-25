@@ -3,7 +3,6 @@
 #include <Data/Session.h>
 #include <Job/Job.h>
 #include <Project/Project.h>
-#include <Project/Subject.h>
 #include <Shape.h>
 #include <ShapeWorksMONAI/MonaiLabelTool.h>
 #include <pybind11/embed.h>
@@ -15,11 +14,8 @@
 #include <string>
 
 namespace py = pybind11;
-using namespace pybind11::literals;
-
 namespace shapeworks {
     class ShapeWorksStudioApp;
-    class Subject;
     class Session;
     class Job;
 }
@@ -28,9 +24,6 @@ namespace monailabel {
 
 using shapeworks::ProjectHandle;
 using shapeworks::Session;
-using shapeworks::ShapeHandle;
-using shapeworks::ShapeList;
-using shapeworks::Subject;
 using shapeworks::ShapeWorksStudioApp;
 using shapeworks::Job;
 
@@ -38,17 +31,18 @@ class MonaiLabelJob : public Job {
   Q_OBJECT;
 
  public:
+  const static std::string MONAI_RESULT_EXTENSION;
+  const static std::string MONAI_RESULT_DTYPE;
+
   MonaiLabelJob(QSharedPointer<Session> session, const std::string& server_url,
                 const std::string& client_id, const std::string& strategy,
                 const std::string& model_type);
   ~MonaiLabelJob();
-
   void setServer(const std::string& server_url);
   void setModelType(const std::string& model_type);
   inline const std::string& getServer() { return server_url_; }
   void setClientId(const std::string& client_id = "");
   inline const std::string& getClientId() { return client_id_; };
-
   void initializeClient();
   inline std::shared_ptr<py::object> getClient() const {
     return monai_client_;
@@ -56,6 +50,7 @@ class MonaiLabelJob : public Job {
 
   py::dict getInfo();
   std::string getModelName(std::string modelType);
+  std::vector<std::string> getModelNames(const std::string& model_type);
   std::string getSessionId();
   py::dict getParamsFromConfig(std::string section, std::string name);
 
@@ -68,10 +63,6 @@ class MonaiLabelJob : public Job {
                      py::dict params);
   py::dict uploadImage(std::string image_in, std::string image_id);
 
-  void set_subject_image_filename(const std::shared_ptr<Subject>& subject,
-                                  const std::string& filename);
-  std::string get_feature_name();
-
   void updateShapes();
 
   void runSegmentationModel();
@@ -81,13 +72,16 @@ class MonaiLabelJob : public Job {
   void setCurrentSampleNumber(int n);
 
  public Q_SLOTS:
-//   void onNextSampleClicked();  // Triggered when Next Sample button is clicked
   void onUploadSampleClicked();  // Triggered when  upload Sample button is clicked
   void onRunSegmentationClicked();   // Triggered when Run Segmentation is clicked
   void onSubmitLabelClicked();  // Triggered when Submit Label is clicked
 
  Q_SIGNALS:
   void triggerUpdateView();
+  void triggerClientInitialized();
+  void triggerUploadSampleCompleted();
+  void triggerSegmentationCompleted();
+  void triggerSubmitLabelCompleted();
 
  private:
   std::string tmp_dir_;
@@ -100,6 +94,7 @@ class MonaiLabelJob : public Job {
   std::string strategy_;
   std::string model_type_ = "";
   std::string model_name_ = "";
+  std::unordered_map<std::string, std::vector<std::string>> models_available_; // TODO: add functionality to interchange between models from UI
   std::shared_ptr<py::object> monai_client_;
 
   // QT states
@@ -110,12 +105,10 @@ class MonaiLabelJob : public Job {
 
   // Current subjects
   int sample_number_;
-  py::dict currentSample_;
   std::string currentSampleId_;
   std::string currentSegmentationPath_;
 
   QSharedPointer<Session> session_;
   ProjectHandle project_;
-  ShapeList shapes_;
 };
 }  // namespace monailabel
