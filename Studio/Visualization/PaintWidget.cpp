@@ -21,6 +21,10 @@
 #include "vtkSphereSource.h"
 #include "vtkWidgetCallbackMapper.h"
 #include "vtkWidgetEvent.h"
+#include "vtkImageActorPointPlacer.h"
+#include "vtkImageActor.h"
+
+#include <Logging.h>
 
 namespace shapeworks {
 
@@ -173,19 +177,33 @@ bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
     return false;
   }
 
+  // cast PointPlacer to vtkImageActorPointPlacer
+  vtkImageActorPointPlacer* image_point_place = dynamic_cast<vtkImageActorPointPlacer*>(this->PointPlacer);
+  if (image_point_place) {
+    auto input = image_point_place->GetImageActor()->GetInput();
+    if (!input) {
+      SW_DEBUG("no input!?!!?!?");
+    }
+
+
+  }
+
+
   if (!PointPlacer->ComputeWorldPosition(Renderer, displayPos, worldPos, worldOrient)) {
+    SW_DEBUG("point placer: leaving");
     LeaveAction(this);
     set_cursor(VTK_CURSOR_DEFAULT);
     return false;
   }
 
   WidgetState = newState;
+  SW_DEBUG("use point placer: update position");
   sphere_cursor_->set_position(worldPos);
   sphere_cursor_->set_visible(true);
 
   if (WidgetState == PaintWidget::Paint || WidgetState == PaintWidget::Erase) {
     if (WidgetState == PaintWidget::Paint) {
-      viewer_->handle_ffc_paint(displayPos, worldPos);
+      viewer_->handle_paint(displayPos, worldPos);
       ////paint_position( this, worldPos );
     } else if (WidgetState == PaintWidget::Erase) {
       ////erase_position( this, worldPos );

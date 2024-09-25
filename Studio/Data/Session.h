@@ -230,6 +230,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_ffc_paint_active(bool enabled);
   bool get_ffc_paint_active();
 
+  void set_seg_paint_active(bool enabled);
+  bool get_seg_paint_active();
+
   void set_ffc_paint_mode_inclusive(bool inclusive);
   bool get_ffc_paint_mode_inclusive();
 
@@ -305,7 +308,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void feature_range_changed();
   void update_view_mode();
   void image_slice_settings_changed();
-  void ffc_paint_mode_changed();
+  void paint_mode_changed();
   void repaint();
   void reinsert_shapes();
   void annotations_changed();
@@ -364,6 +367,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;
   double ffc_paint_size_ = 50;
+  bool seg_painting_active_ = false;
+
 
   bool is_loading_ = false;
   CompareSettings compare_settings_;

@@ -1204,7 +1204,7 @@ void Session::set_tool_state(std::string state) {
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
   trigger_planes_changed();
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
   Q_EMIT tool_state_changed();
 }
 
@@ -1217,7 +1217,7 @@ bool Session::is_analysis_mode() { return get_tool_state() == Session::ANALYSIS_
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_mode_inclusive(bool inclusive) {
   ffc_painting_inclusive_mode_ = inclusive;
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -1226,7 +1226,7 @@ bool Session::get_ffc_paint_mode_inclusive() { return ffc_painting_inclusive_mod
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_size(double size) {
   ffc_paint_size_ = size;
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -1348,11 +1348,21 @@ void Session::set_modified(bool modified) {
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_active(bool enabled) {
   ffc_painting_active_ = enabled;
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
 bool Session::get_ffc_paint_active() { return ffc_painting_active_ && get_tool_state() == Session::DATA_C; }
+
+//---------------------------------------------------------------------------
+void Session::set_seg_paint_active(bool enabled) {
+  SW_DEBUG("Setting segmentation painting active: {}", enabled);
+  seg_painting_active_ = enabled;
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_seg_paint_active() { return seg_painting_active_ && get_tool_state() == Session::DATA_C; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {

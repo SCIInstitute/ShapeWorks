@@ -50,7 +50,7 @@ void Visualizer::set_session(SessionHandle session) {
   connect(session_.data(), &Session::planes_changed, this, &Visualizer::update_planes);
   connect(session_.data(), &Session::image_slice_settings_changed, this,
           &Visualizer::handle_image_slice_settings_changed);
-  connect(session_.data(), &Session::ffc_paint_mode_changed, this, &Visualizer::update_ffc_mode);
+  connect(session_.data(), &Session::paint_mode_changed, this, &Visualizer::update_paint_mode);
   connect(session_.data(), &Session::repaint, this, &Visualizer::redraw);
   connect(session_.data(), &Session::annotations_changed, this, &Visualizer::update_annotations);
 }
@@ -90,9 +90,9 @@ void Visualizer::update_planes() {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::update_ffc_mode() {
+void Visualizer::update_paint_mode() {
   Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
-    viewer->update_ffc_mode();
+    viewer->update_paint_mode();
   }
   lightbox_->redraw();
 }

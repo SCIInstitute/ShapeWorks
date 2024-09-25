@@ -222,6 +222,7 @@ void SliceView::update_renderer() {
       renderer->RemoveViewProp(actor);
     }
   }
+  renderer->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
@@ -411,6 +412,9 @@ bool SliceView::should_point_show(double x, double y, double z) {
 
 //-----------------------------------------------------------------------------
 int SliceView::get_slice_number() { return current_slice_number_; }
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkImageActor> SliceView::get_image_actor() { return image_slice_; }
 
 //-----------------------------------------------------------------------------
 void SliceView::set_slice_number(int slice) {

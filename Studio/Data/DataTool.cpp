@@ -128,6 +128,7 @@ DataTool::~DataTool() {}
 //---------------------------------------------------------------------------
 void DataTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+  segmentation_tool_panel_->set_session(session);
 
   // set (reset) values
   ui_->ffc_brush_size_->setValue(static_cast<int>(session->get_ffc_paint_size()));

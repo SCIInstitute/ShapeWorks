@@ -42,6 +42,9 @@ SegmentationToolPanel::~SegmentationToolPanel() {}
 //---------------------------------------------------------------------------
 void SegmentationToolPanel::set_session(QSharedPointer<Session> session) {
   session_ = session;
+
+  connect(ui_->painting_active_, &QCheckBox::toggled, session.data(), &Session::set_seg_paint_active);
+
   reset();
 }
 

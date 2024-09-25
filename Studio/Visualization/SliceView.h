@@ -68,6 +68,8 @@ class SliceView {
 
   int get_slice_number();
 
+  vtkSmartPointer<vtkImageActor> get_image_actor();
+
  private:
   void set_slice_number(int slice);
 
