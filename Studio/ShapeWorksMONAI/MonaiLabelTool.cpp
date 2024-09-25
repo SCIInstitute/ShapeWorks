@@ -78,6 +78,7 @@ MonaiLabelTool::MonaiLabelTool(Preferences& prefs) : preferences_(prefs) {
 //---------------------------------------------------------------------------
 MonaiLabelTool::~MonaiLabelTool() {}
 
+//---------------------------------------------------------------------------
 void MonaiLabelTool::triggerUpdateView() { Q_EMIT update_view(); }
 
 //---------------------------------------------------------------------------
@@ -191,6 +192,7 @@ void MonaiLabelTool::runSegmentationTool() {
   QTimer::singleShot(1000, this, [=]() { ui_->connectServerButton->setEnabled(true); });
 }
 
+//---------------------------------------------------------------------------
 void MonaiLabelTool::handleClientInitialized() {
   SW_LOG("Connection successfully established to the server, continue with segmentation!");
   tool_is_running_ = true;
@@ -217,6 +219,7 @@ void MonaiLabelTool::handleClientInitialized() {
   Q_EMIT progress(-1);
 }
 
+//---------------------------------------------------------------------------
 void MonaiLabelTool::handleUploadSampleCompleted() {
   SW_LOG("Upload complete! Run {} model on the uploaded sample.", model_type_);
   ui_->uploadSampleButton->setEnabled(false);
@@ -225,6 +228,7 @@ void MonaiLabelTool::handleUploadSampleCompleted() {
   Q_EMIT progress(33);
 }
 
+//---------------------------------------------------------------------------
 void MonaiLabelTool::handleSegmentationCompleted() {
   SW_LOG(
       "Segmentation for the current sample done! Submit the prediction label to server or "
@@ -236,6 +240,7 @@ void MonaiLabelTool::handleSegmentationCompleted() {
   Q_EMIT progress(66);
 }
 
+//---------------------------------------------------------------------------
 void MonaiLabelTool::handleSubmitLabelCompleted() {
   Q_EMIT progress(97);
   SW_WARN(
@@ -251,6 +256,7 @@ void MonaiLabelTool::handleSubmitLabelCompleted() {
   // progress((int)(samples_processed_/session_->get_shapes().size())*100);
   Q_EMIT progress(-1);
 }
+
 //---------------------------------------------------------------------------
 void MonaiLabelTool::set_session(QSharedPointer<Session> session) {
   session_ = session;

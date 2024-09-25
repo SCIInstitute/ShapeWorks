@@ -440,7 +440,7 @@ void MonaiLabelJob::updateShapes() {
     }
 
   } else {
-    SW_ERROR("Current Sample does not exist yet!");
+    SW_ERROR("Segmentation not done successfully!");
     return;
   }
 }
