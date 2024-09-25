@@ -523,7 +523,7 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   }
   ui_->action_analysis_mode->setEnabled(analysis_ready);
   ui_->action_deepssm_mode->setEnabled(session_->get_project()->get_images_present() && original_present);
-  ui_->action_monai_mode->setEnabled(true); // always enable monai mode
+  ui_->action_monai_mode->setEnabled(session_->get_project()->get_images_present());
 
 
   // verification step for broken projects
@@ -566,7 +566,6 @@ void ShapeWorksStudioApp::update_from_preferences() {
   optimize_tool_->load_params();
   analysis_tool_->load_settings();
   deepssm_tool_->load_params();
-  monai_tool_->load_params();
 }
 
 //---------------------------------------------------------------------------
