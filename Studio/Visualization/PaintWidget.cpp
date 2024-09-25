@@ -33,80 +33,80 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
 
   //----------------------------------------------------------------------
   StudioSphereRepresentation() {
-    this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
-    this->sphere_source_->SetThetaResolution(32);
-    this->sphere_source_->SetPhiResolution(32);
-    this->sphere_source_->SetRadius(7);
+    sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
+    sphere_source_->SetThetaResolution(32);
+    sphere_source_->SetPhiResolution(32);
+    sphere_source_->SetRadius(7);
 
-    this->property_ = vtkSmartPointer<vtkProperty>::New();
-    this->property_->SetColor(0.7, 0.7, 0.7);
-    this->property_->SetOpacity(0.4);
-    this->property_->SetLineWidth(0.1);
-    this->property_->SetPointSize(3);
+    property_ = vtkSmartPointer<vtkProperty>::New();
+    property_->SetColor(0.7, 0.7, 0.7);
+    property_->SetOpacity(0.4);
+    property_->SetLineWidth(0.1);
+    property_->SetPointSize(3);
 
-    this->mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-    this->mapper_->SetInputConnection(this->sphere_source_->GetOutputPort());
+    mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper_->SetInputConnection(sphere_source_->GetOutputPort());
 
-    this->actor_ = vtkSmartPointer<vtkActor>::New();
-    this->actor_->SetMapper(this->mapper_);
-    this->actor_->SetProperty(this->property_);
-    this->set_visible(false);
+    actor_ = vtkSmartPointer<vtkActor>::New();
+    actor_->SetMapper(mapper_);
+    actor_->SetProperty(property_);
+    set_visible(false);
   }
 
   //----------------------------------------------------------------------
   virtual void BuildRepresentation() {}
 
   //----------------------------------------------------------------------
-  virtual void GetActors(vtkPropCollection* pc) { this->actor_->GetActors(pc); }
+  virtual void GetActors(vtkPropCollection* pc) { actor_->GetActors(pc); }
 
   //----------------------------------------------------------------------
-  virtual void ReleaseGraphicsResources(vtkWindow* win) { this->actor_->ReleaseGraphicsResources(win); }
+  virtual void ReleaseGraphicsResources(vtkWindow* win) { actor_->ReleaseGraphicsResources(win); }
 
   //----------------------------------------------------------------------
   virtual int RenderOverlay(vtkViewport* viewport) {
-    if (this->actor_->GetVisibility()) {
-      return this->actor_->RenderOverlay(viewport);
+    if (actor_->GetVisibility()) {
+      return actor_->RenderOverlay(viewport);
     }
     return 0;
   }
 
   //----------------------------------------------------------------------
   virtual int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) {
-    if (this->actor_->GetVisibility()) {
-      return this->actor_->RenderTranslucentPolygonalGeometry(viewport);
+    if (actor_->GetVisibility()) {
+      return actor_->RenderTranslucentPolygonalGeometry(viewport);
     }
     return 0;
   }
 
   //----------------------------------------------------------------------
-  virtual int HasTranslucentPolygonalGeometry() { return this->actor_->HasTranslucentPolygonalGeometry(); }
+  virtual int HasTranslucentPolygonalGeometry() { return actor_->HasTranslucentPolygonalGeometry(); }
 
   //----------------------------------------------------------------------
   virtual int RenderOpaqueGeometry(vtkViewport* viewport) {
-    if (this->actor_->GetVisibility()) {
-      return this->actor_->RenderOpaqueGeometry(viewport);
+    if (actor_->GetVisibility()) {
+      return actor_->RenderOpaqueGeometry(viewport);
     }
     return 0;
   }
 
   //----------------------------------------------------------------------
-  void set_size(double size) { this->sphere_source_->SetRadius(size); }
+  void set_size(double size) { sphere_source_->SetRadius(size); }
 
   //----------------------------------------------------------------------
-  double get_size() { return this->sphere_source_->GetRadius(); }
+  double get_size() { return sphere_source_->GetRadius(); }
 
   //----------------------------------------------------------------------
-  void set_position(double pos[3]) { this->actor_->SetPosition(pos); }
+  void set_position(double pos[3]) { actor_->SetPosition(pos); }
 
   //----------------------------------------------------------------------
-  void set_color(float r, float g, float b) { this->property_->SetColor(r, g, b); }
+  void set_color(float r, float g, float b) { property_->SetColor(r, g, b); }
 
   //----------------------------------------------------------------------
   void set_visible(bool visible) {
     if (visible) {
-      this->actor_->VisibilityOn();
+      actor_->VisibilityOn();
     } else {
-      this->actor_->VisibilityOff();
+      actor_->VisibilityOff();
     }
   }
 
@@ -121,32 +121,32 @@ vtkStandardNewMacro(StudioSphereRepresentation);
 
 //----------------------------------------------------------------------
 PaintWidget::PaintWidget() {
-  this->mouse_in_window_ = false;
-  this->ManagesCursor = 0;
-  this->WidgetState = PaintWidget::Start;
+  mouse_in_window_ = false;
+  ManagesCursor = 0;
+  WidgetState = PaintWidget::Start;
 
-  this->PointPlacer = NULL;
-  this->Renderer = NULL;
+  PointPlacer = NULL;
+  Renderer = NULL;
 
   // These are the event callbacks supported by this widget
-  this->CallbackMapper->SetCallbackMethod(vtkCommand::LeftButtonPressEvent, vtkWidgetEvent::Select, this,
+  CallbackMapper->SetCallbackMethod(vtkCommand::LeftButtonPressEvent, vtkWidgetEvent::Select, this,
                                           PaintWidget::StartPaintAction);
-  this->CallbackMapper->SetCallbackMethod(vtkCommand::LeftButtonReleaseEvent, vtkWidgetEvent::EndSelect, this,
+  CallbackMapper->SetCallbackMethod(vtkCommand::LeftButtonReleaseEvent, vtkWidgetEvent::EndSelect, this,
                                           PaintWidget::EndPaintAction);
-  this->CallbackMapper->SetCallbackMethod(vtkCommand::MouseMoveEvent, vtkWidgetEvent::Move, this,
+  CallbackMapper->SetCallbackMethod(vtkCommand::MouseMoveEvent, vtkWidgetEvent::Move, this,
                                           PaintWidget::MoveAction);
 
-  this->CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonPressEvent, vtkWidgetEvent::Translate, this,
+  CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonPressEvent, vtkWidgetEvent::Translate, this,
                                           PaintWidget::StartEraseAction);
-  this->CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonReleaseEvent, vtkWidgetEvent::EndTranslate, this,
+  CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonReleaseEvent, vtkWidgetEvent::EndTranslate, this,
                                           PaintWidget::EndEraseAction);
 
-  this->CallbackMapper->SetCallbackMethod(vtkCommand::LeaveEvent, vtkWidgetEvent::Scale, this,
+  CallbackMapper->SetCallbackMethod(vtkCommand::LeaveEvent, vtkWidgetEvent::Scale, this,
                                           PaintWidget::LeaveAction);
 
-  this->CallbackMapper->SetCallbackMethod(vtkCommand::KeyPressEvent, 100, this, PaintWidget::KeyPressAction);
+  CallbackMapper->SetCallbackMethod(vtkCommand::KeyPressEvent, 100, this, PaintWidget::KeyPressAction);
 
-  this->CreateDefaultRepresentation();
+  CreateDefaultRepresentation();
 }
 
 //----------------------------------------------------------------------
@@ -154,49 +154,49 @@ PaintWidget::~PaintWidget() {}
 
 //----------------------------------------------------------------------
 void PaintWidget::CreateDefaultRepresentation() {
-  if (!this->WidgetRep) {
+  if (!WidgetRep) {
     StudioSphereRepresentation* rep = StudioSphereRepresentation::New();
-    this->WidgetRep = rep;
-    this->sphere_cursor_ = rep;
+    WidgetRep = rep;
+    sphere_cursor_ = rep;
   }
 }
 
 //----------------------------------------------------------------------
-void PaintWidget::SetEnabled(int enabling) { this->Superclass::SetEnabled(enabling); }
+void PaintWidget::SetEnabled(int enabling) { Superclass::SetEnabled(enabling); }
 
 //----------------------------------------------------------------------
 bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
   double worldPos[3];
   double worldOrient[9] = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
 
-  if (!this->Renderer->IsInViewport(displayPos[0], displayPos[1])) {
+  if (!Renderer->IsInViewport(displayPos[0], displayPos[1])) {
     return false;
   }
 
-  if (!this->PointPlacer->ComputeWorldPosition(this->Renderer, displayPos, worldPos, worldOrient)) {
-    this->LeaveAction(this);
-    this->set_cursor(VTK_CURSOR_DEFAULT);
+  if (!PointPlacer->ComputeWorldPosition(Renderer, displayPos, worldPos, worldOrient)) {
+    LeaveAction(this);
+    set_cursor(VTK_CURSOR_DEFAULT);
     return false;
   }
 
-  this->WidgetState = newState;
-  this->sphere_cursor_->set_position(worldPos);
-  this->sphere_cursor_->set_visible(true);
+  WidgetState = newState;
+  sphere_cursor_->set_position(worldPos);
+  sphere_cursor_->set_visible(true);
 
-  if (this->WidgetState == PaintWidget::Paint || this->WidgetState == PaintWidget::Erase) {
-    if (this->WidgetState == PaintWidget::Paint) {
+  if (WidgetState == PaintWidget::Paint || WidgetState == PaintWidget::Erase) {
+    if (WidgetState == PaintWidget::Paint) {
       viewer_->handle_ffc_paint(displayPos, worldPos);
       ////paint_position( this, worldPos );
-    } else if (this->WidgetState == PaintWidget::Erase) {
+    } else if (WidgetState == PaintWidget::Erase) {
       ////erase_position( this, worldPos );
     }
 
     ///// update?
 
-    this->EventCallbackCommand->SetAbortFlag(1);
+    EventCallbackCommand->SetAbortFlag(1);
   }
 
-  this->Render();
+  Render();
 
   return true;
 }
@@ -299,7 +299,7 @@ void PaintWidget::KeyPressAction(vtkAbstractWidget* w) {
 
 //----------------------------------------------------------------------
 void PaintWidget::Initialize(vtkPolyData* pd, int state) {
-  if (!this->GetEnabled()) {
+  if (!GetEnabled()) {
     vtkErrorMacro(<< "Enable widget before initializing");
   }
 }
@@ -307,9 +307,9 @@ void PaintWidget::Initialize(vtkPolyData* pd, int state) {
 //----------------------------------------------------------------------
 void PaintWidget::PrintSelf(ostream& os, vtkIndent indent) {
   // Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
-  this->Superclass::PrintSelf(os, indent);
+  Superclass::PrintSelf(os, indent);
 
-  os << indent << "WidgetState: " << this->WidgetState << endl;
+  os << indent << "WidgetState: " << WidgetState << endl;
 }
 
 //----------------------------------------------------------------------
@@ -330,7 +330,7 @@ void PaintWidget::set_cursor(int requestedShape) { return; }
 //----------------------------------------------------------------------
 void PaintWidget::update_position() {
   if (mouse_in_window_) {
-    this->MoveAction(this);
+    MoveAction(this);
   }
 }
 }  // namespace shapeworks
