@@ -1086,7 +1086,6 @@ void Image::paintCircle(Point p, double radius, unsigned int axis, PixelType val
   ImageType::IndexType centerIndex;
   itk_image_->TransformPhysicalPointToIndex(p, centerIndex);
 
-  SW_LOG("radius = {}", radius);
   ImageType::SpacingType spacing = itk_image_->GetSpacing();
 
   // Calculate the radius squared

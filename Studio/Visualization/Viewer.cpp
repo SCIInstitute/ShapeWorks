@@ -548,13 +548,9 @@ vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { ret
 
 //-----------------------------------------------------------------------------
 void Viewer::handle_paint(double display_pos[2], double world_pos[3]) {
-  SW_LOG("Paint at {} {}", display_pos[0], display_pos[1]);
-
   if (session_->get_seg_paint_active()) {
-    // seg paint
-
+    // segmentation paint
     int axis = slice_view_.get_orientation_index();
-
     shape_->get_segmentation()->paintCircle(world_pos, paint_widget_->get_brush_size(), axis,
                                             session_->get_seg_paint_value());
     slice_view_.update();
@@ -1117,10 +1113,8 @@ void Viewer::update_actors() {
   }
 
   slice_view_.update_renderer();
-  SW_LOG("Resetting clipping range");
   renderer_->ResetCameraClippingRange();
 
-  SW_LOG("set point placer image actor");
   slice_point_placer_->SetImageActor(slice_view_.get_image_actor());
 
   update_opacities();
