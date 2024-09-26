@@ -1046,6 +1046,8 @@ Image::PixelType Image::evaluate(Point p) {
 
 //-------------------------------------------------------------------------
 void Image::paintSphere(Point p, double radius, PixelType value) {
+  painted_ = true;
+
   // Convert the center and radius to the index space
   ImageType::IndexType centerIndex;
   itk_image_->TransformPhysicalPointToIndex(p, centerIndex);
@@ -1079,6 +1081,7 @@ void Image::paintSphere(Point p, double radius, PixelType value) {
 
 //-------------------------------------------------------------------------
 void Image::paintCircle(Point p, double radius, unsigned int axis, PixelType value) {
+  painted_ = true;
   // Convert the center to index space
   ImageType::IndexType centerIndex;
   itk_image_->TransformPhysicalPointToIndex(p, centerIndex);

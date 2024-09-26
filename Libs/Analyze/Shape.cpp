@@ -108,6 +108,24 @@ MeshGroup Shape::get_original_meshes(bool wait) {
 }
 
 //---------------------------------------------------------------------------
+void Shape::recompute_original_surface() {
+  auto seg = get_segmentation();
+  if (!seg) {
+    return;
+  }
+  if (original_meshes_.meshes().empty()) {
+    return;
+  }
+  auto meshes = original_meshes_.meshes();
+  Image copy = *seg;
+  copy.binarize(0, 1);
+  Mesh mesh = copy.toMesh(0.001);
+  MeshHandle mesh_handle = std::make_shared<StudioMesh>();
+  mesh_handle->set_poly_data(mesh.getVTKMesh());
+  original_meshes_.set_mesh(0, mesh_handle);
+}
+
+//---------------------------------------------------------------------------
 MeshGroup Shape::get_groomed_meshes(bool wait) {
   if (!subject_) {
     std::cerr << "Error: asked for groomed meshes when none are present!\n";

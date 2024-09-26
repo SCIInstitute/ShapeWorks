@@ -33,7 +33,8 @@ class SegmentationToolPanel : public QWidget {
  private:
   QSharedPointer<Session> session_;
 
-   void update_paint_value();
+  void update_paint_value();
+  void recompute_surface();
 
   Ui_SegmentationToolPanel* ui_;
 };

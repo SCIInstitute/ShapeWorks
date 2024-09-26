@@ -98,6 +98,11 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
   MeshHandle mesh(new StudioMesh);
 
   try {
+    // only interested in 1's and 0's
+    Image itk_image = Image(image);
+    itk_image.binarize(0, 1);
+    image = itk_image.getITKImage();
+
     // connect to VTK
     vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
     itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
@@ -177,7 +182,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       mesh = this->build_mesh_from_image(image, iso_value);
 
       if (mesh->get_poly_data()->GetNumberOfPoints() == 0) {
-        SW_ERROR("Mesh generated for {} with iso-level {} is empty",filename, iso_value);
+        SW_ERROR("Mesh generated for {} with iso-level {} is empty", filename, iso_value);
       }
 
     } catch (itk::ExceptionObject& excep) {

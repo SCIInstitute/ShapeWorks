@@ -37,6 +37,7 @@ SegmentationToolPanel::SegmentationToolPanel(QWidget* parent) : QWidget(parent),
   connect(ui_->included_mode_, &QRadioButton::toggled, this, &SegmentationToolPanel::update_paint_value);
   connect(ui_->excluded_mode_, &QRadioButton::toggled, this, &SegmentationToolPanel::update_paint_value);
 
+  connect(ui_->recompute_surface_, &QPushButton::clicked, this, &SegmentationToolPanel::recompute_surface);
   ui_->header_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->open_button->setChecked(false);
 }
@@ -69,5 +70,8 @@ void SegmentationToolPanel::update_paint_value() {
   }
   session_->set_seg_paint_value(paint_value);
 }
+
+//---------------------------------------------------------------------------
+void SegmentationToolPanel::recompute_surface() { session_->recompute_surfaces(); }
 
 }  // namespace shapeworks

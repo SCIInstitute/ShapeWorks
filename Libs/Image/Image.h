@@ -300,6 +300,9 @@ class Image {
   //! Paints a circle in the image
   void paintCircle(Point p, double radius, unsigned int axis, PixelType value);
 
+  //! Returns if the image has been painted
+  bool isPainted() const { return painted_; }
+
   //! Return supported file types
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
@@ -337,6 +340,8 @@ class Image {
   StatsPtr statsFilter();
 
   ImageType::Pointer itk_image_;
+
+  bool painted_ = false;
 
   InterpolatorType::Pointer interpolator_;
 };

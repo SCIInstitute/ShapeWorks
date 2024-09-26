@@ -289,6 +289,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool is_modified() { return modified_; }
   void set_modified(bool modified);
 
+  void recompute_surfaces();
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 

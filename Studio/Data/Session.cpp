@@ -148,6 +148,16 @@ bool Session::save_project(QString filename) {
       // session_->set_original_files(original_list);
     }
 
+    // save segmentations
+    for (int i = 0; i < shapes_.size(); i++) {
+      auto seg = shapes_[i]->get_segmentation();
+      if (seg && seg->isPainted()) {
+        auto seg_filename = shapes_[i]->get_original_filename_with_path();
+        SW_LOG("Saving segmentation: {}", seg_filename)
+        seg->write(seg_filename);
+      }
+    }
+
     // landmarks
     for (int i = 0; i < shapes_.size(); i++) {
       shapes_[i]->store_landmarks();
@@ -1390,5 +1400,12 @@ void Session::set_landmark_drag_mode(bool mode) {
 
 //---------------------------------------------------------------------------
 bool Session::get_landmark_drag_mode() { return landmark_drag_mode_ && get_landmarks_active(); }
+
 //---------------------------------------------------------------------------
+void Session::recompute_surfaces() {
+  for (auto& shape : shapes_) {
+    shape->recompute_original_surface();
+  }
+  Q_EMIT update_display();
+}
 }  // namespace shapeworks

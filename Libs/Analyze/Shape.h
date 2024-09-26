@@ -188,6 +188,8 @@ class Shape {
 
   std::vector<std::shared_ptr<MeshWrapper>> get_groomed_mesh_wrappers();
 
+  void recompute_original_surface();
+
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
                        bool wait = false);
