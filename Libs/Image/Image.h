@@ -291,6 +291,12 @@ class Image {
   //! Evaluates the image at a given position
   Image::PixelType evaluate(Point p);
 
+  //! Paints a sphere in the image
+  void paintSphere(Point p, double radius, PixelType value);
+
+  //! Paints a circle in the image
+  void paintCircle(Point p, double radius, unsigned int axis, PixelType value);
+
   //! Return supported file types
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};

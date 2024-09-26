@@ -1038,12 +1038,110 @@ Image::PixelType Image::evaluate(Point p) {
   return interpolator_->Evaluate(p);
 }
 
+//-------------------------------------------------------------------------
+void Image::paintSphere(Point p, double radius, PixelType value) {
+  // Convert the center and radius to the index space
+  ImageType::IndexType centerIndex;
+  itk_image_->TransformPhysicalPointToIndex(p, centerIndex);
+
+  // Calculate the bounding box of the sphere in the index space
+  const double radiusSquared = radius * radius;
+  ImageType::RegionType region = itk_image_->GetLargestPossibleRegion();
+
+  ImageType::SizeType size = region.GetSize();
+  ImageType::IndexType start = region.GetIndex();
+
+  for (unsigned int i = 0; i < 3; ++i) {
+    start[i] = std::max<long>(start[i], centerIndex[i] - static_cast<long>(std::ceil(radius)));
+    size[i] = std::min<long>(size[i], centerIndex[i] + static_cast<long>(std::ceil(radius)) + 1);
+  }
+
+  // Iterate only within the bounding box of the sphere
+  ImageType::IndexType index;
+  for (index[2] = start[2]; index[2] < start[2] + size[2]; ++index[2]) {
+    for (index[1] = start[1]; index[1] < start[1] + size[1]; ++index[1]) {
+      for (index[0] = start[0]; index[0] < start[0] + size[0]; ++index[0]) {
+        // Check if the current index is within the radius
+        Point3 q = logicalToPhysical(index);
+        if ((p - q).GetSquaredNorm() <= radiusSquared) {
+          itk_image_->SetPixel(index, value);
+        }
+      }
+    }
+  }
+}
+
+//-------------------------------------------------------------------------
+
+void Image::paintCircle(Point p, double radius, unsigned int axis, PixelType value) {
+  // Convert the center to index space
+  ImageType::IndexType centerIndex;
+  itk_image_->TransformPhysicalPointToIndex(p, centerIndex);
+
+  // Calculate the radius squared
+  const double radiusSquared = radius * radius;
+
+  // Define the plane's coordinate pairs based on the given VTK axis (dim1, dim2 are the in-plane dimensions)
+  unsigned int dim1, dim2;
+  switch (axis) {
+    case 2:  // XY plane
+      dim1 = 0;
+      dim2 = 1;
+      break;
+    case 1:  // XZ plane
+      dim1 = 0;
+      dim2 = 2;
+      break;
+    case 0:  // YZ plane
+      dim1 = 1;
+      dim2 = 2;
+      break;
+    default:
+      throw std::invalid_argument("Invalid axis, must be 0 (YZ), 1 (XZ), or 2 (XY) according to VTK conventions");
+  }
+
+  // Get the image region
+  ImageType::RegionType region = itk_image_->GetLargestPossibleRegion();
+  ImageType::IndexType startIndex = region.GetIndex();
+  ImageType::SizeType size = region.GetSize();
+  ImageType::IndexType endIndex;
+  endIndex[0] = startIndex[0] + size[0] - 1;
+  endIndex[1] = startIndex[1] + size[1] - 1;
+  endIndex[2] = startIndex[2] + size[2] - 1;
+
+  // Calculate bounding box of the circle in the specified plane
+  startIndex[dim1] = std::max<long>(startIndex[dim1], centerIndex[dim1] - static_cast<long>(std::ceil(radius)));
+  startIndex[dim2] = std::max<long>(startIndex[dim2], centerIndex[dim2] - static_cast<long>(std::ceil(radius)));
+  endIndex[dim1] = std::min<long>(endIndex[dim1], centerIndex[dim1] + static_cast<long>(std::ceil(radius)));
+  endIndex[dim2] = std::min<long>(endIndex[dim2], centerIndex[dim2] + static_cast<long>(std::ceil(radius)));
+
+  // Set the orthogonal dimension index to the center slice
+  ImageType::IndexType index;
+  index[(axis == 2) ? 2 : (axis == 1) ? 1 : 0] = centerIndex[(axis == 2) ? 2 : (axis == 1) ? 1 : 0];
+
+  // Iterate only within the bounding box of the circle
+  for (index[dim2] = startIndex[dim2]; index[dim2] <= endIndex[dim2]; ++index[dim2]) {
+    for (index[dim1] = startIndex[dim1]; index[dim1] <= endIndex[dim1]; ++index[dim1]) {
+      // Calculate the 2D distance on the specified plane
+      Point3 q = logicalToPhysical(index);
+      double distanceSquared = std::pow(p[dim1] - q[dim1], 2) + std::pow(p[dim2] - q[dim2], 2);
+
+      // If it's within the radius, set the pixel value
+      if (distanceSquared <= radiusSquared) {
+        itk_image_->SetPixel(index, value);
+      }
+    }
+  }
+}
+
+//-------------------------------------------------------------------------
 TransformPtr Image::createCenterOfMassTransform() {
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-(center() - centerOfMass()));  // ITK translations go in a counterintuitive direction
   return xform;
 }
 
+//-------------------------------------------------------------------------
 TransformPtr Image::createRigidRegistrationTransform(const Image& target_dt, float isoValue, unsigned iterations) {
   if (!target_dt.itk_image_) {
     throw std::invalid_argument("Invalid target. Expected distance transform image");
@@ -1067,6 +1165,7 @@ TransformPtr Image::createRigidRegistrationTransform(const Image& target_dt, flo
   return AffineTransform::New();
 }
 
+//-------------------------------------------------------------------------
 std::ostream& operator<<(std::ostream& os, const Image& img) {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: " << img.origin() << ",\n\tsize: " << img.size()
             << ",\n\tspacing: " << img.spacing() << "\n}";

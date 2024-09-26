@@ -72,6 +72,8 @@ class SliceView {
 
   vtkPlane* get_slice_plane();
 
+  void update();
+
  private:
   void set_slice_number(int slice);
 

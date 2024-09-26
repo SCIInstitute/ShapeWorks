@@ -417,12 +417,21 @@ int SliceView::get_slice_number() { return current_slice_number_; }
 vtkSmartPointer<vtkImageActor> SliceView::get_image_actor() { return image_slice_; }
 
 //-----------------------------------------------------------------------------
-vtkPlane* SliceView::get_slice_plane() { return slice_mapper_->GetSlicePlane(); }
+vtkPlane *SliceView::get_slice_plane() { return slice_mapper_->GetSlicePlane(); }
+
+//-----------------------------------------------------------------------------
+void SliceView::update() {
+  // the mask has been modified
+  if (mask_volume_) {
+    mask_mapper_->Modified();
+  }
+  // render
+  viewer_->get_renderer()->GetRenderWindow()->Render();
+}
 
 //-----------------------------------------------------------------------------
 void SliceView::set_slice_number(int slice) {
   current_slice_number_ = slice;
-
   current_slice_number_ = std::min(current_slice_number_, slice_mapper_->GetSliceNumberMaxValue());
   current_slice_number_ = std::max(current_slice_number_, slice_mapper_->GetSliceNumberMinValue());
 

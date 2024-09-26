@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
-#include <numeric>
+//#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -33,6 +33,7 @@
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
+#include "ShapeworksUtils.h"
 
 // pybind
 #include <pybind11/embed.h>
