@@ -54,8 +54,6 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
 
     mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
     mapper_->SetInputConnection(sphere_source_->GetOutputPort());
-    mapper_->AddClippingPlane(plane1_);
-    mapper_->AddClippingPlane(plane2_);
 
     actor_ = vtkSmartPointer<vtkActor>::New();
     actor_->SetMapper(mapper_);
@@ -116,10 +114,14 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
       property_->LightingOff();
       property_->SetLineWidth(4.0);
       property_->SetRepresentationToWireframe();
+      mapper_->AddClippingPlane(plane1_);
+      mapper_->AddClippingPlane(plane2_);
+
     } else {
       plane1_->SetNormal(0, 0, 0);
       plane2_->SetNormal(0, 0, 0);
       property_->SetRepresentationToSurface();
+      mapper_->RemoveAllClippingPlanes();
     }
   }
 

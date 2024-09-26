@@ -239,6 +239,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_ffc_paint_size(double size);
   double get_ffc_paint_size();
 
+  void set_seg_paint_size(double size);
+  double get_seg_paint_size();
+
   bool get_show_good_bad_particles();
   void set_show_good_bad_particles(bool enabled);
 
@@ -367,6 +370,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;
   double ffc_paint_size_ = 50;
+  double seg_paint_size_ = 50;
   bool seg_painting_active_ = false;
 
 

@@ -1072,7 +1072,6 @@ void Image::paintSphere(Point p, double radius, PixelType value) {
 }
 
 //-------------------------------------------------------------------------
-
 void Image::paintCircle(Point p, double radius, unsigned int axis, PixelType value) {
   // Convert the center to index space
   ImageType::IndexType centerIndex;

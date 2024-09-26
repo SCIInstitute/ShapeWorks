@@ -1233,6 +1233,15 @@ void Session::set_ffc_paint_size(double size) {
 double Session::get_ffc_paint_size() { return ffc_paint_size_; }
 
 //---------------------------------------------------------------------------
+void Session::set_seg_paint_size(double size) {
+  seg_paint_size_ = size;
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+double Session::get_seg_paint_size() { return seg_paint_size_; }
+
+//---------------------------------------------------------------------------
 bool Session::get_show_good_bad_particles() { return params_.get("show_good_bad_particles", false); }
 
 //---------------------------------------------------------------------------
