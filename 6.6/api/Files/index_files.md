@@ -220,6 +220,10 @@ title: Files
         * **file [Studio/Python/PythonWorker.h](../Files/PythonWorker_8h.md#file-pythonworker.h)** 
     * **dir [Studio/Resources](../Files/dir_a4bc8cdb2751c8604311dac5c98fb558.md#dir-studio/resources)** 
         * **file [Studio/Resources/resource.h](../Files/resource_8h.md#file-resource.h)** 
+    * **dir [Studio/ShapeWorksMONAI](../Files/dir_3ac71cfeb9e8c31aa5ca4ffc7168c68d.md#dir-studio/shapeworksmonai)** 
+        * **file [Studio/ShapeWorksMONAI/MonaiLabelJob.h](../Files/MonaiLabelJob_8h.md#file-monailabeljob.h)** 
+        * **file [Studio/ShapeWorksMONAI/MonaiLabelTool.h](../Files/MonaiLabelTool_8h.md#file-monailabeltool.h)** 
+        * **file [Studio/ShapeWorksMONAI/MonaiLabelUtils.h](../Files/MonaiLabelUtils_8h.md#file-monailabelutils.h)** 
     * **dir [Studio/Utils](../Files/dir_645c19d7da098e01621cdebb663b8767.md#dir-studio/utils)** 
         * **file [Studio/Utils/AnalysisUtils.h](../Files/AnalysisUtils_8h.md#file-analysisutils.h)** 
         * **file [Studio/Utils/ImageLabel.h](../Files/ImageLabel_8h.md#file-imagelabel.h)** 
@@ -247,4 +251,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2024-09-21 at 04:11:02 +0000
+Updated on 2024-09-26 at 21:49:47 +0000

@@ -11,7 +11,7 @@ title: shapeworks::Job
 
 Inherits from QObject
 
-Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md), [shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md), [shapeworks::NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md), [shapeworks::ParticleAreaJob](../Classes/classshapeworks_1_1ParticleAreaJob.md), [shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md), [shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md), [shapeworks::ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md), [shapeworks::StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)
+Inherited by [monailabel::MonaiLabelJob](../Classes/classmonailabel_1_1MonaiLabelJob.md), [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md), [shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md), [shapeworks::NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md), [shapeworks::ParticleAreaJob](../Classes/classshapeworks_1_1ParticleAreaJob.md), [shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md), [shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md), [shapeworks::ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md), [shapeworks::StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)
 
 ## Public Signals
 
@@ -82,7 +82,7 @@ virtual void run() =0
 
 run the job 
 
-**Reimplemented by**: [shapeworks::ShapeEvaluationJob::run](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-run), [shapeworks::DeepSSMJob::run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run), [shapeworks::GroupPvalueJob::run](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-run), [shapeworks::NetworkAnalysisJob::run](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-run), [shapeworks::ParticleAreaJob::run](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-run), [shapeworks::ParticleNormalEvaluationJob::run](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-run), [shapeworks::ShapeScalarJob::run](../Classes/classshapeworks_1_1ShapeScalarJob.md#function-run), [shapeworks::StatsGroupLDAJob::run](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-run)
+**Reimplemented by**: [shapeworks::ShapeEvaluationJob::run](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-run), [shapeworks::DeepSSMJob::run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run), [shapeworks::GroupPvalueJob::run](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-run), [shapeworks::NetworkAnalysisJob::run](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-run), [shapeworks::ParticleAreaJob::run](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-run), [shapeworks::ParticleNormalEvaluationJob::run](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-run), [shapeworks::ShapeScalarJob::run](../Classes/classshapeworks_1_1ShapeScalarJob.md#function-run), [shapeworks::StatsGroupLDAJob::run](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-run), [monailabel::MonaiLabelJob::run](../Classes/classmonailabel_1_1MonaiLabelJob.md#function-run)
 
 
 ### function name
@@ -93,7 +93,7 @@ virtual QString name() =0
 
 get the name of the job 
 
-**Reimplemented by**: [shapeworks::ShapeEvaluationJob::name](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-name), [shapeworks::DeepSSMJob::name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name), [shapeworks::GroupPvalueJob::name](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-name), [shapeworks::NetworkAnalysisJob::name](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-name), [shapeworks::ParticleAreaJob::name](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-name), [shapeworks::ParticleNormalEvaluationJob::name](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-name), [shapeworks::ShapeScalarJob::name](../Classes/classshapeworks_1_1ShapeScalarJob.md#function-name), [shapeworks::StatsGroupLDAJob::name](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-name)
+**Reimplemented by**: [shapeworks::ShapeEvaluationJob::name](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-name), [shapeworks::DeepSSMJob::name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name), [shapeworks::GroupPvalueJob::name](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-name), [shapeworks::NetworkAnalysisJob::name](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-name), [shapeworks::ParticleAreaJob::name](../Classes/classshapeworks_1_1ParticleAreaJob.md#function-name), [shapeworks::ParticleNormalEvaluationJob::name](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-name), [shapeworks::ShapeScalarJob::name](../Classes/classshapeworks_1_1ShapeScalarJob.md#function-name), [shapeworks::StatsGroupLDAJob::name](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-name), [monailabel::MonaiLabelJob::name](../Classes/classmonailabel_1_1MonaiLabelJob.md#function-name)
 
 
 ### function get_completion_message
@@ -182,4 +182,4 @@ get quiet mode
 
 -------------------------------
 
-Updated on 2024-09-21 at 04:11:01 +0000
+Updated on 2024-09-26 at 21:49:46 +0000

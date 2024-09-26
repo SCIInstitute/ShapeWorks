@@ -11,6 +11,7 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 
 | Name           |
 | -------------- |
+| **[monailabel](../Namespaces/namespacemonailabel.md)**  |
 | **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
@@ -52,6 +53,10 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
+
+namespace monailabel {
+  class MonaiLabelTool;
+}
 
 namespace shapeworks {
 class Lightbox;
@@ -102,6 +107,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_optimize_mode_triggered();
   void on_action_analysis_mode_triggered();
   void on_action_deepssm_mode_triggered();
+  void on_action_monai_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
   void on_actionExport_Eigenvalues_triggered();
@@ -247,6 +253,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<DeepSSMTool> deepssm_tool_;
+  QSharedPointer<monailabel::MonaiLabelTool> monai_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   CompareWidget* compare_widget_ = nullptr;
@@ -297,4 +304,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2024-09-21 at 04:11:02 +0000
+Updated on 2024-09-26 at 21:49:46 +0000

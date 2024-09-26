@@ -36,6 +36,7 @@ Inherits from QMainWindow
 | void | **[on_action_optimize_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-optimize-mode-triggered)**() |
 | void | **[on_action_analysis_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-analysis-mode-triggered)**() |
 | void | **[on_action_deepssm_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-deepssm-mode-triggered)**() |
+| void | **[on_action_monai_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-monai-mode-triggered)**() |
 | void | **[on_actionShow_Tool_Window_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionshow-tool-window-triggered)**() |
 | void | **[on_actionExport_PCA_Mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-pca-mesh-triggered)**() |
 | void | **[on_actionExport_Eigenvalues_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-eigenvalues-triggered)**() |
@@ -247,6 +248,13 @@ void on_action_analysis_mode_triggered()
 
 ```cpp
 void on_action_deepssm_mode_triggered()
+```
+
+
+### slot on_action_monai_mode_triggered
+
+```cpp
+void on_action_monai_mode_triggered()
 ```
 
 
@@ -769,4 +777,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2024-09-21 at 04:11:01 +0000
+Updated on 2024-09-26 at 21:49:46 +0000

@@ -37,6 +37,7 @@ Parameter settings.  [More...](#detailed-description)
 | constexpr const char * | **[STUDIO_PARAMS](../Classes/classshapeworks_1_1Parameters.md#variable-studio-params)**  |
 | constexpr const char * | **[PROJECT_PARAMS](../Classes/classshapeworks_1_1Parameters.md#variable-project-params)**  |
 | constexpr const char * | **[DEEPSSM_PARAMS](../Classes/classshapeworks_1_1Parameters.md#variable-deepssm-params)**  |
+| constexpr const char * | **[MONAI_PARAMS](../Classes/classshapeworks_1_1Parameters.md#variable-monai-params)**  |
 
 ## Detailed Description
 
@@ -180,6 +181,13 @@ static constexpr const char * DEEPSSM_PARAMS = "deepssm";
 ```
 
 
+### variable MONAI_PARAMS
+
+```cpp
+static constexpr const char * MONAI_PARAMS = "monai";
+```
+
+
 -------------------------------
 
-Updated on 2024-09-21 at 04:11:01 +0000
+Updated on 2024-09-26 at 21:49:46 +0000

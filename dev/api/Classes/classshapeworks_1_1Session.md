@@ -191,6 +191,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | const std::string | **[OPTIMIZE_C](../Classes/classshapeworks_1_1Session.md#variable-optimize-c)**  |
 | const std::string | **[ANALYSIS_C](../Classes/classshapeworks_1_1Session.md#variable-analysis-c)**  |
 | const std::string | **[DEEPSSM_C](../Classes/classshapeworks_1_1Session.md#variable-deepssm-c)**  |
+| const std::string | **[MONAI_C](../Classes/classshapeworks_1_1Session.md#variable-monai-c)**  |
 
 ## Detailed Description
 
@@ -1410,6 +1411,13 @@ static const std::string DEEPSSM_C;
 ```
 
 
+### variable MONAI_C
+
+```cpp
+static const std::string MONAI_C;
+```
+
+
 -------------------------------
 
-Updated on 2024-09-21 at 04:11:01 +0000
+Updated on 2024-09-26 at 21:49:46 +0000

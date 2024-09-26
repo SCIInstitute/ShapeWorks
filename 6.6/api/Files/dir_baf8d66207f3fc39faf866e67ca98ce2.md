@@ -20,6 +20,7 @@ title: Studio
 | **[Studio/Optimize](../Files/dir_9e99c41d3802fada2a0119d079df0956.md#dir-studio/optimize)**  |
 | **[Studio/Python](../Files/dir_48521012c292b6dfb1bd2f2ae5aacf6c.md#dir-studio/python)**  |
 | **[Studio/Resources](../Files/dir_a4bc8cdb2751c8604311dac5c98fb558.md#dir-studio/resources)**  |
+| **[Studio/ShapeWorksMONAI](../Files/dir_3ac71cfeb9e8c31aa5ca4ffc7168c68d.md#dir-studio/shapeworksmonai)**  |
 | **[Studio/Utils](../Files/dir_645c19d7da098e01621cdebb663b8767.md#dir-studio/utils)**  |
 | **[Studio/Visualization](../Files/dir_b6c1f9d4f6080dc79a7a9d2c69150815.md#dir-studio/visualization)**  |
 
@@ -30,4 +31,4 @@ title: Studio
 
 -------------------------------
 
-Updated on 2024-09-21 at 04:11:02 +0000
+Updated on 2024-09-26 at 21:49:46 +0000
