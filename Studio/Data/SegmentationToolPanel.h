@@ -33,6 +33,8 @@ class SegmentationToolPanel : public QWidget {
  private:
   QSharedPointer<Session> session_;
 
+   void update_paint_value();
+
   Ui_SegmentationToolPanel* ui_;
 };
 }  // namespace shapeworks

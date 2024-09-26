@@ -1374,6 +1374,15 @@ void Session::set_seg_paint_active(bool enabled) {
 bool Session::get_seg_paint_active() { return seg_painting_active_ && get_tool_state() == Session::DATA_C; }
 
 //---------------------------------------------------------------------------
+void Session::set_seg_paint_value(int value) {
+  seg_painting_value_ = value;
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+int Session::get_seg_paint_value() { return seg_painting_value_; }
+
+//---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
   landmark_drag_mode_ = mode;
   Q_EMIT landmarks_changed();

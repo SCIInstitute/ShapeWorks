@@ -114,6 +114,7 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
       property_->LightingOff();
       property_->SetLineWidth(4.0);
       property_->SetRepresentationToWireframe();
+      mapper_->RemoveAllClippingPlanes();
       mapper_->AddClippingPlane(plane1_);
       mapper_->AddClippingPlane(plane2_);
 
@@ -234,28 +235,19 @@ bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
     return false;
   }
 
-  // cast PointPlacer to vtkImageActorPointPlacer
-  vtkImageActorPointPlacer* image_point_place = dynamic_cast<vtkImageActorPointPlacer*>(this->PointPlacer);
-  if (image_point_place) {
-    auto input = image_point_place->GetImageActor()->GetInput();
-    if (!input) {
-      SW_DEBUG("no input!?!!?!?");
-    }
-  }
-
   if (!PointPlacer->ComputeWorldPosition(Renderer, displayPos, worldPos, worldOrient)) {
-    SW_DEBUG("point placer: leaving");
     LeaveAction(this);
     set_cursor(VTK_CURSOR_DEFAULT);
     return false;
   }
 
-  // update planes
-  vtkPlane* plane = viewer_->slice_view().get_slice_plane();
-  sphere_cursor_->update_plane(plane);
+  if (circle_mode_) {
+    // update planes
+    vtkPlane* plane = viewer_->slice_view().get_slice_plane();
+    sphere_cursor_->update_plane(plane);
+  }
 
   WidgetState = newState;
-  SW_DEBUG("use point placer: update position");
   sphere_cursor_->set_position(worldPos);
   sphere_cursor_->set_visible(true);
 
@@ -266,8 +258,6 @@ bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
     } else if (WidgetState == PaintWidget::Erase) {
       ////erase_position( this, worldPos );
     }
-
-    ///// update?
 
     EventCallbackCommand->SetAbortFlag(1);
   }
@@ -392,7 +382,10 @@ void PaintWidget::PrintSelf(ostream& os, vtkIndent indent) {
 void PaintWidget::set_viewer(Viewer* viewer) { viewer_ = viewer; }
 
 //----------------------------------------------------------------------
-void PaintWidget::set_circle_mode(bool circle_mode) { sphere_cursor_->set_circle_mode(circle_mode); }
+void PaintWidget::set_circle_mode(bool circle_mode) {
+  circle_mode_ = circle_mode;
+  sphere_cursor_->set_circle_mode(circle_mode);
+}
 
 //----------------------------------------------------------------------
 void PaintWidget::set_brush_size(double size) { sphere_cursor_->set_size(size); }

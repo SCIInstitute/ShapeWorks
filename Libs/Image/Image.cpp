@@ -1,5 +1,6 @@
 #include "Image.h"
 
+#include <Logging.h>
 #include <itkAntiAliasBinaryImageFilter.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
@@ -905,6 +906,11 @@ Image& Image::isolate() {
   return *this;
 }
 
+double Image::get_largest_dimension_size() const {
+  auto our_size = size();
+  return std::max(our_size[0], std::max(our_size[1], our_size[2]));
+}
+
 double Image::get_minimum_spacing() const {
   auto spacing = this->spacing();
   return std::min(spacing[0], std::min(spacing[1], spacing[2]));
@@ -1077,6 +1083,9 @@ void Image::paintCircle(Point p, double radius, unsigned int axis, PixelType val
   ImageType::IndexType centerIndex;
   itk_image_->TransformPhysicalPointToIndex(p, centerIndex);
 
+  SW_LOG("radius = {}", radius);
+  ImageType::SpacingType spacing = itk_image_->GetSpacing();
+
   // Calculate the radius squared
   const double radiusSquared = radius * radius;
 
@@ -1108,11 +1117,15 @@ void Image::paintCircle(Point p, double radius, unsigned int axis, PixelType val
   endIndex[1] = startIndex[1] + size[1] - 1;
   endIndex[2] = startIndex[2] + size[2] - 1;
 
-  // Calculate bounding box of the circle in the specified plane
-  startIndex[dim1] = std::max<long>(startIndex[dim1], centerIndex[dim1] - static_cast<long>(std::ceil(radius)));
-  startIndex[dim2] = std::max<long>(startIndex[dim2], centerIndex[dim2] - static_cast<long>(std::ceil(radius)));
-  endIndex[dim1] = std::min<long>(endIndex[dim1], centerIndex[dim1] + static_cast<long>(std::ceil(radius)));
-  endIndex[dim2] = std::min<long>(endIndex[dim2], centerIndex[dim2] + static_cast<long>(std::ceil(radius)));
+  // Calculate bounding box of the circle in the specified plane, considering spacing
+  startIndex[dim1] =
+      std::max<long>(startIndex[dim1], centerIndex[dim1] - static_cast<long>(std::ceil(radius / spacing[dim1])));
+  startIndex[dim2] =
+      std::max<long>(startIndex[dim2], centerIndex[dim2] - static_cast<long>(std::ceil(radius / spacing[dim2])));
+  endIndex[dim1] =
+      std::min<long>(endIndex[dim1], centerIndex[dim1] + static_cast<long>(std::ceil(radius / spacing[dim1])));
+  endIndex[dim2] =
+      std::min<long>(endIndex[dim2], centerIndex[dim2] + static_cast<long>(std::ceil(radius / spacing[dim2])));
 
   // Set the orthogonal dimension index to the center slice
   ImageType::IndexType index;
@@ -1123,7 +1136,7 @@ void Image::paintCircle(Point p, double radius, unsigned int axis, PixelType val
     for (index[dim1] = startIndex[dim1]; index[dim1] <= endIndex[dim1]; ++index[dim1]) {
       // Calculate the 2D distance on the specified plane
       Point3 q = logicalToPhysical(index);
-      double distanceSquared = std::pow(p[dim1] - q[dim1], 2) + std::pow(p[dim2] - q[dim2], 2);
+      double distanceSquared = std::pow((p[dim1] - q[dim1]), 2) + std::pow((p[dim2] - q[dim2]), 2);
 
       // If it's within the radius, set the pixel value
       if (distanceSquared <= radiusSquared) {

@@ -217,6 +217,9 @@ class Image {
   /// physical dimensions of the image (dims * spacing)
   Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }
 
+  /// largest dimension size
+  double get_largest_dimension_size() const;
+
   /// physical spacing of the image
   Vector spacing() const { return itk_image_->GetSpacing(); }
 

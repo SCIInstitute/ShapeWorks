@@ -103,6 +103,7 @@ class PaintWidget : public vtkAbstractWidget {
   bool mouse_in_window_;
 
   Viewer* viewer_;
+  bool circle_mode_ = false;
 
  private:
   PaintWidget(const PaintWidget&);     // Not implemented

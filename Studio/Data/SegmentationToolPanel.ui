@@ -204,10 +204,44 @@ QWidget#panel {
       <item>
        <widget class="QWidget" name="content" native="true">
         <layout class="QGridLayout" name="gridLayout">
+         <item row="5" column="1">
+          <widget class="QRadioButton" name="excluded_mode_">
+           <property name="text">
+            <string>Excluded</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Brush Size</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QCheckBox" name="painting_active_">
            <property name="text">
             <string>Painting Enabled</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QRadioButton" name="included_mode_">
+           <property name="text">
+            <string>Included</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" rowspan="4">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Paint Type</string>
            </property>
           </widget>
          </item>
@@ -223,14 +257,7 @@ QWidget#panel {
             <number>80</number>
            </property>
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Brush Size</string>
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -245,29 +272,12 @@ QWidget#panel {
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QRadioButton" name="included_mode_">
+          <widget class="QRadioButton" name="erase_mode_">
            <property name="text">
-            <string>Included</string>
+            <string>Erase</string>
            </property>
            <property name="checked">
             <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QRadioButton" name="excluded_mode_">
-           <property name="text">
-            <string>Excluded</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" rowspan="3">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>Paint Type</string>
            </property>
           </widget>
          </item>

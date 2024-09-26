@@ -233,6 +233,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_seg_paint_active(bool enabled);
   bool get_seg_paint_active();
 
+  void set_seg_paint_value(int value);
+  int get_seg_paint_value();
+
   void set_ffc_paint_mode_inclusive(bool inclusive);
   bool get_ffc_paint_mode_inclusive();
 
@@ -372,7 +375,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   double ffc_paint_size_ = 50;
   double seg_paint_size_ = 50;
   bool seg_painting_active_ = false;
-
+  int seg_painting_value_ = 1;
 
   bool is_loading_ = false;
   CompareSettings compare_settings_;

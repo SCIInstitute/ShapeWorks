@@ -555,7 +555,8 @@ void Viewer::handle_paint(double display_pos[2], double world_pos[3]) {
 
     int axis = slice_view_.get_orientation_index();
 
-    shape_->get_segmentation()->paintCircle(world_pos, paint_widget_->get_brush_size(), axis, 2);
+    shape_->get_segmentation()->paintCircle(world_pos, paint_widget_->get_brush_size(), axis,
+                                            session_->get_seg_paint_value());
     slice_view_.update();
     return;
   }
@@ -613,13 +614,26 @@ void Viewer::update_paint_mode() {
 
   paint_widget_->set_circle_mode(session_->get_seg_paint_active());
 
-  double paint_size = session_->get_ffc_paint_size() * 0.10;
+  double paint_size = 0;
+  if (session_->get_seg_paint_active()) {
+    paint_size = session_->get_seg_paint_size() * 0.10;
 
-  // scale based on dimension of data
-  if (meshes_.valid()) {
-    paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
+    // scale based on dimension of data
+    auto image = shape_->get_segmentation();
+    if (image) {
+      paint_size = paint_size / 100.0 * image->get_largest_dimension_size();
+    }
+
+  } else {
+    paint_size = session_->get_ffc_paint_size() * 0.10;
+
+    // scale based on dimension of data
+    if (meshes_.valid()) {
+      paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
+    }
   }
 
+  SW_LOG("setting paint size {}", paint_size);
   paint_widget_->set_brush_size(paint_size);
   if (session_->get_ffc_paint_active()) {
     SW_DEBUG("Setting point placer to surface");
