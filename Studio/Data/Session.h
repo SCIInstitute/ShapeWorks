@@ -319,6 +319,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string OPTIMIZE_C;
   const static std::string ANALYSIS_C;
   const static std::string DEEPSSM_C;
+  const static std::string MONAI_C;
 
  private:
   void renumber_shapes();

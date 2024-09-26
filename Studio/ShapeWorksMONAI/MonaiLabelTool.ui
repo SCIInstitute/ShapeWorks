@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MonaiLabelTool</class>
+ <widget class="QWidget" name="MonaiLabelTool">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>1451</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+                QToolButton{
+                border: 1px solid rgba( 0, 0, 0, 0 );
+                margin: 0, 0, 0, 0;
+                padding: 0, 0, 0, 0;
+                }
+
+                QToolButton:hover{
+                background-color: rgba( 140, 140, 140, 50 );
+                }
+
+                QToolButton:pressed{
+                border: 1px solid rgba( 100, 100, 100, 120 );
+                background-color: rgba( 100, 100, 100, 200 );
+                }
+
+
+                /********************** monai_params panel ***********************/
+
+                QLabel#monai_params_label {
+                color: white;
+                font: bold;
+                }
+
+                QPushButton#monai_label_header {
+                background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227,
+                stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
+                border-radius: 3px;
+                }
+
+                QWidget#monai_label_header_background {
+                background-color: rgb( 192, 92, 0);
+                border-radius: 3px;
+                border: 1px solid rgb(90, 90, 90);
+                }
+
+                QWidget#monai_params_panel {
+                border-radius: 4px;
+                border: 1px solid rgb(60, 60, 60);
+                color: rgb(90, 90, 90);
+                }
+
+                /********************** edit panel ***********************/
+                QLabel#edit_label {
+                color: white;
+                font: bold;
+                }
+
+
+                QPushButton#edit_header {
+                    background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227,
+                    stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
+                    border-radius: 3px;
+                }
+
+                QWidget#edit_header_background {
+                background-color: rgb( 192, 92, 0);
+                border-radius: 3px;
+                border: 1px solid rgb(90 90, 90);
+                }
+
+                QWidget#edit_panel {
+                border-radius: 4px;
+                border: 1px solid rgb(60, 60, 60);
+                color: rgb(90, 90, 90);
+                }
+            </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="monai_params_panel" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_20">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="monai_label_header_background" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_21">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="monai_label_header">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>215</width>
+             <height>21</height>
+            </size>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_19">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QToolButton" name="monai_label_open_button">
+              <property name="minimumSize">
+               <size>
+                <width>21</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>21</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                <normaloff>:/Studio/Images/RightArrowWhite.png</normaloff>
+                <normalon>:/Studio/Images/DownArrowWhite.png</normalon>:/Studio/Images/RightArrowWhite.png</iconset>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="monai_top_label">
+              <property name="text">
+               <string>AI Assisted Segmentation</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="monai_panel_content" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <property name="spacing">
+          <number>3</number>
+         </property>
+         <property name="leftMargin">
+          <number>3</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="rightMargin">
+          <number>3</number>
+         </property>
+         <property name="bottomMargin">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QWidget" name="monai_panel_contents" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_12">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QWidget" name="group_box" native="true">
+              <layout class="QGridLayout" name="gridLayout">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+
+               <item row="0" column="0">
+                <widget class="QLabel" name="server_address_label">
+                 <property name="text">
+                  <string>MONAI Label Server</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="serverAddressField">
+                 <property name="text">
+                  <string>http://0.0.0.0:8000</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+
+               <item row="2" column="0">
+                <widget class="QLabel" name="monai_model_type_label">
+                 <property name="text">
+                  <string>Model Type</string>
+                 </property>
+                </widget>
+               </item>
+
+               <item row="2" column="1">
+                <widget class="QComboBox" name="monaiModelTypeCombo">
+                 <item>
+                  <property name="text">
+                   <string>Segmentation</string>
+                  </property>
+                 </item>
+                 <!-- <item> -->
+                  <!-- <property name="text">
+                   <string>DeepEdit</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>DeepGrow</string>
+                  </property>
+                 </item> -->
+                </widget>
+               </item>
+
+               <item row="3" column="0">
+                <widget class="QLabel" name="monai_model_name_label">
+                 <property name="text">
+                  <string>Model Name</string>
+                 </property>
+                </widget>
+               </item>
+
+               <item row="3" column="1">
+                <widget class="QComboBox" name="monaiModelNameCombo">
+                 <item>
+                  <property name="text">
+                   <string>--Model Name--</string>
+                  </property>
+                  <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                 </item>
+                </widget>
+               </item>
+
+               <item row="1" column="1">
+                <widget class="QPushButton" name="connectServerButton">
+                 <property name="text">
+                  <string>Connect Server</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/connect.png</normaloff>
+                  </iconset>
+                 </property>
+                </widget>
+               </item>
+
+
+               <item row="6" column="1">
+                <widget class="QPushButton" name="submitLabelButton">
+                 <property name="text">
+                  <string>Submit Label</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                    <normaloff>:/Studio/Images/save.png</normaloff>
+                  </iconset>
+                 </property>
+
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                </widget>
+               </item>
+
+               <item row="6" column="0">
+                <widget class="QPushButton" name="runSegmentationButton">
+                 <property name="text">
+                  <string>Run</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/segment.png</normaloff>
+                  </iconset>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                </widget>
+               </item>
+
+               <item row="4" column="0">
+                <widget class="QLabel" name="monai_sample_number_label">
+                 <property name="text">
+                  <string> Source Volume</string>
+                 </property>
+                </widget>
+               </item>
+
+
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="currentSampleSpinBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Sample selection</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QPushButton" name="uploadSampleButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Upload Sample</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/upload.png</normaloff>
+                  </iconset>
+                 </property>
+                </widget>
+               </item>
+
+
+
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <!-- <item>
+    <widget class="QWidget" name="edit_panel" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_6">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="edit_header_background" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="edit_header">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>215</width>
+             <height>21</height>
+            </size>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QToolButton" name="edit_open_button">
+              <property name="minimumSize">
+               <size>
+                <width>21</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>21</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                <normaloff>:/Studio/Images/RightArrowWhite.png</normaloff>
+                <normalon>:/Studio/Images/DownArrowWhite.png</normalon>:/Studio/Images/RightArrowWhite.png</iconset>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="edit_label">
+              <property name="text">
+               <string>Edit</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="edit_content" native="true">
+        <layout class="QGridLayout" name="gridLayout_14">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0" colspan="2">
+          <widget class="QWidget" name="edit_domain_widget_" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+
+         <item row="1" column="0" colspan="2">
+          <widget class="QWidget" name="scribble_widget" native="true">
+           <layout class="QGridLayout" name="gridLayout_4">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="1" column="0" colspan="2">
+             <widget class="QTableWidget" name="scribble_table_">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ContiguousSelection</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Edit: </string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" colspan="2">
+             <widget class="QWidget" name="scribble_controls_" native="true">
+              <layout class="QGridLayout" name="gridLayout_3">
+               <item row="2" column="1">
+                <widget class="QRadioButton" name="scribble_included_mode_">
+                 <property name="text">
+                  <string>Included</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1" colspan="2">
+                <widget class="CustomSlider" name="scribble_brush_size_" native="true">
+                 <property name="minimum" stdset="0">
+                  <number>5</number>
+                 </property>
+                 <property name="maximum" stdset="0">
+                  <number>200</number>
+                 </property>
+                 <property name="value" stdset="0">
+                  <number>80</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Paint Type</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Brush Size</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QRadioButton" name="scribble_excluded_mode_">
+                 <property name="text">
+                  <string>Excluded</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="scribble_active_">
+                 <property name="text">
+                  <string>Scribble Painting Enabled</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="QPushButton" name="delete_scribble_">
+              <property name="text">
+               <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="scribble_instruction">
+              <property name="text">
+               <string>Scribble Instructions</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item> -->
+   <!-- <item>
+    <widget class="QWidget" name="buttons_widget" native="true">
+     <layout class="QGridLayout" name="gridLayout_11">
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>6</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="load_server_button">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Load Server</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="restoreDefaults">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Restore Defaults</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <widget class="Line" name="line_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>361</width>
+        <height>3</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </widget>
+   </item> -->
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <extends>QWidget</extends>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+
+ </tabstops>
+ <resources>
+  <include location="../Resources/ShapeWorksStudio.qrc"/>
+ </resources>
+ <connections/>
+</ui>
