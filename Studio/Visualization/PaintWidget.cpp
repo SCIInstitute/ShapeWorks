@@ -7,6 +7,7 @@
 
 #include "Viewer.h"
 #include "vtkCallbackCommand.h"
+#include "vtkClipPolyData.h"
 #include "vtkCommand.h"
 #include "vtkEvent.h"
 #include "vtkImageActor.h"
@@ -48,8 +49,13 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
     property_->SetLineWidth(0.1);
     property_->SetPointSize(3);
 
+    plane1_ = vtkSmartPointer<vtkPlane>::New();
+    plane2_ = vtkSmartPointer<vtkPlane>::New();
+
     mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
     mapper_->SetInputConnection(sphere_source_->GetOutputPort());
+    mapper_->AddClippingPlane(plane1_);
+    mapper_->AddClippingPlane(plane2_);
 
     actor_ = vtkSmartPointer<vtkActor>::New();
     actor_->SetMapper(mapper_);
@@ -96,14 +102,49 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
   //----------------------------------------------------------------------
   void set_circle_mode(bool circle_mode) {
     if (circle_mode) {
+      double position[3] = {0, 0, 0};  // Adjust these to match your application
+      double normal1[3] = {0, 0, 1};   // Adjust to match your slice orientation
+      double normal2[3] = {0, 0, -1};
 
-      this->property_->SetOpacity( 1.0 );
-      this->property_->LightingOff();
-      this->property_->SetLineWidth( 3.0 );
-      //property_->SetRepresentationToWireframe();
+      plane1_->SetOrigin(position);
+      plane1_->SetNormal(normal1);
+
+      plane2_->SetOrigin(position);
+      plane2_->SetNormal(normal2);
+
+      property_->SetOpacity(1.0);
+      property_->LightingOff();
+      property_->SetLineWidth(4.0);
+      property_->SetRepresentationToWireframe();
     } else {
+      plane1_->SetNormal(0, 0, 0);
+      plane2_->SetNormal(0, 0, 0);
       property_->SetRepresentationToSurface();
     }
+  }
+
+  //----------------------------------------------------------------------
+  void update_plane(vtkPlane* plane) {
+    // set the two planes as shifted slightly from the slice plane along the normal
+    double position[3];
+    double normal[3];
+    plane->GetOrigin(position);
+    plane->GetNormal(normal);
+
+    double shift = 1.0;
+    double position1[3] = {position[0] + shift * normal[0], position[1] + shift * normal[1],
+                           position[2] + shift * normal[2]};
+    double position2[3] = {position[0] - shift * normal[0], position[1] - shift * normal[1],
+                           position[2] - shift * normal[2]};
+
+    plane1_->SetOrigin(position2);
+    plane1_->SetNormal(normal);
+    plane2_->SetOrigin(position1);
+    // flip the normal
+    normal[0] = -normal[0];
+    normal[1] = -normal[1];
+    normal[2] = -normal[2];
+    plane2_->SetNormal(normal);
   }
 
   //----------------------------------------------------------------------
@@ -132,6 +173,9 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
   vtkSmartPointer<vtkPolyDataMapper> mapper_;
   vtkSmartPointer<vtkSphereSource> sphere_source_;
   vtkSmartPointer<vtkProperty> property_;
+
+  vtkSmartPointer<vtkPlane> plane1_;
+  vtkSmartPointer<vtkPlane> plane2_;
 };
 
 vtkStandardNewMacro(StudioSphereRepresentation);
@@ -203,6 +247,10 @@ bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
     set_cursor(VTK_CURSOR_DEFAULT);
     return false;
   }
+
+  // update planes
+  vtkPlane* plane = viewer_->slice_view().get_slice_plane();
+  sphere_cursor_->update_plane(plane);
 
   WidgetState = newState;
   SW_DEBUG("use point placer: update position");

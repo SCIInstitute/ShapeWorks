@@ -417,6 +417,9 @@ int SliceView::get_slice_number() { return current_slice_number_; }
 vtkSmartPointer<vtkImageActor> SliceView::get_image_actor() { return image_slice_; }
 
 //-----------------------------------------------------------------------------
+vtkPlane* SliceView::get_slice_plane() { return slice_mapper_->GetSlicePlane(); }
+
+//-----------------------------------------------------------------------------
 void SliceView::set_slice_number(int slice) {
   current_slice_number_ = slice;
 

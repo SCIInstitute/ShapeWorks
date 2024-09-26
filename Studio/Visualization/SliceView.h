@@ -53,7 +53,7 @@ class SliceView {
   Point get_slice_position();
 
   void set_slice_position(Point point);
-  
+
   void set_brightness_and_contrast(double brightness, double contrast);
 
   double get_spacing();
@@ -69,6 +69,8 @@ class SliceView {
   int get_slice_number();
 
   vtkSmartPointer<vtkImageActor> get_image_actor();
+
+  vtkPlane* get_slice_plane();
 
  private:
   void set_slice_number(int slice);
@@ -93,7 +95,7 @@ class SliceView {
   int current_slice_number_ = 0;
 
   std::vector<vtkSmartPointer<vtkActor>> cut_actors_;
-  ///std::vector<vtkSmartPointer<vtkPolyDataMapper>>
+  /// std::vector<vtkSmartPointer<vtkPolyDataMapper>>
 
   std::vector<vtkSmartPointer<vtkPolyData>> poly_datas_;
 };
