@@ -38,8 +38,8 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
   //----------------------------------------------------------------------
   StudioSphereRepresentation() {
     sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
-    sphere_source_->SetThetaResolution(32);
-    sphere_source_->SetPhiResolution(32);
+    sphere_source_->SetThetaResolution(128);
+    sphere_source_->SetPhiResolution(128);
     sphere_source_->SetRadius(7);
 
     property_ = vtkSmartPointer<vtkProperty>::New();
@@ -47,6 +47,7 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
     property_->SetOpacity(0.4);
     property_->SetLineWidth(0.1);
     property_->SetPointSize(3);
+    property_->SetEdgeColor(1, 1, 1);
 
     plane1_ = vtkSmartPointer<vtkPlane>::New();
     plane2_ = vtkSmartPointer<vtkPlane>::New();
@@ -111,7 +112,8 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
 
       property_->SetOpacity(1.0);
       property_->LightingOff();
-      property_->SetLineWidth(4.0);
+      property_->SetLineWidth(5.0);
+      property_->SetEdgeVisibility(true);
       property_->SetRepresentationToWireframe();
       mapper_->RemoveAllClippingPlanes();
       mapper_->AddClippingPlane(plane1_);
