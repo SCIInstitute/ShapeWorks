@@ -303,6 +303,9 @@ class Image {
   //! Returns if the image has been painted
   bool isPainted() const { return painted_; }
 
+  //! fill with value
+  Image& fill(PixelType value);
+
   //! Return supported file types
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};

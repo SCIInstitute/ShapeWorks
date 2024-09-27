@@ -551,6 +551,10 @@ void Viewer::handle_paint(double display_pos[2], double world_pos[3]) {
   if (session_->get_seg_paint_active()) {
     // segmentation paint
     int axis = slice_view_.get_orientation_index();
+    shape_->ensure_segmentation();
+    if (!shape_->get_segmentation()) {
+      return;
+    }
     shape_->get_segmentation()->paintCircle(world_pos, paint_widget_->get_brush_size(), axis,
                                             session_->get_seg_paint_value());
     slice_view_.update();
@@ -1211,7 +1215,11 @@ void Viewer::update_image_volume(bool force) {
     }
   }
 
-  slice_view_.add_mask(shape_->get_segmentation());
+  if (session_->get_seg_paint_active()) {
+    slice_view_.set_mask(shape_->get_segmentation());
+  } else {
+    slice_view_.set_mask(nullptr);
+  }
 
   slice_view_.update_particles();
 

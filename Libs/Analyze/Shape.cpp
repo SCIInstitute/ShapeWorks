@@ -125,6 +125,33 @@ void Shape::recompute_original_surface() {
   original_meshes_.set_mesh(0, mesh_handle);
 }
 
+
+//---------------------------------------------------------------------------
+void Shape::ensure_segmentation()
+{
+  if (get_segmentation()) {
+    return;
+  }
+
+  if (!subject_) {
+    return;
+  }
+
+  // get image volume
+  auto image_name = subject_->get_feature_filenames().begin()->first;
+  auto base_image = get_image_volume(image_name);
+  if (!base_image) {
+    return;
+  }
+
+  // deep copy
+  Image blank = *base_image;
+  blank.fill(0);
+  segmentation_ = std::make_shared<Image>(blank);
+  // remove extension and add "_seg.nrrd"
+  segmentation_filename_ = StringUtils::removeExtension(image_volume_filename_) + "_seg.nrrd";
+}
+
 //---------------------------------------------------------------------------
 MeshGroup Shape::get_groomed_meshes(bool wait) {
   if (!subject_) {

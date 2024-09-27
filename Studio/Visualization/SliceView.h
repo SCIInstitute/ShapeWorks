@@ -34,7 +34,7 @@ class SliceView {
   void set_volume(std::shared_ptr<Image> volume);
 
   void add_mesh(vtkSmartPointer<vtkPolyData> poly_data);
-  void add_mask(std::shared_ptr<Image> mask);
+  void set_mask(std::shared_ptr<Image> mask);
   void clear_meshes();
 
   void set_orientation(int orientation);

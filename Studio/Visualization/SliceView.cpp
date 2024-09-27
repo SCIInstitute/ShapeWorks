@@ -121,11 +121,11 @@ void SliceView::add_mesh(vtkSmartPointer<vtkPolyData> poly_data) {
 }
 
 //-----------------------------------------------------------------------------
-void SliceView::add_mask(std::shared_ptr<Image> mask) {
+void SliceView::set_mask(std::shared_ptr<Image> mask) {
+  mask_volume_ = mask;
   if (!mask) {
     return;
   }
-  mask_volume_ = mask;
   vtk_mask_volume_ = mask->getVTKImage();
 
   mask_mapper_->SetInputData(vtk_mask_volume_);
@@ -209,7 +209,11 @@ void SliceView::update_renderer() {
 
   if (is_image_loaded()) {
     renderer->AddActor(image_slice_);
-    renderer->AddActor(mask_slice_);
+    if (mask_volume_) {
+      renderer->AddActor(mask_slice_);
+    } else {
+      renderer->RemoveViewProp(mask_slice_);
+    }
     for (auto &actor : cut_actors_) {
       renderer->AddActor(actor);
     }

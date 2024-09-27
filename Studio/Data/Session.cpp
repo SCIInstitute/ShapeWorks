@@ -152,9 +152,11 @@ bool Session::save_project(QString filename) {
     for (int i = 0; i < shapes_.size(); i++) {
       auto seg = shapes_[i]->get_segmentation();
       if (seg && seg->isPainted()) {
-        auto seg_filename = shapes_[i]->get_original_filename_with_path();
+        auto seg_filename = shapes_[i]->get_segmentation_filename();
         SW_LOG("Saving segmentation: {}", seg_filename)
         seg->write(seg_filename);
+
+        shapes_[i]->get_subject()->set_original_filenames({seg_filename});
       }
     }
 
@@ -1378,6 +1380,11 @@ bool Session::get_ffc_paint_active() {
 //---------------------------------------------------------------------------
 void Session::set_seg_paint_active(bool enabled) {
   seg_painting_active_ = enabled;
+
+  for (auto& shape : shapes_) {
+    shape->ensure_segmentation();
+  }
+  Q_EMIT image_slice_settings_changed();
   Q_EMIT paint_mode_changed();
 }
 

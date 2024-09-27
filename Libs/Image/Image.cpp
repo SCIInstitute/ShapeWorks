@@ -1149,6 +1149,17 @@ void Image::paintCircle(Point p, double radius, unsigned int axis, PixelType val
 }
 
 //-------------------------------------------------------------------------
+Image& Image::fill(PixelType value) {
+  itk::ImageRegionIterator<ImageType> imageIterator(itk_image_, itk_image_->GetLargestPossibleRegion());
+  while (!imageIterator.IsAtEnd()) {
+    imageIterator.Set(value);
+    ++imageIterator;
+  }
+  painted_ = true;
+  return *this;
+}
+
+//-------------------------------------------------------------------------
 TransformPtr Image::createCenterOfMassTransform() {
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-(center() - centerOfMass()));  // ITK translations go in a counterintuitive direction
