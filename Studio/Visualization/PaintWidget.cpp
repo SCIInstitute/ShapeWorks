@@ -119,8 +119,8 @@ class StudioSphereRepresentation : public vtkWidgetRepresentation {
       mapper_->AddClippingPlane(plane2_);
 
     } else {
-      plane1_->SetNormal(0, 0, 0);
-      plane2_->SetNormal(0, 0, 0);
+      property_->LightingOn();
+      property_->SetLineWidth(0.1);
       property_->SetRepresentationToSurface();
       mapper_->RemoveAllClippingPlanes();
     }
@@ -199,11 +199,12 @@ PaintWidget::PaintWidget() {
                                     PaintWidget::EndPaintAction);
   CallbackMapper->SetCallbackMethod(vtkCommand::MouseMoveEvent, vtkWidgetEvent::Move, this, PaintWidget::MoveAction);
 
+  /*
   CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonPressEvent, vtkWidgetEvent::Translate, this,
                                     PaintWidget::StartEraseAction);
   CallbackMapper->SetCallbackMethod(vtkCommand::RightButtonReleaseEvent, vtkWidgetEvent::EndTranslate, this,
                                     PaintWidget::EndEraseAction);
-
+*/
   CallbackMapper->SetCallbackMethod(vtkCommand::LeaveEvent, vtkWidgetEvent::Scale, this, PaintWidget::LeaveAction);
 
   CallbackMapper->SetCallbackMethod(vtkCommand::KeyPressEvent, 100, this, PaintWidget::KeyPressAction);

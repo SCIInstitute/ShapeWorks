@@ -614,7 +614,7 @@ void Viewer::update_paint_mode() {
   if (session_->get_seg_paint_active()) {
     paint_size = session_->get_seg_paint_size() * 0.10;
 
-    // scale based on dimension of data
+    // scale based on dimension of image
     auto image = shape_->get_segmentation();
     if (image) {
       paint_size = paint_size / 100.0 * image->get_largest_dimension_size();
@@ -623,19 +623,16 @@ void Viewer::update_paint_mode() {
   } else {
     paint_size = session_->get_ffc_paint_size() * 0.10;
 
-    // scale based on dimension of data
+    // scale based on dimension of mesh
     if (meshes_.valid()) {
       paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
     }
   }
 
-  SW_LOG("setting paint size {}", paint_size);
   paint_widget_->set_brush_size(paint_size);
   if (session_->get_ffc_paint_active()) {
-    SW_DEBUG("Setting point placer to surface");
     paint_widget_->SetPointPlacer(point_placer_);
   } else {
-    SW_DEBUG("Setting point placer to slice");
     paint_widget_->SetPointPlacer(slice_point_placer_);
   }
 }

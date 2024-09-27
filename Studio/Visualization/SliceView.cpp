@@ -140,8 +140,6 @@ void SliceView::add_mask(std::shared_ptr<Image> mask) {
   mask_slice_->GetProperty()->SetColorWindow(window);
   mask_slice_->GetProperty()->SetColorLevel(level);
 
-  SW_LOG("window {}, level {}", window, level);
-
   // set 0's to be transparent with a lookup table
   // 1's to be orange
   // 2's to be blue

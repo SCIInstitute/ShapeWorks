@@ -1359,7 +1359,6 @@ void Session::set_modified(bool modified) {
   if (modified == modified_) {
     return;
   }
-  SW_LOG("Project has been modified: {}", modified);
   modified_ = modified;
   Q_EMIT session_title_changed();
 }
@@ -1375,7 +1374,6 @@ bool Session::get_ffc_paint_active() { return ffc_painting_active_ && get_tool_s
 
 //---------------------------------------------------------------------------
 void Session::set_seg_paint_active(bool enabled) {
-  SW_DEBUG("Setting segmentation painting active: {}", enabled);
   seg_painting_active_ = enabled;
   Q_EMIT paint_mode_changed();
 }
