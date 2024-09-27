@@ -7,7 +7,6 @@
 
 #include "Viewer.h"
 #include "vtkCallbackCommand.h"
-#include "vtkClipPolyData.h"
 #include "vtkCommand.h"
 #include "vtkEvent.h"
 #include "vtkImageActor.h"

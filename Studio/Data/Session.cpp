@@ -1370,7 +1370,10 @@ void Session::set_ffc_paint_active(bool enabled) {
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_ffc_paint_active() { return ffc_painting_active_ && get_tool_state() == Session::DATA_C; }
+bool Session::get_ffc_paint_active() {
+  // if both are active, prioritize segmentation one
+  return ffc_painting_active_ && !seg_painting_active_ && get_tool_state() == Session::DATA_C;
+}
 
 //---------------------------------------------------------------------------
 void Session::set_seg_paint_active(bool enabled) {
