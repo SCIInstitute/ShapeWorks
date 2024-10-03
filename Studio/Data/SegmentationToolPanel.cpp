@@ -64,6 +64,7 @@ void SegmentationToolPanel::set_session(QSharedPointer<Session> session) {
 void SegmentationToolPanel::reset() {
   ui_->painting_active_->setChecked(false);
   ui_->brush_size_->setValue(50);
+  ui_->segmentation_mode_->setChecked(true);
 }
 
 //---------------------------------------------------------------------------
