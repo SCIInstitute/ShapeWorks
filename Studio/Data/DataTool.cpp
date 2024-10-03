@@ -173,6 +173,7 @@ void DataTool::update_table(bool clean) {
   block_table_update_ = true;
   auto shapes = session_->get_shapes();
   auto project = session_->get_project();
+  segmentation_tool_panel_->set_session(session_);
   auto headers = project->get_headers();
   auto& subjects = project->get_subjects();
 

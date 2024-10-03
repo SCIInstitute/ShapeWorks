@@ -137,6 +137,10 @@ void Shape::ensure_segmentation()
     return;
   }
 
+  if (subject_->get_feature_filenames().empty()) {
+    return;
+  }
+
   // get image volume
   auto image_name = subject_->get_feature_filenames().begin()->first;
   auto base_image = get_image_volume(image_name);

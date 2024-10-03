@@ -51,12 +51,20 @@ void SegmentationToolPanel::set_session(QSharedPointer<Session> session) {
 
   connect(ui_->painting_active_, &QCheckBox::toggled, session.data(), &Session::set_seg_paint_active);
   connect(ui_->brush_size_, &CustomSlider::valueChanged, session.data(), &Session::set_seg_paint_size);
-
   reset();
+
+  bool has_images = !session_->get_project()->get_feature_names().empty();
+
+  ui_->tools->setEnabled(has_images);
+  ui_->message->setVisible(!has_images);
+  ui_->message->setText("Project must have images to enable segmentation tools.");
 }
 
 //---------------------------------------------------------------------------
-void SegmentationToolPanel::reset() {}
+void SegmentationToolPanel::reset() {
+  ui_->painting_active_->setChecked(false);
+  ui_->brush_size_->setValue(50);
+}
 
 //---------------------------------------------------------------------------
 void SegmentationToolPanel::update_paint_value() {
