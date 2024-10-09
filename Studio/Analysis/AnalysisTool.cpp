@@ -869,7 +869,7 @@ void AnalysisTool::store_settings() {
   params.set("network_pvalue_of_interest", ui_->network_pvalue_of_interest->text().toStdString());
   params.set("network_pvalue_threshold", ui_->network_pvalue_threshold->text().toStdString());
 
-  params.set("regression_slope", session->)
+  // params.set("regression_slope", session->)
 
   session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
 }

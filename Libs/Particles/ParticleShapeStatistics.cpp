@@ -694,4 +694,6 @@ Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix() const { return grou
 //---------------------------------------------------------------------------
 Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix() const { return group2_matrix_; }
 
+
+
 }  // namespace shapeworks

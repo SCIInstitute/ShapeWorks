@@ -39,7 +39,7 @@ public:
   //! Store params to project
 
   //! Get flag if regression needs to enabled for analysis in Studio
-  inline bool get_regression_analysis_status() { return regression_analysis_status; }
+  inline bool get_regression_analysis_status() { return regression_analysis_status_; }
 
   void store_params();
 
