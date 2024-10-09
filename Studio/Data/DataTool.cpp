@@ -17,6 +17,8 @@
 #include <QMessageBox>
 #include <QThread>
 
+#include "SegmentationToolPanel.h"
+
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
 #else
@@ -29,6 +31,8 @@ namespace shapeworks {
 DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_DataTool;
   ui_->setupUi(this);
+  segmentation_tool_panel_ = new SegmentationToolPanel(this);
+  layout()->addWidget(segmentation_tool_panel_);
 
   connect(ui_->add_button, &QPushButton::clicked, this, &DataTool::import_button_clicked);
   connect(ui_->delete_button, &QPushButton::clicked, this, &DataTool::delete_button_clicked);
@@ -124,6 +128,7 @@ DataTool::~DataTool() {}
 //---------------------------------------------------------------------------
 void DataTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+  segmentation_tool_panel_->set_session(session);
 
   // set (reset) values
   ui_->ffc_brush_size_->setValue(static_cast<int>(session->get_ffc_paint_size()));
@@ -168,6 +173,7 @@ void DataTool::update_table(bool clean) {
   block_table_update_ = true;
   auto shapes = session_->get_shapes();
   auto project = session_->get_project();
+  segmentation_tool_panel_->set_session(session_);
   auto headers = project->get_headers();
   auto& subjects = project->get_subjects();
 

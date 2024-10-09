@@ -167,6 +167,9 @@ class Shape {
 
   std::shared_ptr<Image> get_image_volume(std::string image_volume_name);
 
+  std::shared_ptr<Image> get_segmentation();
+  std::string get_segmentation_filename() { return segmentation_filename_; }
+
   Eigen::VectorXd get_point_features(std::string feature);
 
   void set_point_features(std::string feature, Eigen::VectorXd values);
@@ -185,6 +188,11 @@ class Shape {
   bool has_planes();
 
   std::vector<std::shared_ptr<MeshWrapper>> get_groomed_mesh_wrappers();
+
+  void recompute_original_surface();
+
+  //! If a segmentation doesn't exist, create a blank canvas
+  void ensure_segmentation();
 
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
@@ -224,6 +232,9 @@ class Shape {
 
   std::shared_ptr<Image> image_volume_;
   std::string image_volume_filename_;
+
+  std::shared_ptr<Image> segmentation_;
+  std::string segmentation_filename_;
 
   std::vector<Constraints> constraints_;  // one set for each domain
   int alignment_type_;

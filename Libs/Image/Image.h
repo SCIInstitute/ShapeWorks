@@ -1,5 +1,6 @@
 #pragma once
 
+#include <StringUtils.h>
 #include <itkImage.h>
 #include <itkImageRegionIterator.h>
 #include <itkLinearInterpolateImageFunction.h>
@@ -145,7 +146,7 @@ class Image {
                         const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// applies the given transformation to the image by using resampling filter with reference image
-  Image &applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
+  Image& applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary
   /// image
@@ -215,6 +216,9 @@ class Image {
 
   /// physical dimensions of the image (dims * spacing)
   Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }
+
+  /// largest dimension size
+  double get_largest_dimension_size() const;
 
   /// physical spacing of the image
   Vector spacing() const { return itk_image_->GetSpacing(); }
@@ -290,9 +294,31 @@ class Image {
   //! Evaluates the image at a given position
   Image::PixelType evaluate(Point p);
 
+  //! Paints a sphere in the image
+  void paintSphere(Point p, double radius, PixelType value);
+
+  //! Paints a circle in the image
+  void paintCircle(Point p, double radius, unsigned int axis, PixelType value);
+
+  //! Returns if the image has been painted
+  bool isPainted() const { return painted_; }
+
+  //! fill with value
+  Image& fill(PixelType value);
+
   //! Return supported file types
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
+  }
+
+  //! Return if the file type is supported
+  static bool isSupportedType(const std::string& filename) {
+    for (const auto& type : Image::getSupportedTypes()) {
+      if (StringUtils::hasSuffix(filename, type)) {
+        return true;
+      }
+    }
+    return false;
   }
 
  private:
@@ -317,6 +343,8 @@ class Image {
   StatsPtr statsFilter();
 
   ImageType::Pointer itk_image_;
+
+  bool painted_ = false;
 
   InterpolatorType::Pointer interpolator_;
 };

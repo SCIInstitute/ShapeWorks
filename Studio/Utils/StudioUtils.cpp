@@ -92,7 +92,7 @@ QString StudioUtils::get_platform_string() {
   QString platform = "windows";
 #ifdef Q_OS_MACOS
   platform = "macos";
-#elifdef Q_OS_LINUX
+#elif defined(Q_OS_LINUX)
   platform = "linux";
 #endif
   return platform;

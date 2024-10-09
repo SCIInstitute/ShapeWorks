@@ -16,6 +16,7 @@
 #include <vtkTransformPolyDataFilter.h>
 
 // shapeworks
+#include <Logging.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/SliceView.h>
 #include <Visualization/Viewer.h>
@@ -58,7 +59,9 @@ vtkSmartPointer<vtkActor> SliceView::create_shape_actor(vtkSmartPointer<vtkPolyD
 //-----------------------------------------------------------------------------
 SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
   image_slice_ = vtkSmartPointer<vtkImageActor>::New();
+  mask_slice_ = vtkSmartPointer<vtkImageActor>::New();
   slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
+  mask_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
   placer_ = vtkSmartPointer<vtkImageActorPointPlacer>::New();
   placer_->SetImageActor(image_slice_);
 }
@@ -99,9 +102,10 @@ void SliceView::add_mesh(vtkSmartPointer<vtkPolyData> poly_data) {
   if (poly_data->GetNumberOfCells() == 0) {
     return;
   }
-  if (!is_image_loaded()) {
-    return;
-  }
+
+  // if (!is_image_loaded()) {
+  // return;
+  //}
 
   poly_datas_.push_back(poly_data);
 
@@ -114,6 +118,50 @@ void SliceView::add_mesh(vtkSmartPointer<vtkPolyData> poly_data) {
   auto actor = create_shape_actor(poly_data, colors[color]);
   cut_actors_.push_back(actor);
   viewer_->get_renderer()->AddActor(actor);
+}
+
+//-----------------------------------------------------------------------------
+void SliceView::set_mask(std::shared_ptr<Image> mask) {
+  mask_volume_ = mask;
+  if (!mask) {
+    return;
+  }
+  vtk_mask_volume_ = mask->getVTKImage();
+
+  mask_mapper_->SetInputData(vtk_mask_volume_);
+
+  mask_slice_->SetMapper(mask_mapper_);
+
+  // reset window and level based on the volume scalar range
+  double range[2];
+  vtk_mask_volume_->GetScalarRange(range);
+  double window = range[1] - range[0];
+  double level = (range[1] + range[0]) / 2.0;
+  mask_slice_->GetProperty()->SetColorWindow(window);
+  mask_slice_->GetProperty()->SetColorLevel(level);
+
+  // set 0's to be transparent with a lookup table
+  // 1's to be orange
+  // 2's to be blue
+  // 3's to be green
+  vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+  lut->SetTableRange(0, 3);
+  lut->SetHueRange(0.0, 0.66667);
+  lut->SetSaturationRange(1, 1);
+  lut->SetValueRange(1, 1);
+  lut->SetAlphaRange(0, 1);
+  lut->SetNumberOfTableValues(4);
+  lut->Build();
+  mask_slice_->GetProperty()->SetLookupTable(lut);
+  mask_slice_->GetProperty()->SetOpacity(0.5);
+  mask_slice_->GetProperty()->SetInterpolationTypeToNearest();
+  mask_slice_->GetProperty()->SetUseLookupTableScalarRange(1);
+  mask_slice_->GetProperty()->SetLookupTable(lut);
+
+  auto transform = viewer_->get_image_transform();
+  mask_slice_->SetUserTransform(transform);
+
+  update_extent();
 }
 
 //-----------------------------------------------------------------------------
@@ -131,6 +179,7 @@ void SliceView::set_orientation(int orientation) {
     return;
   }
   slice_mapper_->SetOrientation(orientation);
+  mask_mapper_->SetOrientation(orientation);
 
   update_camera();
 }
@@ -147,7 +196,7 @@ void SliceView::update_colormap() {
       mapper->SetColorModeToMapScalars();
       mapper->SetLookupTable(viewer_->get_surface_lut());
       mapper->SetScalarRange(viewer_->get_surface_lut()->GetTableRange());
-    } else{
+    } else {
       mapper->SetScalarVisibility(false);
       mapper->SetScalarModeToDefault();
     }
@@ -160,15 +209,22 @@ void SliceView::update_renderer() {
 
   if (is_image_loaded()) {
     renderer->AddActor(image_slice_);
+    if (mask_volume_) {
+      renderer->AddActor(mask_slice_);
+    } else {
+      renderer->RemoveViewProp(mask_slice_);
+    }
     for (auto &actor : cut_actors_) {
       renderer->AddActor(actor);
     }
   } else {
     renderer->RemoveViewProp(image_slice_);
+    renderer->RemoveViewProp(mask_slice_);
     for (auto &actor : cut_actors_) {
       renderer->RemoveViewProp(actor);
     }
   }
+  renderer->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
@@ -191,6 +247,7 @@ void SliceView::update_camera() {
   // start in the middle
   current_slice_number_ = (slice_mapper_->GetSliceNumberMaxValue() - slice_mapper_->GetSliceNumberMinValue()) / 2;
   slice_mapper_->SetSliceNumber(current_slice_number_);
+  mask_mapper_->SetSliceNumber(current_slice_number_);
 
   if (orientation == 0) {
     renderer->GetActiveCamera()->SetPosition(spacing[0] * (max_slice_num + 1), spacing[1] * dims[1] / 2,
@@ -359,9 +416,24 @@ bool SliceView::should_point_show(double x, double y, double z) {
 int SliceView::get_slice_number() { return current_slice_number_; }
 
 //-----------------------------------------------------------------------------
+vtkSmartPointer<vtkImageActor> SliceView::get_image_actor() { return image_slice_; }
+
+//-----------------------------------------------------------------------------
+vtkPlane *SliceView::get_slice_plane() { return slice_mapper_->GetSlicePlane(); }
+
+//-----------------------------------------------------------------------------
+void SliceView::update() {
+  // the mask has been modified
+  if (mask_volume_) {
+    mask_mapper_->Modified();
+  }
+  // render
+  viewer_->get_renderer()->GetRenderWindow()->Render();
+}
+
+//-----------------------------------------------------------------------------
 void SliceView::set_slice_number(int slice) {
   current_slice_number_ = slice;
-
   current_slice_number_ = std::min(current_slice_number_, slice_mapper_->GetSliceNumberMaxValue());
   current_slice_number_ = std::max(current_slice_number_, slice_mapper_->GetSliceNumberMinValue());
 
@@ -370,6 +442,7 @@ void SliceView::set_slice_number(int slice) {
   }
 
   slice_mapper_->SetSliceNumber(current_slice_number_);
+  mask_mapper_->SetSliceNumber(current_slice_number_);
   update_extent();
   viewer_->update_points();
   viewer_->get_renderer()->GetRenderWindow()->Render();

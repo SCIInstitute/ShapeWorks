@@ -148,6 +148,18 @@ bool Session::save_project(QString filename) {
       // session_->set_original_files(original_list);
     }
 
+    // save segmentations
+    for (int i = 0; i < shapes_.size(); i++) {
+      auto seg = shapes_[i]->get_segmentation();
+      if (seg && seg->isPainted()) {
+        auto seg_filename = shapes_[i]->get_segmentation_filename();
+        SW_LOG("Saving segmentation: {}", seg_filename)
+        seg->write(seg_filename);
+
+        shapes_[i]->get_subject()->set_original_filenames({seg_filename});
+      }
+    }
+
     // landmarks
     for (int i = 0; i < shapes_.size(); i++) {
       shapes_[i]->store_landmarks();
@@ -1204,7 +1216,7 @@ void Session::set_tool_state(std::string state) {
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
   trigger_planes_changed();
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
   Q_EMIT tool_state_changed();
 }
 
@@ -1217,7 +1229,7 @@ bool Session::is_analysis_mode() { return get_tool_state() == Session::ANALYSIS_
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_mode_inclusive(bool inclusive) {
   ffc_painting_inclusive_mode_ = inclusive;
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -1226,11 +1238,20 @@ bool Session::get_ffc_paint_mode_inclusive() { return ffc_painting_inclusive_mod
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_size(double size) {
   ffc_paint_size_ = size;
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
 double Session::get_ffc_paint_size() { return ffc_paint_size_; }
+
+//---------------------------------------------------------------------------
+void Session::set_seg_paint_size(double size) {
+  seg_paint_size_ = size;
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+double Session::get_seg_paint_size() { return seg_paint_size_; }
 
 //---------------------------------------------------------------------------
 bool Session::get_show_good_bad_particles() { return params_.get("show_good_bad_particles", false); }
@@ -1340,7 +1361,6 @@ void Session::set_modified(bool modified) {
   if (modified == modified_) {
     return;
   }
-  SW_LOG("Project has been modified: {}", modified);
   modified_ = modified;
   Q_EMIT session_title_changed();
 }
@@ -1348,11 +1368,37 @@ void Session::set_modified(bool modified) {
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_active(bool enabled) {
   ffc_painting_active_ = enabled;
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_ffc_paint_active() { return ffc_painting_active_ && get_tool_state() == Session::DATA_C; }
+bool Session::get_ffc_paint_active() {
+  // if both are active, prioritize segmentation one
+  return ffc_painting_active_ && !seg_painting_active_ && get_tool_state() == Session::DATA_C;
+}
+
+//---------------------------------------------------------------------------
+void Session::set_seg_paint_active(bool enabled) {
+  seg_painting_active_ = enabled;
+
+  for (auto& shape : shapes_) {
+    shape->ensure_segmentation();
+  }
+  Q_EMIT image_slice_settings_changed();
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_seg_paint_active() { return seg_painting_active_ && get_tool_state() == Session::DATA_C; }
+
+//---------------------------------------------------------------------------
+void Session::set_seg_paint_value(int value) {
+  seg_painting_value_ = value;
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+int Session::get_seg_paint_value() { return seg_painting_value_; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
@@ -1362,5 +1408,12 @@ void Session::set_landmark_drag_mode(bool mode) {
 
 //---------------------------------------------------------------------------
 bool Session::get_landmark_drag_mode() { return landmark_drag_mode_ && get_landmarks_active(); }
+
 //---------------------------------------------------------------------------
+void Session::recompute_surfaces() {
+  for (auto& shape : shapes_) {
+    shape->recompute_original_surface();
+  }
+  Q_EMIT update_display();
+}
 }  // namespace shapeworks

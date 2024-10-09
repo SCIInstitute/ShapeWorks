@@ -7,6 +7,8 @@
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
 #include <vtkHandleWidget.h>
+#include <vtkImageActor.h>
+#include <vtkImageActorPointPlacer.h>
 #include <vtkImageData.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
@@ -56,6 +58,7 @@ Viewer::Viewer() {
   prop_picker_->SetPickFromList(1);
   point_placer_ = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
   point_placer_->SetDistanceOffset(0);
+  slice_point_placer_ = vtkSmartPointer<vtkImageActorPointPlacer>::New();
 
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
   plane_widget_ = std::make_shared<PlaneWidget>(this);
@@ -544,7 +547,21 @@ void Viewer::update_clipping_planes() {
 vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::handle_ffc_paint(double display_pos[2], double world_pos[3]) {
+void Viewer::handle_paint(double display_pos[2], double world_pos[3]) {
+  if (session_->get_seg_paint_active()) {
+    // segmentation paint
+    int axis = slice_view_.get_orientation_index();
+    shape_->ensure_segmentation();
+    if (!shape_->get_segmentation()) {
+      return;
+    }
+    shape_->get_segmentation()->paintCircle(world_pos, paint_widget_->get_brush_size(), axis,
+                                            session_->get_seg_paint_value());
+    slice_view_.update();
+    return;
+  }
+
+  // else ffc paint
   if (!meshes_.valid()) {
     return;
   }
@@ -588,22 +605,40 @@ void Viewer::update_planes() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_ffc_mode() {
+void Viewer::update_paint_mode() {
   paint_widget_->SetDefaultRenderer(renderer_);
   paint_widget_->SetRenderer(renderer_);
   paint_widget_->SetInteractor(renderer_->GetRenderWindow()->GetInteractor());
   paint_widget_->SetEnabled(0);
-  paint_widget_->SetEnabled(session_->get_ffc_paint_active());
+  paint_widget_->SetEnabled(session_->get_ffc_paint_active() || session_->get_seg_paint_active());
 
-  double paint_size = session_->get_ffc_paint_size() * 0.10;
+  paint_widget_->set_circle_mode(session_->get_seg_paint_active());
 
-  // scale based on dimension of data
-  if (meshes_.valid()) {
-    paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
+  double paint_size = 0;
+  if (session_->get_seg_paint_active()) {
+    paint_size = session_->get_seg_paint_size() * 0.10;
+
+    // scale based on dimension of image
+    auto image = shape_->get_segmentation();
+    if (image) {
+      paint_size = paint_size / 100.0 * image->get_largest_dimension_size();
+    }
+
+  } else {
+    paint_size = session_->get_ffc_paint_size() * 0.10;
+
+    // scale based on dimension of mesh
+    if (meshes_.valid()) {
+      paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
+    }
   }
 
   paint_widget_->set_brush_size(paint_size);
-  paint_widget_->SetPointPlacer(point_placer_);
+  if (session_->get_ffc_paint_active()) {
+    paint_widget_->SetPointPlacer(point_placer_);
+  } else {
+    paint_widget_->SetPointPlacer(slice_point_placer_);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -777,7 +812,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   plane_widget_->clear_planes();
   update_landmarks();
   update_planes();
-  update_ffc_mode();
+  update_paint_mode();
   renderer_->AddViewProp(corner_annotation_);
 
   /**************
@@ -1028,6 +1063,7 @@ void Viewer::update_actors() {
   prop_picker_->InitializePickList();
   point_placer_->RemoveAllProps();
   point_placer_->GetPolys()->RemoveAllItems();
+
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
   }
@@ -1050,9 +1086,11 @@ void Viewer::update_actors() {
   }
 
   if (show_surface_ && meshes_.valid()) {
+    // if (true && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
       renderer_->AddActor(unclipped_surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
+
       if (session_->get_compare_settings().compare_enabled_ &&
           !session_->get_compare_settings().surface_distance_mode_) {
         renderer_->AddActor(compare_actors_[i]);
@@ -1060,6 +1098,7 @@ void Viewer::update_actors() {
 
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       unclipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
+
       cell_picker_->AddPickList(unclipped_surface_actors_[i]);
       prop_picker_->AddPickList(unclipped_surface_actors_[i]);
       point_placer_->AddProp(unclipped_surface_actors_[i]);
@@ -1075,6 +1114,9 @@ void Viewer::update_actors() {
   }
 
   slice_view_.update_renderer();
+  renderer_->ResetCameraClippingRange();
+
+  slice_point_placer_->SetImageActor(slice_view_.get_image_actor());
 
   update_opacities();
 }
@@ -1171,6 +1213,12 @@ void Viewer::update_image_volume(bool force) {
         }
       }
     }
+  }
+
+  if (session_->get_seg_paint_active()) {
+    slice_view_.set_mask(shape_->get_segmentation());
+  } else {
+    slice_view_.set_mask(nullptr);
   }
 
   slice_view_.update_particles();
