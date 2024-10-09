@@ -2645,7 +2645,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_landmarks</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_planes</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_ffc_mode</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_paint_mode</span><span class="p">();</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_surface_actors</span><span class="p">();</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_unclipped_surface_actors</span><span class="p">();</span>
@@ -2672,7 +2672,7 @@
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolygonalSurfacePointPlacer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_point_placer</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_ffc_paint</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">display_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_paint</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">display_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_reverse</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
 
@@ -2786,6 +2786,7 @@
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellPicker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cell_picker_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPropPicker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prop_picker_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolygonalSurfacePointPlacer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">point_placer_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageActorPointPlacer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_point_placer_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// slice viewer</span>
 <span class="w">  </span><span class="n">SliceView</span><span class="w"> </span><span class="n">slice_view_</span><span class="p">{</span><span class="k">this</span><span class="p">};</span>
@@ -2793,7 +2794,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-09-26 at 21:49:46 +0000</p>
+<p>Updated on 2024-10-09 at 17:00:46 +0000</p>
 
               
             </article>

@@ -81,6 +81,8 @@ Representation of a single shape/patient/subject.
 | vtkSmartPointer< vtkTransform > | **[get_alignment](../Classes/classshapeworks_1_1Shape.md#function-get-alignment)**(int domain =0) |
 | void | **[load_feature](../Classes/classshapeworks_1_1Shape.md#function-load-feature)**(DisplayMode display_mode, std::string feature) |
 | std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > | **[get_image_volume](../Classes/classshapeworks_1_1Shape.md#function-get-image-volume)**(std::string image_volume_name) |
+| std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > | **[get_segmentation](../Classes/classshapeworks_1_1Shape.md#function-get-segmentation)**() |
+| std::string | **[get_segmentation_filename](../Classes/classshapeworks_1_1Shape.md#function-get-segmentation-filename)**() |
 | Eigen::VectorXd | **[get_point_features](../Classes/classshapeworks_1_1Shape.md#function-get-point-features)**(std::string feature) |
 | void | **[set_point_features](../Classes/classshapeworks_1_1Shape.md#function-set-point-features)**(std::string feature, Eigen::VectorXd values) |
 | void | **[load_feature_from_scalar_file](../Classes/classshapeworks_1_1Shape.md#function-load-feature-from-scalar-file)**(std::string filename, std::string feature_name) |
@@ -91,6 +93,8 @@ Representation of a single shape/patient/subject.
 | [Constraints](../Classes/classshapeworks_1_1Constraints.md) & | **[get_constraints](../Classes/classshapeworks_1_1Shape.md#function-get-constraints)**(int domain_id) |
 | bool | **[has_planes](../Classes/classshapeworks_1_1Shape.md#function-has-planes)**() |
 | std::vector< std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > > | **[get_groomed_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-mesh-wrappers)**() |
+| void | **[recompute_original_surface](../Classes/classshapeworks_1_1Shape.md#function-recompute-original-surface)**() |
+| void | **[ensure_segmentation](../Classes/classshapeworks_1_1Shape.md#function-ensure-segmentation)**()<br>If a segmentation doesn't exist, create a blank canvas.  |
 
 ## Public Functions Documentation
 
@@ -587,6 +591,20 @@ std::shared_ptr< Image > get_image_volume(
 ```
 
 
+### function get_segmentation
+
+```cpp
+std::shared_ptr< Image > get_segmentation()
+```
+
+
+### function get_segmentation_filename
+
+```cpp
+inline std::string get_segmentation_filename()
+```
+
+
 ### function get_point_features
 
 ```cpp
@@ -669,6 +687,21 @@ std::vector< std::shared_ptr< MeshWrapper > > get_groomed_mesh_wrappers()
 ```
 
 
+### function recompute_original_surface
+
+```cpp
+void recompute_original_surface()
+```
+
+
+### function ensure_segmentation
+
+```cpp
+void ensure_segmentation()
+```
+
+If a segmentation doesn't exist, create a blank canvas. 
+
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:45 +0000

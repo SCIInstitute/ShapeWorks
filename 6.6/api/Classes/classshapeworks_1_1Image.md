@@ -93,6 +93,7 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[isolate](../Classes/classshapeworks_1_1Image.md#function-isolate)**()<br>isolate the largest object in a binary segmentation  |
 | Dims | **[dims](../Classes/classshapeworks_1_1Image.md#function-dims)**() const<br>logical dimensions of the image  |
 | Point3 | **[size](../Classes/classshapeworks_1_1Image.md#function-size)**() const<br>physical dimensions of the image (dims * spacing)  |
+| double | **[get_largest_dimension_size](../Classes/classshapeworks_1_1Image.md#function-get-largest-dimension-size)**() const<br>largest dimension size  |
 | Vector | **[spacing](../Classes/classshapeworks_1_1Image.md#function-spacing)**() const<br>physical spacing of the image  |
 | double | **[get_minimum_spacing](../Classes/classshapeworks_1_1Image.md#function-get-minimum-spacing)**() const<br>minimum physical spacing of the image  |
 | Point3 | **[origin](../Classes/classshapeworks_1_1Image.md#function-origin)**() const<br>physical coordinates of image origin  |
@@ -117,7 +118,12 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[write](../Classes/classshapeworks_1_1Image.md#function-write)**(const std::string & filename, bool compressed =true)<br>writes image, format specified by filename extension  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[toMesh](../Classes/classshapeworks_1_1Image.md#function-tomesh)**(PixelType isovalue) const<br>converts image to mesh  |
 | Image::PixelType | **[evaluate](../Classes/classshapeworks_1_1Image.md#function-evaluate)**(Point p)<br>Evaluates the image at a given position.  |
+| void | **[paintSphere](../Classes/classshapeworks_1_1Image.md#function-paintsphere)**(Point p, double radius, PixelType value)<br>Paints a sphere in the image.  |
+| void | **[paintCircle](../Classes/classshapeworks_1_1Image.md#function-paintcircle)**(Point p, double radius, unsigned int axis, PixelType value)<br>Paints a circle in the image.  |
+| bool | **[isPainted](../Classes/classshapeworks_1_1Image.md#function-ispainted)**() const<br>Returns if the image has been painted.  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[fill](../Classes/classshapeworks_1_1Image.md#function-fill)**(PixelType value)<br>fill with value  |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Image.md#function-getsupportedtypes)**()<br>Return supported file types.  |
+| bool | **[isSupportedType](../Classes/classshapeworks_1_1Image.md#function-issupportedtype)**(const std::string & filename)<br>Return if the file type is supported.  |
 
 ## Friends
 
@@ -845,6 +851,14 @@ inline Point3 size() const
 
 physical dimensions of the image (dims * spacing) 
 
+### function get_largest_dimension_size
+
+```cpp
+double get_largest_dimension_size() const
+```
+
+largest dimension size 
+
 ### function spacing
 
 ```cpp
@@ -1066,6 +1080,49 @@ Image::PixelType evaluate(
 
 Evaluates the image at a given position. 
 
+### function paintSphere
+
+```cpp
+void paintSphere(
+    Point p,
+    double radius,
+    PixelType value
+)
+```
+
+Paints a sphere in the image. 
+
+### function paintCircle
+
+```cpp
+void paintCircle(
+    Point p,
+    double radius,
+    unsigned int axis,
+    PixelType value
+)
+```
+
+Paints a circle in the image. 
+
+### function isPainted
+
+```cpp
+inline bool isPainted() const
+```
+
+Returns if the image has been painted. 
+
+### function fill
+
+```cpp
+Image & fill(
+    PixelType value
+)
+```
+
+fill with value 
+
 ### function getSupportedTypes
 
 ```cpp
@@ -1073,6 +1130,16 @@ static inline std::vector< std::string > getSupportedTypes()
 ```
 
 Return supported file types. 
+
+### function isSupportedType
+
+```cpp
+static inline bool isSupportedType(
+    const std::string & filename
+)
+```
+
+Return if the file type is supported. 
 
 ## Friends
 
@@ -1087,4 +1154,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:46 +0000

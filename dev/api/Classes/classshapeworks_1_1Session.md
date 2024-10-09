@@ -49,7 +49,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[feature_range_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-range-changed)**() |
 | void | **[update_view_mode](../Classes/classshapeworks_1_1Session.md#signal-update-view-mode)**() |
 | void | **[image_slice_settings_changed](../Classes/classshapeworks_1_1Session.md#signal-image-slice-settings-changed)**() |
-| void | **[ffc_paint_mode_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-paint-mode-changed)**() |
+| void | **[paint_mode_changed](../Classes/classshapeworks_1_1Session.md#signal-paint-mode-changed)**() |
 | void | **[repaint](../Classes/classshapeworks_1_1Session.md#signal-repaint)**() |
 | void | **[reinsert_shapes](../Classes/classshapeworks_1_1Session.md#signal-reinsert-shapes)**() |
 | void | **[annotations_changed](../Classes/classshapeworks_1_1Session.md#signal-annotations-changed)**() |
@@ -150,10 +150,16 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[is_analysis_mode](../Classes/classshapeworks_1_1Session.md#function-is-analysis-mode)**() |
 | void | **[set_ffc_paint_active](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-active)**(bool enabled) |
 | bool | **[get_ffc_paint_active](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-active)**() |
+| void | **[set_seg_paint_active](../Classes/classshapeworks_1_1Session.md#function-set-seg-paint-active)**(bool enabled) |
+| bool | **[get_seg_paint_active](../Classes/classshapeworks_1_1Session.md#function-get-seg-paint-active)**() |
+| void | **[set_seg_paint_value](../Classes/classshapeworks_1_1Session.md#function-set-seg-paint-value)**(int value) |
+| int | **[get_seg_paint_value](../Classes/classshapeworks_1_1Session.md#function-get-seg-paint-value)**() |
 | void | **[set_ffc_paint_mode_inclusive](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-mode-inclusive)**(bool inclusive) |
 | bool | **[get_ffc_paint_mode_inclusive](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-mode-inclusive)**() |
 | void | **[set_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-size)**(double size) |
 | double | **[get_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-size)**() |
+| void | **[set_seg_paint_size](../Classes/classshapeworks_1_1Session.md#function-set-seg-paint-size)**(double size) |
+| double | **[get_seg_paint_size](../Classes/classshapeworks_1_1Session.md#function-get-seg-paint-size)**() |
 | bool | **[get_show_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-get-show-good-bad-particles)**() |
 | void | **[set_show_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-set-show-good-bad-particles)**(bool enabled) |
 | bool | **[get_show_difference_vectors](../Classes/classshapeworks_1_1Session.md#function-get-show-difference-vectors)**() |
@@ -179,6 +185,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | AlignmentType | **[get_current_alignment](../Classes/classshapeworks_1_1Session.md#function-get-current-alignment)**() |
 | bool | **[is_modified](../Classes/classshapeworks_1_1Session.md#function-is-modified)**() |
 | void | **[set_modified](../Classes/classshapeworks_1_1Session.md#function-set-modified)**(bool modified) |
+| void | **[recompute_surfaces](../Classes/classshapeworks_1_1Session.md#function-recompute-surfaces)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -354,10 +361,10 @@ void image_slice_settings_changed()
 ```
 
 
-### signal ffc_paint_mode_changed
+### signal paint_mode_changed
 
 ```cpp
-void ffc_paint_mode_changed()
+void paint_mode_changed()
 ```
 
 
@@ -1122,6 +1129,38 @@ bool get_ffc_paint_active()
 ```
 
 
+### function set_seg_paint_active
+
+```cpp
+void set_seg_paint_active(
+    bool enabled
+)
+```
+
+
+### function get_seg_paint_active
+
+```cpp
+bool get_seg_paint_active()
+```
+
+
+### function set_seg_paint_value
+
+```cpp
+void set_seg_paint_value(
+    int value
+)
+```
+
+
+### function get_seg_paint_value
+
+```cpp
+int get_seg_paint_value()
+```
+
+
 ### function set_ffc_paint_mode_inclusive
 
 ```cpp
@@ -1151,6 +1190,22 @@ void set_ffc_paint_size(
 
 ```cpp
 double get_ffc_paint_size()
+```
+
+
+### function set_seg_paint_size
+
+```cpp
+void set_seg_paint_size(
+    double size
+)
+```
+
+
+### function get_seg_paint_size
+
+```cpp
+double get_seg_paint_size()
 ```
 
 
@@ -1355,6 +1410,13 @@ void set_modified(
 ```
 
 
+### function recompute_surfaces
+
+```cpp
+void recompute_surfaces()
+```
+
+
 ### function is_supported_file_format
 
 ```cpp
@@ -1420,4 +1482,4 @@ static const std::string MONAI_C;
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:45 +0000

@@ -52,7 +52,7 @@ summary: 3D Viewer
 | std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
 | void | **[update_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-update-landmarks)**() |
 | void | **[update_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-planes)**() |
-| void | **[update_ffc_mode](../Classes/classshapeworks_1_1Viewer.md#function-update-ffc-mode)**() |
+| void | **[update_paint_mode](../Classes/classshapeworks_1_1Viewer.md#function-update-paint-mode)**() |
 | std::vector< vtkSmartPointer< vtkActor > > | **[get_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-surface-actors)**() |
 | std::vector< vtkSmartPointer< vtkActor > > | **[get_unclipped_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-unclipped-surface-actors)**() |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Viewer.md#function-get-meshes)**() |
@@ -66,7 +66,7 @@ summary: 3D Viewer
 | vtkSmartPointer< vtkTransform > | **[get_alignment_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-alignment-transform)**() |
 | void | **[update_clipping_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-clipping-planes)**() |
 | vtkSmartPointer< vtkPolygonalSurfacePointPlacer > | **[get_point_placer](../Classes/classshapeworks_1_1Viewer.md#function-get-point-placer)**() |
-| void | **[handle_ffc_paint](../Classes/classshapeworks_1_1Viewer.md#function-handle-ffc-paint)**(double display_pos[2], double world_pos[3]) |
+| void | **[handle_paint](../Classes/classshapeworks_1_1Viewer.md#function-handle-paint)**(double display_pos[2], double world_pos[3]) |
 | void | **[update_actors](../Classes/classshapeworks_1_1Viewer.md#function-update-actors)**() |
 | void | **[remove_scalar_bar](../Classes/classshapeworks_1_1Viewer.md#function-remove-scalar-bar)**() |
 | bool | **[is_ready](../Classes/classshapeworks_1_1Viewer.md#function-is-ready)**() |
@@ -370,10 +370,10 @@ void update_planes()
 ```
 
 
-### function update_ffc_mode
+### function update_paint_mode
 
 ```cpp
-void update_ffc_mode()
+void update_paint_mode()
 ```
 
 
@@ -477,10 +477,10 @@ vtkSmartPointer< vtkPolygonalSurfacePointPlacer > get_point_placer()
 ```
 
 
-### function handle_ffc_paint
+### function handle_paint
 
 ```cpp
-void handle_ffc_paint(
+void handle_paint(
     double display_pos[2],
     double world_pos[3]
 )
@@ -565,4 +565,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:45 +0000

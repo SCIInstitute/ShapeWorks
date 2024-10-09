@@ -29,6 +29,7 @@ Inherits from vtkAbstractWidget
 | | **[vtkSetMacro](../Classes/classshapeworks_1_1PaintWidget.md#function-vtksetmacro)**(Renderer , vtkRenderer * ) |
 | | **[vtkGetMacro](../Classes/classshapeworks_1_1PaintWidget.md#function-vtkgetmacro)**(Renderer , vtkRenderer * ) |
 | void | **[set_viewer](../Classes/classshapeworks_1_1PaintWidget.md#function-set-viewer)**([Viewer](../Classes/classshapeworks_1_1Viewer.md) * viewer) |
+| void | **[set_circle_mode](../Classes/classshapeworks_1_1PaintWidget.md#function-set-circle-mode)**(bool circle_mode) |
 | virtual void | **[SetEnabled](../Classes/classshapeworks_1_1PaintWidget.md#function-setenabled)**(int ) |
 | void | **[SetRepresentation](../Classes/classshapeworks_1_1PaintWidget.md#function-setrepresentation)**(vtkContourRepresentation * r) |
 | void | **[CreateDefaultRepresentation](../Classes/classshapeworks_1_1PaintWidget.md#function-createdefaultrepresentation)**() |
@@ -65,6 +66,7 @@ Inherits from vtkAbstractWidget
 | StudioSphereRepresentation * | **[sphere_cursor_](../Classes/classshapeworks_1_1PaintWidget.md#variable-sphere-cursor-)**  |
 | bool | **[mouse_in_window_](../Classes/classshapeworks_1_1PaintWidget.md#variable-mouse-in-window-)**  |
 | [Viewer](../Classes/classshapeworks_1_1Viewer.md) * | **[viewer_](../Classes/classshapeworks_1_1PaintWidget.md#variable-viewer-)**  |
+| bool | **[circle_mode_](../Classes/classshapeworks_1_1PaintWidget.md#variable-circle-mode-)**  |
 
 ## Protected Types Documentation
 
@@ -153,6 +155,15 @@ vtkGetMacro(
 ```cpp
 void set_viewer(
     Viewer * viewer
+)
+```
+
+
+### function set_circle_mode
+
+```cpp
+void set_circle_mode(
+    bool circle_mode
 )
 ```
 
@@ -375,6 +386,13 @@ Viewer * viewer_;
 ```
 
 
+### variable circle_mode_
+
+```cpp
+bool circle_mode_ = false;
+```
+
+
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:45 +0000

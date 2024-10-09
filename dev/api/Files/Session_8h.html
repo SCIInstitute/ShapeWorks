@@ -2744,11 +2744,20 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_active</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_seg_paint_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_seg_paint_active</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_seg_paint_value</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_seg_paint_value</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_mode_inclusive</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_mode_inclusive</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_size</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_ffc_paint_size</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_seg_paint_size</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_seg_paint_size</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_good_bad_particles</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_good_bad_particles</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
@@ -2790,6 +2799,8 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_modified</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">modified_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_modified</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">modified</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">recompute_surfaces</span><span class="p">();</span>
+
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
@@ -2814,7 +2825,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">feature_range_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_mode</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_slice_settings_changed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_paint_mode_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">paint_mode_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">repaint</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reinsert_shapes</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">annotations_changed</span><span class="p">();</span>
@@ -2871,6 +2882,9 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_inclusive_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">ffc_paint_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">seg_paint_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">seg_painting_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">seg_painting_value_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">compare_settings_</span><span class="p">;</span>
@@ -2887,7 +2901,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-09-26 at 21:49:46 +0000</p>
+<p>Updated on 2024-10-09 at 17:00:46 +0000</p>
 
               
             </article>

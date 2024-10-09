@@ -42,6 +42,7 @@ class QComboBox;
 
 namespace shapeworks {
 
+class SegmentationToolPanel;
 class Session;
 class LandmarkTableModel;
 
@@ -107,9 +108,11 @@ class DataTool : public QWidget {
   Preferences& preferences_;
 
   Ui_DataTool* ui_;
+  SegmentationToolPanel* segmentation_tool_panel_;
   QSharedPointer<Session> session_;
 
   std::shared_ptr<LandmarkTableModel> landmark_table_model_;
+
   bool block_table_update_{false};
 };
 }  // namespace shapeworks
@@ -118,4 +121,4 @@ class DataTool : public QWidget {
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:46 +0000

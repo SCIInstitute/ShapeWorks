@@ -2889,6 +2889,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_segmentation" class="md-nav__link">
+    function get_segmentation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_segmentation_filename" class="md-nav__link">
+    function get_segmentation_filename
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_point_features" class="md-nav__link">
     function get_point_features
   </a>
@@ -2954,6 +2968,20 @@
           <li class="md-nav__item">
   <a href="#function-get_groomed_mesh_wrappers" class="md-nav__link">
     function get_groomed_mesh_wrappers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-recompute_original_surface" class="md-nav__link">
+    function recompute_original_surface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-ensure_segmentation" class="md-nav__link">
+    function ensure_segmentation
   </a>
   
 </li>
@@ -3241,6 +3269,14 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-image-volume">get_image_volume</a></strong>(std::string image_volume_name)</td>
 </tr>
 <tr>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Image.html">Image</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-segmentation">get_segmentation</a></strong>()</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-segmentation-filename">get_segmentation_filename</a></strong>()</td>
+</tr>
+<tr>
 <td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-point-features">get_point_features</a></strong>(std::string feature)</td>
 </tr>
@@ -3279,6 +3315,14 @@
 <tr>
 <td>std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1MeshWrapper.html">MeshWrapper</a> &gt; &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-mesh-wrappers">get_groomed_mesh_wrappers</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-recompute-original-surface">recompute_original_surface</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-ensure-segmentation">ensure_segmentation</a></strong>()<br>If a segmentation doesn't exist, create a blank canvas.</td>
 </tr>
 </tbody>
 </table>
@@ -3544,6 +3588,12 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_volume_name</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-get_segmentation">function get_segmentation</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_segmentation</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-get_segmentation_filename">function get_segmentation_filename</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_segmentation_filename</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_point_features">function get_point_features</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_point_features</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span>
@@ -3586,8 +3636,15 @@
 <h3 id="function-get_groomed_mesh_wrappers">function get_groomed_mesh_wrappers</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-recompute_original_surface">function recompute_original_surface</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">recompute_original_surface</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-ensure_segmentation">function ensure_segmentation</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ensure_segmentation</span><span class="p">()</span>
+</code></pre></div>
+<p>If a segmentation doesn't exist, create a blank canvas. </p>
 <hr />
-<p>Updated on 2024-09-26 at 21:49:46 +0000</p>
+<p>Updated on 2024-10-09 at 17:00:45 +0000</p>
 
               
             </article>

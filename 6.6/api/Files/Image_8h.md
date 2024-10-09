@@ -27,6 +27,7 @@ title: Libs/Image/Image.h
 ```cpp
 #pragma once
 
+#include <StringUtils.h>
 #include <itkImage.h>
 #include <itkImageRegionIterator.h>
 #include <itkLinearInterpolateImageFunction.h>
@@ -131,7 +132,7 @@ class Image {
   Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
                         const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
-  Image &applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
+  Image& applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
 
   Image& extractLabel(const PixelType label = 1.0);
 
@@ -177,6 +178,8 @@ class Image {
   Dims dims() const { return itk_image_->GetLargestPossibleRegion().GetSize(); }
 
   Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }
+
+  double get_largest_dimension_size() const;
 
   Vector spacing() const { return itk_image_->GetSpacing(); }
 
@@ -228,8 +231,25 @@ class Image {
 
   Image::PixelType evaluate(Point p);
 
+  void paintSphere(Point p, double radius, PixelType value);
+
+  void paintCircle(Point p, double radius, unsigned int axis, PixelType value);
+
+  bool isPainted() const { return painted_; }
+
+  Image& fill(PixelType value);
+
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
+  }
+
+  static bool isSupportedType(const std::string& filename) {
+    for (const auto& type : Image::getSupportedTypes()) {
+      if (StringUtils::hasSuffix(filename, type)) {
+        return true;
+      }
+    }
+    return false;
   }
 
  private:
@@ -251,6 +271,8 @@ class Image {
 
   ImageType::Pointer itk_image_;
 
+  bool painted_ = false;
+
   InterpolatorType::Pointer interpolator_;
 };
 
@@ -271,4 +293,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:46 +0000

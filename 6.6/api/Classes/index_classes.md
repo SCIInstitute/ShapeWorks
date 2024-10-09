@@ -223,6 +223,7 @@ title: Classes
         * **struct [SphereType](../Classes/structshapeworks_1_1Sampler_1_1SphereType.md)** 
     * **class [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** 
         * **struct [CrossDomainNeighborhood](../Classes/structshapeworks_1_1SamplingFunction_1_1CrossDomainNeighborhood.md)** 
+    * **class [SegmentationToolPanel](../Classes/classshapeworks_1_1SegmentationToolPanel.md)** 
     * **class [Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session. 
     * **class [Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject. 
         * **class [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md)** <br>TODO: replace this wherever it is used. 
@@ -275,4 +276,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:46 +0000

@@ -144,6 +144,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ReconstructSurface](../Classes/classshapeworks_1_1ReconstructSurface.md)**  |
 | class | **[shapeworks::Sampler](../Classes/classshapeworks_1_1Sampler.md)**  |
 | class | **[shapeworks::SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)**  |
+| class | **[shapeworks::SegmentationToolPanel](../Classes/classshapeworks_1_1SegmentationToolPanel.md)**  |
 | class | **[shapeworks::Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session.  |
 | class | **[shapeworks::Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject.  |
 | class | **[shapeworks::ShapeEvaluation](../Classes/classshapeworks_1_1ShapeEvaluation.md)**  |
@@ -2587,4 +2588,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:45 +0000
+Updated on 2024-10-09 at 17:00:44 +0000

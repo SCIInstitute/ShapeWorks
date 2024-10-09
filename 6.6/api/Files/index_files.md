@@ -182,6 +182,7 @@ title: Files
         * **file [Studio/Data/MeshSettings.h](../Files/MeshSettings_8h.md#file-meshsettings.h)** 
         * **file [Studio/Data/Preferences.h](../Files/Preferences_8h.md#file-preferences.h)** 
         * **file [Studio/Data/PreferencesWindow.h](../Files/PreferencesWindow_8h.md#file-preferenceswindow.h)** 
+        * **file [Studio/Data/SegmentationToolPanel.h](../Files/SegmentationToolPanel_8h.md#file-segmentationtoolpanel.h)** 
         * **file [Studio/Data/Session.h](../Files/Session_8h.md#file-session.h)** 
         * **file [Studio/Data/ShapeWorksWorker.h](../Files/ShapeWorksWorker_8h.md#file-shapeworksworker.h)** 
         * **file [Studio/Data/Telemetry.h](../Files/Telemetry_8h.md#file-telemetry.h)** 
@@ -251,4 +252,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:47 +0000
+Updated on 2024-10-09 at 17:00:46 +0000

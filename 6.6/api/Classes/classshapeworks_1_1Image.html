@@ -3000,6 +3000,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_largest_dimension_size" class="md-nav__link">
+    function get_largest_dimension_size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-spacing" class="md-nav__link">
     function spacing
   </a>
@@ -3168,8 +3175,43 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-paintsphere" class="md-nav__link">
+    function paintSphere
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-paintcircle" class="md-nav__link">
+    function paintCircle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-ispainted" class="md-nav__link">
+    function isPainted
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-fill" class="md-nav__link">
+    function fill
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getsupportedtypes" class="md-nav__link">
     function getSupportedTypes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-issupportedtype" class="md-nav__link">
+    function isSupportedType
   </a>
   
 </li>
@@ -3522,6 +3564,10 @@
 <td><strong><a href="classshapeworks_1_1Image.html#function-size">size</a></strong>() const<br>physical dimensions of the image (dims * spacing)</td>
 </tr>
 <tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-get-largest-dimension-size">get_largest_dimension_size</a></strong>() const<br>largest dimension size</td>
+</tr>
+<tr>
 <td>Vector</td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-spacing">spacing</a></strong>() const<br>physical spacing of the image</td>
 </tr>
@@ -3618,8 +3664,28 @@
 <td><strong><a href="classshapeworks_1_1Image.html#function-evaluate">evaluate</a></strong>(Point p)<br>Evaluates the image at a given position.</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-paintsphere">paintSphere</a></strong>(Point p, double radius, PixelType value)<br>Paints a sphere in the image.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-paintcircle">paintCircle</a></strong>(Point p, double radius, unsigned int axis, PixelType value)<br>Paints a circle in the image.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-ispainted">isPainted</a></strong>() const<br>Returns if the image has been painted.</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-fill">fill</a></strong>(PixelType value)<br>fill with value</td>
+</tr>
+<tr>
 <td>std::vector&lt; std::string &gt;</td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-getsupportedtypes">getSupportedTypes</a></strong>()<br>Return supported file types.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-issupportedtype">isSupportedType</a></strong>(const std::string &amp; filename)<br>Return if the file type is supported.</td>
 </tr>
 </tbody>
 </table>
@@ -4069,6 +4135,10 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>physical dimensions of the image (dims * spacing) </p>
+<h3 id="function-get_largest_dimension_size">function get_largest_dimension_size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_largest_dimension_size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>largest dimension size </p>
 <h3 id="function-spacing">function spacing</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Vector</span><span class="w"> </span><span class="n">spacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -4194,10 +4264,43 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Evaluates the image at a given position. </p>
+<h3 id="function-paintsphere">function paintSphere</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paintSphere</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Paints a sphere in the image. </p>
+<h3 id="function-paintcircle">function paintCircle</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paintCircle</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">axis</span><span class="p">,</span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Paints a circle in the image. </p>
+<h3 id="function-ispainted">function isPainted</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isPainted</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Returns if the image has been painted. </p>
+<h3 id="function-fill">function fill</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fill</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>fill with value </p>
 <h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span>
 </code></pre></div>
 <p>Return supported file types. </p>
+<h3 id="function-issupportedtype">function isSupportedType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isSupportedType</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Return if the file type is supported. </p>
 <h2 id="friends_1">Friends</h2>
 <h3 id="friend-sharedcommanddata">friend SharedCommandData</h3>
 <div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">(</span>
@@ -4205,7 +4308,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-09-26 at 21:49:46 +0000</p>
+<p>Updated on 2024-10-09 at 17:00:46 +0000</p>
 
               
             </article>

@@ -138,7 +138,7 @@ class Viewer {
 
   void update_landmarks();
   void update_planes();
-  void update_ffc_mode();
+  void update_paint_mode();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
   std::vector<vtkSmartPointer<vtkActor>> get_unclipped_surface_actors();
@@ -165,7 +165,7 @@ class Viewer {
 
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
 
-  void handle_ffc_paint(double display_pos[2], double world_pos[3]);
+  void handle_paint(double display_pos[2], double world_pos[3]);
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
@@ -279,6 +279,7 @@ class Viewer {
   vtkSmartPointer<vtkCellPicker> cell_picker_;
   vtkSmartPointer<vtkPropPicker> prop_picker_;
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
+  vtkSmartPointer<vtkImageActorPointPlacer> slice_point_placer_;
 
   // slice viewer
   SliceView slice_view_{this};
@@ -289,4 +290,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:46 +0000

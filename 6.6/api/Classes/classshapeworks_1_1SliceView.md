@@ -26,6 +26,7 @@ summary: SliceView.
 | | **[SliceView](../Classes/classshapeworks_1_1SliceView.md#function-sliceview)**([Viewer](../Classes/classshapeworks_1_1Viewer.md) * viewer) |
 | void | **[set_volume](../Classes/classshapeworks_1_1SliceView.md#function-set-volume)**(std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > volume) |
 | void | **[add_mesh](../Classes/classshapeworks_1_1SliceView.md#function-add-mesh)**(vtkSmartPointer< vtkPolyData > poly_data) |
+| void | **[set_mask](../Classes/classshapeworks_1_1SliceView.md#function-set-mask)**(std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > mask) |
 | void | **[clear_meshes](../Classes/classshapeworks_1_1SliceView.md#function-clear-meshes)**() |
 | void | **[set_orientation](../Classes/classshapeworks_1_1SliceView.md#function-set-orientation)**(int orientation) |
 | bool | **[is_image_loaded](../Classes/classshapeworks_1_1SliceView.md#function-is-image-loaded)**() |
@@ -43,6 +44,9 @@ summary: SliceView.
 | [Viewer](../Classes/classshapeworks_1_1Viewer.md) * | **[get_viewer](../Classes/classshapeworks_1_1SliceView.md#function-get-viewer)**() |
 | bool | **[should_point_show](../Classes/classshapeworks_1_1SliceView.md#function-should-point-show)**(double x, double y, double z) |
 | int | **[get_slice_number](../Classes/classshapeworks_1_1SliceView.md#function-get-slice-number)**() |
+| vtkSmartPointer< vtkImageActor > | **[get_image_actor](../Classes/classshapeworks_1_1SliceView.md#function-get-image-actor)**() |
+| vtkPlane * | **[get_slice_plane](../Classes/classshapeworks_1_1SliceView.md#function-get-slice-plane)**() |
+| void | **[update](../Classes/classshapeworks_1_1SliceView.md#function-update)**() |
 
 ## Detailed Description
 
@@ -91,6 +95,15 @@ void set_volume(
 ```cpp
 void add_mesh(
     vtkSmartPointer< vtkPolyData > poly_data
+)
+```
+
+
+### function set_mask
+
+```cpp
+void set_mask(
+    std::shared_ptr< Image > mask
 )
 ```
 
@@ -229,6 +242,27 @@ int get_slice_number()
 ```
 
 
+### function get_image_actor
+
+```cpp
+vtkSmartPointer< vtkImageActor > get_image_actor()
+```
+
+
+### function get_slice_plane
+
+```cpp
+vtkPlane * get_slice_plane()
+```
+
+
+### function update
+
+```cpp
+void update()
+```
+
+
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:45 +0000

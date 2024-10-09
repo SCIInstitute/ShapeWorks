@@ -41,7 +41,7 @@ Inherits from QObject
 | void | **[update_samples](../Classes/classshapeworks_1_1Visualizer.md#function-update-samples)**() |
 | void | **[update_landmarks](../Classes/classshapeworks_1_1Visualizer.md#function-update-landmarks)**() |
 | void | **[update_planes](../Classes/classshapeworks_1_1Visualizer.md#function-update-planes)**() |
-| void | **[update_ffc_mode](../Classes/classshapeworks_1_1Visualizer.md#function-update-ffc-mode)**() |
+| void | **[update_paint_mode](../Classes/classshapeworks_1_1Visualizer.md#function-update-paint-mode)**() |
 | void | **[display_sample](../Classes/classshapeworks_1_1Visualizer.md#function-display-sample)**(int i) |
 | void | **[display_shape](../Classes/classshapeworks_1_1Visualizer.md#function-display-shape)**(ShapeHandle shape) |
 | void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(ShapeList shapes) |
@@ -240,10 +240,10 @@ void update_planes()
 ```
 
 
-### function update_ffc_mode
+### function update_paint_mode
 
 ```cpp
-void update_ffc_mode()
+void update_paint_mode()
 ```
 
 
@@ -601,4 +601,4 @@ inline LightboxHandle get_lightbox()
 
 -------------------------------
 
-Updated on 2024-09-26 at 21:49:46 +0000
+Updated on 2024-10-09 at 17:00:45 +0000

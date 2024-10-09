@@ -2677,8 +2677,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#signal-ffc_paint_mode_changed" class="md-nav__link">
-    signal ffc_paint_mode_changed
+  <a href="#signal-paint_mode_changed" class="md-nav__link">
+    signal paint_mode_changed
   </a>
   
 </li>
@@ -3362,6 +3362,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_seg_paint_active" class="md-nav__link">
+    function set_seg_paint_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_seg_paint_active" class="md-nav__link">
+    function get_seg_paint_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_seg_paint_value" class="md-nav__link">
+    function set_seg_paint_value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_seg_paint_value" class="md-nav__link">
+    function get_seg_paint_value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-set_ffc_paint_mode_inclusive" class="md-nav__link">
     function set_ffc_paint_mode_inclusive
   </a>
@@ -3385,6 +3413,20 @@
           <li class="md-nav__item">
   <a href="#function-get_ffc_paint_size" class="md-nav__link">
     function get_ffc_paint_size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_seg_paint_size" class="md-nav__link">
+    function set_seg_paint_size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_seg_paint_size" class="md-nav__link">
+    function get_seg_paint_size
   </a>
   
 </li>
@@ -3560,6 +3602,13 @@
           <li class="md-nav__item">
   <a href="#function-set_modified" class="md-nav__link">
     function set_modified
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-recompute_surfaces" class="md-nav__link">
+    function recompute_surfaces
   </a>
   
 </li>
@@ -3773,7 +3822,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Session.html#signal-ffc-paint-mode-changed">ffc_paint_mode_changed</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-paint-mode-changed">paint_mode_changed</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4168,6 +4217,22 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-seg-paint-active">set_seg_paint_active</a></strong>(bool enabled)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-seg-paint-active">get_seg_paint_active</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-seg-paint-value">set_seg_paint_value</a></strong>(int value)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-seg-paint-value">get_seg_paint_value</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-set-ffc-paint-mode-inclusive">set_ffc_paint_mode_inclusive</a></strong>(bool inclusive)</td>
 </tr>
 <tr>
@@ -4181,6 +4246,14 @@
 <tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-ffc-paint-size">get_ffc_paint_size</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-seg-paint-size">set_seg_paint_size</a></strong>(double size)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-seg-paint-size">get_seg_paint_size</a></strong>()</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -4281,6 +4354,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-set-modified">set_modified</a></strong>(bool modified)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-recompute-surfaces">recompute_surfaces</a></strong>()</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -4400,8 +4477,8 @@
 <h3 id="signal-image_slice_settings_changed">signal image_slice_settings_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">image_slice_settings_changed</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="signal-ffc_paint_mode_changed">signal ffc_paint_mode_changed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ffc_paint_mode_changed</span><span class="p">()</span>
+<h3 id="signal-paint_mode_changed">signal paint_mode_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paint_mode_changed</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="signal-repaint">signal repaint</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">repaint</span><span class="p">()</span>
@@ -4783,6 +4860,22 @@
 <h3 id="function-get_ffc_paint_active">function get_ffc_paint_active</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_ffc_paint_active</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-set_seg_paint_active">function set_seg_paint_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_seg_paint_active</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_seg_paint_active">function get_seg_paint_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_seg_paint_active</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_seg_paint_value">function set_seg_paint_value</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_seg_paint_value</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_seg_paint_value">function get_seg_paint_value</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_seg_paint_value</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_ffc_paint_mode_inclusive">function set_ffc_paint_mode_inclusive</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ffc_paint_mode_inclusive</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span>
@@ -4798,6 +4891,14 @@
 </code></pre></div>
 <h3 id="function-get_ffc_paint_size">function get_ffc_paint_size</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_ffc_paint_size</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_seg_paint_size">function set_seg_paint_size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_seg_paint_size</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_seg_paint_size">function get_seg_paint_size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_seg_paint_size</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_show_good_bad_particles">function get_show_good_bad_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_good_bad_particles</span><span class="p">()</span>
@@ -4900,6 +5001,9 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">modified</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-recompute_surfaces">function recompute_surfaces</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">recompute_surfaces</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
@@ -4931,7 +5035,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-09-26 at 21:49:46 +0000</p>
+<p>Updated on 2024-10-09 at 17:00:45 +0000</p>
 
               
             </article>
