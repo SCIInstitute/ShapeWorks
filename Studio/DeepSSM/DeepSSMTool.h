@@ -68,6 +68,7 @@ class DeepSSMTool : public QWidget {
   std::string get_display_feature();
 
   static std::vector<int> get_split(ProjectHandle project, SplitType split_type);
+  static std::vector<int> get_all_indices(ProjectHandle project);
 
  public Q_SLOTS:
 

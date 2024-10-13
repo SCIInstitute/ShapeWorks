@@ -18,7 +18,7 @@ class Preferences : public QObject {
 
   Preferences();
 
-  enum { MAX_RECENT_FILES = 64 };
+  enum { MAX_RECENT_FILES = 128 };
 
   void restore_defaults();
 

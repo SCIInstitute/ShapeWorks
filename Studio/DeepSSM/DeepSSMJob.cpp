@@ -6,12 +6,6 @@
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
-// std
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <random>
-
 // qt
 #include <QFile>
 #include <QTextStream>
@@ -86,7 +80,7 @@ void DeepSSMJob::run_prep() {
   // groom training
   auto subjects = project_->get_subjects();
   auto shapes = session_->get_shapes();
-  SW_LOG("DeepSSM: Grooming Training Data");
+  SW_LOG("DeepSSM: Prep");
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
@@ -96,129 +90,142 @@ void DeepSSMJob::run_prep() {
   params.set_training_step_complete(false);
   params.save_to_project();
 
-  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_TRAINING) {
-    SW_LOG("Creating Split...");
-    /////////////////////////////////////////////////////////
-    /// Step 1. Create Split
-    /////////////////////////////////////////////////////////
-    double val_split = params.get_validation_split();
-    double test_split = params.get_testing_split();
-    double train_split = 100.0 - val_split - test_split;
-    py::object create_split = py_deep_ssm_utils.attr("create_split");
-    create_split(project_, train_split, val_split, test_split);
-
-    if (is_aborted()) {
-      return;
-    }
-
-    /////////////////////////////////////////////////////////
-    /// Step 2. Groom Training Shapes
-    /////////////////////////////////////////////////////////
-    update_prep_stage(DeepSSMTool::PrepStep::GROOM_TRAINING);
-    py::object groom_training_shapes = py_deep_ssm_utils.attr("groom_training_shapes");
-
-    QElapsedTimer timer;
-    timer.start();
-
-    // force ICP on to get reference
-    GroomParameters groom_params{project_};
-    groom_params.set_alignment_method("Iterative Closest Point");
-    groom_params.set_alignment_enabled(true);
-    groom_params.set_alignment_reference(-1);
-    groom_params.save_to_project();
-
-    groom_training_shapes(project_);
-    // re-read parameters after python
-    groom_params = GroomParameters{project_};
-    // store for future steps
-    groom_params.set_alignment_reference(groom_params.get_alignment_reference_chosen());
-    groom_params.save_to_project();
-
-    project_->save();
-
-    QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
-    SW_LOG("DeepSSM: Grooming Training Shapes complete.  Duration: {} seconds", duration.toStdString());
-
-    if (is_aborted()) {
-      return;
-    }
-  }
-
-  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::OPTIMIZE_TRAINING) {
-    /////////////////////////////////////////////////////////
-    /// Step 3. Optimize Training Particles
-    /////////////////////////////////////////////////////////
-    update_prep_stage(DeepSSMTool::PrepStep::OPTIMIZE_TRAINING);
-    QElapsedTimer timer;
-    timer.start();
-    py::object optimize_training_particles = py_deep_ssm_utils.attr("optimize_training_particles");
-    optimize_training_particles(project_);
-    project_->save();
-    QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
-    SW_LOG("DeepSSM: Optimize Training Particles complete.  Duration: {} seconds", duration.toStdString());
-
-    if (is_aborted()) {
-      return;
-    }
-  }
-
-  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::OPTIMIZE_VALIDATION) {
-    /////////////////////////////////////////////////////////
-    /// Step 6. Optimize Validation Particles with Fixed Domains
-    /////////////////////////////////////////////////////////
-    update_prep_stage(DeepSSMTool::PrepStep::OPTIMIZE_VALIDATION);
-    py::object prep_project_for_val_particles = py_deep_ssm_utils.attr("prep_project_for_val_particles");
-    prep_project_for_val_particles(project_);
-
-    QElapsedTimer timer;
-    timer.start();
-    py::object groom_validation_shapes = py_deep_ssm_utils.attr("groom_validation_shapes");
-    groom_validation_shapes(project_);
-    QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
-    SW_LOG("DeepSSM: Groom Validation Shapes complete.  Duration: {} seconds", duration.toStdString());
-
-    timer.start();
-
-    // run optimize
-    Optimize optimize;
-    optimize.SetUpOptimize(project_);
-    optimize.Run();
-
-    project_->update_subjects();
-    project_->save();
-    duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
-    SW_LOG("DeepSSM: Optimize Validation Particles complete.  Duration: {} seconds", duration.toStdString());
-  }
-
-  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_IMAGES) {
-    /////////////////////////////////////////////////////////
-    /// Step 4. Groom Training Images
-    /////////////////////////////////////////////////////////
-
+  if (params.get_model_mode() == DeepSSMParameters::DEEPSSM_MODEL_MODE_EXISTING_C) {
+    SW_LOG("Using Existing Shape Model");
+    SW_LOG("Grooming all images");
     update_prep_stage(DeepSSMTool::PrepStep::GROOM_IMAGES);
     QElapsedTimer timer;
     timer.start();
     py::object groom_training_images = py_deep_ssm_utils.attr("groom_training_images");
-    groom_training_images(project_);
+    groom_training_images(project_, DeepSSMTool::get_all_indices(project_));
     project_->save();
     QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
     SW_LOG("DeepSSM: Groom Training Images complete.  Duration: {} seconds", duration.toStdString());
+  } else {
+    if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_TRAINING) {
+      SW_LOG("Creating Split...");
+      /////////////////////////////////////////////////////////
+      /// Step 1. Create Split
+      /////////////////////////////////////////////////////////
+      double val_split = params.get_validation_split();
+      double test_split = params.get_testing_split();
+      double train_split = 100.0 - val_split - test_split;
+      py::object create_split = py_deep_ssm_utils.attr("create_split");
+      create_split(project_, train_split, val_split, test_split);
 
-    if (is_aborted()) {
-      return;
+      if (is_aborted()) {
+        return;
+      }
+
+      /////////////////////////////////////////////////////////
+      /// Step 2. Groom Training Shapes
+      /////////////////////////////////////////////////////////
+      update_prep_stage(DeepSSMTool::PrepStep::GROOM_TRAINING);
+      py::object groom_training_shapes = py_deep_ssm_utils.attr("groom_training_shapes");
+
+      QElapsedTimer timer;
+      timer.start();
+
+      // force ICP on to get reference
+      GroomParameters groom_params{project_};
+      groom_params.set_alignment_method("Iterative Closest Point");
+      groom_params.set_alignment_enabled(true);
+      groom_params.set_alignment_reference(-1);
+      groom_params.save_to_project();
+
+      groom_training_shapes(project_);
+      // re-read parameters after python
+      groom_params = GroomParameters{project_};
+      // store for future steps
+      groom_params.set_alignment_reference(groom_params.get_alignment_reference_chosen());
+      groom_params.save_to_project();
+
+      project_->save();
+
+      QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+      SW_LOG("DeepSSM: Grooming Training Shapes complete.  Duration: {} seconds", duration.toStdString());
+
+      if (is_aborted()) {
+        return;
+      }
     }
-    /////////////////////////////////////////////////////////
-    /// Step 5. Groom Validation Images
-    /////////////////////////////////////////////////////////
-    timer.start();
-    py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
-    groom_val_test_images(project_, DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::VAL));
-    project_->save();
-    duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
-    SW_LOG("DeepSSM: Groom Validation Images complete.  Duration: {} seconds", duration.toStdString());
 
-    if (is_aborted()) {
-      return;
+    if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::OPTIMIZE_TRAINING) {
+      /////////////////////////////////////////////////////////
+      /// Step 3. Optimize Training Particles
+      /////////////////////////////////////////////////////////
+      update_prep_stage(DeepSSMTool::PrepStep::OPTIMIZE_TRAINING);
+      QElapsedTimer timer;
+      timer.start();
+      py::object optimize_training_particles = py_deep_ssm_utils.attr("optimize_training_particles");
+      optimize_training_particles(project_);
+      project_->save();
+      QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+      SW_LOG("DeepSSM: Optimize Training Particles complete.  Duration: {} seconds", duration.toStdString());
+
+      if (is_aborted()) {
+        return;
+      }
+    }
+
+    if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::OPTIMIZE_VALIDATION) {
+      /////////////////////////////////////////////////////////
+      /// Step 6. Optimize Validation Particles with Fixed Domains
+      /////////////////////////////////////////////////////////
+      update_prep_stage(DeepSSMTool::PrepStep::OPTIMIZE_VALIDATION);
+      py::object prep_project_for_val_particles = py_deep_ssm_utils.attr("prep_project_for_val_particles");
+      prep_project_for_val_particles(project_);
+
+      QElapsedTimer timer;
+      timer.start();
+      py::object groom_validation_shapes = py_deep_ssm_utils.attr("groom_validation_shapes");
+      groom_validation_shapes(project_);
+      QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+      SW_LOG("DeepSSM: Groom Validation Shapes complete.  Duration: {} seconds", duration.toStdString());
+
+      timer.start();
+
+      // run optimize
+      Optimize optimize;
+      optimize.SetUpOptimize(project_);
+      optimize.Run();
+
+      project_->update_subjects();
+      project_->save();
+      duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+      SW_LOG("DeepSSM: Optimize Validation Particles complete.  Duration: {} seconds", duration.toStdString());
+    }
+
+    if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_IMAGES) {
+      /////////////////////////////////////////////////////////
+      /// Step 4. Groom Training Images
+      /////////////////////////////////////////////////////////
+
+      update_prep_stage(DeepSSMTool::PrepStep::GROOM_IMAGES);
+      QElapsedTimer timer;
+      timer.start();
+      py::object groom_training_images = py_deep_ssm_utils.attr("groom_training_images");
+      groom_training_images(project_, DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::TRAIN));
+      project_->save();
+      QString duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+      SW_LOG("DeepSSM: Groom Training Images complete.  Duration: {} seconds", duration.toStdString());
+
+      if (is_aborted()) {
+        return;
+      }
+      /////////////////////////////////////////////////////////
+      /// Step 5. Groom Validation Images
+      /////////////////////////////////////////////////////////
+      timer.start();
+      py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
+      groom_val_test_images(project_, DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::VAL));
+      project_->save();
+      duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
+      SW_LOG("DeepSSM: Groom Validation Images complete.  Duration: {} seconds", duration.toStdString());
+
+      if (is_aborted()) {
+        return;
+      }
     }
   }
 

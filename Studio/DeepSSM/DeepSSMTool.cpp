@@ -889,6 +889,16 @@ std::vector<int> DeepSSMTool::get_split(ProjectHandle project, SplitType split_t
 }
 
 //---------------------------------------------------------------------------
+std::vector<int> DeepSSMTool::get_all_indices(ProjectHandle project) {
+  auto subjects = project->get_subjects();
+  std::vector<int> list;
+  for (int id = 0; id < subjects.size(); id++) {
+    list.push_back(id);
+  }
+  return list;
+}
+
+//---------------------------------------------------------------------------
 void DeepSSMTool::restore_defaults() {
   // need to save values from the other pages
   store_params();
@@ -922,7 +932,6 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
 
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
     ui_->tab_widget->setCurrentIndex(1);
-
     SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/augmentation/TotalData.csv").remove();
@@ -937,12 +946,10 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
     show_training_meshes();
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     ui_->tab_widget->setCurrentIndex(3);
-
     SW_LOG("Please Wait: Running Testing...");
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
     ui_->tab_widget->setCurrentIndex(0);
-
-    SW_LOG("Please Wait: Running Groom/Optimize...");
+    SW_LOG("Please Wait: Running Prep...");
   } else {
     SW_ERROR("Unknown tool mode");
     Q_EMIT progress(100);
