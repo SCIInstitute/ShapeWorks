@@ -178,7 +178,7 @@ def convert_transform_to_numpy(transform):
     return transform
 
 
-def groom_training_images(project):
+def groom_training_images(project, indices):
     """ Groom the training images """
     subjects = project.get_subjects()
 
@@ -229,7 +229,7 @@ def groom_training_images(project):
         f.write(bounding_box_string)
 
     sw_message("Grooming training images")
-    for i in get_training_indices(project):
+    for i in indices:
 
         if sw_check_abort():
             sw_message("Aborted")
