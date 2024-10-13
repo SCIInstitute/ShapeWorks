@@ -328,7 +328,7 @@ TEST(ImageTests, intensityTest) {
 
 TEST(ImageTests, setlevelTest) {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image.applyTPLevelSetFilter(std::string(TEST_DATA_DIR) + "/curvature1.nrrd");
+  image.applyTPLevelSetFilter(Image(std::string(TEST_DATA_DIR) + "/curvature1.nrrd"));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/set-level_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

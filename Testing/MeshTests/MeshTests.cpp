@@ -316,7 +316,7 @@ TEST(MeshTests, fillHolesTest) {
 
 TEST(MeshTests, probeVolumeTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.probeVolume(std::string(TEST_DATA_DIR) + "/femurVtkDT.nrrd");
+  femur.probeVolume(Image(std::string(TEST_DATA_DIR) + "/femurVtkDT.nrrd"));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/probe.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
