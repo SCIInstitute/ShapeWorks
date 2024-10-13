@@ -36,6 +36,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_DeepSSMTool;
   ui_->setupUi(this);
 
+  ui_->model_mode->setToolTip("DeepSSM model mode");
+
   ui_->loss_function->setToolTip("Loss function for training and fine tuning");
   ui_->training_epochs->setToolTip("Number of epochs to train the model");
   ui_->training_learning_rate->setToolTip("Learning rate for training");
@@ -70,6 +72,7 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tab_widget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
 #endif
 
+  connect(ui_->model_mode, &QComboBox::currentTextChanged, this, &DeepSSMTool::update_panels);
   connect(ui_->run_button, &QPushButton::clicked, this, &DeepSSMTool::run_clicked);
   connect(ui_->restore_defaults, &QPushButton::clicked, this, &DeepSSMTool::restore_defaults);
 
@@ -157,6 +160,7 @@ void DeepSSMTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
 void DeepSSMTool::load_params() {
   auto params = DeepSSMParameters(session_->get_project());
 
+  ui_->model_mode->setCurrentText(QString::fromStdString(params.get_model_mode()));
   ui_->validation_split->setText(QString::number(params.get_validation_split()));
   ui_->testing_split->setText(QString::number(params.get_testing_split()));
 
@@ -198,6 +202,7 @@ void DeepSSMTool::load_params() {
 void DeepSSMTool::store_params() {
   auto params = DeepSSMParameters(session_->get_project());
 
+  params.set_model_mode(ui_->model_mode->currentText().toStdString());
   params.set_validation_split(ui_->validation_split->text().toDouble());
   params.set_testing_split(ui_->testing_split->text().toDouble());
 
@@ -366,6 +371,9 @@ void DeepSSMTool::update_panels() {
 
   int prep_stage = params.get_prep_stage();
 
+  bool training_model_mode =
+      ui_->model_mode->currentText().toStdString() == DeepSSMParameters::DEEPSSM_MODEL_MODE_TRAINING_C;
+
   ui_->step1_status->setText(prep_stage >= 1 ? "☑" : "...");
   ui_->step2_status->setText(prep_stage >= 2 ? "☑" : "...");
   ui_->step3_status->setText(prep_stage >= 3 ? "☑" : "...");
@@ -374,7 +382,19 @@ void DeepSSMTool::update_panels() {
   ui_->run_step1->setEnabled(!tool_is_running_);
   ui_->run_step2->setEnabled(!tool_is_running_ && prep_stage >= 1);
   ui_->run_step3->setEnabled(!tool_is_running_ && prep_stage >= 2);
-  ui_->run_step4->setEnabled(!tool_is_running_ && prep_stage >= 3);
+  ui_->run_step4->setEnabled((!tool_is_running_ && prep_stage >= 3) || !training_model_mode);
+
+  ui_->step1_label->setVisible(training_model_mode);
+  ui_->step2_label->setVisible(training_model_mode);
+  ui_->step3_label->setVisible(training_model_mode);
+
+  ui_->step1_status->setVisible(training_model_mode);
+  ui_->step2_status->setVisible(training_model_mode);
+  ui_->step3_status->setVisible(training_model_mode);
+
+  ui_->run_step1->setVisible(training_model_mode);
+  ui_->run_step2->setVisible(training_model_mode);
+  ui_->run_step3->setVisible(training_model_mode);
 
   load_plots();
   update_tables();
