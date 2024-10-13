@@ -938,7 +938,7 @@ Point3 Image::centerOfMass(PixelType minVal, PixelType maxVal) const {
   return com;
 }
 
-Image::StatsPtr Image::statsFilter() {
+Image::StatsPtr Image::statsFilter() const {
   using FilterType = itk::StatisticsImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -1157,6 +1157,15 @@ Image& Image::fill(PixelType value) {
   }
   painted_ = true;
   return *this;
+}
+
+//-------------------------------------------------------------------------
+bool Image::isDistanceTransform() const {
+  auto stats = statsFilter();
+  // examine scalar range of image
+  auto min = stats->GetMinimum();
+  auto max = stats->GetMaximum();
+  return (min < 0 && max > 0);
 }
 
 //-------------------------------------------------------------------------
