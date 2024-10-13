@@ -11,6 +11,9 @@ class DeepSSMParameters {
   explicit DeepSSMParameters(ProjectHandle project);
   void save_to_project();
 
+  std::string get_model_mode();
+  void set_model_mode(std::string mode);
+
   int get_aug_num_samples();
   void set_aug_num_samples(int num_samples);
 
@@ -117,6 +120,9 @@ class DeepSSMParameters {
   const static std::string DEEPSSM_SAMPLER_GAUSSIAN_C;
   const static std::string DEEPSSM_SAMPLER_MIXTURE_C;
   const static std::string DEEPSSM_SAMPLER_KDE_C;
+
+  const static std::string DEEPSSM_MODEL_MODE_TRAINING_C;
+  const static std::string DEEPSSM_MODEL_MODE_EXISTING_C;
 
  private:
   Parameters params_;

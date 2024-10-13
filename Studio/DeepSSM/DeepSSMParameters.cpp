@@ -6,7 +6,12 @@ const std::string DeepSSMParameters::DEEPSSM_SAMPLER_GAUSSIAN_C("Gaussian");
 const std::string DeepSSMParameters::DEEPSSM_SAMPLER_MIXTURE_C("Mixture");
 const std::string DeepSSMParameters::DEEPSSM_SAMPLER_KDE_C("KDE");
 
+const std::string DeepSSMParameters::DEEPSSM_MODEL_MODE_TRAINING_C("Training Only");
+const std::string DeepSSMParameters::DEEPSSM_MODEL_MODE_EXISTING_C("Existing Model");
+
 namespace Keys {
+
+const std::string MODEL_MODE = "model_mode";
 const std::string TRAINING_SPLIT = "training_split";
 const std::string VALIDATION_SPLIT = "validation_split";
 const std::string TESTING_SPLIT = "testing_split";
@@ -48,6 +53,8 @@ const std::string TL_NET_C_LAT = "tl_net_c_lat";
 }  // namespace Keys
 
 namespace Defaults {
+
+const std::string MODEL_MODE = "Training Only";
 
 // split defaults
 const double TRAINING_SPLIT = 60;
@@ -104,6 +111,12 @@ void DeepSSMParameters::restore_defaults() { params_.reset_parameters(); }
 
 //---------------------------------------------------------------------------
 void DeepSSMParameters::save_to_project() { project_->set_parameters(Parameters::DEEPSSM_PARAMS, params_); }
+
+//---------------------------------------------------------------------------
+std::string DeepSSMParameters::get_model_mode() { return params_.get(Keys::MODEL_MODE, Defaults::MODEL_MODE); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_model_mode(std::string mode) { params_.set(Keys::MODEL_MODE, mode); }
 
 //---------------------------------------------------------------------------
 int DeepSSMParameters::get_aug_num_samples() { return params_.get(Keys::AUG_NUM_SAMPLES, Defaults::AUG_NUM_SAMPLES); }
