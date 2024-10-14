@@ -256,7 +256,7 @@ def groom_training_images(project, indices):
         image.fitRegion(bounding_box)
 
         # write image using the index of the subject
-        image.write(deepssm_dir + f"/train_images/{i}.nrrd")
+        image.write(deepssm_dir + f"/images/{i}.nrrd")
 
 
 def run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler, mixture_num=0, processes=1):
@@ -271,7 +271,7 @@ def run_data_augmentation(project, num_samples, num_dim, percent_variability, sa
     train_image_filenames = []
     train_world_particle_filenames = []
     for i in get_training_indices(project):
-        train_image_filenames.append(f"deepssm/train_images/{i}.nrrd")
+        train_image_filenames.append(f"deepssm/images/{i}.nrrd")
         particle_file = subjects[i].get_world_particle_filenames()[0]
         train_world_particle_filenames.append(particle_file)
 
@@ -355,7 +355,7 @@ def groom_val_test_images(project, indices):
     cropped_ref_image = sw.Image(ref_image_file).fitRegion(bounding_box).write(cropped_ref_image_file)
 
     # Make dirs
-    val_test_images_dir = deepssm_dir + 'val_and_test_images/'
+    val_test_images_dir = deepssm_dir + 'images/'
     if not os.path.exists(val_test_images_dir):
         os.makedirs(val_test_images_dir)
 
@@ -451,17 +451,12 @@ def prepare_data_loaders(project, batch_size, split="all"):
     if not os.path.exists(loader_dir):
         os.makedirs(loader_dir)
 
-    val_test_images_dir = deepssm_dir + 'val_and_test_images/'
-    params = project.get_parameters("deepssm")
-    if (params.get("model_mode") == "Existing Model"):
-        val_test_images_dir = deepssm_dir + 'train_images/'
-
     if split == "all" or split == "val":
         val_image_files = []
         val_world_particles = []
         val_indices = get_split_indices(project, "val")
         for i in val_indices:
-            val_image_files.append(val_test_images_dir + f"{i}.nrrd")
+            val_image_files.append(deepssm_dir + "images/" + f"{i}.nrrd")
             particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
             val_world_particles.append(particle_file)
         DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles)
@@ -475,7 +470,7 @@ def prepare_data_loaders(project, batch_size, split="all"):
         test_image_files = []
         test_indices = get_split_indices(project, "test")
         for i in test_indices:
-            test_image_files.append(val_test_images_dir + f"{i}.nrrd")
+            test_image_files.append(deepssm_dir + "images/" + f"{i}.nrrd")
         DeepSSMUtils.getTestLoader(loader_dir, test_image_files)
 
 

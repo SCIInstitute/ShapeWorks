@@ -592,12 +592,12 @@ void DeepSSMTool::show_training_meshes() {
         std::string image_filename = index_string;
 
         if (validation[i]) {
-          image_filename = "deepssm/val_and_test_images/" + image_filename + ".nrrd";
+          image_filename = "deepssm/images/" + image_filename + ".nrrd";
         } else {
           if (image_filename.find("Generated") != std::string::npos) {
             image_filename = "deepssm/augmentation/Generated-Images/" + image_filename + ".nrrd";
           } else {
-            image_filename = "deepssm/train_images/" + image_filename + ".nrrd";
+            image_filename = "deepssm/images/" + image_filename + ".nrrd";
           }
         }
 
@@ -656,7 +656,7 @@ void DeepSSMTool::show_testing_meshes() {
       mesh_group.set_mesh(0, sw_mesh);
       shape->set_reconstructed_meshes(mesh_group);
 
-      auto image_filename = "deepssm/val_and_test_images/" + std::to_string(id) + ".nrrd";
+      auto image_filename = "deepssm/images/" + std::to_string(id) + ".nrrd";
 
       set_subject_image_filename(subject, image_filename);
 
