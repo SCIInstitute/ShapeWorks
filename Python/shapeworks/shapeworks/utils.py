@@ -480,7 +480,7 @@ def get_reference_index(project):
     """ Get the index of the reference subject chosen by grooming alignment."""
     params = project.get_parameters("groom")
     reference_index = params.get("alignment_reference_chosen")
-    if reference_index is None:
+    if reference_index is None or reference_index == "" or not str(reference_index).isdigit():
         # Perhaps the project was groomed without ICP alignment (e.g. centering)
         reference_index = compute_reference_subject(project)
     return int(reference_index)
