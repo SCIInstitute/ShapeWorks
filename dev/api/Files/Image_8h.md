@@ -56,12 +56,13 @@ class Image {
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType>;
 
   // constructors and assignment operators //
-  Image(const Dims dims);
-  Image(const std::string& pathname) : itk_image_(read(pathname)) {}
-  Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
+  explicit Image(const Dims dims);
+  explicit Image(const std::string& pathname) : itk_image_(read(pathname)) {}
+  explicit Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
     if (!itk_image_) throw std::invalid_argument("null imagePtr");
   }
-  Image(const vtkSmartPointer<vtkImageData> vtkImage);
+  explicit Image(const vtkSmartPointer<vtkImageData> vtkImage);
+
   Image(Image&& img) : itk_image_(nullptr) { this->itk_image_.Swap(img.itk_image_); }
   Image(const Image& img) : itk_image_(cloneData(img.itk_image_)) {}
   Image& operator=(const Image& img);  
@@ -239,6 +240,8 @@ class Image {
 
   Image& fill(PixelType value);
 
+  bool isDistanceTransform() const;
+
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
   }
@@ -267,7 +270,7 @@ class Image {
 
   Image& pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);
 
-  StatsPtr statsFilter();
+  StatsPtr statsFilter() const;
 
   ImageType::Pointer itk_image_;
 
@@ -293,4 +296,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2024-10-13 at 16:12:29 +0000
+Updated on 2024-10-14 at 02:46:37 +0000

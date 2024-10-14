@@ -122,6 +122,7 @@ title: shapeworks::Image
 | void | **[paintCircle](../Classes/classshapeworks_1_1Image.md#function-paintcircle)**(Point p, double radius, unsigned int axis, PixelType value)<br>Paints a circle in the image.  |
 | bool | **[isPainted](../Classes/classshapeworks_1_1Image.md#function-ispainted)**() const<br>Returns if the image has been painted.  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[fill](../Classes/classshapeworks_1_1Image.md#function-fill)**(PixelType value)<br>fill with value  |
+| bool | **[isDistanceTransform](../Classes/classshapeworks_1_1Image.md#function-isdistancetransform)**() const<br>Return if the image is a distance transform.  |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Image.md#function-getsupportedtypes)**()<br>Return supported file types.  |
 | bool | **[isSupportedType](../Classes/classshapeworks_1_1Image.md#function-issupportedtype)**(const std::string & filename)<br>Return if the file type is supported.  |
 
@@ -192,7 +193,7 @@ using shapeworks::Image::InterpolatorType =  itk::LinearInterpolateImageFunction
 ### function Image
 
 ```cpp
-Image(
+explicit Image(
     const Dims dims
 )
 ```
@@ -201,7 +202,7 @@ Image(
 ### function Image
 
 ```cpp
-inline Image(
+inline explicit Image(
     const std::string & pathname
 )
 ```
@@ -210,7 +211,7 @@ inline Image(
 ### function Image
 
 ```cpp
-inline Image(
+inline explicit Image(
     ImageType::Pointer imagePtr
 )
 ```
@@ -219,7 +220,7 @@ inline Image(
 ### function Image
 
 ```cpp
-Image(
+explicit Image(
     const vtkSmartPointer< vtkImageData > vtkImage
 )
 ```
@@ -1123,6 +1124,14 @@ Image & fill(
 
 fill with value 
 
+### function isDistanceTransform
+
+```cpp
+bool isDistanceTransform() const
+```
+
+Return if the image is a distance transform. 
+
 ### function getSupportedTypes
 
 ```cpp
@@ -1154,4 +1163,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2024-10-13 at 16:12:29 +0000
+Updated on 2024-10-14 at 02:46:37 +0000

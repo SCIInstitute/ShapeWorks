@@ -3203,6 +3203,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-isdistancetransform" class="md-nav__link">
+    function isDistanceTransform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getsupportedtypes" class="md-nav__link">
     function getSupportedTypes
   </a>
@@ -3680,6 +3687,10 @@
 <td><strong><a href="classshapeworks_1_1Image.html#function-fill">fill</a></strong>(PixelType value)<br>fill with value</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-isdistancetransform">isDistanceTransform</a></strong>() const<br>Return if the image is a distance transform.</td>
+</tr>
+<tr>
 <td>std::vector&lt; std::string &gt;</td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-getsupportedtypes">getSupportedTypes</a></strong>()<br>Return supported file types.</td>
 </tr>
@@ -3748,22 +3759,22 @@
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-image">function Image</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-image_1">function Image</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">explicit</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-image_2">function Image</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">explicit</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span>
 <span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">imagePtr</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-image_3">function Image</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtkImage</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -4291,6 +4302,10 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>fill with value </p>
+<h3 id="function-isdistancetransform">function isDistanceTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">isDistanceTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Return if the image is a distance transform. </p>
 <h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span>
 </code></pre></div>
@@ -4308,7 +4323,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2024-10-13 at 16:12:29 +0000</p>
+<p>Updated on 2024-10-14 at 02:46:37 +0000</p>
 
               
             </article>
