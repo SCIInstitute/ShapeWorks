@@ -100,8 +100,10 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
   try {
     // only interested in 1's and 0's
     Image itk_image = Image(image);
-    itk_image.binarize(0, 1);
-    image = itk_image.getITKImage();
+    if (!itk_image.isDistanceTransform()) {
+      itk_image.binarize(0, 1);
+      image = itk_image.getITKImage();
+    }
 
     // connect to VTK
     vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
