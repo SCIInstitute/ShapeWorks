@@ -91,6 +91,14 @@ void DeepSSMJob::run_prep() {
   params.save_to_project();
 
   if (params.get_model_mode() == DeepSSMParameters::DEEPSSM_MODEL_MODE_EXISTING_C) {
+
+    SW_LOG("Creating Split...");
+    double val_split = params.get_validation_split();
+    double test_split = params.get_testing_split();
+    double train_split = 100.0 - val_split - test_split;
+    py::object create_split = py_deep_ssm_utils.attr("create_split");
+    create_split(project_, train_split, val_split, test_split);
+
     SW_LOG("Using Existing Shape Model");
     SW_LOG("Grooming all images");
     update_prep_stage(DeepSSMTool::PrepStep::GROOM_IMAGES);
