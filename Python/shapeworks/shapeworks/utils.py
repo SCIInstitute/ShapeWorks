@@ -466,10 +466,23 @@ def get_mesh_from_file(filename, iso_value=0):
     return image.toMesh(iso_value)
 
 
+def compute_reference_subject(project):
+    subjects = project.get_subjects()
+    meshes = []
+    for subject in subjects:
+        mesh = get_mesh_from_file(subject.get_groomed_filenames()[0])
+        meshes.append(mesh)
+    reference_index, combined_mesh = find_reference_mesh_index(meshes)
+    return reference_index
+
+
 def get_reference_index(project):
     """ Get the index of the reference subject chosen by grooming alignment."""
     params = project.get_parameters("groom")
     reference_index = params.get("alignment_reference_chosen")
+    if reference_index is None:
+        # Perhaps the project was groomed without ICP alignment (e.g. centering)
+        reference_index = compute_reference_subject(project)
     return int(reference_index)
 
 
