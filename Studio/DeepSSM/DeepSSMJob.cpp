@@ -82,6 +82,7 @@ void DeepSSMJob::run_prep() {
   auto shapes = session_->get_shapes();
   SW_LOG("DeepSSM: Prep");
 
+  SW_LOG("DeepSSM: Importing modules...");
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
   DeepSSMParameters params(project_);
@@ -256,6 +257,7 @@ void DeepSSMJob::run_augmentation() {
 
   QString sampler_type = QString::fromStdString(params.get_aug_sampler_type()).toLower();
 
+  SW_LOG("DeepSSM: Importing modules...");
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
   py::object run_data_aug = py_deep_ssm_utils.attr("run_data_augmentation");
 
@@ -290,6 +292,7 @@ void DeepSSMJob::run_training() {
 
   int batch_size = params.get_training_batch_size();
 
+  SW_LOG("DeepSSM: Importing modules...");
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
   py::object prepare_data_loaders = py_deep_ssm_utils.attr("prepare_data_loaders");
@@ -332,6 +335,7 @@ void DeepSSMJob::run_training() {
 void DeepSSMJob::run_testing() {
   DeepSSMParameters params(project_);
 
+  SW_LOG("DeepSSM: Importing modules...");
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
   std::vector<int> test_indices = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::TEST);
