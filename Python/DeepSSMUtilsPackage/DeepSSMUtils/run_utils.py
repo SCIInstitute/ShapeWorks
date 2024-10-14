@@ -17,6 +17,7 @@ import itk
 # See #2315
 temporary_parameter_object = itk.ParameterObject.New()
 
+
 def create_split(project, train, val, test):
     # Create split
 
@@ -46,7 +47,7 @@ def create_split(project, train, val, test):
 
     train_indices = subject_indices[:math.floor(len(subject_indices) * train / 100)]
     val_indices = subject_indices[
-                  math.floor(len(subject_indices) * train / 100):math.floor(len(subject_indices) * (train + val) / 100)]
+        math.floor(len(subject_indices) * train / 100):math.floor(len(subject_indices) * (train + val) / 100)]
     test_indices = subject_indices[math.floor(len(subject_indices) * (train + val) / 100):]
 
     sw_message(f"Creating split: train:{train}%, val:{val}%, test:{test}%")
@@ -450,12 +451,17 @@ def prepare_data_loaders(project, batch_size, split="all"):
     if not os.path.exists(loader_dir):
         os.makedirs(loader_dir)
 
+    val_test_images_dir = deepssm_dir + 'val_and_test_images/'
+    params = project.get_parameters("deepssm")
+    if (params.get("model_mode") == "Existing Model"):
+        val_test_images_dir = deepssm_dir + 'train_images/'
+
     if split == "all" or split == "val":
         val_image_files = []
         val_world_particles = []
         val_indices = get_split_indices(project, "val")
         for i in val_indices:
-            val_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
+            val_image_files.append(val_test_images_dir + f"{i}.nrrd")
             particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
             val_world_particles.append(particle_file)
         DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles)
@@ -469,7 +475,7 @@ def prepare_data_loaders(project, batch_size, split="all"):
         test_image_files = []
         test_indices = get_split_indices(project, "test")
         for i in test_indices:
-            test_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
+            test_image_files.append(val_test_images_dir + f"{i}.nrrd")
         DeepSSMUtils.getTestLoader(loader_dir, test_image_files)
 
 
