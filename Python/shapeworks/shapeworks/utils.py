@@ -117,12 +117,12 @@ def find_reference_image_index(inDataList, domains_per_shape=1):
 
 
 def find_reference_mesh_index(mesh_list, domains_per_shape=1):
-    if (domains_per_shape == 1):
+    if domains_per_shape == 1:
         return sw.MeshUtils.findReferenceMesh(mesh_list)
     else:
         combined_mesh = sw.data.combine_domains(mesh_list, domains_per_shape)
         index = sw.MeshUtils.findReferenceMesh(combined_mesh)
-        return index, combined_mesh
+        return index
 
 
 def save_contour_as_vtp(points, lines, filename):
@@ -472,7 +472,7 @@ def compute_reference_subject(project):
     for subject in subjects:
         mesh = get_mesh_from_file(subject.get_groomed_filenames()[0])
         meshes.append(mesh)
-    reference_index, combined_mesh = find_reference_mesh_index(meshes)
+    reference_index = find_reference_mesh_index(meshes)
     return reference_index
 
 
@@ -482,7 +482,11 @@ def get_reference_index(project):
     reference_index = params.get("alignment_reference_chosen")
     if reference_index is None or reference_index == "" or not str(reference_index).isdigit():
         # Perhaps the project was groomed without ICP alignment (e.g. centering)
+        sw_message("Computing reference subject.")
         reference_index = compute_reference_subject(project)
+        # Store the reference index in the project
+        params.set("alignment_reference_chosen", str(reference_index))
+        project.set_parameters("groom", params)
     return int(reference_index)
 
 
