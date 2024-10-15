@@ -70,6 +70,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 	if processes != 1:
 		generate_image_params_list = []
 	# Sample to generate new examples
+	sw_message("Generating Augmented Images...")
 	for index in range(1, num_samples+1):
 		if sw_check_abort():
 			sw_message("Aborted")
