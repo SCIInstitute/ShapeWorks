@@ -1229,10 +1229,6 @@ void Viewer::update_image_volume(bool force) {
 
   slice_view_.update_particles();
 
-  auto image_volume_name = session_->get_image_name();
-  if (!force && image_volume_name == current_image_name_) {
-    return;
-  }
   current_image_name_ = image_volume_name;
   if (image_volume_name != "-none-") {
     auto volume = shape_->get_image_volume(image_volume_name);
