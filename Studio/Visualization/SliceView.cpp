@@ -217,6 +217,7 @@ void SliceView::update_renderer() {
     for (auto &actor : cut_actors_) {
       renderer->AddActor(actor);
     }
+    renderer->ResetCameraClippingRange();
   } else {
     renderer->RemoveViewProp(image_slice_);
     renderer->RemoveViewProp(mask_slice_);
@@ -224,7 +225,6 @@ void SliceView::update_renderer() {
       renderer->RemoveViewProp(actor);
     }
   }
-  renderer->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
