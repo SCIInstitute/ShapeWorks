@@ -381,6 +381,9 @@ void Shape::set_id(int id) { id_ = id; }
 
 //---------------------------------------------------------------------------
 void Shape::update_annotations() {
+  if (!subject_) {
+    return;
+  }
   if (!subject_->get_original_filenames().empty()) {
     /// TODO: Show multiple lines of filenames for multiple domains?
     std::string filename = subject_->get_original_filenames()[0];
