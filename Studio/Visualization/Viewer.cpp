@@ -1197,6 +1197,12 @@ void Viewer::update_image_volume(bool force) {
   if (!session_ || !shape_) {
     return;
   }
+
+  auto image_volume_name = session_->get_image_name();
+  if (!force && image_volume_name == current_image_name_) {
+    return;
+  }
+
   slice_view_.set_orientation(session_->get_image_axis());
 
   if (meshes_.valid()) {
