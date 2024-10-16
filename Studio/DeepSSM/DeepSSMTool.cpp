@@ -715,6 +715,7 @@ void DeepSSMTool::update_meshes() {
       show_testing_meshes();
       break;
   }
+  Q_EMIT reset_scalar_range();
 }
 
 //---------------------------------------------------------------------------

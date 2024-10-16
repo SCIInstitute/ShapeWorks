@@ -94,6 +94,7 @@ class DeepSSMTool : public QWidget {
 
   void update_view();
   void progress(int);
+  void reset_scalar_range();
 
  private:
   void update_meshes();
