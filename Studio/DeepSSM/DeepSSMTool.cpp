@@ -534,6 +534,7 @@ QStringList DeepSSMTool::read_images_from_csv(QString filename) {
 //---------------------------------------------------------------------------
 void DeepSSMTool::show_training_meshes() {
   shapes_.clear();
+  Q_EMIT reset_scalar_range();
 
   QStringList filenames;
   filenames << "deepssm/model/examples/validation_best.particles";
@@ -620,6 +621,8 @@ void DeepSSMTool::show_training_meshes() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::show_testing_meshes() {
   shapes_.clear();
+  Q_EMIT reset_scalar_range();
+
   deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
   auto id_list = get_split(session_->get_project(), SplitType::TEST);
 
@@ -680,6 +683,8 @@ void DeepSSMTool::show_testing_meshes() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::update_testing_meshes() {
   try {
+    Q_EMIT reset_scalar_range();
+
     deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
     auto id_list = get_split(session_->get_project(), SplitType::TEST);
 
