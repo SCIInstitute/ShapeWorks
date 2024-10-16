@@ -700,6 +700,7 @@ void DeepSSMTool::update_meshes() {
   if (!is_active()) {
     return;
   }
+  Q_EMIT reset_scalar_range();
   switch (current_tool_) {
     case DeepSSMTool::ToolMode::DeepSSM_PrepType:
       shapes_.clear();
@@ -715,7 +716,6 @@ void DeepSSMTool::update_meshes() {
       show_testing_meshes();
       break;
   }
-  Q_EMIT reset_scalar_range();
 }
 
 //---------------------------------------------------------------------------
