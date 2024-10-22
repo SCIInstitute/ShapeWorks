@@ -135,6 +135,9 @@ def get_deepssm_dir(project):
     # if dir project_path/deepssm doesn't exist, create it using python
     if not os.path.exists(deepssm_dir):
         os.makedirs(deepssm_dir)
+    # if CWD is the same as project_path, then return "deepssm/"
+    if os.getcwd() == project_path:
+        return "deepssm/"
     return deepssm_dir
 
 
