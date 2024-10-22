@@ -87,9 +87,9 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
     return train_path
 
 
-def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
-    """ Creates a validation data loader """
-    sw_message("Creating validation torch loader:")
+def get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
+    """ Creates a validation dataset """
+    sw_message("Creating validation dataset:")
     # Get data
     image_paths = []
     scores = []
@@ -111,6 +111,15 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
     sw_message("Validation names saved to: " + loader_dir + "validation_names.txt")
     images = get_images(loader_dir, image_paths, down_factor, down_dir)
     val_data = DeepSSMdataset(images, scores, models, names)
+    sw_message("Validation dataset complete.")
+    return val_data
+
+
+def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
+    """ Creates a validation data loader """
+    sw_message("Creating validation torch loader:")
+    for index in range(len(val_img_list)):
+        val_data = get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor, down_dir)
     # Make loader
     val_loader = DataLoader(
         val_data,
@@ -261,8 +270,8 @@ class DeepSSMdataset():
         ]
 
         # Pad both datasets to the max shape
-        #self.pad_images(max_shape)
-        #other.pad_images(max_shape)
+        # self.pad_images(max_shape)
+        # other.pad_images(max_shape)
         # Pad both datasets to the max shape
         self.pad_images(self.img.shape[1:], max_shape)
         other.pad_images(other.img.shape[1:], max_shape)
