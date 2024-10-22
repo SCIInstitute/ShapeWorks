@@ -448,7 +448,7 @@ def groom_val_test_images(project, indices):
 
 
 def prepare_data_loaders(project, batch_size, split="all"):
-    """ Prepare PyTorch laoders """
+    """ Prepare PyTorch loaders """
     deepssm_dir = get_deepssm_dir(project)
     loader_dir = deepssm_dir + 'torch_loaders/'
     if not os.path.exists(loader_dir):
