@@ -21,9 +21,9 @@ def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, do
     loaders.get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split)
 
 
-def getTrainLoader(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
+def getTrainLoader(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None):
     testPytorch()
-    loaders.get_train_loader(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split)
+    loaders.get_train_loader(loader_dir, aug_data_csv, batch_size, down_factor, down_dir)
 
 
 def getValidationLoader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
