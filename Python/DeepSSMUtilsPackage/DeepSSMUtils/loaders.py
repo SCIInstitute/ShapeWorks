@@ -235,17 +235,6 @@ class DeepSSMdataset():
     def __len__(self):
         return len(self.img)
 
-    def pad_images_old(self, new_shape):
-        # Calculate required padding for each dimension
-        padding_list = []
-        for dim, target_size in zip(self.img.shape[1:], new_shape):
-            total_padding = target_size - dim
-            # Padding equally on both sides
-            padding_list.extend([total_padding // 2, total_padding - total_padding // 2])
-
-        # Pad all images
-        self.img = pad(self.img, padding_list, 'constant', 0)
-
     def pad_images(self, current_shape, target_shape):
         # Calculate required padding for each dimension
         padding_list = []
@@ -261,7 +250,6 @@ class DeepSSMdataset():
 
     def concatenate(self, other):
         """ Concatenates two datasets """
-        print("dims before: ", self.img.shape, other.img.shape)
 
         # Determine the largest shape
         max_shape = [
@@ -270,13 +258,8 @@ class DeepSSMdataset():
         ]
 
         # Pad both datasets to the max shape
-        # self.pad_images(max_shape)
-        # other.pad_images(max_shape)
-        # Pad both datasets to the max shape
         self.pad_images(self.img.shape[1:], max_shape)
         other.pad_images(other.img.shape[1:], max_shape)
-
-        print("dims after: ", self.img.shape, other.img.shape)
 
         # Concatenate padded images and targets
         self.img = torch.cat((self.img, other.img), 0)
