@@ -32,13 +32,14 @@ def write_examples(pred_particles, true_particles, filenames, out_dir):
         f.write(filenames[indices[i]])
         f.close()
 
-        # reconstruct mesh
-        mesh = reconstruct_mesh(pred)
-        # interpolate scalars to mesh
+        if is_mesh_warp_initialized():
+            # reconstruct mesh
+            mesh = reconstruct_mesh(pred)
+            # interpolate scalars to mesh
 
-        # reshape pred to be 1D
-        pred = pred.flatten()
-        # interpolate scalars to mesh
-        mesh.interpolate_scalars_to_mesh("deepssm_error", pred, scalars)
-        out_mesh_file = out_dir + names[i] + ".vtk"
-        mesh.write(out_mesh_file)
+            # reshape pred to be 1D
+            pred = pred.flatten()
+            # interpolate scalars to mesh
+            mesh.interpolate_scalars_to_mesh("deepssm_error", pred, scalars)
+            out_mesh_file = out_dir + names[i] + ".vtk"
+            mesh.write(out_mesh_file)
