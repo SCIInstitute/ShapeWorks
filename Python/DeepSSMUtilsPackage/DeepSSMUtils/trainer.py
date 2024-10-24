@@ -66,7 +66,8 @@ def set_scheduler(opt, sched_params):
 
 
 def train(project, config_file):
-    sw.utils.initialize_project_mesh_warper(project)
+    if project is not None:
+        sw.utils.initialize_project_mesh_warper(project)
 
     with open(config_file) as json_file:
         parameters = json.load(json_file)
@@ -125,6 +126,7 @@ def supervised_train(config_file):
         temp = np.loadtxt(aug_dir + '/PCA_Particle_Info/pcamode' + str(i) + '.particles')
         orig_pc[i, :] = temp.flatten()
 
+    # Alan: Temp!
     bias = torch.from_numpy(orig_mean.flatten()).to(device)  # load the mean here
     weight = torch.from_numpy(orig_pc.T).to(device)  # load the PCA vectors here
     net.decoder.fc_fine.bias.data.copy_(bias)
