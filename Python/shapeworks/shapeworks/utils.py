@@ -369,6 +369,13 @@ def load_mesh(filename):
         return sw.Image(filename).toMesh(0.5)
 
 
+def is_mesh_warp_initialized() -> bool:
+    """
+    :return: True if the MeshWarper object has been initialized, False otherwise.
+    """
+    return sw_warp is not None
+
+
 def initialize_mesh_warper(template_mesh, template_particles):
     """
     This function initializes a MeshWarper object using a template mesh and corresponding particles.
