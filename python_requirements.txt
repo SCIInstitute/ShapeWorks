@@ -187,7 +187,7 @@ wcwidth==0.2.6
 webcolors==1.13
 webencodings==0.5.1
 websocket-client==1.6.1
-Werkzeug==3.0.3
+Werkzeug==3.0.6
 widgetsnbextension==3.6.4
 zipp==3.19.1
 zstandard==0.21.0
