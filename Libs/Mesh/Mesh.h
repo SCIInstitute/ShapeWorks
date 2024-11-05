@@ -20,7 +20,7 @@ class Mesh {
  public:
   enum FieldType { Point, Face };
   enum AlignmentType { Rigid, Similarity, Affine };
-  enum DistanceMethod { PointToPoint, PointToCell };
+  enum DistanceMethod { PointToPoint, PointToCell, SymmetricPointToCell };
   enum CurvatureType { Principal, Gaussian, Mean };
   enum SubdivisionType { Butterfly, Loop };
 
