@@ -13,9 +13,12 @@ import DeepSSMUtils
 import DeepSSMUtils.eval_utils as eval_utils
 
 import itk
-# this is here to cause the ITK libraries to be loaded at a safe time when other threads won't be doing file I/O
-# See #2315
-temporary_parameter_object = itk.ParameterObject.New()
+
+# if SW_FAST_PYTHON_IMPORT env var is set, then we don't need to import the ITK libraries here
+if not os.environ.get('SW_FAST_PYTHON_STARTUP'):
+    # this is here to cause the ITK libraries to be loaded at a safe time when other threads won't be doing file I/O
+    # See #2315
+    temporary_parameter_object = itk.ParameterObject.New()
 
 
 def create_split(project, train, val, test):
@@ -47,7 +50,7 @@ def create_split(project, train, val, test):
 
     train_indices = subject_indices[:math.floor(len(subject_indices) * train / 100)]
     val_indices = subject_indices[
-        math.floor(len(subject_indices) * train / 100):math.floor(len(subject_indices) * (train + val) / 100)]
+                  math.floor(len(subject_indices) * train / 100):math.floor(len(subject_indices) * (train + val) / 100)]
     test_indices = subject_indices[math.floor(len(subject_indices) * (train + val) / 100):]
 
     sw_message(f"Creating split: train:{train}%, val:{val}%, test:{test}%")

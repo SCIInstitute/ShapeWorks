@@ -110,7 +110,11 @@ def supervised_train(config_file):
     num_pca = train_loader.dataset.pca_target[0].shape[0]
     num_corr = train_loader.dataset.mdl_target[0].shape[0]
     print("Defining net...")
-    net = model.DeepSSMNet(config_file)
+    if parameters["conditional_deepssm"]["enabled"]:
+        print("Conditional DeepSSM Enabled")
+        net = model.ConditionalDeepSSMNet(config_file)
+    else:
+        net = model.DeepSSMNet(config_file)
     device = net.device
     net.to(device)
     # initialize model weights
@@ -180,13 +184,17 @@ def supervised_train(config_file):
         pred_particles = []
         true_particles = []
         train_names = []
-        for img, pca, mdl, names in train_loader:
+        for img, pca, mdl, names, anatomy in train_loader:
             train_names.extend(names)
             opt.zero_grad()
             img = img.to(device)
             pca = pca.to(device)
             mdl = mdl.to(device)
-            [pred_pca, pred_mdl] = net(img)
+            anatomy = anatomy.to(device)
+
+            [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
+            # [pred_pca, pred_mdl] = net(img)
+
             loss = loss_func(pred_mdl, mdl)
             loss.backward()
             opt.step()
@@ -205,13 +213,13 @@ def supervised_train(config_file):
             net.eval()
             val_losses = []
             val_rel_losses = []
-            for img, pca, mdl, names in val_loader:
+            for img, pca, mdl, names, anatomy in val_loader:
                 val_names.extend(names)
                 opt.zero_grad()
                 img = img.to(device)
                 pca = pca.to(device)
                 mdl = mdl.to(device)
-                [pred_pca, pred_mdl] = net(img)
+                [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
                 v_loss = loss_func(pred_mdl, mdl)
                 val_losses.append(v_loss.item())
                 val_rel_loss = loss_func(pred_mdl, mdl) / loss_func(pred_mdl * 0, mdl)

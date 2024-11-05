@@ -60,12 +60,12 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
     return train_path, val_path
 
 
-def get_train_dataset(loader_dir, data_csv, down_factor=1, down_dir=None):
+def get_train_dataset(loader_dir, data_csv, down_factor=1, down_dir=None, anatomy=1):
     sw_message("Creating training dataset...")
     make_dir(loader_dir)
     images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
     images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
-    train_data = DeepSSMdataset(images, scores, models, prefixes)
+    train_data = DeepSSMdataset(images, scores, models, prefixes, anatomy)
     return train_data
 
 
