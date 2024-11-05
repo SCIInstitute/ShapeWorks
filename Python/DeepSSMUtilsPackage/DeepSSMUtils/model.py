@@ -166,24 +166,24 @@ class CorrespondenceDecoder(nn.Module):
 DeepSSM TL-Net Model
 """
 class DeepSSMNet_TLNet(nn.Module):
-	def __init__(self, conflict_file):
-		super(DeepSSMNet_TLNet, self).__init__()
-		if torch.cuda.is_available():
-			device = 'cuda:0'
-		else:
-			device = 'cpu'
-		self.device = device
-		with open(conflict_file) as json_file: 
-			parameters = json.load(json_file)
-		self.num_latent = parameters['num_latent_dim']
-		self.loader_dir = parameters['paths']['loader_dir']
-		loader = torch.load(self.loader_dir + "validation")
-		self.num_corr = loader.dataset.mdl_target[0].shape[0]
-		img_dims = loader.dataset.img[0].shape
-		self.img_dims = img_dims[1:]
-		self.CorrespondenceEncoder = CorrespondenceEncoder(self.num_latent, self.num_corr)
-		self.CorrespondenceDecoder = CorrespondenceDecoder(self.num_latent, self.num_corr)
-		self.ImageEncoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir)
+    def __init__(self, config_file):
+        super(DeepSSMNet_TLNet, self).__init__()
+        if torch.cuda.is_available():
+            device = 'cuda:0'
+        else:
+            device = 'cpu'
+        self.device = device
+        with open(config_file) as json_file:
+            parameters = json.load(json_file)
+        self.num_latent = parameters['num_latent_dim']
+        self.loader_dir = parameters['paths']['loader_dir']
+        loader = torch.load(self.loader_dir + "validation")
+        self.num_corr = loader.dataset.mdl_target[0].shape[0]
+        img_dims = loader.dataset.img[0].shape
+        self.img_dims = img_dims[1:]
+        self.CorrespondenceEncoder = CorrespondenceEncoder(self.num_latent, self.num_corr)
+        self.CorrespondenceDecoder = CorrespondenceDecoder(self.num_latent, self.num_corr)
+        self.ImageEncoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir)
 
 	def forward(self, pt, x):
 		# for testing
