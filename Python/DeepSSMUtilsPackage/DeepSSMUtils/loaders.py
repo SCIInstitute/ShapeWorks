@@ -219,18 +219,20 @@ Class for DeepSSM datasets that works with Pytorch DataLoader
 
 
 class DeepSSMdataset():
-    def __init__(self, img, pca_target, mdl_target, names):
+    def __init__(self, img, pca_target, mdl_target, names, anatomy=1):
         self.img = torch.FloatTensor(np.array(img))
         self.pca_target = torch.FloatTensor(np.array(pca_target))
         self.mdl_target = torch.FloatTensor(np.array(mdl_target))
         self.names = names
+        self.anatomies = [anatomy] * len(img)
 
     def __getitem__(self, index):
         x = self.img[index]
         y1 = self.pca_target[index]
         y2 = self.mdl_target[index]
         name = self.names[index]
-        return x, y1, y2, name
+        anatomy = self.anatomies[index]
+        return x, y1, y2, name, anatomy
 
     def __len__(self):
         return len(self.img)
@@ -266,6 +268,7 @@ class DeepSSMdataset():
         self.pca_target = torch.cat((self.pca_target, other.pca_target), 0)
         self.mdl_target = torch.cat((self.mdl_target, other.mdl_target), 0)
         self.names = self.names + other.names
+        self.anatomies = self.anatomies + other.anatomies
 
 
 def get_prefix(path):
