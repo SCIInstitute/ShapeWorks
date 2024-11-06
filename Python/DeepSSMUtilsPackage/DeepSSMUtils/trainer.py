@@ -323,13 +323,13 @@ def supervised_train(config_file):
             pred_particles = []
             true_particles = []
             train_names = []
-            for img, pca, mdl, names in train_loader:
+            for img, pca, mdl, names, anatomy in train_loader:
                 train_names.extend(names)
                 opt.zero_grad()
                 img = img.to(device)
                 pca = pca.to(device)
                 mdl = mdl.to(device)
-                [pred_pca, pred_mdl] = net(img)
+                [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
                 loss = loss_func(pred_mdl, mdl)
                 loss.backward()
                 opt.step()
