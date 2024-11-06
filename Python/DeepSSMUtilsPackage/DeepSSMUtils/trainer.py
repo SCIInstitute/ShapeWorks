@@ -110,7 +110,8 @@ def supervised_train(config_file):
     num_pca = train_loader.dataset.pca_target[0].shape[0]
     num_corr = train_loader.dataset.mdl_target[0].shape[0]
     print("Defining net...")
-    if parameters["conditional_deepssm"]["enabled"]:
+    # first check if "conditional_deepssm" key is present in the parameters
+    if "conditional_deepssm" in parameters and parameters["conditional_deepssm"]["enabled"]:
         print("Conditional DeepSSM Enabled")
         net = model.ConditionalDeepSSMNet(config_file)
     else:

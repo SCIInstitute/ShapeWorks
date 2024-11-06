@@ -218,7 +218,7 @@ def groom_training_images(project, indices):
     params = project.get_parameters("deepssm")
 
     spacing = params.get("spacing")
-    if (spacing == ""):
+    if spacing == "":
         spacing = [1, 1, 1]
     else:
         spacing = [float(item) for item in spacing.split(" ")]
