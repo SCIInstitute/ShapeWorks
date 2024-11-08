@@ -98,7 +98,7 @@ def supervised_train(config_file):
     eval_freq = parameters['trainer']['val_freq']
     decay_lr = parameters['trainer']['decay_lr']['enabled']
     fine_tune = parameters['fine_tune']['enabled']
-    loss_func = method_to_call = getattr(losses, parameters["loss"]["function"])
+    loss_func = getattr(losses, parameters["loss"]["function"])
     # load the loaders
     train_loader_path = loader_dir + "train"
     validation_loader_path = loader_dir + "validation"
@@ -197,7 +197,8 @@ def supervised_train(config_file):
             [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
             # [pred_pca, pred_mdl] = net(img)
 
-            loss = loss_func(pred_mdl, mdl)
+#            loss = loss_func(pred_mdl, mdl)
+            loss = loss_func(pred_pca, pca)
             loss.backward()
             opt.step()
             train_losses.append(loss.item())
