@@ -127,7 +127,7 @@ class DeepSSMNet(nn.Module):
         if not self.decoder:
             print("Error: Decoder not implemented.")
 
-    def forward(self, x, anatomy_type = None):
+    def forward(self, x, anatomy_type=None):
         pca_load, pca_load_unwhiten = self.encoder(x)
         corr_out = self.decoder(pca_load_unwhiten)
         return [pca_load, corr_out]
@@ -232,7 +232,7 @@ class ConditionalDeterministicEncoder(nn.Module):
             ('linear', nn.Linear(96 + embedding_dim, self.num_latent))
         ]))
 
-    def forward(self, x, anatomy_type = None):
+    def forward(self, x, anatomy_type=None):
         x_features = self.ConvolutionalBackbone(x)
 
         # Get anatomical embedding

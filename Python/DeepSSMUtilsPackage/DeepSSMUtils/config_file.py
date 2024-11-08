@@ -1,5 +1,35 @@
 import json
 
+import DeepSSMUtils
+import shapeworks as sw
+
+
+def prepare_project_config_file(project):
+    params = sw.DeepSSMParameters(project)
+
+    config_file = "deepssm/configuration.json"
+
+    out_dir = "deepssm/"
+    aug_dir = out_dir + "augmentation/"
+    loader_dir = out_dir + "torch_loaders/"
+
+    epochs = params.get_training_epochs()
+    learning_rate = params.get_training_learning_rate()
+    decay_lr = params.get_training_decay_learning_rate()
+    fine_tune = params.get_training_fine_tuning()
+    fine_tune_epochs = params.get_training_fine_tuning_epochs()
+    fine_tune_learning_rate = params.get_training_fine_tuning_learning_rate()
+    num_dims = params.get_training_num_dims()
+
+    DeepSSMUtils.prepare_config_file(config_file, "model", num_dims, out_dir, loader_dir, aug_dir, epochs,
+                                     learning_rate, decay_lr,
+                                     fine_tune, fine_tune_epochs, fine_tune_learning_rate, params.get_loss_function(),
+                                     params.get_tl_net_enabled(), params.get_tl_net_ae_epochs(),
+                                     params.get_tl_net_tf_epochs(),
+                                     params.get_tl_net_joint_epochs(), params.get_tl_net_alpha(),
+                                     params.get_tl_net_a_ae(),
+                                     params.get_tl_net_c_ae(), params.get_tl_net_a_lat(), params.get_tl_net_c_lat())
+
 
 def prepare_config_file(config_file, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,
                         decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate, loss="MSE", tl_net=False,
