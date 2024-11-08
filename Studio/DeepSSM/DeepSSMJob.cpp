@@ -14,12 +14,12 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 // shapeworks
 #include <Data/Session.h>
 #include <DeepSSM/DeepSSMJob.h>
-#include <DeepSSM/DeepSSMParameters.h>
 #include <Groom.h>
 #include <Logging.h>
 #include <Mesh/MeshUtils.h>
 #include <Optimize.h>
 #include <Optimize/OptimizeParameters.h>
+#include <Project/DeepSSMParameters.h>
 
 namespace shapeworks {
 
@@ -92,7 +92,6 @@ void DeepSSMJob::run_prep() {
   params.save_to_project();
 
   if (params.get_model_mode() == DeepSSMParameters::DEEPSSM_MODEL_MODE_EXISTING_C) {
-
     SW_LOG("Creating Split...");
     double val_split = params.get_validation_split();
     double test_split = params.get_testing_split();

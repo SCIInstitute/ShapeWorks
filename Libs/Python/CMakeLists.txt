@@ -2,6 +2,7 @@ pybind11_add_module(shapeworks_py
   ShapeworksPython.cpp
   PythonAnalyze.cpp
   PythonGroom.cpp
+  PythonProject.cpp
   )
 
 if(LINUX)

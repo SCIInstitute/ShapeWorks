@@ -1,5 +1,3 @@
-
-
 #include "PythonAnalyze.h"
 
 #include <Analyze/Analyze.h>

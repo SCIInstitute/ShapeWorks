@@ -16,11 +16,11 @@
 #include <Data/ShapeWorksWorker.h>
 #include <Data/Worker.h>
 #include <DeepSSM/DeepSSMJob.h>
-#include <DeepSSM/DeepSSMParameters.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
 #include <Logging.h>
+#include <Project/DeepSSMParameters.h>
 #include <Shape.h>
 
 // vtk

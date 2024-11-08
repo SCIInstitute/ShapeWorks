@@ -37,6 +37,7 @@ using namespace pybind11::literals;
 #include "Project.h"
 #include "PythonAnalyze.h"
 #include "PythonGroom.h"
+#include "PythonProject.h"
 #include "ReconstructSurface.h"
 #include "ShapeEvaluation.h"
 #include "Shapeworks.h"
@@ -1306,6 +1307,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
   define_python_analyze(m);
   define_python_groom(m);
+  define_python_project(m);
 
   py::class_<ReconstructSurface<ThinPlateSplineTransform>>(m, "ReconstructSurface_ThinPlateSplineTransform")
 
