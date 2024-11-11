@@ -45,6 +45,8 @@ const std::string checkpointing_interval = "checkpointing_interval";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
 const std::string use_disentangled_ssm = "use_disentangled_ssm";
+const std::string use_linear_regression = "use_linear_regression";
+const std::string time_points_per_subject = "time_points_per_subject";
 const std::string field_attributes = "field_attributes";
 const std::string field_attribute_weights = "field_attribute_weights";
 const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
@@ -53,6 +55,7 @@ const std::string particle_format = "particle_format";
 const std::string geodesic_remesh_percent = "geodesic_remesh_percent";
 const std::string shared_boundary = "shared_boundary";
 const std::string shared_boundary_weight = "shared_boundary_weight";
+const std::string output_prefix = "output_prefix";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -93,8 +96,11 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::geodesics_to_landmarks_weight,
                                          Keys::keep_checkpoints,
                                          Keys::use_disentangled_ssm,
+                                         Keys::use_linear_regression,
+                                         Keys::time_points_per_subject,
                                          Keys::particle_format,
                                          Keys::geodesic_remesh_percent,
+                                         Keys::output_prefix,
                                          Keys::shared_boundary,
                                          Keys::shared_boundary_weight};
 
@@ -200,6 +206,18 @@ bool OptimizeParameters::get_use_disentangled_ssm() { return params_.get(Keys::u
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_disentangled_ssm(bool value) { params_.set(Keys::use_disentangled_ssm, value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_linear_regression() { return params_.get(Keys::use_linear_regression, false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_linear_regression(bool value) { params_.set(Keys::use_linear_regression, value); }
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_time_points_per_subject() { return params_.get(Keys::time_points_per_subject, 1); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_time_points_per_subject(int value) { params_.set(Keys::time_points_per_subject, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_procrustes_scaling() { return params_.get(Keys::procrustes_scaling, false); }
@@ -433,6 +451,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
   optimize->SetUseDisentangledSpatiotemporalSSM(get_use_disentangled_ssm());
   optimize->set_particle_format(get_particle_format());
+  optimize->SetTimePtsPerSubject(get_time_points_per_subject());
+  optimize->SetUseRegression(get_use_linear_regression());
+  optimize->SetUseMixedEffects(get_time_points_per_subject() > 1 ? true : false);
   optimize->SetSharedBoundaryEnabled(get_shared_boundary());
   optimize->SetSharedBoundaryWeight(get_shared_boundary_weight());
 
@@ -626,6 +647,21 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
       domain_count++;
     }
+  }
+
+  // get explanatory variables for subjects if used for regression
+  if (get_use_linear_regression())
+  {
+    std::vector<double> exp_vars;
+    for (const auto& s : subjects) {
+      exp_vars.push_back(s->get_explanatory_variable());
+    }
+    dynamic_cast<LinearRegressionShapeMatrix*>(
+      optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
+      ->SetExplanatory(exp_vars);
+    dynamic_cast<MixedEffectsShapeMatrix*>(
+      optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
+      ->SetExplanatory(exp_vars);
   }
 
   std::vector<std::string> filenames;
@@ -852,6 +888,9 @@ double OptimizeParameters::get_geodesic_remesh_percent() { return params_.get(Ke
 void OptimizeParameters::set_geodesic_remesh_percent(double value) {
   params_.set(Keys::geodesic_remesh_percent, value);
 }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_output_prefix(std::string value) { params_.set(Keys::output_prefix, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_shared_boundary() { return params_.get(Keys::shared_boundary, false); }
