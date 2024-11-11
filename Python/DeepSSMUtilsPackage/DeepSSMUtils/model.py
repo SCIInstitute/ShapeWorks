@@ -60,6 +60,14 @@ class ConvolutionalBackbone(nn.Module):
 
 
 class DeterministicEncoder(nn.Module):
+    """ Convolutional Encoder for DeepSSM
+
+    This class defines the deterministic encoder for the DeepSSM model. The encoder consists of a convolutional
+    backbone followed by a linear layer that predicts the PCA loadings (latent space) of the input image.
+
+    This computes both the PCA loadings and the unwhitened PCA loadings and returns both.
+    """
+
     def __init__(self, num_latent, img_dims, loader_dir):
         super(DeterministicEncoder, self).__init__()
         if torch.cuda.is_available():
@@ -83,6 +91,12 @@ class DeterministicEncoder(nn.Module):
 
 
 class DeterministicLinearDecoder(nn.Module):
+    """ Linear Decoder for DeepSSM
+
+    This class defines the deterministic linear decoder for the DeepSSM model. The decoder consists of a linear layer
+    that predicts the correspondence points from the PCA loadings (latent space) of the input image.
+    """
+
     def __init__(self, num_latent, num_corr):
         super(DeterministicLinearDecoder, self).__init__()
         self.num_latent = num_latent
@@ -111,6 +125,8 @@ class DeepSSMNet(nn.Module):
             parameters = json.load(json_file)
         self.num_latent = parameters['num_latent_dim']
         self.loader_dir = parameters['paths']['loader_dir']
+        # if parameter "pca_whiten" is set, use it, if not, use the default value of True
+        self.pca_whiten = parameters.get('pca_whiten', False)
         loader = torch.load(self.loader_dir + "validation")
         self.num_corr = loader.dataset.mdl_target[0].shape[0]
         img_dims = loader.dataset.img[0].shape
@@ -129,11 +145,16 @@ class DeepSSMNet(nn.Module):
 
     def forward(self, x, anatomy_type=None):
         pca_load, pca_load_unwhiten = self.encoder(x)
-        corr_out = self.decoder(pca_load_unwhiten)
+
+        if self.pca_whiten:
+            corr_out = self.decoder(pca_load_unwhiten)
+        else:
+            corr_out = self.decoder(pca_load)
         return [pca_load, corr_out]
 
 
 class CorrespondenceEncoder(nn.Module):
+
     def __init__(self, num_latent, num_corr):
         super(CorrespondenceEncoder, self).__init__()
         self.num_latent = num_latent

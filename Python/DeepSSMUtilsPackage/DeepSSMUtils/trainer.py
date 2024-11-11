@@ -124,19 +124,21 @@ def supervised_train(config_file):
     net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
     # these lines are for the fine tuning layer initialization
-    whiten_mean = np.load(loader_dir + '/mean_PCA.npy')
-    whiten_std = np.load(loader_dir + '/std_PCA.npy')
     orig_mean = np.loadtxt(aug_dir + '/PCA_Particle_Info/mean.particles')
     orig_pc = np.zeros([num_pca, num_corr * 3])
     for i in range(num_pca):
         temp = np.loadtxt(aug_dir + '/PCA_Particle_Info/pcamode' + str(i) + '.particles')
         orig_pc[i, :] = temp.flatten()
 
-    # Alan: Temp!
-    bias = torch.from_numpy(orig_mean.flatten()).to(device)  # load the mean here
-    weight = torch.from_numpy(orig_pc.T).to(device)  # load the PCA vectors here
-    net.decoder.fc_fine.bias.data.copy_(bias)
-    net.decoder.fc_fine.weight.data.copy_(weight)
+    if parameters.get("initialize_to_pca", False):
+        print("Initializing final layer to PCA vectors")
+        bias = torch.from_numpy(orig_mean.flatten()).to(device)  # load the mean here
+        weight = torch.from_numpy(orig_pc.T).to(device)  # load the PCA vectors here
+        net.decoder.fc_fine.bias.data.copy_(bias)
+        net.decoder.fc_fine.weight.data.copy_(weight)
+    else:
+        print("Initializing final layer to random")
+        net.decoder.fc_fine.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
     # define optimizer
     # for the initial steps set the gradient of the final layer to be zero
@@ -197,7 +199,7 @@ def supervised_train(config_file):
             [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
             # [pred_pca, pred_mdl] = net(img)
 
-#            loss = loss_func(pred_mdl, mdl)
+            #            loss = loss_func(pred_mdl, mdl)
             loss = loss_func(pred_pca, pca)
             loss.backward()
             opt.step()
