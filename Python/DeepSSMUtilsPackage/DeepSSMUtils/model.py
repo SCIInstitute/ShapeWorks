@@ -147,8 +147,10 @@ class DeepSSMNet(nn.Module):
         pca_load, pca_load_unwhiten = self.encoder(x)
 
         if self.pca_whiten:
+            print("Using PCA Whitening")
             corr_out = self.decoder(pca_load_unwhiten)
         else:
+            print("Not using PCA Whitening")
             corr_out = self.decoder(pca_load)
         return [pca_load, corr_out]
 
@@ -263,8 +265,27 @@ class ConditionalDeterministicEncoder(nn.Module):
         combined_features = torch.cat((x_features, anatomy_embed), dim=-1)
 
         pca_load = self.pca_pred(combined_features)
-        pca_load_unwhiten = net_utils.unwhiten_PCA_scores(pca_load, self.loader_dir, self.device)
-        return pca_load, pca_load_unwhiten
+        # we don't have whitening for the conditional model, so return the same for both
+        return pca_load, pca_load
+
+
+class ConditionalDeterministicLinearDecoder(nn.Module):
+    """ Linear Decoder for DeepSSM
+
+    This class defines the conditional deterministic linear decoder for the DeepSSM model.
+    The decoder consists of a linear layer that predicts the correspondence points from
+    the PCA loadings (latent space) of the input image.
+    """
+
+    def __init__(self, num_latent, num_corr):
+        super(ConditionalDeterministicLinearDecoder, self).__init__()
+        self.num_latent = num_latent
+        self.numL = num_corr
+        self.fc_fine = nn.Linear(self.num_latent, self.numL * 3)
+
+    def forward(self, pca_load):
+        corr_out = self.fc_fine(pca_load).reshape(-1, self.numL, 3)
+        return corr_out
 
 
 class ConditionalDeepSSMNet(nn.Module):
@@ -285,6 +306,7 @@ class ConditionalDeepSSMNet(nn.Module):
         self.img_dims = img_dims[1:]
         self.num_anatomies = parameters['conditional_deepssm']['num_anatomies']
         self.embedding_dim = parameters['conditional_deepssm']['embedding_dim']
+
         # encoder
         if parameters['encoder']['deterministic']:
             self.encoder = ConditionalDeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir,
@@ -298,7 +320,23 @@ class ConditionalDeepSSMNet(nn.Module):
         if not self.decoder:
             print("Error: Decoder not implemented.")
 
+        self.decoder_branches = nn.ModuleList(
+            [DeterministicLinearDecoder(self.num_latent, self.num_corr) for _ in range(self.num_anatomies)])
+
     def forward(self, x, anatomy_type):
         pca_load, pca_load_unwhiten = self.encoder(x, anatomy_type)
-        corr_out = self.decoder(pca_load_unwhiten)
-        return [pca_load, corr_out]
+
+        # old, non-conditional model
+        # corr_out = self.decoder(pca_load_unwhiten)
+
+        outputs = []
+        for i in range(len(anatomy_type)):
+            output = self.decoder_branches[anatomy_type[i]](pca_load_unwhiten[i])
+            outputs.append(output)
+        outputs = torch.stack(outputs)
+        outputs = outputs.squeeze(1)  # Squeezing dimension 1
+
+        # new, conditional model
+        ###corr_out = self.decoder_branches[anatomy_type](pca_load_unwhiten)
+
+        return [pca_load, outputs]
