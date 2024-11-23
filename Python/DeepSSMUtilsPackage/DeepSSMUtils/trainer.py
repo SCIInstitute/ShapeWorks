@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import os
 import time
 import json
@@ -142,8 +143,10 @@ def supervised_train(config_file):
 
     # define optimizer
     # for the initial steps set the gradient of the final layer to be zero
-    for param in net.decoder.fc_fine.parameters():
-        param.requires_grad = False
+
+    ### TEMP: Alan: I need the last layers on as I'm skipping PCA
+    # for param in net.decoder.fc_fine.parameters():
+    #    param.requires_grad = False
 
     train_params = net.parameters()
     opt = torch.optim.Adam(train_params, learning_rate)
@@ -199,8 +202,10 @@ def supervised_train(config_file):
             [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
             # [pred_pca, pred_mdl] = net(img)
 
-            #            loss = loss_func(pred_mdl, mdl)
-            loss = loss_func(pred_pca, pca)
+            loss = loss_func(pred_mdl, mdl)
+
+            # To do loss on PCA instead of particles
+            # loss = loss_func(pred_pca, pca)
             loss.backward()
             opt.step()
             train_losses.append(loss.item())
@@ -208,8 +213,8 @@ def supervised_train(config_file):
             train_rel_losses.append(train_rel_loss.item())
             pred_particles.extend(pred_mdl.detach().cpu().numpy())
             true_particles.extend(mdl.detach().cpu().numpy())
-        train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names,
-                                 model_dir + "examples/train_")
+            train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names,
+                                     model_dir + "examples/train")
         # test validation
         pred_particles = []
         true_particles = []
@@ -224,6 +229,7 @@ def supervised_train(config_file):
                 img = img.to(device)
                 pca = pca.to(device)
                 mdl = mdl.to(device)
+                anatomy = anatomy.to(device)
                 [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
                 v_loss = loss_func(pred_mdl, mdl)
                 val_losses.append(v_loss.item())
@@ -232,7 +238,7 @@ def supervised_train(config_file):
                 pred_particles.extend(pred_mdl.detach().cpu().numpy())
                 true_particles.extend(mdl.detach().cpu().numpy())
             train_viz.write_examples(np.array(pred_particles), np.array(true_particles), val_names,
-                                     model_dir + "examples/validation_")
+                                     model_dir + "examples/validation")
             # log
             train_mr_MSE = np.mean(np.sqrt(train_losses))
             val_mr_MSE = np.mean(np.sqrt(val_losses))
