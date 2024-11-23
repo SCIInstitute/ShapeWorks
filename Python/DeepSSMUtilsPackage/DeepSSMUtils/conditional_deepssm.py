@@ -1,6 +1,8 @@
 # Package for Conditional DeepSSM model support
 import os
 import argparse
+import matplotlib.pyplot as plt
+import PIL
 
 import shapeworks as sw
 from shapeworks.utils import sw_message, sw_progress, sw_check_abort
@@ -27,6 +29,7 @@ def concatenate_datasets(datasets: list):
 
 def generate_data_loaders(project_filenames: list[str]):
     """ Generate a data loader for the Conditional DeepSSM model """
+    print("")
     sw_message("Step: Generating Combined Data Loader")
     sw_message("Project filenames: {}".format(project_filenames))
     datasets = []
@@ -37,11 +40,10 @@ def generate_data_loaders(project_filenames: list[str]):
     loader_dir = conditional_deepssm_dir + "/torch_loaders/"
     for project_filename in project_filenames:
         os.chdir(root_dir)
+        print("")
         sw_message("Project filename: {}".format(project_filename))
         project_dir = os.path.abspath(os.path.dirname(project_filename))
         os.chdir(project_dir)
-        sw_message("Project directory: {}".format(project_dir))
-        sw_message(f"Current working directory: {os.getcwd()}")
         project_deepssm_dir = project_dir + "/deepssm/"
 
         project_aug_dir = project_deepssm_dir + "augmentation/"
@@ -65,6 +67,7 @@ def generate_data_loaders(project_filenames: list[str]):
                                                      down_dir=None)
         val_datasets.append(val_dataset)
 
+    print("")
     sw_message("Creating dataloaders")
     batch_size = 8
 
