@@ -262,7 +262,7 @@ class ConditionalDeterministicEncoder(nn.Module):
 
 
     # without embedding layer
-    def forward(self, x):
+    def forward(self, x, anatomy_type=None):
         x = self.ConvolutionalBackbone(x)
         pca_load = self.pca_pred(x)
         # we don't have whitening for the conditional model, so return the same for both
