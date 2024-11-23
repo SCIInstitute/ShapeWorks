@@ -247,15 +247,29 @@ class ConditionalDeterministicEncoder(nn.Module):
         self.loader_dir = loader_dir
         self.ConvolutionalBackbone = ConvolutionalBackbone(self.img_dims)
 
-        # Add embedding layer for anatomical types
-        self.anatomy_embedding = nn.Embedding(num_anatomies, embedding_dim)
-
-        # Update fully connected layer to accommodate embeddings
+        # Try without embedding layer
         self.pca_pred = nn.Sequential(OrderedDict([
-            ('linear', nn.Linear(96 + embedding_dim, self.num_latent))
+            ('linear', nn.Linear(96, self.num_latent))
         ]))
 
-    def forward(self, x, anatomy_type=None):
+        # Add embedding layer for anatomical types
+        #self.anatomy_embedding = nn.Embedding(num_anatomies, embedding_dim)
+
+        # Update fully connected layer to accommodate embeddings
+        #self.pca_pred = nn.Sequential(OrderedDict([
+        #    ('linear', nn.Linear(96 + embedding_dim, self.num_latent))
+        #]))
+
+
+    # without embedding layer
+    def forward(self, x):
+        x = self.ConvolutionalBackbone(x)
+        pca_load = self.pca_pred(x)
+        # we don't have whitening for the conditional model, so return the same for both
+        return pca_load, pca_load
+
+    # with embedding layer
+    def forward_embedding(self, x, anatomy_type=None):
         x_features = self.ConvolutionalBackbone(x)
 
         # Get anatomical embedding
