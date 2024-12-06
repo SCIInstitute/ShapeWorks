@@ -247,10 +247,13 @@ class ConditionalDeterministicEncoder(nn.Module):
         self.loader_dir = loader_dir
         self.ConvolutionalBackbone = ConvolutionalBackbone(self.img_dims)
 
+
+        # Commenting out this and leaving at 96 for now
+
         # Try without embedding layer
-        self.pca_pred = nn.Sequential(OrderedDict([
-            ('linear', nn.Linear(96, self.num_latent))
-        ]))
+        ##self.pca_pred = nn.Sequential(OrderedDict([
+        ##    ('linear', nn.Linear(96, self.num_latent))
+        ##]))
 
         # Add embedding layer for anatomical types
         #self.anatomy_embedding = nn.Embedding(num_anatomies, embedding_dim)
@@ -264,9 +267,7 @@ class ConditionalDeterministicEncoder(nn.Module):
     # without embedding layer
     def forward(self, x, anatomy_type=None):
         x = self.ConvolutionalBackbone(x)
-        pca_load = self.pca_pred(x)
-        # we don't have whitening for the conditional model, so return the same for both
-        return pca_load, pca_load
+        return x, x
 
     # with embedding layer
     def forward_embedding(self, x, anatomy_type=None):
@@ -293,12 +294,30 @@ class ConditionalDeterministicLinearDecoder(nn.Module):
 
     def __init__(self, num_latent, num_corr):
         super(ConditionalDeterministicLinearDecoder, self).__init__()
-        self.num_latent = num_latent
+#        self.num_latent = num_latent
         self.numL = num_corr
-        self.fc_fine = nn.Linear(self.num_latent, self.numL * 3)
+#        self.fc_fine = nn.Linear(self.num_latent, self.numL * 3)
 
-    def forward(self, pca_load):
-        corr_out = self.fc_fine(pca_load).reshape(-1, self.numL, 3)
+        num_layers = 3
+        hidden_size = 256
+
+        layers = []
+        # Define the MLP with `num_layers` hidden layers of `hidden_size` neurons each
+        #input_size = self.num_latent
+        input_size = 96
+        for _ in range(num_layers):
+            layers.append(nn.Linear(input_size, hidden_size))
+            layers.append(nn.PReLU())
+            input_size = hidden_size
+
+        # Output layer
+        layers.append(nn.Linear(hidden_size, self.numL * 3))
+
+        self.mlp = nn.Sequential(*layers)
+
+    def forward(self, x):
+        #corr_out = self.fc_fine(pca_load).reshape(-1, self.numL, 3)
+        corr_out = self.mlp(x).reshape(-1, self.numL, 3)
         return corr_out
 
 
@@ -335,7 +354,7 @@ class ConditionalDeepSSMNet(nn.Module):
             print("Error: Decoder not implemented.")
 
         self.decoder_branches = nn.ModuleList(
-            [DeterministicLinearDecoder(self.num_latent, self.num_corr) for _ in range(self.num_anatomies)])
+            [ConditionalDeterministicLinearDecoder(self.num_latent, self.num_corr) for _ in range(self.num_anatomies)])
 
     def forward(self, x, anatomy_type):
         pca_load, pca_load_unwhiten = self.encoder(x, anatomy_type)

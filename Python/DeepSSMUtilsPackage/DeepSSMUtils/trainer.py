@@ -176,6 +176,7 @@ def supervised_train(config_file):
     plot_val_losses = []
     t0 = time.time()
     best_val_rel_error = np.Inf
+    best_val_loss = np.Inf
     for e in range(1, num_epochs + 1):
         if sw_check_abort():
             sw_message("Aborted")
@@ -264,6 +265,8 @@ def supervised_train(config_file):
                 best_val_rel_error = val_rel_err
                 best_epoch = e
                 torch.save(net.state_dict(), os.path.join(model_dir, 'best_model.torch'))
+            if val_mr_MSE < best_val_loss:
+                best_val_loss = val_mr_MSE
             t0 = time.time()
         if decay_lr:
             scheduler.step()
@@ -272,7 +275,10 @@ def supervised_train(config_file):
     parameters['best_model_epochs'] = best_epoch
     with open(config_file, "w") as json_file:
         json.dump(parameters, json_file, indent=2)
+    print("\n")
     print("Training complete, model saved. Best model after epoch " + str(best_epoch))
+    print(f"Best validation relative error: {best_val_rel_error}")
+    print(f"Best validation loss: {best_val_loss}")
 
     # now commence the fine tuning model if present on best model
     if fine_tune:
