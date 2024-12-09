@@ -262,11 +262,11 @@ def run_conditional_deepssm_prep(project_filenames: list[str]):
 
         # run data augmentation
         print("Running data augmentation")
-        num_samples = 50
+        num_samples = 0
         num_dim = 0
 
         # percent_variability = 0.95
-        percent_variability = 0.50
+        percent_variability = 0.95
         sampler = "kde"
         #        sampler = "gaussian"
         embedded_dim = DeepSSMUtils.run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler,
