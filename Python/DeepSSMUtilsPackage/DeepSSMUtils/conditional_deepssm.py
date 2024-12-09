@@ -303,10 +303,10 @@ def run_conditional_deepssm_testing(project_filenames: list[str]):
         test_indices = DeepSSMUtils.get_split_indices(project, "test")
 
         print(f"Grooming test images for project: {project_filename}")
-        # DeepSSMUtils.groom_val_test_images(project, test_indices)
+        DeepSSMUtils.groom_val_test_images(project, test_indices)
 
         print(f"Preparing data loaders for project: {project_filename}")
-        # DeepSSMUtils.prepare_data_loaders(project, batch_size, "test");
+        DeepSSMUtils.prepare_data_loaders(project, batch_size, "test");
 
         # save the project
         project.save()
