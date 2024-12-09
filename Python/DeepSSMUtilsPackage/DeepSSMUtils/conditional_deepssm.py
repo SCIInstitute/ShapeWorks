@@ -1,8 +1,11 @@
 # Package for Conditional DeepSSM model support
 import os
 import argparse
+from fileinput import filename
+
 import matplotlib.pyplot as plt
 import PIL
+import numpy as np
 
 import DeepSSMUtils
 import DataAugmentationUtils
@@ -33,29 +36,11 @@ def get_image_dimensions(dataloader_file: str):
 
 def update_dataloader_with_padding2(dataloader_file: str, image_dimensions: tuple, anatomy: int):
     """ Update the dataloader by padding the images to match image_dimensions and update anatomy info """
-    dataloader = torch.load(dataloader_file)
-    updated_dataloader = []
-
-    for img, pca, mdl, names, old_anatomy in dataloader:
-        # Calculate padding sizes
-        padding_needed = [(target - actual) if target > actual else 0 for target, actual in
-                          zip(image_dimensions, img.shape[2:])]
-        pad = (0, padding_needed[2], 0, padding_needed[1], 0, padding_needed[0])  # (D2, D1, W2, W1, H2, H1)
-
-        # Pad the image
-        padded_img = F.pad(img, pad, "constant", 0)
-
-        updated_dataloader.append((padded_img, pca, mdl, names, anatomy))
-
-    torch.save(updated_dataloader, dataloader_file)
-
-
-def update_dataloader_with_padding(dataloader_file: str, image_dimensions: tuple, anatomy: int):
-    """ Update the dataloader by padding the images to match image_dimensions and update anatomy info """
     # Load the existing dataloader
     dataloader = torch.load(dataloader_file)
     updated_dataloader = []
 
+    count = 0
     for img, pca, mdl, names, old_anatomy in dataloader:
         # Calculate padding sizes
         padding_needed = [(target - actual) if target > actual else 0 for target, actual in
@@ -67,6 +52,62 @@ def update_dataloader_with_padding(dataloader_file: str, image_dimensions: tuple
 
         # Append the updated dataloader items
         updated_dataloader.append((padded_img, pca, mdl, names, anatomy))
+
+        import nrrd
+        numpy_array = padded_img.numpy()
+        numpy_array = np.squeeze(numpy_array)
+
+        print(f"Image dimensions: {numpy_array.shape}")
+
+        # Write to NRRD file
+        output_filename = f"/tmp/padded_{anatomy}_{count}.nrrd"
+        nrrd.write(output_filename, numpy_array)
+
+        count += 1
+
+    # Save the updated dataloader
+    torch.save(updated_dataloader, dataloader_file)
+
+
+def update_dataloader_with_padding(dataloader_file: str, image_dimensions: tuple, anatomy: int):
+    """ Update the dataloader by padding the images to match image_dimensions and update anatomy info """
+    # Load the existing dataloader
+    dataloader = torch.load(dataloader_file)
+    updated_dataloader = []
+
+    count = 0
+    for img, pca, mdl, names, old_anatomy in dataloader:
+        # Calculate padding sizes for each dimension
+        padding_needed = [(target - actual) if target > actual else 0 for target, actual in
+                          zip(image_dimensions, img.shape[2:])]
+
+        # Calculate padding values for both sides to center the image
+        pad_d = (padding_needed[0] // 2, padding_needed[0] - padding_needed[0] // 2)
+        pad_h = (padding_needed[1] // 2, padding_needed[1] - padding_needed[1] // 2)
+        pad_w = (padding_needed[2] // 2, padding_needed[2] - padding_needed[2] // 2)
+
+        pad = (pad_w[0], pad_w[1], pad_h[0], pad_h[1], pad_d[0], pad_d[1])  # Assuming 3D (D, H, W)
+
+        # Pad the image
+        padded_img = F.pad(img, pad, "constant", 0)
+
+        # Append the updated dataloader items
+        updated_dataloader.append((padded_img, pca, mdl, names, anatomy))
+
+        do_write = False
+        if do_write:
+            # Convert the tensor to a numpy array and squeeze it if necessary
+            numpy_array = padded_img.numpy()
+            numpy_array = np.squeeze(numpy_array)
+
+            print(f"Image dimensions after padding: {numpy_array.shape}")
+
+            import nrrd
+            # Write to NRRD file
+            output_filename = f"/tmp/padded_{anatomy}_{count}.nrrd"
+            nrrd.write(output_filename, numpy_array)
+
+            count += 1
 
     # Save the updated dataloader
     torch.save(updated_dataloader, dataloader_file)
@@ -262,10 +303,10 @@ def run_conditional_deepssm_testing(project_filenames: list[str]):
         test_indices = DeepSSMUtils.get_split_indices(project, "test")
 
         print(f"Grooming test images for project: {project_filename}")
-        #DeepSSMUtils.groom_val_test_images(project, test_indices)
+        # DeepSSMUtils.groom_val_test_images(project, test_indices)
 
         print(f"Preparing data loaders for project: {project_filename}")
-        #DeepSSMUtils.prepare_data_loaders(project, batch_size, "test");
+        # DeepSSMUtils.prepare_data_loaders(project, batch_size, "test");
 
         # save the project
         project.save()
