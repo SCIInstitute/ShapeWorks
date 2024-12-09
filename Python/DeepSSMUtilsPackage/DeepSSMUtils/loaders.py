@@ -87,7 +87,7 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
     return train_path
 
 
-def get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
+def get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None, anatomy=1):
     """ Creates a validation dataset """
     sw_message("Creating validation dataset:")
     # Get data
@@ -110,7 +110,7 @@ def get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor=
     name_file.close()
     sw_message("Validation names saved to: " + loader_dir + "validation_names.txt")
     images = get_images(loader_dir, image_paths, down_factor, down_dir)
-    val_data = DeepSSMdataset(images, scores, models, names)
+    val_data = DeepSSMdataset(images, scores, models, names, anatomy)
     sw_message("Validation dataset complete.")
     return val_data
 
@@ -200,6 +200,14 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
             mdl = get_particles(model_path)
             models.append(mdl)
             index += 1
+
+    # # limit to 10
+    # if len(image_paths) > 10:
+    #     image_paths = image_paths[:10]
+    #     scores = scores[:10]
+    #     models = models[:10]
+    #     prefixes = prefixes[:10]
+
     images = get_images(loader_dir, image_paths, down_factor, down_dir)
     scores = whiten_PCA_scores(scores, loader_dir)
     return images, scores, models, prefixes
@@ -258,6 +266,9 @@ class DeepSSMdataset():
             max(self.img.shape[i], other.img.shape[i])
             for i in range(1, len(self.img.shape))
         ]
+
+        print(f"Current shape: {self.img.shape[1:]}")
+        print(f"Max shape: {max_shape}")
 
         # Pad both datasets to the max shape
         self.pad_images(self.img.shape[1:], max_shape)

@@ -21,7 +21,6 @@ if not os.environ.get('SW_FAST_PYTHON_STARTUP'):
     temporary_parameter_object = itk.ParameterObject.New()
 
 
-
 def create_split(project, train, val, test):
     # Create split
 
@@ -51,7 +50,7 @@ def create_split(project, train, val, test):
 
     train_indices = subject_indices[:math.floor(len(subject_indices) * train / 100)]
     val_indices = subject_indices[
-        math.floor(len(subject_indices) * train / 100):math.floor(len(subject_indices) * (train + val) / 100)]
+                  math.floor(len(subject_indices) * train / 100):math.floor(len(subject_indices) * (train + val) / 100)]
     test_indices = subject_indices[math.floor(len(subject_indices) * (train + val) / 100):]
 
     sw_message(f"Creating split: train:{train}%, val:{val}%, test:{test}%")
@@ -238,6 +237,7 @@ def groom_training_images(project, indices):
 
     sw_message("Grooming training images")
     for i in indices:
+        sw_message(f"Index: {i}")
 
         if sw_check_abort():
             sw_message("Aborted")
@@ -263,6 +263,7 @@ def groom_training_images(project, indices):
         image.fitRegion(bounding_box)
 
         # write image using the index of the subject
+        sw_message("Saving to " + deepssm_dir + f"/images/{i}.nrrd")
         image.write(deepssm_dir + f"/images/{i}.nrrd")
 
 

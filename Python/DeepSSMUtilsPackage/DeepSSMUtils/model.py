@@ -58,6 +58,17 @@ class ConvolutionalBackbone(nn.Module):
         x_features = self.features(x)
         return x_features
 
+        # # Print the initial input shape
+        # print(f"Input shape: {x.shape}")
+        #
+        # # Pass through each layer and print the shape
+        # for name, layer in self.features.named_children():
+        #     x = layer(x)
+        #     print(f"After {name}: {x.shape}")
+        #
+        # # Return the final features
+        # return x
+
 
 class DeterministicEncoder(nn.Module):
     """ Convolutional Encoder for DeepSSM
@@ -247,7 +258,6 @@ class ConditionalDeterministicEncoder(nn.Module):
         self.loader_dir = loader_dir
         self.ConvolutionalBackbone = ConvolutionalBackbone(self.img_dims)
 
-
         # Commenting out this and leaving at 96 for now
 
         # Try without embedding layer
@@ -256,13 +266,12 @@ class ConditionalDeterministicEncoder(nn.Module):
         ##]))
 
         # Add embedding layer for anatomical types
-        #self.anatomy_embedding = nn.Embedding(num_anatomies, embedding_dim)
+        # self.anatomy_embedding = nn.Embedding(num_anatomies, embedding_dim)
 
         # Update fully connected layer to accommodate embeddings
-        #self.pca_pred = nn.Sequential(OrderedDict([
+        # self.pca_pred = nn.Sequential(OrderedDict([
         #    ('linear', nn.Linear(96 + embedding_dim, self.num_latent))
-        #]))
-
+        # ]))
 
     # without embedding layer
     def forward(self, x, anatomy_type=None):
@@ -294,16 +303,16 @@ class ConditionalDeterministicLinearDecoder(nn.Module):
 
     def __init__(self, num_latent, num_corr):
         super(ConditionalDeterministicLinearDecoder, self).__init__()
-#        self.num_latent = num_latent
+        #        self.num_latent = num_latent
         self.numL = num_corr
-#        self.fc_fine = nn.Linear(self.num_latent, self.numL * 3)
+        #        self.fc_fine = nn.Linear(self.num_latent, self.numL * 3)
 
         num_layers = 3
         hidden_size = 256
 
         layers = []
         # Define the MLP with `num_layers` hidden layers of `hidden_size` neurons each
-        #input_size = self.num_latent
+        # input_size = self.num_latent
         input_size = 96
         for _ in range(num_layers):
             layers.append(nn.Linear(input_size, hidden_size))
@@ -316,7 +325,7 @@ class ConditionalDeterministicLinearDecoder(nn.Module):
         self.mlp = nn.Sequential(*layers)
 
     def forward(self, x):
-        #corr_out = self.fc_fine(pca_load).reshape(-1, self.numL, 3)
+        # corr_out = self.fc_fine(pca_load).reshape(-1, self.numL, 3)
         corr_out = self.mlp(x).reshape(-1, self.numL, 3)
         return corr_out
 
@@ -337,6 +346,7 @@ class ConditionalDeepSSMNet(nn.Module):
         self.num_corr = loader.dataset.mdl_target[0].shape[0]
         img_dims = loader.dataset.img[0].shape
         self.img_dims = img_dims[1:]
+        print("Image dimensions: ", self.img_dims)
         self.num_anatomies = parameters['conditional_deepssm']['num_anatomies']
         self.embedding_dim = parameters['conditional_deepssm']['embedding_dim']
 
@@ -364,7 +374,15 @@ class ConditionalDeepSSMNet(nn.Module):
 
         outputs = []
         for i in range(len(anatomy_type)):
-            output = self.decoder_branches[anatomy_type[i]](pca_load_unwhiten[i])
+#            print(f"Anatomy: {anatomy_type[i]}")
+
+            anatomy = int(anatomy_type[i])
+
+            # fix: TypeError: only integer tensors of a single element can be converted to an index
+            if not isinstance(anatomy_type[i], int):
+                anatomy_type[i] = int(anatomy_type[i].item())
+
+            output = self.decoder_branches[anatomy](pca_load_unwhiten[i])
             outputs.append(output)
         outputs = torch.stack(outputs)
         outputs = outputs.squeeze(1)  # Squeezing dimension 1

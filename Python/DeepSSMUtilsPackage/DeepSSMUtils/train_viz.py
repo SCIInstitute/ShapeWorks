@@ -18,18 +18,28 @@ def write_examples(pred_particles, true_particles, filenames, out_dir):
         pred = pred_particles[indices[i]]
 
         # write particle file
-        out_particle_file = out_dir + names[i] + ".particles"
+        out_particle_file = out_dir + "_" + names[i] + ".particles"
         np.savetxt(out_particle_file, pred)
 
+        # write true particle file
+        true_particle_file = out_dir + "_" + names[i] + ".true.particles"
+        np.savetxt(true_particle_file, true_particles[indices[i]])
+
         # get scalar field for error
-        out_scalar_file = out_dir + names[i] + ".scalars"
+        out_scalar_file = out_dir + "_" + names[i] + ".scalars"
         scalars = np.mean((pred - true_particles[indices[i]]) ** 2, axis=1)
         np.savetxt(out_scalar_file, scalars)
 
         # write index out to file as an integer
-        out_index_file = out_dir + names[i] + ".index"
+        out_index_file = out_dir + "_" + names[i] + ".index"
         f = open(out_index_file, "w")
         f.write(filenames[indices[i]])
+        f.close()
+
+        # write out mean error
+        out_error_file = out_dir + "_" + names[i] + ".error"
+        f = open(out_error_file, "w")
+        f.write(str(np.mean(scalars)))
         f.close()
 
         if is_mesh_warp_initialized():

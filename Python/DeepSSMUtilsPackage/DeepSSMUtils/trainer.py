@@ -106,6 +106,9 @@ def supervised_train(config_file):
     print("Loading data loaders...")
     train_loader = torch.load(train_loader_path)
     val_loader = torch.load(validation_loader_path)
+
+    print(f"Train loader shape: {len(train_loader.dataset)}")
+
     print("Done.")
     # initializations
     num_pca = train_loader.dataset.pca_target[0].shape[0]
@@ -124,12 +127,13 @@ def supervised_train(config_file):
     net.apply(weight_init(module=nn.Conv3d, initf=nn.init.xavier_normal_))
     net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
-    # these lines are for the fine tuning layer initialization
-    orig_mean = np.loadtxt(aug_dir + '/PCA_Particle_Info/mean.particles')
-    orig_pc = np.zeros([num_pca, num_corr * 3])
-    for i in range(num_pca):
-        temp = np.loadtxt(aug_dir + '/PCA_Particle_Info/pcamode' + str(i) + '.particles')
-        orig_pc[i, :] = temp.flatten()
+    if not "conditional_deepssm" in parameters:
+        # these lines are for the fine tuning layer initialization
+        orig_mean = np.loadtxt(aug_dir + '/PCA_Particle_Info/mean.particles')
+        orig_pc = np.zeros([num_pca, num_corr * 3])
+        for i in range(num_pca):
+            temp = np.loadtxt(aug_dir + '/PCA_Particle_Info/pcamode' + str(i) + '.particles')
+            orig_pc[i, :] = temp.flatten()
 
     if parameters.get("initialize_to_pca", False):
         print("Initializing final layer to PCA vectors")
@@ -203,7 +207,13 @@ def supervised_train(config_file):
             [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
             # [pred_pca, pred_mdl] = net(img)
 
+            # print first 3 particles
             loss = loss_func(pred_mdl, mdl)
+
+            mdl_numpy = mdl.detach().cpu().numpy()
+            pred_mdl_numpy = pred_mdl.detach().cpu().numpy()
+
+#            print(f"\n---\nPred: {pred_mdl_numpy[0, 0:3, :]}\nTrue: {mdl_numpy[0, 0:3, :]}\nAnatomy: {anatomy[0]}, Loss: {loss.item()}")
 
             # To do loss on PCA instead of particles
             # loss = loss_func(pred_pca, pca)
@@ -214,8 +224,8 @@ def supervised_train(config_file):
             train_rel_losses.append(train_rel_loss.item())
             pred_particles.extend(pred_mdl.detach().cpu().numpy())
             true_particles.extend(mdl.detach().cpu().numpy())
-            train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names,
-                                     model_dir + "examples/train")
+        train_viz.write_examples(np.array(pred_particles), np.array(true_particles), train_names,
+                                 model_dir + "examples/train")
         # test validation
         pred_particles = []
         true_particles = []
@@ -225,6 +235,7 @@ def supervised_train(config_file):
             val_losses = []
             val_rel_losses = []
             for img, pca, mdl, names, anatomy in val_loader:
+                #print(f"Validation anatomy: {anatomy}")
                 val_names.extend(names)
                 opt.zero_grad()
                 img = img.to(device)

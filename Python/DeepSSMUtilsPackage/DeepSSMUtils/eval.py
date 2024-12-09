@@ -37,6 +37,11 @@ def test(config_file, loader="test"):
     sw_message("Loading " + loader + " data loader...")
     test_loader = torch.load(loader_dir + loader)
 
+    conditional = False
+    if "conditional_deepssm" in parameters and parameters["conditional_deepssm"]["enabled"]:
+        conditional = True
+
+
     # initialization
     sw_message("Loading trained model...")
     if parameters['tl_net']['enabled']:
@@ -45,6 +50,12 @@ def test(config_file, loader="test"):
         device = model_tl.device
         model_tl.to(device)
         model_tl.eval()
+    elif conditional:
+        model_pca = model.ConditionalDeepSSMNet(config_file)
+        model_pca.load_state_dict(torch.load(model_path))
+        device = model_pca.device
+        model_pca.to(device)
+        model_pca.eval()
     else:
         model_pca = model.DeepSSMNet(config_file)
         model_pca.load_state_dict(torch.load(model_path))
@@ -89,6 +100,13 @@ def test(config_file, loader="test"):
             filename = pred_path + test_names[index] + '.npy'
             np.save(filename, pred_tf.squeeze().detach().cpu().numpy())
             np.savetxt(particle_filename, pred_mdl_tl.squeeze().detach().cpu().numpy())
+        elif conditional:
+            print(f"Image dimensions: {img.shape}")
+            [pred, pred_mdl_pca] = model_pca(img, [anatomy])
+            pred_scores.append(pred.cpu().data.numpy()[0])
+            filename = particle_filename
+            print("Predicted particle file: ", particle_filename)
+            np.savetxt(particle_filename, pred_mdl_pca.squeeze().detach().cpu().numpy())
         else:
             [pred, pred_mdl_pca] = model_pca(img)
             [pred, pred_mdl_ft] = model_ft(img)
