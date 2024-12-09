@@ -262,7 +262,7 @@ def run_conditional_deepssm_prep(project_filenames: list[str]):
 
         # run data augmentation
         print("Running data augmentation")
-        num_samples = 0
+        num_samples = 500
         num_dim = 0
 
         # percent_variability = 0.95
