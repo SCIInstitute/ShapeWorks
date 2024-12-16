@@ -58,17 +58,6 @@ class ConvolutionalBackbone(nn.Module):
         x_features = self.features(x)
         return x_features
 
-        # # Print the initial input shape
-        # print(f"Input shape: {x.shape}")
-        #
-        # # Pass through each layer and print the shape
-        # for name, layer in self.features.named_children():
-        #     x = layer(x)
-        #     print(f"After {name}: {x.shape}")
-        #
-        # # Return the final features
-        # return x
-
 
 class DeterministicEncoder(nn.Module):
     """ Convolutional Encoder for DeepSSM
@@ -137,7 +126,7 @@ class DeepSSMNet(nn.Module):
         self.num_latent = parameters['num_latent_dim']
         self.loader_dir = parameters['paths']['loader_dir']
         # if parameter "pca_whiten" is set, use it, if not, use the default value of True
-        self.pca_whiten = parameters.get('pca_whiten', False)
+        self.pca_whiten = parameters.get('pca_whiten', True)
         loader = torch.load(self.loader_dir + "validation")
         self.num_corr = loader.dataset.mdl_target[0].shape[0]
         img_dims = loader.dataset.img[0].shape
@@ -374,7 +363,7 @@ class ConditionalDeepSSMNet(nn.Module):
 
         outputs = []
         for i in range(len(anatomy_type)):
-#            print(f"Anatomy: {anatomy_type[i]}")
+            #            print(f"Anatomy: {anatomy_type[i]}")
 
             anatomy = int(anatomy_type[i])
 
