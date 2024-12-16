@@ -230,7 +230,7 @@ def Run_Pipeline(args):
     ######################################################################################
     if not os.path.exists(status_dir + "step_5.txt"):
         print("\nStep 5. Groom Training Images")
-        DeepSSMUtils.groom_training_images(project)
+        DeepSSMUtils.groom_training_images(project, DeepSSMUtils.get_split_indices(project, "train"))
         open(status_dir + "step_5.txt", 'w').close()
 
     ######################################################################################
