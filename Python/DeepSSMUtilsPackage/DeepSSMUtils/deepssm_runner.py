@@ -110,8 +110,7 @@ def run_training(project):
     deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
     loader_dir = deepssm_dir + "/torch_loaders/"
 
-    params = project.get_parameters("deepssm")
-    batch_size = int(params.get("train_batch_size"))
+    batch_size = params.get_training_batch_size()
     print(f"Batch size: {batch_size}")
 
     # create loader if not exists
