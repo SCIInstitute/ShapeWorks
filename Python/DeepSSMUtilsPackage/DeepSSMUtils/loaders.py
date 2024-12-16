@@ -238,7 +238,10 @@ class DeepSSMdataset():
         y1 = self.pca_target[index]
         y2 = self.mdl_target[index]
         name = self.names[index]
-        anatomy = self.anatomies[index]
+        if hasattr(self, 'anatomies'):
+            anatomy = self.anatomies[index]
+        else:
+            anatomy = 0
         return x, y1, y2, name, anatomy
 
     def __len__(self):
