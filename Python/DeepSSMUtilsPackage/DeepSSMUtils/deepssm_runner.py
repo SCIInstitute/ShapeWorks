@@ -9,6 +9,8 @@ from shapeworks.utils import sw_message, sw_progress, sw_check_abort
 
 import DeepSSMUtils.config_file as config
 
+sw.setup_console_logging()
+
 
 def run_prep(project):
     """Prepare data for DeepSSM"""
@@ -107,7 +109,6 @@ def run_training(project):
         # create loaders
         DeepSSMUtils.prepare_data_loaders(project, batch_size, "train")
         DeepSSMUtils.prepare_data_loaders(project, batch_size, "val")
-        pass
 
     # prepare config file
     config.prepare_project_config_file(project)
@@ -115,6 +116,26 @@ def run_training(project):
 
     # run training
     DeepSSMUtils.trainDeepSSM(project, config_file)
+
+
+def run_testing(project):
+    """ Run DeepSSM testing """
+    print("Running testing...")
+    params = sw.DeepSSMParameters(project)
+    batch_size = params.get_training_batch_size()
+
+    test_indices = DeepSSMUtils.get_split_indices(project, "test")
+
+    DeepSSMUtils.groom_val_test_images(project, test_indices)
+
+    DeepSSMUtils.prepare_data_loaders(project, batch_size, "test");
+
+    config_file = f"deepssm/configuration.json"
+    DeepSSMUtils.testDeepSSM(config_file)
+    DeepSSMUtils.process_test_predictions(project, "deepssm/configuration.json")
+
+    # save the project
+    project.save()
 
 
 def run_deepssm(project_filename, command):
@@ -128,11 +149,10 @@ def run_deepssm(project_filename, command):
         run_prep(project)
     elif command == "augment":
         run_augmentation(project)
-        pass
     elif command == "train":
         run_training(project)
     elif command == "test":
-        pass
+        run_testing(project)
     else:
         print("Command not recognized. Please use one of the following commands: prep, augment, train, test")
         sys.exit(1)
