@@ -42,7 +42,11 @@ def log_print(logger, values):
     # for each value, if it is a string, print it, otherwise print it with 5 decimal places
     for i in range(len(values)):
         if isinstance(values[i], str):
-            print(values[i], end='	  ')
+            string = values[i]
+            if len(string) < 8:
+                # pad with spaces up to 8 characters
+                string = string + ' ' * (8 - len(string))
+            print(string, end='	  ')
         else:
             print('%.5f' % values[i], end='	  ')
 
@@ -114,20 +118,23 @@ def supervised_train(config_file):
     num_pca = train_loader.dataset.pca_target[0].shape[0]
     num_corr = train_loader.dataset.mdl_target[0].shape[0]
     print("Defining net...")
+
+    conditional = "conditional_deepssm" in parameters and parameters["conditional_deepssm"]["enabled"]
     # first check if "conditional_deepssm" key is present in the parameters
-    if "conditional_deepssm" in parameters and parameters["conditional_deepssm"]["enabled"]:
+    if conditional:
         print("Conditional DeepSSM Enabled")
         net = model.ConditionalDeepSSMNet(config_file)
     else:
         print("Regular DeepSSM Enabled")
         net = model.DeepSSMNet(config_file)
+
     device = net.device
     net.to(device)
     # initialize model weights
     net.apply(weight_init(module=nn.Conv3d, initf=nn.init.xavier_normal_))
     net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
-    if not "conditional_deepssm" in parameters:
+    if not conditional:
         # these lines are for the fine tuning layer initialization
         orig_mean = np.loadtxt(aug_dir + '/PCA_Particle_Info/mean.particles')
         orig_pc = np.zeros([num_pca, num_corr * 3])
@@ -135,22 +142,15 @@ def supervised_train(config_file):
             temp = np.loadtxt(aug_dir + '/PCA_Particle_Info/pcamode' + str(i) + '.particles')
             orig_pc[i, :] = temp.flatten()
 
-    if parameters.get("initialize_to_pca", False):
-        print("Initializing final layer to PCA vectors")
         bias = torch.from_numpy(orig_mean.flatten()).to(device)  # load the mean here
         weight = torch.from_numpy(orig_pc.T).to(device)  # load the PCA vectors here
         net.decoder.fc_fine.bias.data.copy_(bias)
         net.decoder.fc_fine.weight.data.copy_(weight)
-    else:
-        print("Initializing final layer to random")
-        net.decoder.fc_fine.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
-    # define optimizer
-    # for the initial steps set the gradient of the final layer to be zero
-
-    ### TEMP: Alan: I need the last layers on as I'm skipping PCA
-    # for param in net.decoder.fc_fine.parameters():
-    #    param.requires_grad = False
+        # define optimizer
+        # for the initial steps set the gradient of the final layer to be zero
+        for param in net.decoder.fc_fine.parameters():
+            param.requires_grad = False
 
     train_params = net.parameters()
     opt = torch.optim.Adam(train_params, learning_rate)
@@ -213,7 +213,7 @@ def supervised_train(config_file):
             mdl_numpy = mdl.detach().cpu().numpy()
             pred_mdl_numpy = pred_mdl.detach().cpu().numpy()
 
-#            print(f"\n---\nPred: {pred_mdl_numpy[0, 0:3, :]}\nTrue: {mdl_numpy[0, 0:3, :]}\nAnatomy: {anatomy[0]}, Loss: {loss.item()}")
+            #            print(f"\n---\nPred: {pred_mdl_numpy[0, 0:3, :]}\nTrue: {mdl_numpy[0, 0:3, :]}\nAnatomy: {anatomy[0]}, Loss: {loss.item()}")
 
             # To do loss on PCA instead of particles
             # loss = loss_func(pred_pca, pca)
@@ -235,7 +235,7 @@ def supervised_train(config_file):
             val_losses = []
             val_rel_losses = []
             for img, pca, mdl, names, anatomy in val_loader:
-                #print(f"Validation anatomy: {anatomy}")
+                # print(f"Validation anatomy: {anatomy}")
                 val_names.extend(names)
                 opt.zero_grad()
                 img = img.to(device)
