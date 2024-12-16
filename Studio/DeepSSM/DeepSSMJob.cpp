@@ -178,7 +178,7 @@ void DeepSSMJob::run_prep() {
 
     if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::OPTIMIZE_VALIDATION) {
       /////////////////////////////////////////////////////////
-      /// Step 6. Optimize Validation Particles with Fixed Domains
+      /// Step 4. Optimize Validation Particles with Fixed Domains
       /////////////////////////////////////////////////////////
       update_prep_stage(DeepSSMTool::PrepStep::OPTIMIZE_VALIDATION);
       py::object prep_project_for_val_particles = py_deep_ssm_utils.attr("prep_project_for_val_particles");
@@ -206,7 +206,7 @@ void DeepSSMJob::run_prep() {
 
     if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_IMAGES) {
       /////////////////////////////////////////////////////////
-      /// Step 4. Groom Training Images
+      /// Step 5. Groom Training Images
       /////////////////////////////////////////////////////////
 
       update_prep_stage(DeepSSMTool::PrepStep::GROOM_IMAGES);
@@ -222,7 +222,7 @@ void DeepSSMJob::run_prep() {
         return;
       }
       /////////////////////////////////////////////////////////
-      /// Step 5. Groom Validation Images
+      /// Step 6. Groom Validation Images
       /////////////////////////////////////////////////////////
       timer.start();
       py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
