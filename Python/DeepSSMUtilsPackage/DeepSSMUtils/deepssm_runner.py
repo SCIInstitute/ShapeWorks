@@ -10,6 +10,87 @@ from shapeworks.utils import sw_message, sw_progress, sw_check_abort
 import DeepSSMUtils.config_file as config
 
 
+def run_prep(project):
+    """Prepare data for DeepSSM"""
+    params = sw.DeepSSMParameters(project)
+
+    # Create split
+    val_split = params.get_validation_split()
+    test_split = params.get_testing_split()
+    train_split = 100.0 - val_split - test_split
+    sw_message(f"Splitting data into {train_split}% training, {val_split}% validation, and {test_split}% testing")
+    DeepSSMUtils.create_split(project, train_split, val_split, test_split)
+
+    if params.get_model_mode() == "Existing Model":
+        sw_message("Using existing model")
+    else:
+
+        sw_message("Shape Model: Training data only")
+        groom_params = project.get_parameters("groom")
+        groom_params.set("alignment_method", "Iterative Closest Point")
+        groom_params.set("alignment_enabled", "True")
+        groom_params.set("alignment_reference", "-1")
+        project.set_parameters("groom", groom_params)
+
+        # Step 2 - Groom training shapes
+        print("Grooming training shapes...")
+        DeepSSMUtils.groom_training_shapes(project)
+        # re-read parameters after python
+        groom_params = project.get_parameters("groom")
+        # store for future steps
+        groom_params.set("alignment_reference", groom_params.get("alignment_reference_chosen"))
+        project.set_parameters("groom", groom_params)
+
+        # Step 3 - Optimize training particles
+        print("Optimize training particles...")
+        DeepSSMUtils.optimize_training_particles(project)
+
+        # Step 4. Optimize Validation Particles with Fixed Domains
+        DeepSSMUtils.prep_project_for_val_particles(project)
+        print("Grooming validation shapes...")
+        DeepSSMUtils.groom_validation_shapes(project)
+        print("Optimize validation particles...")
+        optimize = sw.Optimize()
+        optimize.SetUpOptimize(project)
+        optimize.Run()
+
+        # Step 5. Groom Training Images
+        print("Grooming training images...")
+        DeepSSMUtils.groom_training_images(project, DeepSSMUtils.get_split_indices(project, "train"))
+
+        # Step 6. Groom Validation Images
+        print("Grooming validation images...")
+        DeepSSMUtils.groom_val_test_images(project, DeepSSMUtils.get_split_indices(project, "val"))
+
+        params.set_prep_step_complete(True)
+        params.set_prep_stage(5)
+        params.save_to_project()
+        project.save()
+
+
+def run_augmentation(project):
+    params = sw.DeepSSMParameters(project)
+
+    sampler_type = params.get_aug_sampler_type().lower()
+
+    print("Running data augmentation...")
+    print(f"Sampler type: {sampler_type}")
+    print(f"Augmentation number of samples: {params.get_aug_num_samples()}")
+    print(f"Augmentation percent variability: {params.get_aug_percent_variability()}")
+
+    num_dims = DeepSSMUtils.run_data_augmentation(project, params.get_aug_num_samples(),
+                                                  0,  # num dims, set to zero to allow percent variability to be used
+                                                  params.get_aug_percent_variability(), sampler_type, 0,  # mixture_num
+                                                  4  # processes
+                                                  )
+
+    params.set_training_num_dims(num_dims)
+
+    params.set_aug_step_complete(True)
+    params.save_to_project()
+    project.save()
+
+
 def run_training(project):
     sw_message("Running training...")
     # check if loaders already exist
@@ -21,7 +102,7 @@ def run_training(project):
     print(f"Batch size: {batch_size}")
 
     # create loader if not exists
-    if not os.path.exists(loader_dir + "train"):
+    if not os.path.exists(loader_dir + "train") or not os.path.exists(loader_dir + "validation"):
         sw_message("Creating loaders...")
         # create loaders
         DeepSSMUtils.prepare_data_loaders(project, batch_size, "train")
@@ -44,8 +125,9 @@ def run_deepssm(project_filename, command):
     project = sw.Project()
     project.load(project_filename)
     if command == "prep":
-        pass
+        run_prep(project)
     elif command == "augment":
+        run_augmentation(project)
         pass
     elif command == "train":
         run_training(project)
