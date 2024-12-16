@@ -147,10 +147,8 @@ class DeepSSMNet(nn.Module):
         pca_load, pca_load_unwhiten = self.encoder(x)
 
         if self.pca_whiten:
-            print("Using PCA Whitening")
             corr_out = self.decoder(pca_load_unwhiten)
         else:
-            print("Not using PCA Whitening")
             corr_out = self.decoder(pca_load)
         return [pca_load, corr_out]
 
