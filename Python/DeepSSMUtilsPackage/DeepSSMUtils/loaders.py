@@ -118,8 +118,7 @@ def get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor=
 def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
     """ Creates a validation data loader """
     sw_message("Creating validation torch loader:")
-    for index in range(len(val_img_list)):
-        val_data = get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor, down_dir)
+    val_data = get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor, down_dir)
     # Make loader
     val_loader = DataLoader(
         val_data,
