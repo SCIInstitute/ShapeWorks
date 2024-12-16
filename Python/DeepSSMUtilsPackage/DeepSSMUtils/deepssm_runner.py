@@ -23,16 +23,6 @@ def run_prep(project):
     sw_message(f"Splitting data into {train_split}% training, {val_split}% validation, and {test_split}% testing")
     DeepSSMUtils.create_split(project, train_split, val_split, test_split)
 
-    params = sw.DeepSSMParameters(project)
-    # set to full model
-    params.set_model_mode("Existing Model")
-    # set augmentation type to KDE
-    params.set_aug_sampler_type("KDE")
-    # set augmentation samples to 500
-    params.set_aug_num_samples(500)
-    params.save_to_project()
-    project.save()
-
     if params.get_model_mode() == "Existing Model":
         sw_message("Using existing model")
     else:
@@ -104,6 +94,17 @@ def run_augmentation(project):
 
 
 def run_training(project):
+
+    params = sw.DeepSSMParameters(project)
+    # set to full model
+    params.set_model_mode("Existing Model")
+    # set augmentation type to KDE
+    params.set_aug_sampler_type("KDE")
+    # set augmentation samples to 500
+    params.set_aug_num_samples(500)
+    params.save_to_project()
+    project.save()
+
     sw_message("Running training...")
     # check if loaders already exist
     deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
