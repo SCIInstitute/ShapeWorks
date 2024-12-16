@@ -280,9 +280,11 @@ class DeepSSMdataset():
         self.img = torch.cat((self.img, other.img), 0)
         # pad to the largest of the two
         if self.pca_target.shape[1] < other.pca_target.shape[1]:
-            self.pca_target = pad(self.pca_target, (0, other.pca_target.shape[1] - self.pca_target.shape[1]), mode='constant', value=0)
+            self.pca_target = pad(
+                self.pca_target, (0, other.pca_target.shape[1] - self.pca_target.shape[1]), mode='constant', value=0)
         else:
-            other.pca_target = pad(other.pca_target, (0, self.pca_target.shape[1] - other.pca_target.shape[1]), mode='constant', value=0)
+            other.pca_target = pad(
+                other.pca_target, (0, self.pca_target.shape[1] - other.pca_target.shape[1]), mode='constant', value=0)
         self.pca_target = torch.cat((self.pca_target, other.pca_target), 0)
         self.mdl_target = torch.cat((self.mdl_target, other.mdl_target), 0)
         self.names = self.names + other.names
