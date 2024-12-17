@@ -102,6 +102,7 @@ def run_training(project):
     params.set_aug_sampler_type("KDE")
     # set augmentation samples to 500
     params.set_aug_num_samples(500)
+    params.set_training_fine_tuning(False)
     params.save_to_project()
     project.save()
 
