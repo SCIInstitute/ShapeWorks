@@ -115,11 +115,11 @@ def run_training(project):
     print(f"Batch size: {batch_size}")
 
     # create loader if not exists
-    if not os.path.exists(loader_dir + "train") or not os.path.exists(loader_dir + "validation"):
-        sw_message("Creating loaders...")
-        # create loaders
-        DeepSSMUtils.prepare_data_loaders(project, batch_size, "train")
-        DeepSSMUtils.prepare_data_loaders(project, batch_size, "val")
+### TMP    if not os.path.exists(loader_dir + "train") or not os.path.exists(loader_dir + "validation"):
+    sw_message("Creating loaders...")
+    # create loaders
+    DeepSSMUtils.prepare_data_loaders(project, batch_size, "train")
+    DeepSSMUtils.prepare_data_loaders(project, batch_size, "val")
 
     # prepare config file
     config.prepare_project_config_file(project)
