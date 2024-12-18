@@ -197,6 +197,10 @@ def groom_training_images(project, indices):
 
     # apply alignment transform
     alignment = convert_transform_to_numpy(subjects[ref_index].get_groomed_transforms()[0])
+
+    # Extract rotation matrix (upper left 3x3)
+    rotation_matrix = alignment[:3, :3]
+
     ref_mesh.applyTransform(alignment)
     ref_mesh.write(deepssm_dir + "reference_mesh.vtk")
 
@@ -213,7 +217,14 @@ def groom_training_images(project, indices):
     reflection = np.eye(4)
     if needs_reflection:
         reflection[axis, axis] = -1
-    ref_image.applyTransform(reflection)
+
+    # Combine the rotation and reflection
+    transform = np.eye(4)
+    transform[:3, :3] = rotation_matrix @ reflection[:3, :3]
+
+    # Apply the combined transform to the image
+    ref_image.applyTransform(transform, meshTransform=True)
+
     params = project.get_parameters("deepssm")
 
     spacing = params.get("spacing")

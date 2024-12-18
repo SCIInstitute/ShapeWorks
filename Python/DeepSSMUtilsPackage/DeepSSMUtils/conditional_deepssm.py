@@ -257,7 +257,7 @@ def run_conditional_deepssm_prep(project_filenames: list[str]):
         all_indices = train_indices + val_indices + test_indices
         print("Number of indices: ", len(all_indices))
 
-        print("Grooming training shapes")
+        print("Grooming training images")
         DeepSSMUtils.groom_training_images(project, all_indices)
 
         # run data augmentation
