@@ -11,6 +11,7 @@ from shapeworks.utils import sw_message, sw_progress, sw_check_abort
 import DataAugmentationUtils
 import DeepSSMUtils
 import DeepSSMUtils.eval_utils as eval_utils
+from DeepSSMUtils import image_utils
 
 import itk
 
@@ -410,6 +411,9 @@ def groom_val_test_images(project, indices):
         image.applyTransform(reflection)
         transform = sw.utils.getVTKtransform(reflection)
 
+        max_translation = 10  # Maximum allowed translation in units (e.g., mm, pixels)
+        max_rotation = 5  # Maximum allowed rotation in degrees
+
         # 2. Translate to have ref center to make rigid registration easier
         translation = ref_center - image.center()
         image.setOrigin(image.origin() + translation).write(image_file)
@@ -417,9 +421,11 @@ def groom_val_test_images(project, indices):
 
         # 3. Translate with respect to slightly cropped ref
         image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
-        itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file,
-                                                                                  image_file,
-                                                                                  transform_type='translation')
+        itk_translation_transform = image_utils.get_image_registration_transform(large_cropped_ref_image_file,
+                                                                                 image_file,
+                                                                                 transform_type='translation',
+                                                                                 max_translation=max_translation,
+                                                                                 max_rotation=max_rotation)
         # 4. Apply transform
         image.applyTransform(itk_translation_transform,
                              large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
@@ -430,8 +436,10 @@ def groom_val_test_images(project, indices):
 
         # 5. Crop with medium bounding box and find rigid transform
         image.fitRegion(medium_bb).write(image_file)
-        itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
-                                                                            image_file, transform_type='rigid')
+        itk_rigid_transform = image_utils.get_image_registration_transform(medium_cropped_ref_image_file,
+                                                                           image_file, transform_type='rigid',
+                                                                           max_translation=max_translation,
+                                                                           max_rotation=max_rotation)
 
         # 6. Apply transform
         image.applyTransform(itk_rigid_transform,
@@ -443,9 +451,11 @@ def groom_val_test_images(project, indices):
 
         # 7. Get similarity transform from image registration and apply
         image.fitRegion(bounding_box).write(image_file)
-        itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
-                                                                                 image_file,
-                                                                                 transform_type='similarity')
+        itk_similarity_transform = image_utils.get_image_registration_transform(cropped_ref_image_file,
+                                                                                image_file,
+                                                                                transform_type='similarity',
+                                                                                max_translation=max_translation,
+                                                                                max_rotation=max_rotation)
         image.applyTransform(itk_similarity_transform,
                              cropped_ref_image.origin(), cropped_ref_image.dims(),
                              cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
