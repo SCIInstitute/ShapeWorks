@@ -366,12 +366,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if args.prep:
+        run_conditional_deepssm_prep(args.project_filenames)
     if args.train:
         run_conditional_deepssm_training(args.project_filenames)
-    elif args.test:
+    if args.test:
         run_conditional_deepssm_testing(args.project_filenames)
-    elif args.prep:
-        run_conditional_deepssm_prep(args.project_filenames)
-    else:
-        print("Please specify either --train or --test flag")
+
+    if not args.train and not args.test and not args.prep:
+        print("Please specify either --prep, --train or --test flag")
         exit(1)
