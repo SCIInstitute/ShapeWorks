@@ -7,7 +7,7 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
                                      max_translation=None, max_rotation=None):
     # Prepare parameter map
     parameter_object = itk.ParameterObject.New()
-    parameter_map = parameter_object.GetDefaultParameterMap(transform_type)
+    parameter_map = parameter_object.GetDefaultParameterMap('rigid')
 
     # Set specific transform type in parameter map
     if transform_type == 'similarity':
@@ -15,7 +15,7 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     elif transform_type == 'translation':
         parameter_map['Transform'] = ['TranslationTransform']
 
-    parameter_map['MaximumNumberOfIterations'] = ['1024']
+    parameter_map['MaximumNumberOfIterations'] = ['512']
 
     # Constraint settings (if applicable)
     if max_translation is not None:
