@@ -135,6 +135,9 @@ class ParticleShapeStatistics {
   //! Set the meshes for each sample (used for some evaluation metrics)
   void set_meshes(const std::vector<Mesh>& meshes) { meshes_ = meshes; }
 
+  // import estimated parameters for regression
+  inline bool import_regression_parameters(Eigen::VectorXd slope, Eigen::VectorXd intercept) { slope_ = slope; intercept_ = intercept; };
+  
  private:
   unsigned int num_samples_group1_;
   unsigned int num_samples_group2_;
@@ -147,9 +150,14 @@ class ParticleShapeStatistics {
   std::vector<double> eigenvalues_;
   Eigen::VectorXd mean_;
   Eigen::VectorXd mean1_;
-  Eigen::VectorXd mean2_;
+  Eigen::VectorXd mean2_;x
   Eigen::MatrixXd points_minus_mean_;
   Eigen::MatrixXd shapes_;
+  
+  // for regression tasks
+  Eigen::VectorXd slope_;
+  Eigen::VectorXd intercept_;
+  bool regression_enabled_;
 
   std::vector<double> percent_variance_by_mode_;
   Eigen::MatrixXd principals_;

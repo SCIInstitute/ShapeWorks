@@ -123,7 +123,7 @@ class Subject {
   std::string display_name_;
   bool fixed_ = false;
   bool excluded_ = false;
-  double explanatory_variable_ = 0.0;
+  double explanatory_variable_ = std::numeric_limits<double>::lowest();
   StringList original_filenames_;
   StringList groomed_filenames_;
   StringList local_particle_filenames_;

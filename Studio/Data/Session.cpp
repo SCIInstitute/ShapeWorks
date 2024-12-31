@@ -1418,4 +1418,19 @@ void Session::recompute_surfaces() {
   }
   Q_EMIT update_display();
 }
+
+std::string get_regression_param_file(std::string param_name) {
+    QFileInfo fileInfo(filename_);
+    QString baseName = fileInfo.completeBaseName();
+
+    QDir projectDir = fileInfo.absoluteDir();
+    QString particlesDir = baseName + "_particles";
+    QString paramFilePath = projectDir.filePath(particlesDir);
+    paramFilePath = QDir(paramFilePath).filePath(param_name);
+
+    if (!QFile::exists(paramFilePath)) {
+        return "";
+    }
+    return paramFilePath.toStdString();
+}
 }  // namespace shapeworks

@@ -80,6 +80,10 @@ class AnalysisTool : public QWidget {
   bool pca_animate();
   McaMode get_mca_level() const;
 
+  bool get_regression_analysis_status();
+
+  bool check_explanatory_variable_limits();
+
   int get_sample_number();
 
   bool compute_stats();
@@ -236,6 +240,8 @@ class AnalysisTool : public QWidget {
   void update_difference_particles();
 
   Eigen::VectorXd get_mean_shape_particles();
+  
+  Eigen::VectorXd load_regression_parameters(std::string filepath);
 
   ShapeHandle create_shape_from_points(Particles points);
 
@@ -274,6 +280,9 @@ class AnalysisTool : public QWidget {
   ShapeList group2_list_;
 
   std::string feature_map_;
+
+  std::vector<double> explanatory_variable_limits_;
+  bool can_run_regression_;
 
   std::vector<std::string> current_group_names_;
   std::vector<std::string> current_group_values_;
