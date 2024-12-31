@@ -150,7 +150,7 @@ class ParticleShapeStatistics {
   std::vector<double> eigenvalues_;
   Eigen::VectorXd mean_;
   Eigen::VectorXd mean1_;
-  Eigen::VectorXd mean2_;x
+  Eigen::VectorXd mean2_;
   Eigen::MatrixXd points_minus_mean_;
   Eigen::MatrixXd shapes_;
   

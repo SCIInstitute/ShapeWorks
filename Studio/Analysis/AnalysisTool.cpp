@@ -138,7 +138,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_->metrics_open_button->setChecked(false);
 
   /// TODO nothing there yet (regression tab)
-  // ui_->tabWidget->removeTab(3);
+  ui_->tabWidget->removeTab(3);
 
   for (auto button : {ui_->distance_transform_radio_button, ui_->mesh_warping_radio_button, ui_->legacy_radio_button}) {
     connect(button, &QRadioButton::clicked, this, &AnalysisTool::reconstruction_method_changed);
