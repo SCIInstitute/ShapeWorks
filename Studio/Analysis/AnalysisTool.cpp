@@ -890,17 +890,11 @@ ShapeHandle AnalysisTool::get_current_shape() {
   int pca_mode = get_pca_mode();
   double pca_value = get_pca_value();
   auto mca_level = get_mca_level();
-  bool regression_analysis_enabled = get_regression_analysis_status();
-  if (!regression_analysis_enabled) {
-    if (mca_level == AnalysisTool::McaMode::Vanilla) {
+  if (mca_level == AnalysisTool::McaMode::Vanilla) {
       return get_mode_shape(pca_mode, pca_value);
     } else {
       return get_mca_mode_shape(pca_mode, pca_value, mca_level);
     }
-  } else {
-
-  }
-
 }
 
 //---------------------------------------------------------------------------
