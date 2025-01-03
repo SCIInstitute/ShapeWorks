@@ -495,24 +495,20 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
   // TODO: importing regression params doesn't make sense here. take a look again later.
 }
 
- Eigen::VectorXd ParticleShapeStatistics::compute_regression_mean(const std::vector<double>& explanatory_variables) const
-{
-      // Map explanatory variables to an Eigen vector
-    Eigen::VectorXd t = Eigen::Map<const Eigen::VectorXd>(explanatory_variables.data(), explanatory_variables.size());
-    
-    // Ensure slope and intercept are initialized
-    if (slope_.size() == 0 || intercept_.size() == 0) {
-        throw std::runtime_error("Slope and Intercept not initialized yet!");
-    }
+Eigen::VectorXd ParticleShapeStatistics::compute_regression_mean(
+    const std::vector<double>& explanatory_variables) const {
+  Eigen::VectorXd t = Eigen::Map<const Eigen::VectorXd>(
+      explanatory_variables.data(), explanatory_variables.size());
 
-    // Handle scalar and vector cases for t
-    if (t.size() == 1) {
-        return slope_ + intercept_ * t[0]; // Scalar broadcasting
-    } else if (t.size() == slope_.size()) {
-        return slope_ + intercept_.cwiseProduct(t); // Element-wise multiplication
-    } else {
-        throw std::invalid_argument("Size mismatch: t must be either scalar or match dimensions of slope and intercept.");
-    }
+  // Ensure slope and intercept are initialized
+  if (slope_.size() == 0 || intercept_.size() == 0) {
+    throw std::runtime_error("Slope and Intercept not initialized yet!");
+  }
+
+  if (t.size() == 1)
+    return slope_ + intercept_ * t[0];
+  else
+    return slope_ + intercept_.cwiseProduct(t);
 }
 
 //---------------------------------------------------------------------------
