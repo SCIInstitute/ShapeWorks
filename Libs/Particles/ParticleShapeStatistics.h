@@ -87,9 +87,9 @@ class ParticleShapeStatistics {
   const Eigen::VectorXd& get_mean_rel_pos() { return mean_rel_pose_; }
 
   //! Returns the mean shape.
-  const Eigen::VectorXd get_mean() const { return mean_; }
+  const Eigen::VectorXd& get_mean() const { return mean_; }
 
- Eigen::VectorXd compute_regression_mean(const std::vector<double>& explanatory_variables) const; 
+  Eigen::VectorXd compute_regression_mean(const std::vector<double>& explanatory_variables) const; 
   const Eigen::VectorXd& get_group1_mean() const { return mean1_; }
   const Eigen::VectorXd& get_group2_mean() const { return mean2_; }
 
@@ -138,7 +138,7 @@ class ParticleShapeStatistics {
   void set_meshes(const std::vector<Mesh>& meshes) { meshes_ = meshes; }
 
   // import estimated parameters for regression
-  inline bool import_regression_parameters(Eigen::VectorXd& slope, Eigen::VectorXd& intercept) { slope_ = slope; intercept_ = intercept; return true;};
+  inline bool import_regression_parameters(Eigen::VectorXd slope, Eigen::VectorXd intercept) { slope_ = slope; intercept_ = intercept; return true;};
   
  private:
   unsigned int num_samples_group1_;
