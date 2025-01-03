@@ -664,10 +664,13 @@ bool AnalysisTool::compute_stats() {
   can_run_regression_ = check_explanatory_variable_limits();
   if (can_run_regression_) {
     auto slope = load_regression_parameters(
-        session_->get_regression_param_file("slope"));
+        session_->get_regression_param_file("slope")); // dM vector
     auto intercept = load_regression_parameters(
-        session_->get_regression_param_file("intercept"));
-    stats_.import_regression_parameters(slope, intercept);
+        session_->get_regression_param_file("intercept")); // dM vector
+    stats_.import_regression_parameters(slope, intercept); // set slope and intercept in stats object
+    ui_->regression_groupbox->setVisible(true);
+    ui_->explanatoryVariableSlider->setVisible(true);
+    ui_->enableRegressionCheckBox->setVisible(true);
   }
   else {
     ui_->regression_groupbox->setVisible(false);
@@ -790,7 +793,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     ui_->explained_variance->setText("");
     ui_->cumulative_explained_variance->setText("");
   }
-  auto mean = !regression_enabled_ ? stats_.get_mean() : stats_.get_regression_mean(ui_->get_explanatory_variable_value());
+  auto mean = !regression_enabled_ ? stats_.get_mean() : stats_.compute_regression_mean(ui_->get_explanatory_variable_value());
   temp_shape_ = mean + (e * (value * lambda));
 
   auto positions = temp_shape_;
@@ -1157,9 +1160,9 @@ double AnalysisTool::get_pca_value() {
 }
 
 
-double AnalysisTool::get_explanatory_variable_value() {
+std::vector<double> AnalysisTool::get_explanatory_variable_value() {
   int slider_value = ui_->explanatoryVariableSlider->value();
-  return t_min + (static_cast<double>(slider_value) / 100.0) * (t_max - t_min);
+  return {t_min + (static_cast<double>(slider_value) / 100.0) * (t_max - t_min)};
 
 }
 
