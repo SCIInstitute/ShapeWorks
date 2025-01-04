@@ -346,10 +346,14 @@ def transform_to_string(transform):
     return transform_string
 
 
-def groom_val_test_images(project, indices):
+def groom_val_test_images(project, indices, max_translation=None, max_rotation=None, max_iterations=1024):
     """ Groom the validation and test images """
     subjects = project.get_subjects()
     deepssm_dir = get_deepssm_dir(project)
+
+    print(f"max_translation: {max_translation}")
+    print(f"max_rotation: {max_rotation}")
+    print(f"max_iterations: {max_iterations}")
 
     # Get reference image
     ref_image_file = deepssm_dir + 'reference_image.nrrd'
@@ -386,6 +390,7 @@ def groom_val_test_images(project, indices):
 
     count = 1
     for i in val_test_indices:
+        print(f"Index: {i}")
         if sw_check_abort():
             sw_message("Aborted")
             return
@@ -411,9 +416,6 @@ def groom_val_test_images(project, indices):
         image.applyTransform(reflection)
         transform = sw.utils.getVTKtransform(reflection)
 
-        max_translation = 10  # Maximum allowed translation in units (e.g., mm, pixels)
-        max_rotation = 5  # Maximum allowed rotation in degrees
-
         # 2. Translate to have ref center to make rigid registration easier
         translation = ref_center - image.center()
         image.setOrigin(image.origin() + translation).write(image_file)
@@ -425,7 +427,8 @@ def groom_val_test_images(project, indices):
                                                                                  image_file,
                                                                                  transform_type='translation',
                                                                                  max_translation=max_translation,
-                                                                                 max_rotation=max_rotation)
+                                                                                 max_rotation=max_rotation,
+                                                                                 max_iterations=max_iterations)
         # 4. Apply transform
         image.applyTransform(itk_translation_transform,
                              large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
@@ -439,7 +442,8 @@ def groom_val_test_images(project, indices):
         itk_rigid_transform = image_utils.get_image_registration_transform(medium_cropped_ref_image_file,
                                                                            image_file, transform_type='rigid',
                                                                            max_translation=max_translation,
-                                                                           max_rotation=max_rotation)
+                                                                           max_rotation=max_rotation,
+                                                                           max_iterations=max_iterations)
 
         # 6. Apply transform
         image.applyTransform(itk_rigid_transform,
@@ -455,7 +459,8 @@ def groom_val_test_images(project, indices):
                                                                                 image_file,
                                                                                 transform_type='similarity',
                                                                                 max_translation=max_translation,
-                                                                                max_rotation=max_rotation)
+                                                                                max_rotation=max_rotation,
+                                                                                max_iterations=max_iterations)
         image.applyTransform(itk_similarity_transform,
                              cropped_ref_image.origin(), cropped_ref_image.dims(),
                              cropped_ref_image.spacing(), cropped_ref_image.coordsys(),

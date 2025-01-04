@@ -203,7 +203,10 @@ def sw_progress(progress, message=""):
     """If sw_logger is set, use it, otherwise do nothing"""
     global sw_logger
     if sw_logger is not None:
+        print("sw_logger not none")
         sw_logger.progress(progress, message)
+    else:
+        print("sw_logger is none")
 
 
 def test(name, failure=False):

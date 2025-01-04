@@ -4,7 +4,7 @@ import numpy as np
 
 
 def get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid',
-                                     max_translation=None, max_rotation=None):
+                                     max_translation=None, max_rotation=None, max_iterations=1024):
     # Prepare parameter map
     parameter_object = itk.ParameterObject.New()
     parameter_map = parameter_object.GetDefaultParameterMap('rigid')
@@ -15,7 +15,10 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     elif transform_type == 'translation':
         parameter_map['Transform'] = ['TranslationTransform']
 
-    parameter_map['MaximumNumberOfIterations'] = ['512']
+    if max_iterations is None:
+        max_iterations = 1024
+
+    parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
 
     # Constraint settings (if applicable)
     if max_translation is not None:

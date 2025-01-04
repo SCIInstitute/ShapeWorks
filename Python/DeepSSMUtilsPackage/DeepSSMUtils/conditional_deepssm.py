@@ -6,6 +6,7 @@ from fileinput import filename
 import matplotlib.pyplot as plt
 import PIL
 import numpy as np
+import json
 
 import DeepSSMUtils
 import DataAugmentationUtils
@@ -24,6 +25,9 @@ import run_utils
 
 import shutil
 
+print("set up console logging")
+sw.setup_console_logging(show_progress=True)
+
 
 def get_image_dimensions(dataloader_file: str):
     """ Get the image dimensions from the dataloader file """
@@ -32,41 +36,6 @@ def get_image_dimensions(dataloader_file: str):
         image_dimensions = img.shape[2:]
         return image_dimensions
     return None
-
-
-def update_dataloader_with_padding2(dataloader_file: str, image_dimensions: tuple, anatomy: int):
-    """ Update the dataloader by padding the images to match image_dimensions and update anatomy info """
-    # Load the existing dataloader
-    dataloader = torch.load(dataloader_file)
-    updated_dataloader = []
-
-    count = 0
-    for img, pca, mdl, names, old_anatomy in dataloader:
-        # Calculate padding sizes
-        padding_needed = [(target - actual) if target > actual else 0 for target, actual in
-                          zip(image_dimensions, img.shape[2:])]
-        pad = (0, padding_needed[2], 0, padding_needed[1], 0, padding_needed[0])  # Assuming 3D (D, W, H)
-
-        # Pad the image
-        padded_img = F.pad(img, pad, "constant", 0)
-
-        # Append the updated dataloader items
-        updated_dataloader.append((padded_img, pca, mdl, names, anatomy))
-
-        import nrrd
-        numpy_array = padded_img.numpy()
-        numpy_array = np.squeeze(numpy_array)
-
-        print(f"Image dimensions: {numpy_array.shape}")
-
-        # Write to NRRD file
-        output_filename = f"/tmp/padded_{anatomy}_{count}.nrrd"
-        nrrd.write(output_filename, numpy_array)
-
-        count += 1
-
-    # Save the updated dataloader
-    torch.save(updated_dataloader, dataloader_file)
 
 
 def update_dataloader_with_padding(dataloader_file: str, image_dimensions: tuple, anatomy: int):
@@ -273,14 +242,22 @@ def run_conditional_deepssm_prep(project_filenames: list[str]):
                                                           mixture_num=0, processes=4)
 
 
-def run_conditional_deepssm_testing(project_filenames: list[str]):
+def run_conditional_deepssm_testing(configuration: dict):
     """ Run Conditional DeepSSM Testing """
     sw_message("Running Conditional DeepSSM Testing")
 
     root_dir = os.getcwd()
 
-    for anatomy in range(len(project_filenames)):
-        project_filename = project_filenames[anatomy]
+    projects = configuration["projects"]
+
+    for number in range(len(projects)):
+        project_config = projects[number]
+        project_filename = project_config["file"]
+
+        max_rotation = project_config.get("max_rotation", None)
+        max_translation = project_config.get("max_translation", None)
+        max_iterations = project_config.get("max_iterations", None)
+
         print(f"Project filename: {project_filename}")
         os.chdir(root_dir)
         if not os.path.exists(project_filename):
@@ -302,10 +279,11 @@ def run_conditional_deepssm_testing(project_filenames: list[str]):
 
         test_indices = DeepSSMUtils.get_split_indices(project, "test")
 
-        print(f"Grooming test images for project: {project_filename}")
-        DeepSSMUtils.groom_val_test_images(project, test_indices)
+        print(f"Grooming test images for project: {project_filename}...")
+        DeepSSMUtils.groom_val_test_images(project, test_indices, max_rotation=max_rotation,
+                                           max_translation=max_translation, max_iterations=max_iterations)
 
-        print(f"Preparing data loaders for project: {project_filename}")
+        print(f"Preparing data loaders for project: {project_filename}...")
         DeepSSMUtils.prepare_data_loaders(project, batch_size, "test");
 
         # save the project
@@ -323,12 +301,14 @@ def run_conditional_deepssm_testing(project_filenames: list[str]):
         image_dimensions = get_image_dimensions("deepssm/torch_loaders/test")
         print("Test Image dimensions: ", image_dimensions)
 
-        train_dimensions = get_image_dimensions("deepssm/torch_loaders/train")
+        train_dimensions = project_config.get("train_dimensions", None)
+        if train_dimensions is None:
+            train_dimensions = get_image_dimensions("deepssm/torch_loaders/train")
         print("Train Image dimensions: ", train_dimensions)
 
         # now we have to update the test loader to match the image dimensions of the training images and set the anatomy
-        update_dataloader_with_padding("deepssm/torch_loaders/test", train_dimensions, anatomy)
-        print("Using anatomy: ", anatomy)
+        update_dataloader_with_padding("deepssm/torch_loaders/test", train_dimensions, number)
+        print("Using anatomy: ", number)
 
         config_file = f"deepssm/configuration.json"
 
@@ -362,16 +342,24 @@ if __name__ == "__main__":
     parser.add_argument('--test', action='store_true', help='Run testing')
     parser.add_argument("--prep", action='store_true', help='Prepare data for training')
 
-    parser.add_argument('project_filenames', nargs='+', help='Project filenames')
+    parser.add_argument('--configuration', required=True, help='Path to the configuration file')
 
     args = parser.parse_args()
 
+    config_file = args.configuration
+    if not os.path.exists(config_file):
+        print(f"Configuration file {config_file} does not exist")
+        exit(1)
+
+    # load configuration file
+    configuration = json.load(open(config_file))
+
     if args.prep:
-        run_conditional_deepssm_prep(args.project_filenames)
+        run_conditional_deepssm_prep(configuration)
     if args.train:
-        run_conditional_deepssm_training(args.project_filenames)
+        run_conditional_deepssm_training(configuration)
     if args.test:
-        run_conditional_deepssm_testing(args.project_filenames)
+        run_conditional_deepssm_testing(configuration)
 
     if not args.train and not args.test and not args.prep:
         print("Please specify either --prep, --train or --test flag")

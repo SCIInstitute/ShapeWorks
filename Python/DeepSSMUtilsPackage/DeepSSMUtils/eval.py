@@ -101,7 +101,9 @@ def test(config_file, loader="test"):
             np.save(filename, pred_tf.squeeze().detach().cpu().numpy())
             np.savetxt(particle_filename, pred_mdl_tl.squeeze().detach().cpu().numpy())
         elif conditional:
-            print(f"Image dimensions: {img.shape}")
+            print(f"Eval image dimensions: {img.shape}")
+            # squeeze the image to remove the batch dimension
+            #img = img.squeeze()
             [pred, pred_mdl_pca] = model_pca(img, [anatomy])
             pred_scores.append(pred.cpu().data.numpy()[0])
             filename = particle_filename
