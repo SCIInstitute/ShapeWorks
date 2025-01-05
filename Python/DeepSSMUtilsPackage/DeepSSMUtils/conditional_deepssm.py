@@ -12,6 +12,7 @@ import DeepSSMUtils
 import DataAugmentationUtils
 
 import shapeworks as sw
+import shapeworks.utils
 from shapeworks.utils import sw_message, sw_progress, sw_check_abort
 
 import torch
@@ -24,9 +25,6 @@ import trainer
 import run_utils
 
 import shutil
-
-print("set up console logging")
-sw.setup_console_logging(show_progress=True)
 
 
 def get_image_dimensions(dataloader_file: str):
@@ -334,6 +332,94 @@ def run_conditional_deepssm_testing(configuration: dict):
         DeepSSMUtils.process_test_predictions(project, "deepssm/configuration.json")
 
 
+def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image: str):
+    """ Run Conditional DeepSSM Inference """
+    sw_message("Running Conditional DeepSSM Inference")
+    print(f"Anatomy: {anatomy}, Image: {image}")
+
+    # Run a single image inference
+    project_filenames = project_config["projects"]
+    project_filename = project_filenames[anatomy]["file"]
+
+    root_dir = os.getcwd()
+    os.chdir(root_dir)
+    if not os.path.exists(project_filename):
+        print(f"Project file {project_filename} does not exist")
+        return
+
+    absolute_image_name = os.path.abspath(image)
+
+    # chdir to project directory
+    project_dir = os.path.abspath(os.path.dirname(project_filename))
+    os.chdir(project_dir)
+    print(f"Working in project directory: {project_dir}")
+
+    project = sw.Project()
+    project.load(os.path.basename(project_filename))
+
+    print(f"Grooming image: {absolute_image_name}")
+    run_utils.groom_val_test_image(project, absolute_image_name)
+
+    deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
+    val_test_images_dir = deepssm_dir + 'images/'
+
+    test_image_files = [val_test_images_dir + f"{os.path.basename(absolute_image_name)}.nrrd"]
+
+    loader_dir = deepssm_dir + 'torch_loaders/'
+    print(f"Creating test loader...")
+    DeepSSMUtils.getTestLoader(loader_dir, test_image_files)
+
+    # copy the test loader to the root directory
+    shutil.copy(f"{project_dir}/deepssm/torch_loaders/test", f"{root_dir}/deepssm/torch_loaders/test")
+    # copy the test_names.txt file
+    shutil.copy(f"{project_dir}/deepssm/torch_loaders/test_names.txt",
+                f"{root_dir}/deepssm/torch_loaders/test_names.txt")
+
+    os.chdir(root_dir)
+
+    # get the image dimensions
+    image_dimensions = get_image_dimensions("deepssm/torch_loaders/test")
+    print("Test Image dimensions: ", image_dimensions)
+
+    train_dimensions = project_config.get("train_dimensions", None)
+    if train_dimensions is None:
+        train_dimensions = get_image_dimensions("deepssm/torch_loaders/train")
+    print("Train Image dimensions: ", train_dimensions)
+
+    # now we have to update the test loader to match the image dimensions of the training images and set the anatomy
+    update_dataloader_with_padding("deepssm/torch_loaders/test", train_dimensions, anatomy)
+    print("Using anatomy: ", anatomy)
+
+    config_file = f"deepssm/configuration.json"
+
+    # clean out the deepssm/model/test_predictions/world_predictions directory
+    test_pred_dir = f"deepssm/model/test_predictions/world_predictions"
+    if os.path.exists(test_pred_dir):
+        shutil.rmtree(test_pred_dir)
+
+    DeepSSMUtils.testDeepSSM(config_file)
+
+    # copy config file to the project directory
+    shutil.copy(config_file, f"{project_dir}/deepssm/configuration.json")
+
+    # copy the test_predictions directory to the project directory
+    project_test_pred_dir = f"{project_dir}/deepssm/model/test_predictions"
+    if os.path.exists(project_test_pred_dir):
+        shutil.rmtree(project_test_pred_dir)
+    shutil.copytree(test_pred_dir, f"{project_dir}/deepssm/model/test_predictions/world_predictions")
+
+    # make inference_prediction dir and copy there
+    inference_dir = f"{root_dir}/inference_prediction/"
+    shutil.rmtree(inference_dir)
+    #os.makedirs(inference_dir, exist_ok=True)
+    shutil.copytree(project_test_pred_dir, f"{inference_dir}")
+
+    # switch back to the project directory
+    os.chdir(project_dir)
+    # process the test predictions
+    # DeepSSMUtils.process_test_predictions(project, "deepssm/configuration.json")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run Conditional DeepSSM Training')
 
@@ -343,6 +429,11 @@ if __name__ == "__main__":
     parser.add_argument("--prep", action='store_true', help='Prepare data for training')
 
     parser.add_argument('--configuration', required=True, help='Path to the configuration file')
+
+    # inference mode
+    parser.add_argument('--anatomy', type=int, help='Anatomy number for inference')
+    parser.add_argument('--image', help='Image file for inference')
+    parser.add_argument('--inference', action='store_true', help='Run inference')
 
     args = parser.parse_args()
 
@@ -360,7 +451,18 @@ if __name__ == "__main__":
         run_conditional_deepssm_training(configuration)
     if args.test:
         run_conditional_deepssm_testing(configuration)
+    if args.inference:
+        if args.anatomy is None:
+            print("Please specify --anatomy flag for inference")
+            exit(1)
+        if args.image is None:
+            print("Please specify --image flag for inference")
+            exit(1)
 
-    if not args.train and not args.test and not args.prep:
-        print("Please specify either --prep, --train or --test flag")
+        # run inference
+        print(f"Running inference for anatomy {args.anatomy} on image {args.image}")
+        run_conditional_deepssm_inference(configuration, args.anatomy, args.image)
+
+    if not args.train and not args.test and not args.prep and not args.inference:
+        print("Please specify either --prep, --train, --test, or --inference flag")
         exit(1)

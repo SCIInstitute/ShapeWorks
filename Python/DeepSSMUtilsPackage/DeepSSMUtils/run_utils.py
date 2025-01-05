@@ -346,6 +346,109 @@ def transform_to_string(transform):
     return transform_string
 
 
+def groom_val_test_image(project, image_filename, needs_reflection=False, reflection_axis=None, max_translation=None,
+                         max_rotation=None,
+                         max_iterations=1024):
+    deepssm_dir = get_deepssm_dir(project)
+    # Make dirs
+    val_test_images_dir = deepssm_dir + 'images/'
+    print(f"val_test_images_dir: {val_test_images_dir}")
+    if not os.path.exists(val_test_images_dir):
+        os.makedirs(val_test_images_dir)
+
+    # Get reference image
+    ref_image_file = deepssm_dir + 'reference_image.nrrd'
+    ref_image = sw.Image(ref_image_file)
+    ref_center = ref_image.center()  # get center
+
+    # Read bounding box
+    bounding_box_file = deepssm_dir + "bounding_box.txt"
+    with open(bounding_box_file, "r") as f:
+        bounding_box_string = f.read()
+
+    bounding_box = sw.PhysicalRegion(bounding_box_string)
+    large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(80)
+    medium_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(20)
+
+    image = sw.Image(image_filename)
+
+    image_file = val_test_images_dir + f"{os.path.basename(image_filename)}.nrrd"
+
+    print(f"Image file: {image_file}")
+    axis = reflection_axis
+
+    large_cropped_ref_image_file = deepssm_dir + 'large_cropped_reference_image.nrrd'
+    large_cropped_ref_image = sw.Image(large_cropped_ref_image_file)
+    medium_cropped_ref_image_file = deepssm_dir + 'medium_cropped_reference_image.nrrd'
+    medium_cropped_ref_image = sw.Image(medium_cropped_ref_image_file)
+    cropped_ref_image_file = deepssm_dir + 'cropped_reference_image.nrrd'
+    cropped_ref_image = sw.Image(cropped_ref_image_file)
+
+    # 1. Apply reflection
+    reflection = np.eye(4)
+    if needs_reflection:
+        reflection[axis, axis] = -1
+        # account for offset
+        reflection[-1][0] = 2 * image.center()[0]
+
+    image.applyTransform(reflection)
+    transform = sw.utils.getVTKtransform(reflection)
+
+    # 2. Translate to have ref center to make rigid registration easier
+    translation = ref_center - image.center()
+    image.setOrigin(image.origin() + translation).write(image_file)
+    transform[:3, -1] += translation
+
+    # 3. Translate with respect to slightly cropped ref
+    image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
+    itk_translation_transform = image_utils.get_image_registration_transform(large_cropped_ref_image_file,
+                                                                             image_file,
+                                                                             transform_type='translation',
+                                                                             max_translation=max_translation,
+                                                                             max_rotation=max_rotation,
+                                                                             max_iterations=max_iterations)
+    # 4. Apply transform
+    image.applyTransform(itk_translation_transform,
+                         large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
+                         large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
+                         sw.InterpolationType.Linear, meshTransform=False)
+    vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+    transform = np.matmul(vtk_translation_transform, transform)
+
+    # 5. Crop with medium bounding box and find rigid transform
+    image.fitRegion(medium_bb).write(image_file)
+    itk_rigid_transform = image_utils.get_image_registration_transform(medium_cropped_ref_image_file,
+                                                                       image_file, transform_type='rigid',
+                                                                       max_translation=max_translation,
+                                                                       max_rotation=max_rotation,
+                                                                       max_iterations=max_iterations)
+
+    # 6. Apply transform
+    image.applyTransform(itk_rigid_transform,
+                         medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
+                         medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
+                         sw.InterpolationType.Linear, meshTransform=False)
+    vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
+    transform = np.matmul(vtk_rigid_transform, transform)
+
+    # 7. Get similarity transform from image registration and apply
+    image.fitRegion(bounding_box).write(image_file)
+    itk_similarity_transform = image_utils.get_image_registration_transform(cropped_ref_image_file,
+                                                                            image_file,
+                                                                            transform_type='similarity',
+                                                                            max_translation=max_translation,
+                                                                            max_rotation=max_rotation,
+                                                                            max_iterations=max_iterations)
+    image.applyTransform(itk_similarity_transform,
+                         cropped_ref_image.origin(), cropped_ref_image.dims(),
+                         cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
+                         sw.InterpolationType.Linear, meshTransform=False)
+    image.write(image_file)
+    vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
+    transform = np.matmul(vtk_similarity_transform, transform)
+    return transform
+
+
 def groom_val_test_images(project, indices, max_translation=None, max_rotation=None, max_iterations=1024):
     """ Groom the validation and test images """
     subjects = project.get_subjects()
@@ -399,75 +502,10 @@ def groom_val_test_images(project, indices, max_translation=None, max_rotation=N
         sw_progress(count / (len(val_test_indices) + 1),
                     f"Grooming val/test image {image_name} ({count}/{len(val_test_indices)})")
         count = count + 1
-        image = sw.Image(image_name)
-
-        image_file = val_test_images_dir + f"{i}.nrrd"
-
-        # check if this subject needs reflection
         needs_reflection, axis = does_subject_need_reflection(project, subjects[i])
 
-        # 1. Apply reflection
-        reflection = np.eye(4)
-        if needs_reflection:
-            reflection[axis, axis] = -1
-            # account for offset
-            reflection[-1][0] = 2 * image.center()[0]
-
-        image.applyTransform(reflection)
-        transform = sw.utils.getVTKtransform(reflection)
-
-        # 2. Translate to have ref center to make rigid registration easier
-        translation = ref_center - image.center()
-        image.setOrigin(image.origin() + translation).write(image_file)
-        transform[:3, -1] += translation
-
-        # 3. Translate with respect to slightly cropped ref
-        image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
-        itk_translation_transform = image_utils.get_image_registration_transform(large_cropped_ref_image_file,
-                                                                                 image_file,
-                                                                                 transform_type='translation',
-                                                                                 max_translation=max_translation,
-                                                                                 max_rotation=max_rotation,
-                                                                                 max_iterations=max_iterations)
-        # 4. Apply transform
-        image.applyTransform(itk_translation_transform,
-                             large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
-                             large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=False)
-        vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
-        transform = np.matmul(vtk_translation_transform, transform)
-
-        # 5. Crop with medium bounding box and find rigid transform
-        image.fitRegion(medium_bb).write(image_file)
-        itk_rigid_transform = image_utils.get_image_registration_transform(medium_cropped_ref_image_file,
-                                                                           image_file, transform_type='rigid',
-                                                                           max_translation=max_translation,
-                                                                           max_rotation=max_rotation,
-                                                                           max_iterations=max_iterations)
-
-        # 6. Apply transform
-        image.applyTransform(itk_rigid_transform,
-                             medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
-                             medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=False)
-        vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
-        transform = np.matmul(vtk_rigid_transform, transform)
-
-        # 7. Get similarity transform from image registration and apply
-        image.fitRegion(bounding_box).write(image_file)
-        itk_similarity_transform = image_utils.get_image_registration_transform(cropped_ref_image_file,
-                                                                                image_file,
-                                                                                transform_type='similarity',
-                                                                                max_translation=max_translation,
-                                                                                max_rotation=max_rotation,
-                                                                                max_iterations=max_iterations)
-        image.applyTransform(itk_similarity_transform,
-                             cropped_ref_image.origin(), cropped_ref_image.dims(),
-                             cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=False)
-        image.write(image_file)
-        vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
-        transform = np.matmul(vtk_similarity_transform, transform)
+        transform = groom_val_test_image(project, image_name, needs_reflection, axis, max_translation, max_rotation,
+                                         max_iterations)
 
         # 8. Save transform
         val_test_transforms.append(transform)
