@@ -38,8 +38,6 @@ public:
   void load_params();
   //! Store params to project
 
-  //! Get flag if regression needs to enabled for analysis in Studio
-  inline bool get_regression_analysis_status() { return regression_analysis_status_; }
 
   void store_params();
 
@@ -99,6 +97,5 @@ private:
 
   Ui_OptimizeTool* ui_;
 
-  bool regression_analysis_status_;
 };
 }
