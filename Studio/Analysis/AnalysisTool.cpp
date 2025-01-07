@@ -383,7 +383,7 @@ void AnalysisTool::handle_analysis_options() {
       ui_->mcaLevelBetweenButton->setEnabled(true);
       ui_->vanillaPCAButton->setChecked(true);
     }
-  } else if (ui_->tabWidget->currentWidget() == ui_->regression_tab){
+  } else {
     // regression mode
     ui_->sampleSpinBox->setEnabled(false);
     ui_->medianButton->setEnabled(false);
@@ -392,13 +392,6 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
     
-  } else {
-    ui_->sampleSpinBox->setEnabled(false);
-    ui_->medianButton->setEnabled(false);
-    ui_->pcaSlider->setEnabled(false);
-    ui_->pcaAnimateCheckBox->setEnabled(false);
-    ui_->pcaModeSpinBox->setEnabled(false);
-    pca_animate_timer_.stop();
   }
 
   update_difference_particles();
