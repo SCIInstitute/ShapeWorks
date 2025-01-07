@@ -18,17 +18,24 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     if max_iterations is None:
         max_iterations = 1024
 
+    print("Using max iterations: ", max_iterations)
     parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
 
     # Constraint settings (if applicable)
     if max_translation is not None:
         translation_constraints = [str(max_translation)] * 3
         parameter_map['MaximumStepLength'] = translation_constraints
+        print("Using max translation: ", max_translation)
+    else:
+        print("No max translation specified")
 
     if max_rotation is not None and transform_type in ['rigid', 'similarity']:
         # Assume rotation is in degrees and we limit optimization scales
         rotation_constraints = [str(np.deg2rad(max_rotation))] * (3 if transform_type == 'rigid' else 6)
         parameter_map['OptimizerScales'] = rotation_constraints
+        print("Using max rotation: ", max_rotation)
+    else:
+        print("No max rotation specified")
 
     parameter_object.AddParameterMap(parameter_map)
 

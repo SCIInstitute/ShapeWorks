@@ -381,7 +381,7 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
     image_dimensions = get_image_dimensions("deepssm/torch_loaders/test")
     print("Test Image dimensions: ", image_dimensions)
 
-    train_dimensions = project_config.get("train_dimensions", None)
+    train_dimensions = project_config.get("train_image_size", None)
     if train_dimensions is None:
         train_dimensions = get_image_dimensions("deepssm/torch_loaders/train")
     print("Train Image dimensions: ", train_dimensions)
@@ -411,7 +411,6 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
     # make inference_prediction dir and copy there
     inference_dir = f"{root_dir}/inference_prediction/"
     shutil.rmtree(inference_dir)
-    #os.makedirs(inference_dir, exist_ok=True)
     shutil.copytree(project_test_pred_dir, f"{inference_dir}")
 
     # switch back to the project directory

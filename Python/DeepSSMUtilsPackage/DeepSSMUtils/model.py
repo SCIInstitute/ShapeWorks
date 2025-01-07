@@ -329,10 +329,15 @@ class ConditionalDeepSSMNet(nn.Module):
             parameters = json.load(json_file)
         self.num_latent = parameters['num_latent_dim']
         self.loader_dir = parameters['paths']['loader_dir']
-        loader = torch.load(self.loader_dir + "validation")
-        self.num_corr = loader.dataset.mdl_target[0].shape[0]
-        img_dims = loader.dataset.img[0].shape
-        self.img_dims = img_dims[1:]
+        if 'num_corr' in parameters and 'img_dims' in parameters:
+            self.num_corr = parameters['num_corr']
+            self.img_dims = parameters['img_dims']
+        else:
+            loader = torch.load(self.loader_dir + "validation")
+            self.num_corr = loader.dataset.mdl_target[0].shape[0]
+            img_dims = loader.dataset.img[0].shape
+            self.img_dims = img_dims[1:]
+        print("Num Corr: ", self.num_corr)
         print("Image dimensions: ", self.img_dims)
         self.num_anatomies = parameters['conditional_deepssm']['num_anatomies']
         self.embedding_dim = parameters['conditional_deepssm']['embedding_dim']
