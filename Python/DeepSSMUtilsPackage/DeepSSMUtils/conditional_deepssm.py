@@ -356,6 +356,7 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
 
     project = sw.Project()
     project.load(os.path.basename(project_filename))
+    sw.utils.initialize_project_mesh_warper(project)
 
     print(f"Grooming image: {absolute_image_name}")
     run_utils.groom_val_test_image(project, absolute_image_name)
@@ -412,6 +413,14 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
     inference_dir = f"{root_dir}/inference_prediction/"
     shutil.rmtree(inference_dir)
     shutil.copytree(project_test_pred_dir, f"{inference_dir}")
+
+    # now run reconstruction using the associated project
+    file_name = os.path.basename(image)
+    prefix = file_name.split(".")[0]
+    particles = np.loadtxt(f"{inference_dir}/world_predictions/{prefix}.particles")
+    mesh = sw.utils.reconstruct_mesh(particles)
+    mesh.write(f"{inference_dir}/{prefix}.vtk")
+    print(f"Mesh written to {inference_dir}/{prefix}.vtk")
 
     # switch back to the project directory
     os.chdir(project_dir)
