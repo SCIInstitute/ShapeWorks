@@ -713,7 +713,7 @@ bool AnalysisTool::compute_stats() {
 
 bool check_explanatory_variable_limits() {
   auto subjects = session_->get_project()->get_subjects();
-  explanatory_variable_limits_.resize(2);
+  explanatory_variable_limits_.resize(2, 0.0);
   explanatory_variable_limits_[0] = std::numeric_limits<double>::max();
   explanatory_variable_limits_[1] = std::numeric_limits<double>::lowest();
   for (auto sub : subjects) {
@@ -786,7 +786,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     ui_->explained_variance->setText("");
     ui_->cumulative_explained_variance->setText("");
   }
-  auto mean = !regression_enabled_ ? stats_.get_mean() : stats_.compute_regression_mean(ui_->get_explanatory_variable_value());
+  auto mean = !get_regression_analysis_status() ? stats_.get_mean() : stats_.compute_regression_mean(ui_->get_explanatory_variable_value());
   temp_shape_ = mean + (e * (value * lambda));
 
   auto positions = temp_shape_;
@@ -1155,7 +1155,8 @@ double AnalysisTool::get_pca_value() {
 
 std::vector<double> AnalysisTool::get_explanatory_variable_value() {
   int slider_value = ui_->explanatoryVariableSlider->value();
-  return {t_min + (static_cast<double>(slider_value) / 100.0) * (t_max - t_min)};
+  // return {t_min + (static_cast<double>(slider_value) / 100.0) * (t_max - t_min)};
+  return {explanatory_variable_limits_[0] + (static_cast<double>(slider_value) / 100.0) * (explanatory_variable_limits_[1] - explanatory_variable_limits_[0])};
 
 }
 

@@ -159,7 +159,6 @@ class ParticleShapeStatistics {
   // for regression tasks
   Eigen::VectorXd slope_;
   Eigen::VectorXd intercept_;
-  bool regression_enabled_;
 
   std::vector<double> percent_variance_by_mode_;
   Eigen::MatrixXd principals_;

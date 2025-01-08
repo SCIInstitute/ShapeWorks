@@ -497,6 +497,7 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
 
 Eigen::VectorXd ParticleShapeStatistics::compute_regression_mean(
     const std::vector<double>& explanatory_variables) const {
+      std::cout << "Computing mean for regression" << std::endl;
   Eigen::VectorXd t = Eigen::Map<const Eigen::VectorXd>(
       explanatory_variables.data(), explanatory_variables.size());
 
