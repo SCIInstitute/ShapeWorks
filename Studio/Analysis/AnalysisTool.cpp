@@ -655,6 +655,7 @@ bool AnalysisTool::compute_stats() {
   }
 
   can_run_regression_ = check_explanatory_variable_limits();
+  std::cout << "can run regression set to " << can_run_regression_ << std::endl;
   if (can_run_regression_) {
     auto slope = load_regression_parameters(
         session_->get_regression_param_file("slope")); // dM vector
@@ -888,10 +889,10 @@ ShapeHandle AnalysisTool::get_current_shape() {
   double pca_value = get_pca_value();
   auto mca_level = get_mca_level();
   if (mca_level == AnalysisTool::McaMode::Vanilla) {
-      return get_mode_shape(pca_mode, pca_value);
-    } else {
-      return get_mca_mode_shape(pca_mode, pca_value, mca_level);
-    }
+    return get_mode_shape(pca_mode, pca_value);
+  } else {
+    return get_mca_mode_shape(pca_mode, pca_value, mca_level);
+  }
 }
 
 //---------------------------------------------------------------------------
