@@ -411,7 +411,8 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
 
     # make inference_prediction dir and copy there
     inference_dir = f"{root_dir}/inference_prediction/"
-    shutil.rmtree(inference_dir)
+    if os.path.exists(inference_dir):
+        shutil.rmtree(inference_dir)
     shutil.copytree(project_test_pred_dir, f"{inference_dir}")
 
     # now run reconstruction using the associated project
