@@ -391,7 +391,6 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaAnimateCheckBox->setEnabled(false);
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
-    
   }
 
   update_difference_particles();
@@ -503,6 +502,7 @@ void AnalysisTool::network_analysis_clicked() {
   app_->get_py_worker()->run_job(network_analysis_job_);
 }
 
+//---------------------------------------------------------------------------
 Eigen::VectorXd load_regression_parameters(std::string filepath) {
   std::ifstream infile(slope_file_path);
   if (!infile.good()) {
@@ -711,6 +711,7 @@ bool AnalysisTool::compute_stats() {
   return true;
 }
 
+//---------------------------------------------------------------------------
 bool check_explanatory_variable_limits() {
   auto subjects = session_->get_project()->get_subjects();
   explanatory_variable_limits_.resize(2, 0.0);

@@ -495,6 +495,7 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
   // TODO: importing regression params doesn't make sense here. take a look again later.
 }
 
+//---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::compute_regression_mean(
     const std::vector<double>& explanatory_variables) const {
       std::cout << "Computing mean for regression" << std::endl;
