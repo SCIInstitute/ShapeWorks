@@ -788,7 +788,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     ui_->explained_variance->setText("");
     ui_->cumulative_explained_variance->setText("");
   }
-  auto mean = !get_regression_analysis_status() ? stats_.get_mean() : stats_.compute_regression_mean(ui_->get_explanatory_variable_value());
+  auto mean = !get_regression_analysis_status() ? stats_.get_mean() : stats_.compute_regression_mean(get_explanatory_variable_value());
   temp_shape_ = mean + (e * (value * lambda));
 
   auto positions = temp_shape_;
@@ -1055,6 +1055,13 @@ void AnalysisTool::on_pcaSlider_valueChanged() {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::on_explanatoryVariableSlider_valueChanged() {
+  // this will make the slider handle redraw making the UI appear more responsive
+  QCoreApplication::processEvents();
+  Q_EMIT pca_update();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_group_slider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
   QCoreApplication::processEvents();
@@ -1180,6 +1187,7 @@ void AnalysisTool::update_slider() {
 void AnalysisTool::reset_stats() {
   stats_ready_ = false;
   evals_ready_ = false;
+  can_run_regression_ = false;
 
   ui_->tabWidget->setCurrentWidget(ui_->mean_tab);
   ui_->allSamplesRadio->setChecked(true);

@@ -141,6 +141,7 @@ class AnalysisTool : public QWidget {
 
   // PCA
   void on_pcaSlider_valueChanged();
+  void on_explanatoryVariableSlider_valueChanged();
   void on_group_slider_valueChanged();
   void on_pcaModeSpinBox_valueChanged(int i);
 
