@@ -37,6 +37,8 @@ public:
   //! Load params from project
   void load_params();
   //! Store params to project
+
+
   void store_params();
 
   //! Enable action buttons
@@ -94,5 +96,6 @@ private:
   QElapsedTimer elapsed_timer_;
 
   Ui_OptimizeTool* ui_;
+
 };
 }
