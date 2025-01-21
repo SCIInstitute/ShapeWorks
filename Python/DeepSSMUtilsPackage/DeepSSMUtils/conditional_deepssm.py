@@ -359,7 +359,10 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
     sw.utils.initialize_project_mesh_warper(project)
 
     print(f"Grooming image: {absolute_image_name}")
-    run_utils.groom_val_test_image(project, absolute_image_name)
+    deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
+    val_test_images_dir = deepssm_dir + 'images/'
+    output_filename = val_test_images_dir + f"{os.path.basename(absolute_image_name)}.nrrd"
+    run_utils.groom_val_test_image(project, absolute_image_name, output_filename)
 
     deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
     val_test_images_dir = deepssm_dir + 'images/'

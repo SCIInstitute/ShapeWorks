@@ -74,6 +74,7 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
     sw_message("Creating training torch loader...")
     train_data = get_train_dataset(loader_dir, data_csv, down_factor, down_dir)
 
+    sw_message(f"Training data dimensions: {len(train_data)}")
     train_loader = DataLoader(
         train_data,
         batch_size=batch_size,
@@ -81,6 +82,12 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
         num_workers=8,
         pin_memory=torch.cuda.is_available()
     )
+
+    # print shape
+    for img, _, _, _, _ in train_loader:
+        print(f"Train image dimensions: {img.shape}")
+        break
+
     train_path = loader_dir + 'train'
     torch.save(train_loader, train_path)
     sw_message("Training loader complete.")

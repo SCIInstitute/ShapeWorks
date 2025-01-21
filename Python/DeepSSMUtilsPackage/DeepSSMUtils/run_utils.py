@@ -346,7 +346,8 @@ def transform_to_string(transform):
     return transform_string
 
 
-def groom_val_test_image(project, image_filename, needs_reflection=False, reflection_axis=None, max_translation=None,
+def groom_val_test_image(project, image_filename, output_filename, needs_reflection=False, reflection_axis=None,
+                         max_translation=None,
                          max_rotation=None,
                          max_iterations=1024):
     deepssm_dir = get_deepssm_dir(project)
@@ -372,7 +373,7 @@ def groom_val_test_image(project, image_filename, needs_reflection=False, reflec
 
     image = sw.Image(image_filename)
 
-    image_file = val_test_images_dir + f"{os.path.basename(image_filename)}.nrrd"
+    image_file = output_filename
 
     print(f"Image file: {image_file}")
     axis = reflection_axis
@@ -444,6 +445,7 @@ def groom_val_test_image(project, image_filename, needs_reflection=False, reflec
                          cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
                          sw.InterpolationType.Linear, meshTransform=False)
     image.write(image_file)
+    print(f"Image file written: {image_file}")
     vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
     transform = np.matmul(vtk_similarity_transform, transform)
     return transform
@@ -504,7 +506,9 @@ def groom_val_test_images(project, indices, max_translation=None, max_rotation=N
         count = count + 1
         needs_reflection, axis = does_subject_need_reflection(project, subjects[i])
 
-        transform = groom_val_test_image(project, image_name, needs_reflection, axis, max_translation, max_rotation,
+        output_filename = val_test_images_dir + f"{i}.nrrd"
+        transform = groom_val_test_image(project, image_name, output_filename, needs_reflection, axis, max_translation,
+                                         max_rotation,
                                          max_iterations)
 
         # 8. Save transform

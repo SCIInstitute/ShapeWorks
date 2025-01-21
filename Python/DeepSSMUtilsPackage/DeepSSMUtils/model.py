@@ -10,6 +10,7 @@ from DeepSSMUtils import net_utils
 class ConvolutionalBackbone(nn.Module):
     def __init__(self, img_dims):
         super(ConvolutionalBackbone, self).__init__()
+        print(f"Image dimensions: {img_dims}")
         self.img_dims = img_dims
         # basically using the number of dims and the number of poolings to be used
         # figure out the size of the last fc layer so that this network is general to
@@ -23,6 +24,8 @@ class ConvolutionalBackbone(nn.Module):
 
         if (self.out_fc_dim[0] < 1) or (self.out_fc_dim[1] < 1) or (self.out_fc_dim[2] < 1):
             raise Exception("Image dimensions are too small for the network.  Try reducing the image spacing.  ")
+
+        print(f"Backbone image dimensions: {self.out_fc_dim}")
 
         self.features = nn.Sequential(OrderedDict([
             ('conv1', nn.Conv3d(1, 12, 5)),
@@ -57,6 +60,12 @@ class ConvolutionalBackbone(nn.Module):
     def forward(self, x):
         x_features = self.features(x)
         return x_features
+
+        # for layer in self.features:
+        #     print(f"LAYER: {layer}, input size: {x.size()}")
+        #     x = layer(x)
+        #     print(f"Output size: {x.size()}")
+        # return x
 
 
 class DeterministicEncoder(nn.Module):
@@ -130,20 +139,28 @@ class DeepSSMNet(nn.Module):
         loader = torch.load(self.loader_dir + "validation")
         self.num_corr = loader.dataset.mdl_target[0].shape[0]
         img_dims = loader.dataset.img[0].shape
+        print(f"DeepSSMNEt: Image dimensions: {img_dims}")
         self.img_dims = img_dims[1:]
         # encoder
         if parameters['encoder']['deterministic']:
-            self.encoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir)
+            # self.encoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir)
+            embedding_dim = 10
+            print(f"Num latent: {self.num_latent}")
+            self.encoder = ConditionalDeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir,
+                                                           1, embedding_dim)
+
         if not self.encoder:
             print("Error: Encoder not implemented.")
         # decoder
         if parameters['decoder']['deterministic']:
             if parameters['decoder']['linear']:
-                self.decoder = DeterministicLinearDecoder(self.num_latent, self.num_corr)
+                # self.decoder = DeterministicLinearDecoder(self.num_latent, self.num_corr)
+                self.decoder = ConditionalDeterministicLinearDecoder(self.num_latent, self.num_corr)
         if not self.decoder:
             print("Error: Decoder not implemented.")
 
     def forward(self, x, anatomy_type=None):
+        # print(f"DeepSSMNet: Incoming shape: {x.shape}")
         pca_load, pca_load_unwhiten = self.encoder(x)
 
         if self.pca_whiten:

@@ -144,13 +144,13 @@ def supervised_train(config_file):
 
         bias = torch.from_numpy(orig_mean.flatten()).to(device)  # load the mean here
         weight = torch.from_numpy(orig_pc.T).to(device)  # load the PCA vectors here
-        net.decoder.fc_fine.bias.data.copy_(bias)
-        net.decoder.fc_fine.weight.data.copy_(weight)
+        #net.decoder.fc_fine.bias.data.copy_(bias)
+        #net.decoder.fc_fine.weight.data.copy_(weight)
 
         # define optimizer
         # for the initial steps set the gradient of the final layer to be zero
-        for param in net.decoder.fc_fine.parameters():
-            param.requires_grad = False
+##        for param in net.decoder.fc_fine.parameters():
+##            param.requires_grad = False
 
     train_params = net.parameters()
     opt = torch.optim.Adam(train_params, learning_rate)

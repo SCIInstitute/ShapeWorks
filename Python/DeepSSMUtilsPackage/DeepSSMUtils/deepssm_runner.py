@@ -56,18 +56,18 @@ def run_prep(project):
         optimize.SetUpOptimize(project)
         optimize.Run()
 
-        # Step 5. Groom Training Images
-        print("Grooming training images...")
-        DeepSSMUtils.groom_training_images(project, DeepSSMUtils.get_split_indices(project, "train"))
+    # Step 5. Groom Training Images
+    print("Grooming training images...")
+    DeepSSMUtils.groom_training_images(project, DeepSSMUtils.get_split_indices(project, "train"))
 
-        # Step 6. Groom Validation Images
-        print("Grooming validation images...")
-        DeepSSMUtils.groom_val_test_images(project, DeepSSMUtils.get_split_indices(project, "val"))
+    # Step 6. Groom Validation Images
+    print("Grooming validation images...")
+    DeepSSMUtils.groom_val_test_images(project, DeepSSMUtils.get_split_indices(project, "val"))
 
-        params.set_prep_step_complete(True)
-        params.set_prep_stage(5)
-        params.save_to_project()
-        project.save()
+    params.set_prep_step_complete(True)
+    params.set_prep_stage(5)
+    params.save_to_project()
+    project.save()
 
 
 def run_augmentation(project):
@@ -137,7 +137,7 @@ def run_testing(project):
 
     test_indices = DeepSSMUtils.get_split_indices(project, "test")
 
-    DeepSSMUtils.groom_val_test_images(project, test_indices)
+    # DeepSSMUtils.groom_val_test_images(project, test_indices)
 
     DeepSSMUtils.prepare_data_loaders(project, batch_size, "test");
 
