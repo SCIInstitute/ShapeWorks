@@ -30,9 +30,7 @@ jobs:
 
     - name: OS Setup
       run: |
-        ls /usr/local
-        uname -m
-        echo $CONDA
+        echo CONDA=$CONDA
         sudo chown -R $UID $CONDA
         conda init zsh
         source ~/.zshrc
