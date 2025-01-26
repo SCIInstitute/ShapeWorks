@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - release_v*
-      - 2341-macos-runner
     tags:
     - '*'
   pull_request:
@@ -40,11 +39,6 @@ jobs:
         source ~/.zshrc
         brew install ccache pigz gnu-tar coreutils
 
-    - name: Acquire 11.0 SDK
-      run: |
-        curl -L -o $HOME/MacOSX11.0.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.0.sdk.tar.xz
-        cd $HOME && tar -xJf MacOSX11.0.sdk.tar.xz
-        
     - name: Checkout code
       uses: actions/checkout@v3
       with:
