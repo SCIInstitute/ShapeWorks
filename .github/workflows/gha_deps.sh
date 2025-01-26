@@ -27,8 +27,8 @@ else
 
     # if intel mac and not arm64, using uname -m to detect arm64
     if [[ "$PLATFORM" == "mac-intel" ]]; then
-        export SDKROOT=$HOME/MacOSX10.15.sdk # only needed for MacOS obviously
-        export MACOSX_DEPLOYMENT_TARGET=10.15
+        export SDKROOT=$HOME/MacOSX11.0.sdk # only needed for MacOS obviously
+        export MACOSX_DEPLOYMENT_TARGET=11.0
     fi
 
     if [[ "$PLATFORM" == "linux" ]]; then
