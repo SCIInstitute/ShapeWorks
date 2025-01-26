@@ -28,6 +28,9 @@ jobs:
     
     steps:
 
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3.0.4
+
     - name: OS Setup
       run: |
         echo CONDA=$CONDA
