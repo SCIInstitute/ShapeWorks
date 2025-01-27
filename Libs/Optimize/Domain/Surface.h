@@ -97,6 +97,8 @@ class Surface {
 
     Eigen::Vector3d compute_barycentric_coordinates(const Eigen::Vector3d& pt, int face) const;
 
+    int compute_barycentric_coordinates(const Eigen::Vector3d& pt, int face, double& dist2, Eigen::Vector3d& bary) const;
+
     int compute_face_and_weights(const PointType& p, int idx, Eigen::Vector3d& weights) const;
 
     Eigen::Vector3d geodesic_walk_on_face(Eigen::Vector3d point_a,

@@ -13,6 +13,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkTriangle.h>
 #include <vtkTriangleFilter.h>
+#include <vtkLine.h>
 
 #include "ExternalLibs/robin_hood/robin_hood.h"
 
@@ -44,6 +45,157 @@ using NormalType = Surface::NormalType;
 using VectorType = Surface::VectorType;
 using PointType = Surface::PointType;
 using GradNType = Surface::GradNType;
+
+//------------------------------------------------------------------------------
+//! From vtkTriangle::EvaluatePosition
+int evaluate_position(const double x[3],
+                      double closestPoint[3],
+                      int& subId,
+                      double pcoords[3],
+                      double& dist2,
+                      double weights[],
+                      double pt3[3],
+                      double pt1[3],
+                      double pt2[3]) {
+  int i, j;
+  double n[3], fabsn;
+  double rhs[2], c1[2], c2[2];
+  double det;
+  double maxComponent;
+  int idx = 0, indices[2];
+  double dist2Point, dist2Line1, dist2Line2;
+  double* closest, closestPoint1[3], closestPoint2[3], cp[3];
+
+  subId = 0;
+  pcoords[2] = 0.0;
+
+  // Get normal for triangle, only the normal direction is needed, i.e. the
+  // normal need not be normalized (unit length)
+  vtkTriangle::ComputeNormalDirection(pt1, pt2, pt3, n);
+
+  // Project point to plane
+  vtkPlane::GeneralizedProjectPoint(x, pt1, n, cp);
+
+  // Construct matrices.  Since we have over determined system, need to find
+  // which 2 out of 3 equations to use to develop equations. (Any 2 should
+  // work since we've projected point to plane.)
+  //
+  for (maxComponent = 0.0, i = 0; i < 3; i++) {
+    // trying to avoid an expensive call to fabs()
+    if (n[i] < 0) {
+      fabsn = -n[i];
+    } else {
+      fabsn = n[i];
+    }
+    if (fabsn > maxComponent) {
+      maxComponent = fabsn;
+      idx = i;
+    }
+  }
+  for (j = 0, i = 0; i < 3; i++) {
+    if (i != idx) {
+      indices[j++] = i;
+    }
+  }
+
+  for (i = 0; i < 2; i++) {
+    rhs[i] = cp[indices[i]] - pt3[indices[i]];
+    c1[i] = pt1[indices[i]] - pt3[indices[i]];
+    c2[i] = pt2[indices[i]] - pt3[indices[i]];
+  }
+
+  if ((det = vtkMath::Determinant2x2(c1, c2)) == 0.0) {
+    pcoords[0] = pcoords[1] = 0.0;
+    return -1;
+  }
+
+  pcoords[0] = vtkMath::Determinant2x2(rhs, c2) / det;
+  pcoords[1] = vtkMath::Determinant2x2(c1, rhs) / det;
+
+  // Okay, now find closest point to element
+  //
+  weights[0] = 1 - (pcoords[0] + pcoords[1]);
+  weights[1] = pcoords[0];
+  weights[2] = pcoords[1];
+
+  if (weights[0] >= 0.0 && weights[0] <= 1.0 && weights[1] >= 0.0 && weights[1] <= 1.0 &&
+    weights[2] >= 0.0 && weights[2] <= 1.0) {
+    // projection distance
+    if (closestPoint) {
+      dist2 = vtkMath::Distance2BetweenPoints(cp, x);
+      closestPoint[0] = cp[0];
+      closestPoint[1] = cp[1];
+      closestPoint[2] = cp[2];
+    }
+    return 1;
+  } else {
+    double t;
+    if (closestPoint) {
+      if (weights[1] < 0.0 && weights[2] < 0.0) {
+        dist2Point = vtkMath::Distance2BetweenPoints(x, pt3);
+        dist2Line1 = vtkLine::DistanceToLine(x, pt1, pt3, t, closestPoint1);
+        dist2Line2 = vtkLine::DistanceToLine(x, pt3, pt2, t, closestPoint2);
+        if (dist2Point < dist2Line1) {
+          dist2 = dist2Point;
+          closest = pt3;
+        } else {
+          dist2 = dist2Line1;
+          closest = closestPoint1;
+        }
+        if (dist2Line2 < dist2) {
+          dist2 = dist2Line2;
+          closest = closestPoint2;
+        }
+        for (i = 0; i < 3; i++) {
+          closestPoint[i] = closest[i];
+        }
+      } else if (weights[2] < 0.0 && weights[0] < 0.0) {
+        dist2Point = vtkMath::Distance2BetweenPoints(x, pt1);
+        dist2Line1 = vtkLine::DistanceToLine(x, pt1, pt3, t, closestPoint1);
+        dist2Line2 = vtkLine::DistanceToLine(x, pt1, pt2, t, closestPoint2);
+        if (dist2Point < dist2Line1) {
+          dist2 = dist2Point;
+          closest = pt1;
+        } else {
+          dist2 = dist2Line1;
+          closest = closestPoint1;
+        }
+        if (dist2Line2 < dist2) {
+          dist2 = dist2Line2;
+          closest = closestPoint2;
+        }
+        for (i = 0; i < 3; i++) {
+          closestPoint[i] = closest[i];
+        }
+      } else if (weights[1] < 0.0 && weights[0] < 0.0) {
+        dist2Point = vtkMath::Distance2BetweenPoints(x, pt2);
+        dist2Line1 = vtkLine::DistanceToLine(x, pt2, pt3, t, closestPoint1);
+        dist2Line2 = vtkLine::DistanceToLine(x, pt1, pt2, t, closestPoint2);
+        if (dist2Point < dist2Line1) {
+          dist2 = dist2Point;
+          closest = pt2;
+        } else {
+          dist2 = dist2Line1;
+          closest = closestPoint1;
+        }
+        if (dist2Line2 < dist2) {
+          dist2 = dist2Line2;
+          closest = closestPoint2;
+        }
+        for (i = 0; i < 3; i++) {
+          closestPoint[i] = closest[i];
+        }
+      } else if (weights[0] < 0.0) {
+        dist2 = vtkLine::DistanceToLine(x, pt1, pt2, t, closestPoint);
+      } else if (weights[1] < 0.0) {
+        dist2 = vtkLine::DistanceToLine(x, pt2, pt3, t, closestPoint);
+      } else if (weights[2] < 0.0) {
+        dist2 = vtkLine::DistanceToLine(x, pt1, pt3, t, closestPoint);
+      }
+    }
+    return 0;
+  }
+}
 
 //---------------------------------------------------------------------------
 Surface::Surface(vtkSmartPointer<vtkPolyData> poly_data,
@@ -488,6 +640,14 @@ void Surface::compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::Matrix
 
 //---------------------------------------------------------------------------
 bool Surface::is_in_triangle(const double* pt, int face_index) const {
+  /*
+  double dist2;
+  Eigen::Vector3d bary;
+
+  Eigen::Vector3d pt_eigen(pt[0], pt[1], pt[2]);
+  int ret = compute_barycentric_coordinates(pt_eigen, face_index, dist2, bary);
+*/
+
   double closest[3];
   int sub_id;
   double pcoords[3];
@@ -514,38 +674,45 @@ bool Surface::is_in_triangle(const double* pt, int face_index) const {
 
 //---------------------------------------------------------------------------
 Eigen::Vector3d Surface::compute_barycentric_coordinates(const Eigen::Vector3d& pt, int face) const {
+  Eigen::Vector3d bary;
+  double dist2;
+  compute_barycentric_coordinates(pt, face, dist2, bary);
+  return bary;
+}
 
+//---------------------------------------------------------------------------
+int Surface::compute_barycentric_coordinates(const Eigen::Vector3d& pt,
+                                             int face,
+                                             double& dist2,
+                                             Eigen::Vector3d& bary) const {
   double closest[3];
   int sub_id;
   double pcoords[3];
-  double dist2;
-  Eigen::Vector3d bary;
+
+  double pt1[3], pt2[3], pt3[3];
 
   vtkTriangle* triangle = vtkTriangle::New();
   triangle->GetPoints()->SetPoint(0, poly_data_->GetPoint(triangles_[face].a_));
   triangle->GetPoints()->SetPoint(1, poly_data_->GetPoint(triangles_[face].b_));
   triangle->GetPoints()->SetPoint(2, poly_data_->GetPoint(triangles_[face].c_));
-  triangle->EvaluatePosition(pt.data(), closest, sub_id, pcoords, dist2, bary.data());
-  triangle->Delete();
 
-  return bary;
+  double pto[3] = {pt[0], pt[1], pt[2]};
+  double bary_array[3];
 
-/*
-  // Validate the face ID
-  if (face < 0 || face >= faces_.rows()) {
-    throw std::invalid_argument("Invalid face ID");
-  }
+  int ret = triangle->EvaluatePosition(pto, closest, sub_id, pcoords, dist2, bary_array);
+  bary = Eigen::Vector3d(bary_array[0], bary_array[1], bary_array[2]);
 
-  // Extract vertices of the specified face as Eigen::Vector3d
-  Eigen::Vector3d v0 = vertices_.row(faces_(face, 0));
-  Eigen::Vector3d v1 = vertices_.row(faces_(face, 1));
-  Eigen::Vector3d v2 = vertices_.row(faces_(face, 2));
+  return ret;
 
-  // Compute barycentric coordinates
-  Eigen::Vector3d barycentric_coords;
-  igl::barycentric_coordinates(pt, v0, v1, v2, barycentric_coords);
+  /*
 
-  return barycentric_coords;
+  poly_data_->GetPoint(triangles_[face].a_, pt1);
+  poly_data_->GetPoint(triangles_[face].b_, pt2);
+  poly_data_->GetPoint(triangles_[face].c_, pt3);
+  ???
+
+  int rc = evaluate_position(pt.data(), closest, sub_id, pcoords, dist2, bary.data(), pt1, pt2, pt3);
+  return rc;
   */
 }
 
@@ -612,32 +779,94 @@ Eigen::Vector3d Surface::geodesic_walk_on_face(Eigen::Vector3d point_a,
         std::cerr << "targetBary: " << PrintValue<vec3>(targetBary) << "\n";
         std::cerr << std::endl;
         */
-      break;
-    }
+  break;
+}
 
-    if (target_bary[0] + barycentric_epsilon >= 0 && target_bary[1] + barycentric_epsilon >= 0 &&
-      target_bary[2] + barycentric_epsilon >= 0 && target_bary[0] - barycentric_epsilon <= 1 &&
-      target_bary[1] - barycentric_epsilon <= 1 && target_bary[2] - barycentric_epsilon <= 1) {
+if
+(target_bary[0]
++
+barycentric_epsilon
+>=
+0
+&&
+target_bary [1]
++
+barycentric_epsilon
+>=
+0
+&&
+target_bary [2]
++
+barycentric_epsilon
+>=
+0
+&&
+target_bary [0]
+-
+barycentric_epsilon
+<=
+1
+&&
+target_bary [1]
+-
+barycentric_epsilon
+<=
+1
+&&
+target_bary [2]
+-
+barycentric_epsilon
+<=
+1
+)
+ {
       current_point = target_point;
       break;
     }
 
-    std::vector<int> negative_vertices;
-    for (int i = 0; i < 3; i++) {
+std::vector<int> negative_vertices;
+for
+(
+int i = 0;
+i<3;
+i
+++
+)
+ {
       if (target_bary[i] < 0) {
         negative_vertices.push_back(i);
       }
     }
 
-    if (negative_vertices.size() == 0 || negative_vertices.size() > 2) {
+if
+(negative_vertices
+.
+size()
+==
+0
+||
+negative_vertices
+.
+size()
+>
+2
+)
+ {
       std::cerr << "ERROR: invalid number of negative vertices. Point is not on surface.\n";
       break;
     }
-    int negativeEdge = negative_vertices[0];
-    Eigen::Vector3d intersect = get_barycentric_intersection(current_bary, target_bary, current_face, negativeEdge);
+int negativeEdge = negative_vertices[0];
+Eigen::Vector3d intersect = get_barycentric_intersection(current_bary, target_bary, current_face, negativeEdge);
 
-    // When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
-    if (negative_vertices.size() == 2) {
+// When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
+if
+(negative_vertices
+.
+size()
+==
+2
+)
+ {
       int negativeEdge1 = negative_vertices[1];
       Eigen::Vector3d intersect1 = get_barycentric_intersection(current_bary, target_bary, current_face, negativeEdge1);
 
@@ -653,31 +882,56 @@ Eigen::Vector3d Surface::geodesic_walk_on_face(Eigen::Vector3d point_a,
       }
     }
 
-    Eigen::Vector3d remaining = target_point - intersect;
-    int next_face = get_across_edge(current_face, negativeEdge);
-    if (next_face == -1) {
+Eigen::Vector3d remaining = target_point - intersect;
+int next_face = get_across_edge(current_face, negativeEdge);
+if
+(next_face
+==
+-
+1
+)
+ {
       next_face = slide_along_edge(intersect, remaining, current_face, negativeEdge);
     }
-    remaining_vector = remaining;
-    if (next_face != -1) {
+remaining_vector= remaining;
+if
+(next_face
+!=
+-
+1
+)
+ {
       remaining_vector = rotate_vector_to_face(get_face_normal(current_face),
                                                get_face_normal(next_face),
                                                remaining_vector);
     }
-    current_point = intersect;
-    current_face = next_face;
-    if (current_face != -1) {
+current_point= intersect;
+current_face= next_face;
+if
+(current_face
+!=
+-
+1
+)
+ {
       prev_face = current_face;
     }
-  }
+}
 
-  if (current_face != -1) {
+if
+(current_face
+!=
+-
+1
+)
+ {
     prev_face = current_face;
   }
 
-  ending_face = prev_face;
-  assert(ending_face != -1);
-  return current_point;
+ending_face= prev_face;
+assert(ending_face != -1);
+return
+current_point;
 }
 
 //---------------------------------------------------------------------------
