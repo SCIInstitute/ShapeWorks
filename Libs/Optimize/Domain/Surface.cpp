@@ -1,5 +1,6 @@
 #include "Surface.h"
 
+#include <Mesh/MeshUtils.h>
 #include <geometrycentral/surface/surface_mesh_factories.h>
 #include <igl/grad.h>
 #include <igl/per_vertex_normals.h>
@@ -13,7 +14,6 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkTriangle.h>
 #include <vtkTriangleFilter.h>
-#include <Mesh/MeshUtils.h>
 
 #include "ExternalLibs/robin_hood/robin_hood.h"
 
@@ -44,7 +44,6 @@ using VectorType = Surface::VectorType;
 using PointType = Surface::PointType;
 using GradNType = Surface::GradNType;
 
-
 //---------------------------------------------------------------------------
 Surface::Surface(vtkSmartPointer<vtkPolyData> poly_data,
                  bool is_geodesics_enabled,
@@ -74,25 +73,6 @@ Surface::Surface(vtkSmartPointer<vtkPolyData> poly_data,
 
   vtkSmartPointer<vtkGenericCell> cell = vtkSmartPointer<vtkGenericCell>::New();
 
-  triangles_.reserve(poly_data_->GetNumberOfCells());
-  for (int i = 0; i < poly_data_->GetNumberOfCells(); i++) {
-    poly_data_->GetCell(i, cell);
-    if (cell->GetNumberOfPoints() != 3) {
-      throw std::runtime_error("Mesh input was not triangular");
-    }
-
-    vtkSmartPointer<vtkTriangle> triangle = vtkSmartPointer<vtkTriangle>::New();
-    triangle->GetPointIds()->SetNumberOfIds(3);
-    triangle->GetPointIds()->SetId(0, cell->GetPointId(0));
-    triangle->GetPointIds()->SetId(1, cell->GetPointId(1));
-    triangle->GetPointIds()->SetId(2, cell->GetPointId(2));
-    triangle->GetPoints()->SetPoint(0, cell->GetPoints()->GetPoint(0));
-    triangle->GetPoints()->SetPoint(1, cell->GetPoints()->GetPoint(1));
-    triangle->GetPoints()->SetPoint(2, cell->GetPoints()->GetPoint(2));
-
-    triangles_.push_back(Triangle(cell->GetPointId(0), cell->GetPointId(1), cell->GetPointId(2)));
-  }
-
   cell_locator_ = vtkSmartPointer<vtkCellLocator>::New();
   cell_locator_->SetCacheCellBounds(true);
   cell_locator_->SetDataSet(poly_data_);
@@ -100,12 +80,8 @@ Surface::Surface(vtkSmartPointer<vtkPolyData> poly_data,
 
   compute_mesh_bounds();
 
-  Eigen::MatrixXd V;
-  Eigen::MatrixXi F;
-  get_igl_mesh(V, F);
-
   get_igl_mesh(vertices_, faces_);
-  compute_grad_normals(V, F);
+  compute_grad_normals(vertices_, faces_);
 
   is_geodesics_enabled_ = is_geodesics_enabled;
   if (is_geodesics_enabled_) {
@@ -115,8 +91,8 @@ Surface::Surface(vtkSmartPointer<vtkPolyData> poly_data,
     }
 
     // the caller provides how many times the number of triangles entries should be stored in cache
-    geo_max_cache_entries_ = geodesics_cache_size_multiplier * triangles_.size();
-    precompute_geodesics(V, F);
+    geo_max_cache_entries_ = geodesics_cache_size_multiplier * get_num_faces();
+    precompute_geodesics(vertices_, faces_);
   }
 }
 
@@ -160,8 +136,7 @@ double Surface::compute_distance(const PointType& pt_a,
   // is greater. We do this pre-emptively since GeodesicsFromTriangleToTriangle would pull geodesics to every point
   // into the cache if face_b is not found. 1.5 is an heuristic to pull in a little more than we need
   if (!geo_dist_cache_[face_a].has_entry(face_b)) {
-    const double max_dist =
-        idx_a >= 0 ? particle_neighboorhood_[idx_a] * 1.5 : std::numeric_limits<double>::infinity();
+    const double max_dist = idx_a >= 0 ? particle_neighboorhood_[idx_a] * 1.5 : std::numeric_limits<double>::infinity();
     geodesics_from_triangle(face_a, max_dist, face_b);
   }
 
@@ -237,9 +212,9 @@ bool Surface::is_within_distance(const PointType& pt_a,
     return dist < test_dist;
   }
 
-  const auto vb0 = triangles_[face_b].a_;
-  const auto vb1 = triangles_[face_b].b_;
-  const auto vb2 = triangles_[face_b].c_;
+  const auto vb0 = faces_(face_b, 0);
+  const auto vb1 = faces_(face_b, 1);
+  const auto vb2 = faces_(face_b, 2);
 
   // 1.5 is an heuristic to pull in a little more than we need
   const auto& geo_entry = geodesics_from_triangle(face_a, test_dist * 1.5);
@@ -352,7 +327,7 @@ GradNType Surface::sample_gradient_normal_at_point(PointType p, int idx) const {
   GradNType weighted_grad_normal = GradNType(0.0);
 
   for (int i = 0; i < 3; i++) {
-    auto id = triangles_[face_index].get_point(i);
+    auto id = faces_(face_index, i);
     GradNType grad_normal = grad_normals_[id];
     grad_normal *= weights[i];
     weighted_grad_normal += grad_normal;
@@ -410,8 +385,7 @@ int Surface::get_triangle_for_point(const double pt[3], int idx, double closest_
 }
 
 //---------------------------------------------------------------------------
-Eigen::Vector3d
-Surface::project_vector_to_face(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const {
+Eigen::Vector3d Surface::project_vector_to_face(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const {
   auto old_mag = vector.norm();
 
   Eigen::Vector3d new_vector = vector - normal * normal.dot(vector);
@@ -426,6 +400,9 @@ Surface::project_vector_to_face(const Eigen::Vector3d& normal, const Eigen::Vect
 
   return new_vector;
 }
+
+//---------------------------------------------------------------------------
+int Surface::get_num_faces() { return faces_.rows(); }
 
 //---------------------------------------------------------------------------
 void Surface::compute_mesh_bounds() {
@@ -521,11 +498,12 @@ int Surface::compute_barycentric_coordinates(const Eigen::Vector3d& pt,
   int sub_id;
   double pcoords[3];
 
-  poly_data_->GetPoint(triangles_[face].a_, pt1);
-  poly_data_->GetPoint(triangles_[face].b_, pt2);
-  poly_data_->GetPoint(triangles_[face].c_, pt3);
+  poly_data_->GetPoint(faces_(face, 0), pt1);
+  poly_data_->GetPoint(faces_(face, 1), pt2);
+  poly_data_->GetPoint(faces_(face, 2), pt3);
 
-  int rc = MeshUtils::evaluate_triangle_position(pt.data(), closest, sub_id, pcoords, dist2, bary.data(), pt1, pt2, pt3);
+  int rc =
+      MeshUtils::evaluate_triangle_position(pt.data(), closest, sub_id, pcoords, dist2, bary.data(), pt1, pt2, pt3);
   return rc;
 }
 
@@ -558,8 +536,8 @@ Eigen::Vector3d Surface::geodesic_walk_on_face(Eigen::Vector3d point_a,
 
     Eigen::Vector3d target_point = current_point + remaining_vector;
     // positions.push_back(currentPoint);
-    vec3 target_bary = compute_barycentric_coordinates(vec3(target_point[0], target_point[1], target_point[2]),
-                                                       current_face);
+    vec3 target_bary =
+        compute_barycentric_coordinates(vec3(target_point[0], target_point[1], target_point[2]), current_face);
     // std::cerr << "Target Bary: " << PrintValue<Eigen::Vector3d>(targetBary) << "\n";
 
     if (faces_traversed.size() >= 3 &&
@@ -595,73 +573,21 @@ Eigen::Vector3d Surface::geodesic_walk_on_face(Eigen::Vector3d point_a,
       break;
     }
 
-    if
-    (target_bary[0]
-      +
-      barycentric_epsilon
-      >=
-      0
-      &&
-      target_bary[1]
-      +
-      barycentric_epsilon
-      >=
-      0
-      &&
-      target_bary[2]
-      +
-      barycentric_epsilon
-      >=
-      0
-      &&
-      target_bary[0]
-      -
-      barycentric_epsilon
-      <=
-      1
-      &&
-      target_bary[1]
-      -
-      barycentric_epsilon
-      <=
-      1
-      &&
-      target_bary[2]
-      -
-      barycentric_epsilon
-      <=
-      1
-    ) {
+    if (target_bary[0] + barycentric_epsilon >= 0 && target_bary[1] + barycentric_epsilon >= 0 &&
+      target_bary[2] + barycentric_epsilon >= 0 && target_bary[0] - barycentric_epsilon <= 1 &&
+      target_bary[1] - barycentric_epsilon <= 1 && target_bary[2] - barycentric_epsilon <= 1) {
       current_point = target_point;
       break;
     }
 
     std::vector<int> negative_vertices;
-    for
-    (
-      int i = 0;
-      i < 3;
-      i
-      ++
-    ) {
+    for (int i = 0; i < 3; i++) {
       if (target_bary[i] < 0) {
         negative_vertices.push_back(i);
       }
     }
 
-    if
-    (negative_vertices
-      .
-      size()
-      ==
-      0
-      ||
-      negative_vertices
-      .
-      size()
-      >
-      2
-    ) {
+    if (negative_vertices.size() == 0 || negative_vertices.size() > 2) {
       std::cerr << "ERROR: invalid number of negative vertices. Point is not on surface.\n";
       break;
     }
@@ -669,13 +595,7 @@ Eigen::Vector3d Surface::geodesic_walk_on_face(Eigen::Vector3d point_a,
     Eigen::Vector3d intersect = get_barycentric_intersection(current_bary, target_bary, current_face, negativeEdge);
 
     // When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
-    if
-    (negative_vertices
-      .
-      size()
-      ==
-      2
-    ) {
+    if (negative_vertices.size() == 2) {
       int negativeEdge1 = negative_vertices[1];
       Eigen::Vector3d intersect1 = get_barycentric_intersection(current_bary, target_bary, current_face, negativeEdge1);
 
@@ -693,50 +613,28 @@ Eigen::Vector3d Surface::geodesic_walk_on_face(Eigen::Vector3d point_a,
 
     Eigen::Vector3d remaining = target_point - intersect;
     int next_face = get_across_edge(current_face, negativeEdge);
-    if
-    (next_face
-      ==
-      -
-      1
-    ) {
+    if (next_face == -1) {
       next_face = slide_along_edge(intersect, remaining, current_face, negativeEdge);
     }
     remaining_vector = remaining;
-    if
-    (next_face
-      !=
-      -
-      1
-    ) {
-      remaining_vector = rotate_vector_to_face(get_face_normal(current_face),
-                                               get_face_normal(next_face),
-                                               remaining_vector);
+    if (next_face != -1) {
+      remaining_vector =
+          rotate_vector_to_face(get_face_normal(current_face), get_face_normal(next_face), remaining_vector);
     }
     current_point = intersect;
     current_face = next_face;
-    if
-    (current_face
-      !=
-      -
-      1
-    ) {
+    if (current_face != -1) {
       prev_face = current_face;
     }
   }
 
-  if
-  (current_face
-    !=
-    -
-    1
-  ) {
+  if (current_face != -1) {
     prev_face = current_face;
   }
 
   ending_face = prev_face;
   assert(ending_face != -1);
-  return
-      current_point;
+  return current_point;
 }
 
 //---------------------------------------------------------------------------
@@ -768,14 +666,14 @@ int Surface::get_across_edge(int face_id, int edge_id) const {
   // get the neighbors of the cell
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
 
-  int edge_p1 = triangles_[face_id].get_point(1);
-  int edge_p2 = triangles_[face_id].get_point(2);
+  int edge_p1 = faces_(face_id, 1);
+  int edge_p2 = faces_(face_id, 2);
   if (edge_id == 1) {
-    edge_p1 = triangles_[face_id].get_point(2);
-    edge_p2 = triangles_[face_id].get_point(0);
+    edge_p1 = faces_(face_id, 2);
+    edge_p2 = faces_(face_id, 0);
   } else if (edge_id == 2) {
-    edge_p1 = triangles_[face_id].get_point(0);
-    edge_p2 = triangles_[face_id].get_point(1);
+    edge_p1 = faces_(face_id, 0);
+    edge_p2 = faces_(face_id, 1);
   }
 
   poly_data_->GetCellEdgeNeighbors(face_id, edge_p1, edge_p2, neighbors);
@@ -823,9 +721,7 @@ int Surface::slide_along_edge(Eigen::Vector3d& point, Eigen::Vector3d& remaining
 }
 
 //---------------------------------------------------------------------------
-int Surface::get_face_point_id(int face, int point_id) const {
-  return poly_data_->GetCell(face)->GetPointId(point_id);
-}
+int Surface::get_face_point_id(int face, int point_id) const { return poly_data_->GetCell(face)->GetPointId(point_id); }
 
 //---------------------------------------------------------------------------
 Eigen::Vector3d Surface::get_vertex_coords(int vertex_id) const {
@@ -856,7 +752,7 @@ NormalType Surface::calculate_normal_at_point(PointType p, int idx) const {
   NormalType weighted_normal(0, 0, 0);
 
   for (int i = 0; i < 3; i++) {
-    auto id = triangles_[face_index].get_point(i);
+    auto id = faces_(face_index, i);
     double* normal = poly_data_->GetPointData()->GetNormals()->GetTuple(id);
     weighted_normal[0] = weighted_normal[0] + normal[0] * weights[i];
     weighted_normal[1] = weighted_normal[1] + normal[1] * weights[i];
@@ -959,8 +855,8 @@ void Surface::precompute_geodesics(const Eigen::MatrixXd& V, const Eigen::Matrix
   }
 
   // compute k-ring
-  face_kring_.resize(triangles_.size());
-  for (int f = 0; f < triangles_.size(); f++) {
+  face_kring_.resize(get_num_faces());
+  for (int f = 0; f < get_num_faces(); f++) {
     compute_k_ring(f, kring_, face_kring_[f]);
   }
 }
@@ -991,10 +887,10 @@ const MeshGeoEntry& Surface::geodesics_from_triangle(int f, double max_dist, int
   const auto n_verts = poly_data_->GetNumberOfPoints();
 
   const auto which_vert_of_tri = [&](int tri, int v) {
-    if (triangles_[tri].get_point(0) == v) {
+    if (faces_(tri, 0) == v) {
       return 0;
     }
-    if (triangles_[tri].get_point(1) == v) {
+    if (faces_(tri, 1) == v) {
       return 1;
     }
     return 2;
@@ -1008,7 +904,7 @@ const MeshGeoEntry& Surface::geodesics_from_triangle(int f, double max_dist, int
   // partial mode values, so we don't do that.
   auto incident_cells = vtkSmartPointer<vtkIdList>::New();
   for (int i = 0; i < 3; i++) {
-    const int v = triangles_[f].get_point(i);
+    const int v = faces_(f, i);
     poly_data_->GetPointCells(v, incident_cells);
     for (int j = 0; j < incident_cells->GetNumberOfIds(); j++) {
       const int f_j = incident_cells->GetId(j);
@@ -1030,7 +926,7 @@ const MeshGeoEntry& Surface::geodesics_from_triangle(int f, double max_dist, int
       continue;
     }
     // todo switch to zero-copy API when that is available: https://github.com/nmwsharp/geometry-central/issues/77
-    const auto v = gc_mesh_->vertex(triangles_[f].get_point(i));
+    const auto v = gc_mesh_->vertex(faces_(f, i));
     const auto gc_dists = gc_heatsolver_->computeDistance(v);
     dists[i] = std::move(gc_dists.raw());
   }
@@ -1047,7 +943,7 @@ const MeshGeoEntry& Surface::geodesics_from_triangle(int f, double max_dist, int
 
   if (req_target_f >= 0) {
     for (int i = 0; i < 3; i++) {
-      const int req_v = triangles_[req_target_f].get_point(i);
+      const int req_v = faces_(req_target_f, i);
       max_dist = std::max({max_dist, dists[0][req_v], dists[1][req_v], dists[2][req_v]});
     }
   }
@@ -1066,10 +962,9 @@ const MeshGeoEntry& Surface::geodesics_from_triangle(int f, double max_dist, int
     if (d0 <= max_dist || d1 <= max_dist || d2 <= max_dist) {
       poly_data_->GetPointCells(i, incident_cells);
       for (int j = 0; j < incident_cells->GetNumberOfIds(); j++) {
-        const auto& tri = triangles_[incident_cells->GetId(j)];
-        needed_points.insert(tri.get_point(0));
-        needed_points.insert(tri.get_point(1));
-        needed_points.insert(tri.get_point(2));
+        needed_points.insert(faces_(incident_cells->GetId(j), 0));
+        needed_points.insert(faces_(incident_cells->GetId(j), 1));
+        needed_points.insert(faces_(incident_cells->GetId(j), 2));
 
         if (needed_points.size() >= switch_to_full_at) {
           break;
@@ -1107,9 +1002,9 @@ const MeshGeoEntry& Surface::geodesics_from_triangle(int f, double max_dist, int
 //---------------------------------------------------------------------------
 const Eigen::Matrix3d Surface::geodesics_from_triangle_to_triangle(int f_a, int f_b) const {
   auto& entry = geo_dist_cache_[f_a];
-  const int v0 = triangles_[f_b].get_point(0);
-  const int v1 = triangles_[f_b].get_point(1);
-  const int v2 = triangles_[f_b].get_point(2);
+  const int v0 = faces_(f_b, 0);
+  const int v1 = faces_(f_b, 1);
+  const int v2 = faces_(f_b, 2);
 
   if (entry.is_full_mode()) {
     Eigen::Matrix3d result;
@@ -1182,7 +1077,7 @@ void Surface::compute_k_ring(int f, int k, std::unordered_set<int>& ring) const 
 
   auto neighbors = vtkSmartPointer<vtkIdList>::New();
   for (int i = 0; i < 3; i++) {
-    const int v = triangles_[f].get_point(i);
+    const int v = faces_(f, i);
     poly_data_->GetPointCells(v, neighbors);
     for (int j = 0; j < neighbors->GetNumberOfIds(); j++) {
       const int f_j = neighbors->GetId(j);

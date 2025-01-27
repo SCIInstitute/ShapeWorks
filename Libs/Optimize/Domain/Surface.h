@@ -84,6 +84,8 @@ class Surface {
     bool is_geodesics_enabled() const { return this->is_geodesics_enabled_; }
 
   private:
+
+    int get_num_faces();
     void compute_mesh_bounds();
     void compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
@@ -97,7 +99,10 @@ class Surface {
 
     Eigen::Vector3d compute_barycentric_coordinates(const Eigen::Vector3d& pt, int face) const;
 
-    int compute_barycentric_coordinates(const Eigen::Vector3d& pt, int face, double& dist2, Eigen::Vector3d& bary) const;
+    int compute_barycentric_coordinates(const Eigen::Vector3d& pt,
+                                        int face,
+                                        double& dist2,
+                                        Eigen::Vector3d& bary) const;
 
     int compute_face_and_weights(const PointType& p, int idx, Eigen::Vector3d& weights) const;
 
@@ -136,9 +141,6 @@ class Surface {
     mutable std::vector<double> particle_neighboorhood_;
 
     std::vector<GradNType> grad_normals_;
-
-    // cache of specialized cells for direct access
-    std::vector<Triangle> triangles_;
 
     // bounds of the mesh plus some buffer
     PointType mesh_lower_bound_;
