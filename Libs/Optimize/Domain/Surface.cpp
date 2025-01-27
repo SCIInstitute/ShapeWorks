@@ -640,28 +640,11 @@ void Surface::compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::Matrix
 
 //---------------------------------------------------------------------------
 bool Surface::is_in_triangle(const double* pt, int face_index) const {
-  /*
   double dist2;
   Eigen::Vector3d bary;
 
   Eigen::Vector3d pt_eigen(pt[0], pt[1], pt[2]);
   int ret = compute_barycentric_coordinates(pt_eigen, face_index, dist2, bary);
-*/
-
-  double closest[3];
-  int sub_id;
-  double pcoords[3];
-  double dist2;
-  double bary[3];
-
-  vtkTriangle* triangle = vtkTriangle::New();
-  triangle->GetPoints()->SetPoint(0, poly_data_->GetPoint(triangles_[face_index].a_));
-  triangle->GetPoints()->SetPoint(1, poly_data_->GetPoint(triangles_[face_index].b_));
-  triangle->GetPoints()->SetPoint(2, poly_data_->GetPoint(triangles_[face_index].c_));
-
-  int ret = triangle->EvaluatePosition(pt, closest, sub_id, pcoords, dist2, bary);
-
-  triangle->Delete();
 
   if (ret && dist2 < epsilon) {
     bool bary_check = ((bary[0] >= -epsilon) && (bary[0] <= 1 + epsilon)) &&
@@ -685,35 +668,17 @@ int Surface::compute_barycentric_coordinates(const Eigen::Vector3d& pt,
                                              int face,
                                              double& dist2,
                                              Eigen::Vector3d& bary) const {
+  double pt1[3], pt2[3], pt3[3];
   double closest[3];
   int sub_id;
   double pcoords[3];
 
-  double pt1[3], pt2[3], pt3[3];
-
-  vtkTriangle* triangle = vtkTriangle::New();
-  triangle->GetPoints()->SetPoint(0, poly_data_->GetPoint(triangles_[face].a_));
-  triangle->GetPoints()->SetPoint(1, poly_data_->GetPoint(triangles_[face].b_));
-  triangle->GetPoints()->SetPoint(2, poly_data_->GetPoint(triangles_[face].c_));
-
-  double pto[3] = {pt[0], pt[1], pt[2]};
-  double bary_array[3];
-
-  int ret = triangle->EvaluatePosition(pto, closest, sub_id, pcoords, dist2, bary_array);
-  bary = Eigen::Vector3d(bary_array[0], bary_array[1], bary_array[2]);
-
-  return ret;
-
-  /*
-
   poly_data_->GetPoint(triangles_[face].a_, pt1);
   poly_data_->GetPoint(triangles_[face].b_, pt2);
   poly_data_->GetPoint(triangles_[face].c_, pt3);
-  ???
 
   int rc = evaluate_position(pt.data(), closest, sub_id, pcoords, dist2, bary.data(), pt1, pt2, pt3);
   return rc;
-  */
 }
 
 //---------------------------------------------------------------------------
@@ -779,94 +744,90 @@ Eigen::Vector3d Surface::geodesic_walk_on_face(Eigen::Vector3d point_a,
         std::cerr << "targetBary: " << PrintValue<vec3>(targetBary) << "\n";
         std::cerr << std::endl;
         */
-  break;
-}
+      break;
+    }
 
-if
-(target_bary[0]
-+
-barycentric_epsilon
->=
-0
-&&
-target_bary [1]
-+
-barycentric_epsilon
->=
-0
-&&
-target_bary [2]
-+
-barycentric_epsilon
->=
-0
-&&
-target_bary [0]
--
-barycentric_epsilon
-<=
-1
-&&
-target_bary [1]
--
-barycentric_epsilon
-<=
-1
-&&
-target_bary [2]
--
-barycentric_epsilon
-<=
-1
-)
- {
+    if
+    (target_bary[0]
+      +
+      barycentric_epsilon
+      >=
+      0
+      &&
+      target_bary[1]
+      +
+      barycentric_epsilon
+      >=
+      0
+      &&
+      target_bary[2]
+      +
+      barycentric_epsilon
+      >=
+      0
+      &&
+      target_bary[0]
+      -
+      barycentric_epsilon
+      <=
+      1
+      &&
+      target_bary[1]
+      -
+      barycentric_epsilon
+      <=
+      1
+      &&
+      target_bary[2]
+      -
+      barycentric_epsilon
+      <=
+      1
+    ) {
       current_point = target_point;
       break;
     }
 
-std::vector<int> negative_vertices;
-for
-(
-int i = 0;
-i<3;
-i
-++
-)
- {
+    std::vector<int> negative_vertices;
+    for
+    (
+      int i = 0;
+      i < 3;
+      i
+      ++
+    ) {
       if (target_bary[i] < 0) {
         negative_vertices.push_back(i);
       }
     }
 
-if
-(negative_vertices
-.
-size()
-==
-0
-||
-negative_vertices
-.
-size()
->
-2
-)
- {
+    if
+    (negative_vertices
+      .
+      size()
+      ==
+      0
+      ||
+      negative_vertices
+      .
+      size()
+      >
+      2
+    ) {
       std::cerr << "ERROR: invalid number of negative vertices. Point is not on surface.\n";
       break;
     }
-int negativeEdge = negative_vertices[0];
-Eigen::Vector3d intersect = get_barycentric_intersection(current_bary, target_bary, current_face, negativeEdge);
+    int negativeEdge = negative_vertices[0];
+    Eigen::Vector3d intersect = get_barycentric_intersection(current_bary, target_bary, current_face, negativeEdge);
 
-// When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
-if
-(negative_vertices
-.
-size()
-==
-2
-)
- {
+    // When more than 1 negative barycentric coordinate, compute both intersections and take the closest one.
+    if
+    (negative_vertices
+      .
+      size()
+      ==
+      2
+    ) {
       int negativeEdge1 = negative_vertices[1];
       Eigen::Vector3d intersect1 = get_barycentric_intersection(current_bary, target_bary, current_face, negativeEdge1);
 
@@ -882,56 +843,52 @@ size()
       }
     }
 
-Eigen::Vector3d remaining = target_point - intersect;
-int next_face = get_across_edge(current_face, negativeEdge);
-if
-(next_face
-==
--
-1
-)
- {
+    Eigen::Vector3d remaining = target_point - intersect;
+    int next_face = get_across_edge(current_face, negativeEdge);
+    if
+    (next_face
+      ==
+      -
+      1
+    ) {
       next_face = slide_along_edge(intersect, remaining, current_face, negativeEdge);
     }
-remaining_vector= remaining;
-if
-(next_face
-!=
--
-1
-)
- {
+    remaining_vector = remaining;
+    if
+    (next_face
+      !=
+      -
+      1
+    ) {
       remaining_vector = rotate_vector_to_face(get_face_normal(current_face),
                                                get_face_normal(next_face),
                                                remaining_vector);
     }
-current_point= intersect;
-current_face= next_face;
-if
-(current_face
-!=
--
-1
-)
- {
+    current_point = intersect;
+    current_face = next_face;
+    if
+    (current_face
+      !=
+      -
+      1
+    ) {
       prev_face = current_face;
     }
-}
+  }
 
-if
-(current_face
-!=
--
-1
-)
- {
+  if
+  (current_face
+    !=
+    -
+    1
+  ) {
     prev_face = current_face;
   }
 
-ending_face= prev_face;
-assert(ending_face != -1);
-return
-current_point;
+  ending_face = prev_face;
+  assert(ending_face != -1);
+  return
+      current_point;
 }
 
 //---------------------------------------------------------------------------
