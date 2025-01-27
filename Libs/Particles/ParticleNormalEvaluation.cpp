@@ -129,7 +129,7 @@ Eigen::MatrixXd ParticleNormalEvaluation::compute_particle_normals(
       position[1] = particles(j * 3 + 1, shape);
       position[2] = particles(j * 3 + 2, shape);
 
-      auto normal = meshes[shape]->SampleNormalAtPoint(position);
+      auto normal = meshes[shape]->sample_normal_at_point(position);
       normals(j * 3 + 0, shape) = normal[0];
       normals(j * 3 + 1, shape) = normal[1];
       normals(j * 3 + 2, shape) = normal[2];

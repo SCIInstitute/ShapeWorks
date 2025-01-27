@@ -110,7 +110,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       // cast to MeshDomain
       auto mesh_domain = std::dynamic_pointer_cast<MeshDomain>(domain);
 
-      m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(!mesh_domain->GetMeshWrapper()->IsGeodesicsEnabled());
+      m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(!mesh_domain->GetMeshWrapper()->is_geodesics_enabled());
     } else if (domain->GetDomainType() == DomainType::Contour) {
       m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(false);
     }
@@ -275,7 +275,7 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geod
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh, geodesic_remesh_percent);
-    this->m_meshes.push_back(mesh->GetPolydata());
+    this->m_meshes.push_back(mesh->get_polydata());
   }
   m_DomainList.push_back(domain);
 }

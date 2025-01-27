@@ -37,8 +37,8 @@ class MeshDomain : public ParticleDomain {
     return 0.02;
   }
 
-  const PointType &GetLowerBound() const override { return mesh_wrapper_->GetMeshLowerBound(); }
-  const PointType &GetUpperBound() const override { return mesh_wrapper_->GetMeshUpperBound(); }
+  const PointType &GetLowerBound() const override { return mesh_wrapper_->get_mesh_lower_bound(); }
+  const PointType &GetUpperBound() const override { return mesh_wrapper_->get_mesh_upper_bound(); }
 
   PointType GetZeroCrossingPoint() const override;
 

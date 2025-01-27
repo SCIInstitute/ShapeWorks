@@ -14,169 +14,183 @@
 class vtkCellLocator;
 
 namespace shapeworks {
-
 //! Simple struct to represent a triangle in 3D space
 class Triangle {
- public:
-  Triangle() = default;
-  Triangle(int a, int b, int c) : a_(a), b_(b), c_(c) {}
-
-  int get_point(int id) const {
-    if (id == 0) {
-      return a_;
-    } else if (id == 1) {
-      return b_;
-    } else if (id == 2) {
-      return c_;
+  public:
+    Triangle() = default;
+    Triangle(const int a, const int b, const int c) : a_(a), b_(b), c_(c) {
     }
-    throw std::runtime_error("Invalid point id");
-  }
 
-  int a_, b_, c_;
+    int get_point(const int id) const {
+      if (id == 0) {
+        return a_;
+      } else if (id == 1) {
+        return b_;
+      } else if (id == 2) {
+        return c_;
+      }
+      throw std::runtime_error("Invalid point id");
+    }
+
+    int a_, b_, c_;
 };
 
 class MeshWrapper {
- public:
-  using PointType = ParticleDomain::PointType;
-  using GradNType = ParticleDomain::GradNType;
+  public:
+    using PointType = ParticleDomain::PointType;
+    using GradNType = ParticleDomain::GradNType;
 
-  using NormalType = vnl_vector_fixed<float, 3>;
-  using VectorType = vnl_vector_fixed<double, 3>;
+    using NormalType = vnl_vector_fixed<float, 3>;
+    using VectorType = vnl_vector_fixed<double, 3>;
 
-  explicit MeshWrapper(vtkSmartPointer<vtkPolyData> mesh, bool geodesics_enabled = false,
-                       size_t geodesics_cache_multiplier_size = 0);  // 0 => MeshWrapper will choose a heuristic
+    explicit MeshWrapper(vtkSmartPointer<vtkPolyData> mesh,
+                         bool geodesics_enabled = false,
+                         size_t geodesics_cache_multiplier_size = 0); // 0 => MeshWrapper will choose a heuristic
 
-  ~MeshWrapper() = default;
+    ~MeshWrapper() = default;
 
-  double compute_distance(const PointType& pointa, int idxa, const PointType& pointb, int idxb,
-                         VectorType* out_grad = nullptr) const;
+    double compute_distance(const PointType& pointa,
+                            int idxa,
+                            const PointType& pointb,
+                            int idxb,
+                            VectorType* out_grad = nullptr) const;
 
-  bool IsWithinDistance(const PointType& pointa, int idxa, const PointType& pointb, int idxb, double test_dist,
-                        double& dist) const;
+    bool is_within_distance(const PointType& pointa,
+                            int idxa,
+                            const PointType& pointb,
+                            int idxb,
+                            double test_dist,
+                            double& dist) const;
 
-  PointType GeodesicWalk(PointType p, int idx, VectorType vector) const;
+    PointType geodesic_walk(PointType p, int idx, VectorType vector) const;
 
-  VectorType ProjectVectorToSurfaceTangent(const PointType& pointa, int idx, VectorType& vector) const;
+    VectorType project_vector_to_surface_tangent(const PointType& pointa, int idx, VectorType& vector) const;
 
-  NormalType SampleNormalAtPoint(PointType p, int idx = -1) const;
-  GradNType SampleGradNAtPoint(PointType p, int idx) const;
+    NormalType sample_normal_at_point(PointType p, int idx = -1) const;
+    GradNType sample_gradient_normal_at_point(PointType p, int idx) const;
 
-  PointType SnapToMesh(PointType pointa, int idx) const;
+    PointType snap_to_mesh(PointType pointa, int idx) const;
 
-  PointType GetPointOnMesh() const;
+    PointType get_point_on_mesh() const;
 
-  inline const PointType& GetMeshLowerBound() const { return mesh_lower_bound_; }
+    inline const PointType& get_mesh_lower_bound() const { return mesh_lower_bound_; }
 
-  inline const PointType& GetMeshUpperBound() const { return mesh_upper_bound_; }
+    inline const PointType& get_mesh_upper_bound() const { return mesh_upper_bound_; }
 
-  virtual void InvalidateParticle(int idx);
+    virtual void invalidate_particle(int idx);
 
-  inline vtkSmartPointer<vtkPolyData> GetPolydata() const { return original_mesh_; }
+    inline vtkSmartPointer<vtkPolyData> get_polydata() const { return original_mesh_; }
 
-  bool IsGeodesicsEnabled() const { return this->is_geodesics_enabled_; }
+    bool is_geodesics_enabled() const { return this->is_geodesics_enabled_; }
 
- private:
-  void ComputeMeshBounds();
-  void ComputeGradN(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
+  private:
+    void compute_mesh_bounds();
+    void compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
-  int GetTriangleForPoint(const double pt[3], int idx, double closest_point[3]) const;
+    int get_triangle_for_point(const double pt[3], int idx, double closest_point[3]) const;
 
-  Eigen::Vector3d ProjectVectorToFace(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const;
+    Eigen::Vector3d project_vector_to_face(const Eigen::Vector3d& normal, const Eigen::Vector3d& vector) const;
 
-  const Eigen::Vector3d GetFaceNormal(int face_index) const;
+    const Eigen::Vector3d get_face_normal(int face_index) const;
 
-  bool IsInTriangle(const double pt[3], int face_index) const;
+    bool is_in_triangle(const double pt[3], int face_index) const;
 
-  Eigen::Vector3d ComputeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const;
+    Eigen::Vector3d compute_barycentric_coordinates(const Eigen::Vector3d& pt, int face) const;
 
-  int ComputeFaceAndWeights(const PointType& p, int idx, Eigen::Vector3d& weights) const;
+    int compute_face_and_weights(const PointType& p, int idx, Eigen::Vector3d& weights) const;
 
-  Eigen::Vector3d GeodesicWalkOnFace(Eigen::Vector3d point_a, Eigen::Vector3d projected_vector, int face_index,
-                                     int& ending_face) const;
+    Eigen::Vector3d geodesic_walk_on_face(Eigen::Vector3d point_a,
+                                          Eigen::Vector3d projected_vector,
+                                          int face_index,
+                                          int& ending_face) const;
 
-  Eigen::Vector3d GetBarycentricIntersection(Eigen::Vector3d start, Eigen::Vector3d end, int currentFace,
-                                             int edge) const;
+    Eigen::Vector3d get_barycentric_intersection(Eigen::Vector3d start,
+                                                 Eigen::Vector3d end,
+                                                 int currentFace,
+                                                 int edge) const;
 
-  int GetAcrossEdge(int face, int edge) const;
+    int get_across_edge(int face, int edge) const;
 
-  int GetFacePointID(int face, int point_id) const;
+    int get_face_point_id(int face, int point_id) const;
 
-  int SlideAlongEdge(Eigen::Vector3d& point, Eigen::Vector3d& remainingVector_, int face_, int edge_) const;
+    int slide_along_edge(Eigen::Vector3d& point, Eigen::Vector3d& remainingVector_, int face_, int edge_) const;
 
-  Eigen::Vector3d GetVertexCoords(int vertex_id) const;
+    Eigen::Vector3d get_vertex_coords(int vertex_id) const;
 
-  Eigen::Vector3d RotateVectorToFace(const Eigen::Vector3d& prev_normal, const Eigen::Vector3d& next_normal,
-                                     const Eigen::Vector3d& vector) const;
+    Eigen::Vector3d rotate_vector_to_face(const Eigen::Vector3d& prev_normal,
+                                          const Eigen::Vector3d& next_normal,
+                                          const Eigen::Vector3d& vector) const;
 
-  vtkSmartPointer<vtkPolyData> poly_data_;
-  vtkSmartPointer<vtkPolyData> original_mesh_;
+    vtkSmartPointer<vtkPolyData> poly_data_;
+    vtkSmartPointer<vtkPolyData> original_mesh_;
 
-  NormalType CalculateNormalAtPoint(MeshWrapper::PointType p, int idx) const;
+    NormalType calculate_normal_at_point(MeshWrapper::PointType p, int idx) const;
 
-  // Caches of triangle, normal and position
-  // Has to be mutable because all of the accessor APIs are const
-  mutable std::vector<int> particle_triangles_;
-  mutable std::vector<NormalType> particle_normals_;
-  mutable std::vector<PointType> particle_positions_;
-  mutable std::vector<double> particle_neighboorhood_;
+    // Caches of triangle, normal and position
+    // Has to be mutable because all of the accessor APIs are const
+    mutable std::vector<int> particle_triangles_;
+    mutable std::vector<NormalType> particle_normals_;
+    mutable std::vector<PointType> particle_positions_;
+    mutable std::vector<double> particle_neighboorhood_;
 
-  std::vector<GradNType> grad_normals_;
+    std::vector<GradNType> grad_normals_;
 
-  // cache of specialized cells for direct access
-  std::vector<Triangle> triangles_;
+    // cache of specialized cells for direct access
+    std::vector<Triangle> triangles_;
 
-  // bounds of the mesh plus some buffer
-  PointType mesh_lower_bound_;
-  PointType mesh_upper_bound_;
+    // bounds of the mesh plus some buffer
+    PointType mesh_lower_bound_;
+    PointType mesh_upper_bound_;
 
-  // cell locator to find closest point on mesh
-  vtkSmartPointer<vtkCellLocator> cell_locator_;
+    // cell locator to find closest point on mesh
+    vtkSmartPointer<vtkCellLocator> cell_locator_;
 
-  /////////////////////////
-  // Geodesic distances
+    /////////////////////////
+    // Geodesic distances
 
-  bool is_geodesics_enabled_{false};
+    bool is_geodesics_enabled_{false};
 
-  // Geometry Central data structures
-  std::unique_ptr<geometrycentral::surface::SurfaceMesh> gc_mesh_;
-  std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
-  std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
+    // Geometry Central data structures
+    std::unique_ptr<geometrycentral::surface::SurfaceMesh> gc_mesh_;
+    std::unique_ptr<geometrycentral::surface::VertexPositionGeometry> gc_geometry_;
+    std::unique_ptr<geometrycentral::surface::HeatMethodDistanceSolver> gc_heatsolver_;
 
-  size_t geo_max_cache_entries_{0};
-  mutable size_t geo_cache_size_{0};
+    size_t geo_max_cache_entries_{0};
+    mutable size_t geo_cache_size_{0};
 
-  // Flattened version of libigl's gradient operator
-  std::vector<Eigen::Matrix3d> face_grad_;
+    // Flattened version of libigl's gradient operator
+    std::vector<Eigen::Matrix3d> face_grad_;
 
-  std::vector<std::unordered_set<int>> face_kring_;
+    std::vector<std::unordered_set<int> > face_kring_;
 
-  // Cache for geodesic distances from a triangle
-  mutable std::vector<MeshGeoEntry> geo_dist_cache_;
+    // Cache for geodesic distances from a triangle
+    mutable std::vector<MeshGeoEntry> geo_dist_cache_;
 
-  // Returns true if face f_a is in the K-ring of face f_b
-  bool AreFacesInKRing(int f_a, int f_b) const;
-  const size_t kring_{1};
+    // Returns true if face f_a is in the K-ring of face f_b
+    bool are_faces_in_k_ring(int f_a, int f_b) const;
+    const size_t kring_{1};
 
-  // Convert the mesh to libigl data structures
-  void GetIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
+    // Convert the mesh to libigl data structures
+    void get_igl_mesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const;
 
-  // Precompute heat data structures for faster geodesic lookups
-  void PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
+    // Precompute heat data structures for faster geodesic lookups
+    void precompute_geodesics(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
 
-  void ComputeKRing(int f, int k, std::unordered_set<int>& ring) const;
+    void compute_k_ring(int f, int k, std::unordered_set<int>& ring) const;
 
-  const MeshGeoEntry& GeodesicsFromTriangle(int f, double max_dist = std::numeric_limits<double>::max(),
-                                            int req_target_f = -1) const;
-  const Eigen::Matrix3d GeodesicsFromTriangleToTriangle(int f_a, int f_b) const;
-  void ClearGeodesicCache() const;
+    const MeshGeoEntry& geodesics_from_triangle(int f,
+                                                double max_dist = std::numeric_limits<double>::max(),
+                                                int req_target_f = -1) const;
+    const Eigen::Matrix3d geodesics_from_triangle_to_triangle(int f_a, int f_b) const;
+    void clear_geodesic_cache() const;
 
-  // Store some info about the last query. This accelerates the computation
-  // because the optimizer generally asks for the distances _from_ the same
-  // point as the previous query.
-  mutable bool geo_lq_cached_{false};
-  mutable PointType geo_lq_pt_a_{-1};
-  mutable int geo_lq_face_{-1};
-  mutable Eigen::Vector3d geo_lq_bary_;
-  void FetchAndCacheFirstPoint(const PointType pt_a, int idx_a, int& face_a, Eigen::Vector3d& bary_a) const;
+    // Store some info about the last query. This accelerates the computation
+    // because the optimizer generally asks for the distances _from_ the same
+    // point as the previous query.
+    mutable bool geo_lq_cached_{false};
+    mutable PointType geo_lq_pt_a_{-1};
+    mutable int geo_lq_face_{-1};
+    mutable Eigen::Vector3d geo_lq_bary_;
+    void fetch_and_cache_first_point(const PointType pt_a, int idx_a, int& face_a, Eigen::Vector3d& bary_a) const;
 };
-}  // namespace shapeworks
+} // namespace shapeworks
