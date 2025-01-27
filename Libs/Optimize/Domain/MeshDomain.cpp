@@ -64,12 +64,12 @@ ParticleDomain::GradNType MeshDomain::SampleGradNAtPoint(const PointType &p, int
 //-------------------------------------------------------------------
 double MeshDomain::Distance(const PointType &a, int idx_a, const PointType &b, int idx_b,
                             vnl_vector_fixed<double, 3> *out_grad) const {
-  return geodesics_mesh_->ComputeDistance(a, idx_a, b, idx_b, out_grad);
+  return geodesics_mesh_->compute_distance(a, idx_a, b, idx_b, out_grad);
 }
 
 //-------------------------------------------------------------------
 double MeshDomain::SquaredDistance(const PointType &a, int idx_a, const PointType &b, int idx_b) const {
-  double dist = geodesics_mesh_->ComputeDistance(a, idx_a, b, idx_b);
+  double dist = geodesics_mesh_->compute_distance(a, idx_a, b, idx_b);
   return dist * dist;
 }
 

@@ -507,7 +507,7 @@ TEST(OptimizeTests, mesh_geodesics_test) {
       const auto pt_b = polar2cart(theta1, phi1);
       const double a_dot_b = std::max(std::min(dot_product(pt_a.GetVnlVector(), pt_b.GetVnlVector()), 1.0), -1.0);
 
-      const double computed = mesh.ComputeDistance(pt_a, -1, pt_b, -1);
+      const double computed = mesh.compute_distance(pt_a, -1, pt_b, -1);
       const double truth = acos(a_dot_b);
 
       // std::cerr << "Geodesics test: " << computed << " " << truth << "\n";

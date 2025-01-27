@@ -6,12 +6,10 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-#include <unordered_map>
 #include <unordered_set>
 
 #include "Libs/Optimize/Domain/ParticleDomain.h"
 #include "MeshGeoEntry.h"
-#include "MeshWrapper.h"
 
 class vtkCellLocator;
 
@@ -50,7 +48,7 @@ class MeshWrapper {
 
   ~MeshWrapper() = default;
 
-  double ComputeDistance(const PointType& pointa, int idxa, const PointType& pointb, int idxb,
+  double compute_distance(const PointType& pointa, int idxa, const PointType& pointb, int idxb,
                          VectorType* out_grad = nullptr) const;
 
   bool IsWithinDistance(const PointType& pointa, int idxa, const PointType& pointb, int idxb, double test_dist,
