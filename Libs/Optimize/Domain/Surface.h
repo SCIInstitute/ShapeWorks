@@ -65,7 +65,7 @@ class Surface {
   private:
     int get_num_faces();
     void compute_mesh_bounds();
-    void compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
+    void compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) const;
 
     int get_triangle_for_point(const double pt[3], int idx, double closest_point[3]) const;
 
@@ -118,7 +118,7 @@ class Surface {
     mutable std::vector<PointType> particle_positions_;
     mutable std::vector<double> particle_neighboorhood_;
 
-    std::vector<GradNType> grad_normals_;
+    mutable std::vector<GradNType> grad_normals_;
 
     // bounds of the mesh plus some buffer
     PointType mesh_lower_bound_;

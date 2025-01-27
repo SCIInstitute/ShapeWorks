@@ -81,7 +81,6 @@ Surface::Surface(vtkSmartPointer<vtkPolyData> poly_data,
   compute_mesh_bounds();
 
   get_igl_mesh(vertices_, faces_);
-  compute_grad_normals(vertices_, faces_);
 
   is_geodesics_enabled_ = is_geodesics_enabled;
   if (is_geodesics_enabled_) {
@@ -326,6 +325,10 @@ GradNType Surface::sample_gradient_normal_at_point(PointType p, int idx) const {
 
   GradNType weighted_grad_normal = GradNType(0.0);
 
+  if (grad_normals_.size() == 0) {
+    compute_grad_normals(vertices_, faces_);
+  }
+
   for (int i = 0; i < 3; i++) {
     auto id = faces_(face_index, i);
     GradNType grad_normal = grad_normals_[id];
@@ -418,7 +421,7 @@ void Surface::compute_mesh_bounds() {
 }
 
 //---------------------------------------------------------------------------
-void Surface::compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) {
+void Surface::compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) const {
   const int n_verts = V.rows();
   const int n_faces = F.rows();
 
