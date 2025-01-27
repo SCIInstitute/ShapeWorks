@@ -17,6 +17,26 @@ class vtkCellLocator;
 
 namespace shapeworks {
 
+//! Simple struct to represent a triangle in 3D space
+class Triangle {
+ public:
+  Triangle() = default;
+  Triangle(int a, int b, int c) : a_(a), b_(b), c_(c) {}
+
+  int get_point(int id) const {
+    if (id == 0) {
+      return a_;
+    } else if (id == 1) {
+      return b_;
+    } else if (id == 2) {
+      return c_;
+    }
+    throw std::runtime_error("Invalid point id");
+  }
+
+  int a_, b_, c_;
+};
+
 class MeshWrapper {
  public:
   using PointType = ParticleDomain::PointType;
@@ -105,7 +125,7 @@ class MeshWrapper {
   std::vector<GradNType> grad_normals_;
 
   // cache of specialized cells for direct access
-  std::vector<vtkSmartPointer<vtkTriangle>> triangles_;
+  std::vector<Triangle> triangles_;
 
   // bounds of the mesh plus some buffer
   PointType mesh_lower_bound_;
