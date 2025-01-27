@@ -14,27 +14,6 @@
 class vtkCellLocator;
 
 namespace shapeworks {
-//! Simple struct to represent a triangle in 3D space
-class Triangle {
-  public:
-    Triangle() = default;
-    Triangle(const int a, const int b, const int c) : a_(a), b_(b), c_(c) {
-    }
-
-    int get_point(const int id) const {
-      if (id == 0) {
-        return a_;
-      } else if (id == 1) {
-        return b_;
-      } else if (id == 2) {
-        return c_;
-      }
-      throw std::runtime_error("Invalid point id");
-    }
-
-    int a_, b_, c_;
-};
-
 class Surface {
   public:
     using PointType = ParticleDomain::PointType;
@@ -67,7 +46,7 @@ class Surface {
     VectorType project_vector_to_surface_tangent(const PointType& pointa, int idx, VectorType& vector) const;
 
     NormalType sample_normal_at_point(PointType p, int idx = -1) const;
-    GradNType sample_gradient_normal_at_point(PointType p, int idx) const;
+    GradNType sample_gradient_normal_at_point(PointType p, int idx);
 
     PointType snap_to_mesh(PointType pointa, int idx) const;
 
@@ -84,7 +63,6 @@ class Surface {
     bool is_geodesics_enabled() const { return this->is_geodesics_enabled_; }
 
   private:
-
     int get_num_faces();
     void compute_mesh_bounds();
     void compute_grad_normals(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F);
