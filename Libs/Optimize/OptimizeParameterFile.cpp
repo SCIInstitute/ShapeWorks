@@ -7,7 +7,7 @@
 
 #include "ExternalLibs/tinyxml/tinyxml.h"
 #include "Libs/Optimize/Domain/DomainType.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/Surface.h"
 #include "Optimize.h"
 
 namespace shapeworks {
