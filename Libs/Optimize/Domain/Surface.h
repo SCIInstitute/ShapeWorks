@@ -35,7 +35,7 @@ class Triangle {
     int a_, b_, c_;
 };
 
-class MeshWrapper {
+class Surface {
   public:
     using PointType = ParticleDomain::PointType;
     using GradNType = ParticleDomain::GradNType;
@@ -43,11 +43,11 @@ class MeshWrapper {
     using NormalType = vnl_vector_fixed<float, 3>;
     using VectorType = vnl_vector_fixed<double, 3>;
 
-    explicit MeshWrapper(vtkSmartPointer<vtkPolyData> mesh,
-                         bool geodesics_enabled = false,
-                         size_t geodesics_cache_multiplier_size = 0); // 0 => MeshWrapper will choose a heuristic
+    explicit Surface(vtkSmartPointer<vtkPolyData> mesh,
+                     bool geodesics_enabled = false,
+                     size_t geodesics_cache_multiplier_size = 0); // 0 => MeshWrapper will choose a heuristic
 
-    ~MeshWrapper() = default;
+    ~Surface() = default;
 
     double compute_distance(const PointType& pointa,
                             int idxa,
@@ -124,7 +124,7 @@ class MeshWrapper {
     vtkSmartPointer<vtkPolyData> poly_data_;
     vtkSmartPointer<vtkPolyData> original_mesh_;
 
-    NormalType calculate_normal_at_point(MeshWrapper::PointType p, int idx) const;
+    NormalType calculate_normal_at_point(Surface::PointType p, int idx) const;
 
     // Caches of triangle, normal and position
     // Has to be mutable because all of the accessor APIs are const
@@ -192,5 +192,8 @@ class MeshWrapper {
     mutable int geo_lq_face_{-1};
     mutable Eigen::Vector3d geo_lq_bary_;
     void fetch_and_cache_first_point(const PointType pt_a, int idx_a, int& face_a, Eigen::Vector3d& bary_a) const;
+
+    Eigen::MatrixXd vertices_;
+    Eigen::MatrixXi faces_;
 };
 } // namespace shapeworks

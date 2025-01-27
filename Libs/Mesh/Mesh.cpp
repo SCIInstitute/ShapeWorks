@@ -60,7 +60,7 @@
 
 #include "FEFixMesh.h"
 #include "Image.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/Surface.h"
 #include "Logging.h"
 #include "MeshComputeThickness.h"
 #include "MeshUtils.h"
@@ -785,8 +785,8 @@ double Mesh::geodesicDistance(int source, int target) const {
     throw std::invalid_argument("requested point ids outside range of points available in mesh");
   }
 
-  MeshWrapper wrap(this->poly_data_, true);
-  return wrap.compute_distance(getPoint(source), -1, getPoint(target), -1);
+  Surface surface(this->poly_data_, true);
+  return surface.compute_distance(getPoint(source), -1, getPoint(target), -1);
 }
 
 Field Mesh::geodesicDistance(const Point3 landmark) const {
@@ -795,10 +795,10 @@ Field Mesh::geodesicDistance(const Point3 landmark) const {
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("GeodesicDistanceToLandmark");
 
-  MeshWrapper wrap(this->poly_data_, true);
+  Surface surface(this->poly_data_, true);
 
   for (int i = 0; i < numPoints(); i++) {
-    distance->SetValue(i, wrap.compute_distance(landmark, -1, getPoint(i), -1));
+    distance->SetValue(i, surface.compute_distance(landmark, -1, getPoint(i), -1));
   }
 
   return distance;
@@ -1767,7 +1767,7 @@ Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const {
   return grad;
 }
 
-// WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+// WARNING: Copied directly from Surface. TODO: When refactoring, take this into account.
 vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const {
   const int n_verts = this->poly_data_->GetNumberOfPoints();
   const int n_faces = this->poly_data_->GetNumberOfCells();
