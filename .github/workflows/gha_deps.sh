@@ -25,12 +25,6 @@ else
 
     NPROCS=4
 
-    # if intel mac and not arm64, using uname -m to detect arm64
-    if [[ "$PLATFORM" == "mac-intel" ]]; then
-        export SDKROOT=$HOME/MacOSX10.15.sdk # only needed for MacOS obviously
-        export MACOSX_DEPLOYMENT_TARGET=10.15
-    fi
-
     if [[ "$PLATFORM" == "linux" ]]; then
         # GHA runner is running out of resources with 4 now on linux
 	NPROCS=2
