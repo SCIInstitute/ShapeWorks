@@ -46,7 +46,7 @@ class Surface {
     VectorType project_vector_to_surface_tangent(const PointType& pointa, int idx, VectorType& vector) const;
 
     NormalType sample_normal_at_point(PointType p, int idx = -1) const;
-    GradNType sample_gradient_normal_at_point(PointType p, int idx);
+    GradNType sample_gradient_normal_at_point(PointType p, int idx) const;
 
     PointType snap_to_mesh(PointType pointa, int idx) const;
 
