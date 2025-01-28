@@ -32,7 +32,7 @@ class Shape {
    public:
     Point(){};
     Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z){};
-    double x, y, z;
+    double x = 0, y = 0, z = 0;
   };
 
   Shape();
