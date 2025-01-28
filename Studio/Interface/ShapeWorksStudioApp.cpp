@@ -1217,7 +1217,6 @@ void ShapeWorksStudioApp::handle_project_changed() {
   }
 
   if (session_->get_shapes().size() == 0) {
-    new_session();
     analysis_tool_->reset_stats();
     lightbox_->clear_renderers();
   }
