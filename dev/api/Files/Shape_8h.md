@@ -58,7 +58,7 @@ class Shape {
    public:
     Point(){};
     Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z){};
-    double x, y, z;
+    double x = 0, y = 0, z = 0;
   };
 
   Shape();
@@ -244,4 +244,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2025-01-28 at 00:25:10 +0000
+Updated on 2025-01-28 at 22:52:41 +0000

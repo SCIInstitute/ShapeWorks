@@ -80,7 +80,7 @@ class Lightbox : public QObject {
 
   void redraw();
 
-  void handle_pick(int* click_pos, bool one, bool ctrl);
+  void handle_pick(int* click_pos, bool one, bool ctrl, vtkRenderer* renderer);
 
   void handle_hover(int* click_pos);
 
@@ -112,7 +112,7 @@ class Lightbox : public QObject {
   void update_feature_range();
 
   void update_interactor_style();
-  
+
   void set_shared_brightness_and_contrast(double brightness, double contrast);
 
   vtkRenderWindow* get_render_window();
@@ -181,4 +181,4 @@ class Lightbox : public QObject {
 
 -------------------------------
 
-Updated on 2025-01-28 at 00:25:10 +0000
+Updated on 2025-01-28 at 22:52:41 +0000

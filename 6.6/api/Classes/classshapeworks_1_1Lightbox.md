@@ -44,7 +44,7 @@ Inherits from QObject
 | void | **[set_start_row](../Classes/classshapeworks_1_1Lightbox.md#function-set-start-row)**(int row) |
 | ViewerList | **[get_viewers](../Classes/classshapeworks_1_1Lightbox.md#function-get-viewers)**() |
 | void | **[redraw](../Classes/classshapeworks_1_1Lightbox.md#function-redraw)**() |
-| void | **[handle_pick](../Classes/classshapeworks_1_1Lightbox.md#function-handle-pick)**(int * click_pos, bool one, bool ctrl) |
+| void | **[handle_pick](../Classes/classshapeworks_1_1Lightbox.md#function-handle-pick)**(int * click_pos, bool one, bool ctrl, vtkRenderer * renderer) |
 | void | **[handle_hover](../Classes/classshapeworks_1_1Lightbox.md#function-handle-hover)**(int * click_pos) |
 | void | **[handle_key](../Classes/classshapeworks_1_1Lightbox.md#function-handle-key)**(int * click_pos, std::string key) |
 | void | **[handle_right_click](../Classes/classshapeworks_1_1Lightbox.md#function-handle-right-click)**(int * click_pos, vtkRenderer * renderer)<br>Handle a right click that did not involve any movement.  |
@@ -204,7 +204,8 @@ void redraw()
 void handle_pick(
     int * click_pos,
     bool one,
-    bool ctrl
+    bool ctrl,
+    vtkRenderer * renderer
 )
 ```
 
@@ -358,4 +359,4 @@ vtkRenderWindow * get_render_window()
 
 -------------------------------
 
-Updated on 2025-01-28 at 00:25:09 +0000
+Updated on 2025-01-28 at 22:52:40 +0000

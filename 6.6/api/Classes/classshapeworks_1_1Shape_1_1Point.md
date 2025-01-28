@@ -53,24 +53,24 @@ inline Point(
 ### variable x
 
 ```cpp
-double x;
+double x = 0;
 ```
 
 
 ### variable y
 
 ```cpp
-double y;
+double y = 0;
 ```
 
 
 ### variable z
 
 ```cpp
-double z;
+double z = 0;
 ```
 
 
 -------------------------------
 
-Updated on 2025-01-28 at 00:25:10 +0000
+Updated on 2025-01-28 at 22:52:41 +0000
