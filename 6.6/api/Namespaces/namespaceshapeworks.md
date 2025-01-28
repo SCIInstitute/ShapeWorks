@@ -96,7 +96,6 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::MeshWorker](../Classes/classshapeworks_1_1MeshWorker.md)**  |
 | class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction.  |
 | class | **[shapeworks::MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)**  |
-| class | **[shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)**  |
 | class | **[shapeworks::MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)**  |
 | struct | **[shapeworks::MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)**  |
 | class | **[shapeworks::NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md)**  |
@@ -171,6 +170,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
 | class | **[shapeworks::Style](../Classes/classshapeworks_1_1Style.md)**  |
 | class | **[shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject.  |
+| class | **[shapeworks::Surface](../Classes/classshapeworks_1_1Surface.md)**  |
 | class | **[shapeworks::Telemetry](../Classes/classshapeworks_1_1Telemetry.md)**  |
 | class | **[shapeworks::UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker.  |
 | class | **[shapeworks::Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types.  |
@@ -2588,4 +2588,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:49 +0000
+Updated on 2025-01-28 at 00:25:09 +0000

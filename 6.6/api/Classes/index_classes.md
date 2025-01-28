@@ -171,7 +171,6 @@ title: Classes
     * **class [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction. 
     * **class [MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)** 
     * **class [MeshWorker](../Classes/classshapeworks_1_1MeshWorker.md)** 
-    * **class [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)** 
     * **class [MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)** 
     * **struct [MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)** 
     * **class [NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md)** 
@@ -251,6 +250,7 @@ title: Classes
     * **class [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages. 
     * **class [Style](../Classes/classshapeworks_1_1Style.md)** 
     * **class [Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject. 
+    * **class [Surface](../Classes/classshapeworks_1_1Surface.md)** 
     * **class [Telemetry](../Classes/classshapeworks_1_1Telemetry.md)** 
     * **class [UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker. 
     * **class [Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types. 
@@ -276,4 +276,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:50 +0000
+Updated on 2025-01-28 at 00:25:10 +0000

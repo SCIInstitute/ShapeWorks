@@ -226,8 +226,8 @@ class Mesh {
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
 
   vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
-      const;  // Copied directly from MeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
-              // from Meshwrapper. TODO: When refactoring, take this into account.
+      const;  // Copied directly from Surface. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
+              // from Surface. TODO: When refactoring, take this into account.
 
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
 
@@ -239,7 +239,7 @@ class Mesh {
   int getClosestFace(const Point3& point) const;
 
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
-      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+      const;  // // WARNING: Copied directly from Surface. TODO: When refactoring, take this into account.
 
   void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);
 
@@ -281,4 +281,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:50 +0000
+Updated on 2025-01-28 at 00:25:10 +0000

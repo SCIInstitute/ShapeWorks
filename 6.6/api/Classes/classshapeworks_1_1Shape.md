@@ -92,7 +92,7 @@ Representation of a single shape/patient/subject.
 | std::vector< [Constraints](../Classes/classshapeworks_1_1Constraints.md) > & | **[constraints](../Classes/classshapeworks_1_1Shape.md#function-constraints)**() |
 | [Constraints](../Classes/classshapeworks_1_1Constraints.md) & | **[get_constraints](../Classes/classshapeworks_1_1Shape.md#function-get-constraints)**(int domain_id) |
 | bool | **[has_planes](../Classes/classshapeworks_1_1Shape.md#function-has-planes)**() |
-| std::vector< std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > > | **[get_groomed_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-mesh-wrappers)**() |
+| std::vector< std::shared_ptr< [Surface](../Classes/classshapeworks_1_1Surface.md) > > | **[get_groomed_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-mesh-wrappers)**() |
 | void | **[recompute_original_surface](../Classes/classshapeworks_1_1Shape.md#function-recompute-original-surface)**() |
 | void | **[ensure_segmentation](../Classes/classshapeworks_1_1Shape.md#function-ensure-segmentation)**()<br>If a segmentation doesn't exist, create a blank canvas.  |
 
@@ -683,7 +683,7 @@ bool has_planes()
 ### function get_groomed_mesh_wrappers
 
 ```cpp
-std::vector< std::shared_ptr< MeshWrapper > > get_groomed_mesh_wrappers()
+std::vector< std::shared_ptr< Surface > > get_groomed_mesh_wrappers()
 ```
 
 
@@ -704,4 +704,4 @@ If a segmentation doesn't exist, create a blank canvas.
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:50 +0000
+Updated on 2025-01-28 at 00:25:10 +0000

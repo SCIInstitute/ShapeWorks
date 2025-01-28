@@ -2533,7 +2533,7 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkObjectFactory.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshWrapper.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Surface.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleDomain.h&quot;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
@@ -2568,8 +2568,8 @@
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mf">0.02</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetLowerBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_wrapper_</span><span class="o">-&gt;</span><span class="n">GetMeshLowerBound</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetUpperBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_wrapper_</span><span class="o">-&gt;</span><span class="n">GetMeshUpperBound</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetLowerBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">surface_</span><span class="o">-&gt;</span><span class="n">get_mesh_lower_bound</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetUpperBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">surface_</span><span class="o">-&gt;</span><span class="n">get_mesh_upper_bound</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 
@@ -2604,17 +2604,17 @@
 <span class="w">    </span><span class="c1">// TODO Change this to a generic delete function</span>
 <span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshWrapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Surface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetSWMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">sw_mesh_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshWrapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetMeshWrapper</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_wrapper_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Surface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">surface_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshWrapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_wrapper_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshWrapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">geodesics_mesh_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Surface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">surface_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Surface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">geodesics_mesh_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sw_mesh_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="n">zero_crossing_point_</span><span class="p">;</span>
 <span class="p">};</span>
@@ -2622,7 +2622,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-01-27 at 01:21:50 +0000</p>
+<p>Updated on 2025-01-28 at 00:25:10 +0000</p>
 
               
             </article>

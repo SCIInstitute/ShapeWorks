@@ -29,7 +29,7 @@ title: Libs/Optimize/Domain/MeshDomain.h
 
 #include <itkObjectFactory.h>
 
-#include "MeshWrapper.h"
+#include "Surface.h"
 #include "ParticleDomain.h"
 
 namespace shapeworks {
@@ -64,8 +64,8 @@ class MeshDomain : public ParticleDomain {
     return 0.02;
   }
 
-  const PointType &GetLowerBound() const override { return mesh_wrapper_->GetMeshLowerBound(); }
-  const PointType &GetUpperBound() const override { return mesh_wrapper_->GetMeshUpperBound(); }
+  const PointType &GetLowerBound() const override { return surface_->get_mesh_lower_bound(); }
+  const PointType &GetUpperBound() const override { return surface_->get_mesh_upper_bound(); }
 
   PointType GetZeroCrossingPoint() const override;
 
@@ -100,17 +100,17 @@ class MeshDomain : public ParticleDomain {
     // TODO Change this to a generic delete function
   }
 
-  void SetMesh(std::shared_ptr<MeshWrapper> mesh_, double geodesic_remesh_percent);
+  void SetMesh(std::shared_ptr<Surface> mesh_, double geodesic_remesh_percent);
 
   std::shared_ptr<Mesh> GetSWMesh() const { return sw_mesh_; }
 
   void UpdateZeroCrossingPoint() override {}
 
-  std::shared_ptr<MeshWrapper> GetMeshWrapper() const { return mesh_wrapper_; }
+  std::shared_ptr<Surface> get_surface() const { return surface_; }
 
  private:
-  std::shared_ptr<MeshWrapper> mesh_wrapper_;
-  std::shared_ptr<MeshWrapper> geodesics_mesh_;
+  std::shared_ptr<Surface> surface_;
+  std::shared_ptr<Surface> geodesics_mesh_;
   std::shared_ptr<Mesh> sw_mesh_;
   PointType zero_crossing_point_;
 };
@@ -121,4 +121,4 @@ class MeshDomain : public ParticleDomain {
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:50 +0000
+Updated on 2025-01-28 at 00:25:10 +0000

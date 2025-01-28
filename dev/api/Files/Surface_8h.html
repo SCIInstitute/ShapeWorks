@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.6/api/Classes/classshapeworks_1_1MeshWrapper.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.6/api/Files/Surface_8h.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>shapeworks::MeshWrapper - ShapeWorks</title>
+        <title>Libs/Optimize/Domain/Surface.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#shapeworksmeshwrapper" class="md-skip">
+        <a href="#libsoptimizedomainsurfaceh" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              shapeworks::MeshWrapper
+              Libs/Optimize/Domain/Surface.h
             
           </span>
         </div>
@@ -2254,7 +2254,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_classes.html" class="md-nav__link">
+      <a href="../Classes/index_classes.html" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -2268,7 +2268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Files/index_files.html" class="md-nav__link">
+      <a href="index_files.html" class="md-nav__link">
         Files
       </a>
     </li>
@@ -2461,175 +2461,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-types" class="md-nav__link">
-    Public Types
+  <a href="#namespaces" class="md-nav__link">
+    Namespaces
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-functions" class="md-nav__link">
-    Public Functions
+  <a href="#classes" class="md-nav__link">
+    Classes
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-types-documentation" class="md-nav__link">
-    Public Types Documentation
+  <a href="#source-code" class="md-nav__link">
+    Source code
   </a>
-  
-    <nav class="md-nav" aria-label="Public Types Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-pointtype" class="md-nav__link">
-    using PointType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-gradntype" class="md-nav__link">
-    using GradNType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-normaltype" class="md-nav__link">
-    using NormalType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-vectortype" class="md-nav__link">
-    using VectorType
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-functions-documentation" class="md-nav__link">
-    Public Functions Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Functions Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#function-meshwrapper" class="md-nav__link">
-    function MeshWrapper
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-meshwrapper_1" class="md-nav__link">
-    function ~MeshWrapper
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-computedistance" class="md-nav__link">
-    function ComputeDistance
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-iswithindistance" class="md-nav__link">
-    function IsWithinDistance
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-geodesicwalk" class="md-nav__link">
-    function GeodesicWalk
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-projectvectortosurfacetangent" class="md-nav__link">
-    function ProjectVectorToSurfaceTangent
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-samplenormalatpoint" class="md-nav__link">
-    function SampleNormalAtPoint
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-samplegradnatpoint" class="md-nav__link">
-    function SampleGradNAtPoint
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-snaptomesh" class="md-nav__link">
-    function SnapToMesh
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getpointonmesh" class="md-nav__link">
-    function GetPointOnMesh
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getmeshlowerbound" class="md-nav__link">
-    function GetMeshLowerBound
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getmeshupperbound" class="md-nav__link">
-    function GetMeshUpperBound
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-invalidateparticle" class="md-nav__link">
-    function InvalidateParticle
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getpolydata" class="md-nav__link">
-    function GetPolydata
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-isgeodesicsenabled" class="md-nav__link">
-    function IsGeodesicsEnabled
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2645,14 +2493,27 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1MeshWrapper.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/Surface_8h.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="shapeworksmeshwrapper">shapeworks::MeshWrapper</h1>
-<h2 id="public-types">Public Types</h2>
+<h1 id="libsoptimizedomainsurfaceh">Libs/Optimize/Domain/Surface.h</h1>
+<h2 id="namespaces">Namespaces</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="classes">Classes</h2>
 <table>
 <thead>
 <tr>
@@ -2662,191 +2523,195 @@
 </thead>
 <tbody>
 <tr>
-<td>using <a href="classshapeworks_1_1ParticleDomain.html#using-pointtype">ParticleDomain::PointType</a></td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#using-pointtype">PointType</a></strong></td>
-</tr>
-<tr>
-<td>using ParticleDomain::GradNType</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#using-gradntype">GradNType</a></strong></td>
-</tr>
-<tr>
-<td>using vnl_vector_fixed&lt; float, 3 &gt;</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#using-normaltype">NormalType</a></strong></td>
-</tr>
-<tr>
-<td>using vnl_vector_fixed&lt; double, 3 &gt;</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#using-vectortype">VectorType</a></strong></td>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1Surface.html">shapeworks::Surface</a></strong></td>
 </tr>
 </tbody>
 </table>
-<h2 id="public-functions">Public Functions</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-meshwrapper">MeshWrapper</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh, bool geodesics_enabled =false, size_t geodesics_cache_multiplier_size =0)</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-~meshwrapper">~MeshWrapper</a></strong>() =default</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-computedistance">ComputeDistance</a></strong>(const PointType &amp; pointa, int idxa, const PointType &amp; pointb, int idxb, VectorType * out_grad =nullptr) const</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-iswithindistance">IsWithinDistance</a></strong>(const PointType &amp; pointa, int idxa, const PointType &amp; pointb, int idxb, double test_dist, double &amp; dist) const</td>
-</tr>
-<tr>
-<td>PointType</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-geodesicwalk">GeodesicWalk</a></strong>(PointType p, int idx, VectorType vector) const</td>
-</tr>
-<tr>
-<td>VectorType</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-projectvectortosurfacetangent">ProjectVectorToSurfaceTangent</a></strong>(const PointType &amp; pointa, int idx, VectorType &amp; vector) const</td>
-</tr>
-<tr>
-<td>NormalType</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-samplenormalatpoint">SampleNormalAtPoint</a></strong>(PointType p, int idx =-1) const</td>
-</tr>
-<tr>
-<td>GradNType</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-samplegradnatpoint">SampleGradNAtPoint</a></strong>(PointType p, int idx) const</td>
-</tr>
-<tr>
-<td>PointType</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-snaptomesh">SnapToMesh</a></strong>(PointType pointa, int idx) const</td>
-</tr>
-<tr>
-<td>PointType</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-getpointonmesh">GetPointOnMesh</a></strong>() const</td>
-</tr>
-<tr>
-<td>const PointType &amp;</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-getmeshlowerbound">GetMeshLowerBound</a></strong>() const</td>
-</tr>
-<tr>
-<td>const PointType &amp;</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-getmeshupperbound">GetMeshUpperBound</a></strong>() const</td>
-</tr>
-<tr>
-<td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-invalidateparticle">InvalidateParticle</a></strong>(int idx)</td>
-</tr>
-<tr>
-<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-getpolydata">GetPolydata</a></strong>() const</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1MeshWrapper.html#function-isgeodesicsenabled">IsGeodesicsEnabled</a></strong>() const</td>
-</tr>
-</tbody>
-</table>
-<h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="using-pointtype">using PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="using-gradntype">using GradNType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">GradNType</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="using-normaltype">using NormalType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="o">::</span><span class="n">NormalType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="using-vectortype">using VectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
-<h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-meshwrapper">function MeshWrapper</h3>
-<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">geodesics_enabled</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">geodesics_cache_multiplier_size</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="function-meshwrapper_1">function ~MeshWrapper</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshWrapper</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
-</code></pre></div>
-<h3 id="function-computedistance">function ComputeDistance</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ComputeDistance</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idxa</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idxb</span><span class="p">,</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_grad</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-iswithindistance">function IsWithinDistance</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IsWithinDistance</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idxa</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idxb</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">test_dist</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dist</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-geodesicwalk">function GeodesicWalk</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PointType</span><span class="w"> </span><span class="n">GeodesicWalk</span><span class="p">(</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">vector</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-projectvectortosurfacetangent">function ProjectVectorToSurfaceTangent</h3>
-<div class="highlight"><pre><span></span><code><span class="n">VectorType</span><span class="w"> </span><span class="n">ProjectVectorToSurfaceTangent</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-samplenormalatpoint">function SampleNormalAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="n">NormalType</span><span class="w"> </span><span class="n">SampleNormalAtPoint</span><span class="p">(</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-samplegradnatpoint">function SampleGradNAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="n">GradNType</span><span class="w"> </span><span class="n">SampleGradNAtPoint</span><span class="p">(</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-snaptomesh">function SnapToMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PointType</span><span class="w"> </span><span class="n">SnapToMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-getpointonmesh">function GetPointOnMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PointType</span><span class="w"> </span><span class="n">GetPointOnMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-getmeshlowerbound">function GetMeshLowerBound</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetMeshLowerBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-getmeshupperbound">function GetMeshUpperBound</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetMeshUpperBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-invalidateparticle">function InvalidateParticle</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">InvalidateParticle</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="function-getpolydata">function GetPolydata</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetPolydata</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-isgeodesicsenabled">function IsGeodesicsEnabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsGeodesicsEnabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<h2 id="source-code">Source code</h2>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/heat_method_distance.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/meshio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/surface_mesh.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unordered_set&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/ParticleDomain.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshGeoEntry.h&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkCellLocator</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Surface</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">GradNType</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">NormalType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="n">Surface</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">                     </span><span class="kt">bool</span><span class="w"> </span><span class="n">geodesics_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span>
+<span class="w">                     </span><span class="kt">size_t</span><span class="w"> </span><span class="n">geodesics_cache_multiplier_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// 0 =&gt; MeshWrapper will choose a heuristic</span>
+
+<span class="w">    </span><span class="o">~</span><span class="n">Surface</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">compute_distance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">                            </span><span class="kt">int</span><span class="w"> </span><span class="n">idxa</span><span class="p">,</span>
+<span class="w">                            </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
+<span class="w">                            </span><span class="kt">int</span><span class="w"> </span><span class="n">idxb</span><span class="p">,</span>
+<span class="w">                            </span><span class="n">VectorType</span><span class="o">*</span><span class="w"> </span><span class="n">out_grad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_within_distance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">                            </span><span class="kt">int</span><span class="w"> </span><span class="n">idxa</span><span class="p">,</span>
+<span class="w">                            </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
+<span class="w">                            </span><span class="kt">int</span><span class="w"> </span><span class="n">idxb</span><span class="p">,</span>
+<span class="w">                            </span><span class="kt">double</span><span class="w"> </span><span class="n">test_dist</span><span class="p">,</span>
+<span class="w">                            </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dist</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="nf">geodesic_walk</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">project_vector_to_surface_tangent</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">VectorType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">NormalType</span><span class="w"> </span><span class="nf">sample_normal_at_point</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="n">GradNType</span><span class="w"> </span><span class="nf">sample_gradient_normal_at_point</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="nf">snap_to_mesh</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="nf">get_point_on_mesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_mesh_lower_bound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_lower_bound_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_mesh_upper_bound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_upper_bound_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">invalidate_particle</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_polydata</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">original_mesh_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_geodesics_enabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">is_geodesics_enabled_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">get_num_faces</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_mesh_bounds</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_grad_normals</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_triangle_for_point</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">pt</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">closest_point</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">project_vector_to_face</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">normal</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">get_face_normal</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">face_index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_in_triangle</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">pt</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face_index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">compute_barycentric_coordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">compute_barycentric_coordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
+<span class="w">                                        </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">,</span>
+<span class="w">                                        </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dist2</span><span class="p">,</span>
+<span class="w">                                        </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">bary</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">compute_face_and_weights</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">weights</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">geodesic_walk_on_face</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">point_a</span><span class="p">,</span>
+<span class="w">                                          </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">projected_vector</span><span class="p">,</span>
+<span class="w">                                          </span><span class="kt">int</span><span class="w"> </span><span class="n">face_index</span><span class="p">,</span>
+<span class="w">                                          </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ending_face</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">get_barycentric_intersection</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">start</span><span class="p">,</span>
+<span class="w">                                                 </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">end</span><span class="p">,</span>
+<span class="w">                                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">currentFace</span><span class="p">,</span>
+<span class="w">                                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">edge</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_across_edge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">edge</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_face_point_id</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">point_id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">slide_along_edge</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">remainingVector_</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face_</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">edge_</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">get_vertex_coords</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">vertex_id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">rotate_vector_to_face</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prev_normal</span><span class="p">,</span>
+<span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">next_normal</span><span class="p">,</span>
+<span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">original_mesh_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">NormalType</span><span class="w"> </span><span class="nf">calculate_normal_at_point</span><span class="p">(</span><span class="n">Surface</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Caches of triangle, normal and position</span>
+<span class="w">    </span><span class="c1">// Has to be mutable because all of the accessor APIs are const</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_triangles_</span><span class="p">;</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NormalType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_normals_</span><span class="p">;</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_positions_</span><span class="p">;</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_neighboorhood_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">GradNType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">grad_normals_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// bounds of the mesh plus some buffer</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">mesh_lower_bound_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">mesh_upper_bound_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// cell locator to find closest point on mesh</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cell_locator_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Geodesic distances</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_geodesics_enabled_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+
+<span class="w">    </span><span class="c1">// Geometry Central data structures</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">geometrycentral</span><span class="o">::</span><span class="n">surface</span><span class="o">::</span><span class="n">SurfaceMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gc_mesh_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">geometrycentral</span><span class="o">::</span><span class="n">surface</span><span class="o">::</span><span class="n">VertexPositionGeometry</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gc_geometry_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">geometrycentral</span><span class="o">::</span><span class="n">surface</span><span class="o">::</span><span class="n">HeatMethodDistanceSolver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gc_heatsolver_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">geo_max_cache_entries_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">geo_cache_size_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">    </span><span class="c1">// Flattened version of libigl&#39;s gradient operator</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">face_grad_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unordered_set</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">face_kring_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Cache for geodesic distances from a triangle</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MeshGeoEntry</span><span class="o">&gt;</span><span class="w"> </span><span class="n">geo_dist_cache_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Returns true if face f_a is in the K-ring of face f_b</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">are_faces_in_k_ring</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">f_a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">f_b</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">kring_</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+
+<span class="w">    </span><span class="c1">// Convert the mesh to libigl data structures</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">get_igl_mesh</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Precompute heat data structures for faster geodesic lookups</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">precompute_geodesics</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_k_ring</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unordered_set</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">ring</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshGeoEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">geodesics_from_triangle</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">f</span><span class="p">,</span>
+<span class="w">                                                </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">(),</span>
+<span class="w">                                                </span><span class="kt">int</span><span class="w"> </span><span class="n">req_target_f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix3d</span><span class="w"> </span><span class="nf">geodesics_from_triangle_to_triangle</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">f_a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">f_b</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_geodesic_cache</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Store some info about the last query. This accelerates the computation</span>
+<span class="w">    </span><span class="c1">// because the optimizer generally asks for the distances _from_ the same</span>
+<span class="w">    </span><span class="c1">// point as the previous query.</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">geo_lq_cached_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">geo_lq_pt_a_</span><span class="p">{</span><span class="mi">-1</span><span class="p">};</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">geo_lq_face_</span><span class="p">{</span><span class="mi">-1</span><span class="p">};</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">geo_lq_bary_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">fetch_and_cache_first_point</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">pt_a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_a</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">bary_a</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">vertices_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="n">faces_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-01-27 at 01:21:49 +0000</p>
+<p>Updated on 2025-01-28 at 00:25:10 +0000</p>
 
               
             </article>

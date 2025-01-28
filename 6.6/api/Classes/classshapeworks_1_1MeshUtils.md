@@ -31,6 +31,7 @@ title: shapeworks::MeshUtils
 | void | **[generateNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-generatenormals)**(const std::vector< std::reference_wrapper< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes, bool forceRegen =false)<br>generates and adds normals for points and faces for each mesh in given set of meshes  |
 | Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::string > & filenames, bool autoGenerateNormals =true)<br>computes average normals for each point in given set of meshes  |
 | Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes)<br>computes average normals for each point in given set of meshes  |
+| int | **[evaluate_triangle_position](../Classes/classshapeworks_1_1MeshUtils.md#function-evaluate-triangle-position)**(const double x[3], double closestPoint[3], int & subId, double pcoords[3], double & dist2, double weights[], double pt3[3], double pt1[3], double pt2[3]) |
 | void | **[visualizeVectorFieldForFFCs](../Classes/classshapeworks_1_1MeshUtils.md#function-visualizevectorfieldforffcs)**(std::shared_ptr< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > mesh)<br>This function visualizes vector and scalar fields for FFCs.  |
 | vtkSmartPointer< vtkActor > | **[getArrow](../Classes/classshapeworks_1_1MeshUtils.md#function-getarrow)**(Eigen::Vector3d start, Eigen::Vector3d end)<br>Used as an auxiliary function for vector field visualizations.  |
 
@@ -189,6 +190,23 @@ static Field computeMeanNormals(
 
 computes average normals for each point in given set of meshes 
 
+### function evaluate_triangle_position
+
+```cpp
+static int evaluate_triangle_position(
+    const double x[3],
+    double closestPoint[3],
+    int & subId,
+    double pcoords[3],
+    double & dist2,
+    double weights[],
+    double pt3[3],
+    double pt1[3],
+    double pt2[3]
+)
+```
+
+
 ### function visualizeVectorFieldForFFCs
 
 ```cpp
@@ -212,4 +230,4 @@ Used as an auxiliary function for vector field visualizations.
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:50 +0000
+Updated on 2025-01-28 at 00:25:10 +0000

@@ -44,10 +44,10 @@ Inherits from [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1Particl
 | virtual bool | **[IsWithinDistance](../Classes/classshapeworks_1_1MeshDomain.md#function-iswithindistance)**(const [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) & a, int idx_a, const [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) & b, int idx_b, double test_dist, double & distance) const override |
 | virtual void | **[DeleteImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deleteimages)**() override |
 | virtual void | **[DeletePartialDerivativeImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deletepartialderivativeimages)**() override |
-| void | **[SetMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-setmesh)**(std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh_, double geodesic_remesh_percent) |
+| void | **[SetMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-setmesh)**(std::shared_ptr< [Surface](../Classes/classshapeworks_1_1Surface.md) > mesh_, double geodesic_remesh_percent) |
 | std::shared_ptr< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > | **[GetSWMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-getswmesh)**() const |
 | virtual void | **[UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-updatezerocrossingpoint)**() override |
-| std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > | **[GetMeshWrapper](../Classes/classshapeworks_1_1MeshDomain.md#function-getmeshwrapper)**() const |
+| std::shared_ptr< [Surface](../Classes/classshapeworks_1_1Surface.md) > | **[get_surface](../Classes/classshapeworks_1_1MeshDomain.md#function-get-surface)**() const |
 
 ## Additional inherited members
 
@@ -417,7 +417,7 @@ inline virtual void DeletePartialDerivativeImages() override
 
 ```cpp
 void SetMesh(
-    std::shared_ptr< MeshWrapper > mesh_,
+    std::shared_ptr< Surface > mesh_,
     double geodesic_remesh_percent
 )
 ```
@@ -440,13 +440,13 @@ inline virtual void UpdateZeroCrossingPoint() override
 **Reimplements**: [shapeworks::ParticleDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1ParticleDomain.md#function-updatezerocrossingpoint)
 
 
-### function GetMeshWrapper
+### function get_surface
 
 ```cpp
-inline std::shared_ptr< MeshWrapper > GetMeshWrapper() const
+inline std::shared_ptr< Surface > get_surface() const
 ```
 
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:49 +0000
+Updated on 2025-01-28 at 00:25:09 +0000

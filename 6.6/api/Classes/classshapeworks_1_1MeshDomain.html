@@ -2692,8 +2692,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getmeshwrapper" class="md-nav__link">
-    function GetMeshWrapper
+  <a href="#function-get_surface" class="md-nav__link">
+    function get_surface
   </a>
   
 </li>
@@ -2841,7 +2841,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshDomain.html#function-setmesh">SetMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1MeshWrapper.html">MeshWrapper</a> &gt; mesh_, double geodesic_remesh_percent)</td>
+<td><strong><a href="classshapeworks_1_1MeshDomain.html#function-setmesh">SetMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">Surface</a> &gt; mesh_, double geodesic_remesh_percent)</td>
 </tr>
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt;</td>
@@ -2852,8 +2852,8 @@
 <td><strong><a href="classshapeworks_1_1MeshDomain.html#function-updatezerocrossingpoint">UpdateZeroCrossingPoint</a></strong>() override</td>
 </tr>
 <tr>
-<td>std::shared_ptr&lt; <a href="classshapeworks_1_1MeshWrapper.html">MeshWrapper</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1MeshDomain.html#function-getmeshwrapper">GetMeshWrapper</a></strong>() const</td>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">Surface</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1MeshDomain.html#function-get-surface">get_surface</a></strong>() const</td>
 </tr>
 </tbody>
 </table>
@@ -3122,7 +3122,7 @@
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-deletepartialderivativeimages">shapeworks::ParticleDomain::DeletePartialDerivativeImages</a></p>
 <h3 id="function-setmesh">function SetMesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -3133,11 +3133,11 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-updatezerocrossingpoint">shapeworks::ParticleDomain::UpdateZeroCrossingPoint</a></p>
-<h3 id="function-getmeshwrapper">function GetMeshWrapper</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetMeshWrapper</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<h3 id="function-get_surface">function get_surface</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-01-27 at 01:21:49 +0000</p>
+<p>Updated on 2025-01-28 at 00:25:09 +0000</p>
 
               
             </article>

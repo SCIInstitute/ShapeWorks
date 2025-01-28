@@ -36,7 +36,7 @@ title: Libs/Optimize/Sampler.h
 #include "GradientDescentOptimizer.h"
 #include "Libs/Optimize/Container/GenericContainerArray.h"
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
 #include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
@@ -113,7 +113,7 @@ class Sampler {
     }
   }
 
-  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent = 100);
+  void AddMesh(std::shared_ptr<shapeworks::Surface> mesh, double geodesic_remesh_percent = 100);
 
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
@@ -354,4 +354,4 @@ class Sampler {
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:50 +0000
+Updated on 2025-01-28 at 00:25:10 +0000

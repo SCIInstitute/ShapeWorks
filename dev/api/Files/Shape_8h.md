@@ -50,7 +50,7 @@ namespace shapeworks {
 class Shape;
 using ShapeHandle = std::shared_ptr<Shape>;
 using ShapeList = std::vector<ShapeHandle>;
-class MeshWrapper;
+class Surface;
 
 class Shape {
  public:
@@ -187,7 +187,7 @@ class Shape {
 
   bool has_planes();
 
-  std::vector<std::shared_ptr<MeshWrapper>> get_groomed_mesh_wrappers();
+  std::vector<std::shared_ptr<Surface>> get_groomed_mesh_wrappers();
 
   void recompute_original_surface();
 
@@ -207,7 +207,7 @@ class Shape {
   MeshGroup original_meshes_;
   MeshGroup groomed_meshes_;
   MeshGroup reconstructed_meshes_;
-  std::vector<std::shared_ptr<MeshWrapper>> groomed_mesh_wrappers_;
+  std::vector<std::shared_ptr<Surface>> groomed_mesh_wrappers_;
 
   std::string override_feature_;
 
@@ -244,4 +244,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2025-01-27 at 01:21:50 +0000
+Updated on 2025-01-28 at 00:25:10 +0000

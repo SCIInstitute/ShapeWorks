@@ -2557,7 +2557,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span>
 <span class="k">using</span><span class="w"> </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="k">using</span><span class="w"> </span><span class="n">ShapeList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ShapeHandle</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MeshWrapper</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Surface</span><span class="p">;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="w"> </span><span class="p">{</span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
@@ -2694,7 +2694,7 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_planes</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshWrapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">();</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Surface</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">recompute_original_surface</span><span class="p">();</span>
 
@@ -2714,7 +2714,7 @@
 <span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">original_meshes_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">groomed_meshes_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">reconstructed_meshes_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshWrapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">groomed_mesh_wrappers_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Surface</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">groomed_mesh_wrappers_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">override_feature_</span><span class="p">;</span>
 
@@ -2748,7 +2748,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-01-27 at 01:21:50 +0000</p>
+<p>Updated on 2025-01-28 at 00:25:10 +0000</p>
 
               
             </article>
