@@ -17,8 +17,9 @@ StudioInteractorStyle::~StudioInteractorStyle() {}
 //-----------------------------------------------------------------------------
 void StudioInteractorStyle::OnLeftButtonDown() {
   if (this->Interactor->GetControlKey()) {
-    int* clickPos = this->GetInteractor()->GetEventPosition();
-    this->lightbox_->handle_pick(clickPos, true, true);
+    int* pos = this->GetInteractor()->GetEventPosition();
+    vtkRenderer* renderer = GetInteractor()->FindPokedRenderer(pos[0], pos[1]);
+    this->lightbox_->handle_pick(pos, true, true, renderer);
     return;
   }
 
@@ -61,17 +62,18 @@ void StudioInteractorStyle::OnMouseWheelBackward() {
 //-----------------------------------------------------------------------------
 void StudioInteractorStyle::OnKeyDown() {
   int* click_pos = this->GetInteractor()->GetEventPosition();
+  vtkRenderer* renderer = GetInteractor()->FindPokedRenderer(click_pos[0], click_pos[1]);
 
   char keycode = this->GetInteractor()->GetKeyCode();
   std::string keysym = GetInteractor()->GetKeySym();
 
   switch (keycode) {
     case '1':
-      this->lightbox_->handle_pick(click_pos, true, false);
+      this->lightbox_->handle_pick(click_pos, true, false, renderer);
       break;
 
     case '2':
-      this->lightbox_->handle_pick(click_pos, false, false);
+      this->lightbox_->handle_pick(click_pos, false, false, renderer);
       break;
 
     case 'r':
