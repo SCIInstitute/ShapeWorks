@@ -349,7 +349,8 @@ def transform_to_string(transform):
 def groom_val_test_image(project, image_filename, output_filename, needs_reflection=False, reflection_axis=None,
                          max_translation=None,
                          max_rotation=None,
-                         max_iterations=1024):
+                         max_iterations=1024,
+                         centroid_file=None):
     deepssm_dir = get_deepssm_dir(project)
     # Make dirs
     val_test_images_dir = deepssm_dir + 'images/'
@@ -359,6 +360,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
 
     # Get reference image
     ref_image_file = deepssm_dir + 'reference_image.nrrd'
+    print("Using reference image: " + ref_image_file)
     ref_image = sw.Image(ref_image_file)
     ref_center = ref_image.center()  # get center
 
@@ -371,6 +373,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
     large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(80)
     medium_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(20)
 
+    print("Loading image: " + image_filename)
     image = sw.Image(image_filename)
 
     image_file = output_filename
@@ -395,40 +398,68 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
     image.applyTransform(reflection)
     transform = sw.utils.getVTKtransform(reflection)
 
-    # 2. Translate to have ref center to make rigid registration easier
-    translation = ref_center - image.center()
-    image.setOrigin(image.origin() + translation).write(image_file)
-    transform[:3, -1] += translation
+    reference_centroid_file = deepssm_dir + "reference_centroid.txt"
 
-    # 3. Translate with respect to slightly cropped ref
-    image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
-    itk_translation_transform = image_utils.get_image_registration_transform(large_cropped_ref_image_file,
-                                                                             image_file,
-                                                                             transform_type='translation',
-                                                                             max_translation=max_translation,
-                                                                             max_rotation=max_rotation,
-                                                                             max_iterations=max_iterations)
-    # 4. Apply transform
-    image.applyTransform(itk_translation_transform,
-                         large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
-                         large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
-                         sw.InterpolationType.Linear, meshTransform=False)
-    vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
-    transform = np.matmul(vtk_translation_transform, transform)
+    if centroid_file is not None and os.path.exists(reference_centroid_file):
+        centroid = np.loadtxt(centroid_file)
+        ref_center = np.loadtxt(reference_centroid_file)
+
+        translation = ref_center - centroid
+        image.setOrigin(image.origin() + translation).write(image_file)
+        transform[:3, -1] += translation
+        print("Using centroid translation")
+        image.write("/tmp/1_center.nrrd")
+        image.write("/tmp/2_translate.nrrd")
+        max_translation = 1
+    else:
+        # 2. Translate to have ref center to make rigid registration easier
+        translation = ref_center - image.center()
+        image.setOrigin(image.origin() + translation).write(image_file)
+        transform[:3, -1] += translation
+
+        image.write("/tmp/1_center.nrrd")
+
+        # 3. Translate with respect to slightly cropped ref
+        image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
+        itk_translation_transform = image_utils.get_image_registration_transform(large_cropped_ref_image_file,
+                                                                                 image_file,
+                                                                                 transform_type='translation',
+                                                                                 max_translation=max_translation,
+                                                                                 max_rotation=max_rotation,
+                                                                                 max_iterations=max_iterations)
+        print("\nTranslation transform:\n" + str(itk_translation_transform))
+        # 4. Apply transform
+        image.applyTransform(itk_translation_transform,
+                             large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
+                             large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        image.write("/tmp/2_translate.nrrd")
+        vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+        transform = np.matmul(vtk_translation_transform, transform)
 
     # 5. Crop with medium bounding box and find rigid transform
     image.fitRegion(medium_bb).write(image_file)
+    print("max_translation: " + str(max_translation))
     itk_rigid_transform = image_utils.get_image_registration_transform(medium_cropped_ref_image_file,
                                                                        image_file, transform_type='rigid',
                                                                        max_translation=max_translation,
                                                                        max_rotation=max_rotation,
                                                                        max_iterations=max_iterations)
 
+    # sum up translation as a magnitude, itk_rigid_transform is a 4x4, not an ITK object
+    translation_vector = itk_rigid_transform[-1, :3]
+    print(f"Translation vector: {translation_vector}")
+    translation = np.linalg.norm(translation_vector)
+    print(f"Translation amount: {translation}")
+
     # 6. Apply transform
     image.applyTransform(itk_rigid_transform,
                          medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
                          medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
                          sw.InterpolationType.Linear, meshTransform=False)
+    print("\nRigid transform:\n" + str(itk_rigid_transform))
+    image.write("/tmp/3_rigid.nrrd")
+
     vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
     transform = np.matmul(vtk_rigid_transform, transform)
 
@@ -444,6 +475,8 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
                          cropped_ref_image.origin(), cropped_ref_image.dims(),
                          cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
                          sw.InterpolationType.Linear, meshTransform=False)
+    print("\nSimilarity transform:\n" + str(itk_similarity_transform))
+    image.write("/tmp/4_similarity.nrrd")
     image.write(image_file)
     print(f"Image file written: {image_file}")
     vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)

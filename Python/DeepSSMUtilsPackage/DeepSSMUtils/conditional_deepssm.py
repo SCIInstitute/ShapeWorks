@@ -332,10 +332,10 @@ def run_conditional_deepssm_testing(configuration: dict):
         DeepSSMUtils.process_test_predictions(project, "deepssm/configuration.json")
 
 
-def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image: str):
+def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image: str, centroid_file: str):
     """ Run Conditional DeepSSM Inference """
     sw_message("Running Conditional DeepSSM Inference")
-    print(f"Anatomy: {anatomy}, Image: {image}")
+    print(f"Anatomy: {anatomy}, Image: {image}, Centroid: {centroid_file}")
 
     # Run a single image inference
     project_filenames = project_config["projects"]
@@ -362,7 +362,7 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
     deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
     val_test_images_dir = deepssm_dir + 'images/'
     output_filename = val_test_images_dir + f"{os.path.basename(absolute_image_name)}.nrrd"
-    run_utils.groom_val_test_image(project, absolute_image_name, output_filename)
+    run_utils.groom_val_test_image(project, absolute_image_name, output_filename, centroid_file=centroid_file)
 
     deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
     val_test_images_dir = deepssm_dir + 'images/'
@@ -446,6 +446,7 @@ if __name__ == "__main__":
     parser.add_argument('--anatomy', type=int, help='Anatomy number for inference')
     parser.add_argument('--image', help='Image file for inference')
     parser.add_argument('--inference', action='store_true', help='Run inference')
+    parser.add_argument("--centroid", required=False, help='Centroid file for inference')
 
     args = parser.parse_args()
 
@@ -473,7 +474,7 @@ if __name__ == "__main__":
 
         # run inference
         print(f"Running inference for anatomy {args.anatomy} on image {args.image}")
-        run_conditional_deepssm_inference(configuration, args.anatomy, args.image)
+        run_conditional_deepssm_inference(configuration, args.anatomy, args.image, args.centroid)
 
     if not args.train and not args.test and not args.prep and not args.inference:
         print("Please specify either --prep, --train, --test, or --inference flag")
