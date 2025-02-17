@@ -16,6 +16,8 @@ from DeepSSMUtils import train_viz
 from DeepSSMUtils import loaders
 import DeepSSMUtils
 from shapeworks.utils import *
+from torchvision import transforms
+from torchvision.transforms import functional as TF
 
 '''
 Train helper
@@ -91,6 +93,179 @@ Network training method
 '''
 
 
+#
+# # Helper function to create a 3D rotation matrix
+# def create_3d_rotation_matrix(angle_x, angle_y, angle_z):
+#     # Convert angles to radians
+#     ax, ay, az = np.deg2rad([angle_x, angle_y, angle_z])
+#
+#     # Rotation matrix around x-axis
+#     Rx = np.array([
+#         [1, 0, 0],
+#         [0, np.cos(ax), -np.sin(ax)],
+#         [0, np.sin(ax), np.cos(ax)]
+#     ])
+#
+#     # Rotation matrix around y-axis
+#     Ry = np.array([
+#         [np.cos(ay), 0, np.sin(ay)],
+#         [0, 1, 0],
+#         [-np.sin(ay), 0, np.cos(ay)]
+#     ])
+#
+#     # Rotation matrix around z-axis
+#     Rz = np.array([
+#         [np.cos(az), -np.sin(az), 0],
+#         [np.sin(az), np.cos(az), 0],
+#         [0, 0, 1]
+#     ])
+#
+#     return Rz @ Ry @ Rx
+
+# Helper function to create a 3D rotation matrix
+def create_3d_rotation_matrices(angle1, angle2, angle3):
+    # Convert angles to radians
+    ax, ay, az = np.deg2rad([angle1, angle2, angle3])
+
+    # Rotation matrix around x-axis
+    Rx = np.array([
+        [1, 0, 0],
+        [0, np.cos(ax), -np.sin(ax)],
+        [0, np.sin(ax), np.cos(ax)]
+    ])
+
+    # Rotation matrix around y-axis
+    Ry = np.array([
+        [np.cos(ay), 0, np.sin(ay)],
+        [0, 1, 0],
+        [-np.sin(ay), 0, np.cos(ay)]
+    ])
+
+    # Rotation matrix around z-axis
+    Rz = np.array([
+        [np.cos(az), -np.sin(az), 0],
+        [np.sin(az), np.cos(az), 0],
+        [0, 0, 1]
+    ])
+
+    return Rx, Ry, Rz
+
+
+def augment_sample(image, particles, reference_origin):
+    # print("Augmenting sample...")
+    # print(f"Image shape: {image.shape}")
+    # print(f"Particles shape: {particles.shape}")
+
+    angle_mean = 0  # Mean of the distribution
+    angle_std_dev = 5  # Standard deviation of the distribution
+
+    # Determine a random angle from a normal distribution for each axis
+    angle1 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+    angle2 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+    angle3 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+
+    angle1 = 0
+    angle2 = 0
+    angle3 = 45
+    # print(f"Angle 1: {angle1}")
+    # print(f"Angle 2: {angle2}")
+    # print(f"Angle 3: {angle3}")
+
+    original = image.numpy().copy()
+
+    # Convert angle to radians for rotation matrix calculation
+    radians1 = np.deg2rad(angle1)
+    radians2 = np.deg2rad(angle2)
+    radians3 = np.deg2rad(angle3)
+
+    np_foo = image.numpy().squeeze()
+    # print(f"np_foo Image shape: {np_foo.shape}")
+    np_foo_transpose = np_foo.transpose()
+    # print(f"np_foo_transpose Image shape: {np_foo_transpose.shape}")
+
+    sw_image = sw.Image(image.numpy().squeeze().transpose().copy())
+    sw_image.recenter()
+    sw_image.rotate(radians1, [1.0, 0.0, 0.0])
+    sw_image.rotate(radians2, [0.0, 1.0, 0.0])
+    sw_image.rotate(radians3, [0.0, 0.0, 1.0])
+
+    image = sw_image.toArray(for_viewing=True)
+    # convert back to tensor
+    image = torch.from_numpy(image).unsqueeze(0)
+
+    # Apply the rotation matrix to the particles
+
+    # Create rotation matrices for each axis
+    Rx, Ry, Rz = create_3d_rotation_matrices(-angle1, -angle2, -angle3)
+
+    original_particles = particles
+
+    # Because the images are transposed for some reason in the loader, we need to swap X and Z for the particles as well
+    # before applying the rotation matrices, then swap them back
+
+    # Apply the rotation matrices to the particles
+
+    particles = particles.numpy()
+
+    # print shape
+    # print(f"Particles shape: {particles.shape}")
+    # Particles shape: (1024, 3)
+
+    # print the first 3 particles
+    # print(f"Original particles: {particles[0:3, :]}")
+    # need to swap the first and last columns to match
+    ###particles = particles[:, [2, 1, 0]]
+    # print(f"Swapped particles: {particles[0:3, :]}")
+
+    particles = np.dot(particles, Rx)
+    particles = np.dot(particles, Ry)
+    particles = np.dot(particles, Rz)
+    ###particles = particles[:, [2, 1, 0]]
+    particles = torch.from_numpy(particles).type_as(original_particles)
+
+    # # Save image and particles to a temporary directory
+    temp_dir = "/tmp"
+    os.makedirs(temp_dir, exist_ok=True)
+    image_index = len(os.listdir(temp_dir)) // 2  # Assuming equal number of images and particles
+
+    if image_index < 100:
+        # save as nrrd too
+        image_nrrd_path = os.path.join(temp_dir, f"rotated_{image_index}.nrrd")
+
+        sw_image.write(image_nrrd_path)
+
+        original_nrrd_path = os.path.join(temp_dir, f"original_{image_index}.nrrd")
+        original = original.squeeze().transpose().copy()
+        im = sw.Image(original)
+        im.recenter()
+        im.write(original_nrrd_path)
+        #
+        # # save original particles
+        np.savetxt(os.path.join(temp_dir, f"particles_{image_index}.particles"), original_particles.numpy())
+        # # save rotated particles
+        np.savetxt(os.path.join(temp_dir, f"rotated_particles_{image_index}.particles"), particles.numpy())
+
+    return image, particles
+
+
+def augment_batch(images, particles, reference_origin):
+    # print("Augmenting batch...")
+    # print(f"Images shape: {images.shape}")
+    # print(f"Particles shape: {particles.shape}")
+    for i in range(images.shape[0]):
+        images[i], particles[i] = augment_sample(images[i], particles[i], reference_origin)
+    return images, particles
+
+
+def get_reference_origin(filename):
+    # Load the reference image
+    reference = sw.Image(filename)
+    # Get the origin of the reference image
+    reference_origin = reference.origin()
+    print(f"Reference origin: {reference_origin}")
+    return reference_origin
+
+
 def supervised_train(config_file):
     with open(config_file) as json_file:
         parameters = json.load(json_file)
@@ -98,6 +273,8 @@ def supervised_train(config_file):
     loaders.make_dir(model_dir)
     loader_dir = parameters['paths']['loader_dir']
     aug_dir = parameters['paths']['aug_dir']
+    deepssm_dir = parameters['paths']['out_dir']
+    reference_origin = get_reference_origin(deepssm_dir + "cropped_reference_image.nrrd")
     num_epochs = parameters['trainer']['epochs']
     learning_rate = parameters['trainer']['learning_rate']
     eval_freq = parameters['trainer']['val_freq']
@@ -144,13 +321,13 @@ def supervised_train(config_file):
 
         bias = torch.from_numpy(orig_mean.flatten()).to(device)  # load the mean here
         weight = torch.from_numpy(orig_pc.T).to(device)  # load the PCA vectors here
-        #net.decoder.fc_fine.bias.data.copy_(bias)
-        #net.decoder.fc_fine.weight.data.copy_(weight)
+        # net.decoder.fc_fine.bias.data.copy_(bias)
+        # net.decoder.fc_fine.weight.data.copy_(weight)
 
         # define optimizer
         # for the initial steps set the gradient of the final layer to be zero
-##        for param in net.decoder.fc_fine.parameters():
-##            param.requires_grad = False
+    ##        for param in net.decoder.fc_fine.parameters():
+    ##            param.requires_grad = False
 
     train_params = net.parameters()
     opt = torch.optim.Adam(train_params, learning_rate)
@@ -197,6 +374,7 @@ def supervised_train(config_file):
         true_particles = []
         train_names = []
         for img, pca, mdl, names, anatomy in train_loader:
+            img, mdl = augment_batch(img, mdl, reference_origin)
             train_names.extend(names)
             opt.zero_grad()
             img = img.to(device)

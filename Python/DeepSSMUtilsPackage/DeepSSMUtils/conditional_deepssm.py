@@ -37,6 +37,7 @@ def get_image_dimensions(dataloader_file: str):
 
 
 def update_dataloader_with_padding(dataloader_file: str, image_dimensions: tuple, anatomy: int):
+    print(f"Updating dataloader with padding to match image dimensions: {image_dimensions}")
     """ Update the dataloader by padding the images to match image_dimensions and update anatomy info """
     # Load the existing dataloader
     dataloader = torch.load(dataloader_file)
@@ -167,12 +168,16 @@ def generate_data_loaders(project_filenames: list[str]):
     os.chdir(root_dir)
 
 
-def run_conditional_deepssm_training(project_filenames: list[str]):
+def run_conditional_deepssm_training(configuration: dict):
     """ Run Conditional DeepSSM Pipeline """
     sw_message("Running Conditional DeepSSM Training")
 
     os.makedirs('status', exist_ok=True)
-    if not os.path.exists('status/generate_data_loader'):
+    if True or not os.path.exists('status/generate_data_loader'):
+        projects = configuration["projects"]
+        project_filenames = []
+        for project in projects:
+            project_filenames.append(project["file"])
         generate_data_loaders(project_filenames)
         open('status/generate_data_loader', 'a').close()
 
@@ -306,7 +311,7 @@ def run_conditional_deepssm_testing(configuration: dict):
 
         # now we have to update the test loader to match the image dimensions of the training images and set the anatomy
         update_dataloader_with_padding("deepssm/torch_loaders/test", train_dimensions, number)
-        print("Using anatomy: ", number)
+        print(f"Using anatomy: {number} which corresponds to {project_filename}")
 
         config_file = f"deepssm/configuration.json"
 
@@ -362,7 +367,7 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
     deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
     val_test_images_dir = deepssm_dir + 'images/'
     output_filename = val_test_images_dir + f"{os.path.basename(absolute_image_name)}.nrrd"
-    run_utils.groom_val_test_image(project, absolute_image_name, output_filename, centroid_file=centroid_file)
+    transform = run_utils.groom_val_test_image(project, absolute_image_name, output_filename, centroid_file=centroid_file)
 
     deepssm_dir = DeepSSMUtils.get_deepssm_dir(project)
     val_test_images_dir = deepssm_dir + 'images/'
@@ -425,6 +430,11 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
     mesh = sw.utils.reconstruct_mesh(particles)
     mesh.write(f"{inference_dir}/{prefix}.vtk")
     print(f"Mesh written to {inference_dir}/{prefix}.vtk")
+
+    inv_transform = np.linalg.inv(transform)
+    mesh.applyTransform(inv_transform)
+    mesh.write(f"{inference_dir}/{prefix}.original.vtk")
+    print(f"Untransformed Mesh written to {inference_dir}/{prefix}.original.vtk")
 
     # switch back to the project directory
     os.chdir(project_dir)

@@ -313,7 +313,7 @@ def get_particles(model_path):
         points = line.split()
         points = [float(i) for i in points]
         data.append(points)
-    return (data)
+    return data
 
 
 def get_images(loader_dir, image_list, down_factor, down_dir):
@@ -333,6 +333,9 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
         all_images.append(img)
 
     all_images = np.array(all_images)
+
+    # TODO: You can't do this differently for each group (test, train, val, ugh!!!)
+
     # get mean and std
     mean_path = loader_dir + 'mean_img.npy'
     std_path = loader_dir + 'std_img.npy'

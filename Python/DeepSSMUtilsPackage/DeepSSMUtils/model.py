@@ -10,7 +10,7 @@ from DeepSSMUtils import net_utils
 class ConvolutionalBackbone(nn.Module):
     def __init__(self, img_dims):
         super(ConvolutionalBackbone, self).__init__()
-        print(f"Image dimensions: {img_dims}")
+        print(f"Image dimensions to the ConvolutionalBackbone: {img_dims}")
         self.img_dims = img_dims
         # basically using the number of dims and the number of poolings to be used
         # figure out the size of the last fc layer so that this network is general to
