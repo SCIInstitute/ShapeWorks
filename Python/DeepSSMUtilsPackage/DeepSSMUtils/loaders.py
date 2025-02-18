@@ -334,7 +334,7 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
 
     all_images = np.array(all_images)
 
-    # TODO: You can't do this differently for each group (test, train, val, ugh!!!)
+    # TODO: Problem: You can't do this differently for each group (test, train, val, ugh!!!)
 
     # get mean and std
     mean_path = loader_dir + 'mean_img.npy'
