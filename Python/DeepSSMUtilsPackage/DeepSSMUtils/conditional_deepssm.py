@@ -30,7 +30,7 @@ import shutil
 def get_image_dimensions(dataloader_file: str):
     """ Get the image dimensions from the dataloader file """
     dataloader = torch.load(dataloader_file)
-    for img, pca, mdl, names, anatomy in dataloader:
+    for img, pca, mdl, names, anatomy, center in dataloader:
         image_dimensions = img.shape[2:]
         return image_dimensions
     return None
@@ -44,7 +44,7 @@ def update_dataloader_with_padding(dataloader_file: str, image_dimensions: tuple
     updated_dataloader = []
 
     count = 0
-    for img, pca, mdl, names, old_anatomy in dataloader:
+    for img, pca, mdl, names, old_anatomy, center in dataloader:
         # Calculate padding sizes for each dimension
         padding_needed = [(target - actual) if target > actual else 0 for target, actual in
                           zip(image_dimensions, img.shape[2:])]
@@ -59,8 +59,10 @@ def update_dataloader_with_padding(dataloader_file: str, image_dimensions: tuple
         # Pad the image
         padded_img = F.pad(img, pad, "constant", 0)
 
+        # TODO: Do something with center?
+
         # Append the updated dataloader items
-        updated_dataloader.append((padded_img, pca, mdl, names, anatomy))
+        updated_dataloader.append((padded_img, pca, mdl, names, anatomy, center))
 
         do_write = False
         if do_write:

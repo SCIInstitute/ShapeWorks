@@ -26,14 +26,14 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
     """ Reads csv and makes both train and validation data loaders from it """
     sw_message("Creating training and validation torch loaders:")
     make_dir(loader_dir)
-    images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
-    images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
+    images, scores, models, prefixes, centers = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
+    images, scores, models, prefixes, centers = shuffle_data(images, scores, models, prefixes, centers)
     # split into train and validation (e.g. 80% vs 20%)
     cut = int(len(images) * train_split)
     sw_message("Turning to tensors...")
-    train_data = DeepSSMdataset(images[:cut], scores[:cut], models[:cut], prefixes[:cut])
+    train_data = DeepSSMdataset(images[:cut], scores[:cut], models[:cut], prefixes[:cut], centers[:cut])
     sw_message(str(len(train_data)) + ' in training set')
-    val_data = DeepSSMdataset(images[cut:], scores[cut:], models[cut:], prefixes[cut:])
+    val_data = DeepSSMdataset(images[cut:], scores[cut:], models[cut:], prefixes[cut:], centers[:cut])
     sw_message(str(len(val_data)) + ' in validation set')
 
     sw_message("Saving data loaders...")
@@ -63,9 +63,9 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 def get_train_dataset(loader_dir, data_csv, down_factor=1, down_dir=None, anatomy=1):
     sw_message("Creating training dataset...")
     make_dir(loader_dir)
-    images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
-    images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
-    train_data = DeepSSMdataset(images, scores, models, prefixes, anatomy)
+    images, scores, models, prefixes, centers = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
+    images, scores, models, prefixes, centers = shuffle_data(images, scores, models, prefixes, centers)
+    train_data = DeepSSMdataset(images, scores, models, prefixes, centers, anatomy)
     return train_data
 
 
@@ -116,8 +116,8 @@ def get_validation_dataset(loader_dir, val_img_list, val_particles, down_factor=
     name_file.write(str(names))
     name_file.close()
     sw_message("Validation names saved to: " + loader_dir + "validation_names.txt")
-    images = get_images(loader_dir, image_paths, down_factor, down_dir)
-    val_data = DeepSSMdataset(images, scores, models, names, anatomy)
+    images, centers = get_images(loader_dir, image_paths, down_factor, down_dir)
+    val_data = DeepSSMdataset(images, scores, models, names, centers, anatomy)
     sw_message("Validation dataset complete.")
     return val_data
 
@@ -157,8 +157,8 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
         # add label placeholders
         scores.append([1])
         models.append([1])
-    images = get_images(loader_dir, image_paths, down_factor, down_dir)
-    test_data = DeepSSMdataset(images, scores, models, test_names)
+    images, centers = get_images(loader_dir, image_paths, down_factor, down_dir)
+    test_data = DeepSSMdataset(images, scores, models, test_names, centers)
     # Write test names to file so they are saved somewhere
     name_file = open(loader_dir + 'test_names.txt', 'w+')
     name_file.write(str(test_names))
@@ -214,17 +214,17 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
     #     models = models[:10]
     #     prefixes = prefixes[:10]
 
-    images = get_images(loader_dir, image_paths, down_factor, down_dir)
+    images, centers = get_images(loader_dir, image_paths, down_factor, down_dir)
     scores = whiten_PCA_scores(scores, loader_dir)
-    return images, scores, models, prefixes
+    return images, scores, models, prefixes, centers
 
 
-def shuffle_data(images, scores, models, prefixes):
+def shuffle_data(images, scores, models, prefixes, centers):
     """ Shuffles all data """
-    c = list(zip(images, scores, models, prefixes))
+    c = list(zip(images, scores, models, prefixes, centers))
     random.shuffle(c)
-    images, scores, models, prefixes = zip(*c)
-    return images, scores, models, prefixes
+    images, scores, models, prefixes, centers = zip(*c)
+    return images, scores, models, prefixes, centers
 
 
 '''
@@ -233,23 +233,29 @@ Class for DeepSSM datasets that works with Pytorch DataLoader
 
 
 class DeepSSMdataset():
-    def __init__(self, img, pca_target, mdl_target, names, anatomy=1):
+    def __init__(self, img, pca_target, mdl_target, names, centers, anatomy=1):
         self.img = torch.FloatTensor(np.array(img))
         self.pca_target = torch.FloatTensor(np.array(pca_target))
         self.mdl_target = torch.FloatTensor(np.array(mdl_target))
         self.names = names
+        self.centers = centers
         self.anatomies = [anatomy] * len(img)
+        # check that centers is a list of numpy.ndarray
+        if not isinstance(centers[0], np.ndarray):
+            print(f"Centers: {centers}")
+            raise ValueError(f"Centers must be a list of numpy.ndarray, instead it seems to be a list of {type(centers[0])}")
 
     def __getitem__(self, index):
         x = self.img[index]
         y1 = self.pca_target[index]
         y2 = self.mdl_target[index]
+        center = self.centers[index]
         name = self.names[index]
         if hasattr(self, 'anatomies'):
             anatomy = self.anatomies[index]
         else:
             anatomy = 0
-        return x, y1, y2, name, anatomy
+        return x, y1, y2, name, anatomy, center
 
     def __len__(self):
         return len(self.img)
@@ -320,6 +326,7 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
     """ reads .nrrd files and returns whitened data """
     # get all images
     all_images = []
+    centers = []
     for image_path in image_list:
         if down_dir is not None:
             make_dir(down_dir)
@@ -329,12 +336,15 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
                 apply_down_sample(image_path, res_img, down_factor)
             image_path = res_img
         # for_viewing returns 'F' order, i.e., transpose, needed for this array
-        img = sw.Image(image_path).toArray(copy=True, for_viewing=True)
+        sw_img = sw.Image(image_path)
+        img = sw_img.toArray(copy=True, for_viewing=True)
         all_images.append(img)
+        print(f"Loaded image: {image_path}, center: {sw_img.center()}")
+        centers.append(sw_img.center())
 
     all_images = np.array(all_images)
 
-    # TODO: Problem: You can't do this differently for each group (test, train, val, ugh!!!)
+    # TODO: Problem: You can't do this differently for each group (test, train, val)
 
     # get mean and std
     mean_path = loader_dir + 'mean_img.npy'
@@ -347,7 +357,7 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
     norm_images = []
     for image in all_images:
         norm_images.append([(image - mean_image) / std_image])
-    return norm_images
+    return norm_images, centers
 
 
 def apply_down_sample(image_path, output_path, factor=0.75):

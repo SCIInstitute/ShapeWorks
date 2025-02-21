@@ -151,22 +151,31 @@ def create_3d_rotation_matrices(angle1, angle2, angle3):
     return Rx, Ry, Rz
 
 
-def augment_sample(image, particles, reference_origin):
+f_counter = 0
+
+
+def augment_sample2(image, particles, center):
+    # return image, particles
     # print("Augmenting sample...")
     # print(f"Image shape: {image.shape}")
     # print(f"Particles shape: {particles.shape}")
 
+    original_sw_image = sw.Image(image.numpy().squeeze().transpose().copy())
+
     angle_mean = 0  # Mean of the distribution
-    angle_std_dev = 5  # Standard deviation of the distribution
+    angle_std_dev = 10  # Standard deviation of the distribution
 
     # Determine a random angle from a normal distribution for each axis
     angle1 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
     angle2 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
     angle3 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
 
-    angle1 = 0
-    angle2 = 0
-    angle3 = 45
+    # but only rotate 50% of the time
+    if np.random.rand() > 0.5:
+        angle1 = 0
+        angle2 = 0
+        angle3 = 0
+
     # print(f"Angle 1: {angle1}")
     # print(f"Angle 2: {angle2}")
     # print(f"Angle 3: {angle3}")
@@ -178,18 +187,19 @@ def augment_sample(image, particles, reference_origin):
     radians2 = np.deg2rad(angle2)
     radians3 = np.deg2rad(angle3)
 
-    np_foo = image.numpy().squeeze()
-    # print(f"np_foo Image shape: {np_foo.shape}")
-    np_foo_transpose = np_foo.transpose()
-    # print(f"np_foo_transpose Image shape: {np_foo_transpose.shape}")
-
     sw_image = sw.Image(image.numpy().squeeze().transpose().copy())
-    sw_image.recenter()
+
+    # print(f"Setting center to {center}")
+    sw_image.setOrigin(-(sw_image.size() / 2) + center.tolist())
+    # print(f"Center is now: {sw_image.center()}")
+
+    # We want the center to be at "center", set the origin correctly
+
     sw_image.rotate(radians1, [1.0, 0.0, 0.0])
     sw_image.rotate(radians2, [0.0, 1.0, 0.0])
     sw_image.rotate(radians3, [0.0, 0.0, 1.0])
 
-    image = sw_image.toArray(for_viewing=True)
+    image = sw_image.toArray(copy=True, for_viewing=True)
     # convert back to tensor
     image = torch.from_numpy(image).unsqueeze(0)
 
@@ -223,37 +233,64 @@ def augment_sample(image, particles, reference_origin):
     ###particles = particles[:, [2, 1, 0]]
     particles = torch.from_numpy(particles).type_as(original_particles)
 
-    # # Save image and particles to a temporary directory
-    temp_dir = "/tmp"
-    os.makedirs(temp_dir, exist_ok=True)
-    image_index = len(os.listdir(temp_dir)) // 2  # Assuming equal number of images and particles
+    global f_counter
+    f_counter += 1
+    if f_counter < 10:
+        # # Save image and particles to a temporary directory
+        temp_dir = "/tmp"
+        os.makedirs(temp_dir, exist_ok=True)
 
-    if image_index < 100:
         # save as nrrd too
-        image_nrrd_path = os.path.join(temp_dir, f"rotated_{image_index}.nrrd")
+        image_nrrd_path = os.path.join(temp_dir, f"rotated_{f_counter}.nrrd")
 
+        print(f" Saving rotated image to {image_nrrd_path}")
         sw_image.write(image_nrrd_path)
 
-        original_nrrd_path = os.path.join(temp_dir, f"original_{image_index}.nrrd")
+        original_nrrd_path = os.path.join(temp_dir, f"original_{f_counter}.nrrd")
         original = original.squeeze().transpose().copy()
         im = sw.Image(original)
-        im.recenter()
+        # im.setOrigin([center[0], center[1], center[2]])
+        # im.recenter()
+
+        im.setOrigin(-(im.size() / 2) + center.tolist())
+
+        print(f" Saving original image to {original_nrrd_path}")
         im.write(original_nrrd_path)
         #
         # # save original particles
-        np.savetxt(os.path.join(temp_dir, f"particles_{image_index}.particles"), original_particles.numpy())
+        np.savetxt(os.path.join(temp_dir, f"particles_{f_counter}.particles"), original_particles.numpy())
         # # save rotated particles
-        np.savetxt(os.path.join(temp_dir, f"rotated_particles_{image_index}.particles"), particles.numpy())
+        np.savetxt(os.path.join(temp_dir, f"rotated_particles_{f_counter}.particles"), particles.numpy())
+
+        original_sw_image.write(os.path.join(temp_dir, f"1_original_{f_counter}.nrrd"))
+        original_sw_image.recenter()
+        original_sw_image.write(os.path.join(temp_dir, f"2_recentered_{f_counter}.nrrd"))
+        original_sw_image.setOrigin([center[0], center[1], center[2]])
+        original_sw_image.write(os.path.join(temp_dir, f"3_origin_{f_counter}.nrrd"))
+    # print the first 3 particles
 
     return image, particles
 
 
-def augment_batch(images, particles, reference_origin):
+def augment_sample(image, particles, center):
+    sw_image = sw.Image(image.numpy().squeeze().transpose().copy())
+
+    # this line?!?!?
+    sw_image.setOrigin(-(sw_image.size() / 2) + center.tolist())
+
+    image = sw_image.toArray(copy=True, for_viewing=True)
+    # convert back to tensor
+    image = torch.from_numpy(image).unsqueeze(0)
+
+    return image, particles
+
+
+def augment_batch(images, particles, centers):
     # print("Augmenting batch...")
     # print(f"Images shape: {images.shape}")
     # print(f"Particles shape: {particles.shape}")
     for i in range(images.shape[0]):
-        images[i], particles[i] = augment_sample(images[i], particles[i], reference_origin)
+        images[i], particles[i] = augment_sample(images[i], particles[i], centers[i])
     return images, particles
 
 
@@ -274,7 +311,7 @@ def supervised_train(config_file):
     loader_dir = parameters['paths']['loader_dir']
     aug_dir = parameters['paths']['aug_dir']
     deepssm_dir = parameters['paths']['out_dir']
-    reference_origin = get_reference_origin(deepssm_dir + "cropped_reference_image.nrrd")
+    # reference_origin = get_reference_origin(deepssm_dir + "cropped_reference_image.nrrd")
     num_epochs = parameters['trainer']['epochs']
     learning_rate = parameters['trainer']['learning_rate']
     eval_freq = parameters['trainer']['val_freq']
@@ -373,8 +410,8 @@ def supervised_train(config_file):
         pred_particles = []
         true_particles = []
         train_names = []
-        for img, pca, mdl, names, anatomy in train_loader:
-            img, mdl = augment_batch(img, mdl, reference_origin)
+        for img, pca, mdl, names, anatomy, center in train_loader:
+            img, mdl = augment_batch(img, mdl, center)
             train_names.extend(names)
             opt.zero_grad()
             img = img.to(device)
@@ -412,13 +449,16 @@ def supervised_train(config_file):
             net.eval()
             val_losses = []
             val_rel_losses = []
-            for img, pca, mdl, names, anatomy in val_loader:
+            for img, pca, mdl, names, anatomy, center in val_loader:
                 # print(f"Validation anatomy: {anatomy}")
+                # augment the validation data
+                img, mdl = augment_batch(img, mdl, center)
                 val_names.extend(names)
                 opt.zero_grad()
                 img = img.to(device)
                 pca = pca.to(device)
                 mdl = mdl.to(device)
+
                 anatomy = anatomy.to(device)
                 [pred_pca, pred_mdl] = net(img, anatomy_type=anatomy)
                 v_loss = loss_func(pred_mdl, mdl)
