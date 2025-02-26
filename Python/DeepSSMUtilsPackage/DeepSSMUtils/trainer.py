@@ -154,7 +154,7 @@ def create_3d_rotation_matrices(angle1, angle2, angle3):
 f_counter = 0
 
 
-def augment_sample2(image, particles, center):
+def augment_sample(image, particles, center):
     # return image, particles
     # print("Augmenting sample...")
     # print(f"Image shape: {image.shape}")
@@ -163,15 +163,20 @@ def augment_sample2(image, particles, center):
     original_sw_image = sw.Image(image.numpy().squeeze().transpose().copy())
 
     angle_mean = 0  # Mean of the distribution
-    angle_std_dev = 10  # Standard deviation of the distribution
+    angle_std_dev = 30  # Standard deviation of the distribution
 
     # Determine a random angle from a normal distribution for each axis
-    angle1 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
-    angle2 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
-    angle3 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+    #angle1 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+    #angle2 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+    #angle3 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
 
-    # but only rotate 50% of the time
-    if np.random.rand() > 0.5:
+    # uniform distribution
+    angle1 = np.random.uniform(-angle_std_dev, angle_std_dev)
+    angle2 = np.random.uniform(-angle_std_dev, angle_std_dev)
+    angle3 = np.random.uniform(-angle_std_dev, angle_std_dev)
+
+    # but only rotate 80% of the time
+    if np.random.rand() > 0.80:
         angle1 = 0
         angle2 = 0
         angle3 = 0
@@ -272,7 +277,7 @@ def augment_sample2(image, particles, center):
     return image, particles
 
 
-def augment_sample(image, particles, center):
+def augment_sample2(image, particles, center):
     sw_image = sw.Image(image.numpy().squeeze().transpose().copy())
 
     # this line?!?!?

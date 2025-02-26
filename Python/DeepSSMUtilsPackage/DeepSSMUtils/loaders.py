@@ -269,9 +269,24 @@ class DeepSSMdataset():
             # Padding equally on both sides
             padding_list.extend([total_padding // 2, total_padding - total_padding // 2])
 
+        print(f"Padding list: {padding_list}")
+
         # Pad all images in respective dimensions
         # `pad` expects padding in reverse order
         self.img = pad(self.img, padding_list[::-1], mode='constant', value=0)
+
+        # Need to update centers as well
+        # If the padding is even, the center should be the same
+        # If the padding is odd, the center should be shifted by 1
+        for i in range(len(self.centers)):
+            center = self.centers[i]
+            for j in range(len(center)):
+                if target_shape[j] > current_shape[j]:
+                    if padding_list[j] % 2 == 0:
+                        continue
+                    else:
+                        center[j] += 1
+
 
     def concatenate(self, other):
         """ Concatenates two datasets """

@@ -15,8 +15,15 @@ def clamp_translation(result_transform_parameters, max_translation):
     else:
         raise ValueError(f"Unexpected number of parameters: {len(clamped_params)}")
 
+    # print translation_indices values before and after
+    print(f"Before clamping:")
+    print([clamped_params[i] for i in translation_indices])
+
     for i in translation_indices:
         clamped_params[i] = max(min(clamped_params[i], max_translation), -max_translation)
+
+    print(f"After clamping:")
+    print([clamped_params[i] for i in translation_indices])
     return tuple(clamped_params)
 
 
@@ -36,7 +43,18 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     if max_iterations is None:
         max_iterations = 1024
 
+    max_iterations = 256
+
     parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
+    #
+    # parameter_map['TransformParameters'] = ['0.0', '0.0', '0.0', '0.0', '0.0',
+    #                                         '0.0']  # initial translation parameters set to zero
+    # parameter_map['AutomaticTransformInitialization'] = ['false']
+    #
+    # parameter_map['AutomaticScalesEstimation'] = ['false']
+    # #    parameter_map['Scales'] = ['1000', '1000', '1000', '1e-6', '1e-6', '1e-6']
+    # #    parameter_map['Scales'] = ['1e-6', '1e-6', '1e-6', '1000', '1000', '1000']
+    # parameter_map['Scales'] = ['1500', '1500', '1500', '1000', '1000', '1000']
 
     # if max_rotation is not None and transform_type in ['rigid', 'similarity']:
     #     # Assume rotation is in degrees and we limit optimization scales
@@ -48,10 +66,18 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     # Load images
     fixed_image = itk.imread(fixed_image_file, itk.F)
     moving_image = itk.imread(moving_image_file, itk.F)
+    fixed_mask = itk.imread("/home/amorris/tmp/reference_mask.nrrd", itk.UC)
 
     # Call registration method
     result_image, result_transform_parameters = itk.elastix_registration_method(
-        fixed_image, moving_image, parameter_object=parameter_object)
+        fixed_image, moving_image,
+        #fixed_mask=fixed_mask,
+        parameter_object=parameter_object, log_to_console=True)
+
+
+
+    itk.imwrite(result_image, '/home/amorris/tmp/result_image.nrrd')
+    print(f"Wrote result image to {result_image}")
 
     # Get transform matrix
     parameter_map = result_transform_parameters.GetParameterMap(0)

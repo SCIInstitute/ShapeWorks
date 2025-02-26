@@ -400,6 +400,10 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
 
     reference_centroid_file = deepssm_dir + "reference_centroid.txt"
 
+    if centroid_file is not None and not os.path.exists(reference_centroid_file):
+        print(f"Reference centroid file {reference_centroid_file} does not exist")
+        print(f"Current pwd: {os.getcwd()}")
+
     if centroid_file is not None and os.path.exists(reference_centroid_file):
         centroid = np.loadtxt(centroid_file)
         ref_center = np.loadtxt(reference_centroid_file)
@@ -410,7 +414,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print("Using centroid translation")
         image.write("/tmp/1_center.nrrd")
         image.write("/tmp/2_translate.nrrd")
-        max_translation = 1
+        max_translation = 10
     else:
         # 2. Translate to have ref center to make rigid registration easier
         translation = ref_center - image.center()
@@ -437,50 +441,80 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
         transform = np.matmul(vtk_translation_transform, transform)
 
-    # 5. Crop with medium bounding box and find rigid transform
-    image.fitRegion(medium_bb).write(image_file)
-    print("max_translation: " + str(max_translation))
-    itk_rigid_transform = image_utils.get_image_registration_transform(medium_cropped_ref_image_file,
-                                                                       image_file, transform_type='rigid',
-                                                                       max_translation=max_translation,
-                                                                       max_rotation=max_rotation,
-                                                                       max_iterations=max_iterations)
+    for iteration in range(1):
+        # 5. Crop with medium bounding box and find rigid transform
+        image.fitRegion(medium_bb).write(image_file)
+        print("max_translation: " + str(max_translation))
 
-    # sum up translation as a magnitude, itk_rigid_transform is a 4x4, not an ITK object
-    translation_vector = itk_rigid_transform[-1, :3]
-    print(f"Translation vector: {translation_vector}")
-    translation = np.linalg.norm(translation_vector)
-    print(f"Translation amount: {translation}")
+        print(f"-----------------------------------------------------")
+        print(f"Rigid Registration Iteration: {iteration}")
+        itk_rigid_transform = image_utils.get_image_registration_transform(medium_cropped_ref_image_file,
+                                                                           image_file, transform_type='rigid',
+                                                                           max_translation=max_translation,
+                                                                           max_rotation=max_rotation,
+                                                                           max_iterations=max_iterations)
+        # disable
+        # itk_rigid_transform = np.eye(4)
 
-    # 6. Apply transform
-    image.applyTransform(itk_rigid_transform,
-                         medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
-                         medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
-                         sw.InterpolationType.Linear, meshTransform=False)
-    print("\nRigid transform:\n" + str(itk_rigid_transform))
-    image.write("/tmp/3_rigid.nrrd")
+        # sum up translation as a magnitude, itk_rigid_transform is a 4x4, not an ITK object
+        translation_vector = itk_rigid_transform[-1, :3]
+        print(f"Translation vector: {translation_vector}")
+        translation = np.linalg.norm(translation_vector)
+        print(f"Translation amount: {translation}")
 
-    vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
-    transform = np.matmul(vtk_rigid_transform, transform)
+        # decompose the transform into rotation and translation
+        rotation_matrix = itk_rigid_transform[:3, :3]
+        rotation = np.arccos((np.trace(rotation_matrix) - 1) / 2) * 180 / np.pi
+        print(f"Rotation amount: {rotation}")
 
-    # 7. Get similarity transform from image registration and apply
-    image.fitRegion(bounding_box).write(image_file)
-    itk_similarity_transform = image_utils.get_image_registration_transform(cropped_ref_image_file,
-                                                                            image_file,
-                                                                            transform_type='similarity',
-                                                                            max_translation=max_translation,
-                                                                            max_rotation=max_rotation,
-                                                                            max_iterations=max_iterations)
-    image.applyTransform(itk_similarity_transform,
-                         cropped_ref_image.origin(), cropped_ref_image.dims(),
-                         cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
-                         sw.InterpolationType.Linear, meshTransform=False)
-    print("\nSimilarity transform:\n" + str(itk_similarity_transform))
-    image.write("/tmp/4_similarity.nrrd")
-    image.write(image_file)
-    print(f"Image file written: {image_file}")
-    vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
-    transform = np.matmul(vtk_similarity_transform, transform)
+        # 6. Apply transform
+        image.applyTransform(itk_rigid_transform,
+                             medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
+                             medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        print("\nRigid transform:\n" + str(itk_rigid_transform))
+        image.write(f"/tmp/3_rigid_{iteration}.nrrd")
+
+        vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
+        transform = np.matmul(vtk_rigid_transform, transform)
+
+    for iteration in range(1):
+        # 7. Get similarity transform from image registration and apply
+        image.fitRegion(bounding_box).write(image_file)
+
+        # itk_similarity_transform = image_utils.get_image_registration_transform(cropped_ref_image_file,
+        #                                                                         image_file,
+        #                                                                         transform_type='similarity',
+        #                                                                         max_translation=max_translation,
+        #                                                                         max_rotation=max_rotation,
+        #                                                                         max_iterations=max_iterations)
+
+        # disable
+        itk_similarity_transform = np.eye(4)
+
+        image.applyTransform(itk_similarity_transform,
+                             cropped_ref_image.origin(), cropped_ref_image.dims(),
+                             cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        print("\nSimilarity transform:\n" + str(itk_similarity_transform))
+
+        # decompose the transform into rotation and translation and scale
+        rotation_matrix = itk_similarity_transform[:3, :3]
+        rotation = np.arccos((np.trace(rotation_matrix) - 1) / 2) * 180 / np.pi
+        print(f"Rotation amount: {rotation}")
+        translation_vector = itk_similarity_transform[-1, :3]
+        print(f"Translation vector: {translation_vector}")
+        translation = np.linalg.norm(translation_vector)
+        print(f"Translation amount: {translation}")
+        scale = np.linalg.norm(rotation_matrix)
+        print(f"Scale amount: {scale}")
+
+        image.write("/tmp/4_similarity.nrrd")
+        image.write(f"/tmp/4_similarity_{iteration}.nrrd")
+        image.write(image_file)
+        print(f"Image file written: {image_file}")
+        vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
+        transform = np.matmul(vtk_similarity_transform, transform)
     return transform
 
 
