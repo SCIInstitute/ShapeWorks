@@ -317,6 +317,7 @@ class DeepSSMdataset():
         self.mdl_target = torch.cat((self.mdl_target, other.mdl_target), 0)
         self.names = self.names + other.names
         self.anatomies = self.anatomies + other.anatomies
+        self.centers = self.centers + other.centers
 
 
 def get_prefix(path):
