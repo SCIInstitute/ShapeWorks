@@ -34,27 +34,33 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     parameter_object = itk.ParameterObject.New()
     parameter_map = parameter_object.GetDefaultParameterMap('rigid')
 
-    # Set specific transform type in parameter map
-    if transform_type == 'similarity':
-        parameter_map['Transform'] = ['SimilarityTransform']
-    elif transform_type == 'translation':
-        parameter_map['Transform'] = ['TranslationTransform']
-
     if max_iterations is None:
         max_iterations = 1024
 
     max_iterations = 256
 
-    parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
-    #
-    # parameter_map['TransformParameters'] = ['0.0', '0.0', '0.0', '0.0', '0.0',
-    #                                         '0.0']  # initial translation parameters set to zero
-    # parameter_map['AutomaticTransformInitialization'] = ['false']
-    #
-    # parameter_map['AutomaticScalesEstimation'] = ['false']
-    # #    parameter_map['Scales'] = ['1000', '1000', '1000', '1e-6', '1e-6', '1e-6']
-    # #    parameter_map['Scales'] = ['1e-6', '1e-6', '1e-6', '1000', '1000', '1000']
-    # parameter_map['Scales'] = ['1500', '1500', '1500', '1000', '1000', '1000']
+    # Set specific transform type in parameter map
+    if transform_type == 'similarity':
+        parameter_map['Transform'] = ['SimilarityTransform']
+    elif transform_type == 'translation':
+        parameter_map['Transform'] = ['TranslationTransform']
+    else:
+        print("Using default transform type: RigidTransform")
+
+        parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
+        #
+        # parameter_map['TransformParameters'] = ['0.0', '0.0', '0.0', '0.0', '0.0',
+        #                                         '0.0']  # initial translation parameters set to zero
+        # parameter_map['AutomaticTransformInitialization'] = ['false']
+        #
+        parameter_map['AutomaticScalesEstimation'] = ['false']
+        # parameter_map['Scales'] = ['1000', '1000', '1000', '1e-6', '1e-6', '1e-6']
+        # parameter_map['Scales'] = ['1500', '1500', '1500', '1000', '1000', '1000']
+        # temp
+
+        parameter_map['Scales'] = ['1e-6', '1e-6', '1e-6', '100000', '100000', '100000']
+
+        # parameter_map['Scales'] = ['1e-6', '1e-6', '1e-6', '1e-6', '1e-6', '100000']
 
     # if max_rotation is not None and transform_type in ['rigid', 'similarity']:
     #     # Assume rotation is in degrees and we limit optimization scales
@@ -66,26 +72,27 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     # Load images
     fixed_image = itk.imread(fixed_image_file, itk.F)
     moving_image = itk.imread(moving_image_file, itk.F)
-    fixed_mask = itk.imread("/home/amorris/tmp/reference_mask.nrrd", itk.UC)
+    # fixed_mask = itk.imread("/home/amorris/tmp/reference_mask.nrrd", itk.UC)
 
     # Call registration method
     result_image, result_transform_parameters = itk.elastix_registration_method(
         fixed_image, moving_image,
-        #fixed_mask=fixed_mask,
-        parameter_object=parameter_object, log_to_console=True)
+        # fixed_mask=fixed_mask,
+        parameter_object=parameter_object, log_to_console=False)
 
-
-
-    itk.imwrite(result_image, '/home/amorris/tmp/result_image.nrrd')
-    print(f"Wrote result image to {result_image}")
+    itk.imwrite(result_image, '/tmp/result_image.nrrd')
+    print(f"Wrote result image to /tmp/result_image.nrrd")
 
     # Get transform matrix
     parameter_map = result_transform_parameters.GetParameterMap(0)
     transform_params = np.array(parameter_map['TransformParameters'], dtype=float)
 
-    if max_translation is not None:
-        clamped_params = clamp_translation(transform_params, max_translation)
-        transform_params = clamped_params
+    # get 4x4 matrix from transform parameters
+    print(f"*** Transform parameters: {transform_params}")
+
+    # if max_translation is not None:
+    #     clamped_params = clamp_translation(transform_params, max_translation)
+    #     transform_params = clamped_params
 
     if transform_type == 'rigid':
         itk_transform = SimpleITK.Euler3DTransform()
@@ -99,10 +106,13 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     itk_transform_matrix = np.eye(4)
 
     if transform_type == 'translation':
-        itk_transform_matrix[-1, :3] = np.array(itk_transform.GetOffset())
+        itk_transform_matrix[:3, 3] = np.array(itk_transform.GetOffset())
     else:
         itk_transform_matrix[:3, :3] = np.array(itk_transform.GetMatrix()).reshape(3, 3)
-        itk_transform_matrix[-1, :3] = np.array(itk_transform.GetTranslation())
+        itk_transform_matrix[:3, 3] = np.array(itk_transform.GetTranslation())
+
+    print("Registration transform matrix being returned:")
+    print(itk_transform_matrix)
 
     return itk_transform_matrix
 

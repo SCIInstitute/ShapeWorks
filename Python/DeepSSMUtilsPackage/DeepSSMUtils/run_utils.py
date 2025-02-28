@@ -6,7 +6,7 @@ import json
 
 import shapeworks as sw
 from bokeh.util.terminal import trace
-from shapeworks.utils import sw_message, sw_progress, sw_check_abort
+from shapeworks.utils import sw_message, sw_progress, sw_check_abort, getVTKtransform, getITKtransform
 
 import DataAugmentationUtils
 import DeepSSMUtils
@@ -346,6 +346,66 @@ def transform_to_string(transform):
     return transform_string
 
 
+def rotation_matrix_to_euler_angles(R):
+    # Assumes R is a proper rotation matrix, i.e., det(R) = 1
+    # The following implementation returns Euler angles following the
+    # Tait-Bryan angles convention of ZYX rotation: rotation about X, then Y, then Z
+
+    sy = np.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
+
+    singular = sy < 1e-6
+
+    if not singular:
+        x = np.arctan2(R[2, 1], R[2, 2])
+        y = np.arctan2(-R[2, 0], sy)
+        z = np.arctan2(R[1, 0], R[0, 0])
+    else:
+        x = np.arctan2(-R[1, 2], R[1, 1])
+        y = np.arctan2(-R[2, 0], sy)
+        z = 0
+
+    # Convert from radians to degrees
+    return np.degrees(np.array([x, y, z]))
+
+
+def format_matrix(matrix, decimals=2):
+    """
+    Formats a matrix by rounding its elements to a specified number of decimal places,
+    ensures consistent padding such that the negative signs are accounted for, and
+    returns a string representation without scientific notation.
+
+    Parameters:
+    - matrix (np.ndarray): The input matrix to format.
+    - decimals (int): Number of decimal places for rounding (default is 2).
+
+    Returns:
+    - str: A string representation of the formatted matrix with padding.
+    """
+    # Round the matrix to the specified number of decimal places
+    rounded_matrix = np.round(matrix, decimals)
+
+    # Determine the maximum width for each element to format the numbers with padding
+    str_matrix = np.array2string(
+        rounded_matrix,
+        formatter={'float_kind': lambda x: f"{x:.{decimals}f}"},
+        separator=','
+    )
+
+    # Strip the extra characters from array2string and convert to a regular list of lists
+    rows = str_matrix.replace('[', '').replace(']', '').strip().split('\n')
+    rows_list = [list(map(str.strip, row.split(','))) for row in rows]
+
+    # Find the maximum length of the elements for uniform padding
+    max_length = max(len(num) for row in rows_list for num in row)
+
+    # Create the final formatted string with consistent width and alignment
+    formatted_matrix = "\n".join(
+        "[" + " ".join(f"{num:>{max_length}}" for num in row) + "]" for row in rows_list
+    )
+
+    return formatted_matrix
+
+
 def groom_val_test_image(project, image_filename, output_filename, needs_reflection=False, reflection_axis=None,
                          max_translation=None,
                          max_rotation=None,
@@ -404,10 +464,15 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print(f"Reference centroid file {reference_centroid_file} does not exist")
         print(f"Current pwd: {os.getcwd()}")
 
+    use_centroid = False
     if centroid_file is not None and os.path.exists(reference_centroid_file):
+        use_centroid = True
+
+    if use_centroid:
         centroid = np.loadtxt(centroid_file)
         ref_center = np.loadtxt(reference_centroid_file)
 
+        # this aligns the centroid of the image to the centroid of the reference image
         translation = ref_center - centroid
         image.setOrigin(image.origin() + translation).write(image_file)
         transform[:3, -1] += translation
@@ -439,7 +504,25 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
                              sw.InterpolationType.Linear, meshTransform=False)
         image.write("/tmp/2_translate.nrrd")
         vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+
+        print("\nITK Translation transform:\n" + format_matrix(itk_translation_transform))
+
+        print("\nVTK Translation transform:\n" + format_matrix(vtk_translation_transform))
+
+        print("\nTranspose of itk translation transform:\n" + format_matrix(np.transpose(itk_translation_transform)))
+
         transform = np.matmul(vtk_translation_transform, transform)
+
+    # transform centroid by the transform and confirm that it now sits at the ref_center
+    if use_centroid:
+        centroid = np.loadtxt(centroid_file)
+        print(f"1: Initial centroid: {centroid}")
+        centroid = np.append(centroid, 1)
+        centroid = np.matmul(transform, centroid)
+        print(f"1: Transformed centroid: {centroid}")
+        print(f"1: Reference centroid: {ref_center}")
+
+    print(f"Initial VTK Translation matrix:\n{transform}")
 
     for iteration in range(1):
         # 5. Crop with medium bounding box and find rigid transform
@@ -447,12 +530,47 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print("max_translation: " + str(max_translation))
 
         print(f"-----------------------------------------------------")
-        print(f"Rigid Registration Iteration: {iteration}")
-        itk_rigid_transform = image_utils.get_image_registration_transform(medium_cropped_ref_image_file,
-                                                                           image_file, transform_type='rigid',
+        print(f"Rigid Registration")
+
+        fixed_image_file = medium_cropped_ref_image_file
+        moving_image_file = image_file
+        if use_centroid:
+            print(f"Ref center: {ref_center}")
+            # We want to do a rotation around the rec_center, so we need to translate both images to have ref_center be at 0,0,0
+            moving_image = sw.Image(moving_image_file)
+            moving_image.setOrigin(moving_image.origin() - ref_center)
+            moving_image.write(f"/tmp/moving.nrrd")
+            moving_image_file = f"/tmp/moving.nrrd"
+            fixed_image = sw.Image(fixed_image_file)
+            fixed_image.setOrigin(fixed_image.origin() - ref_center)
+            fixed_image.write(f"/tmp/fixed.nrrd")
+            fixed_image_file = f"/tmp/fixed.nrrd"
+
+        itk_rigid_transform = image_utils.get_image_registration_transform(fixed_image_file,
+                                                                           moving_image_file, transform_type='rigid',
                                                                            max_translation=max_translation,
                                                                            max_rotation=max_rotation,
                                                                            max_iterations=max_iterations)
+
+
+        print(f"\nRotation transform:\n{format_matrix(itk_rigid_transform)}\n")
+
+        if use_centroid:
+            # need to add translate, the rotation, and then translate back
+            translation = np.eye(4)
+            translation[:3, 3] = -ref_center
+            # transpose the translation matrix, not invert
+            # translation = np.transpose(translation)
+            #translation = getITKtransform(translation)
+
+            print(f"Translation matrix:\n{format_matrix(translation)}")
+            print(f"Inverse translation matrix:\n{format_matrix(np.linalg.inv(translation))}")
+            # itk_rigid_transform = np.matmul(np.matmul(translation, itk_rigid_transform), np.linalg.inv(translation))
+            itk_rigid_transform = np.linalg.inv(translation) @ np.linalg.inv(itk_rigid_transform) @ translation
+#            itk_rigid_transform = getITKtransform(itk_rigid_transform)
+
+        print(f"\nRigid transform after update:\n{format_matrix(itk_rigid_transform)}\n")
+
         # disable
         # itk_rigid_transform = np.eye(4)
 
@@ -467,16 +585,37 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         rotation = np.arccos((np.trace(rotation_matrix) - 1) / 2) * 180 / np.pi
         print(f"Rotation amount: {rotation}")
 
+        euler_angles = rotation_matrix_to_euler_angles(rotation_matrix)
+        print(f"Euler angles (degrees): {euler_angles}")
+
         # 6. Apply transform
         image.applyTransform(itk_rigid_transform,
                              medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
                              medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=False)
+                             sw.InterpolationType.Linear, meshTransform=True)
         print("\nRigid transform:\n" + str(itk_rigid_transform))
         image.write(f"/tmp/3_rigid_{iteration}.nrrd")
 
-        vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
+
+        #vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
+        vtk_rigid_transform = itk_rigid_transform
+        print("\nVTK Rigid transform:\n" + format_matrix(vtk_rigid_transform))
         transform = np.matmul(vtk_rigid_transform, transform)
+        print("\nCombined VTK Transform:\n" + format_matrix(transform))
+
+        # transform ref_center using the
+
+    # transform centroid by the transform and confirm that it now sits at the ref_center
+    if use_centroid:
+        centroid = np.loadtxt(centroid_file)
+        print(f"2: Initial centroid: {centroid}")
+        centroid = np.append(centroid, 1)
+        centroid = np.matmul(transform, centroid)
+        print(f"2: Transformed centroid: {centroid}")
+        print(f"2: Reference centroid: {ref_center}")
+
+    #import sys
+    #sys.exit(0)
 
     for iteration in range(1):
         # 7. Get similarity transform from image registration and apply
@@ -515,6 +654,8 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print(f"Image file written: {image_file}")
         vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
         transform = np.matmul(vtk_similarity_transform, transform)
+
+    print(f"Final Transform:\n{format_matrix(transform)}")
     return transform
 
 
