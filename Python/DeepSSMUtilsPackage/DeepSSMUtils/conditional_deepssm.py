@@ -438,6 +438,7 @@ def run_conditional_deepssm_inference(project_config: dict, anatomy: int, image:
     mesh.write(f"{inference_dir}/{prefix}.original.vtk")
     print(f"Untransformed Mesh written to {inference_dir}/{prefix}.original.vtk")
 
+    print(f"This is the latest version!")
     # switch back to the project directory
     os.chdir(project_dir)
     # process the test predictions
