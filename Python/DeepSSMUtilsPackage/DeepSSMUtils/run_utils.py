@@ -6,7 +6,7 @@ import json
 
 import shapeworks as sw
 from bokeh.util.terminal import trace
-from shapeworks.utils import sw_message, sw_progress, sw_check_abort, getVTKtransform, getITKtransform
+from shapeworks.utils import sw_message, sw_progress, sw_check_abort, getVTKtransform
 
 import DataAugmentationUtils
 import DeepSSMUtils
@@ -501,6 +501,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
                                                                                  max_iterations=max_iterations)
         print("\nTranslation transform:\n" + str(itk_translation_transform))
         # 4. Apply transform
+        print(f"\n******** NEW Applying Transform ********\n{format_matrix(itk_translation_transform)}")
         image.applyTransform(itk_translation_transform,
                              large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
                              large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
@@ -590,10 +591,11 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print(f"Euler angles (degrees): {euler_angles}")
 
         # 6. Apply transform
+        print(f"\n******** NEW Applying Transform ********\n{format_matrix(itk_rigid_transform)}")
         image.applyTransform(itk_rigid_transform,
                              medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
                              medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
-                             sw.InterpolationType.Linear, meshTransform=True)
+                             sw.InterpolationType.Linear, meshTransform=False)
         print("\nRigid transform:\n" + str(itk_rigid_transform))
         image.write(f"/tmp/3_rigid_{iteration}.nrrd")
 
@@ -629,6 +631,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
                                                                                 max_rotation=max_rotation,
                                                                                 max_iterations=max_iterations)
 
+        print(f"\n******** NEW Applying Transform ********\n{format_matrix(itk_similarity_transform)}")
         image.applyTransform(itk_similarity_transform,
                              cropped_ref_image.origin(), cropped_ref_image.dims(),
                              cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
@@ -656,7 +659,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
     image.write(image_file)
 
     print(f"Final Transform:\n{format_matrix(transform)}")
-    return transform
+    return getVTKtransform(transform)
 
 
 def groom_val_test_images(project, indices, max_translation=None, max_rotation=None, max_iterations=1024):
