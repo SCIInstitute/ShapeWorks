@@ -37,8 +37,6 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     if max_iterations is None:
         max_iterations = 1024
 
-    max_iterations = 256
-
     # Set specific transform type in parameter map
     if transform_type == 'similarity':
         parameter_map['Transform'] = ['SimilarityTransform']
@@ -47,37 +45,23 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     else:
         print("Using default transform type: RigidTransform")
 
-        parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
-        #
-        # parameter_map['TransformParameters'] = ['0.0', '0.0', '0.0', '0.0', '0.0',
-        #                                         '0.0']  # initial translation parameters set to zero
-        # parameter_map['AutomaticTransformInitialization'] = ['false']
-        #
+    # override
+    max_iterations = 256
+    parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
+
+    if max_translation == 0:
         parameter_map['AutomaticScalesEstimation'] = ['false']
-        # parameter_map['Scales'] = ['1000', '1000', '1000', '1e-6', '1e-6', '1e-6']
-        # parameter_map['Scales'] = ['1500', '1500', '1500', '1000', '1000', '1000']
-        # temp
-
         parameter_map['Scales'] = ['1e-6', '1e-6', '1e-6', '100000', '100000', '100000']
-
-        # parameter_map['Scales'] = ['1e-6', '1e-6', '1e-6', '1e-6', '1e-6', '100000']
-
-    # if max_rotation is not None and transform_type in ['rigid', 'similarity']:
-    #     # Assume rotation is in degrees and we limit optimization scales
-    #     rotation_constraints = [str(np.deg2rad(max_rotation))] * (3 if transform_type == 'rigid' else 6)
-    #     parameter_map['OptimizerScales'] = rotation_constraints
 
     parameter_object.AddParameterMap(parameter_map)
 
     # Load images
     fixed_image = itk.imread(fixed_image_file, itk.F)
     moving_image = itk.imread(moving_image_file, itk.F)
-    # fixed_mask = itk.imread("/home/amorris/tmp/reference_mask.nrrd", itk.UC)
 
     # Call registration method
     result_image, result_transform_parameters = itk.elastix_registration_method(
         fixed_image, moving_image,
-        # fixed_mask=fixed_mask,
         parameter_object=parameter_object, log_to_console=False)
 
     itk.imwrite(result_image, '/tmp/result_image.nrrd')

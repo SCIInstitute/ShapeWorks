@@ -468,6 +468,8 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
     if centroid_file is not None and os.path.exists(reference_centroid_file):
         use_centroid = True
 
+    # override
+    max_translation = 10
     if use_centroid:
         centroid = np.loadtxt(centroid_file)
         ref_center = np.loadtxt(reference_centroid_file)
@@ -479,12 +481,13 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print("Using centroid translation")
         image.write("/tmp/1_center.nrrd")
         image.write("/tmp/2_translate.nrrd")
-        max_translation = 10
+        max_translation = 0
     else:
         # 2. Translate to have ref center to make rigid registration easier
         translation = ref_center - image.center()
         image.setOrigin(image.origin() + translation).write(image_file)
         transform[:3, -1] += translation
+        print(f"Using translation:\n{format_matrix(transform)}")
 
         image.write("/tmp/1_center.nrrd")
 
@@ -503,7 +506,8 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
                              large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=False)
         image.write("/tmp/2_translate.nrrd")
-        vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+        #vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+        vtk_translation_transform = itk_translation_transform
 
         print("\nITK Translation transform:\n" + format_matrix(itk_translation_transform))
 
@@ -552,7 +556,6 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
                                                                            max_rotation=max_rotation,
                                                                            max_iterations=max_iterations)
 
-
         print(f"\nRotation transform:\n{format_matrix(itk_rigid_transform)}\n")
 
         if use_centroid:
@@ -561,13 +564,11 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
             translation[:3, 3] = -ref_center
             # transpose the translation matrix, not invert
             # translation = np.transpose(translation)
-            #translation = getITKtransform(translation)
+            # translation = getITKtransform(translation)
 
             print(f"Translation matrix:\n{format_matrix(translation)}")
             print(f"Inverse translation matrix:\n{format_matrix(np.linalg.inv(translation))}")
-            # itk_rigid_transform = np.matmul(np.matmul(translation, itk_rigid_transform), np.linalg.inv(translation))
             itk_rigid_transform = np.linalg.inv(translation) @ np.linalg.inv(itk_rigid_transform) @ translation
-#            itk_rigid_transform = getITKtransform(itk_rigid_transform)
 
         print(f"\nRigid transform after update:\n{format_matrix(itk_rigid_transform)}\n")
 
@@ -596,8 +597,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print("\nRigid transform:\n" + str(itk_rigid_transform))
         image.write(f"/tmp/3_rigid_{iteration}.nrrd")
 
-
-        #vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
+        # vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
         vtk_rigid_transform = itk_rigid_transform
         print("\nVTK Rigid transform:\n" + format_matrix(vtk_rigid_transform))
         transform = np.matmul(vtk_rigid_transform, transform)
@@ -614,22 +614,20 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print(f"2: Transformed centroid: {centroid}")
         print(f"2: Reference centroid: {ref_center}")
 
-    #import sys
-    #sys.exit(0)
+    # import sys
+    # sys.exit(0)
 
-    for iteration in range(1):
+    image.fitRegion(bounding_box).write(image_file)
+
+    if not use_centroid:
         # 7. Get similarity transform from image registration and apply
-        image.fitRegion(bounding_box).write(image_file)
 
-        # itk_similarity_transform = image_utils.get_image_registration_transform(cropped_ref_image_file,
-        #                                                                         image_file,
-        #                                                                         transform_type='similarity',
-        #                                                                         max_translation=max_translation,
-        #                                                                         max_rotation=max_rotation,
-        #                                                                         max_iterations=max_iterations)
-
-        # disable
-        itk_similarity_transform = np.eye(4)
+        itk_similarity_transform = image_utils.get_image_registration_transform(cropped_ref_image_file,
+                                                                                image_file,
+                                                                                transform_type='similarity',
+                                                                                max_translation=max_translation,
+                                                                                max_rotation=max_rotation,
+                                                                                max_iterations=max_iterations)
 
         image.applyTransform(itk_similarity_transform,
                              cropped_ref_image.origin(), cropped_ref_image.dims(),
@@ -650,10 +648,12 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
 
         image.write("/tmp/4_similarity.nrrd")
         image.write(f"/tmp/4_similarity_{iteration}.nrrd")
-        image.write(image_file)
-        print(f"Image file written: {image_file}")
-        vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
+        #vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
+        vtk_similarity_transform = itk_similarity_transform
         transform = np.matmul(vtk_similarity_transform, transform)
+
+    print(f"Image file written: {image_file}")
+    image.write(image_file)
 
     print(f"Final Transform:\n{format_matrix(transform)}")
     return transform
