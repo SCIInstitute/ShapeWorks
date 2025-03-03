@@ -688,8 +688,9 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
     image.write(image_file)
 
     print(f"Final Transform:\n{format_matrix(transform)}")
-    print(f"Convert Transform:\n{format_matrix(convert_transform(transform))}")
-    returning_transform = getVTKtransform(convert_transform(transform))
+    returning_transform = transform
+    #print(f"Convert Transform:\n{format_matrix(convert_transform(transform))}")
+    #returning_transform = getVTKtransform(convert_transform(transform))
     print(f"Returning Transform:\n{format_matrix(returning_transform)}")
     return returning_transform
 
