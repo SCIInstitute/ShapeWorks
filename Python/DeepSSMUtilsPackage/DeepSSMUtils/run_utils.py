@@ -368,6 +368,32 @@ def rotation_matrix_to_euler_angles(R):
     return np.degrees(np.array([x, y, z]))
 
 
+def convert_transform(transform):
+    """
+    Convert a standardized 4x4 transform to one suitable for ShapeWorks by
+    swapping the last column with the last row.
+
+    Parameters:
+    transform (numpy.ndarray): A 4x4 transformation matrix.
+
+    Returns:
+    numpy.ndarray: A new 4x4 matrix with the last column and last row swapped.
+    """
+
+    # Ensure we're working with a copy of the original transformation matrix to avoid modifying it in place
+    transform_copy = np.array(transform, copy=True)
+
+    # Extract the last column and last row
+    last_column = transform[:, -1].copy()
+    last_row = transform[-1, :].copy()
+
+    # Swap the last column with the last row
+    transform_copy[:, -1] = last_row
+    transform_copy[-1, :] = last_column
+
+    return transform_copy
+
+
 def format_matrix(matrix, decimals=2):
     """
     Formats a matrix by rounding its elements to a specified number of decimal places,
@@ -502,12 +528,12 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         print("\nTranslation transform:\n" + str(itk_translation_transform))
         # 4. Apply transform
         print(f"\n******** NEW Applying Transform ********\n{format_matrix(itk_translation_transform)}")
-        image.applyTransform(itk_translation_transform,
+        image.applyTransform(convert_transform(itk_translation_transform),
                              large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
                              large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=False)
         image.write("/tmp/2_translate.nrrd")
-        #vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+        # vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
         vtk_translation_transform = itk_translation_transform
 
         print("\nITK Translation transform:\n" + format_matrix(itk_translation_transform))
@@ -516,7 +542,8 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
 
         print("\nTranspose of itk translation transform:\n" + format_matrix(np.transpose(itk_translation_transform)))
 
-        transform = np.matmul(vtk_translation_transform, transform)
+        #transform = np.matmul(vtk_translation_transform, transform)
+        transform = np.matmul(transform, vtk_translation_transform)
 
     # transform centroid by the transform and confirm that it now sits at the ref_center
     if use_centroid:
@@ -592,7 +619,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
 
         # 6. Apply transform
         print(f"\n******** NEW Applying Transform ********\n{format_matrix(itk_rigid_transform)}")
-        image.applyTransform(itk_rigid_transform,
+        image.applyTransform(convert_transform(itk_rigid_transform),
                              medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
                              medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=False)
@@ -602,7 +629,8 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         # vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
         vtk_rigid_transform = itk_rigid_transform
         print("\nVTK Rigid transform:\n" + format_matrix(vtk_rigid_transform))
-        transform = np.matmul(vtk_rigid_transform, transform)
+        #transform = np.matmul(vtk_rigid_transform, transform)
+        transform = np.matmul(transform, vtk_rigid_transform)
         print("\nCombined VTK Transform:\n" + format_matrix(transform))
 
         # transform ref_center using the
@@ -632,7 +660,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
                                                                                 max_iterations=max_iterations)
 
         print(f"\n******** NEW Applying Transform ********\n{format_matrix(itk_similarity_transform)}")
-        image.applyTransform(itk_similarity_transform,
+        image.applyTransform(convert_transform(itk_similarity_transform),
                              cropped_ref_image.origin(), cropped_ref_image.dims(),
                              cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
                              sw.InterpolationType.Linear, meshTransform=False)
@@ -651,15 +679,19 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
 
         image.write("/tmp/4_similarity.nrrd")
         image.write(f"/tmp/4_similarity_{iteration}.nrrd")
-        #vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
+        # vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
         vtk_similarity_transform = itk_similarity_transform
-        transform = np.matmul(vtk_similarity_transform, transform)
+        #transform = np.matmul(vtk_similarity_transform, transform)
+        transform = np.matmul(transform, vtk_similarity_transform)
 
     print(f"Image file written: {image_file}")
     image.write(image_file)
 
     print(f"Final Transform:\n{format_matrix(transform)}")
-    return getVTKtransform(transform)
+    print(f"Convert Transform:\n{format_matrix(convert_transform(transform))}")
+    returning_transform = getVTKtransform(convert_transform(transform))
+    print(f"Returning Transform:\n{format_matrix(returning_transform)}")
+    return returning_transform
 
 
 def groom_val_test_images(project, indices, max_translation=None, max_rotation=None, max_iterations=1024):
