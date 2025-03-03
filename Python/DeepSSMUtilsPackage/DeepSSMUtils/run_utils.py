@@ -549,7 +549,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         centroid = np.loadtxt(centroid_file)
         print(f"1: Initial centroid: {centroid}")
         centroid = np.append(centroid, 1)
-        centroid = np.matmul(transform, centroid)
+        centroid = np.matmul(np.linalg.inv(transform), centroid)
         print(f"1: Transformed centroid: {centroid}")
         print(f"1: Reference centroid: {ref_center}")
 
@@ -595,7 +595,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
 
             # print(f"Translation matrix:\n{format_matrix(translation)}")
             # print(f"Inverse translation matrix:\n{format_matrix(np.linalg.inv(translation))}")
-            itk_rigid_transform = np.linalg.inv(translation) @ np.linalg.inv(itk_rigid_transform) @ translation
+            itk_rigid_transform = np.linalg.inv(translation) @ itk_rigid_transform @ translation
 
         # print(f"\nRigid transform after update:\n{format_matrix(itk_rigid_transform)}\n")
 
