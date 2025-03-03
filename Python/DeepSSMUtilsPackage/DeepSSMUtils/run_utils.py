@@ -694,13 +694,6 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
 
     returning_transform = np.linalg.inv(returning_transform)
 
-    # returning_transform = np.array([
-    #     [1.05, -0.08, -0.04, 1.21],
-    #     [0.08, 1.05, 0.04, -145.75],
-    #     [0.03, -0.05, 1.05, 48.57],
-    #     [0.00, 0.00, 0.00, 1.00]
-    # ])
-
     print(f"Returning Transform:\n{format_matrix(returning_transform)}")
 
     return returning_transform

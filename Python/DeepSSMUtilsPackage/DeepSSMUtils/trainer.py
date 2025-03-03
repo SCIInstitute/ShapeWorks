@@ -166,9 +166,9 @@ def augment_sample(image, particles, center):
     angle_std_dev = 30  # Standard deviation of the distribution
 
     # Determine a random angle from a normal distribution for each axis
-    #angle1 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
-    #angle2 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
-    #angle3 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+    # angle1 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+    # angle2 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
+    # angle3 = np.random.normal(loc=angle_mean, scale=angle_std_dev)
 
     # uniform distribution
     angle1 = np.random.uniform(-angle_std_dev, angle_std_dev)
@@ -180,10 +180,6 @@ def augment_sample(image, particles, center):
         angle1 = 0
         angle2 = 0
         angle3 = 0
-
-    # print(f"Angle 1: {angle1}")
-    # print(f"Angle 2: {angle2}")
-    # print(f"Angle 3: {angle3}")
 
     original = image.numpy().copy()
 
@@ -208,34 +204,16 @@ def augment_sample(image, particles, center):
     # convert back to tensor
     image = torch.from_numpy(image).unsqueeze(0)
 
-    # Apply the rotation matrix to the particles
-
     # Create rotation matrices for each axis
-    Rx, Ry, Rz = create_3d_rotation_matrices(-angle1, -angle2, -angle3)
+    rx, ry, rz = create_3d_rotation_matrices(-angle1, -angle2, -angle3)
 
     original_particles = particles
 
-    # Because the images are transposed for some reason in the loader, we need to swap X and Z for the particles as well
-    # before applying the rotation matrices, then swap them back
-
     # Apply the rotation matrices to the particles
-
     particles = particles.numpy()
-
-    # print shape
-    # print(f"Particles shape: {particles.shape}")
-    # Particles shape: (1024, 3)
-
-    # print the first 3 particles
-    # print(f"Original particles: {particles[0:3, :]}")
-    # need to swap the first and last columns to match
-    ###particles = particles[:, [2, 1, 0]]
-    # print(f"Swapped particles: {particles[0:3, :]}")
-
-    particles = np.dot(particles, Rx)
-    particles = np.dot(particles, Ry)
-    particles = np.dot(particles, Rz)
-    ###particles = particles[:, [2, 1, 0]]
+    particles = np.dot(particles, rx)
+    particles = np.dot(particles, ry)
+    particles = np.dot(particles, rz)
     particles = torch.from_numpy(particles).type_as(original_particles)
 
     global f_counter
