@@ -504,6 +504,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         translation = ref_center - centroid
         image.setOrigin(image.origin() + translation).write(image_file)
         transform[:3, -1] += translation
+        transform = np.linalg.inv(transform)
         print("Using centroid translation")
         image.write("/tmp/1_center.nrrd")
         image.write("/tmp/2_translate.nrrd")
@@ -513,6 +514,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
         translation = ref_center - image.center()
         image.setOrigin(image.origin() + translation).write(image_file)
         transform[:3, -1] += translation
+        transform = np.linalg.inv(transform)
         print(f"1. Center transform:\n{format_matrix(transform)}")
 
         image.write("/tmp/1_center.nrrd")
@@ -534,6 +536,7 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
                              sw.InterpolationType.Linear, meshTransform=False)
         image.write("/tmp/2_translate.nrrd")
         # vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+        # vtk_translation_transform = np.linalg.inv(itk_translation_transform)
         vtk_translation_transform = itk_translation_transform
 
         #transform = np.matmul(vtk_translation_transform, transform)
@@ -688,6 +691,8 @@ def groom_val_test_image(project, image_filename, output_filename, needs_reflect
     #print(f"Convert Transform:\n{format_matrix(convert_transform(transform))}")
     #returning_transform = getVTKtransform(convert_transform(transform))
     print(f"Returning Transform:\n{format_matrix(returning_transform)}")
+
+    returning_transform = np.linalg.inv(returning_transform)
 
     # returning_transform = np.array([
     #     [1.05, -0.08, -0.04, 1.21],
