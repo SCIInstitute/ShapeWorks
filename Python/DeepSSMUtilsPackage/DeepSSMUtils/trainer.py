@@ -200,6 +200,13 @@ def augment_sample(image, particles, center):
     sw_image.rotate(radians2, [0.0, 1.0, 0.0])
     sw_image.rotate(radians3, [0.0, 0.0, 1.0])
 
+    # now translate by up to 10px
+    translate_x = np.random.uniform(-10, 10)
+    translate_y = np.random.uniform(-10, 10)
+    translate_z = np.random.uniform(-10, 10)
+
+    sw_image.translate([translate_x, translate_y, translate_z])
+
     image = sw_image.toArray(copy=True, for_viewing=True)
     # convert back to tensor
     image = torch.from_numpy(image).unsqueeze(0)
@@ -209,11 +216,13 @@ def augment_sample(image, particles, center):
 
     original_particles = particles
 
-    # Apply the rotation matrices to the particles
+    # Apply the rotation and translation matrices to the particles
     particles = particles.numpy()
     particles = np.dot(particles, rx)
     particles = np.dot(particles, ry)
     particles = np.dot(particles, rz)
+    particles += np.array([translate_x, translate_y, translate_z])
+
     particles = torch.from_numpy(particles).type_as(original_particles)
 
     global f_counter
