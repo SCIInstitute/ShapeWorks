@@ -175,7 +175,8 @@ def run_conditional_deepssm_training(configuration: dict):
     sw_message("Running Conditional DeepSSM Training")
 
     os.makedirs('status', exist_ok=True)
-    if True or not os.path.exists('status/generate_data_loader'):
+#    if True or not os.path.exists('status/generate_data_loader'):
+    if not os.path.exists('status/generate_data_loader'):
         projects = configuration["projects"]
         project_filenames = []
         for project in projects:
