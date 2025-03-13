@@ -529,58 +529,9 @@ bool Groom::run_alignment() {
 
   // per-domain alignment
   for (size_t domain = 0; domain < num_domains; domain++) {
-    if (abort_) {
-      return false;
-    }
-
     auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
-    if (params.get_alignment_enabled()) {
-      any_alignment = true;
-    }
-
     if (params.get_use_icp()) {
       global_icp = true;
-      std::vector<Mesh> reference_meshes;
-      std::vector<Mesh> meshes;
-      for (size_t i = 0; i < subjects.size(); i++) {
-        if (!subjects[i]->is_excluded()) {
-          Mesh mesh = get_mesh(i, domain, true);
-          // if fixed subjects are present, only add the fixed subjects
-          if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
-            reference_meshes.push_back(mesh);
-          }
-          meshes.push_back(mesh);
-        }
-      }
-
-      reference_index = params.get_alignment_reference();
-      subset_size = params.get_alignment_subset_size();
-
-      Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
-      if (reference_index < 0 || reference_index >= subjects.size()) {
-        reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
-        reference_index = reference_meshes[reference_index].get_id();
-      }
-      reference_mesh = get_mesh(reference_index, domain, true);
-
-      params.set_alignment_reference_chosen(reference_index);
-      params.save_to_project();
-
-      auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
-      assign_transforms(transforms, domain);
-    } else if (params.get_use_landmarks()) {
-      global_landmarks = true;
-      std::vector<vtkSmartPointer<vtkPoints>> landmarks;
-      for (size_t i = 0; i < subjects.size(); i++) {
-        landmarks.push_back(get_landmarks(i, domain));
-      }
-
-      int reference_index = Groom::find_reference_landmarks(landmarks);
-      params.set_alignment_reference_chosen(reference_index);
-      params.save_to_project();
-
-      auto transforms = Groom::get_landmark_transforms(landmarks, reference_index);
-      assign_transforms(transforms, domain);
     }
   }
 
@@ -649,6 +600,63 @@ bool Groom::run_alignment() {
       }
       size_t domain = num_domains;  // end
       assign_transforms(transforms, domain, true /* global */);
+    }
+  }
+
+  // per-domain alignment
+  for (size_t domain = 0; domain < num_domains; domain++) {
+    if (abort_) {
+      return false;
+    }
+
+    auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
+    if (params.get_alignment_enabled()) {
+      any_alignment = true;
+    }
+
+    if (params.get_use_icp()) {
+      global_icp = true;
+      std::vector<Mesh> reference_meshes;
+      std::vector<Mesh> meshes;
+      for (size_t i = 0; i < subjects.size(); i++) {
+        if (!subjects[i]->is_excluded()) {
+          Mesh mesh = get_mesh(i, domain, true);
+          // if fixed subjects are present, only add the fixed subjects
+          if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
+            reference_meshes.push_back(mesh);
+          }
+          meshes.push_back(mesh);
+        }
+      }
+
+      reference_index = params.get_alignment_reference();
+      subset_size = params.get_alignment_subset_size();
+
+      Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
+      if (reference_index < 0 || reference_index >= subjects.size()) {
+        reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
+        reference_index = reference_meshes[reference_index].get_id();
+      }
+      reference_mesh = get_mesh(reference_index, domain, true);
+
+      params.set_alignment_reference_chosen(reference_index);
+      params.save_to_project();
+
+      auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
+      assign_transforms(transforms, domain);
+    } else if (params.get_use_landmarks()) {
+      global_landmarks = true;
+      std::vector<vtkSmartPointer<vtkPoints>> landmarks;
+      for (size_t i = 0; i < subjects.size(); i++) {
+        landmarks.push_back(get_landmarks(i, domain));
+      }
+
+      int reference_index = Groom::find_reference_landmarks(landmarks);
+      params.set_alignment_reference_chosen(reference_index);
+      params.save_to_project();
+
+      auto transforms = Groom::get_landmark_transforms(landmarks, reference_index);
+      assign_transforms(transforms, domain);
     }
   }
 
