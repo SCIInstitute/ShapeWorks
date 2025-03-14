@@ -25,8 +25,6 @@ void StudioImageActorPointPlacer::PrintSelf(ostream& os, vtkIndent indent) { thi
 //----------------------------------------------------------------------------
 int StudioImageActorPointPlacer::ComputeWorldPosition(vtkRenderer* renderer, double displayPos[2], double worldPos[3],
                                                       double worldOrient[9]) {
-  //std::cerr << "StudioImageActorPointPlacer::ComputeWorldPosition\n";
-
   vtkImageActor* actor = this->GetImageActor();
   if (!actor) {
     return 0;
@@ -96,8 +94,6 @@ int StudioImageActorPointPlacer::ComputeWorldPosition(vtkRenderer* renderer, dou
 
 //----------------------------------------------------------------------------
 int StudioImageActorPointPlacer::ValidateWorldPosition(double worldPos[3]) {
-  std::cerr << "StudioImageActorPointPlacer::ValidateWorldPosition\n";
-
   vtkImageActor* actor = this->GetImageActor();
   if (!actor) {
     return 0;
@@ -141,8 +137,6 @@ int StudioImageActorPointPlacer::ValidateWorldPosition(double worldPos[3]) {
 
 //----------------------------------------------------------------------------
 int StudioImageActorPointPlacer::UpdateWorldPosition(vtkRenderer* renderer, double worldPos[3], double worldOrient[9]) {
-  std::cerr << "StudioImageActorPointPlacer::UpdateWorldPosition\n";
-
   // For a point already on the plane, we need to ensure it stays within bounds
   if (!this->ValidateWorldPosition(worldPos)) {
     return 0;
@@ -152,7 +146,6 @@ int StudioImageActorPointPlacer::UpdateWorldPosition(vtkRenderer* renderer, doub
   if (worldOrient) {
     vtkImageActor* actor = this->GetImageActor();
     if (actor && actor->GetUserTransform()) {
-      std::cerr << "We have a user transform!\n";
       // Use the normal from the transformed image plane for the Z axis
       vtkNew<vtkCellPicker> picker;
       picker->SetTolerance(0.005);
@@ -207,25 +200,3 @@ int StudioImageActorPointPlacer::UpdateWorldPosition(vtkRenderer* renderer, doub
 
   return 1;
 }
-
-/*
-//----------------------------------------------------------------------------
-int StudioImageActorPointPlacer::UpdateDisplayPosition(vtkRenderer *renderer,
-                         double displayPos[2],
-                         double worldPos[3])
-{
-  // Project the world position to display coordinates
-  double worldPoint[4] = {worldPos[0], worldPos[1], worldPos[2], 1.0};
-  renderer->SetWorldPoint(worldPoint);
-  renderer->WorldToDisplay();
-
-  double displayPoint[3];
-  renderer->GetDisplayPoint(displayPoint);
-
-  // Update the display position
-  displayPos[0] = displayPoint[0];
-  displayPos[1] = displayPoint[1];
-
-  return 1;
-}
-*/
