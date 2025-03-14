@@ -3,7 +3,7 @@
 #include <vtkCellData.h>
 #include <vtkCutter.h>
 #include <vtkImageActor.h>
-#include <vtkImageActorPointPlacer.h>
+#include <Visualization/StudioImageActorPointPlacer.h>
 #include <vtkImageProperty.h>
 #include <vtkImageSliceMapper.h>
 #include <vtkLookupTable.h>
@@ -62,7 +62,7 @@ SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
   mask_slice_ = vtkSmartPointer<vtkImageActor>::New();
   slice_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
   mask_mapper_ = vtkSmartPointer<vtkImageSliceMapper>::New();
-  placer_ = vtkSmartPointer<vtkImageActorPointPlacer>::New();
+  placer_ = vtkSmartPointer<StudioImageActorPointPlacer>::New();
   placer_->SetImageActor(image_slice_);
 }
 
