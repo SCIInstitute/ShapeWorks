@@ -118,7 +118,7 @@ void Shape::recompute_original_surface() {
   }
   auto meshes = original_meshes_.meshes();
   Image copy = *seg;
-  copy.binarize(0, 1);
+  copy.binarize(0, 2);
   Mesh mesh = copy.toMesh(0.001);
   MeshHandle mesh_handle = std::make_shared<StudioMesh>();
   mesh_handle->set_poly_data(mesh.getVTKMesh());

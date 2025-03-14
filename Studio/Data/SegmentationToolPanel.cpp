@@ -40,6 +40,10 @@ SegmentationToolPanel::SegmentationToolPanel(QWidget* parent) : QWidget(parent),
   connect(ui_->recompute_surface_, &QPushButton::clicked, this, &SegmentationToolPanel::recompute_surface);
   ui_->header_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->open_button->setChecked(false);
+
+  // for 6.6 release we don't have include/exclude
+  //ui_->included_mode_->hide();
+  //ui_->excluded_mode_->hide();
 }
 
 //---------------------------------------------------------------------------
