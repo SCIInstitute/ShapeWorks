@@ -64,6 +64,7 @@ title: Classes
 * **struct [Ray](../Classes/structRay.md)** 
 * **class [Reconstruction](../Classes/classReconstruction.md)** 
 * **struct [SimilarityTransform3D](../Classes/structSimilarityTransform3D.md)** 
+* **class [StudioImageActorPointPlacer](../Classes/classStudioImageActorPointPlacer.md)** 
 * **class [StudioLogger](../Classes/classStudioLogger.md)** <br>Handle logger callbacks via Qt for thread correctness. 
 * **class [SurfaceReconstructor](../Classes/classSurfaceReconstructor.md)** 
 * **struct [Triangle](../Classes/structTriangle.md)** 
@@ -276,4 +277,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2025-03-14 at 04:44:48 +0000
+Updated on 2025-03-15 at 07:31:44 +0000

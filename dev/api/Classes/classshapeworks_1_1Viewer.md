@@ -60,6 +60,7 @@ summary: 3D Viewer
 | vtkSmartPointer< vtkTransform > | **[get_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-landmark-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_inverse_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-inverse-landmark-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_image_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-image-transform)**() |
+| vtkSmartPointer< vtkTransform > | **[get_inverse_image_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-inverse-image-transform)**() |
 | [SliceView](../Classes/classshapeworks_1_1SliceView.md) & | **[slice_view](../Classes/classshapeworks_1_1Viewer.md#function-slice-view)**() |
 | void | **[update_image_volume](../Classes/classshapeworks_1_1Viewer.md#function-update-image-volume)**(bool force =false) |
 | vtkSmartPointer< vtkPoints > | **[get_glyph_points](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-points)**() |
@@ -433,6 +434,13 @@ vtkSmartPointer< vtkTransform > get_image_transform()
 ```
 
 
+### function get_inverse_image_transform
+
+```cpp
+vtkSmartPointer< vtkTransform > get_inverse_image_transform()
+```
+
+
 ### function slice_view
 
 ```cpp
@@ -565,4 +573,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2025-03-14 at 04:44:48 +0000
+Updated on 2025-03-15 at 07:31:43 +0000

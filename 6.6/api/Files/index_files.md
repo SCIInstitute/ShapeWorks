@@ -242,6 +242,7 @@ title: Files
         * **file [Studio/Visualization/PlaneWidget.h](../Files/PlaneWidget_8h.md#file-planewidget.h)** 
         * **file [Studio/Visualization/SliceView.h](../Files/SliceView_8h.md#file-sliceview.h)** 
         * **file [Studio/Visualization/StudioHandleWidget.h](../Files/StudioHandleWidget_8h.md#file-studiohandlewidget.h)** 
+        * **file [Studio/Visualization/StudioImageActorPointPlacer.h](../Files/StudioImageActorPointPlacer_8h.md#file-studioimageactorpointplacer.h)** 
         * **file [Studio/Visualization/StudioInteractorStyle.h](../Files/StudioInteractorStyle_8h.md#file-studiointeractorstyle.h)** 
         * **file [Studio/Visualization/StudioSliceInteractorStyle.h](../Files/StudioSliceInteractorStyle_8h.md#file-studiosliceinteractorstyle.h)** 
         * **file [Studio/Visualization/StudioVtkOutputWindow.h](../Files/StudioVtkOutputWindow_8h.md#file-studiovtkoutputwindow.h)** 
@@ -252,4 +253,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2025-03-14 at 04:44:48 +0000
+Updated on 2025-03-15 at 07:31:44 +0000
