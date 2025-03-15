@@ -8,7 +8,7 @@
 #include <vtkGlyph3D.h>
 #include <vtkHandleWidget.h>
 #include <vtkImageActor.h>
-#include <vtkImageActorPointPlacer.h>
+#include <Visualization/StudioImageActorPointPlacer.h>
 #include <vtkImageData.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
@@ -58,7 +58,7 @@ Viewer::Viewer() {
   prop_picker_->SetPickFromList(1);
   point_placer_ = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
   point_placer_->SetDistanceOffset(0);
-  slice_point_placer_ = vtkSmartPointer<vtkImageActorPointPlacer>::New();
+  slice_point_placer_ = vtkSmartPointer<StudioImageActorPointPlacer>::New();
 
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
   plane_widget_ = std::make_shared<PlaneWidget>(this);
@@ -756,13 +756,13 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         auto compare_poly_data = compare_meshes_.meshes()[i]->get_poly_data();
 
         if (compare_settings.get_mean_shape_checked()) {
-          auto transform = visualizer_->get_transform(shape_, compare_settings.get_display_mode(),
+          auto mean_transform = visualizer_->get_transform(shape_, compare_settings.get_display_mode(),
                                                       visualizer_->get_alignment_domain(), i);
 
-          transform->Inverse();
+          mean_transform->Inverse();
           auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
           transform_filter->SetInputData(compare_poly_data);
-          transform_filter->SetTransform(transform);
+          transform_filter->SetTransform(mean_transform);
           transform_filter->Update();
 
           compare_poly_data = transform_filter->GetOutput();
@@ -1437,6 +1437,15 @@ vtkSmartPointer<vtkTransform> Viewer::get_inverse_landmark_transform(int domain)
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Viewer::get_image_transform() {
   return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), 0);
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_inverse_image_transform() {
+  auto transform = get_image_transform();
+  auto inverse = vtkSmartPointer<vtkTransform>::New();
+  inverse->DeepCopy(transform);
+  inverse->Inverse();
+  return inverse;
 }
 
 //-----------------------------------------------------------------------------

@@ -129,6 +129,8 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_image_transform();
 
+  vtkSmartPointer<vtkTransform> get_inverse_image_transform();
+
   SliceView& slice_view();
 
   void update_image_volume(bool force = false);
