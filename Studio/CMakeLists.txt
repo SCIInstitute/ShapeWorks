@@ -228,6 +228,7 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/ParticleColors.cpp
   Visualization/StudioInteractorStyle.cpp
   Visualization/StudioSliceInteractorStyle.cpp
+  Visualization/StudioImageActorPointPlacer.cpp
   Visualization/SliceView.cpp
   Visualization/MeshSlice.cpp
   Visualization/Viewer.cpp
