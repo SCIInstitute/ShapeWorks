@@ -212,12 +212,13 @@ void ParticleShapeStatistics::compute_multi_level_analysis_statistics(std::vecto
     m += (this->num_particles_array_[idx]);
   }
   super_matrix_.resize(m, n);
+
   for (unsigned int i = 0; i < points.size(); i++) {
     unsigned int p = super_matrix_.rows();
     for (unsigned int j = 0; j < p; j++) {
-      super_matrix_(j, i * values_per_particle_) = points[i][j * values_per_particle_];
-      super_matrix_(j, i * values_per_particle_ + 1) = points[i][j * values_per_particle_ + 1];
-      super_matrix_(j, i * values_per_particle_ + 2) = points[i][j * values_per_particle_ + 2];
+      for (int k = 0; k < values_per_particle_; k++) {
+        super_matrix_(j, i * values_per_particle_ + k) = points[i][j * values_per_particle_ + k];
+      }
     }
   }
 
@@ -263,9 +264,9 @@ void ParticleShapeStatistics::compute_multi_level_analysis_statistics(std::vecto
   for (unsigned int i = 0; i < num_samples_; i++) {
     unsigned int p = m;
     for (unsigned int j = 0; j < p; j++) {
-      z_shape_dev_objective(j * values_per_particle_, i) = z_shape_dev_centered(j, i * values_per_particle_);
-      z_shape_dev_objective(j * values_per_particle_ + 1, i) = z_shape_dev_centered(j, i * values_per_particle_ + 1);
-      z_shape_dev_objective(j * values_per_particle_ + 2, i) = z_shape_dev_centered(j, i * values_per_particle_ + 2);
+      for (int k = 0; k < values_per_particle_; k++) {
+        z_shape_dev_objective(j * values_per_particle_ + k, i) = z_shape_dev_centered(j, i * values_per_particle_ + k);
+      }
     }
   }
   points_minus_mean_shape_dev_.resize(M, num_samples_);
@@ -277,9 +278,9 @@ void ParticleShapeStatistics::compute_multi_level_analysis_statistics(std::vecto
   z_rel_pose_objective.resize(domains_per_shape_ * values_per_particle_, num_samples_);
   for (unsigned int k = 0; k < domains_per_shape_; k++) {
     for (unsigned int i = 0; i < num_samples_; i++) {
-      z_rel_pose_objective(k * values_per_particle_, i) = z_rel_pose_centered(k, i * values_per_particle_);
-      z_rel_pose_objective(k * values_per_particle_ + 1, i) = z_rel_pose_centered(k, i * values_per_particle_ + 1);
-      z_rel_pose_objective(k * values_per_particle_ + 2, i) = z_rel_pose_centered(k, i * values_per_particle_ + 2);
+      for (int j = 0; j < values_per_particle_; j++) {
+        z_rel_pose_objective(k * values_per_particle_ + j, i) = z_rel_pose_centered(k, i * values_per_particle_ + j);
+      }
     }
   }
   points_minus_mean_rel_pose_.resize(domains_per_shape_ * values_per_particle_, num_samples_);

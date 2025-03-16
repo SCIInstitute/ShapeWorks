@@ -2,6 +2,7 @@
 #include "PaintWidget.h"
 
 #include <Logging.h>
+#include <Visualization/StudioImageActorPointPlacer.h>
 
 #include <QCursor>
 
@@ -10,7 +11,6 @@
 #include "vtkCommand.h"
 #include "vtkEvent.h"
 #include "vtkImageActor.h"
-#include "vtkImageActorPointPlacer.h"
 #include "vtkObjectFactory.h"
 #include "vtkOrientedGlyphContourRepresentation.h"
 #include "vtkPointPlacer.h"
@@ -255,10 +255,13 @@ bool PaintWidget::use_point_placer(double displayPos[2], int newState) {
 
   if (WidgetState == PaintWidget::Paint || WidgetState == PaintWidget::Erase) {
     if (WidgetState == PaintWidget::Paint) {
+      if (circle_mode_) {
+        // we have to transform the point back to the image space in case there is alignment
+        auto transform = viewer_->get_inverse_image_transform();
+        transform->TransformPoint(worldPos, worldPos);
+      }
+
       viewer_->handle_paint(displayPos, worldPos);
-      ////paint_position( this, worldPos );
-    } else if (WidgetState == PaintWidget::Erase) {
-      ////erase_position( this, worldPos );
     }
 
     EventCallbackCommand->SetAbortFlag(1);
