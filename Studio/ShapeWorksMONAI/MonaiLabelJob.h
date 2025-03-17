@@ -107,6 +107,8 @@ class MonaiLabelJob : public Job {
   int sample_number_;
   std::string currentSampleId_;
   std::string currentSegmentationPath_;
+  std::vector<std::string> currentSegmentationPaths_;
+  std::vector<std::string> organNames_;
 
   QSharedPointer<Session> session_;
   ProjectHandle project_;

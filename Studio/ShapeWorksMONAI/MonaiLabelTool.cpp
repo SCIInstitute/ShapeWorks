@@ -105,12 +105,11 @@ void MonaiLabelTool::onConnectServer() {
         "establishing connection with MONAI Label server");
     return;
   }
-  SW_LOG("Connecting to MONAI Label Server...")
+  SW_LOG("⏳ Connecting to MONAI Label Server...")
   ui_->connectServerButton->setText("Connecting...");
   ui_->connectServerButton->setEnabled(false);
   loadParamsFromUi();
   if (model_type_ == MONAI_MODE_SEGMENTATION) {
-    SW_LOG("Connecting to the server...");
     runSegmentationTool();
   } else {
     SW_ERROR(
@@ -194,7 +193,7 @@ void MonaiLabelTool::runSegmentationTool() {
 
 //---------------------------------------------------------------------------
 void MonaiLabelTool::handleClientInitialized() {
-  SW_LOG("Connection successfully established to the server, continue with segmentation!");
+  SW_LOG("✅ Connection successfully established to the server, continue with segmentation!");
   tool_is_running_ = true;
   if (session_->get_shapes().size() > 1)
     ui_->uploadSampleButton->setEnabled(true);
@@ -221,7 +220,7 @@ void MonaiLabelTool::handleClientInitialized() {
 
 //---------------------------------------------------------------------------
 void MonaiLabelTool::handleUploadSampleCompleted() {
-  SW_LOG("Upload complete! Run {} model on the uploaded sample.", model_type_);
+  SW_LOG("✅ Upload complete! Run {} model on the uploaded sample.", model_type_);
   ui_->uploadSampleButton->setEnabled(false);
   ui_->runSegmentationButton->setEnabled(true);
   ui_->submitLabelButton->setEnabled(false);
@@ -237,6 +236,9 @@ void MonaiLabelTool::handleSegmentationCompleted() {
   ui_->runSegmentationButton->setEnabled(false);
   ui_->submitLabelButton->setEnabled(true);
   session_->get_project()->save();
+  SW_LOG(
+      "✅ Segmentation for the current sample done! Submit the prediction label to server or "
+      "proceed with next sample!");
   Q_EMIT progress(66);
 }
 
@@ -250,7 +252,7 @@ void MonaiLabelTool::handleSubmitLabelCompleted() {
   ui_->uploadSampleButton->setEnabled(false);
   ui_->runSegmentationButton->setEnabled(false);
   ui_->submitLabelButton->setEnabled(false);
-  SW_LOG("Label submitted to the server. Proceed with next source volume.")
+  SW_LOG("✅ Label submitted to the server. Proceed with next sample.")
   samples_processed_++;
   // Q_EMIT
   // progress((int)(samples_processed_/session_->get_shapes().size())*100);
