@@ -40,9 +40,7 @@ def Run_Pipeline(args):
     else:
         dataset_name = "ellipsoid_multiple_domain"
         sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_joint_rotation"
-        file_list = sorted(glob.glob(output_directory +
-                                     dataset_name + "/segmentations/*.nrrd"))
+        file_list = sorted(glob.glob(output_directory + "/segmentations/*.nrrd"))
 
         if args.use_subsample:
             inputImages =[sw.Image(filename) for filename in file_list]
