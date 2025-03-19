@@ -7,11 +7,15 @@
 #include <QValidator>
 #include <QSharedPointer>
 #include <Data/Session.h>
+#include <itkImage.h>
 
 namespace shapeworks {
     class Session;
 }
 namespace monailabel {
+
+typedef float PixelType;
+typedef itk::Image< PixelType, 3 > ImageType;
     
 class UrlValidator : public QValidator {
  public:
@@ -45,7 +49,19 @@ class MonaiLabelUtils {
   static bool copySegmentation(const QString& sourcePath,
                                const QString& destinationPath);
   static bool deleteTempFile(const QString& filePath);
-  static std::string getFeatureName(QSharedPointer<shapeworks::Session> session);
+  static std::string getFeatureName(
+      QSharedPointer<shapeworks::Session> session);
+  static ImageType::Pointer loadNRRD(const std::string& filePath);
+  static ImageType::Pointer extractOrganSegmentation(ImageType::Pointer inputImage,
+                                              int label);
+  static void saveNRRD(ImageType::Pointer image, const std::string& outputPath);
+  static bool isOrganPresent(ImageType::Pointer image);
+  
+  static void processSegmentation(const std::string& segmentationPath,
+                           const std::map<int, std::string>& organLabels,
+                           const std::string& outputDir,
+                           const std::string& sampleId,
+                           std::vector<std::string>& organSegmentationPaths);
 };
 
 }  // namespace monailabel
