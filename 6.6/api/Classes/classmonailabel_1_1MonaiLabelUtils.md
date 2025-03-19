@@ -17,6 +17,11 @@ title: monailabel::MonaiLabelUtils
 | bool | **[copySegmentation](../Classes/classmonailabel_1_1MonaiLabelUtils.md#function-copysegmentation)**(const QString & sourcePath, const QString & destinationPath) |
 | bool | **[deleteTempFile](../Classes/classmonailabel_1_1MonaiLabelUtils.md#function-deletetempfile)**(const QString & filePath) |
 | std::string | **[getFeatureName](../Classes/classmonailabel_1_1MonaiLabelUtils.md#function-getfeaturename)**(QSharedPointer< [shapeworks::Session](../Classes/classshapeworks_1_1Session.md) > session) |
+| ImageType::Pointer | **[loadNRRD](../Classes/classmonailabel_1_1MonaiLabelUtils.md#function-loadnrrd)**(const std::string & filePath) |
+| ImageType::Pointer | **[extractOrganSegmentation](../Classes/classmonailabel_1_1MonaiLabelUtils.md#function-extractorgansegmentation)**(ImageType::Pointer inputImage, int label) |
+| void | **[saveNRRD](../Classes/classmonailabel_1_1MonaiLabelUtils.md#function-savenrrd)**(ImageType::Pointer image, const std::string & outputPath) |
+| bool | **[isOrganPresent](../Classes/classmonailabel_1_1MonaiLabelUtils.md#function-isorganpresent)**(ImageType::Pointer image) |
+| void | **[processSegmentation](../Classes/classmonailabel_1_1MonaiLabelUtils.md#function-processsegmentation)**(const std::string & segmentationPath, const std::map< int, std::string > & organLabels, const std::string & outputDir, const std::string & sampleId, std::vector< std::string > & organSegmentationPaths) |
 
 ## Public Functions Documentation
 
@@ -57,6 +62,57 @@ static std::string getFeatureName(
 ```
 
 
+### function loadNRRD
+
+```cpp
+static ImageType::Pointer loadNRRD(
+    const std::string & filePath
+)
+```
+
+
+### function extractOrganSegmentation
+
+```cpp
+static ImageType::Pointer extractOrganSegmentation(
+    ImageType::Pointer inputImage,
+    int label
+)
+```
+
+
+### function saveNRRD
+
+```cpp
+static void saveNRRD(
+    ImageType::Pointer image,
+    const std::string & outputPath
+)
+```
+
+
+### function isOrganPresent
+
+```cpp
+static bool isOrganPresent(
+    ImageType::Pointer image
+)
+```
+
+
+### function processSegmentation
+
+```cpp
+static void processSegmentation(
+    const std::string & segmentationPath,
+    const std::map< int, std::string > & organLabels,
+    const std::string & outputDir,
+    const std::string & sampleId,
+    std::vector< std::string > & organSegmentationPaths
+)
+```
+
+
 -------------------------------
 
-Updated on 2025-03-18 at 23:31:53 +0000
+Updated on 2025-03-19 at 04:20:51 +0000

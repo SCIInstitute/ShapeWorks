@@ -2503,6 +2503,41 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-loadnrrd" class="md-nav__link">
+    function loadNRRD
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-extractorgansegmentation" class="md-nav__link">
+    function extractOrganSegmentation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-savenrrd" class="md-nav__link">
+    function saveNRRD
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-isorganpresent" class="md-nav__link">
+    function isOrganPresent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-processsegmentation" class="md-nav__link">
+    function processSegmentation
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2552,6 +2587,26 @@
 <td>std::string</td>
 <td><strong><a href="classmonailabel_1_1MonaiLabelUtils.html#function-getfeaturename">getFeatureName</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">shapeworks::Session</a> &gt; session)</td>
 </tr>
+<tr>
+<td>ImageType::Pointer</td>
+<td><strong><a href="classmonailabel_1_1MonaiLabelUtils.html#function-loadnrrd">loadNRRD</a></strong>(const std::string &amp; filePath)</td>
+</tr>
+<tr>
+<td>ImageType::Pointer</td>
+<td><strong><a href="classmonailabel_1_1MonaiLabelUtils.html#function-extractorgansegmentation">extractOrganSegmentation</a></strong>(ImageType::Pointer inputImage, int label)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classmonailabel_1_1MonaiLabelUtils.html#function-savenrrd">saveNRRD</a></strong>(ImageType::Pointer image, const std::string &amp; outputPath)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classmonailabel_1_1MonaiLabelUtils.html#function-isorganpresent">isOrganPresent</a></strong>(ImageType::Pointer image)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classmonailabel_1_1MonaiLabelUtils.html#function-processsegmentation">processSegmentation</a></strong>(const std::string &amp; segmentationPath, const std::map&lt; int, std::string &gt; &amp; organLabels, const std::string &amp; outputDir, const std::string &amp; sampleId, std::vector&lt; std::string &gt; &amp; organSegmentationPaths)</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
@@ -2576,8 +2631,39 @@
 <span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-loadnrrd">function loadNRRD</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">loadNRRD</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filePath</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-extractorgansegmentation">function extractOrganSegmentation</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">extractOrganSegmentation</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">inputImage</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">label</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-savenrrd">function saveNRRD</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">saveNRRD</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputPath</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-isorganpresent">function isOrganPresent</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isOrganPresent</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-processsegmentation">function processSegmentation</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">processSegmentation</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">segmentationPath</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">organLabels</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputDir</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sampleId</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">organSegmentationPaths</span>
+<span class="p">)</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2025-03-18 at 23:31:53 +0000</p>
+<p>Updated on 2025-03-19 at 04:20:51 +0000</p>
 
               
             </article>

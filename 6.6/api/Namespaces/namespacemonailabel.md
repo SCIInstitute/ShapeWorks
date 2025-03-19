@@ -16,6 +16,29 @@ title: monailabel
 | class | **[monailabel::MonaiLabelUtils](../Classes/classmonailabel_1_1MonaiLabelUtils.md)**  |
 | class | **[monailabel::UrlValidator](../Classes/classmonailabel_1_1UrlValidator.md)**  |
 
+## Types
+
+|                | Name           |
+| -------------- | -------------- |
+| typedef float | **[PixelType](../Namespaces/namespacemonailabel.md#typedef-pixeltype)**  |
+| typedef itk::Image< PixelType, 3 > | **[ImageType](../Namespaces/namespacemonailabel.md#typedef-imagetype)**  |
+
+## Types Documentation
+
+### typedef PixelType
+
+```cpp
+typedef float monailabel::PixelType;
+```
+
+
+### typedef ImageType
+
+```cpp
+typedef itk::Image< PixelType, 3 > monailabel::ImageType;
+```
+
+
 
 
 
@@ -23,4 +46,4 @@ title: monailabel
 
 -------------------------------
 
-Updated on 2025-03-18 at 23:31:53 +0000
+Updated on 2025-03-19 at 04:20:51 +0000

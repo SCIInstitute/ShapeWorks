@@ -135,6 +135,8 @@ class MonaiLabelJob : public Job {
   int sample_number_;
   std::string currentSampleId_;
   std::string currentSegmentationPath_;
+  std::vector<std::string> currentSegmentationPaths_;
+  std::vector<std::string> organNames_;
 
   QSharedPointer<Session> session_;
   ProjectHandle project_;
@@ -145,4 +147,4 @@ class MonaiLabelJob : public Job {
 
 -------------------------------
 
-Updated on 2025-03-18 at 23:31:55 +0000
+Updated on 2025-03-19 at 04:20:52 +0000
