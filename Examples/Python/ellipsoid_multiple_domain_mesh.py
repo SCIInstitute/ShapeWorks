@@ -112,6 +112,7 @@ def Run_Pipeline(args):
     reference = [domain1_reference, domain2_reference]
     ref_name = [domain1_ref_name, domain2_ref_name]
 
+    # Create a combined mesh for the global alignment
     combined_reference = domain1_reference.copy()
     combined_reference += domain2_reference
 
@@ -133,13 +134,13 @@ def Run_Pipeline(args):
             print('Aligning ' + name + ' to ' + ref_name[d])
             transforms.append(rigidTransform)
 
-        mesh = mesh_list[i*domains_per_shape].copy()
+        combined_mesh = mesh_list[i*domains_per_shape].copy()
         for d in range(domains_per_shape):
             # skip the first domain
             if d == 0:
                 continue
-            mesh += mesh_list[i*domains_per_shape+d]
-        transform = mesh.createTransform(combined_reference, sw.Mesh.AlignmentType.Rigid, 100)
+            combined_mesh += mesh_list[i*domains_per_shape+d]
+        transform = combined_mesh.createTransform(combined_reference, sw.Mesh.AlignmentType.Rigid, 100)
         transforms.append(transform)
 
     # Save groomed meshes
@@ -151,7 +152,7 @@ def Run_Pipeline(args):
 
     Now we can run optimization directly on the meshes.
     For more details on the plethora of parameters for shapeworks please refer 
-    to docs/workflow/optimze.md
+    to docs/workflow/optimize.md
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
