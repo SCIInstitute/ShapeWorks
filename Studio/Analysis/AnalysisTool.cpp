@@ -35,6 +35,8 @@ const std::string AnalysisTool::MODE_PCA_C("pca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
+constexpr auto MESH_WARP_TEMPLATE_INDEX = "mesh_warp_template_index";
+
 //---------------------------------------------------------------------------
 //! Helper to extract x,y,z from x,y,z,scalar
 static Eigen::VectorXd extract_shape_only(Eigen::VectorXd values) {
@@ -147,6 +149,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->run_good_bad, &QPushButton::clicked, this, &AnalysisTool::run_good_bad_particles);
 
   ui_->reconstruction_options->hide();
+  ui_->mesh_warp_options->hide();
   ui_->particles_open_button->toggle();
   ui_->particles_progress->hide();
 
@@ -191,6 +194,12 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   // only connect one so that we only get one signal
   connect(ui_->distance_method_particle, &QRadioButton::toggled, this, &AnalysisTool::handle_distance_method_changed);
+
+  // mesh warp options
+  connect(ui_->mesh_warp_median_button, &QPushButton::clicked, this, &AnalysisTool::mesh_warp_median_clicked);
+  connect(ui_->mesh_warp_sample_spinbox, qOverload<int>(&QSpinBox::valueChanged), this,
+          &AnalysisTool::mesh_warp_sample_changed);
+  connect(ui_->mesh_warp_run_button, &QPushButton::clicked, this, &AnalysisTool::mesh_warp_run_clicked);
 }
 
 //---------------------------------------------------------------------------
@@ -846,6 +855,7 @@ void AnalysisTool::load_settings() {
   ui_->network_pvalue_threshold->setText(
       QString::number(static_cast<double>(params.get("network_pvalue_threshold", 0.05))));
 
+  ui_->mesh_warp_sample_spinbox->setValue(params.get(MESH_WARP_TEMPLATE_INDEX, -1));
   update_group_boxes();
 
   ui_->group_box->setCurrentText(QString::fromStdString(params.get("current_group", "-None-")));
@@ -1179,6 +1189,7 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
 
   update_group_boxes();
   ui_->sampleSpinBox->setMaximum(session_->get_num_shapes() - 1);
+  ui_->mesh_warp_sample_spinbox->setMaximum(session_->get_num_shapes() - 1);
 }
 
 //---------------------------------------------------------------------------
@@ -1603,15 +1614,22 @@ bool AnalysisTool::is_group_active(int shape_index) {
 void AnalysisTool::initialize_mesh_warper() {
   if (session_->particles_present() && session_->get_groomed_present()) {
     compute_stats();
-    int median = stats_.compute_median_shape(-32);  //-32 = both groups
+
+    auto params = session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
+
+    int template_shape = params.get(MESH_WARP_TEMPLATE_INDEX, -1);
+    if (template_shape < 0 || template_shape >= session_->get_num_shapes()) {
+      template_shape = stats_.compute_median_shape(-32);  //-32 = both groups
+      ui_->mesh_warp_sample_spinbox->setValue(template_shape);
+    }
 
     auto shapes = session_->get_non_excluded_shapes();
 
-    if (median < 0 || median >= shapes.size()) {
-      SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
+    if (template_shape < 0 || template_shape >= shapes.size()) {
+      SW_ERROR("Unable to set reference mesh, invalid template shape");
       return;
     }
-    std::shared_ptr<Shape> median_shape = shapes[median];
+    std::shared_ptr<Shape> median_shape = shapes[template_shape];
 
     auto mesh_group = median_shape->get_groomed_meshes(true);
 
@@ -1964,8 +1982,35 @@ void AnalysisTool::samples_table_copy_to_clipboard() {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::mesh_warp_median_clicked() {
+  ui_->mesh_warp_sample_spinbox->setValue(stats_.compute_median_shape(-32));  //-32 = both groups
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::mesh_warp_sample_changed() {
+  int index = ui_->mesh_warp_sample_spinbox->value();
+  auto params = session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
+  params.set(MESH_WARP_TEMPLATE_INDEX, index);
+  session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
+  auto shapes = session_->get_non_excluded_shapes();
+  if (index < 0 || index >= shapes.size()) {
+    ui_->template_mesh_name_label->setText("");
+    return;
+  }
+  ui_->template_mesh_name_label->setText(QString::fromStdString(shapes[index]->get_subject()->get_display_name()));
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::mesh_warp_run_clicked() {
+  session_->handle_clear_cache();
+  initialize_mesh_warper();
+  Q_EMIT reconstruction_complete();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::reconstruction_method_changed() {
   ui_->reconstruction_options->setVisible(ui_->distance_transform_radio_button->isChecked());
+  ui_->mesh_warp_options->setVisible(ui_->mesh_warping_radio_button->isChecked());
   std::string method = MeshGenerator::RECONSTRUCTION_LEGACY_C;
   if (ui_->distance_transform_radio_button->isChecked()) {
     method = MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C;
@@ -1977,6 +2022,9 @@ void AnalysisTool::reconstruction_method_changed() {
   if (previous_method != method) {
     session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
     session_->handle_clear_cache();
+    if (method == MeshGenerator::RECONSTRUCTION_MESH_WARPER_C) {
+      initialize_mesh_warper();
+    }
     Q_EMIT reconstruction_complete();
   }
 }
