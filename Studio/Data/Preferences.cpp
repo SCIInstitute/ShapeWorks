@@ -1,7 +1,11 @@
-// qt
+
 #include <Data/Preferences.h>
 #include <Logging.h>
 
+// sys
+#include <sys/stat.h>
+
+// qt
 #include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
