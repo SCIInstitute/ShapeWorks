@@ -13,6 +13,7 @@
 //-----------------------------------------------------------------------------
 Preferences::Preferences() : settings_("Scientific Computing and Imaging Institute", "ShapeWorksStudio") {
   settings_.setFallbacksEnabled(false);
+  update_threads();
 }
 
 //-----------------------------------------------------------------------------
@@ -47,7 +48,10 @@ void Preferences::set_cache_enabled(bool value) { settings_.setValue("Studio/cac
 bool Preferences::get_parallel_enabled() { return settings_.value("Studio/parallel_enabled", true).toBool(); }
 
 //-----------------------------------------------------------------------------
-void Preferences::set_parallel_enabled(bool value) { settings_.setValue("Studio/parallel_enabled", value); }
+void Preferences::set_parallel_enabled(bool value) {
+  settings_.setValue("Studio/parallel_enabled", value);
+  update_threads();
+}
 
 //-----------------------------------------------------------------------------
 int Preferences::get_memory_cache_percent() { return settings_.value("Studio/memory_cache_percent", 25).toInt(); }
@@ -61,7 +65,10 @@ int Preferences::get_num_threads() {
 }
 
 //-----------------------------------------------------------------------------
-void Preferences::set_num_threads(int num_threads) { settings_.setValue("Studio/num_threads", num_threads); }
+void Preferences::set_num_threads(int num_threads) {
+  settings_.setValue("Studio/num_threads", num_threads);
+  update_threads();
+}
 
 //-----------------------------------------------------------------------------
 float Preferences::get_glyph_size() { return settings_.value("Project/glyph_size", 5.0).toFloat(); }
@@ -326,31 +333,47 @@ void Preferences::update_recent_files() {
 }
 
 //-----------------------------------------------------------------------------
+void Preferences::update_threads() {
+  int num_threads = get_parallel_enabled() ? get_num_threads() : 1;
+  setenv("TBB_NUM_THREADS", std::to_string(num_threads).c_str(), 1);
+}
+
+//-----------------------------------------------------------------------------
 bool Preferences::get_auto_update_check() { return settings_.value("General/auto_update_check", true).toBool(); }
 
 //-----------------------------------------------------------------------------
 void Preferences::set_auto_update_check(bool enabled) { settings_.setValue("General/auto_update_check", enabled); }
 
+//-----------------------------------------------------------------------------
 QDateTime Preferences::get_update_snooze_until() {
   return settings_.value("General/update_snooze_until", QDateTime()).toDateTime();
 }
 
+//-----------------------------------------------------------------------------
 void Preferences::set_update_snooze_until(QDateTime date) { settings_.setValue("General/update_snooze_until", date); }
 
+//-----------------------------------------------------------------------------
 QString Preferences::get_device_id() {
   QString id = settings_.value("General/device_id", QUuid::createUuid().toString()).toString();
   settings_.setValue("General/device_id", id);
   return id;
 }
 
+//-----------------------------------------------------------------------------
 bool Preferences::get_telemetry_enabled() { return settings_.value("General/telemetry_enabled", true).toBool(); }
+//-----------------------------------------------------------------------------
 void Preferences::set_telemetry_enabled(bool enabled) { settings_.setValue("General/telemetry_enabled", enabled); }
+//-----------------------------------------------------------------------------
 bool Preferences::get_telemetry_asked() { return settings_.value("General/telemetry_asked", false).toBool(); }
+//-----------------------------------------------------------------------------
 void Preferences::set_telemetry_asked(bool asked) { settings_.setValue("General/telemetry_asked", asked); }
 
+//-----------------------------------------------------------------------------
 QStringList Preferences::get_pending_telemetry_events() {
   return settings_.value("Telemetry/pending_events").toStringList();
 }
+
+//-----------------------------------------------------------------------------
 void Preferences::set_pending_telemetry_events(QStringList events) {
   settings_.setValue("Telemetry/pending_events", events);
 }

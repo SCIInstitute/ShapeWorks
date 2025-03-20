@@ -139,6 +139,7 @@ class Preferences : public QObject {
 
  private:
   void update_recent_files();
+  void update_threads();
   QStringList recent_files_;
   QStringList recent_paths_;
 
