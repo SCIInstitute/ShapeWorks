@@ -49,6 +49,7 @@ nav:
    - 'DeepSSM Module':                       'studio/deepssm-in-studio.md'
    - 'Multiple Domains SSM':                 'studio/multiple-domains.md'
    - 'Shared Boundaries':                    'studio/studio-shared-boundary.md'
+   - 'Segmentation Tool':                    'studio/segmentation-tool.md'
    - 'AI Assisted Segmentation':             'studio/ai-assisted-segmentation.md'
 - ShapeWorks Cloud:
    - 'Getting Started':                      'cloud/getting-started-with-cloud.md'
