@@ -10,6 +10,7 @@
     * Faster and more robust neighborhood computation code in the optimizer (#2314)
     * Added Java bindings for ShapeWorks
     * Added Matlab bindings for ShapeWorks
+    * Improve mesh domain memory usage (#2353)
 
   * **ShapeWorks Front-end**
     * Added new MONAI Label tool in Studio
@@ -18,12 +19,18 @@
     * Added ability to close a project
     * Added evaluation metrics and graphs for shape+scalar analysis (#2218)
     * Added feature to evaluate generalization and specificity using particle to surface distance (#2212)
+    * Added ability to limit number of threads for grooming/optimization in Studio
+    * Added ability to manually choose reference template mesh for mesh warping (#1085)
 
 
 ### Fixes
   * Fix bug in Studio where parameters are lost switching modules (#2263)
   * Fix problem where VTK DLL was being marked as a virus (#2308)
   * Fix problem loading certain kinds of NIFTI files (#2294)
+  * Placing landmarks on very zoomed in anatomy, causes landmarks to be misplaced (#2346)
+  * Studio crash when removing all shapes (#2354)
+  * Fix Crash on exporting mesh from computed shape (#2335)
+  * 
 
 
 
