@@ -69,6 +69,8 @@ void AnalysisUtils::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString
   plot->getYAxis()->setAxisLabel(y_label);
   plot->getYAxis()->setLabelFontSize(14);
 
+  plot->getPlotter()->setPlotBorderBottom(10);
+
   plot->clearAllMouseWheelActions();
   plot->setMousePositionShown(false);
   plot->addGraph(graph);
