@@ -1,18 +1,17 @@
-
 #include <Data/Preferences.h>
 #include <Logging.h>
 
-// sys
-#include <sys/stat.h>
+// std
+#include <iostream>
 
 // qt
 #include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
+#include <QProcessEnvironment>
 #include <QSize>
 #include <QThread>
 #include <QUuid>
-#include <iostream>
 
 //-----------------------------------------------------------------------------
 Preferences::Preferences() : settings_("Scientific Computing and Imaging Institute", "ShapeWorksStudio") {
@@ -339,7 +338,7 @@ void Preferences::update_recent_files() {
 //-----------------------------------------------------------------------------
 void Preferences::update_threads() {
   int num_threads = get_parallel_enabled() ? get_num_threads() : 1;
-  setenv("TBB_NUM_THREADS", std::to_string(num_threads).c_str(), 1);
+  qputenv("TBB_NUM_THREADS", std::to_string(num_threads).c_str());
 }
 
 //-----------------------------------------------------------------------------
