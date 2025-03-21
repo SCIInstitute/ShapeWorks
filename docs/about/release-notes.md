@@ -1,6 +1,6 @@
 # Release Notes
 
-## ShapeWorks 6.6.0 - 2024-12
+## ShapeWorks 6.6.0 - 2025-03
 
 ![](../img/about/release6.6.png)
 

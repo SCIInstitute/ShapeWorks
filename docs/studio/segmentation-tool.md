@@ -9,3 +9,5 @@ When painting is enabled, you can choose either segmenting or erasing mode. In s
 Segmentation can be performed on each slide and in any of the three views (X, Y, or Z).
 
 Click "Recompute Surface" to regenerate the surface mesh based on the updated segmentation.
+
+![Segmentation Tool Result](../img/studio/segmentation_tool2.png)
