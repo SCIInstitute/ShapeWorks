@@ -71,6 +71,9 @@ Inherits from QWidget
 | void | **[handle_samples_predicted_scalar_options](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-samples-predicted-scalar-options)**() |
 | void | **[samples_table_context_menu](../Classes/classshapeworks_1_1AnalysisTool.md#slot-samples-table-context-menu)**() |
 | void | **[samples_table_copy_to_clipboard](../Classes/classshapeworks_1_1AnalysisTool.md#slot-samples-table-copy-to-clipboard)**() |
+| void | **[mesh_warp_median_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-median-clicked)**() |
+| void | **[mesh_warp_sample_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-sample-changed)**() |
+| void | **[mesh_warp_run_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-run-clicked)**() |
 
 ## Public Signals
 
@@ -531,6 +534,27 @@ void samples_table_copy_to_clipboard()
 ```
 
 
+### slot mesh_warp_median_clicked
+
+```cpp
+void mesh_warp_median_clicked()
+```
+
+
+### slot mesh_warp_sample_changed
+
+```cpp
+void mesh_warp_sample_changed()
+```
+
+
+### slot mesh_warp_run_clicked
+
+```cpp
+void mesh_warp_run_clicked()
+```
+
+
 ## Public Signals Documentation
 
 ### signal update_view
@@ -927,4 +951,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2025-03-19 at 04:20:51 +0000
+Updated on 2025-03-21 at 16:07:30 +0000

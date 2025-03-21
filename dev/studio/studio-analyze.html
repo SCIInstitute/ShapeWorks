@@ -703,6 +703,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -936,6 +950,19 @@
     Metrics Panel
   </a>
   
+    <nav class="md-nav" aria-label="Metrics Panel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distance-calculation-options" class="md-nav__link">
+    Distance Calculation Options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1011,6 +1038,34 @@
     <li class="md-nav__item">
       <a href="studio-shared-boundary.html" class="md-nav__link">
         Shared Boundaries
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="segmentation-tool.html" class="md-nav__link">
+        Segmentation Tool
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
       </a>
     </li>
   
@@ -2674,6 +2729,19 @@
     Metrics Panel
   </a>
   
+    <nav class="md-nav" aria-label="Metrics Panel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distance-calculation-options" class="md-nav__link">
+    Distance Calculation Options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2797,6 +2865,15 @@
 <h2 id="metrics-panel">Metrics Panel</h2>
 <p>The Metrics panel shows the Compactness, Specificity, and Generalization charts.  These are interactive charts with hover menus and the ability to zoom, pan, etc.</p>
 <p><img alt="ShapeWorks Studio Analysis Metrics Panel" src="../img/studio/studio_analyze_metrics.png" /></p>
+<h3 id="distance-calculation-options">Distance Calculation Options</h3>
+<ol>
+<li>
+<p><strong>Particle to Particle</strong> (Default): Calculates the distance directly between particles when evaluating the metrics.</p>
+</li>
+<li>
+<p><strong>Particle to Surface</strong>: Calculates the distance between particles and the actual shape surface. This method enhances accuracy by measuring generalization as the distance between reconstructed particles and the true shape surface. Specificity is determined by the distance between sampled particles and the surface, ensuring generated shapes accurately reflect the true shape population and providing reliable and consistent metrics.</p>
+</li>
+</ol>
 <p>See <a href="../new/ssm-eval.html">Shape Model Evaluation</a> for more information about shape evaluation.</p>
 <h2 id="surface-reconstruction-panel">Surface Reconstruction Panel</h2>
 <p>The surface reconstruction panel provides options for the surface reconstruction method.  There are three surface reconstruction methods available depending on the data you supply.</p>

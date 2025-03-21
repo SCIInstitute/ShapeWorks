@@ -91,6 +91,12 @@ The Metrics panel shows the Compactness, Specificity, and Generalization charts.
 
 ![ShapeWorks Studio Analysis Metrics Panel](../img/studio/studio_analyze_metrics.png)
 
+### Distance Calculation Options
+
+1. **Particle to Particle** (Default): Calculates the distance directly between particles when evaluating the metrics.
+
+2. **Particle to Surface**: Calculates the distance between particles and the actual shape surface. This method enhances accuracy by measuring generalization as the distance between reconstructed particles and the true shape surface. Specificity is determined by the distance between sampled particles and the surface, ensuring generated shapes accurately reflect the true shape population and providing reliable and consistent metrics.
+
 See [Shape Model Evaluation](../new/ssm-eval.md) for more information about shape evaluation.
 
 ## Surface Reconstruction Panel

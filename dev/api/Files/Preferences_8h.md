@@ -156,6 +156,7 @@ class Preferences : public QObject {
 
  private:
   void update_recent_files();
+  void update_threads();
   QStringList recent_files_;
   QStringList recent_paths_;
 
@@ -166,4 +167,4 @@ class Preferences : public QObject {
 
 -------------------------------
 
-Updated on 2025-03-19 at 04:20:52 +0000
+Updated on 2025-03-21 at 16:07:31 +0000

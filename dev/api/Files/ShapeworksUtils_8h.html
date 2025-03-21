@@ -703,6 +703,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -871,6 +885,34 @@
     <li class="md-nav__item">
       <a href="../../studio/studio-shared-boundary.html" class="md-nav__link">
         Shared Boundaries
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/segmentation-tool.html" class="md-nav__link">
+        Segmentation Tool
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
       </a>
     </li>
   
@@ -2531,6 +2573,7 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;oneapi/tbb/global_control.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkMatrix4x4.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
@@ -2574,12 +2617,13 @@
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">rng_seed_</span><span class="p">;</span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="n">mt_</span><span class="p">;</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">tbb</span><span class="o">::</span><span class="n">global_control</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tbb_global_control_</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-03-19 at 04:20:52 +0000</p>
+<p>Updated on 2025-03-21 at 16:07:31 +0000</p>
 
               
             </article>

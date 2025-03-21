@@ -27,6 +27,7 @@ title: Libs/Common/ShapeworksUtils.h
 ```cpp
 #pragma once
 
+#include <oneapi/tbb/global_control.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
@@ -70,6 +71,7 @@ class ShapeWorksUtils {
  private:
   static unsigned rng_seed_;
   static std::mt19937 mt_;
+  static std::unique_ptr<tbb::global_control> tbb_global_control_;
 };
 
 }  // namespace shapeworks
@@ -78,4 +80,4 @@ class ShapeWorksUtils {
 
 -------------------------------
 
-Updated on 2025-03-19 at 04:20:52 +0000
+Updated on 2025-03-21 at 16:07:31 +0000
