@@ -59,9 +59,9 @@ def Run_Pipeline(args):
         sw.download_dataset(dataset_name, output_directory)
         dataset_name = "hip"
         mesh_files = sorted(glob.glob(output_directory +
-                                      dataset_name + "/meshes/*.vtk"))[:6]
+                                      dataset_name + "/meshes/*.vtk"))
         plane_files = sorted(glob.glob(output_directory +
-                                       dataset_name + "/constraints/*.json"))[:6]
+                                       dataset_name + "/constraints/*.json"))
         if args.use_subsample:
             inputMeshes = [sw.Mesh(filename) for filename in mesh_files]
             sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample), domains_per_shape=2)
