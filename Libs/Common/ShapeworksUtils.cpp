@@ -18,6 +18,7 @@ namespace shapeworks {
 
 unsigned ShapeWorksUtils::rng_seed_ = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 ShapeWorksUtils::mt_;
+std::unique_ptr<tbb::global_control> ShapeWorksUtils::tbb_global_control_;
 
 //-----------------------------------------------------------------------------
 /// looks at the pathname to see if it's a file or a directory or neither
@@ -86,7 +87,9 @@ void ShapeWorksUtils::setup_threads() {
   }
   SW_DEBUG("TBB using {} threads", num_threads);
   Eigen::setNbThreads(num_threads);
-  tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
+
+  tbb_global_control_ =
+      std::make_unique<tbb::global_control>(tbb::global_control::max_allowed_parallelism, num_threads);
 }
 
 //-----------------------------------------------------------------------------

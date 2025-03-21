@@ -204,6 +204,11 @@ class AnalysisTool : public QWidget {
   void samples_table_context_menu();
   void samples_table_copy_to_clipboard();
 
+  // mesh warping options
+  void mesh_warp_median_clicked();
+  void mesh_warp_sample_changed();
+  void mesh_warp_run_clicked();
+
  Q_SIGNALS:
 
   void update_view();

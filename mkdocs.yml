@@ -37,6 +37,7 @@ nav:
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
    - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
+   - 'AI Assisted Segmentation':             'new/ai-assisted-segmentation.md'
 - ShapeWorks Studio:
    - 'Getting Started':                      'studio/getting-started-with-studio.md'
    - 'Viewer Controls':                      'studio/studio-viewer.md'
@@ -48,6 +49,8 @@ nav:
    - 'DeepSSM Module':                       'studio/deepssm-in-studio.md'
    - 'Multiple Domains SSM':                 'studio/multiple-domains.md'
    - 'Shared Boundaries':                    'studio/studio-shared-boundary.md'
+   - 'Segmentation Tool':                    'studio/segmentation-tool.md'
+   - 'AI Assisted Segmentation':             'studio/ai-assisted-segmentation.md'
 - ShapeWorks Cloud:
    - 'Getting Started':                      'cloud/getting-started-with-cloud.md'
    - 'Datasets':                             'cloud/cloud-dataset.md'

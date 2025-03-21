@@ -35,7 +35,7 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
   }
 
   ui_->particle_colors->clear();
-  QMetaEnum e = QMetaEnum::fromType<shapeworks::ParticleColors::ParticleColorsType>();
+  QMetaEnum e = QMetaEnum::fromType<ParticleColors::ParticleColorsType>();
   for (int i = 0; i < e.keyCount(); i++) {
     ui_->particle_colors->addItem(e.key(i));
   }

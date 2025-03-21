@@ -40,9 +40,7 @@ def Run_Pipeline(args):
     else:
         dataset_name = "ellipsoid_multiple_domain"
         sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_joint_rotation"
-        file_list = sorted(glob.glob(output_directory +
-                                     dataset_name + "/segmentations/*.nrrd"))
+        file_list = sorted(glob.glob(output_directory + "/segmentations/*.nrrd"))
 
         if args.use_subsample:
             inputImages =[sw.Image(filename) for filename in file_list]
@@ -152,6 +150,10 @@ def Run_Pipeline(args):
     reference = [domain1_reference,domain2_reference]
     ref_name = [domain1_ref_name,domain2_ref_name]
 
+    # Create a combined mesh for the global alignment
+    combined_reference = domain1_reference.toMesh(0.5)
+    combined_reference += domain2_reference.toMesh(0.5)
+
     """
     Grooming Step 3: Rigid alignment
     Now we can loop over all of the segmentations again to find the rigid
@@ -172,6 +174,15 @@ def Run_Pipeline(args):
             reference[d], iso_value, icp_iterations)
             rigid_transform = sw.utils.getVTKtransform(rigidTransform)
             transforms.append(rigid_transform)
+            
+        combined_mesh = shape_seg_list[i*domains_per_shape+d].toMesh(0.5)
+        for d in range(domains_per_shape):
+            # skip the first domain
+            if d == 0:
+                continue
+            combined_mesh += shape_seg_list[i*domains_per_shape+d].toMesh(0.5)
+        transform = combined_mesh.createTransform(combined_reference, sw.Mesh.AlignmentType.Rigid, 100)
+        transforms.append(transform)
    
     """
     Grooming Step 4: Converting segmentations to smooth signed distance transforms.
@@ -225,8 +236,9 @@ def Run_Pipeline(args):
         for d in range(domains_per_shape):
             rel_seg_files += sw.utils.get_relative_paths([os.getcwd() + '/' + file_list[i*domains_per_shape+d]], project_location)
             rel_groom_files += sw.utils.get_relative_paths([os.getcwd() + '/' + dt_files[i*domains_per_shape+d]], project_location)
-            transform.append(transforms[i*domains_per_shape+d].flatten())
-
+            transform.append(transforms[i*(domains_per_shape+1)+d].flatten())
+        # add the global alignment transform
+        transform.append(transforms[i*(domains_per_shape+1)].flatten())
         subject.set_groomed_transforms(transform)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_original_filenames(rel_seg_files)
