@@ -33,7 +33,7 @@
 
                 /********************** monai_params panel ***********************/
 
-                QLabel#monai_params_label {
+                QLabel#monai_top_label {
                 color: white;
                 font: bold;
                 }
