@@ -47,7 +47,6 @@ bool Groom::run() {
 
   tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
     for (size_t i = r.begin(); i < r.end(); ++i) {
-      std::cerr << "Thread " << std::this_thread::get_id() << " processing subject " << i << std::endl;
       for (int domain = 0; domain < project_->get_number_of_domains_per_subject(); domain++) {
         if (abort_) {
           success = false;
