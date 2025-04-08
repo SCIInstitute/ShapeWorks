@@ -78,12 +78,15 @@ void MonaiLabelJob::initializeClient() {
     py::str py_server_url(server_url_);
     py::str py_tmp_dir(tmp_dir_);
     py::str py_client_id(client_id_);
+    SW_DEBUG("Instantiating monai_client_class");
     monai_client_ = std::make_shared<py::object>(monai_client_class(py_server_url, py_tmp_dir, py_client_id));
+    SW_DEBUG("Instantiating monai_client_class completed");
     if (!monai_client_) {
       SW_ERROR("Error in instantiating MONAI client");
       return;
-    } else
+    } else {
       SW_DEBUG("MONAI Client object created.");
+    }
     model_name_ = getModelName(model_type_);
     models_available_[model_type_] = {model_name_};
     Q_EMIT triggerClientInitialized();
@@ -286,7 +289,10 @@ py::dict MonaiLabelJob::saveLabel(std::string image_in, std::string label_in, py
 //---------------------------------------------------------------------------
 void MonaiLabelJob::runSegmentationModel() {
   if (!monai_client_) {
+    SW_DEBUG("MONAI client not initialized, initializing now...");
     initializeClient();
+  } else {
+    SW_DEBUG("MONAI client already initialized");
   }
 
   SW_DEBUG("Waiting for Upload Sample Action...");
