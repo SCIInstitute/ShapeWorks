@@ -91,7 +91,7 @@ void MonaiLabelJob::initializeClient() {
     models_available_[model_type_] = {model_name_};
     Q_EMIT triggerClientInitialized();
   } catch (std::exception &e) {
-    std::cerr << "Error importing MONAILabel or initializing MONAILabelClient: " << e.what() << std::endl;
+    SW_ERROR("Error importing MONAILabel or initializing MONAILabelClient: {}", e.what());
     return;
   }
 }
