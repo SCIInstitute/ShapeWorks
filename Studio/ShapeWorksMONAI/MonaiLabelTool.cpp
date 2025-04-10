@@ -149,6 +149,7 @@ void MonaiLabelTool::runSegmentationTool() {
   strategy_ = MonaiLabelTool::MONAI_SAMPLE_STRATEGY_RANDOM;
   monai_label_job_ =
       QSharedPointer<MonaiLabelJob>::create(session_, server_address_, client_id_, strategy_, model_type_);
+  monai_label_job_->set_quiet_mode(true);
   SW_DEBUG("Monai Label Job initialized!");
   connect(monai_label_job_.data(), &MonaiLabelJob::progress, this, &MonaiLabelTool::handle_progress);
   connect(ui_->uploadSampleButton, &QPushButton::clicked, monai_label_job_.data(),
