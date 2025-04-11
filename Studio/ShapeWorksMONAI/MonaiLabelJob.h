@@ -74,7 +74,7 @@ class MonaiLabelJob : public Job {
 
  Q_SIGNALS:
   void triggerUpdateView();
-  void triggerClientInitialized();
+  void triggerClientInitialized(bool success);
   void triggerUploadSampleCompleted();
   void triggerSegmentationCompleted();
   void triggerSubmitLabelCompleted();
@@ -108,5 +108,7 @@ class MonaiLabelJob : public Job {
 
   QSharedPointer<Session> session_;
   ProjectHandle project_;
+
+  bool error_occurred_ = false;
 };
 }  // namespace monailabel

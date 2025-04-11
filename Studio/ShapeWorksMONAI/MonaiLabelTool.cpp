@@ -69,17 +69,22 @@ MonaiLabelTool::~MonaiLabelTool() {}
 void MonaiLabelTool::triggerUpdateView() { Q_EMIT update_view(); }
 
 //---------------------------------------------------------------------------
+void MonaiLabelTool::set_connect_button() {
+  Style::apply_normal_button_style(ui_->connectServerButton);
+  ui_->connectServerButton->setText("Connect Server");
+  ui_->connectServerButton->setIcon(QIcon(":/Studio/Images/connect.png"));
+  ui_->connectServerButton->setEnabled(true);
+  ui_->serverAddressField->setEnabled(true);
+}
+
+//---------------------------------------------------------------------------
 void MonaiLabelTool::onConnectServer() {
   if (tool_is_running_ && monai_label_job_) {
     ui_->connectServerButton->setText("Disconnecting...");
     monai_label_job_->abort();
     shutdown();
     SW_STATUS("Server disconnected successfully.");
-    Style::apply_normal_button_style(ui_->connectServerButton);
-    ui_->connectServerButton->setText("Connect Server");
-    ui_->connectServerButton->setIcon(QIcon(":/Studio/Images/connect.png"));
-    ui_->connectServerButton->setEnabled(true);
-    ui_->serverAddressField->setEnabled(true);
+    set_connect_button();
     enable_actions();
     session_->get_project()->save();
     monai_label_job_ = nullptr;
@@ -118,7 +123,9 @@ void MonaiLabelTool::enable_actions() {
   ui_->runSegmentationButton->setEnabled(false);
   ui_->submitLabelButton->setEnabled(false);
   std::string feature_name = MonaiLabelUtils::getFeatureName(session_);
-  if (!feature_name.empty()) session_->set_image_name(feature_name);
+  if (!feature_name.empty()) {
+    session_->set_image_name(feature_name);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -174,7 +181,12 @@ void MonaiLabelTool::runSegmentationTool() {
 }
 
 //---------------------------------------------------------------------------
-void MonaiLabelTool::handleClientInitialized() {
+void MonaiLabelTool::handleClientInitialized(bool success) {
+  if (!success) {
+    SW_LOG("Connection failed");
+    set_connect_button();
+    return;
+  }
   SW_LOG("✅ Connection successfully established to the server, continue with segmentation!");
   tool_is_running_ = true;
   if (session_->get_shapes().size() > 1) {

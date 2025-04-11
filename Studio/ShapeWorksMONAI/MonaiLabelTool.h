@@ -57,7 +57,7 @@ class MonaiLabelTool : public QWidget {
   void triggerUpdateView();
   void handle_progress(int val, QString message);
   void handleSampleNumberChanged();
-  void handleClientInitialized();
+  void handleClientInitialized(bool success);
   void handleUploadSampleCompleted();
   void handleSegmentationCompleted();
   void handleSubmitLabelCompleted();
@@ -68,6 +68,9 @@ class MonaiLabelTool : public QWidget {
   void sampleChanged();
 
  private:
+
+  void set_connect_button();
+
   Preferences& preferences_;
   Ui_MonaiLabelTool* ui_;
   QSharedPointer<Session> session_;

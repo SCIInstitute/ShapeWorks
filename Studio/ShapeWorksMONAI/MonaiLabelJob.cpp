@@ -73,6 +73,8 @@ void MonaiLabelJob::setCurrentSampleNumber(int n) { sample_number_ = n; }
 void MonaiLabelJob::initializeClient() {
   SW_DEBUG("Initializing MONAI Client with server: {} tmp dir: {} client_id: {}", server_url_, tmp_dir_, client_id_);
   try {
+    error_occurred_ = false;
+
     py::module monai_label = py::module::import("MONAILabel");
     py::object monai_client_class = monai_label.attr("MONAILabelClient");
     py::str py_server_url(server_url_);
@@ -89,7 +91,7 @@ void MonaiLabelJob::initializeClient() {
     }
     model_name_ = getModelName(model_type_);
     models_available_[model_type_] = {model_name_};
-    Q_EMIT triggerClientInitialized();
+    triggerClientInitialized(!error_occurred_);
   } catch (std::exception &e) {
     SW_ERROR("Error importing MONAILabel or initializing MONAILabelClient: {}", e.what());
     return;
@@ -107,10 +109,13 @@ py::dict MonaiLabelJob::getInfo() {
     response = (*monai_client_).attr("info")();
   } catch (const py::error_already_set &e) {
     SW_ERROR("Python error: {}", e.what());
+    error_occurred_ = true;
   } catch (const std::exception &e) {
     SW_ERROR("Exception occurred: {}", e.what());
+    error_occurred_ = true;
   } catch (...) {
     SW_ERROR("An unknown error occurred!");
+    error_occurred_ = true;
   }
   return response;
 }
