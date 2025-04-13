@@ -436,6 +436,8 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
     if (first_load) {
       // On first load, we can check if there was an active scalar on loaded meshes
       session_->set_feature_map(session_->get_default_feature_map());
+      // reload groom parameters because iso spacing depends on the images loaded
+      groom_tool_->load_params();
     }
   } catch (std::runtime_error& e) {
     handle_error(e.what());
