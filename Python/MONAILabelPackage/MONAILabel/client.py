@@ -16,7 +16,6 @@ import logging
 import mimetypes
 import os
 import re
-import ssl
 import tempfile
 from pathlib import Path
 from urllib.parse import quote_plus, unquote, urlencode, urlparse
@@ -503,6 +502,7 @@ class MONAILabelUtils:
         parsed = urlparse(server_url)
         if parsed.scheme == "https":
             logger.debug("Using HTTPS mode")
+            import ssl
             # noinspection PyProtectedMember
             conn = http.client.HTTPSConnection(parsed.hostname, parsed.port, context=ssl._create_unverified_context())
         else:
@@ -552,6 +552,7 @@ class MONAILabelUtils:
 
         if parsed.scheme == "https":
             logger.debug("Using HTTPS mode")
+            import ssl
             # noinspection PyProtectedMember
             conn = http.client.HTTPSConnection(parsed.hostname, parsed.port, context=ssl._create_unverified_context())
         else:
