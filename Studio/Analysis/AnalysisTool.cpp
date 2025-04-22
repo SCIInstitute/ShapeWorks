@@ -539,6 +539,10 @@ bool AnalysisTool::compute_stats() {
     return true;
   }
 
+  if (session_->is_loading()) {
+    return false;
+  }
+
   if (session_->get_non_excluded_shapes().size() == 0 || !session_->particles_present()) {
     return false;
   }
@@ -1523,6 +1527,8 @@ void AnalysisTool::update_pca_group_options() {
       item_widget->setFlags(item_widget->flags() | Qt::ItemIsUserCheckable);
       item_widget->setCheckState(Qt::Checked);
     }
+    stats_ready_ = false;
+    compute_stats();
   }
 
   int count = ui_->pca_group_list->count();
@@ -1534,9 +1540,6 @@ void AnalysisTool::update_pca_group_options() {
   ui_->pca_group_list->setMaximumHeight(ui_->pca_group_list->sizeHintForRow(0) * count + 2);
 
   current_pca_group_values_ = values;
-
-  stats_ready_ = false;
-  compute_stats();
 }
 
 //---------------------------------------------------------------------------
