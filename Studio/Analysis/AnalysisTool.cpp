@@ -122,10 +122,14 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
-  connect(ui_->group_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::update_group_values);
+  connect(ui_->group_combo, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::update_group_values);
   connect(ui_->group_left, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_right, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_p_values_checkbox, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
+
+  connect(ui_->pca_group_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::update_pca_group_options);
+  connect(ui_->pca_group_list, &QListWidget::itemChanged, this, &AnalysisTool::handle_pca_group_list_item_changed);
 
   // network analysis
   connect(ui_->network_analysis_button, &QPushButton::clicked, this, &AnalysisTool::network_analysis_clicked);
@@ -135,6 +139,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::handle_alignment_changed);
+
+  connect(ui_->tabWidget, &QTabWidget::currentChanged, this, &AnalysisTool::handle_tab_changed);
 
   ui_->surface_open_button->setChecked(false);
   ui_->metrics_open_button->setChecked(false);
@@ -276,6 +282,27 @@ void AnalysisTool::on_reconstructionButton_clicked() {
 }
 
 //---------------------------------------------------------------------------
+QStringList AnalysisTool::get_checked_pca_groups() {
+  QStringList checked_items;
+
+  // Get the number of items in the list
+  int count = ui_->pca_group_list->count();
+
+  // Iterate through all items
+  for (int i = 0; i < count; ++i) {
+    QListWidgetItem* item = ui_->pca_group_list->item(i);
+
+    // Check if the item is checked
+    if (item && item->checkState() == Qt::Checked) {
+      // Add the text of the checked item to our list
+      checked_items.append(item->text());
+    }
+  }
+
+  return checked_items;
+}
+
+//---------------------------------------------------------------------------
 int AnalysisTool::get_pca_mode() { return ui_->pcaModeSpinBox->value() - 1; }
 
 //---------------------------------------------------------------------------
@@ -344,7 +371,7 @@ bool AnalysisTool::group_pvalues_valid() {
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::groups_on() { return ui_->group_box->currentText() != "-None-"; }
+bool AnalysisTool::groups_on() { return ui_->group_combo->currentText() != "-None-"; }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options() {
@@ -493,7 +520,7 @@ void AnalysisTool::group_p_values_clicked() {
 //---------------------------------------------------------------------------
 void AnalysisTool::network_analysis_clicked() {
   network_analysis_job_ =
-      QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_box->currentText().toStdString(),
+      QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_combo->currentText().toStdString(),
                                                  ui_->network_feature->currentText().toStdString());
   network_analysis_job_->set_pvalue_of_interest(ui_->network_pvalue_of_interest->text().toDouble());
   network_analysis_job_->set_pvalue_threshold(ui_->network_pvalue_threshold->text().toDouble());
@@ -524,11 +551,11 @@ bool AnalysisTool::compute_stats() {
   std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
 
-  std::string group_set = ui_->group_box->currentText().toStdString();
+  std::string group_set = ui_->group_combo->currentText().toStdString();
   std::string left_group = ui_->group_left->currentText().toStdString();
   std::string right_group = ui_->group_right->currentText().toStdString();
 
-  bool groups_enabled = groups_active();
+  auto pca_groups = get_checked_pca_groups();
 
   group1_list_.clear();
   group2_list_.clear();
@@ -571,18 +598,34 @@ bool AnalysisTool::compute_stats() {
     if (particles.size() == 0) {
       continue;  // skip any that don't have particles
     }
-    if (groups_enabled) {
-      auto value = shape->get_subject()->get_group_value(group_set);
-      if (value == left_group) {
+    if (groups_active()) {
+      auto group = shape->get_subject()->get_group_value(group_set);
+      if (group == left_group) {
         points.push_back(particles);
         group_ids.push_back(1);
         group1_list_.push_back(shape);
-      } else if (value == right_group) {
+      } else if (group == right_group) {
         points.push_back(particles);
         group_ids.push_back(2);
         group2_list_.push_back(shape);
       } else {
         // we don't include it
+      }
+    } else if (pca_groups_active()) {
+      auto group = shape->get_subject()->get_group_value(ui_->pca_group_combo->currentText().toStdString());
+      // see if it is in the list of groups
+      bool found = false;
+      for (auto&& pca_group : pca_groups) {
+        if (group == pca_group.toStdString()) {
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        points.push_back(particles);
+        group_ids.push_back(1);
+      } else {
+        // excluded
       }
     } else {
       points.push_back(particles);
@@ -633,7 +676,7 @@ bool AnalysisTool::compute_stats() {
   ///  Set this to true to export long format sample data (e.g. for import into R)
   const bool export_long_format = false;
 
-  if (export_long_format && groups_enabled) {
+  if (export_long_format && groups_active()) {
     auto feature_names = session_->get_project()->get_feature_names();
     std::ofstream file;
     file.open("/tmp/stats.csv");
@@ -671,6 +714,7 @@ bool AnalysisTool::compute_stats() {
 //-----------------------------------------------------------------------------
 Particles AnalysisTool::get_mean_shape_points() {
   if (!compute_stats()) {
+    std::cerr << "Non buenas, returning empty particles\n";
     return Particles();
   }
 
@@ -858,7 +902,8 @@ void AnalysisTool::load_settings() {
   ui_->mesh_warp_sample_spinbox->setValue(params.get(MESH_WARP_TEMPLATE_INDEX, -1));
   update_group_boxes();
 
-  ui_->group_box->setCurrentText(QString::fromStdString(params.get("current_group", "-None-")));
+  ui_->group_combo->setCurrentText(QString::fromStdString(params.get("current_group", "-None-")));
+  ui_->pca_group_combo->setCurrentText(QString::fromStdString(params.get("current_pca_group", "-None-")));
 }
 
 //---------------------------------------------------------------------------
@@ -1383,22 +1428,28 @@ void AnalysisTool::update_group_boxes() {
   auto group_names = session_->get_project()->get_group_names();
 
   ui_->group_widget->setEnabled(!group_names.empty());
+  ui_->pca_group_box->setVisible(!group_names.empty());
 
   if (group_names != current_group_names_) {  // only update if different
-    ui_->group_box->clear();
-    ui_->group_box->addItem("-None-");
+    ui_->group_combo->clear();
+    ui_->pca_group_combo->clear();
+    ui_->group_combo->addItem("-None-");
+    ui_->pca_group_combo->addItem("-None-");
     for (const std::string& group : group_names) {
-      ui_->group_box->addItem(QString::fromStdString(group));
+      ui_->group_combo->addItem(QString::fromStdString(group));
+      ui_->pca_group_combo->addItem(QString::fromStdString(group));
     }
+
     current_group_names_ = group_names;
     group_changed();
   }
+  update_pca_group_options();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::update_group_values() {
   block_group_change_ = true;
-  auto values = session_->get_project()->get_group_values(ui_->group_box->currentText().toStdString());
+  auto values = session_->get_project()->get_group_values(ui_->group_combo->currentText().toStdString());
 
   if (values != current_group_values_) {
     // populate group values
@@ -1455,6 +1506,45 @@ void AnalysisTool::update_domain_alignment_box() {
     }
     ui_->reference_domain->setCurrentIndex(0);
   }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_pca_group_options() {
+  auto values = session_->get_project()->get_group_values(ui_->pca_group_combo->currentText().toStdString());
+
+  if (values != current_pca_group_values_) {
+    // populate group values
+    ui_->pca_group_list->clear();
+    for (const std::string& value : values) {
+      QString item = QString::fromStdString(value);
+      // add checkable item
+      ui_->pca_group_list->addItem(item);
+      auto item_widget = ui_->pca_group_list->item(ui_->pca_group_list->count() - 1);
+      item_widget->setFlags(item_widget->flags() | Qt::ItemIsUserCheckable);
+      item_widget->setCheckState(Qt::Checked);
+    }
+  }
+
+  int count = ui_->pca_group_list->count();
+  // clamp the items to 2-10
+  count = std::max(2, std::min(count, 10));
+
+  // resize the list widget to fit the items
+  ui_->pca_group_list->setMinimumHeight(ui_->pca_group_list->sizeHintForRow(0) * count + 2);
+  ui_->pca_group_list->setMaximumHeight(ui_->pca_group_list->sizeHintForRow(0) * count + 2);
+
+  current_pca_group_values_ = values;
+
+  stats_ready_ = false;
+  compute_stats();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_pca_group_list_item_changed() {
+  stats_ready_ = false;
+  compute_stats();
+  // update display
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1545,7 +1635,18 @@ bool AnalysisTool::groups_active() {
     return false;
   }
 
-  std::string group_set = ui_->group_box->currentText().toStdString();
+  std::string group_set = ui_->group_combo->currentText().toStdString();
+  bool groups_enabled = group_set != "" && group_set != "-None-";
+  return groups_enabled;
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::pca_groups_active() {
+  if (ui_->tabWidget->currentWidget() != ui_->pca_tab) {
+    return false;
+  }
+
+  std::string group_set = ui_->pca_group_combo->currentText().toStdString();
   bool groups_enabled = group_set != "" && group_set != "-None-";
   return groups_enabled;
 }
@@ -1570,44 +1671,6 @@ void AnalysisTool::on_metrics_open_button_toggled() {
   if (show) {
     compute_shape_evaluations();
   }
-}
-
-//---------------------------------------------------------------------------
-bool AnalysisTool::is_group_active(int shape_index) {
-  std::string group_set = ui_->group_box->currentText().toStdString();
-  std::string left_group = ui_->group_left->currentText().toStdString();
-  std::string right_group = ui_->group_right->currentText().toStdString();
-
-  bool groups_enabled = groups_active();
-
-  auto shapes = session_->get_non_excluded_shapes();
-  auto shape = shapes[shape_index];
-
-  bool left = false;
-  bool right = false;
-  bool both = true;
-  if (ui_->group1_button->isChecked()) {
-    both = false;
-    left = true;
-  } else if (ui_->group2_button->isChecked()) {
-    both = false;
-    right = true;
-  }
-
-  if (groups_enabled) {
-    auto value = shape->get_subject()->get_group_value(group_set);
-    if (left && value == left_group) {
-      return true;
-    } else if (right && value == right_group) {
-      return true;
-    } else if (both) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -2005,6 +2068,12 @@ void AnalysisTool::mesh_warp_run_clicked() {
   session_->handle_clear_cache();
   initialize_mesh_warper();
   Q_EMIT reconstruction_complete();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_tab_changed() {
+  stats_ready_ = false;
+  compute_stats();
 }
 
 //---------------------------------------------------------------------------
