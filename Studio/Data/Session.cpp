@@ -1092,6 +1092,7 @@ bool Session::set_image_name(std::string image_name) {
   }
   params_.set("image_name", image_name);
   Q_EMIT image_slice_settings_changed();
+  Q_EMIT image_name_changed();
   return true;
 }
 

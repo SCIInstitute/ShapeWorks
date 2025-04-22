@@ -48,6 +48,7 @@ class MonaiLabelTool : public QWidget {
   void resizeEvent(QResizeEvent* event) override;
   int getCurrentSampleNumber();
   void enable_actions();
+  void activate();
 
  public Q_SLOTS:
   void handle_error(QString msg);

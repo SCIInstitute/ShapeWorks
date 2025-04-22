@@ -122,6 +122,10 @@ void MonaiLabelTool::enable_actions() {
   ui_->uploadSampleButton->setEnabled(false);
   ui_->runSegmentationButton->setEnabled(false);
   ui_->submitLabelButton->setEnabled(false);
+}
+
+//---------------------------------------------------------------------------
+void MonaiLabelTool::activate() {
   std::string feature_name = MonaiLabelUtils::getFeatureName(session_);
   if (!feature_name.empty()) {
     session_->set_image_name(feature_name);
@@ -134,10 +138,11 @@ void MonaiLabelTool::handleSampleNumberChanged() {
   if (monai_label_job_) {
     monai_label_job_->setCurrentSampleNumber(getCurrentSampleNumber());
   }
-  if (tool_is_running_)
+  if (tool_is_running_) {
     ui_->uploadSampleButton->setEnabled(true);
-  else
+  } else {
     ui_->uploadSampleButton->setEnabled(false);
+  }
   ui_->runSegmentationButton->setEnabled(false);
   ui_->submitLabelButton->setEnabled(false);
   Q_EMIT progress(-1);

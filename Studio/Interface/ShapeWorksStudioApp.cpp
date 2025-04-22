@@ -1006,6 +1006,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(session_.data(), &Session::save, this, &ShapeWorksStudioApp::on_action_save_project_triggered);
   connect(session_.data(), &Session::tool_state_changed, this, &ShapeWorksStudioApp::update_tool_mode);
   connect(session_.data(), &Session::session_title_changed, this, &ShapeWorksStudioApp::update_window_title);
+  connect(session_.data(), &Session::image_name_changed, this, &ShapeWorksStudioApp::handle_image_name_changed);
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
@@ -1103,6 +1104,7 @@ void ShapeWorksStudioApp::update_tool_mode() {
     ui_->stacked_widget->setCurrentWidget(monai_tool_.data());
     ui_->controlsDock->setWindowTitle("MONAI");
     update_display();
+    monai_tool_->activate();
     ui_->action_monai_mode->setChecked(true);
     session_->set_display_mode(DisplayMode::Original);
   } else {  // DATA
@@ -2110,6 +2112,11 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::image_combo_changed(int index) {
   session_->set_image_name(ui_->image_combo_->itemText(index).toStdString());
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_image_name_changed() {
+  ui_->image_combo_->setCurrentText(QString::fromStdString(session_->get_image_name()));
 }
 
 //---------------------------------------------------------------------------
