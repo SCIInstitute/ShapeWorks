@@ -535,7 +535,7 @@ QWidget#particles_panel {
             <item row="3" column="0" colspan="2">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>1</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="mean_tab">
                <attribute name="title">
@@ -646,7 +646,7 @@ QWidget#particles_panel {
                     </widget>
                    </item>
                    <item row="0" column="1" colspan="2">
-                    <widget class="QComboBox" name="group_box">
+                    <widget class="QComboBox" name="group_combo">
                      <property name="toolTip">
                       <string>Select group set</string>
                      </property>
@@ -658,37 +658,6 @@ QWidget#particles_panel {
                       <string>Analysis</string>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_20">
-                      <item row="0" column="0">
-                       <widget class="QLabel" name="method_label">
-                        <property name="text">
-                         <string>Method</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QComboBox" name="group_analysis_combo">
-                        <item>
-                         <property name="text">
-                          <string>- None -</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Group Particle P-Values</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Network Analysis</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>LDA</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
                       <item row="1" column="0" colspan="2">
                        <widget class="QStackedWidget" name="group_analysis_stacked_widget">
                         <property name="currentIndex">
@@ -922,6 +891,37 @@ QWidget#particles_panel {
                           </item>
                          </layout>
                         </widget>
+                       </widget>
+                      </item>
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="method_label">
+                        <property name="text">
+                         <string>Method</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QComboBox" name="group_analysis_combo">
+                        <item>
+                         <property name="text">
+                          <string>- None -</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Group Particle P-Values</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Network Analysis</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>LDA</string>
+                         </property>
+                        </item>
                        </widget>
                       </item>
                      </layout>
@@ -1223,18 +1223,31 @@ QWidget#particles_panel {
                 <property name="rightMargin">
                  <number>3</number>
                 </property>
-                <item row="2" column="0">
-                 <spacer name="verticalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
+                <item row="1" column="0">
+                 <widget class="QGroupBox" name="pca_group_box">
+                  <property name="title">
+                   <string>Groups</string>
                   </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
+                  <layout class="QGridLayout" name="gridLayout_31">
+                   <item row="0" column="1">
+                    <widget class="QComboBox" name="pca_group_combo">
+                     <property name="toolTip">
+                      <string>Select group set</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_17">
+                     <property name="text">
+                      <string>Group Set</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QListWidget" name="pca_group_list"/>
+                   </item>
+                  </layout>
+                 </widget>
                 </item>
                 <item row="0" column="0">
                  <widget class="QWidget" name="pcaContent" native="true">
@@ -1664,6 +1677,19 @@ QWidget#particles_panel {
                    </item>
                   </layout>
                  </widget>
+                </item>
+                <item row="2" column="0">
+                 <spacer name="verticalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </widget>

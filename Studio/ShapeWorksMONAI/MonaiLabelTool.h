@@ -2,10 +2,10 @@
 
 #include <Data/Preferences.h>
 #include <Data/Session.h>
+#include <Interface/ShapeWorksStudioApp.h>
 #include <Project.h>
 #include <Shape.h>
 #include <ShapeWorksMONAI/MonaiLabelJob.h>
-#include <Interface/ShapeWorksStudioApp.h>
 
 #include <QElapsedTimer>
 #include <QObject>
@@ -21,12 +21,12 @@ class Preferences;
 namespace shapeworks {
 class ShapeWorksStudioApp;
 class Session;
-}
+}  // namespace shapeworks
 namespace monailabel {
 
 class MonaiLabelJob;
-using shapeworks::ShapeWorksStudioApp;
 using shapeworks::Session;
+using shapeworks::ShapeWorksStudioApp;
 class MonaiLabelTool : public QWidget {
   Q_OBJECT;
 
@@ -35,7 +35,6 @@ class MonaiLabelTool : public QWidget {
   const static std::string MONAI_MODE_DEEPGROW;
   const static std::string MONAI_MODE_DEEPEDIT;
   const static std::string MONAI_SAMPLE_STRATEGY_RANDOM;
-
 
   MonaiLabelTool(Preferences& prefs);
   ~MonaiLabelTool();
@@ -49,6 +48,7 @@ class MonaiLabelTool : public QWidget {
   void resizeEvent(QResizeEvent* event) override;
   int getCurrentSampleNumber();
   void enable_actions();
+  void activate();
 
  public Q_SLOTS:
   void handle_error(QString msg);
@@ -58,7 +58,7 @@ class MonaiLabelTool : public QWidget {
   void triggerUpdateView();
   void handle_progress(int val, QString message);
   void handleSampleNumberChanged();
-  void handleClientInitialized();
+  void handleClientInitialized(bool success);
   void handleUploadSampleCompleted();
   void handleSegmentationCompleted();
   void handleSubmitLabelCompleted();
@@ -69,12 +69,15 @@ class MonaiLabelTool : public QWidget {
   void sampleChanged();
 
  private:
+
+  void set_connect_button();
+
   Preferences& preferences_;
   Ui_MonaiLabelTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
   bool tool_is_running_ = false;
-  QSharedPointer<MonaiLabelJob> monai_label_logic_;
+  QSharedPointer<MonaiLabelJob> monai_label_job_;
   QElapsedTimer timer_;
 
   std::string server_address_;
@@ -82,7 +85,6 @@ class MonaiLabelTool : public QWidget {
   std::string strategy_;
   std::string client_id_;
   int samples_processed_ = 0;
-  
 };
 
 }  // namespace monailabel
