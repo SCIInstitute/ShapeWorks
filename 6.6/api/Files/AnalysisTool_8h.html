@@ -2723,14 +2723,14 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">group_changed</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groups_active</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">pca_groups_active</span><span class="p">();</span>
+<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="nf">get_checked_pca_groups</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_view_open_button_toggled</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_surface_open_button_toggled</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_metrics_open_button_toggled</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_group_active</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shape_index</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reconstruction_method_changed</span><span class="p">();</span>
 
@@ -2775,6 +2775,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">mesh_warp_sample_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">mesh_warp_run_clicked</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_tab_changed</span><span class="p">();</span>
+
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span>
@@ -2800,6 +2802,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_group_boxes</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_group_values</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_domain_alignment_box</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_pca_group_options</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_group_list_item_changed</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_lda_graph</span><span class="p">();</span>
 
@@ -2847,6 +2851,7 @@
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_group_names_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_group_values_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_pca_group_values_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">reconstruction_transforms_</span><span class="p">;</span>
 
@@ -2866,7 +2871,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-03-25 at 08:57:11 +0000</p>
+<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
 
               
             </article>

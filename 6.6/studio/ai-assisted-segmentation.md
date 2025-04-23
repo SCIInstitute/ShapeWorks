@@ -101,7 +101,7 @@ The **MONAI Model Zoo** provides a variety of AI models for automated medical im
 
 ### **3. Open ShapeWorks Studio and Connect to MONAI Label**
 - Open your project file in **ShapeWorks Studio** and navigate to the **MONAI Tab**.
-- Enter the MONAI Label server address (default: `http://0.0.0.0:8000/`).
+- Enter the MONAI Label server address (default: `http://127.0.0.1:8000/`).
 - Click the ***Connect Server*** button.
 <p align="center">
   <img src="../img/swmonai/illustration-monai-1.png" alt="Illustration1" width="600">

@@ -24,7 +24,7 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 |                | Name           |
 | -------------- | -------------- |
 | void | **[triggerUpdateView](../Classes/classmonailabel_1_1MonaiLabelJob.md#signal-triggerupdateview)**() |
-| void | **[triggerClientInitialized](../Classes/classmonailabel_1_1MonaiLabelJob.md#signal-triggerclientinitialized)**() |
+| void | **[triggerClientInitialized](../Classes/classmonailabel_1_1MonaiLabelJob.md#signal-triggerclientinitialized)**(bool success) |
 | void | **[triggerUploadSampleCompleted](../Classes/classmonailabel_1_1MonaiLabelJob.md#signal-triggeruploadsamplecompleted)**() |
 | void | **[triggerSegmentationCompleted](../Classes/classmonailabel_1_1MonaiLabelJob.md#signal-triggersegmentationcompleted)**() |
 | void | **[triggerSubmitLabelCompleted](../Classes/classmonailabel_1_1MonaiLabelJob.md#signal-triggersubmitlabelcompleted)**() |
@@ -127,7 +127,9 @@ void triggerUpdateView()
 ### signal triggerClientInitialized
 
 ```cpp
-void triggerClientInitialized()
+void triggerClientInitialized(
+    bool success
+)
 ```
 
 
@@ -388,4 +390,4 @@ static const std::string MONAI_RESULT_DTYPE;
 
 -------------------------------
 
-Updated on 2025-03-25 at 08:57:10 +0000
+Updated on 2025-04-23 at 22:52:43 +0000

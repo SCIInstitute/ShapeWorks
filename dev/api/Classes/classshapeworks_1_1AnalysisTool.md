@@ -44,10 +44,11 @@ Inherits from QWidget
 | std::string | **[get_display_feature_map](../Classes/classshapeworks_1_1AnalysisTool.md#slot-get-display-feature-map)**() |
 | void | **[group_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-changed)**() |
 | bool | **[groups_active](../Classes/classshapeworks_1_1AnalysisTool.md#slot-groups-active)**() |
+| bool | **[pca_groups_active](../Classes/classshapeworks_1_1AnalysisTool.md#slot-pca-groups-active)**() |
+| QStringList | **[get_checked_pca_groups](../Classes/classshapeworks_1_1AnalysisTool.md#slot-get-checked-pca-groups)**() |
 | void | **[on_view_open_button_toggled](../Classes/classshapeworks_1_1AnalysisTool.md#slot-on-view-open-button-toggled)**() |
 | void | **[on_surface_open_button_toggled](../Classes/classshapeworks_1_1AnalysisTool.md#slot-on-surface-open-button-toggled)**() |
 | void | **[on_metrics_open_button_toggled](../Classes/classshapeworks_1_1AnalysisTool.md#slot-on-metrics-open-button-toggled)**() |
-| bool | **[is_group_active](../Classes/classshapeworks_1_1AnalysisTool.md#slot-is-group-active)**(int shape_index) |
 | void | **[reconstruction_method_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-reconstruction-method-changed)**() |
 | void | **[initialize_mesh_warper](../Classes/classshapeworks_1_1AnalysisTool.md#slot-initialize-mesh-warper)**() |
 | void | **[group_p_values_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-p-values-clicked)**() |
@@ -74,6 +75,7 @@ Inherits from QWidget
 | void | **[mesh_warp_median_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-median-clicked)**() |
 | void | **[mesh_warp_sample_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-sample-changed)**() |
 | void | **[mesh_warp_run_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-run-clicked)**() |
+| void | **[handle_tab_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-tab-changed)**() |
 
 ## Public Signals
 
@@ -326,6 +328,20 @@ bool groups_active()
 ```
 
 
+### slot pca_groups_active
+
+```cpp
+bool pca_groups_active()
+```
+
+
+### slot get_checked_pca_groups
+
+```cpp
+QStringList get_checked_pca_groups()
+```
+
+
 ### slot on_view_open_button_toggled
 
 ```cpp
@@ -344,15 +360,6 @@ void on_surface_open_button_toggled()
 
 ```cpp
 void on_metrics_open_button_toggled()
-```
-
-
-### slot is_group_active
-
-```cpp
-bool is_group_active(
-    int shape_index
-)
 ```
 
 
@@ -552,6 +559,13 @@ void mesh_warp_sample_changed()
 
 ```cpp
 void mesh_warp_run_clicked()
+```
+
+
+### slot handle_tab_changed
+
+```cpp
+void handle_tab_changed()
 ```
 
 
@@ -951,4 +965,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2025-03-25 at 08:57:10 +0000
+Updated on 2025-04-23 at 22:52:43 +0000

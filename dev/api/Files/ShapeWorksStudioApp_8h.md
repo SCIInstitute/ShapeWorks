@@ -173,6 +173,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_feature_map_scale();
 
   void image_combo_changed(int index);
+  void handle_image_name_changed();
 
   void show_splash_screen();
   void hide_splash_screen();
@@ -304,4 +305,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2025-03-25 at 08:57:11 +0000
+Updated on 2025-04-23 at 22:52:44 +0000

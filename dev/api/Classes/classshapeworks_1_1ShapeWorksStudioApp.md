@@ -89,6 +89,7 @@ Inherits from QMainWindow
 | void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(int index) |
 | void | **[update_feature_map_scale](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-scale)**() |
 | void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(int index) |
+| void | **[handle_image_name_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-image-name-changed)**() |
 | void | **[show_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-show-splash-screen)**() |
 | void | **[hide_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-hide-splash-screen)**() |
 | void | **[about](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-about)**() |
@@ -649,6 +650,13 @@ void image_combo_changed(
 ```
 
 
+### slot handle_image_name_changed
+
+```cpp
+void handle_image_name_changed()
+```
+
+
 ### slot show_splash_screen
 
 ```cpp
@@ -777,4 +785,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2025-03-25 at 08:57:11 +0000
+Updated on 2025-04-23 at 22:52:44 +0000

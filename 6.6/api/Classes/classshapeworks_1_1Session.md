@@ -55,6 +55,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[annotations_changed](../Classes/classshapeworks_1_1Session.md#signal-annotations-changed)**() |
 | void | **[save](../Classes/classshapeworks_1_1Session.md#signal-save)**() |
 | void | **[session_title_changed](../Classes/classshapeworks_1_1Session.md#signal-session-title-changed)**() |
+| void | **[image_name_changed](../Classes/classshapeworks_1_1Session.md#signal-image-name-changed)**() |
 
 ## Public Functions
 
@@ -400,6 +401,13 @@ void save()
 
 ```cpp
 void session_title_changed()
+```
+
+
+### signal image_name_changed
+
+```cpp
+void image_name_changed()
 ```
 
 
@@ -1482,4 +1490,4 @@ static const std::string MONAI_C;
 
 -------------------------------
 
-Updated on 2025-03-25 at 08:57:11 +0000
+Updated on 2025-04-23 at 22:52:44 +0000

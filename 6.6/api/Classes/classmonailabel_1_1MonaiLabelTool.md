@@ -22,7 +22,7 @@ Inherits from QWidget
 | void | **[triggerUpdateView](../Classes/classmonailabel_1_1MonaiLabelTool.md#slot-triggerupdateview)**() |
 | void | **[handle_progress](../Classes/classmonailabel_1_1MonaiLabelTool.md#slot-handle-progress)**(int val, QString message) |
 | void | **[handleSampleNumberChanged](../Classes/classmonailabel_1_1MonaiLabelTool.md#slot-handlesamplenumberchanged)**() |
-| void | **[handleClientInitialized](../Classes/classmonailabel_1_1MonaiLabelTool.md#slot-handleclientinitialized)**() |
+| void | **[handleClientInitialized](../Classes/classmonailabel_1_1MonaiLabelTool.md#slot-handleclientinitialized)**(bool success) |
 | void | **[handleUploadSampleCompleted](../Classes/classmonailabel_1_1MonaiLabelTool.md#slot-handleuploadsamplecompleted)**() |
 | void | **[handleSegmentationCompleted](../Classes/classmonailabel_1_1MonaiLabelTool.md#slot-handlesegmentationcompleted)**() |
 | void | **[handleSubmitLabelCompleted](../Classes/classmonailabel_1_1MonaiLabelTool.md#slot-handlesubmitlabelcompleted)**() |
@@ -50,6 +50,7 @@ Inherits from QWidget
 | void | **[resizeEvent](../Classes/classmonailabel_1_1MonaiLabelTool.md#function-resizeevent)**(QResizeEvent * event) override |
 | int | **[getCurrentSampleNumber](../Classes/classmonailabel_1_1MonaiLabelTool.md#function-getcurrentsamplenumber)**() |
 | void | **[enable_actions](../Classes/classmonailabel_1_1MonaiLabelTool.md#function-enable-actions)**() |
+| void | **[activate](../Classes/classmonailabel_1_1MonaiLabelTool.md#function-activate)**() |
 
 ## Public Attributes
 
@@ -121,7 +122,9 @@ void handleSampleNumberChanged()
 ### slot handleClientInitialized
 
 ```cpp
-void handleClientInitialized()
+void handleClientInitialized(
+    bool success
+)
 ```
 
 
@@ -258,6 +261,13 @@ void enable_actions()
 ```
 
 
+### function activate
+
+```cpp
+void activate()
+```
+
+
 ## Public Attributes Documentation
 
 ### variable MONAI_MODE_SEGMENTATION
@@ -290,4 +300,4 @@ static const std::string MONAI_SAMPLE_STRATEGY_RANDOM;
 
 -------------------------------
 
-Updated on 2025-03-25 at 08:57:10 +0000
+Updated on 2025-04-23 at 22:52:43 +0000

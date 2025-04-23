@@ -2727,6 +2727,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#slot-pca_groups_active" class="md-nav__link">
+    slot pca_groups_active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-get_checked_pca_groups" class="md-nav__link">
+    slot get_checked_pca_groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#slot-on_view_open_button_toggled" class="md-nav__link">
     slot on_view_open_button_toggled
   </a>
@@ -2743,13 +2757,6 @@
           <li class="md-nav__item">
   <a href="#slot-on_metrics_open_button_toggled" class="md-nav__link">
     slot on_metrics_open_button_toggled
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-is_group_active" class="md-nav__link">
-    slot is_group_active
   </a>
   
 </li>
@@ -2932,6 +2939,13 @@
           <li class="md-nav__item">
   <a href="#slot-mesh_warp_run_clicked" class="md-nav__link">
     slot mesh_warp_run_clicked
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-handle_tab_changed" class="md-nav__link">
+    slot handle_tab_changed
   </a>
   
 </li>
@@ -3467,6 +3481,14 @@
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-groups-active">groups_active</a></strong>()</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-pca-groups-active">pca_groups_active</a></strong>()</td>
+</tr>
+<tr>
+<td>QStringList</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-get-checked-pca-groups">get_checked_pca_groups</a></strong>()</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-on-view-open-button-toggled">on_view_open_button_toggled</a></strong>()</td>
 </tr>
@@ -3477,10 +3499,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-on-metrics-open-button-toggled">on_metrics_open_button_toggled</a></strong>()</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-is-group-active">is_group_active</a></strong>(int shape_index)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3585,6 +3603,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-mesh-warp-run-clicked">mesh_warp_run_clicked</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-tab-changed">handle_tab_changed</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3953,6 +3975,12 @@
 <h3 id="slot-groups_active">slot groups_active</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">groups_active</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="slot-pca_groups_active">slot pca_groups_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">pca_groups_active</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="slot-get_checked_pca_groups">slot get_checked_pca_groups</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QStringList</span><span class="w"> </span><span class="n">get_checked_pca_groups</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="slot-on_view_open_button_toggled">slot on_view_open_button_toggled</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_view_open_button_toggled</span><span class="p">()</span>
 </code></pre></div>
@@ -3961,11 +3989,6 @@
 </code></pre></div>
 <h3 id="slot-on_metrics_open_button_toggled">slot on_metrics_open_button_toggled</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_metrics_open_button_toggled</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-is_group_active">slot is_group_active</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_group_active</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">shape_index</span>
-<span class="p">)</span>
 </code></pre></div>
 <h3 id="slot-reconstruction_method_changed">slot reconstruction_method_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reconstruction_method_changed</span><span class="p">()</span>
@@ -4061,6 +4084,9 @@
 </code></pre></div>
 <h3 id="slot-mesh_warp_run_clicked">slot mesh_warp_run_clicked</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">mesh_warp_run_clicked</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="slot-handle_tab_changed">slot handle_tab_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_tab_changed</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-update_view">signal update_view</h3>
@@ -4254,7 +4280,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-03-25 at 08:57:10 +0000</p>
+<p>Updated on 2025-04-23 at 22:52:43 +0000</p>
 
               
             </article>
