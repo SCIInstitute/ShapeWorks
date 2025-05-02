@@ -190,14 +190,18 @@ def run_conditional_deepssm_training(configuration: dict):
     trainer.train(None, config_file)
 
 
-def run_conditional_deepssm_prep(project_filenames: list[str]):
+def run_conditional_deepssm_prep(configuration: dict):
     """ Prepare data for Conditional DeepSSM """
     sw_message("Preparing data for Conditional DeepSSM")
 
     root_dir = os.getcwd()
+    
+    projects = configuration["projects"]
+
 
     # for each project
-    for project_filename in project_filenames:
+    for project in projects:
+        project_filename = project["file"]
         os.chdir(root_dir)
         if not os.path.exists(project_filename):
             print(f"Project file {project_filename} does not exist")
