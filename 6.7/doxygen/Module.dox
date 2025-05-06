@@ -1,0 +1,7 @@
+/** \defgroup Group-Common Common Classes */
+
+/** \defgroup Group-Mesh Mesh Classes */
+
+/** \defgroup Group-Image Image Classes */
+
+/** \defgroup Group-Constraint Constraint Classes */
