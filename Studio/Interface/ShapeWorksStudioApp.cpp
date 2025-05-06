@@ -1528,7 +1528,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   }
 
   analysis_tool_->reset_stats();
-  analysis_tool_->initialize_mesh_warper();
 
   block_update_ = true;
 
@@ -1565,6 +1564,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   on_zoom_slider_valueChanged();
 
   session_->set_loading(false);
+  analysis_tool_->initialize_mesh_warper();
 
   if (ui_->action_analysis_mode->isChecked() && !ui_->action_analysis_mode->isEnabled()) {
     on_action_import_mode_triggered();

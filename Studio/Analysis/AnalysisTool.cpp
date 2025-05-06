@@ -1679,7 +1679,9 @@ void AnalysisTool::on_metrics_open_button_toggled() {
 //---------------------------------------------------------------------------
 void AnalysisTool::initialize_mesh_warper() {
   if (session_->particles_present() && session_->get_groomed_present()) {
-    compute_stats();
+    if (!compute_stats()) {
+      return;
+    }
 
     auto params = session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
 
