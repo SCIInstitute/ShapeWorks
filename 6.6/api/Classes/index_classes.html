@@ -2590,7 +2590,6 @@
 <li><strong>struct <a href="structRay.html">Ray</a></strong> </li>
 <li><strong>class <a href="classReconstruction.html">Reconstruction</a></strong> </li>
 <li><strong>struct <a href="structSimilarityTransform3D.html">SimilarityTransform3D</a></strong> </li>
-<li><strong>class <a href="classStudioImageActorPointPlacer.html">StudioImageActorPointPlacer</a></strong> </li>
 <li><strong>class <a href="classStudioLogger.html">StudioLogger</a></strong> <br>Handle logger callbacks via Qt for thread correctness. </li>
 <li><strong>class <a href="classSurfaceReconstructor.html">SurfaceReconstructor</a></strong> </li>
 <li><strong>struct <a href="structTriangle.html">Triangle</a></strong> </li>
@@ -2619,13 +2618,6 @@
 <li><strong>class <a href="classmat3d.html">mat3d</a></strong> </li>
 <li><strong>class <a href="classmatrix.html">matrix</a></strong> </li>
 <li><strong>class <a href="classmeshFIM.html">meshFIM</a></strong> </li>
-<li><strong>namespace <a href="../Namespaces/namespacemonailabel.html">monailabel</a></strong> <ul>
-<li><strong>class <a href="classmonailabel_1_1MonaiLabelJob.html">MonaiLabelJob</a></strong> </li>
-<li><strong>class <a href="classmonailabel_1_1MonaiLabelTool.html">MonaiLabelTool</a></strong> </li>
-<li><strong>class <a href="classmonailabel_1_1MonaiLabelUtils.html">MonaiLabelUtils</a></strong> </li>
-<li><strong>class <a href="classmonailabel_1_1UrlValidator.html">UrlValidator</a></strong> </li>
-</ul>
-</li>
 <li><strong>class <a href="classobject__reader.html">object_reader</a></strong> </li>
 <li><strong>class <a href="classobject__writer.html">object_writer</a></strong> </li>
 <li><strong>class <a href="classquatd.html">quatd</a></strong> </li>
@@ -2643,6 +2635,10 @@
 <li><strong>class <a href="classshapeworks_1_1Constraints.html">Constraints</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ContourDomain.html">ContourDomain</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1CorrespondenceFunction.html">CorrespondenceFunction</a></strong> <br>Correspondence term. </li>
+<li><strong>class <a href="classshapeworks_1_1CurvatureSamplingFunction.html">CurvatureSamplingFunction</a></strong> <br>Please note: This is the sampling function currently being used. <ul>
+<li><strong>struct <a href="structshapeworks_1_1CurvatureSamplingFunction_1_1CrossDomainNeighborhood.html">CrossDomainNeighborhood</a></strong> </li>
+</ul>
+</li>
 <li><strong>class <a href="classshapeworks_1_1DataTool.html">DataTool</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1DeepSSMJob.html">DeepSSMJob</a></strong> <br>Qt Wrapper for DeepSSM. </li>
 <li><strong>class <a href="classshapeworks_1_1DeepSSMParameters.html">DeepSSMParameters</a></strong> </li>
@@ -2706,6 +2702,7 @@
 <li><strong>class <a href="classshapeworks_1_1MeshWorkItem.html">MeshWorkItem</a></strong> <br>Provides concurrent access to a list of shapes to work needing reconstruction. </li>
 <li><strong>class <a href="classshapeworks_1_1MeshWorkQueue.html">MeshWorkQueue</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MeshWorker.html">MeshWorker</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshWrapper.html">MeshWrapper</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MixedEffectsShapeMatrix.html">MixedEffectsShapeMatrix</a></strong> </li>
 <li><strong>struct <a href="structshapeworks_1_1MultiVariateNormalRandom.html">MultiVariateNormalRandom</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1NetworkAnalysisJob.html">NetworkAnalysisJob</a></strong> </li>
@@ -2734,7 +2731,12 @@
 <li><strong>class <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html">ParticleNormalEvaluationJob</a></strong> </li>
 <li><strong>struct <a href="structshapeworks_1_1ParticlePointIndexPair.html">ParticlePointIndexPair</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ParticleRegionDomain.html">ParticleRegionDomain</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ParticleRegionNeighborhood.html">ParticleRegionNeighborhood</a></strong> <ul>
+<li><strong>struct <a href="structshapeworks_1_1ParticleRegionNeighborhood_1_1IteratorNodePair.html">IteratorNodePair</a></strong> </li>
+</ul>
+</li>
 <li><strong>class <a href="classshapeworks_1_1ParticleShapeStatistics.html">ParticleShapeStatistics</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1ParticleSurfaceNeighborhood.html">ParticleSurfaceNeighborhood</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a></strong> <br>A facade class managing interactions with a particle system. </li>
 <li><strong>class <a href="classshapeworks_1_1ParticleSystemCommand.html">ParticleSystemCommand</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a></strong> </li>
@@ -2743,6 +2745,8 @@
 <li><strong>class <a href="classshapeworks_1_1PickResult.html">PickResult</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1PlaneConstraint.html">PlaneConstraint</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1PlaneWidget.html">PlaneWidget</a></strong> <br><a href="">PlaneWidget</a>. </li>
+<li><strong>class <a href="classshapeworks_1_1PowerOfTwoPointTree.html">PowerOfTwoPointTree</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1PowerOfTwoPointTreeNode.html">PowerOfTwoPointTreeNode</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1PreferencesWindow.html">PreferencesWindow</a></strong> <br>Qt UI dialog to control preferences. </li>
 <li><strong>class <a href="classshapeworks_1_1ProcrustesRegistration.html">ProcrustesRegistration</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1Project.html">Project</a></strong> <br>Representation of a project. </li>
@@ -2759,18 +2763,14 @@
 <li><strong>struct <a href="structshapeworks_1_1Sampler_1_1SphereType.html">SphereType</a></strong> </li>
 </ul>
 </li>
-<li><strong>class <a href="classshapeworks_1_1SamplingFunction.html">SamplingFunction</a></strong> <ul>
-<li><strong>struct <a href="structshapeworks_1_1SamplingFunction_1_1CrossDomainNeighborhood.html">CrossDomainNeighborhood</a></strong> </li>
-</ul>
-</li>
-<li><strong>class <a href="classshapeworks_1_1SegmentationToolPanel.html">SegmentationToolPanel</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1SamplingFunction.html">SamplingFunction</a></strong> <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. </li>
 <li><strong>class <a href="classshapeworks_1_1Session.html">Session</a></strong> <br>Representation of a session. </li>
 <li><strong>class <a href="classshapeworks_1_1Shape.html">Shape</a></strong> <br>Representation of a single shape/patient/subject. <ul>
 <li><strong>class <a href="classshapeworks_1_1Shape_1_1Point.html">Point</a></strong> <br>TODO: replace this wherever it is used. </li>
 </ul>
 </li>
 <li><strong>class <a href="classshapeworks_1_1ShapeEvaluation.html">ShapeEvaluation</a></strong> </li>
-<li><strong>class <a href="classshapeworks_1_1ShapeEvaluationJob.html">ShapeEvaluationJob</a></strong> <br>The <a href="">ShapeEvaluationJob</a> class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the <a href="classshapeworks_1_1Job.html">Job</a> and <a href="">Worker</a> interfaces. </li>
+<li><strong>class <a href="classshapeworks_1_1ShapeEvaluationJob.html">ShapeEvaluationJob</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ShapeGradientMatrix.html">ShapeGradientMatrix</a></strong> <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE <em>NOT</em> ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! </li>
 <li><strong>class <a href="classshapeworks_1_1ShapeMatrix.html">ShapeMatrix</a></strong> <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE <em>NOT</em> ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! </li>
 <li><strong>class <a href="classshapeworks_1_1ShapeScalarJob.html">ShapeScalarJob</a></strong> </li>
@@ -2793,7 +2793,6 @@
 <li><strong>class <a href="classshapeworks_1_1StudioVtkOutputWindow.html">StudioVtkOutputWindow</a></strong> <br>Implementation of vtkOutputWindow to capture and display VTK error messages. </li>
 <li><strong>class <a href="classshapeworks_1_1Style.html">Style</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1Subject.html">Subject</a></strong> <br>Representation of a single subject. </li>
-<li><strong>class <a href="classshapeworks_1_1Surface.html">Surface</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1Telemetry.html">Telemetry</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1UpdateChecker.html">UpdateChecker</a></strong> <br>Update Checker. </li>
 <li><strong>class <a href="classshapeworks_1_1Variant.html">Variant</a></strong> <br><a href="">Variant</a> class to represent multiple types. </li>
@@ -2805,11 +2804,14 @@
 <li><strong>class <a href="classshapeworks_1_1Worker.html">Worker</a></strong> </li>
 <li><strong>namespace <a href="../Namespaces/namespaceshapeworks_1_1mesh.html">mesh</a></strong> </li>
 <li><strong>namespace <a href="../Namespaces/namespaceshapeworks_1_1particles.html">particles</a></strong> </li>
+<li><strong>struct <a href="structshapeworks_1_1powstruct.html">powstruct</a></strong> </li>
+<li><strong>struct <a href="structshapeworks_1_1powstruct_3_01a_00_010_01_4.html">powstruct&lt; a, 0 &gt;</a></strong> </li>
 <li><strong>namespace <a href="../Namespaces/namespaceshapeworks_1_1project.html">project</a></strong> <ul>
 <li><strong>namespace <a href="../Namespaces/namespaceshapeworks_1_1project_1_1prefixes.html">prefixes</a></strong> </li>
 <li><strong>namespace <a href="../Namespaces/namespaceshapeworks_1_1project_1_1types.html">types</a></strong> </li>
 </ul>
 </li>
+<li><strong>class <a href="classshapeworks_1_1shapeworks__exception.html">shapeworks_exception</a></strong> </li>
 </ul>
 </li>
 <li><strong>namespace <a href="../Namespaces/namespacestd.html">std</a></strong> </li>
@@ -2820,7 +2822,7 @@
 <li><strong>class <a href="classvtkPolyDataToImageData.html">vtkPolyDataToImageData</a></strong> </li>
 </ul>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

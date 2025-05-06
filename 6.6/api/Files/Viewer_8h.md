@@ -130,7 +130,6 @@ class Viewer {
   void set_visualizer(Visualizer* visualizer);
 
   void update_feature_range(double* range);
-  void reset_feature_range();
 
   void update_opacities();
 
@@ -138,7 +137,7 @@ class Viewer {
 
   void update_landmarks();
   void update_planes();
-  void update_paint_mode();
+  void update_ffc_mode();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
   std::vector<vtkSmartPointer<vtkActor>> get_unclipped_surface_actors();
@@ -153,8 +152,6 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_image_transform();
 
-  vtkSmartPointer<vtkTransform> get_inverse_image_transform();
-
   SliceView& slice_view();
 
   void update_image_volume(bool force = false);
@@ -167,7 +164,7 @@ class Viewer {
 
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
 
-  void handle_paint(double display_pos[2], double world_pos[3]);
+  void handle_ffc_paint(double display_pos[2], double world_pos[3]);
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
@@ -183,12 +180,7 @@ class Viewer {
 
   void insert_compare_meshes();
 
-  void set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSmartPointer<vtkPolyDataMapper> mapper,
-                             std::string scalar);
-
-  vtkSmartPointer<vtkLookupTable> get_surface_lut() { return surface_lut_; }
-
-  bool showing_feature_map();
+  void set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSmartPointer<vtkPolyDataMapper> mapper, std::string scalar);
 
  private:
   void initialize_surfaces();
@@ -202,6 +194,7 @@ class Viewer {
 
   void update_difference_lut(float r0, float r1);
 
+  bool showing_feature_map();
   std::string get_displayed_feature_map();
 
   vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
@@ -267,8 +260,6 @@ class Viewer {
   Visualizer* visualizer_{nullptr};
 
   int number_of_domains_ = 0;
-  double lut_min_ = 0;
-  double lut_max_ = 0;
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   std::shared_ptr<PlaneWidget> plane_widget_;
@@ -281,7 +272,6 @@ class Viewer {
   vtkSmartPointer<vtkCellPicker> cell_picker_;
   vtkSmartPointer<vtkPropPicker> prop_picker_;
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
-  vtkSmartPointer<vtkImageActorPointPlacer> slice_point_placer_;
 
   // slice viewer
   SliceView slice_view_{this};
@@ -292,4 +282,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -2603,14 +2603,12 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_volume</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span><span class="w"> </span><span class="n">volume</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mask</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mask</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_meshes</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">orientation</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_image_loaded</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_colormap</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_renderer</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_camera</span><span class="p">();</span>
@@ -2637,12 +2635,6 @@
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_slice_number</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_actor</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">vtkPlane</span><span class="o">*</span><span class="w"> </span><span class="nf">get_slice_plane</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update</span><span class="p">();</span>
-
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_slice_number</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">slice</span><span class="p">);</span>
 
@@ -2653,14 +2645,9 @@
 <span class="w">  </span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">image_slice_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mask_slice_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageSliceMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_mapper_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageSliceMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mask_mapper_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span><span class="w"> </span><span class="n">volume_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mask_volume_</span><span class="p">;</span>
-
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtk_volume_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtk_mask_volume_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageActorPointPlacer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">placer_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">current_slice_number_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -2673,7 +2660,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

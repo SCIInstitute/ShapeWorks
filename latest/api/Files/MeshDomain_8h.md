@@ -29,7 +29,7 @@ title: Libs/Optimize/Domain/MeshDomain.h
 
 #include <itkObjectFactory.h>
 
-#include "MeshWrapper.h"
+#include "Surface.h"
 #include "ParticleDomain.h"
 
 namespace shapeworks {

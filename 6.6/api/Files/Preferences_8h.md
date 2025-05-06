@@ -43,6 +43,9 @@ class Preferences : public QObject {
   QStringList get_recent_files();
   QStringList get_recent_paths();
 
+  bool not_saved();
+  void set_saved(bool saved = true);
+
   QByteArray get_window_geometry();
   void set_window_geometry(QByteArray geometry);
 
@@ -156,15 +159,15 @@ class Preferences : public QObject {
 
  private:
   void update_recent_files();
-  void update_threads();
   QStringList recent_files_;
   QStringList recent_paths_;
 
   QSettings settings_;
+  bool saved_ = true;
 };
 ```
 
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

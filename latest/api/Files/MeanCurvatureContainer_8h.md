@@ -85,7 +85,7 @@ class MeanCurvatureContainer : public GenericContainerArray<TNumericType> {
   inline void ComputeMeanCurvature(const ParticleSystemType* system, unsigned int idx, unsigned int dom) {
     //  Get the position and index.
     PointType pos = system->GetPosition(idx, dom);
-    this->operator[](dom)->operator[](idx) = system->GetDomain(dom)->GetCurvature(pos, idx);
+    this->operator[](dom)->operator[](idx) = system->get_domain(dom)->GetCurvature(pos, idx);
   }
 
   virtual void ComputeCurvatureStatistics(const ParticleSystemType*, unsigned int d);

@@ -80,11 +80,11 @@ class ParticleNeighborhood : public itk::DataObject {
 
   // itkSetObjectMacro(Domain, DomainType);
   // itkGetConstObjectMacro(Domain, DomainType);
-  virtual void SetDomain(DomainType::Pointer domain) {
+  virtual void set_domain(DomainType::Pointer domain) {
     m_Domain = domain;
     this->Modified();
   };
-  DomainType::Pointer GetDomain() const { return m_Domain; };
+  DomainType::Pointer get_domain() const { return m_Domain; };
 
   virtual void AddPosition(const PointType& p, unsigned int idx, int threadId = 0) {}
   virtual void SetPosition(const PointType& p, unsigned int idx, int threadId = 0) {}

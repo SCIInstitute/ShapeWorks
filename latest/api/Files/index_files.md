@@ -107,7 +107,7 @@ title: Files
             * **file [Libs/Optimize/Domain/ImplicitSurfaceDomain.h](../Files/ImplicitSurfaceDomain_8h.md#file-implicitsurfacedomain.h)** 
             * **file [Libs/Optimize/Domain/MeshDomain.h](../Files/MeshDomain_8h.md#file-meshdomain.h)** 
             * **file [Libs/Optimize/Domain/MeshGeoEntry.h](../Files/MeshGeoEntry_8h.md#file-meshgeoentry.h)** 
-            * **file [Libs/Optimize/Domain/MeshWrapper.h](../Files/MeshWrapper_8h.md#file-meshwrapper.h)** 
+            * **file [Libs/Optimize/Domain/Surface.h](../Files/MeshWrapper_8h.md#file-Surface.h)** 
             * **file [Libs/Optimize/Domain/ParticleDomain.h](../Files/ParticleDomain_8h.md#file-particledomain.h)** 
             * **file [Libs/Optimize/Domain/ParticleRegionDomain.h](../Files/ParticleRegionDomain_8h.md#file-particleregiondomain.h)** 
         * **dir [Libs/Optimize/Function](../Files/dir_63c42ca9646c64be763540e8d88cba2f.md#dir-libs/optimize/function)** 

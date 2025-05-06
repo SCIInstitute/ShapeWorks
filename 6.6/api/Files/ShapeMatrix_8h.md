@@ -126,7 +126,7 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
       s += VDimension;
     }
     if (m_use_normals[dom]) {
-      vnl_vector_fixed<float, DIMENSION> pN = ps->GetDomain(d)->SampleNormalAtPoint(posLocal, idx);
+      vnl_vector_fixed<float, DIMENSION> pN = ps->get_domain(d)->SampleNormalAtPoint(posLocal, idx);
       ParticleSystem::VectorType tmp;
       tmp[0] = pN[0];
       tmp[1] = pN[1];
@@ -150,7 +150,7 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
       pt[1] = posLocal[1];
       pt[2] = posLocal[2];
       feature_values.clear();
-      const MeshDomain* domain = static_cast<const MeshDomain*>(ps->GetDomain(d));
+      const MeshDomain* domain = static_cast<const MeshDomain*>(ps->get_domain(d));
 
       auto mesh = domain->GetSWMesh();
 
@@ -256,4 +256,4 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -1,6 +1,5 @@
 ---
 title: shapeworks::ShapeEvaluationJob
-summary: The ShapeEvaluationJob class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the Job and Worker interfaces. 
 
 ---
 
@@ -8,10 +7,7 @@ summary: The ShapeEvaluationJob class is a worker class that computes shape eval
 
 
 
-The [ShapeEvaluationJob]() class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the [Job](../Classes/classshapeworks_1_1Job.md) and [Worker]() interfaces. 
 
-
-`#include <ShapeEvaluationJob.h>`
 
 Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
@@ -32,7 +28,7 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-shapeevaluationjob)**(JobType job_type, [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) stats, QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
+| | **[ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-shapeevaluationjob)**(JobType job_type, [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) stats) |
 | virtual void | **[run](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-run)**() override<br>run the job  |
 | virtual QString | **[name](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-name)**() override<br>get the name of the job  |
 
@@ -105,8 +101,7 @@ void result_ready(
 ```cpp
 ShapeEvaluationJob(
     JobType job_type,
-    ParticleShapeStatistics stats,
-    QSharedPointer< Session > session
+    ParticleShapeStatistics stats
 )
 ```
 
@@ -135,4 +130,4 @@ get the name of the job
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

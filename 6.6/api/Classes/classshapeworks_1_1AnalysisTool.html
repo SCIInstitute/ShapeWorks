@@ -2727,20 +2727,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#slot-pca_groups_active" class="md-nav__link">
-    slot pca_groups_active
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-get_checked_pca_groups" class="md-nav__link">
-    slot get_checked_pca_groups
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#slot-on_view_open_button_toggled" class="md-nav__link">
     slot on_view_open_button_toggled
   </a>
@@ -2757,6 +2743,13 @@
           <li class="md-nav__item">
   <a href="#slot-on_metrics_open_button_toggled" class="md-nav__link">
     slot on_metrics_open_button_toggled
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-is_group_active" class="md-nav__link">
+    slot is_group_active
   </a>
   
 </li>
@@ -2832,13 +2825,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#slot-handle_distance_method_changed" class="md-nav__link">
-    slot handle_distance_method_changed
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#slot-run_good_bad_particles" class="md-nav__link">
     slot run_good_bad_particles
   </a>
@@ -2901,55 +2887,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#slot-handle_samples_predicted_scalar_options" class="md-nav__link">
-    slot handle_samples_predicted_scalar_options
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-samples_table_context_menu" class="md-nav__link">
-    slot samples_table_context_menu
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-samples_table_copy_to_clipboard" class="md-nav__link">
-    slot samples_table_copy_to_clipboard
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-mesh_warp_median_clicked" class="md-nav__link">
-    slot mesh_warp_median_clicked
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-mesh_warp_sample_changed" class="md-nav__link">
-    slot mesh_warp_sample_changed
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-mesh_warp_run_clicked" class="md-nav__link">
-    slot mesh_warp_run_clicked
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-handle_tab_changed" class="md-nav__link">
-    slot handle_tab_changed
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2966,13 +2903,6 @@
           <li class="md-nav__item">
   <a href="#signal-update_view" class="md-nav__link">
     signal update_view
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#signal-analysis_mode_changed" class="md-nav__link">
-    signal analysis_mode_changed
   </a>
   
 </li>
@@ -3481,14 +3411,6 @@
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-groups-active">groups_active</a></strong>()</td>
 </tr>
 <tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-pca-groups-active">pca_groups_active</a></strong>()</td>
-</tr>
-<tr>
-<td>QStringList</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-get-checked-pca-groups">get_checked_pca_groups</a></strong>()</td>
-</tr>
-<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-on-view-open-button-toggled">on_view_open_button_toggled</a></strong>()</td>
 </tr>
@@ -3499,6 +3421,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-on-metrics-open-button-toggled">on_metrics_open_button_toggled</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-is-group-active">is_group_active</a></strong>(int shape_index)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3542,10 +3468,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-distance-method-changed">handle_distance_method_changed</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-run-good-bad-particles">run_good_bad_particles</a></strong>()</td>
 </tr>
 <tr>
@@ -3580,34 +3502,6 @@
 <td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-construct-mean-shape">construct_mean_shape</a></strong>()<br>Compute the mean shape outside of the PCA in case we are using scalars only.</td>
 </tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-samples-predicted-scalar-options">handle_samples_predicted_scalar_options</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-samples-table-context-menu">samples_table_context_menu</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-samples-table-copy-to-clipboard">samples_table_copy_to_clipboard</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-mesh-warp-median-clicked">mesh_warp_median_clicked</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-mesh-warp-sample-changed">mesh_warp_sample_changed</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-mesh-warp-run-clicked">mesh_warp_run_clicked</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-tab-changed">handle_tab_changed</a></strong>()</td>
-</tr>
 </tbody>
 </table>
 <h2 id="public-signals">Public Signals</h2>
@@ -3622,10 +3516,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#signal-update-view">update_view</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#signal-analysis-mode-changed">analysis_mode_changed</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3975,12 +3865,6 @@
 <h3 id="slot-groups_active">slot groups_active</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">groups_active</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="slot-pca_groups_active">slot pca_groups_active</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">pca_groups_active</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-get_checked_pca_groups">slot get_checked_pca_groups</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QStringList</span><span class="w"> </span><span class="n">get_checked_pca_groups</span><span class="p">()</span>
-</code></pre></div>
 <h3 id="slot-on_view_open_button_toggled">slot on_view_open_button_toggled</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_view_open_button_toggled</span><span class="p">()</span>
 </code></pre></div>
@@ -3989,6 +3873,11 @@
 </code></pre></div>
 <h3 id="slot-on_metrics_open_button_toggled">slot on_metrics_open_button_toggled</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_metrics_open_button_toggled</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="slot-is_group_active">slot is_group_active</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_group_active</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">shape_index</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="slot-reconstruction_method_changed">slot reconstruction_method_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reconstruction_method_changed</span><span class="p">()</span>
@@ -4032,9 +3921,6 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">new_alignment</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="slot-handle_distance_method_changed">slot handle_distance_method_changed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_distance_method_changed</span><span class="p">()</span>
-</code></pre></div>
 <h3 id="slot-run_good_bad_particles">slot run_good_bad_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_good_bad_particles</span><span class="p">()</span>
 </code></pre></div>
@@ -4067,33 +3953,9 @@
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">construct_mean_shape</span><span class="p">()</span>
 </code></pre></div>
 <p>Compute the mean shape outside of the PCA in case we are using scalars only. </p>
-<h3 id="slot-handle_samples_predicted_scalar_options">slot handle_samples_predicted_scalar_options</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_samples_predicted_scalar_options</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-samples_table_context_menu">slot samples_table_context_menu</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">samples_table_context_menu</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-samples_table_copy_to_clipboard">slot samples_table_copy_to_clipboard</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">samples_table_copy_to_clipboard</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-mesh_warp_median_clicked">slot mesh_warp_median_clicked</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">mesh_warp_median_clicked</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-mesh_warp_sample_changed">slot mesh_warp_sample_changed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">mesh_warp_sample_changed</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-mesh_warp_run_clicked">slot mesh_warp_run_clicked</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">mesh_warp_run_clicked</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-handle_tab_changed">slot handle_tab_changed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_tab_changed</span><span class="p">()</span>
-</code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-update_view">signal update_view</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_view</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="signal-analysis_mode_changed">signal analysis_mode_changed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">analysis_mode_changed</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="signal-pca_update">signal pca_update</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">pca_update</span><span class="p">()</span>
@@ -4280,7 +4142,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:43 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

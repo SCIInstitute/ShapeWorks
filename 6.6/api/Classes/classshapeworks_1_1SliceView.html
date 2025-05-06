@@ -2573,13 +2573,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_mask" class="md-nav__link">
-    function set_mask
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-clear_meshes" class="md-nav__link">
     function clear_meshes
   </a>
@@ -2596,13 +2589,6 @@
           <li class="md-nav__item">
   <a href="#function-is_image_loaded" class="md-nav__link">
     function is_image_loaded
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-update_colormap" class="md-nav__link">
-    function update_colormap
   </a>
   
 </li>
@@ -2698,27 +2684,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-get_image_actor" class="md-nav__link">
-    function get_image_actor
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_slice_plane" class="md-nav__link">
-    function get_slice_plane
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-update" class="md-nav__link">
-    function update
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2783,10 +2748,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1SliceView.html#function-set-mask">set_mask</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Image.html">Image</a> &gt; mask)</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1SliceView.html#function-clear-meshes">clear_meshes</a></strong>()</td>
 </tr>
 <tr>
@@ -2796,10 +2757,6 @@
 <tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1SliceView.html#function-is-image-loaded">is_image_loaded</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1SliceView.html#function-update-colormap">update_colormap</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2853,18 +2810,6 @@
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1SliceView.html#function-get-slice-number">get_slice_number</a></strong>()</td>
 </tr>
-<tr>
-<td>vtkSmartPointer&lt; vtkImageActor &gt;</td>
-<td><strong><a href="classshapeworks_1_1SliceView.html#function-get-image-actor">get_image_actor</a></strong>()</td>
-</tr>
-<tr>
-<td>vtkPlane *</td>
-<td><strong><a href="classshapeworks_1_1SliceView.html#function-get-slice-plane">get_slice_plane</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1SliceView.html#function-update">update</a></strong>()</td>
-</tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
@@ -2911,11 +2856,6 @@
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-set_mask">function set_mask</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mask</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mask</span>
-<span class="p">)</span>
-</code></pre></div>
 <h3 id="function-clear_meshes">function clear_meshes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_meshes</span><span class="p">()</span>
 </code></pre></div>
@@ -2926,9 +2866,6 @@
 </code></pre></div>
 <h3 id="function-is_image_loaded">function is_image_loaded</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_image_loaded</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-update_colormap">function update_colormap</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_colormap</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_renderer">function update_renderer</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_renderer</span><span class="p">()</span>
@@ -2982,17 +2919,8 @@
 <h3 id="function-get_slice_number">function get_slice_number</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_slice_number</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-get_image_actor">function get_image_actor</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageActor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_actor</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-get_slice_plane">function get_slice_plane</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkPlane</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_slice_plane</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-update">function update</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update</span><span class="p">()</span>
-</code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

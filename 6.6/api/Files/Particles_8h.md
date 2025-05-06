@@ -77,8 +77,6 @@ class Particles {
 
   int get_number_of_domains();
 
-  int get_total_number_of_particles();
-
  private:
   void transform_global_particles();
 
@@ -102,4 +100,4 @@ class Particles {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

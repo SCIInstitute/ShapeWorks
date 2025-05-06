@@ -34,8 +34,6 @@ Inherits from QObject
 | | **[Worker](../Classes/classshapeworks_1_1Worker.md#function-worker)**() |
 | | **[~Worker](../Classes/classshapeworks_1_1Worker.md#function-~worker)**() |
 | void | **[run_job](../Classes/classshapeworks_1_1Worker.md#function-run-job)**(QSharedPointer< [Job](../Classes/classshapeworks_1_1Job.md) > job) |
-| QPointer< QThread > | **[get_thread](../Classes/classshapeworks_1_1Worker.md#function-get-thread)**() |
-| void | **[stop](../Classes/classshapeworks_1_1Worker.md#function-stop)**() |
 | [Worker](../Classes/classshapeworks_1_1Worker.md) * | **[create_worker](../Classes/classshapeworks_1_1Worker.md#function-create-worker)**() |
 
 ## Public Slots Documentation
@@ -117,20 +115,6 @@ void run_job(
 ```
 
 
-### function get_thread
-
-```cpp
-inline QPointer< QThread > get_thread()
-```
-
-
-### function stop
-
-```cpp
-void stop()
-```
-
-
 ### function create_worker
 
 ```cpp
@@ -140,4 +124,4 @@ static Worker * create_worker()
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

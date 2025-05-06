@@ -2735,13 +2735,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-reset_feature_range" class="md-nav__link">
-    function reset_feature_range
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-update_opacities" class="md-nav__link">
     function update_opacities
   </a>
@@ -2770,8 +2763,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-update_paint_mode" class="md-nav__link">
-    function update_paint_mode
+  <a href="#function-update_ffc_mode" class="md-nav__link">
+    function update_ffc_mode
   </a>
   
 </li>
@@ -2826,13 +2819,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_inverse_image_transform" class="md-nav__link">
-    function get_inverse_image_transform
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-slice_view" class="md-nav__link">
     function slice_view
   </a>
@@ -2875,8 +2861,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-handle_paint" class="md-nav__link">
-    function handle_paint
+  <a href="#function-handle_ffc_paint" class="md-nav__link">
+    function handle_ffc_paint
   </a>
   
 </li>
@@ -2926,20 +2912,6 @@
           <li class="md-nav__item">
   <a href="#function-set_scalar_visibility" class="md-nav__link">
     function set_scalar_visibility
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_surface_lut" class="md-nav__link">
-    function get_surface_lut
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-showing_feature_map" class="md-nav__link">
-    function showing_feature_map
   </a>
   
 </li>
@@ -3108,10 +3080,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-reset-feature-range">reset_feature_range</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-update-opacities">update_opacities</a></strong>()</td>
 </tr>
 <tr>
@@ -3128,7 +3096,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-update-paint-mode">update_paint_mode</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-update-ffc-mode">update_ffc_mode</a></strong>()</td>
 </tr>
 <tr>
 <td>std::vector&lt; vtkSmartPointer&lt; vtkActor &gt; &gt;</td>
@@ -3159,10 +3127,6 @@
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-image-transform">get_image_transform</a></strong>()</td>
 </tr>
 <tr>
-<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-inverse-image-transform">get_inverse_image_transform</a></strong>()</td>
-</tr>
-<tr>
 <td><a href="classshapeworks_1_1SliceView.html">SliceView</a> &amp;</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-slice-view">slice_view</a></strong>()</td>
 </tr>
@@ -3188,7 +3152,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-handle-paint">handle_paint</a></strong>(double display_pos[2], double world_pos[3])</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-handle-ffc-paint">handle_ffc_paint</a></strong>(double display_pos[2], double world_pos[3])</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3217,14 +3181,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-set-scalar-visibility">set_scalar_visibility</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; poly_data, vtkSmartPointer&lt; vtkPolyDataMapper &gt; mapper, std::string scalar)</td>
-</tr>
-<tr>
-<td>vtkSmartPointer&lt; vtkLookupTable &gt;</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-surface-lut">get_surface_lut</a></strong>()</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-showing-feature-map">showing_feature_map</a></strong>()</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -3363,9 +3319,6 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">range</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-reset_feature_range">function reset_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_feature_range</span><span class="p">()</span>
-</code></pre></div>
 <h3 id="function-update_opacities">function update_opacities</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_opacities</span><span class="p">()</span>
 </code></pre></div>
@@ -3378,8 +3331,8 @@
 <h3 id="function-update_planes">function update_planes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_planes</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-update_paint_mode">function update_paint_mode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_paint_mode</span><span class="p">()</span>
+<h3 id="function-update_ffc_mode">function update_ffc_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_ffc_mode</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_surface_actors">function get_surface_actors</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkActor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface_actors</span><span class="p">()</span>
@@ -3409,9 +3362,6 @@
 <h3 id="function-get_image_transform">function get_image_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_transform</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-get_inverse_image_transform">function get_inverse_image_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_inverse_image_transform</span><span class="p">()</span>
-</code></pre></div>
 <h3 id="function-slice_view">function slice_view</h3>
 <div class="highlight"><pre><span></span><code><span class="n">SliceView</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">slice_view</span><span class="p">()</span>
 </code></pre></div>
@@ -3432,8 +3382,8 @@
 <h3 id="function-get_point_placer">function get_point_placer</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolygonalSurfacePointPlacer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_point_placer</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-handle_paint">function handle_paint</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_paint</span><span class="p">(</span>
+<h3 id="function-handle_ffc_paint">function handle_ffc_paint</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ffc_paint</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">display_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 <span class="p">)</span>
@@ -3463,19 +3413,13 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">scalar</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-get_surface_lut">function get_surface_lut</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface_lut</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-showing_feature_map">function showing_feature_map</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">showing_feature_map</span><span class="p">()</span>
-</code></pre></div>
 <h3 id="function-is_reverse">function is_reverse</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_reverse</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span>
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

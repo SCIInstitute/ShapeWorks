@@ -69,7 +69,7 @@ class Visualizer : public QObject {
 
   void update_landmarks();
   void update_planes();
-  void update_paint_mode();
+  void update_ffc_mode();
 
   void display_sample(int i);
 
@@ -197,4 +197,4 @@ class Visualizer : public QObject {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

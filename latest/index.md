@@ -22,7 +22,7 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
  <!--![](img/about/release6.2.png)-->
  <!--![](img/about/release6.3.png)-->
  <!--![](img/about/release6.4.png)-->
-![](img/about/release6.5.png)
+![](img/about/release6.6.png)
 
 !!! note "Release Notes"    
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
@@ -52,17 +52,17 @@ Its optimized approach offers increased power for testing biological hypotheses 
 *Part 1: Statistical Shape Modeling & ShapeWorks*  
 Speakers: Shireen Elhabian and Alan Morris
 
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartA.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartA.mp4" muted loop controls style="width:100%"></p>
 
 *Part 2: ShapeWorks Success Stories in Orthopedics*   
 Speakers: Heath Henninger, Andrew Anderson, and Amy Lenz
 
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartB.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartB.mp4" muted loop controls style="width:100%"></p>
 
 *Part 3: Next Generation of ShapeWorks*   
 Speakers: Shireen Elhabian, Andrew Anderson, Penny Atkins, and Riddhish Bhalodia
 
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartC.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks-SB3C-PartC.mp4" muted loop controls style="width:100%"></p>
 
 
 ## ShapeWorks in Action!
@@ -77,29 +77,32 @@ ShapeWorks has been effective in various applications, including psychology, bio
 
 Now enjoy some tour videos for different recent software releases.
 
+*ShapeWorks 6.6 tour - MONAI Label, Shared Boundaries, Java/MATLAB, Segmentation Tools, Particle to Surface Metrics, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.6.mp4" autoplay muted loop controls style="width:100%"></p>
+
 *ShapeWorks 6.5 tour - Shape / Scalar Correlation, Network Analysis, DeepSSM Improvments, and more ...*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.5.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.5.mp4" muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.4 tour - Multi-level PCA, Improved Constraints, Python Docs, and more ...*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.4.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.4.mp4" muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.3 tour - Landmarks, cutting planes, free form constraints in Studio, and more ...*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.3.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.3.mp4" muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.2 tour - DeepSSM in Studio, multi-domain alignments, shape evaluation charts, scalar and opacity controls, and more ...*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.2.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.2.mp4" muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.1 tour - multi-domain support, mesh grooming, improved models for complex anatomies, and more ...*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.1.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.1.mp4" muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.0 tour - mesh support and more in ShapeWorks Studio*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_6.0_tour.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_6.0_tour.mp4" muted loop controls style="width:100%"></p>
 
 *ShapeWorks 5.5 tour - feature support in ShapeWorks Studio*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_5.5_tour.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_5.5_tour.mp4" muted loop controls style="width:100%"></p>
     
 *Grooming segmentations, optimizing correspondences, and analyzing shape models in ShapeWorks Studio*   
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ellipsoid.mp4" muted loop controls style="width:100%"></p>
 
 
 

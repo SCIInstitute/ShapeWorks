@@ -15,12 +15,6 @@ Representation of a session.  [More...](#detailed-description)
 
 Inherits from QObject, QEnableSharedFromThis< Session >
 
-## Public Types
-
-|                | Name           |
-| -------------- | -------------- |
-| using Analyze::AlignmentType | **[AlignmentType](../Classes/classshapeworks_1_1Session.md#using-alignmenttype)**  |
-
 ## Public Slots
 
 |                | Name           |
@@ -37,25 +31,21 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 |                | Name           |
 | -------------- | -------------- |
 | void | **[data_changed](../Classes/classshapeworks_1_1Session.md#signal-data-changed)**()<br>signal that the data has changed  |
-| void | **[tool_state_changed](../Classes/classshapeworks_1_1Session.md#signal-tool-state-changed)**() |
 | void | **[points_changed](../Classes/classshapeworks_1_1Session.md#signal-points-changed)**() |
 | void | **[landmarks_changed](../Classes/classshapeworks_1_1Session.md#signal-landmarks-changed)**() |
 | void | **[planes_changed](../Classes/classshapeworks_1_1Session.md#signal-planes-changed)**() |
 | void | **[ffc_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-changed)**() |
 | void | **[update_display](../Classes/classshapeworks_1_1Session.md#signal-update-display)**() |
-| void | **[feature_map_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-map-changed)**() |
 | void | **[reset_stats](../Classes/classshapeworks_1_1Session.md#signal-reset-stats)**() |
 | void | **[new_mesh](../Classes/classshapeworks_1_1Session.md#signal-new-mesh)**() |
 | void | **[feature_range_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-range-changed)**() |
 | void | **[update_view_mode](../Classes/classshapeworks_1_1Session.md#signal-update-view-mode)**() |
 | void | **[image_slice_settings_changed](../Classes/classshapeworks_1_1Session.md#signal-image-slice-settings-changed)**() |
-| void | **[paint_mode_changed](../Classes/classshapeworks_1_1Session.md#signal-paint-mode-changed)**() |
+| void | **[ffc_paint_mode_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-paint-mode-changed)**() |
 | void | **[repaint](../Classes/classshapeworks_1_1Session.md#signal-repaint)**() |
 | void | **[reinsert_shapes](../Classes/classshapeworks_1_1Session.md#signal-reinsert-shapes)**() |
 | void | **[annotations_changed](../Classes/classshapeworks_1_1Session.md#signal-annotations-changed)**() |
 | void | **[save](../Classes/classshapeworks_1_1Session.md#signal-save)**() |
-| void | **[session_title_changed](../Classes/classshapeworks_1_1Session.md#signal-session-title-changed)**() |
-| void | **[image_name_changed](../Classes/classshapeworks_1_1Session.md#signal-image-name-changed)**() |
 
 ## Public Functions
 
@@ -104,8 +94,6 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[set_feature_range](../Classes/classshapeworks_1_1Session.md#function-set-feature-range)**(double min, double max) |
 | void | **[set_feature_range_min](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-min)**(double value) |
 | void | **[set_feature_range_max](../Classes/classshapeworks_1_1Session.md#function-set-feature-range-max)**(double value) |
-| void | **[set_feature_uniform_scale](../Classes/classshapeworks_1_1Session.md#function-set-feature-uniform-scale)**(bool value) |
-| bool | **[get_feature_uniform_scale](../Classes/classshapeworks_1_1Session.md#function-get-feature-uniform-scale)**() |
 | void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Session.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result) |
 | void | **[trigger_landmarks_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-landmarks-changed)**() |
 | void | **[trigger_planes_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-planes-changed)**() |
@@ -151,16 +139,10 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[is_analysis_mode](../Classes/classshapeworks_1_1Session.md#function-is-analysis-mode)**() |
 | void | **[set_ffc_paint_active](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-active)**(bool enabled) |
 | bool | **[get_ffc_paint_active](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-active)**() |
-| void | **[set_seg_paint_active](../Classes/classshapeworks_1_1Session.md#function-set-seg-paint-active)**(bool enabled) |
-| bool | **[get_seg_paint_active](../Classes/classshapeworks_1_1Session.md#function-get-seg-paint-active)**() |
-| void | **[set_seg_paint_value](../Classes/classshapeworks_1_1Session.md#function-set-seg-paint-value)**(int value) |
-| int | **[get_seg_paint_value](../Classes/classshapeworks_1_1Session.md#function-get-seg-paint-value)**() |
 | void | **[set_ffc_paint_mode_inclusive](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-mode-inclusive)**(bool inclusive) |
 | bool | **[get_ffc_paint_mode_inclusive](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-mode-inclusive)**() |
 | void | **[set_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-size)**(double size) |
 | double | **[get_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-size)**() |
-| void | **[set_seg_paint_size](../Classes/classshapeworks_1_1Session.md#function-set-seg-paint-size)**(double size) |
-| double | **[get_seg_paint_size](../Classes/classshapeworks_1_1Session.md#function-get-seg-paint-size)**() |
 | bool | **[get_show_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-get-show-good-bad-particles)**() |
 | void | **[set_show_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-set-show-good-bad-particles)**(bool enabled) |
 | bool | **[get_show_difference_vectors](../Classes/classshapeworks_1_1Session.md#function-get-show-difference-vectors)**() |
@@ -182,11 +164,6 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | QSharedPointer< [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md) > | **[get_py_worker](../Classes/classshapeworks_1_1Session.md#function-get-py-worker)**() |
 | Eigen::MatrixXd | **[get_all_particles](../Classes/classshapeworks_1_1Session.md#function-get-all-particles)**()<br>Return all world particles (number of shapes, 3 x num particles)  |
 | Eigen::MatrixXd | **[get_all_scalars](../Classes/classshapeworks_1_1Session.md#function-get-all-scalars)**(std::string target_feature)<br>Return all scalars for all shapes, given target feature.  |
-| void | **[set_current_alignment](../Classes/classshapeworks_1_1Session.md#function-set-current-alignment)**(AlignmentType alignment) |
-| AlignmentType | **[get_current_alignment](../Classes/classshapeworks_1_1Session.md#function-get-current-alignment)**() |
-| bool | **[is_modified](../Classes/classshapeworks_1_1Session.md#function-is-modified)**() |
-| void | **[set_modified](../Classes/classshapeworks_1_1Session.md#function-set-modified)**(bool modified) |
-| void | **[recompute_surfaces](../Classes/classshapeworks_1_1Session.md#function-recompute-surfaces)**() |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -199,7 +176,6 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | const std::string | **[OPTIMIZE_C](../Classes/classshapeworks_1_1Session.md#variable-optimize-c)**  |
 | const std::string | **[ANALYSIS_C](../Classes/classshapeworks_1_1Session.md#variable-analysis-c)**  |
 | const std::string | **[DEEPSSM_C](../Classes/classshapeworks_1_1Session.md#variable-deepssm-c)**  |
-| const std::string | **[MONAI_C](../Classes/classshapeworks_1_1Session.md#variable-monai-c)**  |
 
 ## Detailed Description
 
@@ -210,15 +186,6 @@ class shapeworks::Session;
 Representation of a session. 
 
 The [Session](../Classes/classshapeworks_1_1Session.md) class encapsulates everything about a session/project. 
-
-## Public Types Documentation
-
-### using AlignmentType
-
-```cpp
-using shapeworks::Session::AlignmentType =  Analyze::AlignmentType;
-```
-
 
 ## Public Slots Documentation
 
@@ -278,13 +245,6 @@ void data_changed()
 
 signal that the data has changed 
 
-### signal tool_state_changed
-
-```cpp
-void tool_state_changed()
-```
-
-
 ### signal points_changed
 
 ```cpp
@@ -317,13 +277,6 @@ void ffc_changed()
 
 ```cpp
 void update_display()
-```
-
-
-### signal feature_map_changed
-
-```cpp
-void feature_map_changed()
 ```
 
 
@@ -362,10 +315,10 @@ void image_slice_settings_changed()
 ```
 
 
-### signal paint_mode_changed
+### signal ffc_paint_mode_changed
 
 ```cpp
-void paint_mode_changed()
+void ffc_paint_mode_changed()
 ```
 
 
@@ -394,20 +347,6 @@ void annotations_changed()
 
 ```cpp
 void save()
-```
-
-
-### signal session_title_changed
-
-```cpp
-void session_title_changed()
-```
-
-
-### signal image_name_changed
-
-```cpp
-void image_name_changed()
 ```
 
 
@@ -770,22 +709,6 @@ void set_feature_range_max(
 ```
 
 
-### function set_feature_uniform_scale
-
-```cpp
-void set_feature_uniform_scale(
-    bool value
-)
-```
-
-
-### function get_feature_uniform_scale
-
-```cpp
-bool get_feature_uniform_scale()
-```
-
-
 ### function handle_ctrl_click
 
 ```cpp
@@ -1137,38 +1060,6 @@ bool get_ffc_paint_active()
 ```
 
 
-### function set_seg_paint_active
-
-```cpp
-void set_seg_paint_active(
-    bool enabled
-)
-```
-
-
-### function get_seg_paint_active
-
-```cpp
-bool get_seg_paint_active()
-```
-
-
-### function set_seg_paint_value
-
-```cpp
-void set_seg_paint_value(
-    int value
-)
-```
-
-
-### function get_seg_paint_value
-
-```cpp
-int get_seg_paint_value()
-```
-
-
 ### function set_ffc_paint_mode_inclusive
 
 ```cpp
@@ -1198,22 +1089,6 @@ void set_ffc_paint_size(
 
 ```cpp
 double get_ffc_paint_size()
-```
-
-
-### function set_seg_paint_size
-
-```cpp
-void set_seg_paint_size(
-    double size
-)
-```
-
-
-### function get_seg_paint_size
-
-```cpp
-double get_seg_paint_size()
 ```
 
 
@@ -1386,45 +1261,6 @@ Eigen::MatrixXd get_all_scalars(
 
 Return all scalars for all shapes, given target feature. 
 
-### function set_current_alignment
-
-```cpp
-inline void set_current_alignment(
-    AlignmentType alignment
-)
-```
-
-
-### function get_current_alignment
-
-```cpp
-inline AlignmentType get_current_alignment()
-```
-
-
-### function is_modified
-
-```cpp
-inline bool is_modified()
-```
-
-
-### function set_modified
-
-```cpp
-void set_modified(
-    bool modified
-)
-```
-
-
-### function recompute_surfaces
-
-```cpp
-void recompute_surfaces()
-```
-
-
 ### function is_supported_file_format
 
 ```cpp
@@ -1481,13 +1317,6 @@ static const std::string DEEPSSM_C;
 ```
 
 
-### variable MONAI_C
-
-```cpp
-static const std::string MONAI_C;
-```
-
-
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

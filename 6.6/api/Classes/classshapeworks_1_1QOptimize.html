@@ -2909,7 +2909,19 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocessingmode">SetProcessingMode</a></strong>(int mode)<br>Set processing mode (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitymode">SetAdaptivityMode</a></strong>(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setmeshffcmode">SetMeshFFCMode</a></strong>(int mesh_ffc_mode)<br>Set <a href="classshapeworks_1_1Mesh.html">Mesh</a> FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitystrength">SetAdaptivityStrength</a></strong>(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3112,10 +3124,6 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicsenabled">SetGeodesicsEnabled</a></strong>(bool is_enabled)<br>Set whether or not geodesics are enabled.</td>
 </tr>
 <tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getgeodesicsenabled">GetGeodesicsEnabled</a></strong>() const</td>
-</tr>
-<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicscachesizemultiplier">SetGeodesicsCacheSizeMultiplier</a></strong>(size_t n)</td>
 </tr>
@@ -3193,6 +3201,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-initialize">Initialize</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-addadaptivity">AddAdaptivity</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3400,6 +3412,18 @@
 <tr>
 <td>std::string</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-output-cutting-plane-file">m_output_cutting_plane_file</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-processing-mode">m_processing_mode</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-mode">m_adaptivity_mode</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-strength">m_adaptivity_strength</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
@@ -3686,7 +3710,7 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-iteratecallback">shapeworks::Optimize::IterateCallback</a></p>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

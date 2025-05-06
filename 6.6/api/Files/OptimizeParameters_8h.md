@@ -153,11 +153,6 @@ class OptimizeParameters {
   double get_geodesic_remesh_percent();
   void set_geodesic_remesh_percent(double value);
 
-  bool get_shared_boundary();
-  void set_shared_boundary(bool value);
-
-  double get_shared_boundary_weight();
-  void set_shared_boundary_weight(double value);
 
  private:
   std::string get_output_prefix();
@@ -178,4 +173,4 @@ class OptimizeParameters {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

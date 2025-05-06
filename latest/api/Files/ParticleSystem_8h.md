@@ -157,13 +157,13 @@ class ParticleSystem : public itk::DataObject {
 
   std::vector<DomainType::Pointer>::const_iterator GetDomainsEnd() const { return m_Domains.end(); }
 
-  DomainType *GetDomain(unsigned int i) { return m_Domains[i].get(); }
+  DomainType *get_domain(unsigned int i) { return m_Domains[i].get(); }
 
-  DomainType *GetDomain() { return m_Domains[0].get(); }
+  DomainType *get_domain() { return m_Domains[0].get(); }
 
-  const DomainType *GetDomain(unsigned int i) const { return m_Domains[i].get(); }
+  const DomainType *get_domain(unsigned int i) const { return m_Domains[i].get(); }
 
-  const DomainType *GetDomain() const { return m_Domains[0].get(); }
+  const DomainType *get_domain() const { return m_Domains[0].get(); }
 
   unsigned int GetNumberOfDomains() const { return m_Domains.size(); }
 

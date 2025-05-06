@@ -47,12 +47,11 @@ summary: 3D Viewer
 | bool | **[is_viewer_ready](../Classes/classshapeworks_1_1Viewer.md#function-is-viewer-ready)**() |
 | void | **[set_visualizer](../Classes/classshapeworks_1_1Viewer.md#function-set-visualizer)**([Visualizer](../Classes/classshapeworks_1_1Visualizer.md) * visualizer) |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Viewer.md#function-update-feature-range)**(double * range) |
-| void | **[reset_feature_range](../Classes/classshapeworks_1_1Viewer.md#function-reset-feature-range)**() |
 | void | **[update_opacities](../Classes/classshapeworks_1_1Viewer.md#function-update-opacities)**() |
 | std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
 | void | **[update_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-update-landmarks)**() |
 | void | **[update_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-planes)**() |
-| void | **[update_paint_mode](../Classes/classshapeworks_1_1Viewer.md#function-update-paint-mode)**() |
+| void | **[update_ffc_mode](../Classes/classshapeworks_1_1Viewer.md#function-update-ffc-mode)**() |
 | std::vector< vtkSmartPointer< vtkActor > > | **[get_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-surface-actors)**() |
 | std::vector< vtkSmartPointer< vtkActor > > | **[get_unclipped_surface_actors](../Classes/classshapeworks_1_1Viewer.md#function-get-unclipped-surface-actors)**() |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Viewer.md#function-get-meshes)**() |
@@ -60,14 +59,13 @@ summary: 3D Viewer
 | vtkSmartPointer< vtkTransform > | **[get_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-landmark-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_inverse_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-inverse-landmark-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_image_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-image-transform)**() |
-| vtkSmartPointer< vtkTransform > | **[get_inverse_image_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-inverse-image-transform)**() |
 | [SliceView](../Classes/classshapeworks_1_1SliceView.md) & | **[slice_view](../Classes/classshapeworks_1_1Viewer.md#function-slice-view)**() |
 | void | **[update_image_volume](../Classes/classshapeworks_1_1Viewer.md#function-update-image-volume)**(bool force =false) |
 | vtkSmartPointer< vtkPoints > | **[get_glyph_points](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-points)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-alignment-transform)**() |
 | void | **[update_clipping_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-clipping-planes)**() |
 | vtkSmartPointer< vtkPolygonalSurfacePointPlacer > | **[get_point_placer](../Classes/classshapeworks_1_1Viewer.md#function-get-point-placer)**() |
-| void | **[handle_paint](../Classes/classshapeworks_1_1Viewer.md#function-handle-paint)**(double display_pos[2], double world_pos[3]) |
+| void | **[handle_ffc_paint](../Classes/classshapeworks_1_1Viewer.md#function-handle-ffc-paint)**(double display_pos[2], double world_pos[3]) |
 | void | **[update_actors](../Classes/classshapeworks_1_1Viewer.md#function-update-actors)**() |
 | void | **[remove_scalar_bar](../Classes/classshapeworks_1_1Viewer.md#function-remove-scalar-bar)**() |
 | bool | **[is_ready](../Classes/classshapeworks_1_1Viewer.md#function-is-ready)**() |
@@ -75,8 +73,6 @@ summary: 3D Viewer
 | vtkSmartPointer< vtkPolyData > | **[get_particle_poly_data](../Classes/classshapeworks_1_1Viewer.md#function-get-particle-poly-data)**() |
 | void | **[insert_compare_meshes](../Classes/classshapeworks_1_1Viewer.md#function-insert-compare-meshes)**() |
 | void | **[set_scalar_visibility](../Classes/classshapeworks_1_1Viewer.md#function-set-scalar-visibility)**(vtkSmartPointer< vtkPolyData > poly_data, vtkSmartPointer< vtkPolyDataMapper > mapper, std::string scalar) |
-| vtkSmartPointer< vtkLookupTable > | **[get_surface_lut](../Classes/classshapeworks_1_1Viewer.md#function-get-surface-lut)**() |
-| bool | **[showing_feature_map](../Classes/classshapeworks_1_1Viewer.md#function-showing-feature-map)**() |
 | bool | **[is_reverse](../Classes/classshapeworks_1_1Viewer.md#function-is-reverse)**(vtkSmartPointer< vtkTransform > transform) |
 
 ## Detailed Description
@@ -336,13 +332,6 @@ void update_feature_range(
 ```
 
 
-### function reset_feature_range
-
-```cpp
-void reset_feature_range()
-```
-
-
 ### function update_opacities
 
 ```cpp
@@ -371,10 +360,10 @@ void update_planes()
 ```
 
 
-### function update_paint_mode
+### function update_ffc_mode
 
 ```cpp
-void update_paint_mode()
+void update_ffc_mode()
 ```
 
 
@@ -434,13 +423,6 @@ vtkSmartPointer< vtkTransform > get_image_transform()
 ```
 
 
-### function get_inverse_image_transform
-
-```cpp
-vtkSmartPointer< vtkTransform > get_inverse_image_transform()
-```
-
-
 ### function slice_view
 
 ```cpp
@@ -485,10 +467,10 @@ vtkSmartPointer< vtkPolygonalSurfacePointPlacer > get_point_placer()
 ```
 
 
-### function handle_paint
+### function handle_ffc_paint
 
 ```cpp
-void handle_paint(
+void handle_ffc_paint(
     double display_pos[2],
     double world_pos[3]
 )
@@ -548,20 +530,6 @@ void set_scalar_visibility(
 ```
 
 
-### function get_surface_lut
-
-```cpp
-inline vtkSmartPointer< vtkLookupTable > get_surface_lut()
-```
-
-
-### function showing_feature_map
-
-```cpp
-bool showing_feature_map()
-```
-
-
 ### function is_reverse
 
 ```cpp
@@ -573,4 +541,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

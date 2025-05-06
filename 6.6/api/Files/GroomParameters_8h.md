@@ -158,19 +158,6 @@ class GroomParameters {
   bool get_skip_grooming();
   void set_skip_grooming(bool skip);
 
-
-  bool get_shared_boundary();
-  void set_shared_boundary(bool shared_boundary);
-
-  std::string get_shared_boundary_first_domain();
-  void set_shared_boundary_first_domain(const std::string& domain_name);
-
-  std::string get_shared_boundary_second_domain();
-  void set_shared_boundary_second_domain(const std::string& domain_name);
-
-  double get_shared_boundary_tolerance();
-  void set_shared_boundary_tolerance(double tolerance);
-
   void restore_defaults();
 
   // constants
@@ -192,4 +179,4 @@ class GroomParameters {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

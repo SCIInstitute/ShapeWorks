@@ -2551,9 +2551,6 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespacemonailabel.html">monailabel</a></strong></td>
-</tr>
-<tr>
 <td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
 </tr>
 </tbody>
@@ -2601,10 +2598,6 @@
 
 <span class="c1">// Forward Qt class declarations</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_ShapeWorksStudioApp</span><span class="p">;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">monailabel</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">MonaiLabelTool</span><span class="p">;</span>
-<span class="p">}</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
@@ -2655,7 +2648,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_optimize_mode_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_analysis_mode_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_deepssm_mode_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_monai_mode_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionShow_Tool_Window_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_PCA_Mesh_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_Eigenvalues_triggered</span><span class="p">();</span>
@@ -2721,7 +2713,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_map_scale</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_combo_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_image_name_changed</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_splash_screen</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">hide_splash_screen</span><span class="p">();</span>
@@ -2774,6 +2765,9 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_mode_shape</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">set_feature_map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_feature_map</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_feature_uniform_scale</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_uniform_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
@@ -2790,8 +2784,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_iso_submenu</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_compare_submenu</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_window_title</span><span class="p">();</span>
-
 <span class="w">  </span><span class="n">Ui_ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">QActionGroup</span><span class="o">*</span><span class="w"> </span><span class="n">action_group_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
@@ -2802,7 +2794,6 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">OptimizeTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">optimize_tool_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">AnalysisTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">analysis_tool_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">DeepSSMTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deepssm_tool_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">monailabel</span><span class="o">::</span><span class="n">MonaiLabelTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">monai_tool_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Visualizer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PreferencesWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">preferences_window_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">CompareWidget</span><span class="o">*</span><span class="w"> </span><span class="n">compare_widget_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
@@ -2850,7 +2841,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

@@ -2595,8 +2595,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#typedef-neighborhoodtype" class="md-nav__link">
+    typedef NeighborhoodType
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#typedef-pointcontainertype" class="md-nav__link">
     typedef PointContainerType
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#typedef-pointvectortype" class="md-nav__link">
+    typedef PointVectorType
   </a>
   
 </li>
@@ -2618,13 +2632,6 @@
           <li class="md-nav__item">
   <a href="#typedef-vnlmatrixtype" class="md-nav__link">
     typedef VnlMatrixType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-pointvectortype" class="md-nav__link">
-    using PointVectorType
   </a>
   
 </li>
@@ -2762,6 +2769,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setneighborhood" class="md-nav__link">
+    function SetNeighborhood
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setneighborhood_1" class="md-nav__link">
+    function SetNeighborhood
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getneighborhood" class="md-nav__link">
     function GetNeighborhood
   </a>
@@ -2832,29 +2853,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getdomain" class="md-nav__link">
-    function GetDomain
+  <a href="#function-get_domain" class="md-nav__link">
+    function get_domain
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getdomain_1" class="md-nav__link">
-    function GetDomain
+  <a href="#function-get_domain_1" class="md-nav__link">
+    function get_domain
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getdomain_2" class="md-nav__link">
-    function GetDomain
+  <a href="#function-get_domain_2" class="md-nav__link">
+    function get_domain
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getdomain_3" class="md-nav__link">
-    function GetDomain
+  <a href="#function-get_domain_3" class="md-nav__link">
+    function get_domain
   </a>
   
 </li>
@@ -3314,8 +3335,16 @@
 <td><strong><a href="classshapeworks_1_1ParticleSystem.html#typedef-pointtype">PointType</a></strong></td>
 </tr>
 <tr>
+<td>typedef <a href="classshapeworks_1_1ParticleNeighborhood.html">ParticleNeighborhood</a></td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#typedef-neighborhoodtype">NeighborhoodType</a></strong></td>
+</tr>
+<tr>
 <td>typedef <a href="classshapeworks_1_1GenericContainer.html">GenericContainer</a>&lt; <a href="classshapeworks_1_1ParticleSystem.html#typedef-pointtype">PointType</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1ParticleSystem.html#typedef-pointcontainertype">PointContainerType</a></strong></td>
+</tr>
+<tr>
+<td>typedef <a href="classshapeworks_1_1ParticleNeighborhood.html#typedef-pointvectortype">NeighborhoodType::PointVectorType</a></td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#typedef-pointvectortype">PointVectorType</a></strong></td>
 </tr>
 <tr>
 <td>typedef vnl_matrix_fixed&lt; double, VDimension+1, VDimension+1 &gt;</td>
@@ -3328,10 +3357,6 @@
 <tr>
 <td>typedef vnl_matrix&lt; double &gt;</td>
 <td><strong><a href="classshapeworks_1_1ParticleSystem.html#typedef-vnlmatrixtype">VnlMatrixType</a></strong></td>
-</tr>
-<tr>
-<td>using std::vector&lt; <a href="structshapeworks_1_1ParticlePointIndexPair.html">ParticlePointIndexPair</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1ParticleSystem.html#using-pointvectortype">PointVectorType</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -3413,8 +3438,16 @@
 <td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-printparticlesystem">PrintParticleSystem</a></strong>()</td>
 </tr>
 <tr>
-<td>std::shared_ptr&lt; <a href="classshapeworks_1_1ParticleNeighborhood.html">ParticleNeighborhood</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getneighborhood">GetNeighborhood</a></strong>(unsigned int k) const<br>Get the neighborhood object associated with domain k.</td>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-setneighborhood">SetNeighborhood</a></strong>(unsigned int , <a href="classshapeworks_1_1ParticleSystem.html#typedef-neighborhoodtype">NeighborhoodType</a> * )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-setneighborhood">SetNeighborhood</a></strong>(<a href="classshapeworks_1_1ParticleSystem.html#typedef-neighborhoodtype">NeighborhoodType</a> * n)</td>
+</tr>
+<tr>
+<td>NeighborhoodType::ConstPointer</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getneighborhood">GetNeighborhood</a></strong>(unsigned int k) const</td>
 </tr>
 <tr>
 <td>PointVectorType</td>
@@ -3454,19 +3487,19 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1ParticleSystem.html#using-domaintype">DomainType</a> *</td>
-<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getdomain">GetDomain</a></strong>(unsigned int i)</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getdomain">get_domain</a></strong>(unsigned int i)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1ParticleSystem.html#using-domaintype">DomainType</a> *</td>
-<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getdomain">GetDomain</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getdomain">get_domain</a></strong>()</td>
 </tr>
 <tr>
 <td>const <a href="classshapeworks_1_1ParticleSystem.html#using-domaintype">DomainType</a> *</td>
-<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getdomain">GetDomain</a></strong>(unsigned int i) const</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getdomain">get_domain</a></strong>(unsigned int i) const</td>
 </tr>
 <tr>
 <td>const <a href="classshapeworks_1_1ParticleSystem.html#using-domaintype">DomainType</a> *</td>
-<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getdomain">GetDomain</a></strong>() const</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-getdomain">get_domain</a></strong>() const</td>
 </tr>
 <tr>
 <td>unsigned int</td>
@@ -3730,10 +3763,17 @@
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <p>Point type used to store particle locations. </p>
+<h3 id="typedef-neighborhoodtype">typedef NeighborhoodType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">NeighborhoodType</span><span class="p">;</span>
+</code></pre></div>
+<p>Class used to compute neighborhoods of points. One is associated with each domain. </p>
 <h3 id="typedef-pointcontainertype">typedef PointContainerType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">GenericContainer</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointContainerType</span><span class="p">;</span>
 </code></pre></div>
 <p>Point container type. One is associated with each domain. </p>
+<h3 id="typedef-pointvectortype">typedef PointVectorType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointVectorType</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-transformtype">typedef TransformType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">TransformType</span><span class="p">;</span>
 </code></pre></div>
@@ -3743,9 +3783,6 @@
 </code></pre></div>
 <h3 id="typedef-vnlmatrixtype">typedef VnlMatrixType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">VnlMatrixType</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="using-pointvectortype">using PointVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ParticlePointIndexPair</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
@@ -3853,12 +3890,23 @@
 <h3 id="function-printparticlesystem">function PrintParticleSystem</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintParticleSystem</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-setneighborhood">function SetNeighborhood</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNeighborhood</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">NeighborhoodType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set/Get the neighborhood object associated with domain k. </p>
+<h3 id="function-setneighborhood_1">function SetNeighborhood</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNeighborhood</span><span class="p">(</span>
+<span class="w">    </span><span class="n">NeighborhoodType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getneighborhood">function GetNeighborhood</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetNeighborhood</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">ConstPointer</span><span class="w"> </span><span class="n">GetNeighborhood</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
-<p>Get the neighborhood object associated with domain k. </p>
 <h3 id="function-findneighborhoodpoints">function FindNeighborhoodPoints</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
@@ -3925,24 +3973,24 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the domains. </p>
-<h3 id="function-getdomain">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">(</span>
+<h3 id="function-get_domain">function get_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_domain</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Return the i'th domain object. </p>
-<h3 id="function-getdomain_1">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">()</span>
+<h3 id="function-get_domain_1">function get_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_domain</span><span class="p">()</span>
 </code></pre></div>
 <p>API for the single domain case. </p>
-<h3 id="function-getdomain_2">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">(</span>
+<h3 id="function-get_domain_2">function get_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_domain</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the i'th domain object. </p>
-<h3 id="function-getdomain_3">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<h3 id="function-get_domain_3">function get_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_domain</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>API for the single domain case. </p>
 <h3 id="function-getnumberofdomains">function GetNumberOfDomains</h3>
@@ -4203,7 +4251,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

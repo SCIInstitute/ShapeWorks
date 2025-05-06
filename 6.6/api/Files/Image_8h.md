@@ -27,7 +27,6 @@ title: Libs/Image/Image.h
 ```cpp
 #pragma once
 
-#include <StringUtils.h>
 #include <itkImage.h>
 #include <itkImageRegionIterator.h>
 #include <itkLinearInterpolateImageFunction.h>
@@ -56,13 +55,12 @@ class Image {
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType>;
 
   // constructors and assignment operators //
-  explicit Image(const Dims dims);
-  explicit Image(const std::string& pathname) : itk_image_(read(pathname)) {}
-  explicit Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
+  Image(const Dims dims);
+  Image(const std::string& pathname) : itk_image_(read(pathname)) {}
+  Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
     if (!itk_image_) throw std::invalid_argument("null imagePtr");
   }
-  explicit Image(const vtkSmartPointer<vtkImageData> vtkImage);
-
+  Image(const vtkSmartPointer<vtkImageData> vtkImage);
   Image(Image&& img) : itk_image_(nullptr) { this->itk_image_.Swap(img.itk_image_); }
   Image(const Image& img) : itk_image_(cloneData(img.itk_image_)) {}
   Image& operator=(const Image& img);  
@@ -133,7 +131,7 @@ class Image {
   Image& applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
                         const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
-  Image& applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
+  Image &applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
 
   Image& extractLabel(const PixelType label = 1.0);
 
@@ -160,8 +158,6 @@ class Image {
 
   Image& crop(PhysicalRegion region, const int padding = 0);
 
-  Image& fitRegion(PhysicalRegion region);
-
   Image& clip(const Plane plane, const PixelType val = 0.0);
 
   Image& reflect(const Axis& axis);
@@ -179,8 +175,6 @@ class Image {
   Dims dims() const { return itk_image_->GetLargestPossibleRegion().GetSize(); }
 
   Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }
-
-  double get_largest_dimension_size() const;
 
   Vector spacing() const { return itk_image_->GetSpacing(); }
 
@@ -220,7 +214,7 @@ class Image {
 
   ImageIterator iterator();
 
-  bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-6) const;
+  bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;
 
   bool operator==(const Image& other) const { return compare(other); }
 
@@ -232,27 +226,8 @@ class Image {
 
   Image::PixelType evaluate(Point p);
 
-  void paintSphere(Point p, double radius, PixelType value);
-
-  void paintCircle(Point p, double radius, unsigned int axis, PixelType value);
-
-  bool isPainted() const { return painted_; }
-
-  Image& fill(PixelType value);
-
-  bool isDistanceTransform() const;
-
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
-  }
-
-  static bool isSupportedType(const std::string& filename) {
-    for (const auto& type : Image::getSupportedTypes()) {
-      if (StringUtils::hasSuffix(filename, type)) {
-        return true;
-      }
-    }
-    return false;
   }
 
  private:
@@ -270,11 +245,9 @@ class Image {
 
   Image& pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);
 
-  StatsPtr statsFilter() const;
+  StatsPtr statsFilter();
 
   ImageType::Pointer itk_image_;
-
-  bool painted_ = false;
 
   InterpolatorType::Pointer interpolator_;
 };
@@ -296,4 +269,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/studio/studio-analyze.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.6/studio/studio-analyze.html">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
@@ -703,6 +703,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -936,6 +950,19 @@
     Metrics Panel
   </a>
   
+    <nav class="md-nav" aria-label="Metrics Panel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distance-calculation-options" class="md-nav__link">
+    Distance Calculation Options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -997,6 +1024,48 @@
     <li class="md-nav__item">
       <a href="multiple-domains.html" class="md-nav__link">
         Multiple Domains SSM
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="studio-shared-boundary.html" class="md-nav__link">
+        Shared Boundaries
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="segmentation-tool.html" class="md-nav__link">
+        Segmentation Tool
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
       </a>
     </li>
   
@@ -2269,6 +2338,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/release-process.html" class="md-nav__link">
+        Release Process
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2411,12 +2494,74 @@
       
       
         <label class="md-nav__link" for="__nav_15">
+          Java/Matlab Interface
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java/Matlab Interface" data-md-level="1">
+        <label class="md-nav__title" for="__nav_15">
+          <span class="md-nav__icon md-icon"></span>
+          Java/Matlab Interface
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../java/java.html" class="md-nav__link">
+        Java Interface
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../java/matlab.html" class="md-nav__link">
+        Matlab Interface
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_16" type="checkbox" id="__nav_16" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_16">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_15">
+        <label class="md-nav__title" for="__nav_16">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2584,6 +2729,19 @@
     Metrics Panel
   </a>
   
+    <nav class="md-nav" aria-label="Metrics Panel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distance-calculation-options" class="md-nav__link">
+    Distance Calculation Options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2707,6 +2865,15 @@
 <h2 id="metrics-panel">Metrics Panel</h2>
 <p>The Metrics panel shows the Compactness, Specificity, and Generalization charts.  These are interactive charts with hover menus and the ability to zoom, pan, etc.</p>
 <p><img alt="ShapeWorks Studio Analysis Metrics Panel" src="../img/studio/studio_analyze_metrics.png" /></p>
+<h3 id="distance-calculation-options">Distance Calculation Options</h3>
+<ol>
+<li>
+<p><strong>Particle to Particle</strong> (Default): Calculates the distance directly between particles when evaluating the metrics.</p>
+</li>
+<li>
+<p><strong>Particle to Surface</strong>: Calculates the distance between particles and the actual shape surface. This method enhances accuracy by measuring generalization as the distance between reconstructed particles and the true shape surface. Specificity is determined by the distance between sampled particles and the surface, ensuring generated shapes accurately reflect the true shape population and providing reliable and consistent metrics.</p>
+</li>
+</ol>
 <p>See <a href="../new/ssm-eval.html">Shape Model Evaluation</a> for more information about shape evaluation.</p>
 <h2 id="surface-reconstruction-panel">Surface Reconstruction Panel</h2>
 <p>The surface reconstruction panel provides options for the surface reconstruction method.  There are three surface reconstruction methods available depending on the data you supply.</p>

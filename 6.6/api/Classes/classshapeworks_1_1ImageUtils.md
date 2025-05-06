@@ -17,7 +17,7 @@ Helper functions for image.
 
 |                | Name           |
 | -------------- | -------------- |
-| using itk::ThinPlateSplineKernelTransform< double, 3 > | **[TPSTransform](../Classes/classshapeworks_1_1ImageUtils.md#using-tpstransform)**  |
+| using itk::ThinPlateSplineKernelTransform< double, 3 > | **[TPSTransform](../Classes/classshapeworks_1_1ImageUtils.md#using-tpstransform)** <br>computes a thin plate spline (TSP) transform from the source to the target landmarks (in the given files) using every stride points  |
 
 ## Public Functions
 
@@ -35,9 +35,7 @@ Helper functions for image.
 using shapeworks::ImageUtils::TPSTransform =  itk::ThinPlateSplineKernelTransform<double, 3>;
 ```
 
-
 computes a thin plate spline (TSP) transform from the source to the target landmarks (in the given files) using every stride points 
-
 
 ## Public Functions Documentation
 
@@ -76,4 +74,4 @@ static TPSTransform::Pointer createWarpTransform(
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:43 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -92,10 +92,6 @@ title: shapeworks::OptimizeParameters
 | void | **[set_particle_format](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-particle-format)**(std::string format) |
 | double | **[get_geodesic_remesh_percent](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-geodesic-remesh-percent)**() |
 | void | **[set_geodesic_remesh_percent](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-geodesic-remesh-percent)**(double value) |
-| bool | **[get_shared_boundary](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-shared-boundary)**() |
-| void | **[set_shared_boundary](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-shared-boundary)**(bool value) |
-| double | **[get_shared_boundary_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-shared-boundary-weight)**() |
-| void | **[set_shared_boundary_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-shared-boundary-weight)**(double value) |
 
 ## Detailed Description
 
@@ -720,38 +716,6 @@ void set_geodesic_remesh_percent(
 ```
 
 
-### function get_shared_boundary
-
-```cpp
-bool get_shared_boundary()
-```
-
-
-### function set_shared_boundary
-
-```cpp
-void set_shared_boundary(
-    bool value
-)
-```
-
-
-### function get_shared_boundary_weight
-
-```cpp
-double get_shared_boundary_weight()
-```
-
-
-### function set_shared_boundary_weight
-
-```cpp
-void set_shared_boundary_weight(
-    double value
-)
-```
-
-
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

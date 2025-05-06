@@ -43,8 +43,8 @@ Inherited by [shapeworks::ParticleRegionNeighborhood](../Classes/classshapeworks
 | virtual [PointVectorType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[FindNeighborhoodPoints](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , double ) const |
 | virtual [PointVectorType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[FindNeighborhoodPoints](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , std::vector< double > & , double ) const |
 | virtual unsigned int | **[FindNeighborhoodPoints](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, double , [PointVectorType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointvectortype) & ) const |
-| virtual void | **[SetDomain](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-setdomain)**(DomainType::Pointer domain) |
-| DomainType::Pointer | **[GetDomain](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-getdomain)**() const |
+| virtual void | **[set_domain](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-setdomain)**(DomainType::Pointer domain) |
+| DomainType::Pointer | **[get_domain](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-getdomain)**() const |
 | virtual void | **[AddPosition](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-addposition)**(const [PointType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointtype) & p, unsigned int idx, int threadId =0) |
 | virtual void | **[SetPosition](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-setposition)**(const [PointType](../Classes/classshapeworks_1_1ParticleNeighborhood.md#typedef-pointtype) & p, unsigned int idx, int threadId =0) |
 | virtual void | **[RemovePosition](../Classes/classshapeworks_1_1ParticleNeighborhood.md#function-removeposition)**(unsigned int idx, int threadId =0) |
@@ -282,25 +282,25 @@ inline virtual unsigned int FindNeighborhoodPoints(
 ```
 
 
-### function SetDomain
+### function set_domain
 
 ```cpp
-inline virtual void SetDomain(
+inline virtual void set_domain(
     DomainType::Pointer domain
 )
 ```
 
 
-**Reimplemented by**: [shapeworks::ParticleRegionNeighborhood::SetDomain](../Classes/classshapeworks_1_1ParticleRegionNeighborhood.md#function-setdomain)
+**Reimplemented by**: [shapeworks::ParticleRegionNeighborhood::set_domain](../Classes/classshapeworks_1_1ParticleRegionNeighborhood.md#function-setdomain)
 
 
 Set the Domain that this neighborhood will use. The Domain object is important because it defines bounds and distance measures. 
 
 
-### function GetDomain
+### function get_domain
 
 ```cpp
-inline DomainType::Pointer GetDomain() const
+inline DomainType::Pointer get_domain() const
 ```
 
 

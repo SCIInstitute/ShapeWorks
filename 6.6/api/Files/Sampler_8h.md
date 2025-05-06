@@ -38,13 +38,14 @@ title: Libs/Optimize/Sampler.h
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
-#include "Libs/Optimize/Function/SamplingFunction.h"
+#include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
 #include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
+#include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"
 #include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
-#include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"
+#include "Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h"
 #include "ParticleSystem.h"
 #include "vnl/vnl_matrix_fixed.h"
 
@@ -87,7 +88,9 @@ class Sampler {
   ParticleSystem* GetParticleSystem() { return m_ParticleSystem; }
   const ParticleSystem* GetParticleSystem() const { return m_ParticleSystem.GetPointer(); }
 
-  SamplingFunction* GetCurvatureGradientFunction() { return m_SamplingFunction; }
+  SamplingFunction* GetGradientFunction() { return m_GradientFunction; }
+
+  CurvatureSamplingFunction* GetCurvatureGradientFunction() { return m_CurvatureGradientFunction; }
 
   OptimizerType* GetOptimizer() { return m_Optimizer; }
   const OptimizerType* GetOptimizer() const { return m_Optimizer.GetPointer(); }
@@ -113,7 +116,7 @@ class Sampler {
     }
   }
 
-  void AddMesh(std::shared_ptr<shapeworks::Surface> mesh, double geodesic_remesh_percent = 100);
+  void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent = 100);
 
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
@@ -137,7 +140,18 @@ class Sampler {
 
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-  void SetAdaptivityMode() { m_LinkingFunction->SetFunctionA(GetCurvatureGradientFunction()); }
+  void SetAdaptivityMode(int mode) {
+    // SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
+    if (mode == 0) {
+      m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
+    } else if (mode == 1) {
+      m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
+    }
+
+    this->m_AdaptivityMode = mode;
+  }
+
+  int GetAdaptivityMode() const { return m_AdaptivityMode; }
 
   void SetCorrespondenceOn() { m_LinkingFunction->SetBOn(); }
 
@@ -246,6 +260,8 @@ class Sampler {
 
   unsigned int GetVerbosity() { return m_verbosity; }
 
+  MeanCurvatureCacheType* GetMeanCurvatureCache() { return m_MeanCurvatureCache.GetPointer(); }
+
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }
 
@@ -279,6 +295,7 @@ class Sampler {
   void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }
 
  private:
+
   bool GetInitialized() { return this->m_Initialized; }
 
   void SetInitialized(bool value) { this->m_Initialized = value; }
@@ -288,17 +305,24 @@ class Sampler {
   void SetInitializing(bool value) { this->m_Initializing = value; }
 
   bool m_Initialized{false};
+  int m_AdaptivityMode{0};
   bool m_Initializing{false};
 
   OptimizerType::Pointer m_Optimizer;
 
-  SamplingFunction::Pointer m_SamplingFunction;
+  SamplingFunction::Pointer m_GradientFunction;
+  CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
 
   GenericContainerArray<double>::Pointer m_Sigma1Cache;
+  GenericContainerArray<double>::Pointer m_Sigma2Cache;
+
+  MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
   ParticleSystem::Pointer m_ParticleSystem;
 
   std::vector<ParticleDomain::Pointer> m_DomainList;
+
+  std::vector<ParticleSurfaceNeighborhood::Pointer> m_NeighborhoodList;
 
   int m_pairwise_potential_type;
 
@@ -354,4 +378,4 @@ class Sampler {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -34,7 +34,7 @@ title: Libs/Particles/ParticleNormalEvaluation.h
 namespace shapeworks {
 
 
-class Surface;
+class MeshWrapper;
 class ParticleNormalEvaluation {
  public:
   static std::vector<double> evaluate_particle_normals(const Eigen::MatrixXd& particles,
@@ -43,7 +43,7 @@ class ParticleNormalEvaluation {
   static std::vector<bool> threshold_particle_normals(std::vector<double> angles, double max_angle_degrees);
 
   static Eigen::MatrixXd compute_particle_normals(const Eigen::MatrixXd& particles,
-                                                  std::vector<std::shared_ptr<Surface>> meshes);
+                                                  std::vector<std::shared_ptr<MeshWrapper>> meshes);
 
  private:
 };
@@ -54,4 +54,4 @@ class ParticleNormalEvaluation {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

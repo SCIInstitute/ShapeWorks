@@ -101,7 +101,7 @@ class ImageDomainWithCurvature : public ImageDomainWithGradN<T> {
         // Find closest pixel location to surface.
         PointType pos;
         // dynamic_cast<const DomainType
-        //*>(system->GetDomain(d))->GetImage()->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
+        //*>(system->get_domain(d))->GetImage()->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
         I->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
 
         // Project point to surface.
@@ -137,4 +137,4 @@ class ImageDomainWithCurvature : public ImageDomainWithGradN<T> {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

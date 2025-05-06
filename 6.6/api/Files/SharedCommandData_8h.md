@@ -46,7 +46,7 @@ struct SharedCommandData
 
   bool validImage() const { return image.itk_image_ != nullptr; }
   bool validMesh() const { return mesh != nullptr; }
-  bool validParticleSystem() const {return particleSystem.num_samples() >= 1 && particleSystem.num_dims() >= 1; }
+  bool validParticleSystem() const {return particleSystem.N() >= 1 && particleSystem.D() >= 1; }
 };
 
 
@@ -56,4 +56,4 @@ struct SharedCommandData
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

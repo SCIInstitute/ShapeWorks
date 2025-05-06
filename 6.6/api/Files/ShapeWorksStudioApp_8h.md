@@ -11,7 +11,6 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 
 | Name           |
 | -------------- |
-| **[monailabel](../Namespaces/namespacemonailabel.md)**  |
 | **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
@@ -53,10 +52,6 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
-
-namespace monailabel {
-  class MonaiLabelTool;
-}
 
 namespace shapeworks {
 class Lightbox;
@@ -107,7 +102,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_optimize_mode_triggered();
   void on_action_analysis_mode_triggered();
   void on_action_deepssm_mode_triggered();
-  void on_action_monai_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
   void on_actionExport_Eigenvalues_triggered();
@@ -173,7 +167,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_feature_map_scale();
 
   void image_combo_changed(int index);
-  void handle_image_name_changed();
 
   void show_splash_screen();
   void hide_splash_screen();
@@ -226,6 +219,9 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void display_mode_shape();
 
+  bool set_feature_map(std::string feature_map);
+  std::string get_feature_map();
+
   bool get_feature_uniform_scale();
   void set_feature_uniform_scale(bool value);
 
@@ -242,8 +238,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   void create_iso_submenu();
   void create_compare_submenu();
 
-  void update_window_title();
-
   Ui_ShapeWorksStudioApp* ui_;
 
   QActionGroup* action_group_ = nullptr;
@@ -254,7 +248,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<DeepSSMTool> deepssm_tool_;
-  QSharedPointer<monailabel::MonaiLabelTool> monai_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   CompareWidget* compare_widget_ = nullptr;
@@ -305,4 +298,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

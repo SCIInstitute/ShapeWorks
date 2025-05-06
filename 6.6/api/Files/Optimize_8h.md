@@ -134,10 +134,13 @@ class Optimize {
   void SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3>& va, const vnl_vector_fixed<double, 3>& vb,
                        const vnl_vector_fixed<double, 3>& vc);
 
+  void SetProcessingMode(int mode);
+  void SetAdaptivityMode(int adaptivity_mode);
   void SetMeshFFCMode(int mesh_ffc_mode) {
     m_mesh_ffc_mode = mesh_ffc_mode;
     m_sampler->SetMeshFFCMode(mesh_ffc_mode);
   }
+  void SetAdaptivityStrength(double adaptivity_strength);
   void SetTimePtsPerSubject(int time_pts_per_subject);
   int GetTimePtsPerSubject();
   void SetOptimizationIterations(int optimization_iterations);
@@ -211,7 +214,6 @@ class Optimize {
   void SetPythonFile(std::string filename);
 
   void SetGeodesicsEnabled(bool is_enabled);
-  bool GetGeodesicsEnabled() const { return m_geodesics_enabled; }
 
   void SetGeodesicsCacheSizeMultiplier(size_t n);
 
@@ -243,6 +245,7 @@ class Optimize {
   double GetMinNeighborhoodRadius();
   void AddSinglePoint();
   void Initialize();
+  void AddAdaptivity();
   void RunOptimize();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject&);
@@ -314,6 +317,10 @@ class Optimize {
   std::string m_output_cutting_plane_file;
 
   // Optimization Parameters
+  int m_processing_mode = 3;
+  int m_adaptivity_mode = 0;
+  double m_adaptivity_strength = 0.0;
+
   bool m_mesh_ffc_mode = 0;
 
   unsigned int m_timepts_per_subject = 1;
@@ -342,7 +349,7 @@ class Optimize {
   std::string m_python_filename;
   bool m_geodesics_enabled = false;             // geodesics disabled by default
   size_t m_geodesic_cache_size_multiplier = 0;  // 0 => MeshWrapper will use a heuristic to determine cache size
-  double m_geodesic_remesh_percent = 100.0;     // 100% by default (e.g. no remeshing)
+  double m_geodesic_remesh_percent = 100.0;    // 100% by default (e.g. no remeshing)
 
   // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;
@@ -394,4 +401,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

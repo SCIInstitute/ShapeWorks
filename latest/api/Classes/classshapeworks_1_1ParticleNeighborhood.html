@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1ParticleNeighborhood.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.6/api/Classes/classshapeworks_1_1ParticleNeighborhood.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
@@ -703,6 +703,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../new/ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -857,6 +871,48 @@
     <li class="md-nav__item">
       <a href="../../studio/multiple-domains.html" class="md-nav__link">
         Multiple Domains SSM
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/studio-shared-boundary.html" class="md-nav__link">
+        Shared Boundaries
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/segmentation-tool.html" class="md-nav__link">
+        Segmentation Tool
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
       </a>
     </li>
   
@@ -2129,6 +2185,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/release-process.html" class="md-nav__link">
+        Release Process
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2271,12 +2341,74 @@
       
       
         <label class="md-nav__link" for="__nav_15">
+          Java/Matlab Interface
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java/Matlab Interface" data-md-level="1">
+        <label class="md-nav__title" for="__nav_15">
+          <span class="md-nav__icon md-icon"></span>
+          Java/Matlab Interface
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/java.html" class="md-nav__link">
+        Java Interface
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/matlab.html" class="md-nav__link">
+        Matlab Interface
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_16" type="checkbox" id="__nav_16" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_16">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_15">
+        <label class="md-nav__title" for="__nav_16">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2553,15 +2685,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setdomain" class="md-nav__link">
-    function SetDomain
+  <a href="#function-set_domain" class="md-nav__link">
+    function set_domain
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getdomain" class="md-nav__link">
-    function GetDomain
+  <a href="#function-get_domain" class="md-nav__link">
+    function get_domain
   </a>
   
 </li>
@@ -2763,11 +2895,11 @@
 </tr>
 <tr>
 <td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1ParticleNeighborhood.html#function-setdomain">SetDomain</a></strong>(DomainType::Pointer domain)</td>
+<td><strong><a href="classshapeworks_1_1ParticleNeighborhood.html#function-setdomain">set_domain</a></strong>(DomainType::Pointer domain)</td>
 </tr>
 <tr>
 <td>DomainType::Pointer</td>
-<td><strong><a href="classshapeworks_1_1ParticleNeighborhood.html#function-getdomain">GetDomain</a></strong>() const</td>
+<td><strong><a href="classshapeworks_1_1ParticleNeighborhood.html#function-getdomain">get_domain</a></strong>() const</td>
 </tr>
 <tr>
 <td>virtual void</td>
@@ -2931,15 +3063,15 @@
 <span class="w">    </span><span class="n">PointVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
-<h3 id="function-setdomain">function SetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomain</span><span class="p">(</span>
+<h3 id="function-set_domain">function set_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_domain</span><span class="p">(</span>
 <span class="w">    </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">domain</span>
 <span class="p">)</span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ParticleRegionNeighborhood.html#function-setdomain">shapeworks::ParticleRegionNeighborhood::SetDomain</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ParticleRegionNeighborhood.html#function-setdomain">shapeworks::ParticleRegionNeighborhood::set_domain</a></p>
 <p>Set the Domain that this neighborhood will use. The Domain object is important because it defines bounds and distance measures. </p>
-<h3 id="function-getdomain">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<h3 id="function-get_domain">function get_domain</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">get_domain</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-addposition">function AddPosition</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AddPosition</span><span class="p">(</span>

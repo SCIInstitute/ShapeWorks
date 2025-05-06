@@ -323,7 +323,7 @@ virtual const PointType & GetLowerBound() const =0
 **Reimplemented by**: [shapeworks::ParticleRegionDomain::GetLowerBound](../Classes/classshapeworks_1_1ParticleRegionDomain.md#function-getlowerbound), [shapeworks::ContourDomain::GetLowerBound](../Classes/classshapeworks_1_1ContourDomain.md#function-getlowerbound), [shapeworks::MeshDomain::GetLowerBound](../Classes/classshapeworks_1_1MeshDomain.md#function-getlowerbound)
 
 
-Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
+Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
 
 
 ### function GetUpperBound
@@ -336,7 +336,7 @@ virtual const PointType & GetUpperBound() const =0
 **Reimplemented by**: [shapeworks::ParticleRegionDomain::GetUpperBound](../Classes/classshapeworks_1_1ParticleRegionDomain.md#function-getupperbound), [shapeworks::ContourDomain::GetUpperBound](../Classes/classshapeworks_1_1ContourDomain.md#function-getupperbound), [shapeworks::MeshDomain::GetUpperBound](../Classes/classshapeworks_1_1MeshDomain.md#function-getupperbound)
 
 
-Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
+Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
 
 
 ### function GetZeroCrossingPoint
@@ -528,4 +528,4 @@ std::shared_ptr< shapeworks::Constraints > constraints;
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

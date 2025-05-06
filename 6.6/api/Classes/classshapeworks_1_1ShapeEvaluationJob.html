@@ -2630,8 +2630,6 @@
 
 
 <h1 id="shapeworksshapeevaluationjob">shapeworks::ShapeEvaluationJob</h1>
-<p>The <a href="">ShapeEvaluationJob</a> class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the <a href="classshapeworks_1_1Job.html">Job</a> and <a href="">Worker</a> interfaces. </p>
-<p><code>#include &lt;ShapeEvaluationJob.h&gt;</code></p>
 <p>Inherits from <a href="classshapeworks_1_1Job.html">shapeworks::Job</a>, QObject</p>
 <h2 id="public-types">Public Types</h2>
 <table>
@@ -2678,7 +2676,7 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluationJob.html#function-shapeevaluationjob">ShapeEvaluationJob</a></strong>(JobType job_type, <a href="classshapeworks_1_1ParticleShapeStatistics.html">ParticleShapeStatistics</a> stats, QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session)</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluationJob.html#function-shapeevaluationjob">ShapeEvaluationJob</a></strong>(JobType job_type, <a href="classshapeworks_1_1ParticleShapeStatistics.html">ParticleShapeStatistics</a> stats)</td>
 </tr>
 <tr>
 <td>virtual void</td>
@@ -2814,8 +2812,7 @@
 <h3 id="function-shapeevaluationjob">function ShapeEvaluationJob</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeEvaluationJob</span><span class="p">(</span>
 <span class="w">    </span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span>
-<span class="w">    </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span>
+<span class="w">    </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-run">function run</h3>
@@ -2829,7 +2826,7 @@
 <p>get the name of the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-name">shapeworks::Job::name</a></p>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

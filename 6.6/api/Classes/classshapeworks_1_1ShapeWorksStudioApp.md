@@ -36,7 +36,6 @@ Inherits from QMainWindow
 | void | **[on_action_optimize_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-optimize-mode-triggered)**() |
 | void | **[on_action_analysis_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-analysis-mode-triggered)**() |
 | void | **[on_action_deepssm_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-deepssm-mode-triggered)**() |
-| void | **[on_action_monai_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-monai-mode-triggered)**() |
 | void | **[on_actionShow_Tool_Window_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionshow-tool-window-triggered)**() |
 | void | **[on_actionExport_PCA_Mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-pca-mesh-triggered)**() |
 | void | **[on_actionExport_Eigenvalues_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-eigenvalues-triggered)**() |
@@ -89,7 +88,6 @@ Inherits from QMainWindow
 | void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(int index) |
 | void | **[update_feature_map_scale](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-scale)**() |
 | void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(int index) |
-| void | **[handle_image_name_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-image-name-changed)**() |
 | void | **[show_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-show-splash-screen)**() |
 | void | **[hide_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-hide-splash-screen)**() |
 | void | **[about](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-about)**() |
@@ -249,13 +247,6 @@ void on_action_analysis_mode_triggered()
 
 ```cpp
 void on_action_deepssm_mode_triggered()
-```
-
-
-### slot on_action_monai_mode_triggered
-
-```cpp
-void on_action_monai_mode_triggered()
 ```
 
 
@@ -650,13 +641,6 @@ void image_combo_changed(
 ```
 
 
-### slot handle_image_name_changed
-
-```cpp
-void handle_image_name_changed()
-```
-
-
 ### slot show_splash_screen
 
 ```cpp
@@ -785,4 +769,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

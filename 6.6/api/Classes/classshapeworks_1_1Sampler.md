@@ -36,7 +36,8 @@ title: shapeworks::Sampler
 | virtual | **[~Sampler](../Classes/classshapeworks_1_1Sampler.md#function-~sampler)**()<br>Destructor.  |
 | [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) * | **[GetParticleSystem](../Classes/classshapeworks_1_1Sampler.md#function-getparticlesystem)**()<br>Returns the particle system.  |
 | const [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) * | **[GetParticleSystem](../Classes/classshapeworks_1_1Sampler.md#function-getparticlesystem)**() const |
-| [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md) * | **[GetCurvatureGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getcurvaturegradientfunction)**() |
+| [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md) * | **[GetGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getgradientfunction)**() |
+| [CurvatureSamplingFunction](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md) * | **[GetCurvatureGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getcurvaturegradientfunction)**() |
 | [OptimizerType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md) * | **[GetOptimizer](../Classes/classshapeworks_1_1Sampler.md#function-getoptimizer)**()<br>Return a pointer to the optimizer object.  |
 | const [OptimizerType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md) * | **[GetOptimizer](../Classes/classshapeworks_1_1Sampler.md#function-getoptimizer)**() const |
 | void | **[SetPointsFile](../Classes/classshapeworks_1_1Sampler.md#function-setpointsfile)**(unsigned int i, const std::string & s) |
@@ -44,7 +45,7 @@ title: shapeworks::Sampler
 | void | **[SetInitialPoints](../Classes/classshapeworks_1_1Sampler.md#function-setinitialpoints)**(std::vector< std::vector< itk::Point< double > > > initial_points)<br>Set initial particle positions (e.g. for fixed subjects)  |
 | void | **[AddImage](../Classes/classshapeworks_1_1Sampler.md#function-addimage)**(ImageType::Pointer image, double narrow_band, std::string name ="") |
 | void | **[ApplyConstraintsToZeroCrossing](../Classes/classshapeworks_1_1Sampler.md#function-applyconstraintstozerocrossing)**() |
-| void | **[AddMesh](../Classes/classshapeworks_1_1Sampler.md#function-addmesh)**(std::shared_ptr< [shapeworks::Surface](../Classes/classshapeworks_1_1Surface.md) > mesh, double geodesic_remesh_percent =100) |
+| void | **[AddMesh](../Classes/classshapeworks_1_1Sampler.md#function-addmesh)**(std::shared_ptr< [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh, double geodesic_remesh_percent =100) |
 | void | **[AddContour](../Classes/classshapeworks_1_1Sampler.md#function-addcontour)**(vtkSmartPointer< vtkPolyData > poly_data) |
 | void | **[SetFieldAttributes](../Classes/classshapeworks_1_1Sampler.md#function-setfieldattributes)**(const std::vector< std::string > & s) |
 | void | **[SetDomainsPerShape](../Classes/classshapeworks_1_1Sampler.md#function-setdomainspershape)**(int n) |
@@ -52,7 +53,8 @@ title: shapeworks::Sampler
 | void | **[AddFreeFormConstraint](../Classes/classshapeworks_1_1Sampler.md#function-addfreeformconstraint)**(int domain, const [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & ffc) |
 | void | **[TransformCuttingPlanes](../Classes/classshapeworks_1_1Sampler.md#function-transformcuttingplanes)**(unsigned int i) |
 | void | **[AddSphere](../Classes/classshapeworks_1_1Sampler.md#function-addsphere)**(unsigned int i, vnl_vector_fixed< double, Dimension > & c, double r) |
-| void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Sampler.md#function-setadaptivitymode)**() |
+| void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Sampler.md#function-setadaptivitymode)**(int mode) |
+| int | **[GetAdaptivityMode](../Classes/classshapeworks_1_1Sampler.md#function-getadaptivitymode)**() const |
 | void | **[SetCorrespondenceOn](../Classes/classshapeworks_1_1Sampler.md#function-setcorrespondenceon)**() |
 | void | **[SetCorrespondenceOff](../Classes/classshapeworks_1_1Sampler.md#function-setcorrespondenceoff)**() |
 | void | **[SetSamplingOn](../Classes/classshapeworks_1_1Sampler.md#function-setsamplingon)**() |
@@ -90,6 +92,7 @@ title: shapeworks::Sampler
 | int | **[GetPairwisePotentialType](../Classes/classshapeworks_1_1Sampler.md#function-getpairwisepotentialtype)**() |
 | void | **[SetVerbosity](../Classes/classshapeworks_1_1Sampler.md#function-setverbosity)**(unsigned int val) |
 | unsigned int | **[GetVerbosity](../Classes/classshapeworks_1_1Sampler.md#function-getverbosity)**() |
+| [MeanCurvatureCacheType](../Classes/classshapeworks_1_1MeanCurvatureContainer.md) * | **[GetMeanCurvatureCache](../Classes/classshapeworks_1_1Sampler.md#function-getmeancurvaturecache)**() |
 | void | **[SetSharedBoundaryEnabled](../Classes/classshapeworks_1_1Sampler.md#function-setsharedboundaryenabled)**(bool enabled) |
 | void | **[SetSharedBoundaryWeight](../Classes/classshapeworks_1_1Sampler.md#function-setsharedboundaryweight)**(double weight) |
 | void | **[ReadTransforms](../Classes/classshapeworks_1_1Sampler.md#function-readtransforms)**() |
@@ -196,10 +199,20 @@ inline const ParticleSystem * GetParticleSystem() const
 ```
 
 
+### function GetGradientFunction
+
+```cpp
+inline SamplingFunction * GetGradientFunction()
+```
+
+
+Returns a pointer to the gradient function used. 
+
+
 ### function GetCurvatureGradientFunction
 
 ```cpp
-inline SamplingFunction * GetCurvatureGradientFunction()
+inline CurvatureSamplingFunction * GetCurvatureGradientFunction()
 ```
 
 
@@ -272,7 +285,7 @@ inline void ApplyConstraintsToZeroCrossing()
 
 ```cpp
 void AddMesh(
-    std::shared_ptr< shapeworks::Surface > mesh,
+    std::shared_ptr< shapeworks::MeshWrapper > mesh,
     double geodesic_remesh_percent =100
 )
 ```
@@ -359,7 +372,19 @@ Optionally add spheres that may be used as constraints to the domain.
 ### function SetAdaptivityMode
 
 ```cpp
-inline void SetAdaptivityMode()
+inline void SetAdaptivityMode(
+    int mode
+)
+```
+
+
+This method sets the optimization function for the sampling. mode 0 = isotropic adaptivity mode 1 = no adaptivity 
+
+
+### function GetAdaptivityMode
+
+```cpp
+inline int GetAdaptivityMode() const
 ```
 
 
@@ -651,6 +676,13 @@ inline unsigned int GetVerbosity()
 ```
 
 
+### function GetMeanCurvatureCache
+
+```cpp
+inline MeanCurvatureCacheType * GetMeanCurvatureCache()
+```
+
+
 ### function SetSharedBoundaryEnabled
 
 ```cpp
@@ -777,4 +809,4 @@ static constexpr unsigned int Dimension = 3;
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

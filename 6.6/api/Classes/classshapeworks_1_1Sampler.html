@@ -2629,6 +2629,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-getgradientfunction" class="md-nav__link">
+    function GetGradientFunction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getcurvaturegradientfunction" class="md-nav__link">
     function GetCurvatureGradientFunction
   </a>
@@ -2743,6 +2750,13 @@
           <li class="md-nav__item">
   <a href="#function-setadaptivitymode" class="md-nav__link">
     function SetAdaptivityMode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-getadaptivitymode" class="md-nav__link">
+    function GetAdaptivityMode
   </a>
   
 </li>
@@ -3007,6 +3021,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-getmeancurvaturecache" class="md-nav__link">
+    function GetMeanCurvatureCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-setsharedboundaryenabled" class="md-nav__link">
     function SetSharedBoundaryEnabled
   </a>
@@ -3240,6 +3261,10 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1SamplingFunction.html">SamplingFunction</a> *</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-getgradientfunction">GetGradientFunction</a></strong>()</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1CurvatureSamplingFunction.html">CurvatureSamplingFunction</a> *</td>
 <td><strong><a href="classshapeworks_1_1Sampler.html#function-getcurvaturegradientfunction">GetCurvatureGradientFunction</a></strong>()</td>
 </tr>
 <tr>
@@ -3272,7 +3297,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Sampler.html#function-addmesh">AddMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">shapeworks::Surface</a> &gt; mesh, double geodesic_remesh_percent =100)</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-addmesh">AddMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1MeshWrapper.html">shapeworks::MeshWrapper</a> &gt; mesh, double geodesic_remesh_percent =100)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3304,7 +3329,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Sampler.html#function-setadaptivitymode">SetAdaptivityMode</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-setadaptivitymode">SetAdaptivityMode</a></strong>(int mode)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-getadaptivitymode">GetAdaptivityMode</a></strong>() const</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3455,6 +3484,10 @@
 <td><strong><a href="classshapeworks_1_1Sampler.html#function-getverbosity">GetVerbosity</a></strong>()</td>
 </tr>
 <tr>
+<td><a href="classshapeworks_1_1MeanCurvatureContainer.html">MeanCurvatureCacheType</a> *</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-getmeancurvaturecache">GetMeanCurvatureCache</a></strong>()</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Sampler.html#function-setsharedboundaryenabled">SetSharedBoundaryEnabled</a></strong>(bool enabled)</td>
 </tr>
@@ -3569,8 +3602,12 @@
 <h3 id="function-getparticlesystem_1">function GetParticleSystem</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
+<h3 id="function-getgradientfunction">function GetGradientFunction</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">SamplingFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGradientFunction</span><span class="p">()</span>
+</code></pre></div>
+<p>Returns a pointer to the gradient function used. </p>
 <h3 id="function-getcurvaturegradientfunction">function GetCurvatureGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">SamplingFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetCurvatureGradientFunction</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">CurvatureSamplingFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetCurvatureGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getoptimizer">function GetOptimizer</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">OptimizerType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetOptimizer</span><span class="p">()</span>
@@ -3609,7 +3646,7 @@
 </code></pre></div>
 <h3 id="function-addmesh">function AddMesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span><span class="w"> </span><span class="o">=</span><span class="mi">100</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -3658,7 +3695,13 @@
 </code></pre></div>
 <p>Optionally add spheres that may be used as constraints to the domain. </p>
 <h3 id="function-setadaptivitymode">function SetAdaptivityMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAdaptivityMode</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAdaptivityMode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>This method sets the optimization function for the sampling. mode 0 = isotropic adaptivity mode 1 = no adaptivity </p>
+<h3 id="function-getadaptivitymode">function GetAdaptivityMode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetAdaptivityMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setcorrespondenceon">function SetCorrespondenceOn</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceOn</span><span class="p">()</span>
@@ -3798,6 +3841,9 @@
 <h3 id="function-getverbosity">function GetVerbosity</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetVerbosity</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-getmeancurvaturecache">function GetMeanCurvatureCache</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeanCurvatureCache</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setsharedboundaryenabled">function SetSharedBoundaryEnabled</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryEnabled</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
@@ -3858,7 +3904,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

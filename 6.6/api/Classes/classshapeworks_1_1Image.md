@@ -84,7 +84,6 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyIntensityFilter](../Classes/classshapeworks_1_1Image.md#function-applyintensityfilter)**(double minVal, double maxVal)<br>applies intensity windowing image filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[gaussianBlur](../Classes/classshapeworks_1_1Image.md#function-gaussianblur)**(double sigma =0.0)<br>applies gaussian blur with given sigma  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[crop](../Classes/classshapeworks_1_1Image.md#function-crop)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region, const int padding =0)<br>crops the image down to the given region, with optional padding added  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[fitRegion](../Classes/classshapeworks_1_1Image.md#function-fitregion)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region)<br>crops (or pads) the image to fit the given region  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[clip](../Classes/classshapeworks_1_1Image.md#function-clip)**(const Plane plane, const PixelType val =0.0)<br>clips an image using a cutting plane  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[reflect](../Classes/classshapeworks_1_1Image.md#function-reflect)**(const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) & axis) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setOrigin](../Classes/classshapeworks_1_1Image.md#function-setorigin)**(Point3 origin =Point3({0, 0, 0}))<br>sets the image origin in physical space to the given value  |
@@ -93,7 +92,6 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[isolate](../Classes/classshapeworks_1_1Image.md#function-isolate)**()<br>isolate the largest object in a binary segmentation  |
 | Dims | **[dims](../Classes/classshapeworks_1_1Image.md#function-dims)**() const<br>logical dimensions of the image  |
 | Point3 | **[size](../Classes/classshapeworks_1_1Image.md#function-size)**() const<br>physical dimensions of the image (dims * spacing)  |
-| double | **[get_largest_dimension_size](../Classes/classshapeworks_1_1Image.md#function-get-largest-dimension-size)**() const<br>largest dimension size  |
 | Vector | **[spacing](../Classes/classshapeworks_1_1Image.md#function-spacing)**() const<br>physical spacing of the image  |
 | double | **[get_minimum_spacing](../Classes/classshapeworks_1_1Image.md#function-get-minimum-spacing)**() const<br>minimum physical spacing of the image  |
 | Point3 | **[origin](../Classes/classshapeworks_1_1Image.md#function-origin)**() const<br>physical coordinates of image origin  |
@@ -113,18 +111,12 @@ title: shapeworks::Image
 | [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**(const Point3 & p) const<br>converts from a physical coordinate to a logical coordinate  |
 | bool | **[isInside](../Classes/classshapeworks_1_1Image.md#function-isinside)**(const Point3 & p) const<br>checks if a given point is inside the image  |
 | ImageIterator | **[iterator](../Classes/classshapeworks_1_1Image.md#function-iterator)**()<br>creates an image iterator and returns it  |
-| bool | **[compare](../Classes/classshapeworks_1_1Image.md#function-compare)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other, bool verifyall =true, double tolerance =0.0, double precision =1e-6) const<br>compares this with another image using the region of interest filter  |
+| bool | **[compare](../Classes/classshapeworks_1_1Image.md#function-compare)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other, bool verifyall =true, double tolerance =0.0, double precision =1e-12) const<br>compares this with another image using the region of interest filter  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Image.md#function-operator==)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) const<br>compares this with another image using the region of interest filter  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[write](../Classes/classshapeworks_1_1Image.md#function-write)**(const std::string & filename, bool compressed =true)<br>writes image, format specified by filename extension  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[toMesh](../Classes/classshapeworks_1_1Image.md#function-tomesh)**(PixelType isovalue) const<br>converts image to mesh  |
 | Image::PixelType | **[evaluate](../Classes/classshapeworks_1_1Image.md#function-evaluate)**(Point p)<br>Evaluates the image at a given position.  |
-| void | **[paintSphere](../Classes/classshapeworks_1_1Image.md#function-paintsphere)**(Point p, double radius, PixelType value)<br>Paints a sphere in the image.  |
-| void | **[paintCircle](../Classes/classshapeworks_1_1Image.md#function-paintcircle)**(Point p, double radius, unsigned int axis, PixelType value)<br>Paints a circle in the image.  |
-| bool | **[isPainted](../Classes/classshapeworks_1_1Image.md#function-ispainted)**() const<br>Returns if the image has been painted.  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[fill](../Classes/classshapeworks_1_1Image.md#function-fill)**(PixelType value)<br>fill with value  |
-| bool | **[isDistanceTransform](../Classes/classshapeworks_1_1Image.md#function-isdistancetransform)**() const<br>Return if the image is a distance transform.  |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Image.md#function-getsupportedtypes)**()<br>Return supported file types.  |
-| bool | **[isSupportedType](../Classes/classshapeworks_1_1Image.md#function-issupportedtype)**(const std::string & filename)<br>Return if the file type is supported.  |
 
 ## Friends
 
@@ -193,7 +185,7 @@ using shapeworks::Image::InterpolatorType =  itk::LinearInterpolateImageFunction
 ### function Image
 
 ```cpp
-explicit Image(
+Image(
     const Dims dims
 )
 ```
@@ -202,7 +194,7 @@ explicit Image(
 ### function Image
 
 ```cpp
-inline explicit Image(
+inline Image(
     const std::string & pathname
 )
 ```
@@ -211,7 +203,7 @@ inline explicit Image(
 ### function Image
 
 ```cpp
-inline explicit Image(
+inline Image(
     ImageType::Pointer imagePtr
 )
 ```
@@ -220,7 +212,7 @@ inline explicit Image(
 ### function Image
 
 ```cpp
-explicit Image(
+Image(
     const vtkSmartPointer< vtkImageData > vtkImage
 )
 ```
@@ -765,16 +757,6 @@ Image & crop(
 
 crops the image down to the given region, with optional padding added 
 
-### function fitRegion
-
-```cpp
-Image & fitRegion(
-    PhysicalRegion region
-)
-```
-
-crops (or pads) the image to fit the given region 
-
 ### function clip
 
 ```cpp
@@ -851,14 +833,6 @@ inline Point3 size() const
 ```
 
 physical dimensions of the image (dims * spacing) 
-
-### function get_largest_dimension_size
-
-```cpp
-double get_largest_dimension_size() const
-```
-
-largest dimension size 
 
 ### function spacing
 
@@ -1034,7 +1008,7 @@ bool compare(
     const Image & other,
     bool verifyall =true,
     double tolerance =0.0,
-    double precision =1e-6
+    double precision =1e-12
 ) const
 ```
 
@@ -1081,57 +1055,6 @@ Image::PixelType evaluate(
 
 Evaluates the image at a given position. 
 
-### function paintSphere
-
-```cpp
-void paintSphere(
-    Point p,
-    double radius,
-    PixelType value
-)
-```
-
-Paints a sphere in the image. 
-
-### function paintCircle
-
-```cpp
-void paintCircle(
-    Point p,
-    double radius,
-    unsigned int axis,
-    PixelType value
-)
-```
-
-Paints a circle in the image. 
-
-### function isPainted
-
-```cpp
-inline bool isPainted() const
-```
-
-Returns if the image has been painted. 
-
-### function fill
-
-```cpp
-Image & fill(
-    PixelType value
-)
-```
-
-fill with value 
-
-### function isDistanceTransform
-
-```cpp
-bool isDistanceTransform() const
-```
-
-Return if the image is a distance transform. 
-
 ### function getSupportedTypes
 
 ```cpp
@@ -1139,16 +1062,6 @@ static inline std::vector< std::string > getSupportedTypes()
 ```
 
 Return supported file types. 
-
-### function isSupportedType
-
-```cpp
-static inline bool isSupportedType(
-    const std::string & filename
-)
-```
-
-Return if the file type is supported. 
 
 ## Friends
 
@@ -1163,4 +1076,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

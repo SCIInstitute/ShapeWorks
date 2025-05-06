@@ -95,7 +95,7 @@ title: shapeworks::Mesh
 | Eigen::VectorXd | **[getMultiFieldValue](../Classes/classshapeworks_1_1Mesh.md#function-getmultifieldvalue)**(const std::string & name, int idx) const<br>gets the multi value at the given index of [vertex] field  |
 | bool | **[compareAllPoints](../Classes/classshapeworks_1_1Mesh.md#function-compareallpoints)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh) const<br>compare if values of the points in two (corresponding) meshes are (eps)equal  |
 | bool | **[compareAllFaces](../Classes/classshapeworks_1_1Mesh.md#function-compareallfaces)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh) const<br>compare if face indices in two (corresponding) meshes are equal  |
-| bool | **[compareAllFields](../Classes/classshapeworks_1_1Mesh.md#function-compareallfields)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =1e4) const<br>compare if all fields in two meshes are (eps)equal  |
+| bool | **[compareAllFields](../Classes/classshapeworks_1_1Mesh.md#function-compareallfields)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =-1.0) const<br>compare if all fields in two meshes are (eps)equal  |
 | bool | **[compareField](../Classes/classshapeworks_1_1Mesh.md#function-comparefield)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const std::string & name1, const std::string & name2 ="", const double eps =-1.0) const<br>compare field of meshes to be (eps)equal (same field for both if only one specified)  |
 | bool | **[compare](../Classes/classshapeworks_1_1Mesh.md#function-compare)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =-1.0) const<br>compare meshes  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Mesh.md#function-operator==)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other) const<br>compare meshes  |
@@ -106,7 +106,6 @@ title: shapeworks::Mesh
 | vtkSmartPointer< vtkStaticCellLocator > | **[getCellLocator](../Classes/classshapeworks_1_1Mesh.md#function-getcelllocator)**() const<br>Returns the cell locator.  |
 | int | **[getClosestFace](../Classes/classshapeworks_1_1Mesh.md#function-getclosestface)**(const Point3 & point) const |
 | Eigen::Vector3d | **[computeBarycentricCoordinates](../Classes/classshapeworks_1_1Mesh.md#function-computebarycentriccoordinates)**(const Eigen::Vector3d & pt, int face) const<br>Computes baricentric coordinates given a query point and a face number.  |
-| void | **[interpolate_scalars_to_mesh](../Classes/classshapeworks_1_1Mesh.md#function-interpolate-scalars-to-mesh)**(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values) |
 | std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Mesh.md#function-getsupportedtypes)**()<br>Return supported file types.  |
 
 ## Friends
@@ -855,7 +854,7 @@ compare if face indices in two (corresponding) meshes are equal
 ```cpp
 bool compareAllFields(
     const Mesh & other_mesh,
-    const double eps =1e4
+    const double eps =-1.0
 ) const
 ```
 
@@ -965,20 +964,6 @@ Eigen::Vector3d computeBarycentricCoordinates(
 
 Computes baricentric coordinates given a query point and a face number. 
 
-### function interpolate_scalars_to_mesh
-
-```cpp
-void interpolate_scalars_to_mesh(
-    std::string name,
-    Eigen::VectorXd positions,
-    Eigen::VectorXd scalar_values
-)
-```
-
-
-Interpolates scalar values at points (e.g. correspondence points) to the mesh, assign/create a field with the given name 
-
-
 ### function getSupportedTypes
 
 ```cpp
@@ -1000,4 +985,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -26,11 +26,9 @@ summary: SliceView.
 | | **[SliceView](../Classes/classshapeworks_1_1SliceView.md#function-sliceview)**([Viewer](../Classes/classshapeworks_1_1Viewer.md) * viewer) |
 | void | **[set_volume](../Classes/classshapeworks_1_1SliceView.md#function-set-volume)**(std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > volume) |
 | void | **[add_mesh](../Classes/classshapeworks_1_1SliceView.md#function-add-mesh)**(vtkSmartPointer< vtkPolyData > poly_data) |
-| void | **[set_mask](../Classes/classshapeworks_1_1SliceView.md#function-set-mask)**(std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > mask) |
 | void | **[clear_meshes](../Classes/classshapeworks_1_1SliceView.md#function-clear-meshes)**() |
 | void | **[set_orientation](../Classes/classshapeworks_1_1SliceView.md#function-set-orientation)**(int orientation) |
 | bool | **[is_image_loaded](../Classes/classshapeworks_1_1SliceView.md#function-is-image-loaded)**() |
-| void | **[update_colormap](../Classes/classshapeworks_1_1SliceView.md#function-update-colormap)**() |
 | void | **[update_renderer](../Classes/classshapeworks_1_1SliceView.md#function-update-renderer)**() |
 | void | **[update_camera](../Classes/classshapeworks_1_1SliceView.md#function-update-camera)**() |
 | Point | **[handle_key](../Classes/classshapeworks_1_1SliceView.md#function-handle-key)**(std::string key) |
@@ -44,9 +42,6 @@ summary: SliceView.
 | [Viewer](../Classes/classshapeworks_1_1Viewer.md) * | **[get_viewer](../Classes/classshapeworks_1_1SliceView.md#function-get-viewer)**() |
 | bool | **[should_point_show](../Classes/classshapeworks_1_1SliceView.md#function-should-point-show)**(double x, double y, double z) |
 | int | **[get_slice_number](../Classes/classshapeworks_1_1SliceView.md#function-get-slice-number)**() |
-| vtkSmartPointer< vtkImageActor > | **[get_image_actor](../Classes/classshapeworks_1_1SliceView.md#function-get-image-actor)**() |
-| vtkPlane * | **[get_slice_plane](../Classes/classshapeworks_1_1SliceView.md#function-get-slice-plane)**() |
-| void | **[update](../Classes/classshapeworks_1_1SliceView.md#function-update)**() |
 
 ## Detailed Description
 
@@ -99,15 +94,6 @@ void add_mesh(
 ```
 
 
-### function set_mask
-
-```cpp
-void set_mask(
-    std::shared_ptr< Image > mask
-)
-```
-
-
 ### function clear_meshes
 
 ```cpp
@@ -128,13 +114,6 @@ void set_orientation(
 
 ```cpp
 bool is_image_loaded()
-```
-
-
-### function update_colormap
-
-```cpp
-void update_colormap()
 ```
 
 
@@ -242,27 +221,6 @@ int get_slice_number()
 ```
 
 
-### function get_image_actor
-
-```cpp
-vtkSmartPointer< vtkImageActor > get_image_actor()
-```
-
-
-### function get_slice_plane
-
-```cpp
-vtkPlane * get_slice_plane()
-```
-
-
-### function update
-
-```cpp
-void update()
-```
-
-
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

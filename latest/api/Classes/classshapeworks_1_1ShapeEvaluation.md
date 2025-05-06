@@ -16,7 +16,7 @@ title: shapeworks::ShapeEvaluation
 | | **[ShapeEvaluation](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-shapeevaluation)**() |
 | double | **[ComputeCompactness](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computecompactness)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, const int nModes, const std::string & saveTo ="") |
 | Eigen::VectorXd | **[ComputeFullCompactness](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computefullcompactness)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, std::function< void(float)> progress_callback =nullptr) |
-| double | **[ComputeGeneralization](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computegeneralization)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, const int nModes, const std::string & saveTo ="") |
+| double | **[compute_generalization](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computegeneralization)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, const int nModes, const std::string & saveTo ="") |
 | Eigen::VectorXd | **[ComputeFullGeneralization](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computefullgeneralization)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, std::function< void(float)> progress_callback =nullptr) |
 | double | **[ComputeSpecificity](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computespecificity)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, const int nModes, const std::string & saveTo ="") |
 | Eigen::VectorXd | **[ComputeFullSpecificity](../Classes/classshapeworks_1_1ShapeEvaluation.md#function-computefullspecificity)**(const [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) & ParticleSystemEvaluation, std::function< void(float)> progress_callback =nullptr) |
@@ -57,10 +57,10 @@ static Eigen::VectorXd ComputeFullCompactness(
 ```
 
 
-### function ComputeGeneralization
+### function compute_generalization
 
 ```cpp
-static double ComputeGeneralization(
+static double compute_generalization(
     const ParticleSystemEvaluation & ParticleSystemEvaluation,
     const int nModes,
     const std::string & saveTo =""

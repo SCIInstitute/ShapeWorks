@@ -51,12 +51,14 @@ class Observer : public itk::DataObject {
         : DomainAddEvent(false),
           TransformSetEvent(false),
           PrefixTransformSetEvent(false),
+          NeighborhoodSetEvent(false),
           PositionSetEvent(false),
           PositionAddEvent(false),
           PositionRemoveEvent(false) {}
     bool DomainAddEvent;
     bool TransformSetEvent;
     bool PrefixTransformSetEvent;
+    bool NeighborhoodSetEvent;
     bool PositionSetEvent;
     bool PositionAddEvent;
     bool PositionRemoveEvent;
@@ -67,6 +69,7 @@ class Observer : public itk::DataObject {
   virtual void DomainAddEventCallback(Object*, const itk::EventObject&) {}
   virtual void TransformSetEventCallback(Object*, const itk::EventObject&) {}
   virtual void PrefixTransformSetEventCallback(Object*, const itk::EventObject&) {}
+  virtual void NeighborhoodSetEventCallback(Object*, const itk::EventObject&) {}
   virtual void PositionSetEventCallback(Object*, const itk::EventObject&) {}
   virtual void PositionAddEventCallback(Object*, const itk::EventObject&) {}
   virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {}
@@ -88,4 +91,4 @@ class Observer : public itk::DataObject {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

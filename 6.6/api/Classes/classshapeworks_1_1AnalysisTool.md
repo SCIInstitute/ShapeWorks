@@ -44,11 +44,10 @@ Inherits from QWidget
 | std::string | **[get_display_feature_map](../Classes/classshapeworks_1_1AnalysisTool.md#slot-get-display-feature-map)**() |
 | void | **[group_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-changed)**() |
 | bool | **[groups_active](../Classes/classshapeworks_1_1AnalysisTool.md#slot-groups-active)**() |
-| bool | **[pca_groups_active](../Classes/classshapeworks_1_1AnalysisTool.md#slot-pca-groups-active)**() |
-| QStringList | **[get_checked_pca_groups](../Classes/classshapeworks_1_1AnalysisTool.md#slot-get-checked-pca-groups)**() |
 | void | **[on_view_open_button_toggled](../Classes/classshapeworks_1_1AnalysisTool.md#slot-on-view-open-button-toggled)**() |
 | void | **[on_surface_open_button_toggled](../Classes/classshapeworks_1_1AnalysisTool.md#slot-on-surface-open-button-toggled)**() |
 | void | **[on_metrics_open_button_toggled](../Classes/classshapeworks_1_1AnalysisTool.md#slot-on-metrics-open-button-toggled)**() |
+| bool | **[is_group_active](../Classes/classshapeworks_1_1AnalysisTool.md#slot-is-group-active)**(int shape_index) |
 | void | **[reconstruction_method_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-reconstruction-method-changed)**() |
 | void | **[initialize_mesh_warper](../Classes/classshapeworks_1_1AnalysisTool.md#slot-initialize-mesh-warper)**() |
 | void | **[group_p_values_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-p-values-clicked)**() |
@@ -59,7 +58,6 @@ Inherits from QWidget
 | void | **[handle_eval_particle_normals_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-particle-normals-complete)**(std::vector< bool > good_bad) |
 | void | **[handle_group_pvalues_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-group-pvalues-complete)**() |
 | void | **[handle_alignment_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-alignment-changed)**(int new_alignment) |
-| void | **[handle_distance_method_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-distance-method-changed)**() |
 | void | **[run_good_bad_particles](../Classes/classshapeworks_1_1AnalysisTool.md#slot-run-good-bad-particles)**() |
 | void | **[handle_lda_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-progress)**(double progress) |
 | void | **[handle_lda_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-complete)**() |
@@ -69,20 +67,12 @@ Inherits from QWidget
 | void | **[group_analysis_combo_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-analysis-combo-changed)**() |
 | void | **[change_pca_analysis_type](../Classes/classshapeworks_1_1AnalysisTool.md#slot-change-pca-analysis-type)**() |
 | Eigen::VectorXd | **[construct_mean_shape](../Classes/classshapeworks_1_1AnalysisTool.md#slot-construct-mean-shape)**()<br>Compute the mean shape outside of the PCA in case we are using scalars only.  |
-| void | **[handle_samples_predicted_scalar_options](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-samples-predicted-scalar-options)**() |
-| void | **[samples_table_context_menu](../Classes/classshapeworks_1_1AnalysisTool.md#slot-samples-table-context-menu)**() |
-| void | **[samples_table_copy_to_clipboard](../Classes/classshapeworks_1_1AnalysisTool.md#slot-samples-table-copy-to-clipboard)**() |
-| void | **[mesh_warp_median_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-median-clicked)**() |
-| void | **[mesh_warp_sample_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-sample-changed)**() |
-| void | **[mesh_warp_run_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-mesh-warp-run-clicked)**() |
-| void | **[handle_tab_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-tab-changed)**() |
 
 ## Public Signals
 
 |                | Name           |
 | -------------- | -------------- |
 | void | **[update_view](../Classes/classshapeworks_1_1AnalysisTool.md#signal-update-view)**() |
-| void | **[analysis_mode_changed](../Classes/classshapeworks_1_1AnalysisTool.md#signal-analysis-mode-changed)**() |
 | void | **[pca_update](../Classes/classshapeworks_1_1AnalysisTool.md#signal-pca-update)**() |
 | void | **[progress](../Classes/classshapeworks_1_1AnalysisTool.md#signal-progress)**(int ) |
 | void | **[reconstruction_complete](../Classes/classshapeworks_1_1AnalysisTool.md#signal-reconstruction-complete)**() |
@@ -328,20 +318,6 @@ bool groups_active()
 ```
 
 
-### slot pca_groups_active
-
-```cpp
-bool pca_groups_active()
-```
-
-
-### slot get_checked_pca_groups
-
-```cpp
-QStringList get_checked_pca_groups()
-```
-
-
 ### slot on_view_open_button_toggled
 
 ```cpp
@@ -360,6 +336,15 @@ void on_surface_open_button_toggled()
 
 ```cpp
 void on_metrics_open_button_toggled()
+```
+
+
+### slot is_group_active
+
+```cpp
+bool is_group_active(
+    int shape_index
+)
 ```
 
 
@@ -445,13 +430,6 @@ void handle_alignment_changed(
 ```
 
 
-### slot handle_distance_method_changed
-
-```cpp
-void handle_distance_method_changed()
-```
-
-
 ### slot run_good_bad_particles
 
 ```cpp
@@ -520,68 +498,12 @@ Eigen::VectorXd construct_mean_shape()
 
 Compute the mean shape outside of the PCA in case we are using scalars only. 
 
-### slot handle_samples_predicted_scalar_options
-
-```cpp
-void handle_samples_predicted_scalar_options()
-```
-
-
-### slot samples_table_context_menu
-
-```cpp
-void samples_table_context_menu()
-```
-
-
-### slot samples_table_copy_to_clipboard
-
-```cpp
-void samples_table_copy_to_clipboard()
-```
-
-
-### slot mesh_warp_median_clicked
-
-```cpp
-void mesh_warp_median_clicked()
-```
-
-
-### slot mesh_warp_sample_changed
-
-```cpp
-void mesh_warp_sample_changed()
-```
-
-
-### slot mesh_warp_run_clicked
-
-```cpp
-void mesh_warp_run_clicked()
-```
-
-
-### slot handle_tab_changed
-
-```cpp
-void handle_tab_changed()
-```
-
-
 ## Public Signals Documentation
 
 ### signal update_view
 
 ```cpp
 void update_view()
-```
-
-
-### signal analysis_mode_changed
-
-```cpp
-void analysis_mode_changed()
 ```
 
 
@@ -965,4 +887,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:43 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -2839,8 +2839,29 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setprocessingmode" class="md-nav__link">
+    function SetProcessingMode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setadaptivitymode" class="md-nav__link">
+    function SetAdaptivityMode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-setmeshffcmode" class="md-nav__link">
     function SetMeshFFCMode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setadaptivitystrength" class="md-nav__link">
+    function SetAdaptivityStrength
   </a>
   
 </li>
@@ -3196,13 +3217,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getgeodesicsenabled" class="md-nav__link">
-    function GetGeodesicsEnabled
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-setgeodesicscachesizemultiplier" class="md-nav__link">
     function SetGeodesicsCacheSizeMultiplier
   </a>
@@ -3337,6 +3351,13 @@
           <li class="md-nav__item">
   <a href="#function-initialize" class="md-nav__link">
     function Initialize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-addadaptivity" class="md-nav__link">
+    function AddAdaptivity
   </a>
   
 </li>
@@ -3714,6 +3735,27 @@
           <li class="md-nav__item">
   <a href="#variable-m_output_cutting_plane_file" class="md-nav__link">
     variable m_output_cutting_plane_file
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_processing_mode" class="md-nav__link">
+    variable m_processing_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_adaptivity_mode" class="md-nav__link">
+    variable m_adaptivity_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_adaptivity_strength" class="md-nav__link">
+    variable m_adaptivity_strength
   </a>
   
 </li>
@@ -4333,7 +4375,19 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocessingmode">SetProcessingMode</a></strong>(int mode)<br>Set processing mode (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitymode">SetAdaptivityMode</a></strong>(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setmeshffcmode">SetMeshFFCMode</a></strong>(int mesh_ffc_mode)<br>Set <a href="classshapeworks_1_1Mesh.html">Mesh</a> FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitystrength">SetAdaptivityStrength</a></strong>(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4536,10 +4590,6 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicsenabled">SetGeodesicsEnabled</a></strong>(bool is_enabled)<br>Set whether or not geodesics are enabled.</td>
 </tr>
 <tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getgeodesicsenabled">GetGeodesicsEnabled</a></strong>() const</td>
-</tr>
-<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicscachesizemultiplier">SetGeodesicsCacheSizeMultiplier</a></strong>(size_t n)</td>
 </tr>
@@ -4621,6 +4671,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-initialize">Initialize</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-addadaptivity">AddAdaptivity</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4840,6 +4894,18 @@
 <tr>
 <td>std::string</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-output-cutting-plane-file">m_output_cutting_plane_file</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-processing-mode">m_processing_mode</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-mode">m_adaptivity_mode</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-strength">m_adaptivity_strength</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
@@ -5287,12 +5353,30 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set a given cutting plane for a shape. </p>
+<h3 id="function-setprocessingmode">function SetProcessingMode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProcessingMode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set processing mode (TODO: details) </p>
+<h3 id="function-setadaptivitymode">function SetAdaptivityMode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetAdaptivityMode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">adaptivity_mode</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set adaptivity mode (TODO: details) </p>
 <h3 id="function-setmeshffcmode">function SetMeshFFCMode</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFFCMode</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mesh_ffc_mode</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Set <a href="classshapeworks_1_1Mesh.html">Mesh</a> FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode. </p>
+<h3 id="function-setadaptivitystrength">function SetAdaptivityStrength</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetAdaptivityStrength</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity_strength</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set adaptivity strength (TODO: details) </p>
 <h3 id="function-settimeptspersubject">function SetTimePtsPerSubject</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetTimePtsPerSubject</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">time_pts_per_subject</span>
@@ -5568,9 +5652,6 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set whether or not geodesics are enabled. </p>
-<h3 id="function-getgeodesicsenabled">function GetGeodesicsEnabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetGeodesicsEnabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
 <h3 id="function-setgeodesicscachesizemultiplier">function SetGeodesicsCacheSizeMultiplier</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetGeodesicsCacheSizeMultiplier</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span>
@@ -5643,6 +5724,9 @@
 </code></pre></div>
 <h3 id="function-initialize">function Initialize</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-addadaptivity">function AddAdaptivity</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddAdaptivity</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-runoptimize">function RunOptimize</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RunOptimize</span><span class="p">()</span>
@@ -5834,6 +5918,15 @@
 <h3 id="variable-m_output_cutting_plane_file">variable m_output_cutting_plane_file</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_output_cutting_plane_file</span><span class="p">;</span>
 </code></pre></div>
+<h3 id="variable-m_processing_mode">variable m_processing_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_processing_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_adaptivity_mode">variable m_adaptivity_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_adaptivity_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_adaptivity_strength">variable m_adaptivity_strength</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_adaptivity_strength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_mesh_ffc_mode">variable m_mesh_ffc_mode</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
@@ -6009,7 +6102,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

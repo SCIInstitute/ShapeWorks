@@ -27,8 +27,6 @@ title: Libs/Particles/ParticleSystemEvaluation.h
 ```cpp
 #pragma once
 
-#include <Libs/Mesh/Mesh.h>
-
 #include <Eigen/Core>
 #include <vector>
 
@@ -36,39 +34,33 @@ namespace shapeworks {
 
 class ParticleSystemEvaluation {
  public:
-  explicit ParticleSystemEvaluation(const std::vector<std::string>& paths);
+  ParticleSystemEvaluation(const std::vector<std::string>& paths);
 
-  explicit ParticleSystemEvaluation(const Eigen::MatrixXd& matrix, int num_values_per_particle = 3);
+  // Initialize particle system from eigen matrix (rows=dimensions, cols=num_samples)
+  ParticleSystemEvaluation(const Eigen::MatrixXd& matrix);
 
-  const Eigen::MatrixXd& get_matrix() const { return matrix_; };
+  const Eigen::MatrixXd& Particles() const { return P; };
 
-  int get_num_values_per_particle() const { return num_values_per_particle_; }
+  const std::vector<std::string>& Paths() const { return paths; }
 
-  const std::vector<std::string>& get_paths() const { return paths_; }
+  int N() const { return P.cols(); }
 
-  int num_samples() const { return matrix_.cols(); }
+  int D() const { return P.rows(); }
 
-  int num_dims() const { return matrix_.rows(); }
+  bool ExactCompare(const ParticleSystemEvaluation& other) const;
 
-  bool exact_compare(const ParticleSystemEvaluation& other) const;
+  bool EvaluationCompare(const ParticleSystemEvaluation& other) const;
 
-  bool evaluation_compare(const ParticleSystemEvaluation& other) const;
-
-  static bool read_particle_file(std::string filename, Eigen::VectorXd& points);
-
-  void set_meshes(const std::vector<Mesh>& meshes);
-
-  const std::vector<Mesh>& get_meshes() const { return meshes_; }
+  static bool ReadParticleFile(std::string filename, Eigen::VectorXd& points);
 
  private:
   friend struct SharedCommandData;
 
-  ParticleSystemEvaluation() {}
+  ParticleSystemEvaluation() {
+  }  // only for use by SharedCommandData since a ParticleSystem should always be valid, never "empty"
 
-  Eigen::MatrixXd matrix_;
-  std::vector<std::string> paths_;
-  int num_values_per_particle_ = 3;  // e.g. 3 for x/y/z, 4 for x/y/z/scalar, 1 for scalar-only
-  std::vector<Mesh> meshes_;
+  Eigen::MatrixXd P;
+  std::vector<std::string> paths;
 };
 }  // namespace shapeworks
 ```
@@ -76,4 +68,4 @@ class ParticleSystemEvaluation {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

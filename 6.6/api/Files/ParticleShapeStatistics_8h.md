@@ -106,10 +106,8 @@ class ParticleShapeStatistics {
   static int simple_linear_regression(const std::vector<double>& y, const std::vector<double>& x, double& a, double& b);
 
   Eigen::VectorXd get_compactness(const std::function<void(float)>& progress_callback = nullptr) const;
-  Eigen::VectorXd get_specificity(const std::function<void(float)>& progress_callback = nullptr,
-                                  const std::function<bool()>& check_abort = nullptr) const;
-  Eigen::VectorXd get_generalization(const std::function<void(float)>& progress_callback = nullptr,
-                                     const std::function<bool(void)>& check_abort = nullptr) const;
+  Eigen::VectorXd get_specificity(const std::function<void(float)>& progress_callback = nullptr) const;
+  Eigen::VectorXd get_generalization(const std::function<void(float)>& progress_callback = nullptr) const;
 
   Eigen::MatrixXd get_group1_matrix() const;
   Eigen::MatrixXd get_group2_matrix() const;
@@ -117,10 +115,6 @@ class ParticleShapeStatistics {
   Eigen::MatrixXd& matrix() { return matrix_; };
 
   void set_num_values_per_particle(int value_per_particle) { values_per_particle_ = value_per_particle; }
-
-  void set_particle_to_surface_mode(bool value) { particle_to_surface_mode_ = value; }
-  bool get_particle_to_surface_mode() const { return particle_to_surface_mode_; }
-  void set_meshes(const std::vector<Mesh>& meshes) { meshes_ = meshes; }
 
  private:
   unsigned int num_samples_group1_;
@@ -144,16 +138,17 @@ class ParticleShapeStatistics {
   Eigen::VectorXd groupdiff_;
 
   // Variables for MLCA
-  std::vector<int> num_particles_array_;      // Number of Particles for each object in the multi-object shape structure
-  Eigen::MatrixXd eigenvectors_rel_pose_;     // Eigenvectors defined for relative pose subspace
-  Eigen::MatrixXd eigenvectors_shape_dev_;    // Eigenvectors defined for morphological subspace
-  std::vector<double> eigenvalues_rel_pose_;  // Eigenvalues defined in relative pose subspace
+  std::vector<int> num_particles_array_;     // Number of Particles for each object in the multi-object shape structure
+  Eigen::MatrixXd eigenvectors_rel_pose_;   // Eigenvectors defined for relative pose subspace
+  Eigen::MatrixXd eigenvectors_shape_dev_;  // Eigenvectors defined for morphological subspace
+  std::vector<double> eigenvalues_rel_pose_;   // Eigenvalues defined in relative pose subspace
   std::vector<double> eigenvalues_shape_dev_;  // Eigenvectors defined in morphological subspace
   Eigen::MatrixXd points_minus_mean_rel_pose_;
   Eigen::MatrixXd points_minus_mean_shape_dev_;
   Eigen::VectorXd mean_shape_dev_;
   Eigen::VectorXd mean_rel_pose_;
   Eigen::MatrixXd super_matrix_;  // Shape Matrix reshaped, used to compute MLCA statistics
+
 
   Eigen::MatrixXd matrix_;
 
@@ -163,8 +158,6 @@ class ParticleShapeStatistics {
   std::vector<Eigen::VectorXd> points_;
 
   int values_per_particle_ = 3;  // e.g. 3 for x/y/z, 4 for x/y/z/scalar
-  bool particle_to_surface_mode_ = false;
-  std::vector<Mesh> meshes_;
 };
 
 }  // namespace shapeworks
@@ -173,4 +166,4 @@ class ParticleShapeStatistics {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

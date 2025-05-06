@@ -159,7 +159,7 @@ virtual VectorType Evaluate(
 ```
 
 
-**Reimplemented by**: [shapeworks::CorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-evaluate), [shapeworks::DisentangledCorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-evaluate), [shapeworks::LegacyCorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-evaluate), [shapeworks::SamplingFunction::Evaluate](../Classes/classshapeworks_1_1SamplingFunction.md#function-evaluate), [shapeworks::DualVectorFunction::Evaluate](../Classes/classshapeworks_1_1DualVectorFunction.md#function-evaluate)
+**Reimplemented by**: [shapeworks::CorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-evaluate), [shapeworks::CurvatureSamplingFunction::Evaluate](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md#function-evaluate), [shapeworks::DisentangledCorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-evaluate), [shapeworks::LegacyCorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-evaluate), [shapeworks::SamplingFunction::Evaluate](../Classes/classshapeworks_1_1SamplingFunction.md#function-evaluate), [shapeworks::DualVectorFunction::Evaluate](../Classes/classshapeworks_1_1DualVectorFunction.md#function-evaluate)
 
 
 The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. 
@@ -178,7 +178,7 @@ virtual VectorType Evaluate(
 ```
 
 
-**Reimplemented by**: [shapeworks::DualVectorFunction::Evaluate](../Classes/classshapeworks_1_1DualVectorFunction.md#function-evaluate), [shapeworks::CorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-evaluate), [shapeworks::DisentangledCorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-evaluate), [shapeworks::LegacyCorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-evaluate), [shapeworks::SamplingFunction::Evaluate](../Classes/classshapeworks_1_1SamplingFunction.md#function-evaluate)
+**Reimplemented by**: [shapeworks::SamplingFunction::Evaluate](../Classes/classshapeworks_1_1SamplingFunction.md#function-evaluate), [shapeworks::DualVectorFunction::Evaluate](../Classes/classshapeworks_1_1DualVectorFunction.md#function-evaluate), [shapeworks::CorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-evaluate), [shapeworks::CurvatureSamplingFunction::Evaluate](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md#function-evaluate), [shapeworks::DisentangledCorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-evaluate), [shapeworks::LegacyCorrespondenceFunction::Evaluate](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-evaluate)
 
 
 ### function Energy
@@ -192,7 +192,7 @@ virtual double Energy(
 ```
 
 
-**Reimplemented by**: [shapeworks::CorrespondenceFunction::Energy](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-energy), [shapeworks::DisentangledCorrespondenceFunction::Energy](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-energy), [shapeworks::LegacyCorrespondenceFunction::Energy](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-energy), [shapeworks::SamplingFunction::Energy](../Classes/classshapeworks_1_1SamplingFunction.md#function-energy), [shapeworks::DualVectorFunction::Energy](../Classes/classshapeworks_1_1DualVectorFunction.md#function-energy)
+**Reimplemented by**: [shapeworks::CorrespondenceFunction::Energy](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-energy), [shapeworks::CurvatureSamplingFunction::Energy](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md#function-energy), [shapeworks::DisentangledCorrespondenceFunction::Energy](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-energy), [shapeworks::LegacyCorrespondenceFunction::Energy](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-energy), [shapeworks::DualVectorFunction::Energy](../Classes/classshapeworks_1_1DualVectorFunction.md#function-energy), [shapeworks::SamplingFunction::Energy](../Classes/classshapeworks_1_1SamplingFunction.md#function-energy)
 
 
 ### function ResetBuffers
@@ -215,7 +215,7 @@ inline virtual void AfterIteration()
 ```
 
 
-**Reimplemented by**: [shapeworks::CorrespondenceFunction::AfterIteration](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-afteriteration), [shapeworks::DisentangledCorrespondenceFunction::AfterIteration](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-afteriteration), [shapeworks::DualVectorFunction::AfterIteration](../Classes/classshapeworks_1_1DualVectorFunction.md#function-afteriteration), [shapeworks::LegacyCorrespondenceFunction::AfterIteration](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-afteriteration)
+**Reimplemented by**: [shapeworks::CorrespondenceFunction::AfterIteration](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-afteriteration), [shapeworks::CurvatureSamplingFunction::AfterIteration](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md#function-afteriteration), [shapeworks::DisentangledCorrespondenceFunction::AfterIteration](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-afteriteration), [shapeworks::DualVectorFunction::AfterIteration](../Classes/classshapeworks_1_1DualVectorFunction.md#function-afteriteration), [shapeworks::LegacyCorrespondenceFunction::AfterIteration](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-afteriteration)
 
 
 This method is called by a solver after each iteration. Subclasses may or may not implement this method. 
@@ -228,7 +228,7 @@ inline virtual void BeforeIteration()
 ```
 
 
-**Reimplemented by**: [shapeworks::CorrespondenceFunction::BeforeIteration](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-beforeiteration), [shapeworks::DisentangledCorrespondenceFunction::BeforeIteration](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-beforeiteration), [shapeworks::DualVectorFunction::BeforeIteration](../Classes/classshapeworks_1_1DualVectorFunction.md#function-beforeiteration), [shapeworks::LegacyCorrespondenceFunction::BeforeIteration](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-beforeiteration)
+**Reimplemented by**: [shapeworks::CorrespondenceFunction::BeforeIteration](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-beforeiteration), [shapeworks::CurvatureSamplingFunction::BeforeIteration](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md#function-beforeiteration), [shapeworks::DisentangledCorrespondenceFunction::BeforeIteration](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-beforeiteration), [shapeworks::DualVectorFunction::BeforeIteration](../Classes/classshapeworks_1_1DualVectorFunction.md#function-beforeiteration), [shapeworks::LegacyCorrespondenceFunction::BeforeIteration](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-beforeiteration)
 
 
 This method is called by a solver before each iteration. Subclasses may or may not implement this method. 
@@ -245,7 +245,7 @@ inline virtual void BeforeEvaluate(
 ```
 
 
-**Reimplemented by**: [shapeworks::DualVectorFunction::BeforeEvaluate](../Classes/classshapeworks_1_1DualVectorFunction.md#function-beforeevaluate), [shapeworks::SamplingFunction::BeforeEvaluate](../Classes/classshapeworks_1_1SamplingFunction.md#function-beforeevaluate)
+**Reimplemented by**: [shapeworks::DualVectorFunction::BeforeEvaluate](../Classes/classshapeworks_1_1DualVectorFunction.md#function-beforeevaluate), [shapeworks::CurvatureSamplingFunction::BeforeEvaluate](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md#function-beforeevaluate)
 
 
 This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. 
@@ -299,7 +299,7 @@ inline virtual VectorFunction::Pointer Clone()
 ```
 
 
-**Reimplemented by**: [shapeworks::CorrespondenceFunction::Clone](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-clone), [shapeworks::DisentangledCorrespondenceFunction::Clone](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-clone), [shapeworks::DualVectorFunction::Clone](../Classes/classshapeworks_1_1DualVectorFunction.md#function-clone), [shapeworks::LegacyCorrespondenceFunction::Clone](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-clone), [shapeworks::SamplingFunction::Clone](../Classes/classshapeworks_1_1SamplingFunction.md#function-clone)
+**Reimplemented by**: [shapeworks::CorrespondenceFunction::Clone](../Classes/classshapeworks_1_1CorrespondenceFunction.md#function-clone), [shapeworks::CurvatureSamplingFunction::Clone](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md#function-clone), [shapeworks::DisentangledCorrespondenceFunction::Clone](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md#function-clone), [shapeworks::DualVectorFunction::Clone](../Classes/classshapeworks_1_1DualVectorFunction.md#function-clone), [shapeworks::LegacyCorrespondenceFunction::Clone](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#function-clone), [shapeworks::SamplingFunction::Clone](../Classes/classshapeworks_1_1SamplingFunction.md#function-clone)
 
 
 ### function GetRelativeEnergyScaling
@@ -385,4 +385,4 @@ unsigned int m_DomainNumber;
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -63,7 +63,10 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | void | **[SetOutputCuttingPlaneFile](../Classes/classshapeworks_1_1Optimize.md#function-setoutputcuttingplanefile)**(std::string output_cutting_plane_file)<br>Set the output cutting plane file.  |
 | void | **[SetUseCuttingPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setusecuttingplanes)**(bool use_cutting_planes)<br>Set if using cutting planes.  |
 | void | **[SetCuttingPlane](../Classes/classshapeworks_1_1Optimize.md#function-setcuttingplane)**(unsigned int i, const vnl_vector_fixed< double, 3 > & va, const vnl_vector_fixed< double, 3 > & vb, const vnl_vector_fixed< double, 3 > & vc)<br>Set a given cutting plane for a shape.  |
+| void | **[SetProcessingMode](../Classes/classshapeworks_1_1Optimize.md#function-setprocessingmode)**(int mode)<br>Set processing mode (TODO: details)  |
+| void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitymode)**(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)  |
 | void | **[SetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-setmeshffcmode)**(int mesh_ffc_mode)<br>Set [Mesh](../Classes/classshapeworks_1_1Mesh.md) FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.  |
+| void | **[SetAdaptivityStrength](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitystrength)**(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)  |
 | void | **[SetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-settimeptspersubject)**(int time_pts_per_subject)<br>Set the number of time points per subject (TODO: details)  |
 | int | **[GetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-gettimeptspersubject)**()<br>Get the number of time points per subject (TODO: details)  |
 | void | **[SetOptimizationIterations](../Classes/classshapeworks_1_1Optimize.md#function-setoptimizationiterations)**(int optimization_iterations)<br>Set the number of optimization iterations.  |
@@ -114,7 +117,6 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | [MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md) | **[GetParticleSystem](../Classes/classshapeworks_1_1Optimize.md#function-getparticlesystem)**()<br>Return the particle system as a matrix.  |
 | void | **[SetPythonFile](../Classes/classshapeworks_1_1Optimize.md#function-setpythonfile)**(std::string filename)<br>Set the python file to run at startup.  |
 | void | **[SetGeodesicsEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicsenabled)**(bool is_enabled)<br>Set whether or not geodesics are enabled.  |
-| bool | **[GetGeodesicsEnabled](../Classes/classshapeworks_1_1Optimize.md#function-getgeodesicsenabled)**() const |
 | void | **[SetGeodesicsCacheSizeMultiplier](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicscachesizemultiplier)**(size_t n) |
 | void | **[SetGeodesicsRemeshPercent](../Classes/classshapeworks_1_1Optimize.md#function-setgeodesicsremeshpercent)**(double percent)<br>Set the remeshing percent for the mesh used for computing geodesics (0-100)  |
 | [OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) & | **[GetVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getvisualizer)**() |
@@ -138,6 +140,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | double | **[GetMinNeighborhoodRadius](../Classes/classshapeworks_1_1Optimize.md#function-getminneighborhoodradius)**() |
 | void | **[AddSinglePoint](../Classes/classshapeworks_1_1Optimize.md#function-addsinglepoint)**() |
 | void | **[Initialize](../Classes/classshapeworks_1_1Optimize.md#function-initialize)**() |
+| void | **[AddAdaptivity](../Classes/classshapeworks_1_1Optimize.md#function-addadaptivity)**() |
 | void | **[RunOptimize](../Classes/classshapeworks_1_1Optimize.md#function-runoptimize)**() |
 | virtual void | **[IterateCallback](../Classes/classshapeworks_1_1Optimize.md#function-iteratecallback)**(itk::Object * , const itk::EventObject & ) |
 | void | **[ComputeEnergyAfterIteration](../Classes/classshapeworks_1_1Optimize.md#function-computeenergyafteriteration)**() |
@@ -195,6 +198,9 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | std::vector< int > | **[m_attributes_per_domain](../Classes/classshapeworks_1_1Optimize.md#variable-m-attributes-per-domain)**  |
 | int | **[m_distribution_domain_id](../Classes/classshapeworks_1_1Optimize.md#variable-m-distribution-domain-id)**  |
 | std::string | **[m_output_cutting_plane_file](../Classes/classshapeworks_1_1Optimize.md#variable-m-output-cutting-plane-file)**  |
+| int | **[m_processing_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-processing-mode)**  |
+| int | **[m_adaptivity_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-mode)**  |
+| double | **[m_adaptivity_strength](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-strength)**  |
 | bool | **[m_mesh_ffc_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-mesh-ffc-mode)**  |
 | unsigned int | **[m_timepts_per_subject](../Classes/classshapeworks_1_1Optimize.md#variable-m-timepts-per-subject)**  |
 | int | **[m_optimization_iterations](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-iterations)**  |
@@ -640,6 +646,26 @@ void SetCuttingPlane(
 
 Set a given cutting plane for a shape. 
 
+### function SetProcessingMode
+
+```cpp
+void SetProcessingMode(
+    int mode
+)
+```
+
+Set processing mode (TODO: details) 
+
+### function SetAdaptivityMode
+
+```cpp
+void SetAdaptivityMode(
+    int adaptivity_mode
+)
+```
+
+Set adaptivity mode (TODO: details) 
+
 ### function SetMeshFFCMode
 
 ```cpp
@@ -649,6 +675,16 @@ inline void SetMeshFFCMode(
 ```
 
 Set [Mesh](../Classes/classshapeworks_1_1Mesh.md) FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode. 
+
+### function SetAdaptivityStrength
+
+```cpp
+void SetAdaptivityStrength(
+    double adaptivity_strength
+)
+```
+
+Set adaptivity strength (TODO: details) 
 
 ### function SetTimePtsPerSubject
 
@@ -1125,13 +1161,6 @@ void SetGeodesicsEnabled(
 
 Set whether or not geodesics are enabled. 
 
-### function GetGeodesicsEnabled
-
-```cpp
-inline bool GetGeodesicsEnabled() const
-```
-
-
 ### function SetGeodesicsCacheSizeMultiplier
 
 ```cpp
@@ -1279,6 +1308,13 @@ void AddSinglePoint()
 
 ```cpp
 void Initialize()
+```
+
+
+### function AddAdaptivity
+
+```cpp
+void AddAdaptivity()
 ```
 
 
@@ -1684,6 +1720,27 @@ int m_distribution_domain_id = -1;
 
 ```cpp
 std::string m_output_cutting_plane_file;
+```
+
+
+### variable m_processing_mode
+
+```cpp
+int m_processing_mode = 3;
+```
+
+
+### variable m_adaptivity_mode
+
+```cpp
+int m_adaptivity_mode = 0;
+```
+
+
+### variable m_adaptivity_strength
+
+```cpp
+double m_adaptivity_strength = 0.0;
 ```
 
 
@@ -2095,4 +2152,4 @@ std::string m_remaining_time_message;
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

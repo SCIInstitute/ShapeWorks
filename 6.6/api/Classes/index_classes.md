@@ -64,7 +64,6 @@ title: Classes
 * **struct [Ray](../Classes/structRay.md)** 
 * **class [Reconstruction](../Classes/classReconstruction.md)** 
 * **struct [SimilarityTransform3D](../Classes/structSimilarityTransform3D.md)** 
-* **class [StudioImageActorPointPlacer](../Classes/classStudioImageActorPointPlacer.md)** 
 * **class [StudioLogger](../Classes/classStudioLogger.md)** <br>Handle logger callbacks via Qt for thread correctness. 
 * **class [SurfaceReconstructor](../Classes/classSurfaceReconstructor.md)** 
 * **struct [Triangle](../Classes/structTriangle.md)** 
@@ -87,11 +86,6 @@ title: Classes
 * **class [mat3d](../Classes/classmat3d.md)** 
 * **class [matrix](../Classes/classmatrix.md)** 
 * **class [meshFIM](../Classes/classmeshFIM.md)** 
-* **namespace [monailabel](../Namespaces/namespacemonailabel.md)** 
-    * **class [MonaiLabelJob](../Classes/classmonailabel_1_1MonaiLabelJob.md)** 
-    * **class [MonaiLabelTool](../Classes/classmonailabel_1_1MonaiLabelTool.md)** 
-    * **class [MonaiLabelUtils](../Classes/classmonailabel_1_1MonaiLabelUtils.md)** 
-    * **class [UrlValidator](../Classes/classmonailabel_1_1UrlValidator.md)** 
 * **class [object_reader](../Classes/classobject__reader.md)** 
 * **class [object_writer](../Classes/classobject__writer.md)** 
 * **class [quatd](../Classes/classquatd.md)** 
@@ -109,6 +103,8 @@ title: Classes
     * **class [Constraints](../Classes/classshapeworks_1_1Constraints.md)** 
     * **class [ContourDomain](../Classes/classshapeworks_1_1ContourDomain.md)** 
     * **class [CorrespondenceFunction](../Classes/classshapeworks_1_1CorrespondenceFunction.md)** <br>Correspondence term. 
+    * **class [CurvatureSamplingFunction](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md)** <br>Please note: This is the sampling function currently being used. 
+        * **struct [CrossDomainNeighborhood](../Classes/structshapeworks_1_1CurvatureSamplingFunction_1_1CrossDomainNeighborhood.md)** 
     * **class [DataTool](../Classes/classshapeworks_1_1DataTool.md)** 
     * **class [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM. 
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
@@ -172,6 +168,7 @@ title: Classes
     * **class [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction. 
     * **class [MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)** 
     * **class [MeshWorker](../Classes/classshapeworks_1_1MeshWorker.md)** 
+    * **class [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)** 
     * **class [MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)** 
     * **struct [MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)** 
     * **class [NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md)** 
@@ -198,7 +195,10 @@ title: Classes
     * **class [ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)** 
     * **struct [ParticlePointIndexPair](../Classes/structshapeworks_1_1ParticlePointIndexPair.md)** 
     * **class [ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)** 
+    * **class [ParticleRegionNeighborhood](../Classes/classshapeworks_1_1ParticleRegionNeighborhood.md)** 
+        * **struct [IteratorNodePair](../Classes/structshapeworks_1_1ParticleRegionNeighborhood_1_1IteratorNodePair.md)** 
     * **class [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)** 
+    * **class [ParticleSurfaceNeighborhood](../Classes/classshapeworks_1_1ParticleSurfaceNeighborhood.md)** 
     * **class [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** <br>A facade class managing interactions with a particle system. 
     * **class [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)** 
     * **class [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md)** 
@@ -207,6 +207,8 @@ title: Classes
     * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
     * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** 
     * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
+    * **class [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md)** 
+    * **class [PowerOfTwoPointTreeNode](../Classes/classshapeworks_1_1PowerOfTwoPointTreeNode.md)** 
     * **class [PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
     * **class [ProcrustesRegistration](../Classes/classshapeworks_1_1ProcrustesRegistration.md)** 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
@@ -221,14 +223,12 @@ title: Classes
     * **class [Sampler](../Classes/classshapeworks_1_1Sampler.md)** 
         * **struct [CuttingPlaneType](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md)** 
         * **struct [SphereType](../Classes/structshapeworks_1_1Sampler_1_1SphereType.md)** 
-    * **class [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** 
-        * **struct [CrossDomainNeighborhood](../Classes/structshapeworks_1_1SamplingFunction_1_1CrossDomainNeighborhood.md)** 
-    * **class [SegmentationToolPanel](../Classes/classshapeworks_1_1SegmentationToolPanel.md)** 
+    * **class [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. 
     * **class [Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session. 
     * **class [Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject. 
         * **class [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md)** <br>TODO: replace this wherever it is used. 
     * **class [ShapeEvaluation](../Classes/classshapeworks_1_1ShapeEvaluation.md)** 
-    * **class [ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)** <br>The [ShapeEvaluationJob]() class is a worker class that computes shape evaluation metrics of compactness, specificity, and generalization. It runs asynchronously using the [Job](../Classes/classshapeworks_1_1Job.md) and [Worker]() interfaces. 
+    * **class [ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)** 
     * **class [ShapeGradientMatrix](../Classes/classshapeworks_1_1ShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
     * **class [ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
     * **class [ShapeScalarJob](../Classes/classshapeworks_1_1ShapeScalarJob.md)** 
@@ -251,7 +251,6 @@ title: Classes
     * **class [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages. 
     * **class [Style](../Classes/classshapeworks_1_1Style.md)** 
     * **class [Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject. 
-    * **class [Surface](../Classes/classshapeworks_1_1Surface.md)** 
     * **class [Telemetry](../Classes/classshapeworks_1_1Telemetry.md)** 
     * **class [UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker. 
     * **class [Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types. 
@@ -263,9 +262,12 @@ title: Classes
     * **class [Worker](../Classes/classshapeworks_1_1Worker.md)** 
     * **namespace [mesh](../Namespaces/namespaceshapeworks_1_1mesh.md)** 
     * **namespace [particles](../Namespaces/namespaceshapeworks_1_1particles.md)** 
+    * **struct [powstruct](../Classes/structshapeworks_1_1powstruct.md)** 
+    * **struct [powstruct< a, 0 >](../Classes/structshapeworks_1_1powstruct_3_01a_00_010_01_4.md)** 
     * **namespace [project](../Namespaces/namespaceshapeworks_1_1project.md)** 
         * **namespace [prefixes](../Namespaces/namespaceshapeworks_1_1project_1_1prefixes.md)** 
         * **namespace [types](../Namespaces/namespaceshapeworks_1_1project_1_1types.md)** 
+    * **class [shapeworks_exception](../Classes/classshapeworks_1_1shapeworks__exception.md)** 
 * **namespace [std](../Namespaces/namespacestd.md)** 
 * **namespace [utils](../Namespaces/namespaceutils.md)** 
 * **class [vec2d](../Classes/classvec2d.md)** 
@@ -277,4 +279,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

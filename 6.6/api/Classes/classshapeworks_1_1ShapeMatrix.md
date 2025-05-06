@@ -78,6 +78,7 @@ Inherits from vnl_matrix< double >, [shapeworks::Observer](../Classes/classshape
 | -------------- | -------------- |
 | virtual void | **[TransformSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-transformseteventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[PrefixTransformSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-prefixtransformseteventcallback)**(Object * , const itk::EventObject & ) |
+| virtual void | **[NeighborhoodSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-neighborhoodseteventcallback)**(Object * , const itk::EventObject & ) |
 
 **Protected Functions inherited from [shapeworks::Observer](../Classes/classshapeworks_1_1Observer.md)**
 
@@ -384,4 +385,4 @@ int m_DomainsPerShape;
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

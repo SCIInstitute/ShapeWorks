@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/python/python-api.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.6/python/python-api.html">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
@@ -703,6 +703,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -857,6 +871,48 @@
     <li class="md-nav__item">
       <a href="../studio/multiple-domains.html" class="md-nav__link">
         Multiple Domains SSM
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-shared-boundary.html" class="md-nav__link">
+        Shared Boundaries
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/segmentation-tool.html" class="md-nav__link">
+        Segmentation Tool
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/ai-assisted-segmentation.html" class="md-nav__link">
+        AI Assisted Segmentation
       </a>
     </li>
   
@@ -2129,6 +2185,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/release-process.html" class="md-nav__link">
+        Release Process
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2631,6 +2701,13 @@
           <li class="md-nav__item">
   <a href="#shapeworks_py.Image.extractLabel" class="md-nav__link">
     extractLabel()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks_py.Image.fitRegion" class="md-nav__link">
+    fitRegion()
   </a>
   
 </li>
@@ -5014,12 +5091,74 @@
       
       
         <label class="md-nav__link" for="__nav_15">
+          Java/Matlab Interface
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java/Matlab Interface" data-md-level="1">
+        <label class="md-nav__title" for="__nav_15">
+          <span class="md-nav__icon md-icon"></span>
+          Java/Matlab Interface
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../java/java.html" class="md-nav__link">
+        Java Interface
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../java/matlab.html" class="md-nav__link">
+        Matlab Interface
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_16" type="checkbox" id="__nav_16" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_16">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_15">
+        <label class="md-nav__title" for="__nav_16">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -5568,6 +5707,13 @@
           <li class="md-nav__item">
   <a href="#shapeworks_py.Image.extractLabel" class="md-nav__link">
     extractLabel()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks_py.Image.fitRegion" class="md-nav__link">
+    fitRegion()
   </a>
   
 </li>
@@ -9102,7 +9248,7 @@ Overloaded function.</p>
       <p>compare(<em>args, </em>*kwargs)
 Overloaded function.</p>
 <ol>
-<li>compare(self: shapeworks_py.Image, other: shapeworks_py.Image, verifyall: bool = True, tolerance: float = 0.0, precision: float = 1e-12) -&gt; bool</li>
+<li>compare(self: shapeworks_py.Image, other: shapeworks_py.Image, verifyall: bool = True, tolerance: float = 0.0, precision: float = 1e-06) -&gt; bool</li>
 </ol>
 <p>compares two images</p>
 <ol>
@@ -9245,7 +9391,7 @@ Overloaded function.</p>
   <div class="doc doc-contents ">
   
       <p>crop(self: shapeworks_py.Image, region: shapeworks::PhysicalRegion, padding: int = 0) -&gt; shapeworks_py.Image</p>
-<p>crops the image down to the given (physica) region, with optional padding</p>
+<p>crops the image down to the given (physical) region, with optional padding</p>
 
   </div>
 
@@ -9315,6 +9461,29 @@ Overloaded function.</p>
   
       <p>extractLabel(self: shapeworks_py.Image, label: float = 1.0) -&gt; shapeworks_py.Image</p>
 <p>extracts/isolates a specific pixel label from a given multi-label volume and outputs the corresponding binary image</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="shapeworks_py.Image.fitRegion" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">fitRegion</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method descriptor"><code>method descriptor</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>fitRegion(self: shapeworks_py.Image, region: shapeworks::PhysicalRegion) -&gt; shapeworks_py.Image</p>
+<p>crops or pads the image to fit a region</p>
 
   </div>
 
@@ -12297,7 +12466,7 @@ Overloaded function.</p>
         min: [1e+09, 1e+09, 1e+09],
         max: [-1e+09, -1e+09, -1e+09]
 }, spacing: List[float] = [1.0, 1.0, 1.0]) -&gt; shapeworks_py.Image</p>
-<p>rasterizes specified region to create binary image of desired dims (default: unit spacing)</p>
+<p>rasterize specified region to create binary image of desired dims (default: unit spacing)</p>
 
   </div>
 
@@ -15450,7 +15619,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>ComputeFullGeneralization(particleSystem: shapeworks_py.ParticleSystem, progress_callback: Callable[[float], None] = None) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
+      <p>ComputeFullGeneralization(particleSystem: shapeworks_py.ParticleSystem, progress_callback: Callable[[float], None] = None, check_abort: Callable[[], bool] = None, surface_distance_mode: bool = False) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
 <p>Computes the generalization measure for a particle system, all modes</p>
 
   </div>
@@ -15473,7 +15642,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>ComputeFullSpecificity(particleSystem: shapeworks_py.ParticleSystem, progress_callback: Callable[[float], None] = None) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
+      <p>ComputeFullSpecificity(particleSystem: shapeworks_py.ParticleSystem, progress_callback: Callable[[float], None] = None, check_abort: Callable[[], bool] = None, surface_distance_mode: bool = False) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
 <p>Computes the specificity measure for a particle system, all modes</p>
 
   </div>
@@ -15496,7 +15665,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>ComputeGeneralization(particleSystem: shapeworks_py.ParticleSystem, nModes: int, saveTo: str = '') -&gt; float</p>
+      <p>ComputeGeneralization(particleSystem: shapeworks_py.ParticleSystem, nModes: int, saveTo: str = '', surface_distance_mode: bool = False) -&gt; float</p>
 <p>Computes the generalization measure for a particle system</p>
 
   </div>
@@ -15519,7 +15688,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>ComputeSpecificity(particleSystem: shapeworks_py.ParticleSystem, nModes: int, saveTo: str = '') -&gt; float</p>
+      <p>ComputeSpecificity(particleSystem: shapeworks_py.ParticleSystem, nModes: int, saveTo: str = '', surface_distance_mode: bool = False) -&gt; float</p>
 <p>Computes the specificity measure for a particle system</p>
 
   </div>
@@ -16558,7 +16727,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>seed(seed: int = 1713107641017977) -&gt; None</p>
+      <p>seed(seed: int = 1746553348901044) -&gt; None</p>
 <p>sets the seed for random number generation (internal use)</p>
 
   </div>
@@ -16679,7 +16848,7 @@ Overloaded function.</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../dev/paths.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Adding to PATH Environment Variable" rel="prev">
+        <a href="../dev/release-process.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Release Process" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -16688,7 +16857,7 @@ Overloaded function.</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Adding to PATH Environment Variable
+              Release Process
             </div>
           </div>
         </a>

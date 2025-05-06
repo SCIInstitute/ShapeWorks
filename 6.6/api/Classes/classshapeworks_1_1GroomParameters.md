@@ -100,14 +100,6 @@ title: shapeworks::GroomParameters
 | void | **[set_remesh_gradation](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-gradation)**(double gradation) |
 | bool | **[get_skip_grooming](../Classes/classshapeworks_1_1GroomParameters.md#function-get-skip-grooming)**() |
 | void | **[set_skip_grooming](../Classes/classshapeworks_1_1GroomParameters.md#function-set-skip-grooming)**(bool skip) |
-| bool | **[get_shared_boundary](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary)**() |
-| void | **[set_shared_boundary](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary)**(bool shared_boundary) |
-| std::string | **[get_shared_boundary_first_domain](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary-first-domain)**() |
-| void | **[set_shared_boundary_first_domain](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary-first-domain)**(const std::string & domain_name) |
-| std::string | **[get_shared_boundary_second_domain](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary-second-domain)**() |
-| void | **[set_shared_boundary_second_domain](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary-second-domain)**(const std::string & domain_name) |
-| double | **[get_shared_boundary_tolerance](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary-tolerance)**() |
-| void | **[set_shared_boundary_tolerance](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary-tolerance)**(double tolerance) |
 | void | **[restore_defaults](../Classes/classshapeworks_1_1GroomParameters.md#function-restore-defaults)**() |
 
 ## Public Attributes
@@ -802,70 +794,6 @@ void set_skip_grooming(
 ```
 
 
-### function get_shared_boundary
-
-```cpp
-bool get_shared_boundary()
-```
-
-
-### function set_shared_boundary
-
-```cpp
-void set_shared_boundary(
-    bool shared_boundary
-)
-```
-
-
-### function get_shared_boundary_first_domain
-
-```cpp
-std::string get_shared_boundary_first_domain()
-```
-
-
-### function set_shared_boundary_first_domain
-
-```cpp
-void set_shared_boundary_first_domain(
-    const std::string & domain_name
-)
-```
-
-
-### function get_shared_boundary_second_domain
-
-```cpp
-std::string get_shared_boundary_second_domain()
-```
-
-
-### function set_shared_boundary_second_domain
-
-```cpp
-void set_shared_boundary_second_domain(
-    const std::string & domain_name
-)
-```
-
-
-### function get_shared_boundary_tolerance
-
-```cpp
-double get_shared_boundary_tolerance()
-```
-
-
-### function set_shared_boundary_tolerance
-
-```cpp
-void set_shared_boundary_tolerance(
-    double tolerance
-)
-```
-
-
 ### function restore_defaults
 
 ```cpp
@@ -912,4 +840,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:43 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

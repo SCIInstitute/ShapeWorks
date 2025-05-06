@@ -74,8 +74,6 @@ class Groom {
 
   bool run_alignment();
 
-  bool run_shared_boundaries();
-
   void assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global = false);
 
   static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference);
@@ -114,4 +112,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

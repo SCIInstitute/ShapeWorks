@@ -44,7 +44,6 @@ class Parameters {
   static constexpr const char* STUDIO_PARAMS = "studio";
   static constexpr const char* PROJECT_PARAMS = "project";
   static constexpr const char* DEEPSSM_PARAMS = "deepssm";
-  static constexpr const char* MONAI_PARAMS = "monai";
 
   Parameters();
 
@@ -75,4 +74,4 @@ class Parameters {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

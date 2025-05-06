@@ -66,10 +66,10 @@ Inherits from itk::DataObject
 | void | **[AddDomain](../Classes/classshapeworks_1_1ParticleSystem.md#function-adddomain)**(DomainType::Pointer input) |
 | std::vector< DomainType::Pointer >::const_iterator | **[GetDomainsBegin](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomainsbegin)**() const |
 | std::vector< DomainType::Pointer >::const_iterator | **[GetDomainsEnd](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomainsend)**() const |
-| [DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype) * | **[GetDomain](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomain)**(unsigned int i) |
-| [DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype) * | **[GetDomain](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomain)**() |
-| const [DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype) * | **[GetDomain](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomain)**(unsigned int i) const |
-| const [DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype) * | **[GetDomain](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomain)**() const |
+| [DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype) * | **[get_domain](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomain)**(unsigned int i) |
+| [DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype) * | **[get_domain](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomain)**() |
+| const [DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype) * | **[get_domain](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomain)**(unsigned int i) const |
+| const [DomainType](../Classes/classshapeworks_1_1ParticleSystem.md#using-domaintype) * | **[get_domain](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomain)**() const |
 | unsigned int | **[GetNumberOfDomains](../Classes/classshapeworks_1_1ParticleSystem.md#function-getnumberofdomains)**() const |
 | void | **[SetTransform](../Classes/classshapeworks_1_1ParticleSystem.md#function-settransform)**(unsigned int i, const [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) & ) |
 | void | **[SetTransform](../Classes/classshapeworks_1_1ParticleSystem.md#function-settransform)**(const [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) & p) |
@@ -588,10 +588,10 @@ inline std::vector< DomainType::Pointer >::const_iterator GetDomainsEnd() const
 Return an iterator that points one position past the last element of the list of the domains. 
 
 
-### function GetDomain
+### function get_domain
 
 ```cpp
-inline DomainType * GetDomain(
+inline DomainType * get_domain(
     unsigned int i
 )
 ```
@@ -600,20 +600,20 @@ inline DomainType * GetDomain(
 Return the i'th domain object. 
 
 
-### function GetDomain
+### function get_domain
 
 ```cpp
-inline DomainType * GetDomain()
+inline DomainType * get_domain()
 ```
 
 
 API for the single domain case. 
 
 
-### function GetDomain
+### function get_domain
 
 ```cpp
-inline const DomainType * GetDomain(
+inline const DomainType * get_domain(
     unsigned int i
 ) const
 ```
@@ -622,10 +622,10 @@ inline const DomainType * GetDomain(
 Return the i'th domain object. 
 
 
-### function GetDomain
+### function get_domain
 
 ```cpp
-inline const DomainType * GetDomain() const
+inline const DomainType * get_domain() const
 ```
 
 

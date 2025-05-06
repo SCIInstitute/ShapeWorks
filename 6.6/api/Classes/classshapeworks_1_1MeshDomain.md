@@ -44,10 +44,9 @@ Inherits from [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1Particl
 | virtual bool | **[IsWithinDistance](../Classes/classshapeworks_1_1MeshDomain.md#function-iswithindistance)**(const [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) & a, int idx_a, const [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) & b, int idx_b, double test_dist, double & distance) const override |
 | virtual void | **[DeleteImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deleteimages)**() override |
 | virtual void | **[DeletePartialDerivativeImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deletepartialderivativeimages)**() override |
-| void | **[SetMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-setmesh)**(std::shared_ptr< [Surface](../Classes/classshapeworks_1_1Surface.md) > mesh_, double geodesic_remesh_percent) |
+| void | **[SetMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-setmesh)**(std::shared_ptr< [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh_, double geodesic_remesh_percent) |
 | std::shared_ptr< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > | **[GetSWMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-getswmesh)**() const |
 | virtual void | **[UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-updatezerocrossingpoint)**() override |
-| std::shared_ptr< [Surface](../Classes/classshapeworks_1_1Surface.md) > | **[get_surface](../Classes/classshapeworks_1_1MeshDomain.md#function-get-surface)**() const |
 
 ## Additional inherited members
 
@@ -233,7 +232,7 @@ inline virtual const PointType & GetLowerBound() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetLowerBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getlowerbound)
 
 
-Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
+Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
 
 
 ### function GetUpperBound
@@ -246,7 +245,7 @@ inline virtual const PointType & GetUpperBound() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetUpperBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getupperbound)
 
 
-Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
+Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
 
 
 ### function GetZeroCrossingPoint
@@ -417,7 +416,7 @@ inline virtual void DeletePartialDerivativeImages() override
 
 ```cpp
 void SetMesh(
-    std::shared_ptr< Surface > mesh_,
+    std::shared_ptr< MeshWrapper > mesh_,
     double geodesic_remesh_percent
 )
 ```
@@ -440,13 +439,6 @@ inline virtual void UpdateZeroCrossingPoint() override
 **Reimplements**: [shapeworks::ParticleDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1ParticleDomain.md#function-updatezerocrossingpoint)
 
 
-### function get_surface
-
-```cpp
-inline std::shared_ptr< Surface > get_surface() const
-```
-
-
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

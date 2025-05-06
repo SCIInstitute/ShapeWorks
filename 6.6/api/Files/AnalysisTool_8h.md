@@ -177,14 +177,14 @@ class AnalysisTool : public QWidget {
   void group_changed();
 
   bool groups_active();
-  bool pca_groups_active();
-  QStringList get_checked_pca_groups();
 
   void on_view_open_button_toggled();
 
   void on_surface_open_button_toggled();
 
   void on_metrics_open_button_toggled();
+
+  bool is_group_active(int shape_index);
 
   void reconstruction_method_changed();
 
@@ -200,8 +200,6 @@ class AnalysisTool : public QWidget {
 
   void handle_group_pvalues_complete();
   void handle_alignment_changed(int new_alignment);
-
-  void handle_distance_method_changed();
 
   void run_good_bad_particles();
 
@@ -219,33 +217,22 @@ class AnalysisTool : public QWidget {
 
   Eigen::VectorXd construct_mean_shape();
 
-  void handle_samples_predicted_scalar_options();
-
-  void samples_table_context_menu();
-  void samples_table_copy_to_clipboard();
-
-  // mesh warping options
-  void mesh_warp_median_clicked();
-  void mesh_warp_sample_changed();
-  void mesh_warp_run_clicked();
-
-  void handle_tab_changed();
-
  Q_SIGNALS:
 
   void update_view();
-  void analysis_mode_changed();
   void pca_update();
   void progress(int);
   void reconstruction_complete();
 
  private:
+  void create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);
+
   void compute_reconstructed_domain_transforms();
 
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
-
+  void update_analysis_mode();
   void update_interface();
 
   bool group_pvalues_valid();
@@ -256,8 +243,6 @@ class AnalysisTool : public QWidget {
   void update_group_boxes();
   void update_group_values();
   void update_domain_alignment_box();
-  void update_pca_group_options();
-  void handle_pca_group_list_item_changed();
 
   void update_lda_graph();
 
@@ -305,7 +290,6 @@ class AnalysisTool : public QWidget {
 
   std::vector<std::string> current_group_names_;
   std::vector<std::string> current_group_values_;
-  std::vector<std::string> current_pca_group_values_;
 
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
@@ -317,10 +301,9 @@ class AnalysisTool : public QWidget {
   bool lda_computed_ = false;
   bool block_group_change_ = false;
 
+  AlignmentType current_alignment_{AlignmentType::Local};
   ParticleAreaPanel* particle_area_panel_{nullptr};
   ShapeScalarPanel* shape_scalar_panel_{nullptr};
-
-  std::vector<QPointer<Worker>> workers_;
 };
 }  // namespace shapeworks
 ```
@@ -328,4 +311,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -2590,13 +2590,14 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Container/MeanCurvatureContainer.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/Surface.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/CorrespondenceFunction.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/SamplingFunction.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/CurvatureSamplingFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/DisentangledCorrespondenceFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/DualVectorFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/LegacyCorrespondenceFunction.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/SamplingFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Neighborhood/ParticleNeighborhood.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_matrix_fixed.h&quot;</span>
 
@@ -2639,7 +2640,9 @@
 <span class="w">  </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="nf">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="nf">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">SamplingFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetCurvatureGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_SamplingFunction</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">SamplingFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_GradientFunction</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">CurvatureSamplingFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetCurvatureGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_CurvatureGradientFunction</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="n">OptimizerType</span><span class="o">*</span><span class="w"> </span><span class="nf">GetOptimizer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Optimizer</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">OptimizerType</span><span class="o">*</span><span class="w"> </span><span class="nf">GetOptimizer</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Optimizer</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
@@ -2665,7 +2668,7 @@
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Surface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddContour</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span>
 
@@ -2689,7 +2692,18 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddSphere</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAdaptivityMode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">SetFunctionA</span><span class="p">(</span><span class="n">GetCurvatureGradientFunction</span><span class="p">());</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAdaptivityMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// SW_LOG(&quot;SetAdaptivityMode: {}, pairwise_potential_type: {}&quot;, mode, m_pairwise_potential_type);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">SetFunctionA</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetCurvatureGradientFunction</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">SetFunctionA</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetGradientFunction</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AdaptivityMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mode</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetAdaptivityMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_AdaptivityMode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCorrespondenceOn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">SetBOn</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
@@ -2798,6 +2812,8 @@
 
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetVerbosity</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
+<span class="w">  </span><span class="n">MeanCurvatureCacheType</span><span class="o">*</span><span class="w"> </span><span class="nf">GetMeanCurvatureCache</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_MeanCurvatureCache</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_IsSharedBoundaryEnabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryWeight</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SharedBoundaryWeight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weight</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
@@ -2831,6 +2847,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFFCMode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_meshFFCMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
+
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetInitialized</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initialized</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialized</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initialized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
@@ -2840,17 +2857,24 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitializing</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initializing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_Initialized</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_AdaptivityMode</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_Initializing</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
 
 <span class="w">  </span><span class="n">OptimizerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Optimizer</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">SamplingFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_SamplingFunction</span><span class="p">;</span>
+<span class="w">  </span><span class="n">SamplingFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GradientFunction</span><span class="p">;</span>
+<span class="w">  </span><span class="n">CurvatureSamplingFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_CurvatureGradientFunction</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Sigma1Cache</span><span class="p">;</span>
+<span class="w">  </span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Sigma2Cache</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">MeanCurvatureCacheType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MeanCurvatureCache</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ParticleSurfaceNeighborhood</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_NeighborhoodList</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="p">;</span>
 
@@ -2903,7 +2927,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-04-23 at 22:52:44 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
               
             </article>

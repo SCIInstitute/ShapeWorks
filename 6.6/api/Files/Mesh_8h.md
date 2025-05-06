@@ -206,7 +206,7 @@ class Mesh {
 
   bool compareAllFaces(const Mesh& other_mesh) const;
 
-  bool compareAllFields(const Mesh& other_mesh, const double eps = 1e4) const;
+  bool compareAllFields(const Mesh& other_mesh, const double eps = -1.0) const;
 
   bool compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2 = "",
                     const double eps = -1.0) const;
@@ -226,8 +226,8 @@ class Mesh {
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
 
   vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
-      const;  // Copied directly from Surface. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
-              // from Surface. TODO: When refactoring, take this into account.
+      const;  // Copied directly from MeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
+              // from Meshwrapper. TODO: When refactoring, take this into account.
 
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
 
@@ -239,9 +239,7 @@ class Mesh {
   int getClosestFace(const Point3& point) const;
 
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
-      const;  // // WARNING: Copied directly from Surface. TODO: When refactoring, take this into account.
-
-  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);
+      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
  private:
   friend struct SharedCommandData;
@@ -281,4 +279,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2025-04-23 at 22:52:44 +0000
+Updated on 2024-03-17 at 12:58:44 -0600

@@ -46,7 +46,7 @@ class ShapeEvaluation {
   static Eigen::VectorXd ComputeFullCompactness(const ParticleSystemEvaluation& ParticleSystemEvaluation,
                                                 std::function<void(float)> progress_callback = nullptr);
 
-  static double ComputeGeneralization(const ParticleSystemEvaluation& ParticleSystemEvaluation, const int nModes,
+  static double compute_generalization(const ParticleSystemEvaluation& ParticleSystemEvaluation, const int nModes,
                                       const std::string& saveTo = "");
 
   static Eigen::VectorXd ComputeFullGeneralization(const ParticleSystemEvaluation& ParticleSystemEvaluation,

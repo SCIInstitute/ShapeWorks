@@ -36,7 +36,7 @@ title: Libs/Optimize/Sampler.h
 #include "GradientDescentOptimizer.h"
 #include "Libs/Optimize/Container/GenericContainerArray.h"
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
 #include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
 #include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
