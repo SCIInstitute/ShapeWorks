@@ -302,6 +302,13 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
+               <item row="22" column="0">
+                <widget class="QLabel" name="linear_regression_label">
+                 <property name="text">
+                  <string>Use Linear Regression</string>
+                 </property>
+                </widget>
+               </item>
                <item row="23" column="2">
                 <widget class="QWidget" name="disentangled_widget" native="true">
                  <layout class="QGridLayout" name="gridLayout_18">
@@ -428,6 +435,13 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
+               <item row="23" column="0">
+                <widget class="QLabel" name="label_time_points">
+                 <property name="text">
+                  <string>Timepoints defined per subject</string>
+                 </property>
+                </widget>
+               </item>
                <item row="0" column="2">
                 <widget class="QStackedWidget" name="particle_stack">
                  <property name="currentIndex">
@@ -543,6 +557,16 @@ QWidget#optimize_panel {
                </item>
                <item row="12" column="2">
                 <widget class="QLineEdit" name="geodesics_to_landmarks_weight">
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="23" column="2">
+                <widget class="QLineEdit" name="time_points_per_subject">
                  <property name="text">
                   <string>1</string>
                  </property>
@@ -859,6 +883,67 @@ QWidget#optimize_panel {
                </item>
                <item row="8" column="2">
                 <widget class="QLineEdit" name="geodesic_remesh_percent">
+                 <property name="text">
+                  <string>100</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="22" column="2">
+                <widget class="QWidget" name="linear_regression_widget" native="true">
+                 <layout class="QGridLayout" name="gridLayout_18">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item row="0" column="1">
+                   <widget class="QCheckBox" name="use_linear_regression">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <spacer name="horizontalSpacer_13">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item row="0" column="2">
+                   <spacer name="horizontalSpacer_14">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QLineEdit" name="iterations_per_split">
                  <property name="text">
                   <string>100</string>
                  </property>
@@ -1223,6 +1308,9 @@ QWidget#optimize_panel {
   <tabstop>use_landmarks</tabstop>
   <tabstop>narrow_band</tabstop>
   <tabstop>use_disentangled_ssm</tabstop>
+  <tabstop>use_linear_regression</tabstop>
+  <tabstop>time_points_per_subject</tabstop>
+
  </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>

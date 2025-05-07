@@ -68,6 +68,10 @@ void ProjectReader::load_subjects(StringMapList list) {
     if (contains(item, "excluded")) {
       subject->set_excluded(Variant(item["excluded"]));
     }
+    if (contains(item, "explanatory_variable")) {
+      subject->set_explanatory_variable(Variant(item["explanatory_variable"]));
+    }
+
     if (name.empty()) {
       if (!subject->get_original_filenames().empty()) {
         name = StringUtils::getBaseFilenameWithoutExtension(subject->get_original_filenames()[0]);

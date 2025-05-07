@@ -1668,6 +1668,12 @@ void Optimize::SetTimePtsPerSubject(int time_pts_per_subject) { this->m_timepts_
 int Optimize::GetTimePtsPerSubject() { return this->m_timepts_per_subject; }
 
 //---------------------------------------------------------------------------
+void Optimize::SetExplanatoryVariables(std::vector<double> val) { this->m_explanatory_variables = val; }
+
+//---------------------------------------------------------------------------
+std::vector<double> Optimize::GetExplanatoryVariables() { return this->m_explanatory_variables; }
+
+//---------------------------------------------------------------------------
 void Optimize::SetOptimizationIterations(int optimization_iterations) {
   this->m_optimization_iterations = optimization_iterations;
 }

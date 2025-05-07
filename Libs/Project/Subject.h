@@ -107,6 +107,11 @@ class Subject {
   //! Set if this subject is excluded or not
   void set_excluded(bool excluded);
 
+  //! Get the explanatory variable defined for the subject, used for Linear Regression and Mixed Effects Model for optimization
+  double get_explanatory_variable();
+  //! Set the explanatory variable defined for the subject, used for Linear Regression and Mixed Effects Model for optimization
+  void set_explanatory_variable(double val);
+
   //! Get the notes
   std::string get_notes();
   //! Set the notes
@@ -118,6 +123,7 @@ class Subject {
   std::string display_name_;
   bool fixed_ = false;
   bool excluded_ = false;
+  double explanatory_variable_ = std::numeric_limits<double>::lowest();
   StringList original_filenames_;
   StringList groomed_filenames_;
   StringList local_particle_filenames_;

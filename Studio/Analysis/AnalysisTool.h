@@ -77,8 +77,14 @@ class AnalysisTool : public QWidget {
 
   double get_pca_value();
 
+  std::vector<double> get_explanatory_variable_value();
+
   bool pca_animate();
   McaMode get_mca_level() const;
+
+  bool get_regression_analysis_status();
+
+  bool check_explanatory_variable_limits();
 
   int get_sample_number();
 
@@ -135,6 +141,7 @@ class AnalysisTool : public QWidget {
 
   // PCA
   void on_pcaSlider_valueChanged();
+  void on_explanatoryVariableSlider_valueChanged();
   void on_group_slider_valueChanged();
   void on_pcaModeSpinBox_valueChanged(int i);
 
@@ -245,6 +252,8 @@ class AnalysisTool : public QWidget {
   void update_difference_particles();
 
   Eigen::VectorXd get_mean_shape_particles();
+  
+  Eigen::VectorXd load_regression_parameters(std::string filepath);
 
   ShapeHandle create_shape_from_points(Particles points);
 
@@ -283,6 +292,9 @@ class AnalysisTool : public QWidget {
   ShapeList group2_list_;
 
   std::string feature_map_;
+
+  std::vector<double> explanatory_variable_limits_;
+  bool can_run_regression_; // decide if necessary variables are present to run regression in analysis
 
   std::vector<std::string> current_group_names_;
   std::vector<std::string> current_group_values_;

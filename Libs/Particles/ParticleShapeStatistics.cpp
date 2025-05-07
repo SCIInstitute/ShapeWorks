@@ -493,6 +493,25 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
     groups.push_back(1);
   }
   import_points(points, groups);
+  // TODO: importing regression params doesn't make sense here. take a look again later.
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ParticleShapeStatistics::compute_regression_mean(
+    const std::vector<double>& explanatory_variables) const {
+      std::cout << "Computing mean for regression" << std::endl;
+  Eigen::VectorXd t = Eigen::Map<const Eigen::VectorXd>(
+      explanatory_variables.data(), explanatory_variables.size());
+
+  // Ensure slope and intercept are initialized
+  if (slope_.size() == 0 || intercept_.size() == 0) {
+    throw std::runtime_error("Slope and Intercept not initialized yet!");
+  }
+
+  if (t.size() == 1)
+    return slope_ + intercept_ * t[0];
+  else
+    return slope_ + intercept_.cwiseProduct(t);
 }
 
 //---------------------------------------------------------------------------
@@ -694,5 +713,7 @@ Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix() const { return grou
 
 //---------------------------------------------------------------------------
 Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix() const { return group2_matrix_; }
+
+
 
 }  // namespace shapeworks

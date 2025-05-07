@@ -833,6 +833,8 @@ void Session::new_plane_point(PickResult result) {
 //---------------------------------------------------------------------------
 QString Session::get_filename() { return filename_; }
 
+// QString Session::get_parent_dir()
+
 //---------------------------------------------------------------------------
 int Session::get_num_shapes() { return shapes_.size(); }
 
@@ -1412,5 +1414,20 @@ void Session::recompute_surfaces() {
     shape->recompute_original_surface();
   }
   Q_EMIT update_display();
+}
+
+std::string get_regression_param_file(std::string param_name) {
+    QFileInfo fileInfo(filename_);
+    QString baseName = fileInfo.completeBaseName();
+
+    QDir projectDir = fileInfo.absoluteDir();
+    QString particlesDir = baseName + "_particles";
+    QString paramFilePath = projectDir.filePath(particlesDir);
+    paramFilePath = QDir(paramFilePath).filePath(param_name);
+
+    if (!QFile::exists(paramFilePath)) {
+        return "";
+    }
+    return paramFilePath.toStdString();
 }
 }  // namespace shapeworks

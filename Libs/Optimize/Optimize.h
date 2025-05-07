@@ -158,10 +158,14 @@ class Optimize {
     m_mesh_ffc_mode = mesh_ffc_mode;
     m_sampler->SetMeshFFCMode(mesh_ffc_mode);
   }
-  //! Set the number of time points per subject (TODO: details)
+  //! Set the number of time points per subject used for Linear Regression or Mixed Effects Model optimization
   void SetTimePtsPerSubject(int time_pts_per_subject);
-  //! Get the number of time points per subject (TODO: details)
+  //! Get the number of time points per subject used for Linear Regression or Mixed Effects Model optimization
   int GetTimePtsPerSubject();
+  //! Set Explanatory Variable for |  used for Linear Regression or Mixed Effects Model optimization
+  void SetExplanatoryVariables(std::vector<double> vals);
+  //! Get the number of time points per subject used for Linear Regression or Mixed Effects Model optimization
+  std::vector<double> GetExplanatoryVariables();
   //! Set the number of optimization iterations
   void SetOptimizationIterations(int optimization_iterations);
   //! Set the number of optimization iterations already completed (TODO: details)
@@ -388,6 +392,7 @@ class Optimize {
   bool m_mesh_ffc_mode = 0;
 
   unsigned int m_timepts_per_subject = 1;
+  std::vector<double> m_explanatory_variables;
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
   int m_iterations_per_split = 1000;

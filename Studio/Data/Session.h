@@ -340,6 +340,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void new_plane_point(PickResult result);
 
+  std::string get_regression_param_file(std::string param_name = "slope");
+
   QWidget* parent_{nullptr};
 
   Preferences& preferences_;

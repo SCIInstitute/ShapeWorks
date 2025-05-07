@@ -306,6 +306,11 @@ QStringList AnalysisTool::get_checked_pca_groups() {
 int AnalysisTool::get_pca_mode() { return ui_->pcaModeSpinBox->value() - 1; }
 
 //---------------------------------------------------------------------------
+bool AnalysisTool::get_regression_analysis_status() {
+  return ui_->enableRegressionCheckBox->isChecked();
+}
+
+//---------------------------------------------------------------------------
 double AnalysisTool::get_group_ratio() {
   double group_slider_value = ui_->group_slider->value();
   double group_ratio = group_slider_value / static_cast<double>(ui_->group_slider->maximum());
@@ -533,6 +538,36 @@ void AnalysisTool::network_analysis_clicked() {
   app_->get_py_worker()->run_job(network_analysis_job_);
 }
 
+//---------------------------------------------------------------------------
+Eigen::VectorXd load_regression_parameters(std::string filepath) {
+  std::ifstream infile(slope_file_path);
+  if (!infile.good()) {
+    throw std::runtime_error("Unable to open regression parameter file: \"" +
+                             filepath + "\" for reading");
+  }
+  try {
+    std::vector<double> temp_values;
+    double value;
+    while (infile >> value) {
+      temp_values.push_back(value);
+    }
+    if (temp_values.empty()) {
+      std::cerr << "Error: No data found in file " << slope_file_path
+                << std::endl;
+      return Eigen::VectorXd();
+    }
+    Eigen::VectorXd param_vector(temp_values.size());
+    for (std::size_t i = 0; i < temp_values.size(); ++i) {
+      param_vector[i] = temp_values[i];
+    }
+    return param_vector;
+
+  } catch (json::exception& e) {
+    throw std::runtime_error("Unabled to parse regression parameter file " +
+                             filepath + " : " + e.what());
+  }
+}
+
 //-----------------------------------------------------------------------------
 bool AnalysisTool::compute_stats() {
   if (stats_ready_) {
@@ -675,6 +710,24 @@ bool AnalysisTool::compute_stats() {
     compute_shape_evaluations();
   }
 
+  can_run_regression_ = check_explanatory_variable_limits();
+  std::cout << "can run regression set to " << can_run_regression_ << std::endl;
+  if (can_run_regression_) {
+    auto slope = load_regression_parameters(
+        session_->get_regression_param_file("slope")); // dM vector
+    auto intercept = load_regression_parameters(
+        session_->get_regression_param_file("intercept")); // dM vector
+    stats_.import_regression_parameters(slope, intercept); // set slope and intercept in stats object
+    ui_->regression_groupbox->setVisible(true);
+    ui_->explanatoryVariableSlider->setVisible(true);
+    ui_->enableRegressionCheckBox->setVisible(true);
+  }
+  else {
+    ui_->regression_groupbox->setVisible(false);
+    ui_->explanatoryVariableSlider->setVisible(false);
+    ui_->enableRegressionCheckBox->setVisible(false);
+  }
+
   stats_ready_ = true;
 
   ///  Set this to true to export long format sample data (e.g. for import into R)
@@ -715,6 +768,20 @@ bool AnalysisTool::compute_stats() {
   return true;
 }
 
+//---------------------------------------------------------------------------
+bool check_explanatory_variable_limits() {
+  auto subjects = session_->get_project()->get_subjects();
+  explanatory_variable_limits_.resize(2, 0.0);
+  explanatory_variable_limits_[0] = std::numeric_limits<double>::max();
+  explanatory_variable_limits_[1] = std::numeric_limits<double>::lowest();
+  for (auto sub : subjects) {
+    double exp_val = sub->get_explanatory_variable();
+    if (exp_val == std::numeric_limits<double>::lowest()) return false;
+    explanatory_variable_limits_[0] = std::min(explanatory_variable_limits_[0], exp_val);
+    explanatory_variable_limits_[1] = std::max(explanatory_variable_limits_[1], exp_val);
+  }
+  return true;
+}
 //-----------------------------------------------------------------------------
 Particles AnalysisTool::get_mean_shape_points() {
   if (!compute_stats()) {
@@ -778,8 +845,8 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     ui_->explained_variance->setText("");
     ui_->cumulative_explained_variance->setText("");
   }
-
-  temp_shape_ = stats_.get_mean() + (e * (value * lambda));
+  auto mean = !get_regression_analysis_status() ? stats_.get_mean() : stats_.compute_regression_mean(get_explanatory_variable_value());
+  temp_shape_ = mean + (e * (value * lambda));
 
   auto positions = temp_shape_;
 
@@ -920,6 +987,8 @@ void AnalysisTool::store_settings() {
   params.set("network_pvalue_of_interest", ui_->network_pvalue_of_interest->text().toStdString());
   params.set("network_pvalue_threshold", ui_->network_pvalue_threshold->text().toStdString());
 
+  // params.set("regression_slope", session->)
+
   session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
 }
 
@@ -1045,6 +1114,13 @@ void AnalysisTool::on_pcaSlider_valueChanged() {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::on_explanatoryVariableSlider_valueChanged() {
+  // this will make the slider handle redraw making the UI appear more responsive
+  QCoreApplication::processEvents();
+  Q_EMIT pca_update();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_group_slider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
   QCoreApplication::processEvents();
@@ -1144,6 +1220,14 @@ double AnalysisTool::get_pca_value() {
   return value;
 }
 
+
+std::vector<double> AnalysisTool::get_explanatory_variable_value() {
+  int slider_value = ui_->explanatoryVariableSlider->value();
+  // return {t_min + (static_cast<double>(slider_value) / 100.0) * (t_max - t_min)};
+  return {explanatory_variable_limits_[0] + (static_cast<double>(slider_value) / 100.0) * (explanatory_variable_limits_[1] - explanatory_variable_limits_[0])};
+
+}
+
 //---------------------------------------------------------------------------
 void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lambda) {
   set_labels(QString("pca"), value);
@@ -1162,6 +1246,7 @@ void AnalysisTool::update_slider() {
 void AnalysisTool::reset_stats() {
   stats_ready_ = false;
   evals_ready_ = false;
+  can_run_regression_ = false;
 
   ui_->tabWidget->setCurrentWidget(ui_->mean_tab);
   ui_->allSamplesRadio->setChecked(true);
