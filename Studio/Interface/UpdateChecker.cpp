@@ -50,7 +50,7 @@ void UpdateChecker::run_auto_update_check() {
 
 void UpdateChecker::run_update_check() {
   // check if a new version is available
-  QNetworkRequest request(QUrl("http://www.sci.utah.edu/~shapeworks/version.json"));
+  QNetworkRequest request(QUrl("https://www.sci.utah.edu/~shapeworks/version.json"));
   network_.get(request);
 }
 
