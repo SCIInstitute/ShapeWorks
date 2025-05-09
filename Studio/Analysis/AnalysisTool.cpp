@@ -718,7 +718,6 @@ bool AnalysisTool::compute_stats() {
 //-----------------------------------------------------------------------------
 Particles AnalysisTool::get_mean_shape_points() {
   if (!compute_stats()) {
-    std::cerr << "Non buenas, returning empty particles\n";
     return Particles();
   }
 
