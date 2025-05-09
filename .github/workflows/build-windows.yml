@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - deep_ssm_mods2
     tags:
     - '*'
   pull_request:
