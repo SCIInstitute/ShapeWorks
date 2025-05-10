@@ -141,11 +141,14 @@ function install_conda() {
       if ! pip install open3d-cpu==0.17.0;              then return 1; fi
   elif [[ "$(uname)" == "Darwin" ]]; then
       if ! pip install open3d==0.17.0;                  then return 1; fi
-      # fix hard-coded homebrew libomp.dylib
-      pushd $CONDA_PREFIX/lib/python3.9/site-packages/open3d/cpu
-      install_name_tool -change /opt/homebrew/opt/libomp/lib/libomp.dylib @rpath/libomp.dylib pybind.cpython-39-darwin.so
-      install_name_tool -add_rpath @loader_path/../../../ pybind.cpython-39-darwin.so
-      popd
+      
+      if [[ "$(uname -m)" == "arm64" ]]; then
+        pushd $CONDA_PREFIX/lib/python3.9/site-packages/open3d/cpu
+        install_name_tool -change /opt/homebrew/opt/libomp/lib/libomp.dylib @rpath/libomp.dylib pybind.cpython-39-darwin.so
+        install_name_tool -add_rpath @loader_path/../../../ pybind.cpython-39-darwin.so
+        popd
+        ln -sf "$CONDA_PREFIX/lib/libomp.dylib" "$CONDA_PREFIX/lib/python3.9/site-packages/open3d/cpu/../../../libomp.dylib"
+      fi
   else
       if ! pip install open3d==0.17.0;                  then return 1; fi
   fi
