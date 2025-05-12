@@ -864,3 +864,6 @@ double OptimizeParameters::get_shared_boundary_weight() { return params_.get(Key
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_shared_boundary_weight(double value) { params_.set(Keys::shared_boundary_weight, value); }
+
+//---------------------------------------------------------------------------
+Parameters OptimizeParameters::get_parameters() const { return params_; }

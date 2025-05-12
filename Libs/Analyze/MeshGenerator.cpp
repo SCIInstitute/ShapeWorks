@@ -165,6 +165,8 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
     }
   } else if (is_image) {
     try {
+      ImageUtils::register_itk_factories();
+
       // read file using ITK
       using ReaderType = itk::ImageFileReader<ImageType>;
       ReaderType::Pointer reader = ReaderType::New();
