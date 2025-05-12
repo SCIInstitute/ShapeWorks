@@ -2136,6 +2136,12 @@ Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
   int idx = 0;
   for (int d = 0; d < worlds.size(); d++) {
     Eigen::VectorXd new_world(worlds[d].size());
+
+    if (idx + new_world.size() > points.size()) {
+      SW_WARN("Inconsistent number of values in particle vector");
+      return {};
+    }
+
     for (int i = 0; i < worlds[d].size(); i++) {
       new_world[i] = points[idx++];
     }
