@@ -297,7 +297,12 @@ class NetworkAnalysis:
         snpm = spm1d.stats.nonparam.ttest2(
             np.transpose(all_data[:, :, np.where(grouprs == 0)[0], :].reshape(num_pts, len(np.where(grouprs == 0)[0]))),
             np.transpose(all_data[:, :, np.where(grouprs == 1)[0], :].reshape(num_pts, len(np.where(grouprs == 1)[0]))))
-        snpmi = snpm.inference(0.05, two_tailed=True, iterations=n_iter, force_iterations=True)  # assume one-sided
+        
+        alpha = 0.05
+        # Specified alpha must be greater than or equal to (1/nPermTotal)=0.33333
+        if (alpha < 1/n_iter):
+            alpha = 1/n_iter
+        snpmi = snpm.inference(alpha, two_tailed=True, iterations=n_iter, force_iterations=True)  # assume one-sided
 
         Z = snpmi.z  # flattened test statistic  (i.e., t value) over only non-zero-variance nodes
         tradzstar = snpmi.zstar  # critical test statistic  (i.e., critical t value)
