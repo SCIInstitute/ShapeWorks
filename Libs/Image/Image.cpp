@@ -44,25 +44,7 @@
 #include "ShapeworksUtils.h"
 #include "itkTPGACLevelSetImageFilter.h"  // actually a shapeworks class, not itk
 
-// ITK image factories
-#include <itkMetaImageIOFactory.h>
-#include <itkNiftiImageIOFactory.h>
-#include <itkNrrdImageIOFactory.h>
-
 namespace shapeworks {
-
-namespace {
-void register_factories() {
-  static bool registered = false;
-  if (!registered) {
-    // register all the factories
-    itk::NrrdImageIOFactory::RegisterOneFactory();
-    itk::NiftiImageIOFactory::RegisterOneFactory();
-    itk::MetaImageIOFactory::RegisterOneFactory();
-    registered = true;
-  }
-}
-}  // namespace
 
 Image::Image(const Dims dims) : itk_image_(ImageType::New()) {
   ImageType::RegionType region;
@@ -119,7 +101,7 @@ Image& Image::operator=(Image&& img) {
 }
 
 Image::ImageType::Pointer Image::read(const std::string& pathname) {
-  register_factories();
+  ImageUtils::register_itk_factories();
 
   if (pathname.empty()) {
     throw std::invalid_argument("Empty pathname");
