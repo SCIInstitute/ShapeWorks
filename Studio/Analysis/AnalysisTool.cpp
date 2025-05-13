@@ -524,7 +524,7 @@ void AnalysisTool::group_p_values_clicked() {
 void AnalysisTool::network_analysis_clicked() {
   if (ui_->network_feature->currentText().isEmpty()) {
     QMessageBox::warning(this, "Network Analysis", "Project must have a scalar feature for network analysis.");
-    //SW_WARN("Project must have a scalar features for network analysis");
+    // SW_WARN("Project must have a scalar features for network analysis");
     return;
   }
   network_analysis_job_ =
@@ -610,6 +610,7 @@ bool AnalysisTool::compute_stats() {
     if (particles.size() == 0) {
       continue;  // skip any that don't have particles
     }
+
     if (groups_active()) {
       auto group = shape->get_subject()->get_group_value(group_set);
       if (group == left_group) {
@@ -1461,6 +1462,8 @@ void AnalysisTool::update_group_boxes() {
 //---------------------------------------------------------------------------
 void AnalysisTool::update_group_values() {
   block_group_change_ = true;
+  stats_ready_ = false;
+
   auto values = session_->get_project()->get_group_values(ui_->group_combo->currentText().toStdString());
 
   if (values != current_group_values_) {
