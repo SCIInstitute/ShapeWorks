@@ -380,6 +380,7 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaAnimateCheckBox->setEnabled(false);
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
     ui_->pcaSlider->setEnabled(false);
     if (ui_->singleSamplesRadio->isChecked()) {
       // one sample mode
@@ -406,6 +407,7 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaSlider->setEnabled(true);
     ui_->pcaAnimateCheckBox->setEnabled(true);
     ui_->pcaModeSpinBox->setEnabled(true);
+    group_animate_timer_.stop();
     auto domain_names = session_->get_project()->get_domain_names();
     bool multiple_domains = domain_names.size() > 1;
     if (multiple_domains) {
@@ -422,6 +424,7 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaAnimateCheckBox->setEnabled(false);
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
   }
 
   update_difference_particles();
@@ -930,6 +933,7 @@ void AnalysisTool::store_settings() {
 //---------------------------------------------------------------------------
 void AnalysisTool::shutdown() {
   pca_animate_timer_.stop();
+  group_animate_timer_.stop();
 
   for (const auto& worker : workers_) {
     if (worker) {
@@ -2111,7 +2115,9 @@ void AnalysisTool::reconstruction_method_changed() {
 void AnalysisTool::set_active(bool active) {
   if (!active) {
     ui_->pcaAnimateCheckBox->setChecked(false);
+    ui_->group_animate_checkbox->setChecked(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
   } else {
     auto features = session_->get_project()->get_feature_names();
     ui_->network_feature->clear();
