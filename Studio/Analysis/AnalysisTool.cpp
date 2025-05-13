@@ -519,6 +519,11 @@ void AnalysisTool::group_p_values_clicked() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::network_analysis_clicked() {
+  if (ui_->network_feature->currentText().isEmpty()) {
+    QMessageBox::warning(this, "Network Analysis", "Project must have a scalar feature for network analysis.");
+    //SW_WARN("Project must have a scalar features for network analysis");
+    return;
+  }
   network_analysis_job_ =
       QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_combo->currentText().toStdString(),
                                                  ui_->network_feature->currentText().toStdString());
