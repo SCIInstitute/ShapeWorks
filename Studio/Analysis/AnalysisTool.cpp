@@ -345,6 +345,8 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
   update_difference_particles();
+  ui_->pcaSlider->setValue(0);
+  ui_->group_slider->setValue(10);
 
   ui_->show_predicted_scalar->setChecked(false);
   ui_->show_difference_to_predicted_scalar->setChecked(false);
