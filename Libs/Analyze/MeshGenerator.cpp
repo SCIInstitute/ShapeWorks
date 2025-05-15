@@ -7,6 +7,7 @@
 #include <QMeshWarper.h>
 #include <SurfaceReconstructor.h>
 #include <Utils/StringUtils.h>
+#include <itkConstantPadImageFilter.h>
 #include <itkImageFileReader.h>
 #include <itkOrientImageFilter.h>
 #include <itkPoint.h>
@@ -16,7 +17,6 @@
 #include <vtkPolyDataNormals.h>
 
 #include <QFileInfo>
-#include <limits>
 
 namespace shapeworks {
 
@@ -101,7 +101,7 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
     // only interested in 1's and 0's
     Image itk_image = Image(image);
     if (!itk_image.isDistanceTransform()) {
-      itk_image.binarize(0, 1);
+      itk_image.binarize();
       image = itk_image.getITKImage();
     }
 
