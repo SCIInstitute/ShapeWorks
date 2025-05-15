@@ -442,6 +442,9 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
   } catch (std::runtime_error& e) {
     handle_error(e.what());
   }
+
+  visualizer_->reset_camera();
+
   handle_message("Files loaded");
   handle_progress(100);
 }
