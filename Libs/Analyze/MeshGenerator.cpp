@@ -105,6 +105,20 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
       image = itk_image.getITKImage();
     }
 
+    // first, pad the image in case the segmentation is on the edge
+    using PadFilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
+    PadFilterType::Pointer pad = PadFilterType::New();
+    ImageType::SizeType lower_extend_region;
+    ImageType::SizeType upper_extend_region;
+    lower_extend_region.Fill(10);
+    upper_extend_region.Fill(10);
+    pad->SetInput(image);
+    pad->SetPadLowerBound(lower_extend_region);
+    pad->SetPadUpperBound(upper_extend_region);
+    pad->SetConstant(0);  // set to background value
+    pad->Update();
+    image = pad->GetOutput();
+
     // connect to VTK
     vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
     itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
