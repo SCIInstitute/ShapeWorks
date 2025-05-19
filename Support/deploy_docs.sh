@@ -58,7 +58,7 @@ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommand
 doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
 
 # use mike to mkdocs w/ version
-mike deploy --config-file ./mkdocs.yml --title "6.6 (dev)" 6.6 dev --branch gh-pages --update-aliases --no-redirect
+mike deploy --config-file ./mkdocs.yml --title "6.7 (dev)" 6.7 dev --branch gh-pages --update-aliases --no-redirect
 mike set-default latest
 
 # update docs on github
