@@ -1,6 +1,25 @@
 # Release Notes
 
-## ShapeWorks 6.6.0 - 2025-03
+
+## ShapeWorks 6.6.1 - 2025-05
+
+### Fixes
+  * Fix loading of non-binary segmentations
+  * Add padding for visualization of segmentation surfaces
+  * Add Blue/Red color map for scalar visualization
+  * Fix PCA/Group sliders when switching projects
+  * Fix stats being reloaded when groups are changed
+  * Fix a crash that can happen when changing projects while mesh warping
+  * Turn off group animate checkbox when deactivating analysis module
+  * Disallow network analysis when there are no scalar features
+  * Auto adjust network analysis alpha when necessary
+  * Add logging of groom and optimize parameters to file log
+  * Fix itk image factory registration for network analysis with image based features
+  * Added warning about inconsistent number of values in particle vector
+  * Fix libomp.dylib install problem on mac arm64 
+  * Update URL for UpdateChecker
+
+## ShapeWorks 6.6.0 - 2025-05
 
 ![](../img/about/release6.6.png)
 
