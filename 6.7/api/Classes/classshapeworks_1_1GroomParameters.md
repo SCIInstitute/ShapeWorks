@@ -109,6 +109,7 @@ title: shapeworks::GroomParameters
 | double | **[get_shared_boundary_tolerance](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary-tolerance)**() |
 | void | **[set_shared_boundary_tolerance](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary-tolerance)**(double tolerance) |
 | void | **[restore_defaults](../Classes/classshapeworks_1_1GroomParameters.md#function-restore-defaults)**() |
+| [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1GroomParameters.md#function-get-parameters)**() const |
 
 ## Public Attributes
 
@@ -873,6 +874,13 @@ void restore_defaults()
 ```
 
 
+### function get_parameters
+
+```cpp
+inline Parameters get_parameters() const
+```
+
+
 ## Public Attributes Documentation
 
 ### variable GROOM_SMOOTH_VTK_LAPLACIAN_C
@@ -912,4 +920,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2025-05-06 at 07:14:35 +0000
+Updated on 2025-05-19 at 18:59:07 +0000

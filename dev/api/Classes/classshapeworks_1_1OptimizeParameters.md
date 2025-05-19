@@ -96,6 +96,7 @@ title: shapeworks::OptimizeParameters
 | void | **[set_shared_boundary](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-shared-boundary)**(bool value) |
 | double | **[get_shared_boundary_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-shared-boundary-weight)**() |
 | void | **[set_shared_boundary_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-shared-boundary-weight)**(double value) |
+| [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-parameters)**() const |
 
 ## Detailed Description
 
@@ -752,6 +753,13 @@ void set_shared_boundary_weight(
 ```
 
 
+### function get_parameters
+
+```cpp
+Parameters get_parameters() const
+```
+
+
 -------------------------------
 
-Updated on 2025-05-06 at 07:14:35 +0000
+Updated on 2025-05-19 at 18:59:07 +0000

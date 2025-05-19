@@ -44,6 +44,9 @@ class ImageUtils {
   using TPSTransform = itk::ThinPlateSplineKernelTransform<double, 3>;
   static TPSTransform::Pointer createWarpTransform(const std::string& source_landmarks_file,
                                                    const std::string& target_landmarks_file, const int stride = 1);
+
+  static void register_itk_factories();
+
 };
 
 }  // namespace shapeworks
@@ -52,4 +55,4 @@ class ImageUtils {
 
 -------------------------------
 
-Updated on 2025-05-06 at 07:14:36 +0000
+Updated on 2025-05-19 at 18:59:07 +0000

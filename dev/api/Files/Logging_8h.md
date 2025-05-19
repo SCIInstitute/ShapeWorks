@@ -32,6 +32,7 @@ title: Libs/Common/Logging.h
 | -------------- | -------------- |
 |  | **[SW_LOG_STACK](../Files/Logging_8h.md#define-sw-log-stack)**(message) <br>Log stack macro.  |
 |  | **[SW_LOG](../Files/Logging_8h.md#define-sw-log)**(message, ...) <br>Log message macro.  |
+|  | **[SW_LOG_ONLY](../Files/Logging_8h.md#define-sw-log-only)**(message, ...) <br>Log only macro.  |
 |  | **[SW_WARN](../Files/Logging_8h.md#define-sw-warn)**(message, ...) <br>Log warning macro.  |
 |  | **[SW_ERROR](../Files/Logging_8h.md#define-sw-error)**(message, ...) <br>Log error macro.  |
 |  | **[SW_DEBUG](../Files/Logging_8h.md#define-sw-debug)**(message, ...) <br>Log debug macro.  |
@@ -82,6 +83,18 @@ shapeworks::Logging::Instance().log_message(safe_format(message, ##__VA_ARGS__),
 ```
 
 Log message macro. 
+
+### define SW_LOG_ONLY
+
+```cpp
+#define SW_LOG_ONLY(
+    message,
+    ...
+)
+shapeworks::Logging::Instance().log_only(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);
+```
+
+Log only macro. 
 
 ### define SW_WARN
 
@@ -242,6 +255,8 @@ class Logging {
 
   void log_message(const std::string& message, const int line, const char* file) const;
 
+  void log_only(const std::string& message, const int line, const char* file) const;
+
   void log_stack(const std::string& message) const;
 
   void log_error(const std::string& message, const int line, const char* file) const;
@@ -294,6 +309,9 @@ class Logging {
 #define SW_LOG(message, ...) \
   shapeworks::Logging::Instance().log_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);
 
+#define SW_LOG_ONLY(message, ...) \
+  shapeworks::Logging::Instance().log_only(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);
+
 #define SW_WARN(message, ...) \
   shapeworks::Logging::Instance().log_warning(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
@@ -330,4 +348,4 @@ class Logging {
 
 -------------------------------
 
-Updated on 2025-05-06 at 07:14:36 +0000
+Updated on 2025-05-19 at 18:59:07 +0000

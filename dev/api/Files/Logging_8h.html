@@ -2573,6 +2573,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#define-sw_log_only" class="md-nav__link">
+    define SW_LOG_ONLY
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#define-sw_warn" class="md-nav__link">
     define SW_WARN
   </a>
@@ -2732,6 +2739,10 @@
 </tr>
 <tr>
 <td></td>
+<td><strong><a href="Logging_8h.html#define-sw-log-only">SW_LOG_ONLY</a></strong>(message, ...) <br>Log only macro.</td>
+</tr>
+<tr>
+<td></td>
 <td><strong><a href="Logging_8h.html#define-sw-warn">SW_WARN</a></strong>(message, ...) <br>Log warning macro.</td>
 </tr>
 <tr>
@@ -2792,6 +2803,14 @@
 <span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_message</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">);</span>
 </code></pre></div>
 <p>Log message macro. </p>
+<h3 id="define-sw_log_only">define SW_LOG_ONLY</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define SW_LOG_ONLY(</span>
+<span class="w">    </span><span class="n">message</span><span class="p">,</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_only</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">);</span>
+</code></pre></div>
+<p>Log only macro. </p>
 <h3 id="define-sw_warn">define SW_WARN</h3>
 <div class="highlight"><pre><span></span><code><span class="cp">#define SW_WARN(</span>
 <span class="w">    </span><span class="n">message</span><span class="p">,</span>
@@ -2913,6 +2932,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_message</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_only</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_stack</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_error</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
@@ -2965,6 +2986,9 @@
 <span class="cp">#define SW_LOG(message, ...) \</span>
 <span class="cp">  shapeworks::Logging::Instance().log_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);</span>
 
+<span class="cp">#define SW_LOG_ONLY(message, ...) \</span>
+<span class="cp">  shapeworks::Logging::Instance().log_only(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);</span>
+
 <span class="cp">#define SW_WARN(message, ...) \</span>
 <span class="cp">  shapeworks::Logging::Instance().log_warning(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
 
@@ -2998,7 +3022,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-05-06 at 07:14:36 +0000</p>
+<p>Updated on 2025-05-19 at 18:59:07 +0000</p>
 
               
             </article>

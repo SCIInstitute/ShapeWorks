@@ -24,6 +24,7 @@ ShapeWorks [Logging]() Library.  [More...](#detailed-description)
 | bool | **[check_log_open](../Classes/classshapeworks_1_1Logging.md#function-check-log-open)**() const<br>Return if the log is open.  |
 | std::string | **[get_log_filename](../Classes/classshapeworks_1_1Logging.md#function-get-log-filename)**() const<br>Return the log filename.  |
 | void | **[log_message](../Classes/classshapeworks_1_1Logging.md#function-log-message)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_LOG macro.  |
+| void | **[log_only](../Classes/classshapeworks_1_1Logging.md#function-log-only)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_LOG_ONLY macro.  |
 | void | **[log_stack](../Classes/classshapeworks_1_1Logging.md#function-log-stack)**(const std::string & message) const<br>Log a stack trace message, use SW_LOG_STACK macro.  |
 | void | **[log_error](../Classes/classshapeworks_1_1Logging.md#function-log-error)**(const std::string & message, const int line, const char * file) const<br>Log an error, use SW_ERROR macro.  |
 | void | **[show_message](../Classes/classshapeworks_1_1Logging.md#function-show-message)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_MESSAGE macro.  |
@@ -146,6 +147,18 @@ void log_message(
 ```
 
 Log a message, use SW_LOG macro. 
+
+### function log_only
+
+```cpp
+void log_only(
+    const std::string & message,
+    const int line,
+    const char * file
+) const
+```
+
+Log a message, use SW_LOG_ONLY macro. 
 
 ### function log_stack
 
@@ -299,4 +312,4 @@ Set a progress callback function to be called whenever a progress update is post
 
 -------------------------------
 
-Updated on 2025-05-06 at 07:14:36 +0000
+Updated on 2025-05-19 at 18:59:07 +0000

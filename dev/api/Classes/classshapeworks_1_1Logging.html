@@ -2560,6 +2560,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-log_only" class="md-nav__link">
+    function log_only
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-log_stack" class="md-nav__link">
     function log_stack
   </a>
@@ -2715,6 +2722,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-only">log_only</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log a message, use SW_LOG_ONLY macro.</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Logging.html#function-log-stack">log_stack</a></strong>(const std::string &amp; message) const<br>Log a stack trace message, use SW_LOG_STACK macro.</td>
 </tr>
 <tr>
@@ -2829,6 +2840,14 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Log a message, use SW_LOG macro. </p>
+<h3 id="function-log_only">function log_only</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_only</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Log a message, use SW_LOG_ONLY macro. </p>
 <h3 id="function-log_stack">function log_stack</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_stack</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span>
@@ -2924,7 +2943,7 @@
 </code></pre></div>
 <p>Set a progress callback function to be called whenever a progress update is posted. </p>
 <hr />
-<p>Updated on 2025-05-06 at 07:14:36 +0000</p>
+<p>Updated on 2025-05-19 at 18:59:07 +0000</p>
 
               
             </article>

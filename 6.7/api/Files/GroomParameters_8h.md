@@ -158,7 +158,6 @@ class GroomParameters {
   bool get_skip_grooming();
   void set_skip_grooming(bool skip);
 
-
   bool get_shared_boundary();
   void set_shared_boundary(bool shared_boundary);
 
@@ -172,6 +171,8 @@ class GroomParameters {
   void set_shared_boundary_tolerance(double tolerance);
 
   void restore_defaults();
+
+  Parameters get_parameters() const { return params_; }
 
   // constants
   const static std::string GROOM_SMOOTH_VTK_LAPLACIAN_C;
@@ -192,4 +193,4 @@ class GroomParameters {
 
 -------------------------------
 
-Updated on 2025-05-06 at 07:14:36 +0000
+Updated on 2025-05-19 at 18:59:07 +0000
