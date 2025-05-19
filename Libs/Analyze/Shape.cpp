@@ -125,10 +125,8 @@ void Shape::recompute_original_surface() {
   original_meshes_.set_mesh(0, mesh_handle);
 }
 
-
 //---------------------------------------------------------------------------
-void Shape::ensure_segmentation()
-{
+void Shape::ensure_segmentation() {
   if (get_segmentation()) {
     return;
   }
@@ -159,8 +157,7 @@ void Shape::ensure_segmentation()
 //---------------------------------------------------------------------------
 MeshGroup Shape::get_groomed_meshes(bool wait) {
   if (!subject_) {
-    std::cerr << "Error: asked for groomed meshes when none are present!\n";
-    assert(0);
+    return {};
   }
 
   if (!groomed_meshes_.valid() || groomed_meshes_.meshes().size() != subject_->get_number_of_domains()) {

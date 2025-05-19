@@ -345,6 +345,8 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
   update_difference_particles();
+  ui_->pcaSlider->setValue(0);
+  ui_->group_slider->setValue(10);
 
   ui_->show_predicted_scalar->setChecked(false);
   ui_->show_difference_to_predicted_scalar->setChecked(false);
@@ -380,6 +382,7 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaAnimateCheckBox->setEnabled(false);
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
     ui_->pcaSlider->setEnabled(false);
     if (ui_->singleSamplesRadio->isChecked()) {
       // one sample mode
@@ -406,6 +409,7 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaSlider->setEnabled(true);
     ui_->pcaAnimateCheckBox->setEnabled(true);
     ui_->pcaModeSpinBox->setEnabled(true);
+    group_animate_timer_.stop();
     auto domain_names = session_->get_project()->get_domain_names();
     bool multiple_domains = domain_names.size() > 1;
     if (multiple_domains) {
@@ -422,6 +426,7 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaAnimateCheckBox->setEnabled(false);
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
   }
 
   update_difference_particles();
@@ -519,6 +524,11 @@ void AnalysisTool::group_p_values_clicked() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::network_analysis_clicked() {
+  if (ui_->network_feature->currentText().isEmpty()) {
+    QMessageBox::warning(this, "Network Analysis", "Project must have a scalar feature for network analysis.");
+    // SW_WARN("Project must have a scalar features for network analysis");
+    return;
+  }
   network_analysis_job_ =
       QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_combo->currentText().toStdString(),
                                                  ui_->network_feature->currentText().toStdString());
@@ -602,6 +612,7 @@ bool AnalysisTool::compute_stats() {
     if (particles.size() == 0) {
       continue;  // skip any that don't have particles
     }
+
     if (groups_active()) {
       auto group = shape->get_subject()->get_group_value(group_set);
       if (group == left_group) {
@@ -718,7 +729,6 @@ bool AnalysisTool::compute_stats() {
 //-----------------------------------------------------------------------------
 Particles AnalysisTool::get_mean_shape_points() {
   if (!compute_stats()) {
-    std::cerr << "Non buenas, returning empty particles\n";
     return Particles();
   }
 
@@ -926,6 +936,7 @@ void AnalysisTool::store_settings() {
 //---------------------------------------------------------------------------
 void AnalysisTool::shutdown() {
   pca_animate_timer_.stop();
+  group_animate_timer_.stop();
 
   for (const auto& worker : workers_) {
     if (worker) {
@@ -1453,6 +1464,8 @@ void AnalysisTool::update_group_boxes() {
 //---------------------------------------------------------------------------
 void AnalysisTool::update_group_values() {
   block_group_change_ = true;
+  stats_ready_ = false;
+
   auto values = session_->get_project()->get_group_values(ui_->group_combo->currentText().toStdString());
 
   if (values != current_group_values_) {
@@ -2107,7 +2120,9 @@ void AnalysisTool::reconstruction_method_changed() {
 void AnalysisTool::set_active(bool active) {
   if (!active) {
     ui_->pcaAnimateCheckBox->setChecked(false);
+    ui_->group_animate_checkbox->setChecked(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
   } else {
     auto features = session_->get_project()->get_feature_names();
     ui_->network_feature->clear();
@@ -2137,6 +2152,12 @@ Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
   int idx = 0;
   for (int d = 0; d < worlds.size(); d++) {
     Eigen::VectorXd new_world(worlds[d].size());
+
+    if (idx + new_world.size() > points.size()) {
+      SW_WARN("Inconsistent number of values in particle vector");
+      return {};
+    }
+
     for (int i = 0; i < worlds[d].size(); i++) {
       new_world[i] = points[idx++];
     }

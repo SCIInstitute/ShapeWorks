@@ -2,6 +2,11 @@
 
 #include <itkPointSet.h>
 
+// ITK image factories
+#include <itkMetaImageIOFactory.h>
+#include <itkNiftiImageIOFactory.h>
+#include <itkNrrdImageIOFactory.h>
+
 namespace shapeworks {
 
 PhysicalRegion ImageUtils::boundingBox(const std::vector<std::string>& filenames, Image::PixelType isoValue) {
@@ -37,6 +42,18 @@ PhysicalRegion ImageUtils::boundingBox(const std::vector<std::reference_wrapper<
   }
 
   return bbox;
+}
+
+void ImageUtils::register_itk_factories()
+{
+  static bool registered = false;
+  if (!registered) {
+    // register all the factories
+    itk::NrrdImageIOFactory::RegisterOneFactory();
+    itk::NiftiImageIOFactory::RegisterOneFactory();
+    itk::MetaImageIOFactory::RegisterOneFactory();
+    registered = true;
+  }
 }
 
 ImageUtils::TPSTransform::Pointer ImageUtils::createWarpTransform(const std::string& source_landmarks_file,

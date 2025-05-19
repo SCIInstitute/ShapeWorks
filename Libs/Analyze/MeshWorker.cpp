@@ -19,6 +19,9 @@ void MeshWorker::run()
 {
   // build the mesh using our MeshGenerator
   auto item = this->queue_->get_next_work_item();
+  if (!item) {
+    return;
+  }
 
   MeshHandle mesh = this->mesh_generator_->build_mesh(*item);
 

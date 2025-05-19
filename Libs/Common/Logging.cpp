@@ -13,11 +13,11 @@ namespace shapeworks {
 static std::string create_header(const int line, const char* filename, const char* function = "") {
   const char* name = (strrchr(filename, '/') ? strrchr(filename, '/') + 1 : filename);
   const char* name2 = (strrchr(name, '\\') ? strrchr(name, '\\') + 1 : name);
-  const char* function_name = (strrchr(function, ':') ? strrchr(function, ':') + 1 : function);
   if (!function) {
     std::string header = "[" + std::string(name2) + "|" + std::to_string(line) + "]";
     return header;
   } else {
+    const char* function_name = (strrchr(function, ':') ? strrchr(function, ':') + 1 : function);
     std::string header = "[" + std::string(name2) + "|" + std::string(function_name) + "|" + std::to_string(line) + "]";
     return header;
   }
@@ -66,6 +66,14 @@ void Logging::log_message(const std::string& message, const int line, const char
   }
   if (message_callback_) {
     message_callback_(message);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Logging::log_only(const std::string& message, const int line, const char* file) const {
+  spd::info(message);
+  if (log_open_) {
+    spd::get("file")->info(message);
   }
 }
 

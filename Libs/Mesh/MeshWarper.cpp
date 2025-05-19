@@ -56,6 +56,9 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 //---------------------------------------------------------------------------
 void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
                                     const Eigen::MatrixXd& reference_particles, const Eigen::MatrixXd& landmarks) {
+  // lock so that we don't swap out the reference mesh while we are using it
+  std::scoped_lock lock(mutex);
+
   if (this->incoming_reference_mesh_ == reference_mesh) {
     if (this->reference_particles_.size() == reference_particles.size()) {
       if (this->reference_particles_ == reference_particles && landmarks_points_ == landmarks) {

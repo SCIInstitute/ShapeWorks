@@ -222,6 +222,12 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   optimize_parameters_->set_load_callback(std::bind(&OptimizeTool::handle_load_progress, this, std::placeholders::_1));
   optimize_->SetFileOutputEnabled(false);
 
+  // log parameters
+  SW_LOG_ONLY("Optimization parameters:");
+  for (const auto& pair : optimize_parameters_->get_parameters().get_map()) {
+    SW_LOG_ONLY(pair.first + ": " + pair.second);
+  }
+
   ShapeworksWorker* worker =
       new ShapeworksWorker(ShapeworksWorker::OptimizeType, NULL, optimize_, optimize_parameters_, session_);
   QThread* thread = new QThread;
