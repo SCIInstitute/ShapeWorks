@@ -5,31 +5,13 @@
 #include <tbb/global_control.h>
 #include <tbb/info.h>
 
+#include <boost/filesystem.hpp>
+
 namespace shapeworks {
-
-// Windows doesn't have S_ISDIR and S_ISREG macros
-#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
-#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
-#endif
-
-#if !defined(S_ISDIR) && defined(S_IFMT) && defined(S_IFDIR)
-#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
-#endif
 
 unsigned ShapeWorksUtils::rng_seed_ = std::chrono::system_clock::now().time_since_epoch().count();
 std::mt19937 ShapeWorksUtils::mt_;
 std::unique_ptr<tbb::global_control> ShapeWorksUtils::tbb_global_control_;
-
-//-----------------------------------------------------------------------------
-/// looks at the pathname to see if it's a file or a directory or neither
-static bool stat_path(const std::string& pathname, bool isdir = false) {
-  struct stat info;
-  if (stat(pathname.c_str(), &info) != 0) {
-    return false;
-  } else {
-    return isdir ? S_ISDIR(info.st_mode) : S_ISREG(info.st_mode);
-  }
-}
 
 //-----------------------------------------------------------------------------
 void ShapeWorksUtils::set_rng_seed(const unsigned seed) {
@@ -38,10 +20,16 @@ void ShapeWorksUtils::set_rng_seed(const unsigned seed) {
 }
 
 //-----------------------------------------------------------------------------
-bool ShapeWorksUtils::is_directory(const std::string& pathname) { return stat_path(pathname, true); }
+bool ShapeWorksUtils::is_directory(const std::string& pathname) {
+  boost::system::error_code ec;
+  return boost::filesystem::is_directory(pathname, ec);
+}
 
 //-----------------------------------------------------------------------------
-bool ShapeWorksUtils::file_exists(const std::string& filename) { return stat_path(filename, false); }
+bool ShapeWorksUtils::file_exists(const std::string& filename) {
+  boost::system::error_code ec;
+  return boost::filesystem::is_regular_file(filename, ec);
+}
 
 //-----------------------------------------------------------------------------
 void ShapeWorksUtils::setup_console_logging(bool show_progress, bool xml_status) {
