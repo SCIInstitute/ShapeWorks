@@ -107,7 +107,9 @@ Image::ImageType::Pointer Image::read(const std::string& pathname) {
     throw std::invalid_argument("Empty pathname");
   }
 
-  if (ShapeWorksUtils::is_directory(pathname)) return readDICOMImage(pathname);
+  if (ShapeWorksUtils::is_directory(pathname)) {
+    return readDICOMImage(pathname);
+  }
 
   // check if it exists
   if (!boost::filesystem::exists(pathname)) {
