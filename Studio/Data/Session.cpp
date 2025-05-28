@@ -203,10 +203,6 @@ bool Session::save_project(QString filename) {
 bool Session::load_project(QString filename) {
   modified_ = false;
 
-  if (!QFile::exists(filename)) {
-    QMessageBox::critical(nullptr, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
-    return false;
-  }
 
   // clear the project out first
   filename_ = QFileInfo(filename).absoluteFilePath();
@@ -1096,6 +1092,7 @@ bool Session::set_image_name(std::string image_name) {
   }
   params_.set("image_name", image_name);
   Q_EMIT image_slice_settings_changed();
+  Q_EMIT image_name_changed();
   return true;
 }
 

@@ -15,7 +15,7 @@ using namespace shapeworks;
 
 TEST(MeshTests, meshLocators) {
   Mesh mesh1(std::string(TEST_DATA_DIR) + "/butterfly.vtk");
-  Mesh mesh2(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
+  Mesh mesh2(std::string(TEST_DATA_DIR) + "/smoothsinc.vtp");
   Point center_1 = mesh1.center();
   Point center_2 = mesh2.center();
   int center_id_1 = mesh1.closestPointId(center_1);
@@ -277,7 +277,7 @@ TEST(MeshTests, smoothTest2) {
 TEST(MeshTests, smoothSincTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   femur.smoothSinc(10, 0.05);
-  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtp");
 
   ASSERT_TRUE(femur == ground_truth);
 }

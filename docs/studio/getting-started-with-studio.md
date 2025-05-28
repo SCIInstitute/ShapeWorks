@@ -48,21 +48,22 @@ Studio provides a number of preference options.
 | Option | Description |
 | --- | ----------- |
 | Color Scheme | Base foreground and background colors for viewers |
+| Particle Colors | Choice of color for particles |
 | Color Map | Color map used for scalar ranges |
 | Reverse Color Map | Option to reverse the color map |
 | Discrete Color Mode | Option to use discrete colors for color map |
 | Groom Output | Folder name for groom output |
 | Optimize Output | Folder name for optimize particle output |
+| Parallel Processing Enabled | Whether to use parallelized grooming, optimizing and mesh reconstruction |
+| Parallel Number of Threads | How many threads to use for parallelized operations |
 | Mesh Cache Enabled | Whether to use a cache of meshes |
 | Mesh Cache Memory to Use | Percentage of phyisical memory to allow mesh cache to use |
-| Mesh Parallel Reconstruction | Whether to use parallelized mesh reconstruction |
-| Mesh Parallel Number of Threads | How many threads to use for parallelized mesh reconstruction |
+| Log Location | A display of where the current log file is located |
 | Orientation Marker Type | Medical, Triad, or None |
 | Orientation Marker Corner | Upper Right, Upper Left, Lower Left, Lower Right |
 | PCA Range | Number of standard deviations for PCA slider |
 | Number of PCA Steps | Number of steps for PCA slider bar |
 | Geodesics Cache Size Multiplier |  Multiplier value for geodesics caching |
-| Log Location | A display of where the current log file is located |
 | Automatically Check for Updates | Whether Studio should automatically check for updates to ShapeWorks |
 | Send Anonymous Usage Statistics | Whether Studio should send anonymous usage statistics to the ShapeWorks team to help improve the software |
 <br/>

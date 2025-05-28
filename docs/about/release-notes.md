@@ -1,5 +1,58 @@
 # Release Notes
 
+
+## ShapeWorks 6.6.1 - 2025-05
+
+### Fixes
+  * Fix loading of non-binary segmentations
+  * Add padding for visualization of segmentation surfaces
+  * Add Blue/Red color map for scalar visualization
+  * Fix PCA/Group sliders when switching projects
+  * Fix stats being reloaded when groups are changed
+  * Fix a crash that can happen when changing projects while mesh warping
+  * Turn off group animate checkbox when deactivating analysis module
+  * Disallow network analysis when there are no scalar features
+  * Auto adjust network analysis alpha when necessary
+  * Add logging of groom and optimize parameters to file log
+  * Fix itk image factory registration for network analysis with image based features
+  * Added warning about inconsistent number of values in particle vector
+  * Fix libomp.dylib install problem on mac arm64 
+  * Update URL for UpdateChecker
+
+## ShapeWorks 6.6.0 - 2025-05
+
+![](../img/about/release6.6.png)
+
+### What is new?
+  * **ShapeWorks Back-end**
+    * Improved support for varied image sizes in DeepSSM (#2218)
+    * Faster and more robust neighborhood computation code in the optimizer (#2314)
+    * Added Java bindings for ShapeWorks
+    * Added Matlab bindings for ShapeWorks
+    * Improve mesh domain memory usage (#2353)
+
+  * **ShapeWorks Front-end**
+    * Added new MONAI Label tool in Studio
+    * Added basic segmentation tools in Studio
+    * Modeling Shared Boundaries is now fully supported in Studio
+    * Added ability to close a project
+    * Added evaluation metrics and graphs for shape+scalar analysis (#2218)
+    * Added feature to evaluate generalization and specificity using particle to surface distance (#2212)
+    * Added ability to limit number of threads for grooming/optimization in Studio
+    * Added ability to manually choose reference template mesh for mesh warping (#1085)
+
+
+### Fixes
+  * Fix bug in Studio where parameters are lost switching modules (#2263)
+  * Fix problem where VTK DLL was being marked as a virus (#2308)
+  * Fix problem loading certain kinds of NIFTI files (#2294)
+  * Placing landmarks on very zoomed in anatomy, causes landmarks to be misplaced (#2346)
+  * Studio crash when removing all shapes (#2354)
+  * Fix Crash on exporting mesh from computed shape (#2335)
+  * 
+
+
+
 ## ShapeWorks 6.5.1 - 2024-08
 
 ### Fixes

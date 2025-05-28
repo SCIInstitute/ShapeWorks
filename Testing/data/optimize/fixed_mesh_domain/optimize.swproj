@@ -2,9 +2,9 @@
     "data": [
         {
             "name": "id0000_ss3",
-            "shape_1": "meshes/id0000_ss3.ply",
+            "shape_1": "meshes/id0000_ss3.vtp",
             "landmarks_file_1": "optimize_particles/id0000_ss3_local.particles",
-            "groomed_1": "meshes/id0000_ss3.ply",
+            "groomed_1": "meshes/id0000_ss3.vtp",
             "local_particles_1": "optimize_particles/id0000_ss3_local.particles",
             "world_particles_1": "optimize_particles/id0000_ss3_world.particles",
             "alignment_1": "1.000000 0.000000 0.000000 0.179590 0.000000 1.000000 0.000000 0.112159 0.000000 0.000000 1.000000 -0.003390 0.000000 0.000000 0.000000 1.000000",
@@ -13,9 +13,9 @@
         },
         {
             "name": "id0001_ss3",
-            "shape_1": "meshes/id0001_ss3.ply",
+            "shape_1": "meshes/id0001_ss3.vtp",
             "landmarks_file_1": "optimize_particles/id0001_ss3_local.particles",
-            "groomed_1": "meshes/id0001_ss3.ply",
+            "groomed_1": "meshes/id0001_ss3.vtp",
             "local_particles_1": "optimize_particles/id0001_ss3_local.particles",
             "world_particles_1": "optimize_particles/id0001_ss3_world.particles",
             "alignment_1": "1.000000 0.000000 0.000000 0.116387 0.000000 1.000000 0.000000 0.078636 0.000000 0.000000 1.000000 -0.009698 0.000000 0.000000 0.000000 1.000000",
@@ -24,9 +24,9 @@
         },
         {
             "name": "id0002_ss3",
-            "shape_1": "meshes/id0002_ss3.ply",
+            "shape_1": "meshes/id0002_ss3.vtp",
             "landmarks_file_1": "optimize_particles/id0002_ss3_local.particles",
-            "groomed_1": "meshes/id0002_ss3.ply",
+            "groomed_1": "meshes/id0002_ss3.vtp",
             "local_particles_1": "optimize_particles/id0002_ss3_local.particles",
             "world_particles_1": "optimize_particles/id0002_ss3_world.particles",
             "alignment_1": "1.000000 0.000000 0.000000 0.166802 0.000000 1.000000 0.000000 0.089135 0.000000 0.000000 1.000000 -0.006630 0.000000 0.000000 0.000000 1.000000",

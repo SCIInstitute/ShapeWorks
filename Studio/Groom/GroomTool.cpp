@@ -591,6 +591,18 @@ void GroomTool::on_run_groom_button_clicked() {
   timer_.start();
 
   SW_LOG("Please wait: running groom step...");
+
+  // log parameters
+  SW_LOG_ONLY("Grooming parameters:");
+
+  for (const auto& domain_name : session_->get_project()->get_domain_names()) {
+    auto params = GroomParameters(session_->get_project(), domain_name);
+    SW_LOG_ONLY("Domain: " + domain_name);
+    for (const auto& pair : params.get_parameters().get_map()) {
+      SW_LOG_ONLY(pair.first + ": " + pair.second);
+    }
+  }
+
   Q_EMIT progress(0);
 
   groom_ = QSharedPointer<Groom>(new Groom(session_->get_project()));

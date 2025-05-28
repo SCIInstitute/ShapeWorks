@@ -22,7 +22,7 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
  <!--![](img/about/release6.2.png)-->
  <!--![](img/about/release6.3.png)-->
  <!--![](img/about/release6.4.png)-->
-![](img/about/release6.5.png)
+![](img/about/release6.6.png)
 
 !!! note "Release Notes"    
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
@@ -77,8 +77,11 @@ ShapeWorks has been effective in various applications, including psychology, bio
 
 Now enjoy some tour videos for different recent software releases.
 
+*ShapeWorks 6.6 tour - MONAI Label, Shared Boundaries, Java/MATLAB, Segmentation Tools, Particle to Surface Metrics, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.6.mp4" autoplay muted loop controls style="width:100%"></p>
+
 *ShapeWorks 6.5 tour - Shape / Scalar Correlation, Network Analysis, DeepSSM Improvments, and more ...*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.5.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.5.mp4" muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.4 tour - Multi-level PCA, Improved Constraints, Python Docs, and more ...*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.4.mp4" muted loop controls style="width:100%"></p>

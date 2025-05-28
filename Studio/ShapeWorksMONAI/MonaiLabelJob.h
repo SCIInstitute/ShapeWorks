@@ -16,17 +16,17 @@
 namespace py = pybind11;
 
 namespace shapeworks {
-    class ShapeWorksStudioApp;
-    class Session;
-    class Job;
-}
+class ShapeWorksStudioApp;
+class Session;
+class Job;
+}  // namespace shapeworks
 
 namespace monailabel {
 
+using shapeworks::Job;
 using shapeworks::ProjectHandle;
 using shapeworks::Session;
 using shapeworks::ShapeWorksStudioApp;
-using shapeworks::Job;
 
 class MonaiLabelJob : public Job {
   Q_OBJECT;
@@ -35,9 +35,8 @@ class MonaiLabelJob : public Job {
   const static std::string MONAI_RESULT_EXTENSION;
   const static std::string MONAI_RESULT_DTYPE;
 
-  MonaiLabelJob(QSharedPointer<Session> session, const std::string& server_url,
-                const std::string& client_id, const std::string& strategy,
-                const std::string& model_type);
+  MonaiLabelJob(QSharedPointer<Session> session, const std::string& server_url, const std::string& client_id,
+                const std::string& strategy, const std::string& model_type);
   ~MonaiLabelJob();
   void setServer(const std::string& server_url);
   void setModelType(const std::string& model_type);
@@ -45,9 +44,7 @@ class MonaiLabelJob : public Job {
   void setClientId(const std::string& client_id = "");
   inline const std::string& getClientId() { return client_id_; };
   void initializeClient();
-  inline std::shared_ptr<py::object> getClient() const {
-    return monai_client_;
-  };
+  inline std::shared_ptr<py::object> getClient() const { return monai_client_; };
 
   py::dict getInfo();
   std::string getModelName(std::string modelType);
@@ -57,11 +54,9 @@ class MonaiLabelJob : public Job {
 
   // MONAI Client callers
   py::dict nextSample(std::string strategy, py::dict params);
-  py::tuple infer(std::string model, std::string image_in, py::dict params,
-                  std::string label_in, std::string file,
+  py::tuple infer(std::string model, std::string image_in, py::dict params, std::string label_in, std::string file,
                   std::string session_id);
-  py::dict saveLabel(std::string image_in, std::string label_in,
-                     py::dict params);
+  py::dict saveLabel(std::string image_in, std::string label_in, py::dict params);
   py::dict uploadImage(std::string image_in, std::string image_id);
 
   void updateShapes();
@@ -73,13 +68,13 @@ class MonaiLabelJob : public Job {
   void setCurrentSampleNumber(int n);
 
  public Q_SLOTS:
-  void onUploadSampleClicked();  // Triggered when  upload Sample button is clicked
-  void onRunSegmentationClicked();   // Triggered when Run Segmentation is clicked
-  void onSubmitLabelClicked();  // Triggered when Submit Label is clicked
+  void onUploadSampleClicked();     // Triggered when  upload Sample button is clicked
+  void onRunSegmentationClicked();  // Triggered when Run Segmentation is clicked
+  void onSubmitLabelClicked();      // Triggered when Submit Label is clicked
 
  Q_SIGNALS:
   void triggerUpdateView();
-  void triggerClientInitialized();
+  void triggerClientInitialized(bool success);
   void triggerUploadSampleCompleted();
   void triggerSegmentationCompleted();
   void triggerSubmitLabelCompleted();
@@ -95,7 +90,8 @@ class MonaiLabelJob : public Job {
   std::string strategy_;
   std::string model_type_ = "";
   std::string model_name_ = "";
-  std::unordered_map<std::string, std::vector<std::string>> models_available_; // TODO: add functionality to interchange between models from UI
+  std::unordered_map<std::string, std::vector<std::string>>
+      models_available_;  // TODO: add functionality to interchange between models from UI
   std::shared_ptr<py::object> monai_client_;
 
   // QT states
@@ -107,8 +103,12 @@ class MonaiLabelJob : public Job {
   int sample_number_;
   std::string currentSampleId_;
   std::string currentSegmentationPath_;
+  std::vector<std::string> currentSegmentationPaths_;
+  std::vector<std::string> organNames_;
 
   QSharedPointer<Session> session_;
   ProjectHandle project_;
+
+  bool error_occurred_ = false;
 };
 }  // namespace monailabel

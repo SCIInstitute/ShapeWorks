@@ -26,6 +26,7 @@
 
 using namespace shapeworks;
 
+//---------------------------------------------------------------------------
 class OverrideQApplication : public QApplication {
  public:
   OverrideQApplication(int& argc, char** argv) : QApplication(argc, argv) {}
@@ -47,6 +48,7 @@ class OverrideQApplication : public QApplication {
   QString stored_filename_;
 };
 
+//---------------------------------------------------------------------------
 static void new_log() {
   QDateTime date_time = QDateTime::currentDateTime();
   QString session_name = date_time.toString("yyyy-MM-dd_HH_mm_ss");
@@ -71,10 +73,17 @@ static void new_log() {
   Logging::Instance().open_file_log(logfile.toStdString());
 }
 
+//---------------------------------------------------------------------------
 int main(int argc, char** argv) {
   // tbb::task_scheduler_init init(1);
 
   try {
+
+#ifdef Q_OS_MACOS
+    // Prevent cursor crashes on Apple Silicon
+    qputenv("QT_MAC_DISABLE_NATIVE_CURSORS", "1");
+#endif
+
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
 #ifdef _WIN32

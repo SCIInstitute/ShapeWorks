@@ -96,6 +96,9 @@ class MeshWarper {
   //! Clean mesh (remove deleted)
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
+  //! Remove zero area triangles from a mesh
+  static vtkSmartPointer<vtkPolyData> remove_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh);
+
   //! Recreate mesh, dropping deleted cells
   static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 

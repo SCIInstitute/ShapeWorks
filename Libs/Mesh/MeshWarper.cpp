@@ -8,8 +8,10 @@
 #include <vtkCleanPolyData.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLine.h>
+#include <vtkPointData.h>
 #include <vtkPointLocator.h>
 #include <vtkPolyDataConnectivityFilter.h>
+#include <vtkTriangle.h>
 #include <vtkTriangleFilter.h>
 
 #include <set>
@@ -54,6 +56,9 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 //---------------------------------------------------------------------------
 void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
                                     const Eigen::MatrixXd& reference_particles, const Eigen::MatrixXd& landmarks) {
+  // lock so that we don't swap out the reference mesh while we are using it
+  std::scoped_lock lock(mutex);
+
   if (this->incoming_reference_mesh_ == reference_mesh) {
     if (this->reference_particles_.size() == reference_particles.size()) {
       if (this->reference_particles_ == reference_particles && landmarks_points_ == landmarks) {
@@ -378,9 +383,9 @@ vtkSmartPointer<vtkPolyData> MeshWarper::prep_mesh(vtkSmartPointer<vtkPolyData> 
   auto fixed = Mesh(cleaned).fixNonManifold();
 
   // remove deleted triangles and clean up
-  auto recreate = MeshWarper::recreate_mesh(fixed.getVTKMesh());
+  auto recreated = MeshWarper::recreate_mesh(fixed.getVTKMesh());
 
-  return MeshWarper::clean_mesh(recreate);
+  return MeshWarper::remove_zero_area_triangles(recreated);
 }
 
 //---------------------------------------------------------------------------
@@ -393,6 +398,62 @@ vtkSmartPointer<vtkPolyData> MeshWarper::clean_mesh(vtkSmartPointer<vtkPolyData>
   clean->SetInputData(mesh);
   clean->Update();
   return clean->GetOutput();
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshWarper::remove_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh) {
+  // Create a new polydata to store the filtered triangles
+  auto filtered_mesh = vtkSmartPointer<vtkPolyData>::New();
+
+  // Get the points from the input mesh
+  vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
+  filtered_mesh->SetPoints(points);
+
+  // Create a new cell array to store triangles
+  auto newTriangles = vtkSmartPointer<vtkCellArray>::New();
+
+  // Get the triangle cells from the input mesh
+  vtkCellArray* triangles = mesh->GetPolys();
+
+  // Iterate through all cells
+  auto cell_point_ids = vtkSmartPointer<vtkIdList>::New();
+
+  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
+    mesh->GetCellPoints(cellId, cell_point_ids);
+
+    // Only process triangles
+    if (cell_point_ids->GetNumberOfIds() == 3) {
+      // Get the coordinates of the three vertices
+      double p0[3], p1[3], p2[3];
+      points->GetPoint(cell_point_ids->GetId(0), p0);
+      points->GetPoint(cell_point_ids->GetId(1), p1);
+      points->GetPoint(cell_point_ids->GetId(2), p2);
+
+      // Calculate the area of the triangle using VTK's built-in function
+      double area = vtkTriangle::TriangleArea(p0, p1, p2);
+
+      // If the area is not zero (use a small epsilon for floating point comparison)
+      const double EPSILON = 1e-10;
+      if (area > EPSILON) {
+        // Add this triangle to the new cell array
+        newTriangles->InsertNextCell(cell_point_ids);
+      }
+    }
+  }
+
+  // Set the triangles in the filtered mesh
+  filtered_mesh->SetPolys(newTriangles);
+
+  // Copy the point data
+  filtered_mesh->GetPointData()->ShallowCopy(mesh->GetPointData());
+
+  // Use vtkCleanPolyData to remove unused points
+  auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->SetInputData(filtered_mesh);
+  cleaner->PointMergingOff();  // Don't merge points, just remove unused ones
+  cleaner->Update();
+
+  return cleaner->GetOutput();
 }
 
 //---------------------------------------------------------------------------

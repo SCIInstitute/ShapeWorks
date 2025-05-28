@@ -59,7 +59,7 @@ ColorMaps::ColorMaps() {
 
   add_custom_series("Rainbow", {Qt::blue, Qt::cyan, Qt::green, Qt::yellow, Qt::red});
   add_custom_series("Grayscale", {Qt::black, Qt::darkGray, Qt::lightGray, Qt::white});
-  add_custom_series("Blue to Red", {Qt::blue, Qt::white, Qt::red});
+  add_custom_series("Blue White Red", {Qt::blue, Qt::white, Qt::red});
   add_custom_series("Magenta to Green", {QColor(191, 53, 136), QColor(208, 121, 178), Qt::white, QColor(155, 196, 128),
                                          QColor(102, 167, 61)});
   add_custom_series("Black-Body Radiation", {Qt::black, Qt::red, Qt::yellow, Qt::white});
@@ -78,6 +78,7 @@ ColorMaps::ColorMaps() {
   for (int i = vtkColorSeries::SPECTRUM; i < vtkColorSeries::CUSTOM; i++) {
     add_vtk_series(i);
   }
+  add_custom_series("Blue and Red", {Qt::blue, Qt::red});
 }
 
 }  // namespace shapeworks

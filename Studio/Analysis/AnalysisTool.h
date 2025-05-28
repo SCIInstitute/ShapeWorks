@@ -156,14 +156,14 @@ class AnalysisTool : public QWidget {
   void group_changed();
 
   bool groups_active();
+  bool pca_groups_active();
+  QStringList get_checked_pca_groups();
 
   void on_view_open_button_toggled();
 
   void on_surface_open_button_toggled();
 
   void on_metrics_open_button_toggled();
-
-  bool is_group_active(int shape_index);
 
   void reconstruction_method_changed();
 
@@ -204,6 +204,13 @@ class AnalysisTool : public QWidget {
   void samples_table_context_menu();
   void samples_table_copy_to_clipboard();
 
+  // mesh warping options
+  void mesh_warp_median_clicked();
+  void mesh_warp_sample_changed();
+  void mesh_warp_run_clicked();
+
+  void handle_tab_changed();
+
  Q_SIGNALS:
 
   void update_view();
@@ -230,6 +237,8 @@ class AnalysisTool : public QWidget {
   void update_group_boxes();
   void update_group_values();
   void update_domain_alignment_box();
+  void update_pca_group_options();
+  void handle_pca_group_list_item_changed();
 
   void update_lda_graph();
 
@@ -277,6 +286,7 @@ class AnalysisTool : public QWidget {
 
   std::vector<std::string> current_group_names_;
   std::vector<std::string> current_group_values_;
+  std::vector<std::string> current_pca_group_values_;
 
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 

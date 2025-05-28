@@ -322,6 +322,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void annotations_changed();
   void save();
   void session_title_changed();
+  void image_name_changed();
 
  public:
   // constants
