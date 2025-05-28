@@ -23,4 +23,4 @@ This class optimizes a list of particle system positions with respect to a speci
 
 -------------------------------
 
-Updated on 2025-05-19 at 18:59:07 +0000
+Updated on 2025-05-28 at 23:15:54 +0000
