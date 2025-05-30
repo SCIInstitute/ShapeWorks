@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - 2382-github-windows-runner
     tags:
     - '*'
   pull_request:
