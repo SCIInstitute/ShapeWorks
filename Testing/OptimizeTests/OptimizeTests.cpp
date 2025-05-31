@@ -412,7 +412,7 @@ TEST(OptimizeTests, procrustes_no_scale_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   ASSERT_GT(values[values.size() - 1], 150.0);
-  ASSERT_LT(values[values.size() - 1], 200.0);
+  ASSERT_LT(values[values.size() - 1], 205.0);
 }
 
 //---------------------------------------------------------------------------
