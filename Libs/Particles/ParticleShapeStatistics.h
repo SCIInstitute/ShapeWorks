@@ -139,7 +139,7 @@ class ParticleShapeStatistics {
   unsigned int num_samples_group1_;
   unsigned int num_samples_group2_;
   unsigned int num_samples_;
-  unsigned int domains_per_shape_;
+  unsigned int domains_per_shape_ = 0;
   unsigned int num_dimensions_;
   std::vector<int> group_ids_;
 
