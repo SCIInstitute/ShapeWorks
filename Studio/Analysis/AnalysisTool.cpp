@@ -1171,9 +1171,6 @@ void AnalysisTool::update_slider() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::reset_stats() {
-  stats_ready_ = false;
-  evals_ready_ = false;
-
   ui_->tabWidget->setCurrentWidget(ui_->mean_tab);
   ui_->allSamplesRadio->setChecked(true);
   ui_->singleSamplesRadio->setChecked(false);
@@ -1200,6 +1197,8 @@ void AnalysisTool::reset_stats() {
   particle_area_panel_->reset();
   shape_scalar_panel_->reset();
   stats_ = ParticleShapeStatistics();
+  evals_ready_ = false;
+  stats_ready_ = false;
 
   ui_->pca_scalar_combo->clear();
   if (session_) {
