@@ -32,7 +32,8 @@ class ExcelProjectReader::Container {
     auto rows = ws.rows(false);
     auto headers = rows[0];
 
-    for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
+    int highest_row = ws.highest_row();
+    for (int i = ws.lowest_row(); i < highest_row; i++) {
       StringMap map;
       bool empty = true;
       for (int h = 0; h < headers.length(); h++) {
