@@ -1,6 +1,7 @@
 #include "ExcelProjectWriter.h"
 
 #include <Logging.h>
+
 #include <xlnt/workbook/workbook_view.hpp>
 #include <xlnt/xlnt.hpp>
 
@@ -28,8 +29,8 @@ static int get_index_for_column(xlnt::worksheet& ws, const std::string& name) {
 }
 
 //---------------------------------------------------------------------------
-static void set_value(xlnt::worksheet& ws, int column, int subject_id, const std::string& value) {
-  ws.cell(xlnt::cell_reference(column, subject_id)).value(value);
+static void set_value(xlnt::worksheet& ws, int column, int row, const std::string& value) {
+  ws.cell(xlnt::cell_reference(column, row)).value(value);
 }
 
 //---------------------------------------------------------------------------
@@ -39,9 +40,17 @@ static void set_value(xlnt::worksheet& ws, const std::string& column_name, int s
 }
 
 //---------------------------------------------------------------------------
+static void set_subject_value(xlnt::worksheet& ws, int column_index, int subject_id, const std::string& value) {
+  set_value(ws, column_index, subject_id + 2, value);  // +1 for header, +1 for 1-indexed
+}
+
+//---------------------------------------------------------------------------
 static void store_subjects(Project& project, xlnt::workbook& wb) {
   xlnt::worksheet ws = wb.sheet_by_index(0);
   ws.title("data");
+
+  // cache column indices for performance, get_index_for_column can be expensive
+  std::map<std::string, int> column_map;
 
   auto subjects = project.get_subjects();
   for (int i = 0; i < subjects.size(); i++) {
@@ -49,7 +58,12 @@ static void store_subjects(Project& project, xlnt::workbook& wb) {
     auto map = ProjectUtils::convert_subject_to_map(&project, subject.get());
 
     for (auto& [key, value] : map) {
-      set_value(ws, key, i, value);
+      if (column_map.find(key) == column_map.end()) {
+        int column_index = get_index_for_column(ws, key);
+        column_map[key] = column_index;
+      }
+
+      set_subject_value(ws, column_map[key], i, value);
     }
   }
 }
