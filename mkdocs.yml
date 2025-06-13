@@ -116,7 +116,7 @@ nav:
    - 'How to Add Python APIs?':              'dev/python-apis.md'
    - 'How to Add and Run Unit Tests?':       'dev/tests.md'
    - 'How to Add New Use Cases?':            'dev/new-use-case.md'
-   - 'When Modifying Existing Datasets':     'dev/modify-datasets.md'
+   - 'How to Add New Notebooks?':            'dev/new-notebook.md'
    - 'Getting Started with Documentation':   'dev/docs.md'
    - 'Getting Started with GitHub Actions':  'dev/gh-actions.md'
    - 'Getting Started with Markdown':        'dev/markdown.md'
