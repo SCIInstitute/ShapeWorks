@@ -21,8 +21,7 @@ To add a new use case to the codebase:
 
 To add the dataset associated with the new use case:
 
-- Organize the dataset to adhere to the [Dataset Requirements](../dev/datasets.md#dataset-requirements).
-- Upload the datset to the [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org/). Visit [Uploading a Dataset](../dev/datasets.md#uploading-a-dataset).
+- Upload the datset to ShapeWorks Cloud
 
 ## Use case documentation 
  
