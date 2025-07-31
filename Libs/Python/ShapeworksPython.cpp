@@ -346,7 +346,8 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def("crop", &Image::crop, "crops the image down to the given (physical) region, with optional padding",
            "region"_a, "padding"_a = 0)
 
-      .def("fitRegion", &Image::fitRegion, "crops or pads the image to fit a region", "region"_a)
+      .def("fitRegion", &Image::fitRegion, "crops or pads the image to fit a region with optional padding value",
+           "region"_a, "value"_a = 0)
 
       .def(
           "clip",

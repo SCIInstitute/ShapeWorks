@@ -189,7 +189,7 @@ class Image {
   Image& crop(PhysicalRegion region, const int padding = 0);
 
   /// crops (or pads) the image to fit the given region
-  Image& fitRegion(PhysicalRegion region);
+  Image& fitRegion(PhysicalRegion region, const PixelType value = 0.0);
 
   /// clips an image using a cutting plane
   Image& clip(const Plane plane, const PixelType val = 0.0);

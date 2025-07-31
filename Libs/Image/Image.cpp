@@ -757,14 +757,14 @@ Image& Image::crop(PhysicalRegion region, const int padding) {
   return *this;
 }
 
-Image& Image::fitRegion(PhysicalRegion region) {
+Image& Image::fitRegion(PhysicalRegion region, const PixelType value) {
   // first pad to make sure the image is large enough to fit the region
 
   // convert PhysicalRegion to IndexRegion
   IndexRegion indexRegion(physicalToLogical(region));
 
   // pad the image
-  pad(indexRegion, 0);
+  pad(indexRegion, value);
 
   // fix origin and indices
   using RegionFilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
