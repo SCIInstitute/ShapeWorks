@@ -94,6 +94,7 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   QIntValidator* zero_to_hundred = new QIntValidator(0, 100, this);
   ui_->validation_split->setValidator(zero_to_hundred);
   ui_->testing_split->setValidator(zero_to_hundred);
+  ui_->training_split->setValidator(zero_to_hundred);
 
   QDoubleValidator* double_validator = new QDoubleValidator(0, 100, 4, this);
   double_validator->setNotation(QDoubleValidator::StandardNotation);
@@ -102,8 +103,8 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->spacing_y->setValidator(double_validator);
   ui_->spacing_z->setValidator(double_validator);
 
+  connect(ui_->training_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
   connect(ui_->validation_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
-  connect(ui_->testing_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
 
   ui_->tl_net_options->setVisible(false);
 
@@ -198,6 +199,7 @@ void DeepSSMTool::load_params() {
 void DeepSSMTool::store_params() {
   auto params = DeepSSMParameters(session_->get_project());
 
+  params.set_training_split(ui_->training_split->text().toDouble());
   params.set_validation_split(ui_->validation_split->text().toDouble());
   params.set_testing_split(ui_->testing_split->text().toDouble());
 
@@ -382,22 +384,24 @@ void DeepSSMTool::update_panels() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::update_split() {
+  double training = ui_->training_split->text().toDouble();
   double testing = ui_->testing_split->text().toDouble();
   double validation = ui_->validation_split->text().toDouble();
+  training = std::max<double>(std::min<double>(training, 100), 0);
   testing = std::max<double>(std::min<double>(testing, 100), 0);
   validation = std::max<double>(std::min<double>(validation, 100), 0);
 
-  if (testing + validation > 100) {
-    if (testing > validation) {
-      validation = 100 - testing;
+  if (training + validation > 100) {
+    if (training > validation) {
+      validation = 100 - training;
     } else {
-      testing = 100 - validation;
+      training = 100 - validation;
     }
   }
 
-  ui_->testing_split->setText(QString::number(testing));
+  ui_->training_split->setText(QString::number(training));
   ui_->validation_split->setText(QString::number(validation));
-  ui_->training_split->setText(QString::number(100 - testing - validation));
+  ui_->testing_split->setText(QString::number(100 - training - validation));
 }
 
 //---------------------------------------------------------------------------
@@ -921,6 +925,10 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
     SW_LOG("Please Wait: Running Testing...");
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
     ui_->tab_widget->setCurrentIndex(0);
+
+    // check that there are at least 1 subject in test/val/train each
+
+
 
     SW_LOG("Please Wait: Running Groom/Optimize...");
   } else {

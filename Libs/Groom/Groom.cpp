@@ -518,6 +518,11 @@ bool Groom::run_alignment() {
   size_t num_domains = project_->get_number_of_domains_per_subject();
   auto subjects = project_->get_subjects();
 
+  if (subjects.empty()) {
+    SW_ERROR("No subjects to groom");
+    return false;
+  }
+
   auto base_params = GroomParameters(project_);
 
   bool global_icp = false;
@@ -564,6 +569,10 @@ bool Groom::run_alignment() {
 
     if (global_icp) {
       Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
+      if (reference_meshes.empty()) {
+        SW_ERROR("No reference meshes available");
+        return false;
+      }
       if (reference_index < 0 || reference_index >= reference_meshes.size()) {
         reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
         if (reference_index < 0 || reference_index >= reference_meshes.size()) {
@@ -631,6 +640,11 @@ bool Groom::run_alignment() {
 
       reference_index = params.get_alignment_reference();
       subset_size = params.get_alignment_subset_size();
+
+      if (reference_meshes.empty()) {
+        SW_ERROR("No reference meshes available");
+        return false;
+      }
 
       Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
       if (reference_index < 0 || reference_index >= subjects.size()) {
