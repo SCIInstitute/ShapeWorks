@@ -107,6 +107,15 @@ void DeepSSMJob::run_prep() {
     py::object create_split = py_deep_ssm_utils.attr("create_split");
     create_split(project_, train_split, val_split, test_split);
 
+    int num_train = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::TRAIN).size();
+    int num_val = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::VAL).size();
+    int num_test = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::TEST).size();
+    if (num_train == 0 || num_val == 0) {
+      SW_ERROR("DeepSSM: Not enough subjects in training and validation.  Please check split.");
+      abort();
+      //return;
+    }
+
     if (is_aborted()) {
       return;
     }
