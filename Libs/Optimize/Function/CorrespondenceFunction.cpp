@@ -4,12 +4,14 @@
 #include <math.h>
 
 #include "Libs/Utils/Utils.h"
+#include "Profiling.h"
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
 
 namespace shapeworks {
 
 void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
+  TIME_SCOPE("CorrespondenceFunction::ComputeUpdates");
   num_dims = m_ShapeData->rows();
   num_samples = m_ShapeData->cols();
 
@@ -45,7 +47,9 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     m_InverseCovMatrix->setZero();
 
   } else {
+    TIME_START("correspondence::gramMat");
     gramMat = points_minus_mean.transpose() * points_minus_mean;
+    TIME_STOP("correspondence::gramMat");
 
     vnl_svd<double> svd(gramMat);
 
@@ -67,7 +71,9 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
       m_InverseCovMatrix->resize(num_dims, num_dims);
     }
+    TIME_START("correspondence::covariance_multiply");
     Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+    TIME_STOP("correspondence::covariance_multiply");
   }
 
   vnl_matrix_type Q = points_minus_mean * pinvMat;

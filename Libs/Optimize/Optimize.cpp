@@ -2,10 +2,12 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
-//#include <numeric>
+// #include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "Profiling.h"
 
 #ifdef _WIN32
 #include <direct.h>
@@ -175,6 +177,8 @@ bool Optimize::Run() {
 
 //---------------------------------------------------------------------------
 int Optimize::SetParameters() {
+  TIME_SCOPE("Optimize::SetParameters");
+
   // sanity check
   if (m_domains_per_shape != m_number_of_particles.size()) {
     SW_ERROR("Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()");
@@ -494,6 +498,7 @@ void Optimize::AddSinglePoint() {
 
 //---------------------------------------------------------------------------
 void Optimize::Initialize() {
+  TIME_SCOPE("Optimize::Initialize");
   if (m_verbosity_level > 0) {
     SW_LOG("------------------------------");
     SW_LOG("*** Initialize Step ***");
@@ -690,6 +695,8 @@ void Optimize::Initialize() {
 
 //---------------------------------------------------------------------------
 void Optimize::RunOptimize() {
+  TIME_SCOPE("Optimize::RunOptimize");
+
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** Optimize Step\n";

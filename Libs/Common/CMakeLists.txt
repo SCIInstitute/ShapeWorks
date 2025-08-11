@@ -4,12 +4,14 @@ set(Common_sources
   ShapeworksUtils.cpp
   Region.cpp
   Logging.cpp
+  Profiling.cpp
   )
 set(Common_headers
   Shapeworks.h
   ShapeworksUtils.h
   Region.h
   Logging.h
+  Profiling.h
   )
 add_library(Common STATIC
   ${Common_sources}

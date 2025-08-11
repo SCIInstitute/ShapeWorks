@@ -11,6 +11,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include <Profiling.h>
+
 namespace shapeworks {
 
 // boilerplate for a command. Copy this to start a new command
@@ -119,10 +121,12 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
         project->set_filename(StringUtils::getFilename(projectFile));
       }
 
+      TIME_START("set_up_optimize");
       // set up Optimize class based on project parameters
       OptimizeParameters params(project);
       params.set_up_optimize(&app);
       app.SetProject(project);
+      TIME_STOP("set_up_optimize");
 
       bool success = app.Run();
 
