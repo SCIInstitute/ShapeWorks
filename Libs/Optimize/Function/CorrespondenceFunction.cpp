@@ -25,7 +25,7 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
   m_PointsUpdate->fill(0.0);
 
-  Eigen::MatrixXd points_minus_mean(num_dims, num_samples);
+  vnl_matrix_type points_minus_mean(num_dims, num_samples, 0.0);
 
   m_points_mean->clear();
   m_points_mean->set_size(num_dims, 1);
@@ -33,55 +33,93 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
   for (unsigned int i = 0; i < num_dims; i++) {
     m_points_mean->put(i, 0, (m_ShapeData->get_n_rows(i, 1)).mean());
-    points_minus_mean.row(i) = Eigen::Map<const Eigen::VectorXd>(
-                                   m_ShapeData->get_row(i).data_block(), num_samples).array() - m_points_mean->get(i, 0);
+    points_minus_mean.set_row(i, m_ShapeData->get_row(i) - m_points_mean->get(i, 0));
   }
 
-  Eigen::VectorXd W;
+  vnl_diag_matrix<double> W;
 
-  Eigen::MatrixXd gramMat(num_samples, num_samples);
-  Eigen::MatrixXd pinvMat(num_samples, num_samples);
+  vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
+  vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);  // gramMat inverse
 
   if (this->m_UseMeanEnergy) {
-    pinvMat.setIdentity();
+    pinvMat.set_identity();
     m_InverseCovMatrix->setZero();
   } else {
     TIME_START("correspondence::gramMat");
-    gramMat = points_minus_mean.transpose() * points_minus_mean;
+
+    // old
+    //gramMat = points_minus_mean.transpose() * points_minus_mean;
+
+
+    /*
+    // Create Eigen maps that point to the VNL data
+    Eigen::Map<Eigen::MatrixXd> points_minus_mean_map(points_minus_mean.data_block(),
+                                                      points_minus_mean.rows(),
+                                                      points_minus_mean.cols());
+
+    // Perform the computation directly on the mapped data
+    Eigen::MatrixXd gramMat_eigen = points_minus_mean_map.transpose() * points_minus_mean_map;
+
+    // Copy result back to VNL matrix
+    gramMat.set_size(gramMat_eigen.rows(), gramMat_eigen.cols());
+    std::memcpy(gramMat.data_block(), gramMat_eigen.data(),
+                gramMat_eigen.size() * sizeof(double));
+    */
+
+    // Create Eigen maps that point to the VNL data
+    Eigen::Map<Eigen::MatrixXd> points_minus_mean_map(points_minus_mean.data_block(),
+                                                      points_minus_mean.rows(),
+                                                      points_minus_mean.cols());
+
+    // Make sure gramMat is the right size first
+    gramMat.set_size(num_samples, num_samples);
+
+    // Create a map to the gramMat data
+    Eigen::Map<Eigen::MatrixXd> gramMat_map(gramMat.data_block(),
+                                            gramMat.rows(),
+                                            gramMat.cols());
+
+    // Perform the computation directly into the mapped gramMat
+    gramMat_map = points_minus_mean_map.transpose() * points_minus_mean_map;
+
+
+
     TIME_STOP("correspondence::gramMat");
 
-    Eigen::JacobiSVD<Eigen::MatrixXd> svd(gramMat, Eigen::ComputeFullU | Eigen::ComputeFullV);
+    vnl_svd<double> svd(gramMat);
 
-    Eigen::MatrixXd UG = svd.matrixU();
-    W = svd.singularValues();
+    vnl_matrix_type UG = svd.U();
+    W = svd.W();
 
-    Eigen::VectorXd invLambda = W;
-    invLambda = (invLambda.array() / (double)(num_samples - 1) + m_MinimumVariance).inverse();
+    vnl_diag_matrix<double> invLambda = svd.W();
+    invLambda.set_diagonal(invLambda.get_diagonal() / (double)(num_samples - 1) + m_MinimumVariance);
+    invLambda.invert_in_place();
 
-    pinvMat = UG * invLambda.asDiagonal() * UG.transpose();
+    pinvMat = (UG * invLambda) * UG.transpose();
 
-    Eigen::MatrixXd projMat = points_minus_mean * UG;
-    const Eigen::MatrixXd lhs = projMat * invLambda.asDiagonal();
-    const Eigen::MatrixXd rhs = invLambda.asDiagonal() * projMat.transpose();
+    vnl_matrix_type projMat = points_minus_mean * UG;
+    const auto lhs = projMat * invLambda;
+    const auto rhs =
+        invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
 
     // resize the inverse covariance matrix if necessary
     if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
       m_InverseCovMatrix->resize(num_dims, num_dims);
     }
     TIME_START("correspondence::covariance_multiply");
-    m_InverseCovMatrix->noalias() = lhs * rhs;
+    Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
     TIME_STOP("correspondence::covariance_multiply");
   }
 
-  Eigen::MatrixXd Q = points_minus_mean * pinvMat;
+  vnl_matrix_type Q = points_minus_mean * pinvMat;
 
   // Compute the update matrix in coordinate space by multiplication with the
   // Jacobian.  Each shape gradient must be transformed by a different Jacobian
   // so we have to do this individually for each shape (sample).
 
   {
-    Eigen::MatrixXd Jmatrix;
-    Eigen::MatrixXd v;
+    vnl_matrix_type Jmatrix;
+    vnl_matrix_type v;
     for (int j = 0; j < num_samples; j++) {
       int num = 0;
       int num2 = 0;
@@ -104,21 +142,18 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
             num_attr += 3;
           }
 
-          Jmatrix.resize(num_attr, VDimension);
-          Jmatrix.setZero();
-          v.resize(num_attr, 1);
-          v.setZero();
+          Jmatrix.clear();
+          Jmatrix.set_size(num_attr, VDimension);
+          Jmatrix.fill(0.0);
+          v.clear();
+          v.set_size(num_attr, 1);
+          v.fill(0.0);
 
           for (unsigned int p = 0; p < c->GetNumberOfParticles(dom); p++) {
-            // Extract from Eigen Q matrix
-            v = Q.block(num + p * num_attr, j, num_attr, 1);
+            v = Q.extract(num_attr, 1, num + p * num_attr, j);
+            Jmatrix = m_ShapeGradient->extract(num_attr, 3, num + p * num_attr, 3 * j);
 
-            // Map VNL matrix data to Eigen for extraction
-            Eigen::Map<const Eigen::MatrixXd> shapeGradMap(
-                m_ShapeGradient->data_block(), m_ShapeGradient->rows(), m_ShapeGradient->cols());
-            Jmatrix = shapeGradMap.block(num + p * num_attr, 3 * j, num_attr, 3);
-
-            Eigen::MatrixXd dx = Jmatrix.transpose() * v;
+            vnl_matrix_type dx = Jmatrix.transpose() * v;
             for (unsigned int vd = 0; vd < VDimension; vd++) {
               m_PointsUpdate->put(num2 + p * VDimension + vd, j, dx(vd, 0));
             }
@@ -130,7 +165,7 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
   m_CurrentEnergy = 0.0;
 
   if (m_UseMeanEnergy) {
-    m_CurrentEnergy = points_minus_mean.norm();
+    m_CurrentEnergy = points_minus_mean.frobenius_norm();
   } else {
     m_MinimumEigenValue = W(0) * W(0) + m_MinimumVariance;
     for (unsigned int i = 0; i < num_samples; i++) {
@@ -146,7 +181,6 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     m_MinimumEigenValue = m_CurrentEnergy / 2.0;
   }
 }
-
 
 CorrespondenceFunction::VectorType CorrespondenceFunction::Evaluate(unsigned int idx, unsigned int d,
                                                                     const ParticleSystem* system, double& maxdt,
