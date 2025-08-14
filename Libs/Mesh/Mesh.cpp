@@ -840,9 +840,6 @@ Field Mesh::curvature(const CurvatureType type) const {
     case Principal: {
       curv->SetName("principal curvature");
 
-      // returns maximal curvature value for each vertex
-      // igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
-
       // returns minimal curvature value for each vertex
       igl::principal_curvature(V, F, PD1, PD2, C, PV2);
       break;
@@ -854,18 +851,6 @@ Field Mesh::curvature(const CurvatureType type) const {
     }
     case Mean: {
       curv->SetName("mean curvature");
-
-      Eigen::MatrixXd HN;
-      Eigen::SparseMatrix<double> L, M, Minv;
-      igl::cotmatrix(V, F, L);
-      igl::massmatrix(V, F, igl::MASSMATRIX_TYPE_VORONOI, M);
-      igl::invert_diag(M, Minv);
-
-      // Laplace-Beltrami of position
-      HN = -Minv * (L * V);
-
-      // Extract magnitude as mean curvature
-      C = HN.rowwise().norm();
 
       // Compute curvature directions via quadric fitting
       igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
