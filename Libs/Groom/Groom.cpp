@@ -665,6 +665,23 @@ bool Groom::run_alignment() {
         landmarks.push_back(get_landmarks(i, domain));
       }
 
+      // confirm that each subject has landmarks and has the same number of landmarks
+      for (size_t i = 0; i < subjects.size(); i++) {
+        if (landmarks[i]->GetNumberOfPoints() == 0) {
+          SW_ERROR(
+              "Unable to perform landmark-based alignment.  Subject '{}' does not have landmarks defined for domain {}",
+              subjects[i]->get_display_name(), domain);
+          return false;
+        }
+        if (i > 0 && landmarks[i]->GetNumberOfPoints() != landmarks[0]->GetNumberOfPoints()) {
+          SW_ERROR(
+              "Unable to perform landmark-based alignment.  Subject '{}' has a different number of landmarks than "
+              "subject '{}'",
+              subjects[i]->get_display_name(), subjects[0]->get_display_name());
+          return false;
+        }
+      }
+
       int reference_index = Groom::find_reference_landmarks(landmarks);
       params.set_alignment_reference_chosen(reference_index);
       params.save_to_project();
@@ -960,7 +977,11 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
 vtkSmartPointer<vtkPoints> Groom::get_landmarks(int subject, int domain) {
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
   auto subjects = project_->get_subjects();
-  auto path = subjects[subject]->get_landmarks_filenames()[domain];
+  auto landmarks_filenames = subjects[subject]->get_landmarks_filenames();
+  if (domain >= landmarks_filenames.size()) {
+    return vtk_points;
+  }
+  auto path = landmarks_filenames[domain];
 
   std::ifstream in(path.c_str());
   if (!in.good()) {
