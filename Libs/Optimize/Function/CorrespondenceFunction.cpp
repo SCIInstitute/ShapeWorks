@@ -48,14 +48,13 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     TIME_START("correspondence::gramMat");
 
     // old
-    //gramMat = points_minus_mean.transpose() * points_minus_mean;
+    // gramMat = points_minus_mean.transpose() * points_minus_mean;
 
-
-    /*
     // Create Eigen maps that point to the VNL data
-    Eigen::Map<Eigen::MatrixXd> points_minus_mean_map(points_minus_mean.data_block(),
-                                                      points_minus_mean.rows(),
-                                                      points_minus_mean.cols());
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
+    points_minus_mean_map(points_minus_mean.data_block(),
+                          points_minus_mean.rows(),
+                          points_minus_mean.cols());
 
     // Perform the computation directly on the mapped data
     Eigen::MatrixXd gramMat_eigen = points_minus_mean_map.transpose() * points_minus_mean_map;
@@ -64,25 +63,6 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     gramMat.set_size(gramMat_eigen.rows(), gramMat_eigen.cols());
     std::memcpy(gramMat.data_block(), gramMat_eigen.data(),
                 gramMat_eigen.size() * sizeof(double));
-    */
-
-    // Create Eigen maps that point to the VNL data
-    Eigen::Map<Eigen::MatrixXd> points_minus_mean_map(points_minus_mean.data_block(),
-                                                      points_minus_mean.rows(),
-                                                      points_minus_mean.cols());
-
-    // Make sure gramMat is the right size first
-    gramMat.set_size(num_samples, num_samples);
-
-    // Create a map to the gramMat data
-    Eigen::Map<Eigen::MatrixXd> gramMat_map(gramMat.data_block(),
-                                            gramMat.rows(),
-                                            gramMat.cols());
-
-    // Perform the computation directly into the mapped gramMat
-    gramMat_map = points_minus_mean_map.transpose() * points_minus_mean_map;
-
-
 
     TIME_STOP("correspondence::gramMat");
 
