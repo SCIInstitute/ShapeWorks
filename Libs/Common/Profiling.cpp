@@ -9,10 +9,12 @@
 
 namespace shapeworks {
 
-Timer_Stack_Entry::Timer_Stack_Entry(const QString& name, qint64 start_time_us)
+//---------------------------------------------------------------------------
+TimerStackEntry::TimerStackEntry(const QString& name, qint64 start_time_us)
   : name(name), start_time_us(start_time_us), accumulated_child_time_ms(0.0) {
 }
 
+//---------------------------------------------------------------------------
 Profiler::Profiler()
   : profiling_enabled_(false), tracing_enabled_(false), start_time_us_(0) {
 
@@ -36,14 +38,17 @@ Profiler::Profiler()
   }
 }
 
+//---------------------------------------------------------------------------
 Profiler::~Profiler() {
 }
 
+//---------------------------------------------------------------------------
 Profiler& Profiler::instance() {
   static Profiler instance;
   return instance;
 }
 
+//---------------------------------------------------------------------------
 void Profiler::start_timer(const QString& name) {
   if (!profiling_enabled_ && !tracing_enabled_) {
     return;
@@ -55,11 +60,11 @@ void Profiler::start_timer(const QString& name) {
 
   // Add to timer stack
   auto& stack = timer_stacks_[thread_id];
-  stack.push_back(std::make_unique<Timer_Stack_Entry>(name, current_time_us));
+  stack.push_back(std::make_unique<TimerStackEntry>(name, current_time_us));
 
   // Add trace event if tracing enabled
   if (tracing_enabled_) {
-    Trace_Event event;
+    TraceEvent event;
     event.name = name;
     event.phase = "B";
     event.timestamp_us = start_time_us_ + current_time_us;
@@ -69,6 +74,7 @@ void Profiler::start_timer(const QString& name) {
   }
 }
 
+//---------------------------------------------------------------------------
 void Profiler::stop_timer(const QString& name) {
   if (!profiling_enabled_ && !tracing_enabled_) {
     return;
@@ -86,7 +92,7 @@ void Profiler::stop_timer(const QString& name) {
 
   // Find matching timer in stack (should be at top, but handle mismatched calls)
   auto it = std::find_if(stack.rbegin(), stack.rend(),
-    [&name](const std::unique_ptr<Timer_Stack_Entry>& entry) {
+    [&name](const std::unique_ptr<TimerStackEntry>& entry) {
       return entry->name == name;
     });
 
@@ -120,7 +126,7 @@ void Profiler::stop_timer(const QString& name) {
 
   // Add trace event if tracing enabled
   if (tracing_enabled_) {
-    Trace_Event event;
+    TraceEvent event;
     event.name = name;
     event.phase = "E";
     event.timestamp_us = start_time_us_ + current_time_us;
@@ -133,6 +139,7 @@ void Profiler::stop_timer(const QString& name) {
   stack.erase(it.base() - 1);
 }
 
+//---------------------------------------------------------------------------
 void Profiler::finalize() {
   if (!profiling_enabled_ && !tracing_enabled_) {
     return;
@@ -149,12 +156,13 @@ void Profiler::finalize() {
   }
 }
 
+//---------------------------------------------------------------------------
 void Profiler::write_profile_report() {
   // Calculate total time
   double total_time_ms = elapsed_timer_.elapsed();
 
   // Group entries by thread
-  std::unordered_map<Qt::HANDLE, std::vector<Profile_Entry*>> entries_by_thread;
+  std::unordered_map<Qt::HANDLE, std::vector<ProfileEntry*>> entries_by_thread;
   for (auto& pair : profile_entries_) {
     entries_by_thread[pair.second.thread_id].push_back(&pair.second);
   }
@@ -168,7 +176,7 @@ void Profiler::write_profile_report() {
 
     // Sort by inclusive time (descending)
     std::sort(entries.begin(), entries.end(),
-      [](const Profile_Entry* a, const Profile_Entry* b) {
+      [](const ProfileEntry* a, const ProfileEntry* b) {
         return a->inclusive_time_ms > b->inclusive_time_ms;
       });
 
@@ -222,6 +230,7 @@ void Profiler::write_profile_report() {
   }
 }
 
+//---------------------------------------------------------------------------
 void Profiler::write_trace_file() {
   QJsonObject root;
   QJsonArray events;
@@ -250,6 +259,7 @@ void Profiler::write_trace_file() {
   }
 }
 
+//---------------------------------------------------------------------------
 QString Profiler::format_time(double ms) {
   if (ms >= 1000.0) {
     return QString::number(ms / 1000.0, 'f', 3) + "s";
@@ -258,14 +268,16 @@ QString Profiler::format_time(double ms) {
   }
 }
 
-Scoped_Timer::Scoped_Timer(const QString& name)
+//---------------------------------------------------------------------------
+ScopedTimer::ScopedTimer(const QString& name)
   : name_(name), enabled_(Profiler::instance().is_profiling_enabled() || Profiler::instance().is_tracing_enabled()) {
   if (enabled_) {
     Profiler::instance().start_timer(name_);
   }
 }
 
-Scoped_Timer::~Scoped_Timer() {
+//---------------------------------------------------------------------------
+ScopedTimer::~ScopedTimer() {
   if (enabled_) {
     Profiler::instance().stop_timer(name_);
   }
