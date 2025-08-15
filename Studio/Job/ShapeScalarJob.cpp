@@ -108,37 +108,61 @@ void ShapeScalarJob::prep_data() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeScalarJob::run_fit() {
-  prep_data();
-  py::module np = py::module::import("numpy");
-  py::module sw = py::module::import("shapeworks");
+bool ShapeScalarJob::run_fit() {
+  try {
+    prep_data();
+    if (all_particles_.cols() == 0 || all_scalars_.cols() == 0) {
+      SW_ERROR("No data available for fitting MBPLS model.");
+      return false;
+    }
 
-  py::object A;
-  py::object B;
-  if (direction_ == Direction::To_Scalar) {
-    A = np.attr("array")(all_particles_);
-    B = np.attr("array")(all_scalars_);
-  } else {
-    A = np.attr("array")(all_scalars_);
-    B = np.attr("array")(all_particles_);
+    if (all_particles_.rows() != all_scalars_.rows()) {
+      SW_ERROR("Number of particles and scalars don't match.");
+      return false;
+    }
+
+    py::module np = py::module::import("numpy");
+    py::module sw = py::module::import("shapeworks");
+
+    py::object A;
+    py::object B;
+    if (direction_ == Direction::To_Scalar) {
+      A = np.attr("array")(all_particles_);
+      B = np.attr("array")(all_scalars_);
+    } else {
+      A = np.attr("array")(all_scalars_);
+      B = np.attr("array")(all_particles_);
+    }
+
+    // returns a tuple of (png_raw_bytes, y_pred, mse)
+    using ResultType = std::tuple<py::array, Eigen::MatrixXd, double>;
+
+    py::object run_mbpls = sw.attr("shape_scalars").attr("run_mbpls");
+
+    auto output = run_mbpls(A, B, num_components_, num_folds_);
+
+    if (output.is_none()) {
+      SW_ERROR("Failed to run MBPLS model fitting.");
+      return false;
+    }
+
+    ResultType result = output.cast<ResultType>();
+
+    py::array png_raw_bytes = std::get<0>(result);
+    Eigen::MatrixXd y_pred = std::get<1>(result);
+    double mse = std::get<2>(result);
+
+    // interpret png_raw_bytes as a QImage
+    QImage image;
+    image.loadFromData((const uchar*)png_raw_bytes.data(), png_raw_bytes.size(), "PNG");
+    plot_ = QPixmap::fromImage(image);
+
+    SW_LOG("mse = {}", mse);
+    return true;
+  } catch (const std::exception& e) {
+    SW_ERROR("Exception in shape scalar job fit: {}", e.what());
+    return false;
   }
-
-  // returns a tuple of (png_raw_bytes, y_pred, mse)
-  using ResultType = std::tuple<py::array, Eigen::MatrixXd, double>;
-
-  py::object run_mbpls = sw.attr("shape_scalars").attr("run_mbpls");
-  ResultType result = run_mbpls(A, B, num_components_, num_folds_).cast<ResultType>();
-
-  py::array png_raw_bytes = std::get<0>(result);
-  Eigen::MatrixXd y_pred = std::get<1>(result);
-  double mse = std::get<2>(result);
-
-  // interpret png_raw_bytes as a QImage
-  QImage image;
-  image.loadFromData((const uchar*)png_raw_bytes.data(), png_raw_bytes.size(), "PNG");
-  plot_ = QPixmap::fromImage(image);
-
-  SW_LOG("mse = {}", mse);
 }
 
 //---------------------------------------------------------------------------
@@ -149,7 +173,9 @@ void ShapeScalarJob::run_prediction() {
   py::object does_mbpls_model_exist = sw.attr("shape_scalars").attr("does_mbpls_model_exist");
   if (needs_clear_ == true || !does_mbpls_model_exist().cast<bool>()) {
     SW_LOG("No MBPLS model exists, running fit");
-    run_fit();
+    if (!run_fit()) {
+      return;
+    }
     needs_clear_ = false;
   }
 
