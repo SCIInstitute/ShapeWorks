@@ -76,21 +76,13 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
     TIME_START("correspondence::lhs_rhs");
 
-    /*
-    vnl_matrix_type projMat = points_minus_mean * UG;
-    const auto lhs = projMat * invLambda;
-    const auto rhs =
-        invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
-    */
-
     // Create Eigen maps for the VNL matrices
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> UG_map(UG.data_block(),
                                                                                               UG.rows(), UG.cols());
-
     // Create temporary Eigen matrices for the computations
     Eigen::MatrixXd projMat_eigen = points_minus_mean_map * UG_map;
-
     // Convert invLambda diagonal matrix to Eigen
+
     // Assuming invLambda is a vnl_diag_matrix, you'll need to extract the diagonal
     Eigen::VectorXd invLambda_diag(invLambda.size());
     for (int i = 0; i < invLambda.size(); i++) {
@@ -101,7 +93,6 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     // Perform the computations using Eigen
     const auto lhs = projMat_eigen * invLambda_eigen;
     const auto rhs = invLambda_eigen * projMat_eigen.transpose();
-
     TIME_STOP("correspondence::lhs_rhs");
 
     // resize the inverse covariance matrix if necessary
@@ -109,7 +100,6 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
       m_InverseCovMatrix->resize(num_dims, num_dims);
     }
     TIME_START("correspondence::covariance_multiply");
-    //Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
     m_InverseCovMatrix->noalias() = lhs * rhs;
     TIME_STOP("correspondence::covariance_multiply");
   }
