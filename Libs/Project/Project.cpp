@@ -346,6 +346,11 @@ void Project::determine_feature_names() {
             if (poly_data) {
               vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
               for (vtkIdType i = 0; i < num_arrays; i++) {
+                std::string array_name = StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i));
+                // ignore "normals" and "Normals" arrays
+                if (array_name == "normals" || array_name == "Normals") {
+                  continue;
+                }
                 mesh_scalars.push_back(StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i)));
               }
             }
