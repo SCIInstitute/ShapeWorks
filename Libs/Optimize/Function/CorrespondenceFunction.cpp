@@ -47,47 +47,70 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
   } else {
     TIME_START("correspondence::gramMat");
 
-    // old
-    // gramMat = points_minus_mean.transpose() * points_minus_mean;
-
     // Create Eigen maps that point to the VNL data
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
-    points_minus_mean_map(points_minus_mean.data_block(),
-                          points_minus_mean.rows(),
-                          points_minus_mean.cols());
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> points_minus_mean_map(
+        points_minus_mean.data_block(), points_minus_mean.rows(), points_minus_mean.cols());
 
     // Perform the computation directly on the mapped data
     Eigen::MatrixXd gramMat_eigen = points_minus_mean_map.transpose() * points_minus_mean_map;
 
     // Copy result back to VNL matrix
     gramMat.set_size(gramMat_eigen.rows(), gramMat_eigen.cols());
-    std::memcpy(gramMat.data_block(), gramMat_eigen.data(),
-                gramMat_eigen.size() * sizeof(double));
+    std::memcpy(gramMat.data_block(), gramMat_eigen.data(), gramMat_eigen.size() * sizeof(double));
 
     TIME_STOP("correspondence::gramMat");
 
+    TIME_START("correspondence::svd");
     vnl_svd<double> svd(gramMat);
-
     vnl_matrix_type UG = svd.U();
     W = svd.W();
-
     vnl_diag_matrix<double> invLambda = svd.W();
+    TIME_STOP("correspondence::svd");
+
     invLambda.set_diagonal(invLambda.get_diagonal() / (double)(num_samples - 1) + m_MinimumVariance);
     invLambda.invert_in_place();
 
+    TIME_START("correspondence::pinvMat");
     pinvMat = (UG * invLambda) * UG.transpose();
+    TIME_STOP("correspondence::pinvMat");
 
+    TIME_START("correspondence::lhs_rhs");
+
+    /*
     vnl_matrix_type projMat = points_minus_mean * UG;
     const auto lhs = projMat * invLambda;
     const auto rhs =
         invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
+    */
+
+    // Create Eigen maps for the VNL matrices
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> UG_map(UG.data_block(),
+                                                                                              UG.rows(), UG.cols());
+
+    // Create temporary Eigen matrices for the computations
+    Eigen::MatrixXd projMat_eigen = points_minus_mean_map * UG_map;
+
+    // Convert invLambda diagonal matrix to Eigen
+    // Assuming invLambda is a vnl_diag_matrix, you'll need to extract the diagonal
+    Eigen::VectorXd invLambda_diag(invLambda.size());
+    for (int i = 0; i < invLambda.size(); i++) {
+      invLambda_diag(i) = invLambda(i, i);
+    }
+    Eigen::DiagonalMatrix<double, Eigen::Dynamic> invLambda_eigen(invLambda_diag);
+
+    // Perform the computations using Eigen
+    const auto lhs = projMat_eigen * invLambda_eigen;
+    const auto rhs = invLambda_eigen * projMat_eigen.transpose();
+
+    TIME_STOP("correspondence::lhs_rhs");
 
     // resize the inverse covariance matrix if necessary
     if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
       m_InverseCovMatrix->resize(num_dims, num_dims);
     }
     TIME_START("correspondence::covariance_multiply");
-    Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+    //Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+    m_InverseCovMatrix->noalias() = lhs * rhs;
     TIME_STOP("correspondence::covariance_multiply");
   }
 
