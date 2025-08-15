@@ -1211,6 +1211,7 @@ void AnalysisTool::reset_stats() {
     ui_->show_difference_to_predicted_scalar->setChecked(false);
   }
   ui_->show_difference_to_predicted_scalar->setEnabled(has_scalars);
+  ui_->show_predicted_scalar->setEnabled(has_scalars);
 
   ui_->shape_scalar_groupbox->setVisible(ui_->pca_scalar_combo->count() > 0);
 }
@@ -1607,7 +1608,7 @@ void AnalysisTool::update_difference_particles() {
   }
 
   if (all_particles.size() != mean.size()) {
-    SW_ERROR("Inconsistent number of values in particle vector, {} vs. {}", all_particles.size(), mean.size());
+    SW_LOG_ONLY("Inconsistent number of values in particle vector, {} vs. {}", all_particles.size(), mean.size());
     return;
   }
 
@@ -1983,13 +1984,26 @@ void AnalysisTool::handle_samples_predicted_scalar_options() {
       auto& shape = shapes[i];
       auto particles = shape->get_particles();
       auto target_feature = ui_->pca_scalar_combo->currentText();
+      if (target_feature == "") {
+        return;
+      }
       auto predicted =
           ShapeScalarJob::predict_scalars(session_, target_feature, particles.get_combined_global_particles());
+
+      if (predicted.size() == 0) {
+        // This indicates that an error occurred, which should already have been reported
+        return;
+      }
 
       // load the mesh and feature
       shape->get_meshes(session_->get_display_mode(), true);
       shape->load_feature(session_->get_display_mode(), target_feature.toStdString());
       Eigen::VectorXd scalars = shape->get_point_features(target_feature.toStdString());
+
+      if (scalars.size() != predicted.size()) {
+        SW_LOG_ONLY("Inconsistent number of values in particle vector, {} vs. {}", scalars.size(), predicted.size());
+        return;
+      }
       // compute difference
       Eigen::VectorXd diff = predicted - scalars;
       if (ui_->show_absolute_difference->isChecked()) {
@@ -2153,7 +2167,7 @@ Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
     Eigen::VectorXd new_world(worlds[d].size());
 
     if (idx + new_world.size() > points.size()) {
-      SW_WARN("Inconsistent number of values in particle vector");
+      SW_LOG_ONLY("Inconsistent number of values in particle vector");
       return {};
     }
 

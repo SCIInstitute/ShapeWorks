@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
-
+from numpy.linalg import LinAlgError
 
 def get_fig_png():
     # return plot as PNG in memory
@@ -28,46 +28,61 @@ def get_fig_png():
 def run_mbpls(x, y, n_components=3, cv=5):
     """ Run MBPLS on shape and scalar data """
 
-    # don't set cv higher than the number of samples
-    cv = min(cv, len(x))
+    try:
+        # don't set cv higher than the number of samples
+        cv = min(cv, len(x))
 
-    global mbpls_model
-    mbpls_model = MBPLS(n_components=n_components)
-    if cv != 1:
-        y_pred = cross_val_predict(mbpls_model, x, y, cv=cv)
+        global mbpls_model
+        mbpls_model = MBPLS(n_components=n_components)
+        if cv != 1:
+            y_pred = cross_val_predict(mbpls_model, x, y, cv=cv)
 
-    mbpls_model.fit(x, y)
-    
-    if cv == 1:
-        y_pred = mbpls_model.predict(x)
+        mbpls_model.fit(x, y)
+        
+        if cv == 1:
+            y_pred = mbpls_model.predict(x)
 
-    mse = mean_squared_error(y, y_pred)
+        mse = mean_squared_error(y, y_pred)
 
-    sw_message(f'Python MSE: {mse}')
+        sw_message(f'Python MSE: {mse}')
 
-    prediction = pd.DataFrame(np.array(y_pred))
+        prediction = pd.DataFrame(np.array(y_pred))
 
-    # concatenate all columns into one
-    prediction = pd.DataFrame(prediction.values.flatten())
+        # concatenate all columns into one
+        prediction = pd.DataFrame(prediction.values.flatten())
 
-    y = pd.DataFrame(np.array(y))
-    y = pd.DataFrame(y.values.flatten())
+        y = pd.DataFrame(np.array(y))
+        y = pd.DataFrame(y.values.flatten())
 
-    prediction = pd.concat((prediction, y), axis=1)
-    prediction.columns = ['Predicted Scalar', 'Known Scalar']
-    prediction.plot.scatter(x='Known Scalar', y='Predicted Scalar')
-    plt.plot([prediction.min().min(), prediction.max().max()],
-             [prediction.min().min(), prediction.max().max()], color='red')
-    plt.ylabel(prediction.columns[0], fontsize=16)
-    plt.xlabel(prediction.columns[1], fontsize=16)
-    plt.title('MSE = {:.4f}'.format(mean_squared_error(prediction['Known Scalar'],
-                                                       prediction['Predicted Scalar'])), fontsize=18);
+        prediction = pd.concat((prediction, y), axis=1)
+        prediction.columns = ['Predicted Scalar', 'Known Scalar']
+        prediction.plot.scatter(x='Known Scalar', y='Predicted Scalar')
+        plt.plot([prediction.min().min(), prediction.max().max()],
+                [prediction.min().min(), prediction.max().max()], color='red')
+        plt.ylabel(prediction.columns[0], fontsize=16)
+        plt.xlabel(prediction.columns[1], fontsize=16)
+        plt.title('MSE = {:.4f}'.format(mean_squared_error(prediction['Known Scalar'],
+                                                        prediction['Predicted Scalar'])), fontsize=18);
 
-    # convert figdata_png to an array
-    figdata_png = get_fig_png()
+        # convert figdata_png to an array
+        figdata_png = get_fig_png()
 
-    return figdata_png, y_pred, mse
-
+        return figdata_png, y_pred, mse
+    except LinAlgError as e:
+        if "SVD did not converge" in str(e):
+            raise ValueError(
+                "PLS analysis failed due to numerical issues in the data. "
+                "This typically occurs when variables are highly correlated, "
+                "data contains outliers, or matrices are poorly conditioned. "
+                "Please check your data for missing values, outliers, and "
+                "consider standardizing variables or removing redundant features."
+            )
+        else:
+            # Re-raise other LinAlgErrors with original message
+            raise
+    except Exception as e:
+        # Handle any other unexpected errors
+        raise RuntimeError(f"Unexpected error in PLS analysis: {str(e)}")
 
 def run_find_num_components(x, y, max_components, cv=5):
     """ Run MBPLS on shape and scalar data to determine the number of components to use"""
