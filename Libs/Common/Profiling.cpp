@@ -1,23 +1,27 @@
 #include "Profiling.h"
+
 #include <QCoreApplication>
 #include <QDebug>
-#include <QStandardPaths>
 #include <QDir>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QStandardPaths>
+#include <QTextStream>
+#include <QThread>
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
-#include <algorithm>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
 TimerStackEntry::TimerStackEntry(const QString& name, qint64 start_time_us)
-  : name(name), start_time_us(start_time_us), accumulated_child_time_ms(0.0) {
-}
+    : name(name), start_time_us(start_time_us), accumulated_child_time_ms(0.0) {}
 
 //---------------------------------------------------------------------------
-Profiler::Profiler()
-  : profiling_enabled_(false), tracing_enabled_(false), start_time_us_(0) {
-
+Profiler::Profiler() : profiling_enabled_(false), tracing_enabled_(false), start_time_us_(0) {
   // Check environment variables
   const char* profile_env = std::getenv("SW_TIME_PROFILE");
   if (profile_env) {
@@ -34,13 +38,13 @@ Profiler::Profiler()
   if (profiling_enabled_ || tracing_enabled_) {
     elapsed_timer_.start();
     start_time_us_ = std::chrono::duration_cast<std::chrono::microseconds>(
-      std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+                         std::chrono::high_resolution_clock::now().time_since_epoch())
+                         .count();
   }
 }
 
 //---------------------------------------------------------------------------
-Profiler::~Profiler() {
-}
+Profiler::~Profiler() {}
 
 //---------------------------------------------------------------------------
 Profiler& Profiler::instance() {
@@ -92,9 +96,7 @@ void Profiler::stop_timer(const QString& name) {
 
   // Find matching timer in stack (should be at top, but handle mismatched calls)
   auto it = std::find_if(stack.rbegin(), stack.rend(),
-    [&name](const std::unique_ptr<TimerStackEntry>& entry) {
-      return entry->name == name;
-    });
+                         [&name](const std::unique_ptr<TimerStackEntry>& entry) { return entry->name == name; });
 
   if (it == stack.rend()) {
     qWarning() << "No matching start timer found for" << name;
@@ -155,8 +157,6 @@ void Profiler::finalize() {
     write_trace_file();
   }
 }
-
-//---------------------------------------------------------------------------
 void Profiler::write_profile_report() {
   // Calculate total time
   double total_time_ms = elapsed_timer_.elapsed();
@@ -170,49 +170,56 @@ void Profiler::write_profile_report() {
   QString report;
   QTextStream stream(&report);
 
+  int tid = 0;
   for (const auto& thread_pair : entries_by_thread) {
     Qt::HANDLE thread_id = thread_pair.first;
     auto entries = thread_pair.second;
 
     // Sort by inclusive time (descending)
     std::sort(entries.begin(), entries.end(),
-      [](const ProfileEntry* a, const ProfileEntry* b) {
-        return a->inclusive_time_ms > b->inclusive_time_ms;
-      });
+              [](const ProfileEntry* a, const ProfileEntry* b) { return a->inclusive_time_ms > b->inclusive_time_ms; });
 
-    stream << QString("THREAD %1: ").arg(reinterpret_cast<quintptr>(thread_id)) << "\n";
-    stream << "--------------------------------------------------------------------------------------\n";
-    stream << QString("%1 %2 %3 %4 %5 %6 %7\n")
-             .arg("   %Time", 8)
-             .arg("Exclusive", 12)
-             .arg("Inclusive", 12)
-             .arg("#Call", 8)
-             .arg("#Subrs", 8)
-             .arg("Inclusive", 12)
-             .arg("Name", 5);
-    stream << QString("%1 %2 %3 %4 %5 %6\n")
-             .arg("", 8)
-             .arg("msec", 12)
-             .arg("total msec", 12)
-             .arg("", 8)
-             .arg("", 8)
-             .arg("ms/call",12);
-    stream << "--------------------------------------------------------------------------------------\n";
+    stream << QString("THREAD %1: ").arg(tid++) << "\n";
+    stream
+        << "------------------------------------------------------------------------------------------------------\n";
+    stream << QString("%1 %2 %3 %4 %5 %6 %7 %8\n")
+                  .arg("   %Time", 8)
+                  .arg("Exclusive", 12)
+                  .arg("Inclusive", 12)
+                  .arg("#Calls", 8)
+                  .arg("#Child", 8)
+                  .arg("Exclusive", 12)
+                  .arg("Inclusive", 12)
+                  .arg("Name");
+    stream << QString("%1 %2 %3 %4 %5 %6 %7 %8\n")
+                  .arg("", 8)
+                  .arg("total ms", 12)
+                  .arg("total ms", 12)
+                  .arg("", 8)
+                  .arg("", 8)
+                  .arg("ms/call", 12)
+                  .arg("ms/call", 12)
+                  .arg("");
+    stream
+        << "------------------------------------------------------------------------------------------------------\n";
 
     for (const auto* entry : entries) {
       double percent = (entry->inclusive_time_ms / total_time_ms) * 100.0;
-      double msec_per_call = entry->call_count > 0 ? (entry->inclusive_time_ms) / entry->call_count : 0.0;
+      double exclusive_msec_per_call = entry->call_count > 0 ? entry->exclusive_time_ms / entry->call_count : 0.0;
+      double inclusive_msec_per_call = entry->call_count > 0 ? entry->inclusive_time_ms / entry->call_count : 0.0;
 
-      stream << QString("%1 %2 %3 %4 %5 %6 %7\n")
-               .arg(QString::number(percent, 'f', 1), 8)
-               .arg(QString::number(entry->exclusive_time_ms, 'f', 0), 12)
-               .arg(QString::number(entry->inclusive_time_ms, 'f', 0), 12)
-               .arg(entry->call_count, 8)
-               .arg(entry->subcall_count, 8)
-               .arg(QString::number(msec_per_call, 'f', 0), 12)
-               .arg(entry->name);
+      stream << QString("%1 %2 %3 %4 %5 %6 %7 %8\n")
+                    .arg(QString::number(percent, 'f', 1), 8)
+                    .arg(QString::number(entry->exclusive_time_ms, 'f', 0), 12)
+                    .arg(QString::number(entry->inclusive_time_ms, 'f', 0), 12)
+                    .arg(entry->call_count, 8)
+                    .arg(entry->subcall_count, 8)
+                    .arg(QString::number(exclusive_msec_per_call, 'f', 0), 12)
+                    .arg(QString::number(inclusive_msec_per_call, 'f', 0), 12)
+                    .arg(entry->name);
     }
-    stream << "--------------------------------------------------------------------------------------\n\n";
+    stream
+        << "------------------------------------------------------------------------------------------------------\n\n";
   }
 
   // Output to console
@@ -229,7 +236,6 @@ void Profiler::write_profile_report() {
     qWarning() << "Failed to write profile.txt";
   }
 }
-
 //---------------------------------------------------------------------------
 void Profiler::write_trace_file() {
   QJsonObject root;
@@ -270,7 +276,7 @@ QString Profiler::format_time(double ms) {
 
 //---------------------------------------------------------------------------
 ScopedTimer::ScopedTimer(const QString& name)
-  : name_(name), enabled_(Profiler::instance().is_profiling_enabled() || Profiler::instance().is_tracing_enabled()) {
+    : name_(name), enabled_(Profiler::instance().is_profiling_enabled() || Profiler::instance().is_tracing_enabled()) {
   if (enabled_) {
     Profiler::instance().start_timer(name_);
   }
@@ -283,4 +289,4 @@ ScopedTimer::~ScopedTimer() {
   }
 }
 
-} // namespace shapeworks
+}  // namespace shapeworks

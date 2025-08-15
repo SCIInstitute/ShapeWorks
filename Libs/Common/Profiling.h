@@ -1,16 +1,9 @@
 #pragma once
 
 #include <QElapsedTimer>
-#include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QMutex>
 #include <QString>
-#include <QTextStream>
 #include <QThread>
-#include <chrono>
-#include <memory>
 #include <unordered_map>
 #include <vector>
 
