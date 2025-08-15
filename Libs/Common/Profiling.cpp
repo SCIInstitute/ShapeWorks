@@ -201,7 +201,7 @@ void Profiler::write_profile_report() {
 
     for (const auto* entry : entries) {
       double percent = (entry->inclusive_time_ms / total_time_ms) * 100.0;
-      double usec_per_call = entry->call_count > 0 ? (entry->inclusive_time_ms) / entry->call_count : 0.0;
+      double msec_per_call = entry->call_count > 0 ? (entry->inclusive_time_ms) / entry->call_count : 0.0;
 
       stream << QString("%1 %2 %3 %4 %5 %6 %7\n")
                .arg(QString::number(percent, 'f', 1), 8)
@@ -209,7 +209,7 @@ void Profiler::write_profile_report() {
                .arg(QString::number(entry->inclusive_time_ms, 'f', 0), 12)
                .arg(entry->call_count, 8)
                .arg(entry->subcall_count, 8)
-               .arg(QString::number(usec_per_call, 'f', 0), 12)
+               .arg(QString::number(msec_per_call, 'f', 0), 12)
                .arg(entry->name);
     }
     stream << "--------------------------------------------------------------------------------------\n\n";
