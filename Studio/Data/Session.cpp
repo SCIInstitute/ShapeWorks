@@ -1340,9 +1340,7 @@ Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
 
     // check that the scalars are the right size
     if (scalars.size() != num_particles) {
-      SW_ERROR("scalars.size() : {}", scalars.size());
-      SW_ERROR("num_particles : {}", num_particles);
-      SW_ERROR("Error: scalars size does not match number of particles");
+      SW_LOG("Size of scalars ({}) does not match number of particles ({})", scalars.size(), num_particles);
       return Eigen::MatrixXd();
     }
 
