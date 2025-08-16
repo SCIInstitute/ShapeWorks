@@ -87,12 +87,16 @@ void Logging::log_stack(const std::string& message) const {
 
 //-----------------------------------------------------------------------------
 void Logging::log_error(const std::string& message, const int line, const char* file) const {
-  spd::error(message);
+  std::string str = message;
+  if (spd::get_level() == spd::level::debug) {
+    str = create_header(line, file) + " Error: " + message;
+  }
+  spd::error(str);
   if (log_open_) {
-    spd::get("file")->error(message);
+    spd::get("file")->error(str);
   }
   if (error_callback_) {
-    error_callback_(message);
+    error_callback_(str);
   }
 }
 

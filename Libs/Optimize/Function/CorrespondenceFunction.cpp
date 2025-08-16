@@ -1,15 +1,18 @@
 
 #include "CorrespondenceFunction.h"
 
+#include <Libs/Utils/PlatformUtils.h>
 #include <math.h>
 
 #include "Libs/Utils/Utils.h"
+#include "Profiling.h"
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
 
 namespace shapeworks {
 
 void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
+  TIME_SCOPE("CorrespondenceFunction::ComputeUpdates");
   num_dims = m_ShapeData->rows();
   num_samples = m_ShapeData->cols();
 
@@ -41,33 +44,71 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
   if (this->m_UseMeanEnergy) {
     pinvMat.set_identity();
-
     m_InverseCovMatrix->setZero();
-
   } else {
-    gramMat = points_minus_mean.transpose() * points_minus_mean;
+    TIME_START("correspondence::gramMat");
 
+    // Create Eigen maps that point to the VNL data
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> points_minus_mean_map(
+        points_minus_mean.data_block(), points_minus_mean.rows(), points_minus_mean.cols());
+
+    // Perform the computation directly on the mapped data
+    Eigen::MatrixXd gramMat_eigen = points_minus_mean_map.transpose() * points_minus_mean_map;
+
+    // Copy result back to VNL matrix
+    gramMat.set_size(gramMat_eigen.rows(), gramMat_eigen.cols());
+    std::memcpy(gramMat.data_block(), gramMat_eigen.data(), gramMat_eigen.size() * sizeof(double));
+
+    TIME_STOP("correspondence::gramMat");
+
+    TIME_START("correspondence::svd");
     vnl_svd<double> svd(gramMat);
-
     vnl_matrix_type UG = svd.U();
     W = svd.W();
-
     vnl_diag_matrix<double> invLambda = svd.W();
+    TIME_STOP("correspondence::svd");
+
     invLambda.set_diagonal(invLambda.get_diagonal() / (double)(num_samples - 1) + m_MinimumVariance);
     invLambda.invert_in_place();
 
+    TIME_START("correspondence::pinvMat");
     pinvMat = (UG * invLambda) * UG.transpose();
+    TIME_STOP("correspondence::pinvMat");
 
-    vnl_matrix_type projMat = points_minus_mean * UG;
-    const auto lhs = projMat * invLambda;
-    const auto rhs =
-        invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
+    TIME_START("correspondence::lhs_rhs");
+
+    // Create Eigen maps for the VNL matrices
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> UG_map(UG.data_block(),
+                                                                                              UG.rows(), UG.cols());
+    // Create temporary Eigen matrices for the computations
+    Eigen::MatrixXd projMat_eigen = points_minus_mean_map * UG_map;
+
+    // Convert invLambda diagonal matrix to Eigen
+    // Since invLambda is a vnl_diag_matrix, we'll need to extract the diagonal
+    Eigen::VectorXd invLambda_diag(invLambda.size());
+    for (int i = 0; i < invLambda.size(); i++) {
+      invLambda_diag(i) = invLambda(i, i);
+    }
+    Eigen::DiagonalMatrix<double, Eigen::Dynamic> invLambda_eigen(invLambda_diag);
+
+    // Perform the computations using Eigen
+    const auto lhs = projMat_eigen * invLambda_eigen;
+    const auto rhs = invLambda_eigen * projMat_eigen.transpose();
+    TIME_STOP("correspondence::lhs_rhs");
 
     // resize the inverse covariance matrix if necessary
     if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
       m_InverseCovMatrix->resize(num_dims, num_dims);
     }
-    Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+
+    TIME_START("correspondence::covariance_multiply");
+    if (PlatformUtils::is_macos()) {
+      // this is about 2x faster on MacOS, but slower on Linux
+      m_InverseCovMatrix->selfadjointView<Eigen::Upper>().rankUpdate(lhs);
+    } else {
+      m_InverseCovMatrix->noalias() = lhs * rhs;
+    }
+    TIME_STOP("correspondence::covariance_multiply");
   }
 
   vnl_matrix_type Q = points_minus_mean * pinvMat;
@@ -142,8 +183,8 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 }
 
 CorrespondenceFunction::VectorType CorrespondenceFunction::Evaluate(unsigned int idx, unsigned int d,
-                                                                     const ParticleSystem* system, double& maxdt,
-                                                                     double& energy) const {
+                                                                    const ParticleSystem* system, double& maxdt,
+                                                                    double& energy) const {
   int dom = d % m_DomainsPerShape;      // domain number within shape
   int sampNum = d / m_DomainsPerShape;  // shape number
 

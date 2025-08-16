@@ -18,6 +18,8 @@ const int global_iteration = 1;
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "Libs/Optimize/Utils/MemoryUsage.h"
 
+#include <Profiling.h>
+
 namespace shapeworks {
 GradientDescentOptimizer::GradientDescentOptimizer() {
   m_StopOptimization = false;
@@ -47,6 +49,7 @@ void GradientDescentOptimizer::ResetTimeStepVectors() {
 }
 
 void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
+  TIME_SCOPE("GradientDescentOptimizer");
   /// uncomment this to run single threaded
   // tbb::task_scheduler_init init(1);
 
@@ -77,6 +80,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
   double maxchange = 0.0;
   while (m_StopOptimization == false)  // iterations loop
   {
+    TIME_SCOPE("optimizer_iteration");
     double dampening = 1;
     int startDampening = m_MaximumNumberOfIterations / 2;
     if (m_NumberOfIterations > startDampening) {
@@ -89,9 +93,13 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
     const auto accTimerBegin = std::chrono::steady_clock::now();
     m_GradientFunction->SetParticleSystem(m_ParticleSystem);
+
+    TIME_START("gradient_before_iteration");
     if (counter % global_iteration == 0) m_GradientFunction->BeforeIteration();
+    TIME_STOP("gradient_before_iteration");
     counter++;
 
+    TIME_START("parallel_sampling");
     // Iterate over each domain
     const auto domains_per_shape = m_ParticleSystem->GetDomainsPerShape();
     tbb::parallel_for(
@@ -190,6 +198,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
           }  // for each domain
         });
 
+    TIME_STOP("parallel_sampling");
     m_NumberOfIterations++;
     m_GradientFunction->AfterIteration();
 
