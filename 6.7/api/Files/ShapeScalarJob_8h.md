@@ -68,7 +68,7 @@ class ShapeScalarJob : public Job {
  private:
   void prep_data();
 
-  void run_fit();
+  bool run_fit();
   void run_prediction();
 
   static Eigen::VectorXd predict(QSharedPointer<Session> session, QString target_feature,
@@ -103,4 +103,4 @@ class ShapeScalarJob : public Job {
 
 -------------------------------
 
-Updated on 2025-08-14 at 09:07:45 +0000
+Updated on 2025-08-16 at 16:54:10 +0000

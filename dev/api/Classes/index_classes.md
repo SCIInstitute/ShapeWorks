@@ -207,8 +207,11 @@ title: Classes
     * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
     * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** 
     * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
+    * **class [PlatformUtils](../Classes/classshapeworks_1_1PlatformUtils.md)** <br>Platform utility functions. 
     * **class [PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
     * **class [ProcrustesRegistration](../Classes/classshapeworks_1_1ProcrustesRegistration.md)** 
+    * **struct [ProfileEntry](../Classes/structshapeworks_1_1ProfileEntry.md)** 
+    * **class [Profiler](../Classes/classshapeworks_1_1Profiler.md)** 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
     * **class [ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md)** 
     * **class [ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers. 
@@ -223,6 +226,7 @@ title: Classes
         * **struct [SphereType](../Classes/structshapeworks_1_1Sampler_1_1SphereType.md)** 
     * **class [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** 
         * **struct [CrossDomainNeighborhood](../Classes/structshapeworks_1_1SamplingFunction_1_1CrossDomainNeighborhood.md)** 
+    * **class [ScopedTimer](../Classes/classshapeworks_1_1ScopedTimer.md)** 
     * **class [SegmentationToolPanel](../Classes/classshapeworks_1_1SegmentationToolPanel.md)** 
     * **class [Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session. 
     * **class [Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject. 
@@ -253,6 +257,8 @@ title: Classes
     * **class [Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject. 
     * **class [Surface](../Classes/classshapeworks_1_1Surface.md)** 
     * **class [Telemetry](../Classes/classshapeworks_1_1Telemetry.md)** 
+    * **class [TimerStackEntry](../Classes/classshapeworks_1_1TimerStackEntry.md)** 
+    * **struct [TraceEvent](../Classes/structshapeworks_1_1TraceEvent.md)** 
     * **class [UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker. 
     * **class [Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types. 
     * **class [VectorFunction](../Classes/classshapeworks_1_1VectorFunction.md)** 
@@ -277,4 +283,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2025-08-14 at 09:07:45 +0000
+Updated on 2025-08-16 at 16:54:10 +0000

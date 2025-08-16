@@ -130,8 +130,11 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::PickResult](../Classes/classshapeworks_1_1PickResult.md)**  |
 | class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)**  |
 | class | **[shapeworks::PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget]().  |
+| class | **[shapeworks::PlatformUtils](../Classes/classshapeworks_1_1PlatformUtils.md)** <br>Platform utility functions.  |
 | class | **[shapeworks::PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
 | class | **[shapeworks::ProcrustesRegistration](../Classes/classshapeworks_1_1ProcrustesRegistration.md)**  |
+| struct | **[shapeworks::ProfileEntry](../Classes/structshapeworks_1_1ProfileEntry.md)**  |
+| class | **[shapeworks::Profiler](../Classes/classshapeworks_1_1Profiler.md)**  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
 | class | **[shapeworks::ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md)**  |
 | class | **[shapeworks::ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers.  |
@@ -143,6 +146,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ReconstructSurface](../Classes/classshapeworks_1_1ReconstructSurface.md)**  |
 | class | **[shapeworks::Sampler](../Classes/classshapeworks_1_1Sampler.md)**  |
 | class | **[shapeworks::SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)**  |
+| class | **[shapeworks::ScopedTimer](../Classes/classshapeworks_1_1ScopedTimer.md)**  |
 | class | **[shapeworks::SegmentationToolPanel](../Classes/classshapeworks_1_1SegmentationToolPanel.md)**  |
 | class | **[shapeworks::Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session.  |
 | class | **[shapeworks::Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject.  |
@@ -172,6 +176,8 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject.  |
 | class | **[shapeworks::Surface](../Classes/classshapeworks_1_1Surface.md)**  |
 | class | **[shapeworks::Telemetry](../Classes/classshapeworks_1_1Telemetry.md)**  |
+| class | **[shapeworks::TimerStackEntry](../Classes/classshapeworks_1_1TimerStackEntry.md)**  |
+| struct | **[shapeworks::TraceEvent](../Classes/structshapeworks_1_1TraceEvent.md)**  |
 | class | **[shapeworks::UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker.  |
 | class | **[shapeworks::Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types.  |
 | class | **[shapeworks::VectorFunction](../Classes/classshapeworks_1_1VectorFunction.md)**  |
@@ -2588,4 +2594,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2025-08-14 at 09:07:44 +0000
+Updated on 2025-08-16 at 16:54:08 +0000

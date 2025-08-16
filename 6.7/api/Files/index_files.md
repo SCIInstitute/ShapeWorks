@@ -47,6 +47,7 @@ title: Files
         * **file [Libs/Analyze/vtkPolyDataToImageData.h](../Files/vtkPolyDataToImageData_8h.md#file-vtkpolydatatoimagedata.h)** 
     * **dir [Libs/Common](../Files/dir_c13ed27a749775eeb2d59234813cae48.md#dir-libs/common)** 
         * **file [Libs/Common/Logging.h](../Files/Logging_8h.md#file-logging.h)** 
+        * **file [Libs/Common/Profiling.h](../Files/Profiling_8h.md#file-profiling.h)** 
         * **file [Libs/Common/Region.h](../Files/Region_8h.md#file-region.h)** 
         * **file [Libs/Common/Shapeworks.h](../Files/Shapeworks_8h.md#file-shapeworks.h)** 
         * **file [Libs/Common/ShapeworksUtils.h](../Files/ShapeworksUtils_8h.md#file-shapeworksutils.h)** 
@@ -165,6 +166,7 @@ title: Files
         * **file [Libs/Python/pybind_utils.h](../Files/pybind__utils_8h.md#file-pybind-utils.h)** 
     * **dir [Libs/Utils](../Files/dir_73a09fceee206218e6d903b3c5deb969.md#dir-libs/utils)** 
         * **file [Libs/Utils/EigenUtils.h](../Files/EigenUtils_8h.md#file-eigenutils.h)** 
+        * **file [Libs/Utils/PlatformUtils.h](../Files/PlatformUtils_8h.md#file-platformutils.h)** 
         * **file [Libs/Utils/StringUtils.h](../Files/StringUtils_8h.md#file-stringutils.h)** 
         * **file [Libs/Utils/Utils.h](../Files/Utils_8h.md#file-utils.h)** 
 * **file [Module.dox](../Files/Module_8dox.md#file-module.dox)** 
@@ -253,4 +255,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2025-08-14 at 09:07:45 +0000
+Updated on 2025-08-16 at 16:54:10 +0000
