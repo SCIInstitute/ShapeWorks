@@ -1,6 +1,7 @@
 
 #include "CorrespondenceFunction.h"
 
+#include <Libs/Utils/PlatformUtils.h>
 #include <math.h>
 
 #include "Libs/Utils/Utils.h"
@@ -99,15 +100,14 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
       m_InverseCovMatrix->resize(num_dims, num_dims);
     }
+
     TIME_START("correspondence::covariance_multiply");
-
-    // instead of this:
-    // m_InverseCovMatrix->noalias() = lhs * rhs;
-
-    // we now use the selfadjointView for better performance because the covariance matrix is symmetric
-    m_InverseCovMatrix->setZero(num_dims, num_dims);
-    m_InverseCovMatrix->selfadjointView<Eigen::Upper>().rankUpdate(lhs);
-
+    if (PlatformUtils::is_macos()) {
+      // this is about 2x faster on MacOS, but slower on Linux
+      m_InverseCovMatrix->selfadjointView<Eigen::Upper>().rankUpdate(lhs);
+    } else {
+      m_InverseCovMatrix->noalias() = lhs * rhs;
+    }
     TIME_STOP("correspondence::covariance_multiply");
   }
 
