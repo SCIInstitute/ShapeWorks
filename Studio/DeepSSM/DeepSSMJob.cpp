@@ -12,7 +12,7 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 
 // shapeworks
 #include <DeepSSM/DeepSSMJob.h>
-#include <DeepSSM/DeepSSMParameters.h>
+#include <Project/DeepSSMParameters.h>
 #include <Groom.h>
 #include <Logging.h>
 #include <Mesh/MeshUtils.h>
