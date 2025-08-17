@@ -1,4 +1,5 @@
 SET(APPLICATION_MOC_HDRS
+  DeepSSM/DeepSSMJob.h
   Job/Job.h
 )
 
@@ -8,6 +9,7 @@ SET(Application_headers
  )
 
 add_library(Application STATIC
+  DeepSSM/DeepSSMJob.cpp
   Job/Job.cpp
   ${APPLICATION_MOC_SRCS}
   )
@@ -16,10 +18,19 @@ target_include_directories(Application PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 
+set(SW_PYTHON_LIBS pybind11::embed)
+
+if (APPLE)
+  include_directories(${_Python3_INCLUDE_DIR})
+  set(SW_PYTHON_LIBS "")
+endif(APPLE)
+
 target_link_libraries(Application PUBLIC
+  Groom
   Mesh
   Utils
   Particles
+  ${SW_PYTHON_LIBS}
   )
 
 # set

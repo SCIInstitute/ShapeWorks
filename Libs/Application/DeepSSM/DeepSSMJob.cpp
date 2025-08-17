@@ -11,7 +11,7 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 #include <QThread>
 
 // shapeworks
-#include <DeepSSM/DeepSSMJob.h>
+#include "DeepSSMJob.h"
 #include <Project/DeepSSMParameters.h>
 #include <Groom.h>
 #include <Logging.h>
