@@ -160,6 +160,8 @@ void DeepSSMTool::load_params() {
 
   ui_->validation_split->setText(QString::number(params.get_validation_split()));
   ui_->testing_split->setText(QString::number(params.get_testing_split()));
+  ui_->training_split->setText(QString::number(params.get_training_split()));
+  update_split();
 
   auto spacing = params.get_spacing();
   ui_->spacing_x->setText(QString::number(spacing[0]));
