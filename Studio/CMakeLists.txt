@@ -102,7 +102,6 @@ SET(STUDIO_DATA_MOC_HDRS
   )
 
 SET(STUDIO_JOB_SRCS
-  Job/Job.cpp
   Job/GroupPvalueJob.cpp
   Job/ParticleAreaJob.cpp
   Job/NetworkAnalysisJob.cpp
@@ -112,7 +111,6 @@ SET(STUDIO_JOB_SRCS
   )
 
 SET(STUDIO_JOB_MOC_HDRS
-  Job/Job.h
   Job/GroupPvalueJob.h
   Job/NetworkAnalysisJob.h
   Job/ParticleAreaJob.h
@@ -385,6 +383,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
   tinyxml
+  Application
   Alignment
   Analyze
   OptimizeLibraries
