@@ -2,15 +2,8 @@
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
 
-#include "qdir.h"
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
-
-// std
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <random>
 
 // qt
 #include <QFile>
@@ -18,7 +11,6 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 #include <QThread>
 
 // shapeworks
-#include <Data/Session.h>
 #include <DeepSSM/DeepSSMJob.h>
 #include <DeepSSM/DeepSSMParameters.h>
 #include <Groom.h>
@@ -30,10 +22,9 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-DeepSSMJob::DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode,
-                       DeepSSMTool::PrepStep prep_step)
-    : session_(session), tool_mode_(tool_mode), prep_step_(prep_step) {
-  project_ = session_->get_project();
+DeepSSMJob::DeepSSMJob(std::shared_ptr<Project> project, DeepSSMTool::ToolMode tool_mode,
+    DeepSSMTool::PrepStep prep_step)
+    : project_(project), tool_mode_(tool_mode), prep_step_(prep_step) {
 }
 
 //---------------------------------------------------------------------------
@@ -85,7 +76,6 @@ QString DeepSSMJob::name() {
 void DeepSSMJob::run_prep() {
   // groom training
   auto subjects = project_->get_subjects();
-  auto shapes = session_->get_shapes();
   SW_LOG("DeepSSM: Grooming Training Data");
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
@@ -113,7 +103,6 @@ void DeepSSMJob::run_prep() {
     if (num_train == 0 || num_val == 0) {
       SW_ERROR("DeepSSM: Not enough subjects in training and validation.  Please check split.");
       abort();
-      //return;
     }
 
     if (is_aborted()) {

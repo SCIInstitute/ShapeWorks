@@ -17,7 +17,7 @@ class DeepSSMJob : public Job {
   Q_OBJECT;
 
  public:
-  DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode,
+  DeepSSMJob(std::shared_ptr<Project> project, DeepSSMTool::ToolMode tool_mode,
              DeepSSMTool::PrepStep prep_step = DeepSSMTool::NOT_STARTED);
   ~DeepSSMJob();
 
@@ -37,7 +37,7 @@ class DeepSSMJob : public Job {
   void process_test_results();
 
   QSharedPointer<Session> session_;
-  ProjectHandle project_;
+  std::shared_ptr<Project> project_;
 
   DeepSSMTool::ToolMode tool_mode_;
 

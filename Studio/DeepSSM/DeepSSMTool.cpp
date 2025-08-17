@@ -604,7 +604,7 @@ void DeepSSMTool::show_training_meshes() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::show_testing_meshes() {
   shapes_.clear();
-  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
+  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
   auto id_list = get_split(session_->get_project(), SplitType::TEST);
 
   auto subjects = session_->get_project()->get_subjects();
@@ -664,7 +664,7 @@ void DeepSSMTool::show_testing_meshes() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::update_testing_meshes() {
   try {
-    deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
+    deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
     auto id_list = get_split(session_->get_project(), SplitType::TEST);
 
     auto subjects = session_->get_project()->get_subjects();
@@ -947,7 +947,7 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
 
   store_params();
 
-  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, type, prep_step_);
+  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), type, prep_step_);
   connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
 
