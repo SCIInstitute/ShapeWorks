@@ -6,7 +6,7 @@
 #include <Interface/LogWindow.h>
 #include <Interface/StudioLogger.h>
 #include <Interface/UpdateChecker.h>
-#include <Visualization/ShapeWorksVtkOutputWindow.h>
+#include <Libs/Application/ShapeWorksVtkOutputWindow.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 

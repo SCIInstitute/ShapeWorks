@@ -2,6 +2,7 @@
 
 #include <Analyze/Analyze.h>
 #include <Application/DeepSSM/DeepSSMJob.h>
+#include <Application/Job/PythonWorker.h>
 #include <Groom/Groom.h>
 #include <Logging.h>
 #include <Optimize/Optimize.h>
@@ -11,6 +12,7 @@
 #include <ShapeworksUtils.h>
 #include <Utils/StringUtils.h>
 
+#include <QApplication>
 #include <boost/filesystem.hpp>
 
 namespace shapeworks {
@@ -350,7 +352,7 @@ void DeepSSMCommand::buildParser() {
       .action("store")
       .type("choice")
       .choices(prep_choices.begin(), prep_choices.end())
-      .set_default("all")
+      //.set_default("all")
       .help("Preparation step to run");
 
   // Boolean flag options
@@ -366,6 +368,11 @@ void DeepSSMCommand::buildParser() {
 }
 
 bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
+  // Create a non-gui QApplication instance
+  int argc = 0;
+  char** argv = nullptr;
+  QApplication app(argc, argv);
+
   // Handle project file: either from --name or first positional argument
   std::string project_file;
   if (options.is_set_by_user("name")) {
@@ -379,13 +386,26 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
     parser.error("Project file must be provided either as --name or as a positional argument");
   }
 
+  // Handle prep option with manual default
+  std::string prep_step;
+  if (options.is_set_by_user("prep")) {
+    prep_step = options["prep"];
+  } else {
+    prep_step = "all";  // Manual default
+  }
+
   std::cout << "DeepSSM: Using project file: " << project_file << std::endl;
 
   bool do_prep = options.is_set("prep") || options.is_set("all");
-  std::string prep_step = options["prep"];
   bool do_augment = options.is_set("augment") || options.is_set("all");
   bool do_train = options.is_set("train") || options.is_set("all");
   bool do_test = options.is_set("test") || options.is_set("all");
+
+  std::cout << "Prep step:    " << (do_prep ? "on" : "off") << "\n";
+  std::cout << "Augment step: " << (do_augment ? "on" : "off") << "\n";
+  std::cout << "Train step:   " << (do_train ? "on" : "off") << "\n";
+  std::cout << "Test step:    " << (do_test ? "on" : "off") << "\n";
+
   if (!do_prep && !do_augment && !do_train && !do_test) {
     do_prep = true;
     do_augment = true;
@@ -396,42 +416,73 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
   ProjectHandle project = std::make_shared<Project>();
   project->load(project_file);
 
-  DeepSSMJob job(project, DeepSSMJob::JobType::DeepSSM_PrepType);
+  PythonWorker python_worker;
+
+  auto wait_for_job = [&](auto job) {
+    // This lambda will block until the job is complete
+    while (!job->is_complete()) {
+      QCoreApplication::processEvents();
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      if (job->is_aborted()) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   if (do_prep) {
+    auto job = QSharedPointer<DeepSSMJob>::create(project, DeepSSMJob::JobType::DeepSSM_PrepType);
     if (prep_step == "all") {
-      job.set_prep_step(DeepSSMJob::PrepStep::NOT_STARTED);
+      job->set_prep_step(DeepSSMJob::PrepStep::NOT_STARTED);
     } else if (prep_step == "groom_training") {
-      job.set_prep_step(DeepSSMJob::PrepStep::GROOM_TRAINING);
+      job->set_prep_step(DeepSSMJob::PrepStep::GROOM_TRAINING);
     } else if (prep_step == "optimize_training") {
-      job.set_prep_step(DeepSSMJob::PrepStep::OPTIMIZE_TRAINING);
+      job->set_prep_step(DeepSSMJob::PrepStep::OPTIMIZE_TRAINING);
     } else if (prep_step == "optimize_validation") {
-      job.set_prep_step(DeepSSMJob::PrepStep::OPTIMIZE_VALIDATION);
+      job->set_prep_step(DeepSSMJob::PrepStep::OPTIMIZE_VALIDATION);
     } else if (prep_step == "groom_images") {
-      job.set_prep_step(DeepSSMJob::PrepStep::GROOM_IMAGES);
+      job->set_prep_step(DeepSSMJob::PrepStep::GROOM_IMAGES);
     } else {
       SW_ERROR("Unknown prep step: {}", prep_step);
       return false;
     }
     std::cout << "Running DeepSSM preparation step...\n";
-    job.run_prep();
+    python_worker.run_job(job);
+    if (!wait_for_job(job)) {
+      return false;
+    }
+    std::cout << "DeepSSM preparation step completed.\n";
   }
   if (do_augment) {
     std::cout << "Running DeepSSM data augmentation...\n";
-    job.run_augmentation();
+    auto job = QSharedPointer<DeepSSMJob>::create(project, DeepSSMJob::JobType::DeepSSM_AugmentationType);
+    python_worker.run_job(job);
+    if (!wait_for_job(job)) {
+      return false;
+    }
+    std::cout << "DeepSSM data augmentation completed.\n";
   }
   if (do_train) {
     std::cout << "Running DeepSSM training...\n";
-    job.run_training();
+    auto job = QSharedPointer<DeepSSMJob>::create(project, DeepSSMJob::JobType::DeepSSM_TrainingType);
+    python_worker.run_job(job);
+    if (!wait_for_job(job)) {
+      return false;
+    }
+    std::cout << "DeepSSM training completed.\n";
   }
   if (do_test) {
     std::cout << "Running DeepSSM testing...\n";
-    job.run_testing();
+    auto job = QSharedPointer<DeepSSMJob>::create(project, DeepSSMJob::JobType::DeepSSM_TestingType);
+    python_worker.run_job(job);
+    if (!wait_for_job(job)) {
+      return false;
+    }
+    std::cout << "DeepSSM testing completed.\n";
   }
 
   project->save();
 
-  SW_ERROR("DeepSSM command is not implemented yet.");
   return false;
 }
 

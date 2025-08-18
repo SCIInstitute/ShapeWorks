@@ -1,6 +1,8 @@
 SET(APPLICATION_MOC_HDRS
   DeepSSM/DeepSSMJob.h
   Job/Job.h
+  Job/PythonWorker.h
+  ShapeWorksVtkOutputWindow.h
 )
 
 qt5_wrap_cpp( APPLICATION_MOC_SRCS ${APPLICATION_MOC_HDRS} )
@@ -11,6 +13,8 @@ SET(Application_headers
 add_library(Application STATIC
   DeepSSM/DeepSSMJob.cpp
   Job/Job.cpp
+  Job/PythonWorker.cpp
+  ShapeWorksVtkOutputWindow.cpp
   ${APPLICATION_MOC_SRCS}
   )
 

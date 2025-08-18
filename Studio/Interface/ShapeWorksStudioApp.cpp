@@ -41,8 +41,8 @@
 #include <Interface/StatusBarWidget.h>
 #include <Interface/UpdateChecker.h>
 #include <Interface/WheelEventForwarder.h>
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Optimize/OptimizeTool.h>
-#include <Python/PythonWorker.h>
 #include <Shape.h>
 #include <ShapeWorksMONAI/MonaiLabelTool.h>
 #include <Utils/StudioUtils.h>

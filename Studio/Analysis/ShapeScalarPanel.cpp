@@ -10,8 +10,8 @@
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
 #include <Job/GroupPvalueJob.h>
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Logging.h>
-#include <Python/PythonWorker.h>
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>

@@ -7,15 +7,14 @@
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Logging.h>
-#include <Python/PythonWorker.h>
-#include <Shape.h>
 
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QProcess>
+#include <QThread>
 #include <iostream>
-#include <sstream>
 
 namespace shapeworks {
 
@@ -58,6 +57,8 @@ PYBIND11_EMBEDDED_MODULE(logger, m) {
 PythonWorker::PythonWorker() {
   python_logger_ = QSharedPointer<PythonLogger>::create();
 
+  qRegisterMetaType<QSharedPointer<Job>>("QSharedPointer<Job>");
+
   // create singular Python thread and move this object to the new thread
   thread_ = new QThread(this);
   moveToThread(thread_);
@@ -67,8 +68,10 @@ PythonWorker::PythonWorker() {
 //---------------------------------------------------------------------------
 PythonWorker::~PythonWorker() {
   end_python();
-  thread_->wait();
-  delete thread_;
+  if (thread_) {
+    thread_->wait();
+    delete thread_;
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -108,6 +111,9 @@ void PythonWorker::run_job(QSharedPointer<Job> job) {
   // run on python thread
   QMetaObject::invokeMethod(this, "start_job", Qt::QueuedConnection, Q_ARG(QSharedPointer<Job>, job));
 }
+
+//---------------------------------------------------------------------------
+void PythonWorker::set_current_job(QSharedPointer<Job> job) { current_job_ = job; }
 
 //---------------------------------------------------------------------------
 bool PythonWorker::init() {

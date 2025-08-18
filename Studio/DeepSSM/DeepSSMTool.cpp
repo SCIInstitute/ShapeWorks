@@ -7,9 +7,9 @@
 #include <QThread>
 
 // shapeworks
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Logging.h>
 #include <Mesh/Mesh.h>
-#include <Python/PythonWorker.h>
 
 // studio
 #include <Data/Session.h>

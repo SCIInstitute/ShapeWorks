@@ -126,13 +126,6 @@ SET(STUDIO_GROOM_MOC_HDRS
   Groom/GroomTool.h
   )
 
-SET(STUDIO_PYTHON_SRCS
-  Python/PythonWorker.cpp
-  )
-SET(STUDIO_PYTHON_MOC_HDRS
-  Python/PythonWorker.h
-  )
-
 SET(STUDIO_OPTIMIZE_SRCS
   Optimize/OptimizeTool.cpp
   Optimize/QOptimize.cpp
@@ -228,14 +221,12 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/MeshSlice.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
-  Visualization/ShapeWorksVtkOutputWindow.cpp
   Visualization/StudioHandleWidget.cpp
 )
 
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/Lightbox.h
   Visualization/ParticleColors.h
-  Visualization/ShapeWorksVtkOutputWindow.h
   Visualization/Visualizer.h
 )
 
@@ -246,7 +237,6 @@ SET(STUDIO_SRCS
   ${STUDIO_DEEPSSM_SRCS}
   ${STUDIO_MONAILABEL_SRCS}
   ${STUDIO_GROOM_SRCS}
-  ${STUDIO_PYTHON_SRCS}
   ${STUDIO_INTERFACE_SRCS}
   ${STUDIO_OPTIMIZE_SRCS}
   ${STUDIO_UTILS_SRCS}
@@ -260,7 +250,6 @@ SET(STUDIO_MOC_HDRS
   ${STUDIO_DEEPSSM_MOC_HDRS}
   ${STUDIO_MONAILABEL_MOC_HDRS}
   ${STUDIO_GROOM_MOC_HDRS}
-  ${STUDIO_PYTHON_MOC_HDRS}
   ${STUDIO_INTERFACE_MOC_HDRS}
   ${STUDIO_OPTIMIZE_MOC_HDRS}
   ${STUDIO_UTILS_MOC_HDRS}
