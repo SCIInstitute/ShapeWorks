@@ -369,8 +369,12 @@ void DeepSSMCommand::buildParser() {
 
 bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   // Create a non-gui QApplication instance
-  int argc = 0;
-  char** argv = nullptr;
+  int argc = 3;
+  char* argv[3];
+  argv[0] = const_cast<char*>("shapeworks");
+  argv[1] = const_cast<char*>("-platform");
+  argv[2] = const_cast<char*>("offscreen");
+
   QApplication app(argc, argv);
 
   // Handle project file: either from --name or first positional argument
