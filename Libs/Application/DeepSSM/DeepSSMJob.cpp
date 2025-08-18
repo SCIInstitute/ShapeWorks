@@ -22,8 +22,8 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-DeepSSMJob::DeepSSMJob(std::shared_ptr<Project> project, DeepSSMJob::ToolMode tool_mode, DeepSSMJob::PrepStep prep_step)
-    : project_(project), tool_mode_(tool_mode), prep_step_(prep_step) {}
+DeepSSMJob::DeepSSMJob(std::shared_ptr<Project> project, DeepSSMJob::JobType tool_mode, DeepSSMJob::PrepStep prep_step)
+    : project_(project), job_type_(tool_mode), prep_step_(prep_step) {}
 
 //---------------------------------------------------------------------------
 DeepSSMJob::~DeepSSMJob() {}
@@ -31,17 +31,17 @@ DeepSSMJob::~DeepSSMJob() {}
 //---------------------------------------------------------------------------
 void DeepSSMJob::run() {
   try {
-    switch (tool_mode_) {
-      case DeepSSMJob::ToolMode::DeepSSM_PrepType:
+    switch (job_type_) {
+      case DeepSSMJob::JobType::DeepSSM_PrepType:
         run_prep();
         break;
-      case DeepSSMJob::ToolMode::DeepSSM_AugmentationType:
+      case DeepSSMJob::JobType::DeepSSM_AugmentationType:
         run_augmentation();
         break;
-      case DeepSSMJob::ToolMode::DeepSSM_TrainingType:
+      case DeepSSMJob::JobType::DeepSSM_TrainingType:
         run_training();
         break;
-      case DeepSSMJob::ToolMode::DeepSSM_TestingType:
+      case DeepSSMJob::JobType::DeepSSM_TestingType:
         run_testing();
         break;
     }
@@ -52,17 +52,17 @@ void DeepSSMJob::run() {
 
 //---------------------------------------------------------------------------
 QString DeepSSMJob::name() {
-  switch (tool_mode_) {
-    case DeepSSMJob::ToolMode::DeepSSM_PrepType:
+  switch (job_type_) {
+    case DeepSSMJob::JobType::DeepSSM_PrepType:
       return "DeepSSM: Prep";
       break;
-    case DeepSSMJob::ToolMode::DeepSSM_AugmentationType:
+    case DeepSSMJob::JobType::DeepSSM_AugmentationType:
       return "DeepSSM: Augmentation";
       break;
-    case DeepSSMJob::ToolMode::DeepSSM_TrainingType:
+    case DeepSSMJob::JobType::DeepSSM_TrainingType:
       return "DeepSSM: Training";
       break;
-    case DeepSSMJob::ToolMode::DeepSSM_TestingType:
+    case DeepSSMJob::JobType::DeepSSM_TestingType:
       return "DeepSSM: Testing";
       break;
   }

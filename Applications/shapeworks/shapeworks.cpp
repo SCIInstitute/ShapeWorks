@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(GroomCommand::getCommand());
   shapeworks.addCommand(AnalyzeCommand::getCommand());
   shapeworks.addCommand(ConvertProjectCommand::getCommand());
+  shapeworks.addCommand(DeepSSMCommand::getCommand());
 
   try {
     TIME_START("shapeworks");

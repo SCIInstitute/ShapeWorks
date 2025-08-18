@@ -1,17 +1,17 @@
 #include "Commands.h"
 
 #include <Analyze/Analyze.h>
+#include <Application/DeepSSM/DeepSSMJob.h>
 #include <Groom/Groom.h>
 #include <Logging.h>
 #include <Optimize/Optimize.h>
 #include <Optimize/OptimizeParameterFile.h>
 #include <Optimize/OptimizeParameters.h>
+#include <Profiling.h>
 #include <ShapeworksUtils.h>
 #include <Utils/StringUtils.h>
 
 #include <boost/filesystem.hpp>
-
-#include <Profiling.h>
 
 namespace shapeworks {
 
@@ -42,8 +42,6 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
   return true;
 }
 #endif
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Seed
@@ -331,4 +329,110 @@ bool ConvertProjectCommand::execute(const optparse::Values& options, SharedComma
     return false;
   }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// DeepSSM
+///////////////////////////////////////////////////////////////////////////////
+void DeepSSMCommand::buildParser() {
+  const std::string prog = "deepssm";
+  const std::string desc = "run deepssm steps";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help(
+      "Path to input project file (xlsx or swproj).");
+
+  // Create a vector of choices first
+  std::vector<std::string> prep_choices = {"all", "groom_training", "optimize_training", "optimize_validation",
+                                           "groom_images"};
+
+  // --prep option with choices
+  parser.add_option("--prep")
+      .action("store")
+      .type("choice")
+      .choices(prep_choices.begin(), prep_choices.end())
+      .set_default("all")
+      .help("Preparation step to run");
+
+  // Boolean flag options
+  parser.add_option("--augment").action("store_true").help("Run data augmentation");
+
+  parser.add_option("--train").action("store_true").help("Run training");
+
+  parser.add_option("--test").action("store_true").help("Run testing");
+
+  parser.add_option("--all").action("store_true").help("Run all steps");
+
+  Command::buildParser();
+}
+
+bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
+  // Handle project file: either from --name or first positional argument
+  std::string project_file;
+  if (options.is_set_by_user("name")) {
+    // User explicitly provided --name
+    project_file = options["name"];
+  } else if (!parser.args().empty()) {
+    // Use first positional argument
+    project_file = parser.args()[0];
+  } else {
+    // No project file provided at all
+    parser.error("Project file must be provided either as --name or as a positional argument");
+  }
+
+  std::cout << "DeepSSM: Using project file: " << project_file << std::endl;
+
+  bool do_prep = options.is_set("prep") || options.is_set("all");
+  std::string prep_step = options["prep"];
+  bool do_augment = options.is_set("augment") || options.is_set("all");
+  bool do_train = options.is_set("train") || options.is_set("all");
+  bool do_test = options.is_set("test") || options.is_set("all");
+  if (!do_prep && !do_augment && !do_train && !do_test) {
+    do_prep = true;
+    do_augment = true;
+    do_train = true;
+    do_test = true;
+  }
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load(project_file);
+
+  DeepSSMJob job(project, DeepSSMJob::JobType::DeepSSM_PrepType);
+
+  if (do_prep) {
+    if (prep_step == "all") {
+      job.set_prep_step(DeepSSMJob::PrepStep::NOT_STARTED);
+    } else if (prep_step == "groom_training") {
+      job.set_prep_step(DeepSSMJob::PrepStep::GROOM_TRAINING);
+    } else if (prep_step == "optimize_training") {
+      job.set_prep_step(DeepSSMJob::PrepStep::OPTIMIZE_TRAINING);
+    } else if (prep_step == "optimize_validation") {
+      job.set_prep_step(DeepSSMJob::PrepStep::OPTIMIZE_VALIDATION);
+    } else if (prep_step == "groom_images") {
+      job.set_prep_step(DeepSSMJob::PrepStep::GROOM_IMAGES);
+    } else {
+      SW_ERROR("Unknown prep step: {}", prep_step);
+      return false;
+    }
+    std::cout << "Running DeepSSM preparation step...\n";
+    job.run_prep();
+  }
+  if (do_augment) {
+    std::cout << "Running DeepSSM data augmentation...\n";
+    job.run_augmentation();
+  }
+  if (do_train) {
+    std::cout << "Running DeepSSM training...\n";
+    job.run_training();
+  }
+  if (do_test) {
+    std::cout << "Running DeepSSM testing...\n";
+    job.run_testing();
+  }
+
+  project->save();
+
+  SW_ERROR("DeepSSM command is not implemented yet.");
+  return false;
+}
+
 }  // namespace shapeworks

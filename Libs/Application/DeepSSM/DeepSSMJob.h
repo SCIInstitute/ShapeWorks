@@ -16,7 +16,7 @@ class DeepSSMJob : public Job {
   Q_OBJECT;
 
  public:
-  enum class ToolMode {
+  enum class JobType {
     DeepSSM_PrepType = 0,
     DeepSSM_AugmentationType = 1,
     DeepSSM_TrainingType = 2,
@@ -34,7 +34,7 @@ class DeepSSMJob : public Job {
 
   enum class SplitType { TRAIN, VAL, TEST };
 
-  DeepSSMJob(std::shared_ptr<Project> project, DeepSSMJob::ToolMode tool_mode,
+  DeepSSMJob(std::shared_ptr<Project> project, DeepSSMJob::JobType tool_mode,
              DeepSSMJob::PrepStep prep_step = DeepSSMJob::NOT_STARTED);
   ~DeepSSMJob();
 
@@ -51,13 +51,18 @@ class DeepSSMJob : public Job {
 
   static std::vector<int> get_split(ProjectHandle project, DeepSSMJob::SplitType split_type);
 
+  void set_prep_step(DeepSSMJob::PrepStep step) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    prep_step_ = step;
+  }
+
  private:
   void update_prep_stage(DeepSSMJob::PrepStep step);
   void process_test_results();
 
   std::shared_ptr<Project> project_;
 
-  DeepSSMJob::ToolMode tool_mode_;
+  DeepSSMJob::JobType job_type_;
 
   QString prep_message_;
   DeepSSMJob::PrepStep prep_step_{DeepSSMJob::NOT_STARTED};

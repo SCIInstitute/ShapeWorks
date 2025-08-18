@@ -103,6 +103,15 @@ public:
 private:
 };
 
+class DeepSSMCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "DeepSSM"; }
+
+private:
+};
+
+
 class ShapeworksCommand : public Command
 {
 public:

@@ -80,7 +80,7 @@ class DeepSSMTool : public QWidget {
 
  private:
   void update_meshes();
-  void run_tool(DeepSSMJob::ToolMode type);
+  void run_tool(DeepSSMJob::JobType type);
   void show_augmentation_meshes();
   void update_tables();
   void show_training_meshes();
@@ -107,7 +107,7 @@ class DeepSSMTool : public QWidget {
   DeepSSMJob::PrepStep prep_step_ = DeepSSMJob::PrepStep::NOT_STARTED;
 
   bool tool_is_running_ = false;
-  DeepSSMJob::ToolMode current_tool_ = DeepSSMJob::ToolMode::DeepSSM_AugmentationType;
+  DeepSSMJob::JobType current_tool_ = DeepSSMJob::JobType::DeepSSM_AugmentationType;
   QSharedPointer<DeepSSMJob> deep_ssm_;
   QElapsedTimer timer_;
 
