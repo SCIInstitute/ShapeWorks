@@ -6,7 +6,7 @@
 #include <Interface/LogWindow.h>
 #include <Interface/StudioLogger.h>
 #include <Interface/UpdateChecker.h>
-#include <Visualization/StudioVtkOutputWindow.h>
+#include <Visualization/ShapeWorksVtkOutputWindow.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
@@ -234,7 +234,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   CompareWidget* compare_widget_ = nullptr;
-  vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
+  vtkSmartPointer<ShapeWorksVtkOutputWindow> studio_vtk_output_window_;
 
   // all the preferences
   Preferences preferences_;

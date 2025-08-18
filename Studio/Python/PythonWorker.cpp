@@ -72,7 +72,7 @@ PythonWorker::~PythonWorker() {
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> output_window) {
+void PythonWorker::set_vtk_output_window(vtkSmartPointer<ShapeWorksVtkOutputWindow> output_window) {
   studio_vtk_output_window_ = output_window;
 }
 

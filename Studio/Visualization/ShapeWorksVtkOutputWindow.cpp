@@ -1,26 +1,26 @@
-#include "StudioVtkOutputWindow.h"
+#include "ShapeWorksVtkOutputWindow.h"
 
 #include <Logging.h>
 #include <vtkObjectFactory.h>
 
 namespace shapeworks {
 
-vtkStandardNewMacro(StudioVtkOutputWindow);
+vtkStandardNewMacro(ShapeWorksVtkOutputWindow);
 
 //---------------------------------------------------------------------------
-StudioVtkOutputWindow::StudioVtkOutputWindow() {}
+ShapeWorksVtkOutputWindow::ShapeWorksVtkOutputWindow() {}
 
 //---------------------------------------------------------------------------
-void StudioVtkOutputWindow::DisplayErrorText(const char* text) { SW_ERROR(text); }
+void ShapeWorksVtkOutputWindow::DisplayErrorText(const char* text) { SW_ERROR(text); }
 
 //---------------------------------------------------------------------------
-void StudioVtkOutputWindow::DisplayWarningText(const char* text) { SW_WARN(text); }
+void ShapeWorksVtkOutputWindow::DisplayWarningText(const char* text) { SW_WARN(text); }
 
 //---------------------------------------------------------------------------
-void StudioVtkOutputWindow::DisplayGenericWarningText(const char* text) { SW_WARN(text); }
+void ShapeWorksVtkOutputWindow::DisplayGenericWarningText(const char* text) { SW_WARN(text); }
 
 //---------------------------------------------------------------------------
-void StudioVtkOutputWindow::DisplayDebugText(const char* text) { SW_DEBUG(text); }
+void ShapeWorksVtkOutputWindow::DisplayDebugText(const char* text) { SW_DEBUG(text); }
 
 //---------------------------------------------------------------------------
 

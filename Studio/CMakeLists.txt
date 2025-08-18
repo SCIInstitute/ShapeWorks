@@ -228,14 +228,14 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/MeshSlice.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
-  Visualization/StudioVtkOutputWindow.cpp
+  Visualization/ShapeWorksVtkOutputWindow.cpp
   Visualization/StudioHandleWidget.cpp
 )
 
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/Lightbox.h
   Visualization/ParticleColors.h
-  Visualization/StudioVtkOutputWindow.h
+  Visualization/ShapeWorksVtkOutputWindow.h
   Visualization/Visualizer.h
 )
 

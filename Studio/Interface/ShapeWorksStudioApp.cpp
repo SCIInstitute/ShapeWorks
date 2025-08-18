@@ -69,7 +69,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   status_bar_ = new StatusBarWidget(this);
   connect(status_bar_, &StatusBarWidget::toggle_log_window, this, &ShapeWorksStudioApp::toggle_log_window);
 
-  studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
+  studio_vtk_output_window_ = vtkSmartPointer<ShapeWorksVtkOutputWindow>::New();
   vtkOutputWindow::SetInstance(studio_vtk_output_window_);
 
   logger_.register_callbacks();
