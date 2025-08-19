@@ -34,6 +34,7 @@ target_link_libraries(Application PUBLIC
   Mesh
   Utils
   Particles
+  Project
   ${SW_PYTHON_LIBS}
   )
 
