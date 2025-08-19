@@ -37,11 +37,17 @@ class PythonLogger {
 
   bool check_abort() { return aborted_; }
 
+  bool is_cli_mode() { return is_cli_mode_; }
+
+  void set_cli_mode(bool cli) { is_cli_mode_ = cli; }
+
  private:
   std::function<void(std::string)> callback_;
   std::function<void(double, std::string)> progress_callback_;
 
   std::atomic<bool> aborted_{false};
+
+  std::atomic<bool> is_cli_mode_{false};
 };
 
 //---------------------------------------------------------------------------
@@ -50,7 +56,8 @@ PYBIND11_EMBEDDED_MODULE(logger, m) {
       .def(py::init<>())
       .def("log", &PythonLogger::cpp_log)
       .def("check_abort", &PythonLogger::check_abort)
-      .def("progress", &PythonLogger::cpp_progress);
+      .def("progress", &PythonLogger::cpp_progress)
+      .def("is_cli_mode", &PythonLogger::is_cli_mode);
 };
 
 //---------------------------------------------------------------------------
@@ -78,6 +85,9 @@ PythonWorker::~PythonWorker() {
 void PythonWorker::set_vtk_output_window(vtkSmartPointer<ShapeWorksVtkOutputWindow> output_window) {
   studio_vtk_output_window_ = output_window;
 }
+
+//---------------------------------------------------------------------------
+void PythonWorker::set_cli_mode(bool cli_mode) { python_logger_->set_cli_mode(cli_mode); }
 
 //---------------------------------------------------------------------------
 void PythonWorker::start_job(QSharedPointer<Job> job) {

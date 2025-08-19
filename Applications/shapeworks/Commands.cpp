@@ -421,6 +421,7 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
   project->load(project_file);
 
   PythonWorker python_worker;
+  python_worker.set_cli_mode(true);
 
   auto wait_for_job = [&](auto job) {
     // This lambda will block until the job is complete

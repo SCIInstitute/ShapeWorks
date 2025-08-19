@@ -167,7 +167,8 @@ def supervised_train(config_file):
         if sw_check_abort():
             sw_message("Aborted")
             return
-        sw_message(f"Epoch {e}/{num_epochs}")
+        if not sw_is_cli_mode():
+            sw_message(f"Epoch {e}/{num_epochs}")
         sw_progress(e / (num_epochs + 1))
 
         torch.cuda.empty_cache()

@@ -24,6 +24,7 @@ class PythonWorker : public QObject {
   ~PythonWorker();
 
   void set_vtk_output_window(vtkSmartPointer<ShapeWorksVtkOutputWindow> output_window);
+  void set_cli_mode(bool cli_mode);
 
   void run_job(QSharedPointer<Job> job);
   void set_current_job(QSharedPointer<Job> job);
