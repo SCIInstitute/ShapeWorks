@@ -47,6 +47,7 @@ class PythonLogger {
 
   std::atomic<bool> aborted_{false};
 
+  //! Command line interface mode
   std::atomic<bool> is_cli_mode_{false};
 };
 
