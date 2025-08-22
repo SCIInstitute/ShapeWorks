@@ -1,9 +1,9 @@
 ---
-title: Studio/Python/PythonWorker.h
+title: Libs/Application/Job/PythonWorker.h
 
 ---
 
-# Studio/Python/PythonWorker.h
+# Libs/Application/Job/PythonWorker.h
 
 
 
@@ -36,7 +36,7 @@ title: Studio/Python/PythonWorker.h
 
 // studio
 #include <Job/Job.h>
-#include <Visualization/StudioVtkOutputWindow.h>
+#include <Libs/Application/ShapeWorksVtkOutputWindow.h>
 
 namespace shapeworks {
 class PythonLogger;
@@ -50,9 +50,11 @@ class PythonWorker : public QObject {
   PythonWorker();
   ~PythonWorker();
 
-  void set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> output_window);
+  void set_vtk_output_window(vtkSmartPointer<ShapeWorksVtkOutputWindow> output_window);
+  void set_cli_mode(bool cli_mode);
 
   void run_job(QSharedPointer<Job> job);
+  void set_current_job(QSharedPointer<Job> job);
 
   void incoming_python_message(std::string message_string);
   void incoming_python_progress(double value, std::string message);
@@ -78,13 +80,13 @@ class PythonWorker : public QObject {
   bool initialized_ = false;
   bool initialized_success_ = false;
 
-  vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
+  vtkSmartPointer<ShapeWorksVtkOutputWindow> studio_vtk_output_window_;
 
   QSharedPointer<PythonLogger> python_logger_;
 
   QSharedPointer<Job> current_job_;
 
-  QThread* thread_;
+  QThread* thread_{nullptr};
 };
 }  // namespace shapeworks
 ```
@@ -92,4 +94,4 @@ class PythonWorker : public QObject {
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:10 +0000
+Updated on 2025-08-22 at 08:23:43 +0000

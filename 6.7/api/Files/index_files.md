@@ -45,6 +45,13 @@ title: Files
         * **file [Libs/Analyze/StudioMesh.h](../Files/StudioMesh_8h.md#file-studiomesh.h)** 
         * **file [Libs/Analyze/SurfaceReconstructor.h](../Files/SurfaceReconstructor_8h.md#file-surfacereconstructor.h)** <br>Surface [Reconstruction](../Classes/classReconstruction.md) Layer. 
         * **file [Libs/Analyze/vtkPolyDataToImageData.h](../Files/vtkPolyDataToImageData_8h.md#file-vtkpolydatatoimagedata.h)** 
+    * **dir [Libs/Application](../Files/dir_9ab7bf277be286941ed03c100233212b.md#dir-libs/application)** 
+        * **dir [Libs/Application/DeepSSM](../Files/dir_6a983b09072555944f6e4668cf5f99a9.md#dir-libs/application/deepssm)** 
+            * **file [Libs/Application/DeepSSM/DeepSSMJob.h](../Files/DeepSSMJob_8h.md#file-deepssmjob.h)** 
+        * **dir [Libs/Application/Job](../Files/dir_d0685ddcbfeb436aff8439708f351fe6.md#dir-libs/application/job)** 
+            * **file [Libs/Application/Job/Job.h](../Files/Job_8h.md#file-job.h)** 
+            * **file [Libs/Application/Job/PythonWorker.h](../Files/PythonWorker_8h.md#file-pythonworker.h)** 
+        * **file [Libs/Application/ShapeWorksVtkOutputWindow.h](../Files/ShapeWorksVtkOutputWindow_8h.md#file-shapeworksvtkoutputwindow.h)** 
     * **dir [Libs/Common](../Files/dir_c13ed27a749775eeb2d59234813cae48.md#dir-libs/common)** 
         * **file [Libs/Common/Logging.h](../Files/Logging_8h.md#file-logging.h)** 
         * **file [Libs/Common/Profiling.h](../Files/Profiling_8h.md#file-profiling.h)** 
@@ -150,6 +157,7 @@ title: Files
         * **file [Libs/Particles/ReconstructSurface.h](../Files/ReconstructSurface_8h.md#file-reconstructsurface.h)** 
         * **file [Libs/Particles/ShapeEvaluation.h](../Files/ShapeEvaluation_8h.md#file-shapeevaluation.h)** 
     * **dir [Libs/Project](../Files/dir_4ea27a77bf632cd63100af8008b8abf4.md#dir-libs/project)** 
+        * **file [Libs/Project/DeepSSMParameters.h](../Files/DeepSSMParameters_8h.md#file-deepssmparameters.h)** 
         * **file [Libs/Project/ExcelProjectReader.h](../Files/ExcelProjectReader_8h.md#file-excelprojectreader.h)** 
         * **file [Libs/Project/ExcelProjectWriter.h](../Files/ExcelProjectWriter_8h.md#file-excelprojectwriter.h)** 
         * **file [Libs/Project/JsonProjectReader.h](../Files/JsonProjectReader_8h.md#file-jsonprojectreader.h)** 
@@ -190,8 +198,6 @@ title: Files
         * **file [Studio/Data/Telemetry.h](../Files/Telemetry_8h.md#file-telemetry.h)** 
         * **file [Studio/Data/Worker.h](../Files/Worker_8h.md#file-worker.h)** 
     * **dir [Studio/DeepSSM](../Files/dir_e938d55d0d25a8e3889ca0b02966a6b3.md#dir-studio/deepssm)** 
-        * **file [Studio/DeepSSM/DeepSSMJob.h](../Files/DeepSSMJob_8h.md#file-deepssmjob.h)** 
-        * **file [Studio/DeepSSM/DeepSSMParameters.h](../Files/DeepSSMParameters_8h.md#file-deepssmparameters.h)** 
         * **file [Studio/DeepSSM/DeepSSMTool.h](../Files/DeepSSMTool_8h.md#file-deepssmtool.h)** 
     * **dir [Studio/Groom](../Files/dir_4481568adb70067b4bb4b5ce096891b2.md#dir-studio/groom)** 
         * **file [Studio/Groom/GroomTool.h](../Files/GroomTool_8h.md#file-groomtool.h)** 
@@ -210,7 +216,6 @@ title: Files
         * **file [Studio/Interface/WheelEventForwarder.h](../Files/WheelEventForwarder_8h.md#file-wheeleventforwarder.h)** 
     * **dir [Studio/Job](../Files/dir_7d4dd3d8a2b1d1a0e92682acfb57f0f0.md#dir-studio/job)** 
         * **file [Studio/Job/GroupPvalueJob.h](../Files/GroupPvalueJob_8h.md#file-grouppvaluejob.h)** 
-        * **file [Studio/Job/Job.h](../Files/Job_8h.md#file-job.h)** 
         * **file [Studio/Job/NetworkAnalysisJob.h](../Files/NetworkAnalysisJob_8h.md#file-networkanalysisjob.h)** 
         * **file [Studio/Job/ParticleAreaJob.h](../Files/ParticleAreaJob_8h.md#file-particleareajob.h)** 
         * **file [Studio/Job/ParticleNormalEvaluationJob.h](../Files/ParticleNormalEvaluationJob_8h.md#file-particlenormalevaluationjob.h)** 
@@ -219,8 +224,6 @@ title: Files
     * **dir [Studio/Optimize](../Files/dir_9e99c41d3802fada2a0119d079df0956.md#dir-studio/optimize)** 
         * **file [Studio/Optimize/OptimizeTool.h](../Files/OptimizeTool_8h.md#file-optimizetool.h)** 
         * **file [Studio/Optimize/QOptimize.h](../Files/QOptimize_8h.md#file-qoptimize.h)** 
-    * **dir [Studio/Python](../Files/dir_48521012c292b6dfb1bd2f2ae5aacf6c.md#dir-studio/python)** 
-        * **file [Studio/Python/PythonWorker.h](../Files/PythonWorker_8h.md#file-pythonworker.h)** 
     * **dir [Studio/Resources](../Files/dir_a4bc8cdb2751c8604311dac5c98fb558.md#dir-studio/resources)** 
         * **file [Studio/Resources/resource.h](../Files/resource_8h.md#file-resource.h)** 
     * **dir [Studio/ShapeWorksMONAI](../Files/dir_3ac71cfeb9e8c31aa5ca4ffc7168c68d.md#dir-studio/shapeworksmonai)** 
@@ -247,7 +250,6 @@ title: Files
         * **file [Studio/Visualization/StudioImageActorPointPlacer.h](../Files/StudioImageActorPointPlacer_8h.md#file-studioimageactorpointplacer.h)** 
         * **file [Studio/Visualization/StudioInteractorStyle.h](../Files/StudioInteractorStyle_8h.md#file-studiointeractorstyle.h)** 
         * **file [Studio/Visualization/StudioSliceInteractorStyle.h](../Files/StudioSliceInteractorStyle_8h.md#file-studiosliceinteractorstyle.h)** 
-        * **file [Studio/Visualization/StudioVtkOutputWindow.h](../Files/StudioVtkOutputWindow_8h.md#file-studiovtkoutputwindow.h)** 
         * **file [Studio/Visualization/Viewer.h](../Files/Viewer_8h.md#file-viewer.h)** 
         * **file [Studio/Visualization/Visualizer.h](../Files/Visualizer_8h.md#file-visualizer.h)** 
 
@@ -255,4 +257,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:10 +0000
+Updated on 2025-08-22 at 08:23:44 +0000

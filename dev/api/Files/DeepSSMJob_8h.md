@@ -1,9 +1,9 @@
 ---
-title: Studio/DeepSSM/DeepSSMJob.h
+title: Libs/Application/DeepSSM/DeepSSMJob.h
 
 ---
 
-# Studio/DeepSSM/DeepSSMJob.h
+# Libs/Application/DeepSSM/DeepSSMJob.h
 
 
 
@@ -27,7 +27,6 @@ title: Studio/DeepSSM/DeepSSMJob.h
 ```cpp
 #pragma once
 
-#include <DeepSSM/DeepSSMTool.h>
 #include <Job/Job.h>
 #include <Project/Project.h>
 
@@ -40,8 +39,26 @@ class DeepSSMJob : public Job {
   Q_OBJECT;
 
  public:
-  DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode,
-             DeepSSMTool::PrepStep prep_step = DeepSSMTool::NOT_STARTED);
+  enum class JobType {
+    DeepSSM_PrepType = 0,
+    DeepSSM_AugmentationType = 1,
+    DeepSSM_TrainingType = 2,
+    DeepSSM_TestingType = 3
+  };
+
+  enum PrepStep {
+    NOT_STARTED = 0,
+    GROOM_TRAINING = 1,
+    OPTIMIZE_TRAINING = 2,
+    OPTIMIZE_VALIDATION = 3,
+    GROOM_IMAGES = 4,
+    DONE = 5
+  };
+
+  enum class SplitType { TRAIN, VAL, TEST };
+
+  DeepSSMJob(std::shared_ptr<Project> project, DeepSSMJob::JobType tool_mode,
+             DeepSSMJob::PrepStep prep_step = DeepSSMJob::NOT_STARTED);
   ~DeepSSMJob();
 
   void run() override;
@@ -55,17 +72,23 @@ class DeepSSMJob : public Job {
 
   void python_message(std::string str);
 
+  static std::vector<int> get_split(ProjectHandle project, DeepSSMJob::SplitType split_type);
+
+  void set_prep_step(DeepSSMJob::PrepStep step) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    prep_step_ = step;
+  }
+
  private:
-  void update_prep_stage(DeepSSMTool::PrepStep step);
+  void update_prep_stage(DeepSSMJob::PrepStep step);
   void process_test_results();
 
-  QSharedPointer<Session> session_;
-  ProjectHandle project_;
+  std::shared_ptr<Project> project_;
 
-  DeepSSMTool::ToolMode tool_mode_;
+  DeepSSMJob::JobType job_type_;
 
   QString prep_message_;
-  DeepSSMTool::PrepStep prep_step_{DeepSSMTool::NOT_STARTED};
+  DeepSSMJob::PrepStep prep_step_{DeepSSMJob::NOT_STARTED};
 
   // mutex
   std::mutex mutex_;
@@ -76,4 +99,4 @@ class DeepSSMJob : public Job {
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:10 +0000
+Updated on 2025-08-22 at 08:23:43 +0000

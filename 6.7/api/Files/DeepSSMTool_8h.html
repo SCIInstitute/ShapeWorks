@@ -2550,6 +2550,8 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
 
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;DeepSSM/DeepSSMJob.h&gt;</span>
+
 <span class="c1">// studio</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project.h&gt;</span>
@@ -2571,23 +2573,6 @@
 <span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ToolMode</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">DeepSSM_PrepType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">    </span><span class="n">DeepSSM_AugmentationType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">    </span><span class="n">DeepSSM_TrainingType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
-<span class="w">    </span><span class="n">DeepSSM_TestingType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
-<span class="w">  </span><span class="p">};</span>
-
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">PrepStep</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">NOT_STARTED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">    </span><span class="n">GROOM_TRAINING</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">    </span><span class="n">OPTIMIZE_TRAINING</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
-<span class="w">    </span><span class="n">OPTIMIZE_VALIDATION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
-<span class="w">    </span><span class="n">GROOM_IMAGES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-<span class="w">    </span><span class="n">DONE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
-<span class="w">  </span><span class="p">};</span>
-
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">SplitType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">TRAIN</span><span class="p">,</span><span class="w"> </span><span class="n">VAL</span><span class="p">,</span><span class="w"> </span><span class="n">TEST</span><span class="w"> </span><span class="p">};</span>
 
 <span class="w">  </span><span class="n">DeepSSMTool</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
 <span class="w">  </span><span class="o">~</span><span class="n">DeepSSMTool</span><span class="p">();</span>
@@ -2609,7 +2594,6 @@
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_display_feature</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_split</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"> </span><span class="n">SplitType</span><span class="w"> </span><span class="n">split_type</span><span class="p">);</span>
 
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 
@@ -2638,7 +2622,7 @@
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_meshes</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_tool</span><span class="p">(</span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_tool</span><span class="p">(</span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_augmentation_meshes</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_tables</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_training_meshes</span><span class="p">();</span>
@@ -2662,10 +2646,10 @@
 <span class="w">  </span><span class="n">Ui_DeepSSMTool</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">app_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PrepStep</span><span class="o">::</span><span class="n">NOT_STARTED</span><span class="p">;</span>
+<span class="w">  </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">PrepStep</span><span class="o">::</span><span class="n">NOT_STARTED</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">tool_is_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">current_tool_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="o">::</span><span class="n">DeepSSM_AugmentationType</span><span class="p">;</span>
+<span class="w">  </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">current_tool_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">JobType</span><span class="o">::</span><span class="n">DeepSSM_AugmentationType</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">DeepSSMJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deep_ssm_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
 
@@ -2682,7 +2666,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-08-16 at 16:54:10 +0000</p>
+<p>Updated on 2025-08-22 at 08:23:44 +0000</p>
 
               
             </article>

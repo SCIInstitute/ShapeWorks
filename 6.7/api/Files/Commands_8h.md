@@ -122,6 +122,7 @@ COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
 COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 COMMAND_DECLARE(AnalyzeCommand, AnalyzeCommandGroup);
 COMMAND_DECLARE(ConvertProjectCommand, ProjectCommandGroup);
+COMMAND_DECLARE(DeepSSMCommand, DeepSSMCommandGroup);
 
 } // shapeworks
 ```
@@ -129,4 +130,4 @@ COMMAND_DECLARE(ConvertProjectCommand, ProjectCommandGroup);
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:09 +0000
+Updated on 2025-08-22 at 08:23:43 +0000

@@ -25,6 +25,7 @@ title: Applications/shapeworks/Command.h
 | class | **[shapeworks::AnalyzeCommandGroup](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md)**  |
 | class | **[shapeworks::ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md)**  |
 | class | **[shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)**  |
+| class | **[shapeworks::DeepSSMCommandGroup](../Classes/classshapeworks_1_1DeepSSMCommandGroup.md)**  |
 | class | **[shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)**  |
 
 ## Functions
@@ -182,6 +183,15 @@ public:
 private:
 };
 
+class DeepSSMCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "DeepSSM"; }
+
+private:
+};
+
+
 class ShapeworksCommand : public Command
 {
 public:
@@ -198,4 +208,4 @@ std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd);
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:09 +0000
+Updated on 2025-08-22 at 08:23:43 +0000

@@ -19,7 +19,7 @@
     
     
       
-        <title>Studio/Python/PythonWorker.h - ShapeWorks</title>
+        <title>Libs/Application/Job/PythonWorker.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiopythonpythonworkerh" class="md-skip">
+        <a href="#libsapplicationjobpythonworkerh" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/Python/PythonWorker.h
+              Libs/Application/Job/PythonWorker.h
             
           </span>
         </div>
@@ -2513,7 +2513,7 @@
 
 
 
-<h1 id="studiopythonpythonworkerh">Studio/Python/PythonWorker.h</h1>
+<h1 id="libsapplicationjobpythonworkerh">Libs/Application/Job/PythonWorker.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2554,7 +2554,7 @@
 
 <span class="c1">// studio</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Job/Job.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/StudioVtkOutputWindow.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Application/ShapeWorksVtkOutputWindow.h&gt;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PythonLogger</span><span class="p">;</span>
@@ -2568,9 +2568,11 @@
 <span class="w">  </span><span class="n">PythonWorker</span><span class="p">();</span>
 <span class="w">  </span><span class="o">~</span><span class="n">PythonWorker</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_vtk_output_window</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioVtkOutputWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">output_window</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_vtk_output_window</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">ShapeWorksVtkOutputWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">output_window</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_cli_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">cli_mode</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_job</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Job</span><span class="o">&gt;</span><span class="w"> </span><span class="n">job</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_current_job</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Job</span><span class="o">&gt;</span><span class="w"> </span><span class="n">job</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">incoming_python_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message_string</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">incoming_python_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
@@ -2596,18 +2598,18 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">initialized_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">initialized_success_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioVtkOutputWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">studio_vtk_output_window_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">ShapeWorksVtkOutputWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">studio_vtk_output_window_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonLogger</span><span class="o">&gt;</span><span class="w"> </span><span class="n">python_logger_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Job</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_job_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QThread</span><span class="o">*</span><span class="w"> </span><span class="n">thread_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QThread</span><span class="o">*</span><span class="w"> </span><span class="n">thread_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-08-16 at 16:54:10 +0000</p>
+<p>Updated on 2025-08-22 at 08:23:43 +0000</p>
 
               
             </article>

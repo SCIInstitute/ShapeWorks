@@ -1,9 +1,9 @@
 ---
-title: Studio/Job/Job.h
+title: Libs/Application/Job/Job.h
 
 ---
 
-# Studio/Job/Job.h
+# Libs/Application/Job/Job.h
 
 
 
@@ -19,6 +19,23 @@ title: Studio/Job/Job.h
 | -------------- | -------------- |
 | class | **[shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**  |
 
+## Functions
+
+|                | Name           |
+| -------------- | -------------- |
+| | **[Q_DECLARE_METATYPE](../Files/Job_8h.md#function-q-declare-metatype)**(QSharedPointer< [shapeworks::Job](../Classes/classshapeworks_1_1Job.md) > ) |
+
+
+## Functions Documentation
+
+### function Q_DECLARE_METATYPE
+
+```cpp
+Q_DECLARE_METATYPE(
+    QSharedPointer< shapeworks::Job > 
+)
+```
+
 
 
 
@@ -28,6 +45,7 @@ title: Studio/Job/Job.h
 #pragma once
 #include <QElapsedTimer>
 #include <QObject>
+#include <QSharedPointer>
 
 namespace shapeworks {
 
@@ -77,9 +95,12 @@ class Job : public QObject {
   QElapsedTimer timer_;
 };
 }  // namespace shapeworks
+
+
+Q_DECLARE_METATYPE(QSharedPointer<shapeworks::Job>);
 ```
 
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:10 +0000
+Updated on 2025-08-22 at 08:23:43 +0000

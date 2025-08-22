@@ -9,7 +9,7 @@ title: shapeworks::Command
 
 
 
-Inherited by [shapeworks::AnalyzeCommandGroup](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md), [shapeworks::GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md), [shapeworks::ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md), [shapeworks::MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md), [shapeworks::OptimizeCommandGroup](../Classes/classshapeworks_1_1OptimizeCommandGroup.md), [shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md), [shapeworks::ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md), [shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)
+Inherited by [shapeworks::AnalyzeCommandGroup](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md), [shapeworks::DeepSSMCommandGroup](../Classes/classshapeworks_1_1DeepSSMCommandGroup.md), [shapeworks::GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md), [shapeworks::ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md), [shapeworks::MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md), [shapeworks::OptimizeCommandGroup](../Classes/classshapeworks_1_1OptimizeCommandGroup.md), [shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md), [shapeworks::ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md), [shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)
 
 ## Public Functions
 
@@ -43,7 +43,7 @@ inline virtual const std::string type()
 ```
 
 
-**Reimplemented by**: [shapeworks::ImageCommand::type](../Classes/classshapeworks_1_1ImageCommand.md#function-type), [shapeworks::MeshCommand::type](../Classes/classshapeworks_1_1MeshCommand.md#function-type), [shapeworks::OptimizeCommandGroup::type](../Classes/classshapeworks_1_1OptimizeCommandGroup.md#function-type), [shapeworks::GroomCommandGroup::type](../Classes/classshapeworks_1_1GroomCommandGroup.md#function-type), [shapeworks::AnalyzeCommandGroup::type](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md#function-type), [shapeworks::ProjectCommandGroup::type](../Classes/classshapeworks_1_1ProjectCommandGroup.md#function-type), [shapeworks::ParticleSystemCommand::type](../Classes/classshapeworks_1_1ParticleSystemCommand.md#function-type), [shapeworks::ShapeworksCommand::type](../Classes/classshapeworks_1_1ShapeworksCommand.md#function-type)
+**Reimplemented by**: [shapeworks::ImageCommand::type](../Classes/classshapeworks_1_1ImageCommand.md#function-type), [shapeworks::MeshCommand::type](../Classes/classshapeworks_1_1MeshCommand.md#function-type), [shapeworks::OptimizeCommandGroup::type](../Classes/classshapeworks_1_1OptimizeCommandGroup.md#function-type), [shapeworks::GroomCommandGroup::type](../Classes/classshapeworks_1_1GroomCommandGroup.md#function-type), [shapeworks::AnalyzeCommandGroup::type](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md#function-type), [shapeworks::ProjectCommandGroup::type](../Classes/classshapeworks_1_1ProjectCommandGroup.md#function-type), [shapeworks::ParticleSystemCommand::type](../Classes/classshapeworks_1_1ParticleSystemCommand.md#function-type), [shapeworks::DeepSSMCommandGroup::type](../Classes/classshapeworks_1_1DeepSSMCommandGroup.md#function-type), [shapeworks::ShapeworksCommand::type](../Classes/classshapeworks_1_1ShapeworksCommand.md#function-type)
 
 
 ### function name
@@ -107,4 +107,4 @@ optparse::OptionParser parser;
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:08 +0000
+Updated on 2025-08-22 at 08:23:41 +0000

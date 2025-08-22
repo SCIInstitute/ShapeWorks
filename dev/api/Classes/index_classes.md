@@ -110,6 +110,7 @@ title: Classes
     * **class [ContourDomain](../Classes/classshapeworks_1_1ContourDomain.md)** 
     * **class [CorrespondenceFunction](../Classes/classshapeworks_1_1CorrespondenceFunction.md)** <br>Correspondence term. 
     * **class [DataTool](../Classes/classshapeworks_1_1DataTool.md)** 
+    * **class [DeepSSMCommandGroup](../Classes/classshapeworks_1_1DeepSSMCommandGroup.md)** 
     * **class [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM. 
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
@@ -239,6 +240,7 @@ title: Classes
     * **class [ShapeScalarPanel](../Classes/classshapeworks_1_1ShapeScalarPanel.md)** 
     * **class [ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window. 
     * **class [ShapeWorksUtils](../Classes/classshapeworks_1_1ShapeWorksUtils.md)** 
+    * **class [ShapeWorksVtkOutputWindow](../Classes/classshapeworks_1_1ShapeWorksVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages. 
     * **class [ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)** 
     * **class [ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)** 
     * **struct [SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)** 
@@ -252,7 +254,6 @@ title: Classes
     * **class [StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh. 
     * **class [StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md)** 
     * **class [StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)** <br>Utilities for Studio. 
-    * **class [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages. 
     * **class [Style](../Classes/classshapeworks_1_1Style.md)** 
     * **class [Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject. 
     * **class [Surface](../Classes/classshapeworks_1_1Surface.md)** 
@@ -283,4 +284,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:10 +0000
+Updated on 2025-08-22 at 08:23:44 +0000

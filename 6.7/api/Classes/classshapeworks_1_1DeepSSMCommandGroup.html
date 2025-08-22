@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/api/Files/dir_48521012c292b6dfb1bd2f2ae5aacf6c.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/api/Classes/classshapeworks_1_1DeepSSMCommandGroup.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>Studio/Python - ShapeWorks</title>
+        <title>shapeworks::DeepSSMCommandGroup - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiopython" class="md-skip">
+        <a href="#shapeworksdeepssmcommandgroup" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/Python
+              shapeworks::DeepSSMCommandGroup
             
           </span>
         </div>
@@ -2268,7 +2268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Classes/index_classes.html" class="md-nav__link">
+      <a href="index_classes.html" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -2282,7 +2282,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_files.html" class="md-nav__link">
+      <a href="../Files/index_files.html" class="md-nav__link">
         Files
       </a>
     </li>
@@ -2475,9 +2475,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#files" class="md-nav__link">
-    Files
+  <a href="#public-functions" class="md-nav__link">
+    Public Functions
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-inherited-members" class="md-nav__link">
+    Additional inherited members
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-functions-documentation" class="md-nav__link">
+    Public Functions Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Functions Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-type" class="md-nav__link">
+    function type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2493,28 +2520,98 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/dir_48521012c292b6dfb1bd2f2ae5aacf6c.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1DeepSSMCommandGroup.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="studiopython">Studio/Python</h1>
-<h2 id="files">Files</h2>
+<h1 id="shapeworksdeepssmcommandgroup">shapeworks::DeepSSMCommandGroup</h1>
+<p>Inherits from <a href="classshapeworks_1_1Command.html">shapeworks::Command</a></p>
+<h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
 <tr>
+<th></th>
 <th>Name</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="PythonWorker_8h.html#file-pythonworker.h">Studio/Python/PythonWorker.h</a></strong></td>
+<td>virtual const std::string</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMCommandGroup.html#function-type">type</a></strong>() override</td>
 </tr>
 </tbody>
 </table>
+<h2 id="additional-inherited-members">Additional inherited members</h2>
+<p><strong>Public Functions inherited from <a href="classshapeworks_1_1Command.html">shapeworks::Command</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>const std::string</td>
+<td><strong><a href="classshapeworks_1_1Command.html#function-name">name</a></strong>() const</td>
+</tr>
+<tr>
+<td>const std::string</td>
+<td><strong><a href="classshapeworks_1_1Command.html#function-usage">usage</a></strong>() const</td>
+</tr>
+<tr>
+<td>const std::string</td>
+<td><strong><a href="classshapeworks_1_1Command.html#function-desc">desc</a></strong>() const</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1Command.html#function-parse-args">parse_args</a></strong>(const std::vector&lt; std::string &gt; &amp; arguments)<br>parses the arguments for this command, saving them in the parser and returning the leftovers</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Command.html#function-run">run</a></strong>(<a href="structshapeworks_1_1SharedCommandData.html">SharedCommandData</a> &amp; sharedData)<br>calls execute for this command using the parsed args, returning system exit value</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protected Functions inherited from <a href="classshapeworks_1_1Command.html">shapeworks::Command</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classshapeworks_1_1Command.html#function-buildparser">buildParser</a></strong>()</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protected Attributes inherited from <a href="classshapeworks_1_1Command.html">shapeworks::Command</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>optparse::OptionParser</td>
+<td><strong><a href="classshapeworks_1_1Command.html#variable-parser">parser</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-type">function type</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Command.html#function-type">shapeworks::Command::type</a></p>
 <hr />
-<p>Updated on 2025-08-16 at 16:54:10 +0000</p>
+<p>Updated on 2025-08-22 at 08:23:42 +0000</p>
 
               
             </article>

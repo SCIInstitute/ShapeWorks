@@ -34,7 +34,7 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 #include <Interface/LogWindow.h>
 #include <Interface/StudioLogger.h>
 #include <Interface/UpdateChecker.h>
-#include <Visualization/StudioVtkOutputWindow.h>
+#include <Libs/Application/ShapeWorksVtkOutputWindow.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
@@ -258,7 +258,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   CompareWidget* compare_widget_ = nullptr;
-  vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
+  vtkSmartPointer<ShapeWorksVtkOutputWindow> studio_vtk_output_window_;
 
   // all the preferences
   Preferences preferences_;
@@ -305,4 +305,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:10 +0000
+Updated on 2025-08-22 at 08:23:44 +0000

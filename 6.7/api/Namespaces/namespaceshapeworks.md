@@ -34,6 +34,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ContourDomain](../Classes/classshapeworks_1_1ContourDomain.md)**  |
 | class | **[shapeworks::CorrespondenceFunction](../Classes/classshapeworks_1_1CorrespondenceFunction.md)** <br>Correspondence term.  |
 | class | **[shapeworks::DataTool](../Classes/classshapeworks_1_1DataTool.md)**  |
+| class | **[shapeworks::DeepSSMCommandGroup](../Classes/classshapeworks_1_1DeepSSMCommandGroup.md)**  |
 | class | **[shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM.  |
 | class | **[shapeworks::DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)**  |
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
@@ -159,6 +160,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)**  |
 | class | **[shapeworks::ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window.  |
 | class | **[shapeworks::ShapeWorksUtils](../Classes/classshapeworks_1_1ShapeWorksUtils.md)**  |
+| class | **[shapeworks::ShapeWorksVtkOutputWindow](../Classes/classshapeworks_1_1ShapeWorksVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
 | class | **[shapeworks::ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)**  |
 | struct | **[shapeworks::SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)**  |
 | class | **[shapeworks::SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView]().  |
@@ -171,7 +173,6 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh.  |
 | class | **[shapeworks::StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md)**  |
 | class | **[shapeworks::StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)** <br>Utilities for Studio.  |
-| class | **[shapeworks::StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
 | class | **[shapeworks::Style](../Classes/classshapeworks_1_1Style.md)**  |
 | class | **[shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject.  |
 | class | **[shapeworks::Surface](../Classes/classshapeworks_1_1Surface.md)**  |
@@ -333,6 +334,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(GroomCommand , [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(AnalyzeCommand , [AnalyzeCommandGroup](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(ConvertProjectCommand , [ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md) ) |
+| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(DeepSSMCommand , [DeepSSMCommandGroup](../Classes/classshapeworks_1_1DeepSSMCommandGroup.md) ) |
 | std::string | **[display_mode_to_string](../Namespaces/namespaceshapeworks.md#function-display-mode-to-string)**(DisplayMode display_mode) |
 | DisplayMode | **[string_to_display_mode](../Namespaces/namespaceshapeworks.md#function-string-to-display-mode)**(std::string str) |
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) & region) |
@@ -1717,6 +1719,16 @@ COMMAND_DECLARE(
 ```
 
 
+### function COMMAND_DECLARE
+
+```cpp
+COMMAND_DECLARE(
+    DeepSSMCommand ,
+    DeepSSMCommandGroup 
+)
+```
+
+
 ### function display_mode_to_string
 
 ```cpp
@@ -2594,4 +2606,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:08 +0000
+Updated on 2025-08-22 at 08:23:41 +0000

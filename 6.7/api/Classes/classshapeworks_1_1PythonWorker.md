@@ -32,8 +32,10 @@ Inherits from QObject
 | -------------- | -------------- |
 | | **[PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md#function-pythonworker)**() |
 | | **[~PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md#function-~pythonworker)**() |
-| void | **[set_vtk_output_window](../Classes/classshapeworks_1_1PythonWorker.md#function-set-vtk-output-window)**(vtkSmartPointer< [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md) > output_window) |
+| void | **[set_vtk_output_window](../Classes/classshapeworks_1_1PythonWorker.md#function-set-vtk-output-window)**(vtkSmartPointer< [ShapeWorksVtkOutputWindow](../Classes/classshapeworks_1_1ShapeWorksVtkOutputWindow.md) > output_window) |
+| void | **[set_cli_mode](../Classes/classshapeworks_1_1PythonWorker.md#function-set-cli-mode)**(bool cli_mode) |
 | void | **[run_job](../Classes/classshapeworks_1_1PythonWorker.md#function-run-job)**(QSharedPointer< [Job](../Classes/classshapeworks_1_1Job.md) > job) |
+| void | **[set_current_job](../Classes/classshapeworks_1_1PythonWorker.md#function-set-current-job)**(QSharedPointer< [Job](../Classes/classshapeworks_1_1Job.md) > job) |
 | void | **[incoming_python_message](../Classes/classshapeworks_1_1PythonWorker.md#function-incoming-python-message)**(std::string message_string) |
 | void | **[incoming_python_progress](../Classes/classshapeworks_1_1PythonWorker.md#function-incoming-python-progress)**(double value, std::string message) |
 | void | **[end_python](../Classes/classshapeworks_1_1PythonWorker.md#function-end-python)**() |
@@ -106,7 +108,16 @@ PythonWorker()
 
 ```cpp
 void set_vtk_output_window(
-    vtkSmartPointer< StudioVtkOutputWindow > output_window
+    vtkSmartPointer< ShapeWorksVtkOutputWindow > output_window
+)
+```
+
+
+### function set_cli_mode
+
+```cpp
+void set_cli_mode(
+    bool cli_mode
 )
 ```
 
@@ -115,6 +126,15 @@ void set_vtk_output_window(
 
 ```cpp
 void run_job(
+    QSharedPointer< Job > job
+)
+```
+
+
+### function set_current_job
+
+```cpp
+void set_current_job(
     QSharedPointer< Job > job
 )
 ```
@@ -164,4 +184,4 @@ static constexpr static const char * python_api_version = "6.6";
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:09 +0000
+Updated on 2025-08-22 at 08:23:42 +0000

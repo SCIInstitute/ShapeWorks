@@ -1,9 +1,9 @@
 ---
-title: Studio/Visualization/StudioVtkOutputWindow.h
+title: Libs/Application/ShapeWorksVtkOutputWindow.h
 
 ---
 
-# Studio/Visualization/StudioVtkOutputWindow.h
+# Libs/Application/ShapeWorksVtkOutputWindow.h
 
 
 
@@ -17,7 +17,7 @@ title: Studio/Visualization/StudioVtkOutputWindow.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
+| class | **[shapeworks::ShapeWorksVtkOutputWindow](../Classes/classshapeworks_1_1ShapeWorksVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
 
 
 
@@ -33,15 +33,15 @@ title: Studio/Visualization/StudioVtkOutputWindow.h
 
 namespace shapeworks {
 
-class StudioVtkOutputWindow : public QObject, public vtkOutputWindow {
+class ShapeWorksVtkOutputWindow : public QObject, public vtkOutputWindow {
   Q_OBJECT;
 
  public:
-  static StudioVtkOutputWindow* New();
+  static ShapeWorksVtkOutputWindow* New();
 
-  vtkTypeMacro(StudioVtkOutputWindow, vtkOutputWindow);
+  vtkTypeMacro(ShapeWorksVtkOutputWindow, vtkOutputWindow);
 
-  StudioVtkOutputWindow();
+  ShapeWorksVtkOutputWindow();
 
   void DisplayErrorText(const char* text) override;
   void DisplayWarningText(const char* text) override;
@@ -55,4 +55,4 @@ class StudioVtkOutputWindow : public QObject, public vtkOutputWindow {
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:10 +0000
+Updated on 2025-08-22 at 08:23:43 +0000

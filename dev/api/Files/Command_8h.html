@@ -2624,6 +2624,10 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1DeepSSMCommandGroup.html">shapeworks::DeepSSMCommandGroup</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1ShapeworksCommand.html">shapeworks::ShapeworksCommand</a></strong></td>
 </tr>
 </tbody>
@@ -2786,6 +2790,15 @@
 <span class="k">private</span><span class="o">:</span>
 <span class="p">};</span>
 
+<span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMCommandGroup</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;DeepSSM&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="p">};</span>
+
+
 <span class="k">class</span><span class="w"> </span><span class="nc">ShapeworksCommand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
@@ -2799,7 +2812,7 @@
 <span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Command</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cmd</span><span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-08-16 at 16:54:09 +0000</p>
+<p>Updated on 2025-08-22 at 08:23:43 +0000</p>
 
               
             </article>

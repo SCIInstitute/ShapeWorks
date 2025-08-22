@@ -18,7 +18,6 @@ title: Studio
 | **[Studio/Interface](../Files/dir_f27aadd9c7f02e71212dbf7893d91496.md#dir-studio/interface)**  |
 | **[Studio/Job](../Files/dir_7d4dd3d8a2b1d1a0e92682acfb57f0f0.md#dir-studio/job)**  |
 | **[Studio/Optimize](../Files/dir_9e99c41d3802fada2a0119d079df0956.md#dir-studio/optimize)**  |
-| **[Studio/Python](../Files/dir_48521012c292b6dfb1bd2f2ae5aacf6c.md#dir-studio/python)**  |
 | **[Studio/Resources](../Files/dir_a4bc8cdb2751c8604311dac5c98fb558.md#dir-studio/resources)**  |
 | **[Studio/ShapeWorksMONAI](../Files/dir_3ac71cfeb9e8c31aa5ca4ffc7168c68d.md#dir-studio/shapeworksmonai)**  |
 | **[Studio/Utils](../Files/dir_645c19d7da098e01621cdebb663b8767.md#dir-studio/utils)**  |
@@ -31,4 +30,4 @@ title: Studio
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:09 +0000
+Updated on 2025-08-22 at 08:23:43 +0000

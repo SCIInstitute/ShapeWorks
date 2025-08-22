@@ -11,14 +11,6 @@ title: shapeworks::DeepSSMTool
 
 Inherits from QWidget
 
-## Public Types
-
-|                | Name           |
-| -------------- | -------------- |
-| enum class| **[ToolMode](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-toolmode)** { DeepSSM_PrepType = 0, DeepSSM_AugmentationType = 1, DeepSSM_TrainingType = 2, DeepSSM_TestingType = 3} |
-| enum| **[PrepStep](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-prepstep)** { NOT_STARTED = 0, GROOM_TRAINING = 1, OPTIMIZE_TRAINING = 2, OPTIMIZE_VALIDATION = 3, GROOM_IMAGES = 4, DONE = 5} |
-| enum class| **[SplitType](../Classes/classshapeworks_1_1DeepSSMTool.md#enum-splittype)** { TRAIN, VAL, TEST} |
-
 ## Public Slots
 
 |                | Name           |
@@ -57,46 +49,6 @@ Inherits from QWidget
 | ShapeList | **[get_shapes](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-shapes)**() |
 | void | **[resizeEvent](../Classes/classshapeworks_1_1DeepSSMTool.md#function-resizeevent)**(QResizeEvent * event) override |
 | std::string | **[get_display_feature](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-display-feature)**() |
-| std::vector< int > | **[get_split](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-split)**(ProjectHandle project, SplitType split_type) |
-
-## Public Types Documentation
-
-### enum ToolMode
-
-| Enumerator | Value | Description |
-| ---------- | ----- | ----------- |
-| DeepSSM_PrepType | 0|   |
-| DeepSSM_AugmentationType | 1|   |
-| DeepSSM_TrainingType | 2|   |
-| DeepSSM_TestingType | 3|   |
-
-
-
-
-### enum PrepStep
-
-| Enumerator | Value | Description |
-| ---------- | ----- | ----------- |
-| NOT_STARTED | 0|   |
-| GROOM_TRAINING | 1|   |
-| OPTIMIZE_TRAINING | 2|   |
-| OPTIMIZE_VALIDATION | 3|   |
-| GROOM_IMAGES | 4|   |
-| DONE | 5|   |
-
-
-
-
-### enum SplitType
-
-| Enumerator | Value | Description |
-| ---------- | ----- | ----------- |
-| TRAIN | |   |
-| VAL | |   |
-| TEST | |   |
-
-
-
 
 ## Public Slots Documentation
 
@@ -294,16 +246,6 @@ std::string get_display_feature()
 ```
 
 
-### function get_split
-
-```cpp
-static std::vector< int > get_split(
-    ProjectHandle project,
-    SplitType split_type
-)
-```
-
-
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:09 +0000
+Updated on 2025-08-22 at 08:23:42 +0000

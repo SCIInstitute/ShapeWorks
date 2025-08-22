@@ -15,11 +15,19 @@ Qt Wrapper for DeepSSM.  [More...](#detailed-description)
 
 Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
+## Public Types
+
+|                | Name           |
+| -------------- | -------------- |
+| enum class| **[JobType](../Classes/classshapeworks_1_1DeepSSMJob.md#enum-jobtype)** { DeepSSM_PrepType = 0, DeepSSM_AugmentationType = 1, DeepSSM_TrainingType = 2, DeepSSM_TestingType = 3} |
+| enum| **[PrepStep](../Classes/classshapeworks_1_1DeepSSMJob.md#enum-prepstep)** { NOT_STARTED = 0, GROOM_TRAINING = 1, OPTIMIZE_TRAINING = 2, OPTIMIZE_VALIDATION = 3, GROOM_IMAGES = 4, DONE = 5} |
+| enum class| **[SplitType](../Classes/classshapeworks_1_1DeepSSMJob.md#enum-splittype)** { TRAIN, VAL, TEST} |
+
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-deepssmjob)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session, DeepSSMTool::ToolMode tool_mode, DeepSSMTool::PrepStep prep_step =DeepSSMTool::NOT_STARTED) |
+| | **[DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-deepssmjob)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project, DeepSSMJob::JobType tool_mode, DeepSSMJob::PrepStep prep_step =DeepSSMJob::NOT_STARTED) |
 | | **[~DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md#function-~deepssmjob)**() |
 | virtual void | **[run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run)**() override<br>run the job  |
 | virtual QString | **[name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name)**() override<br>get the name of the job  |
@@ -28,6 +36,8 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | void | **[run_training](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-training)**() |
 | void | **[run_testing](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-testing)**() |
 | void | **[python_message](../Classes/classshapeworks_1_1DeepSSMJob.md#function-python-message)**(std::string str) |
+| void | **[set_prep_step](../Classes/classshapeworks_1_1DeepSSMJob.md#function-set-prep-step)**(DeepSSMJob::PrepStep step) |
+| std::vector< int > | **[get_split](../Classes/classshapeworks_1_1DeepSSMJob.md#function-get-split)**(ProjectHandle project, DeepSSMJob::SplitType split_type) |
 
 ## Additional inherited members
 
@@ -66,15 +76,54 @@ Qt Wrapper for DeepSSM.
 
 The [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md) class wraps the functionality for DeepSSM as a Studio [Job](../Classes/classshapeworks_1_1Job.md) object 
 
+## Public Types Documentation
+
+### enum JobType
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| DeepSSM_PrepType | 0|   |
+| DeepSSM_AugmentationType | 1|   |
+| DeepSSM_TrainingType | 2|   |
+| DeepSSM_TestingType | 3|   |
+
+
+
+
+### enum PrepStep
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| NOT_STARTED | 0|   |
+| GROOM_TRAINING | 1|   |
+| OPTIMIZE_TRAINING | 2|   |
+| OPTIMIZE_VALIDATION | 3|   |
+| GROOM_IMAGES | 4|   |
+| DONE | 5|   |
+
+
+
+
+### enum SplitType
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| TRAIN | |   |
+| VAL | |   |
+| TEST | |   |
+
+
+
+
 ## Public Functions Documentation
 
 ### function DeepSSMJob
 
 ```cpp
 DeepSSMJob(
-    QSharedPointer< Session > session,
-    DeepSSMTool::ToolMode tool_mode,
-    DeepSSMTool::PrepStep prep_step =DeepSSMTool::NOT_STARTED
+    std::shared_ptr< Project > project,
+    DeepSSMJob::JobType tool_mode,
+    DeepSSMJob::PrepStep prep_step =DeepSSMJob::NOT_STARTED
 )
 ```
 
@@ -145,6 +194,25 @@ void python_message(
 ```
 
 
+### function set_prep_step
+
+```cpp
+inline void set_prep_step(
+    DeepSSMJob::PrepStep step
+)
+```
+
+
+### function get_split
+
+```cpp
+static std::vector< int > get_split(
+    ProjectHandle project,
+    DeepSSMJob::SplitType split_type
+)
+```
+
+
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:08 +0000
+Updated on 2025-08-22 at 08:23:42 +0000

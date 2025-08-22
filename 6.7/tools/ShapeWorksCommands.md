@@ -64,6 +64,40 @@ shapeworks  analyze [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Analyze Commands](#analyze-commands)
+## DeepSSM Commands
+
+### deepssm
+
+
+**Usage:**
+
+```
+shapeworks  deepssm [args]...
+```  
+
+
+**Description:** run deepssm steps  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Path to input project file (xlsx or swproj).
+
+**--prep=CHOICE:** Preparation step to run (choose from 'all', 'groom_training', 'optimize_training', 'optimize_validation', 'groom_images')
+
+**--augment:** Run data augmentation
+
+**--train:** Run training
+
+**--test:** Run testing
+
+**--all:** Run all steps  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to DeepSSM Commands](#deepssm-commands)
 ## Groom Commands
 
 ### groom

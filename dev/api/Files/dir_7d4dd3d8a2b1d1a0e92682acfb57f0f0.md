@@ -12,7 +12,6 @@ title: Studio/Job
 | Name           |
 | -------------- |
 | **[Studio/Job/GroupPvalueJob.h](../Files/GroupPvalueJob_8h.md#file-grouppvaluejob.h)**  |
-| **[Studio/Job/Job.h](../Files/Job_8h.md#file-job.h)**  |
 | **[Studio/Job/NetworkAnalysisJob.h](../Files/NetworkAnalysisJob_8h.md#file-networkanalysisjob.h)**  |
 | **[Studio/Job/ParticleAreaJob.h](../Files/ParticleAreaJob_8h.md#file-particleareajob.h)**  |
 | **[Studio/Job/ParticleNormalEvaluationJob.h](../Files/ParticleNormalEvaluationJob_8h.md#file-particlenormalevaluationjob.h)**  |
@@ -26,4 +25,4 @@ title: Studio/Job
 
 -------------------------------
 
-Updated on 2025-08-16 at 16:54:10 +0000
+Updated on 2025-08-22 at 08:23:44 +0000

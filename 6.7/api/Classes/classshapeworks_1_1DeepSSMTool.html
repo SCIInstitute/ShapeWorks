@@ -2475,13 +2475,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-types" class="md-nav__link">
-    Public Types
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-slots" class="md-nav__link">
     Public Slots
   </a>
@@ -2499,40 +2492,6 @@
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-types-documentation" class="md-nav__link">
-    Public Types Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Types Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#enum-toolmode" class="md-nav__link">
-    enum ToolMode
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#enum-prepstep" class="md-nav__link">
-    enum PrepStep
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#enum-splittype" class="md-nav__link">
-    enum SplitType
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2738,13 +2697,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-get_split" class="md-nav__link">
-    function get_split
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2770,29 +2722,6 @@
 
 <h1 id="shapeworksdeepssmtool">shapeworks::DeepSSMTool</h1>
 <p>Inherits from QWidget</p>
-<h2 id="public-types">Public Types</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>enum class</td>
-<td DeepSSM_PrepType="DeepSSM_PrepType"><strong><a href="classshapeworks_1_1DeepSSMTool.html#enum-toolmode">ToolMode</a></strong></td>
-</tr>
-<tr>
-<td>enum</td>
-<td NOT_STARTED="NOT_STARTED"><strong><a href="classshapeworks_1_1DeepSSMTool.html#enum-prepstep">PrepStep</a></strong></td>
-</tr>
-<tr>
-<td>enum class</td>
-<td TEST="TEST" TRAIN_="TRAIN," VAL_="VAL,"><strong><a href="classshapeworks_1_1DeepSSMTool.html#enum-splittype">SplitType</a></strong></td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-slots">Public Slots</h2>
 <table>
 <thead>
@@ -2920,112 +2849,6 @@
 <td>std::string</td>
 <td><strong><a href="classshapeworks_1_1DeepSSMTool.html#function-get-display-feature">get_display_feature</a></strong>()</td>
 </tr>
-<tr>
-<td>std::vector&lt; int &gt;</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMTool.html#function-get-split">get_split</a></strong>(ProjectHandle project, SplitType split_type)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="enum-toolmode">enum ToolMode</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DeepSSM_PrepType</td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td>DeepSSM_AugmentationType</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr>
-<td>DeepSSM_TrainingType</td>
-<td>2</td>
-<td></td>
-</tr>
-<tr>
-<td>DeepSSM_TestingType</td>
-<td>3</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="enum-prepstep">enum PrepStep</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>NOT_STARTED</td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td>GROOM_TRAINING</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr>
-<td>OPTIMIZE_TRAINING</td>
-<td>2</td>
-<td></td>
-</tr>
-<tr>
-<td>OPTIMIZE_VALIDATION</td>
-<td>3</td>
-<td></td>
-</tr>
-<tr>
-<td>GROOM_IMAGES</td>
-<td>4</td>
-<td></td>
-</tr>
-<tr>
-<td>DONE</td>
-<td>5</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="enum-splittype">enum SplitType</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TRAIN</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>VAL</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>TEST</td>
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
@@ -3125,14 +2948,8 @@
 <h3 id="function-get_display_feature">function get_display_feature</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_display_feature</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-get_split">function get_split</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_split</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">,</span>
-<span class="w">    </span><span class="n">SplitType</span><span class="w"> </span><span class="n">split_type</span>
-<span class="p">)</span>
-</code></pre></div>
 <hr />
-<p>Updated on 2025-08-16 at 16:54:09 +0000</p>
+<p>Updated on 2025-08-22 at 08:23:42 +0000</p>
 
               
             </article>

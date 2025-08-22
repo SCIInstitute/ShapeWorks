@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/api/Files/StudioVtkOutputWindow_8h.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/api/Classes/classshapeworks_1_1ShapeWorksVtkOutputWindow.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>Studio/Visualization/StudioVtkOutputWindow.h - ShapeWorks</title>
+        <title>shapeworks::ShapeWorksVtkOutputWindow - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiovisualizationstudiovtkoutputwindowh" class="md-skip">
+        <a href="#shapeworksshapeworksvtkoutputwindow" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/Visualization/StudioVtkOutputWindow.h
+              shapeworks::ShapeWorksVtkOutputWindow
             
           </span>
         </div>
@@ -2268,7 +2268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Classes/index_classes.html" class="md-nav__link">
+      <a href="index_classes.html" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -2282,7 +2282,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_files.html" class="md-nav__link">
+      <a href="../Files/index_files.html" class="md-nav__link">
         Files
       </a>
     </li>
@@ -2475,23 +2475,71 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#namespaces" class="md-nav__link">
-    Namespaces
+  <a href="#public-functions" class="md-nav__link">
+    Public Functions
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#classes" class="md-nav__link">
-    Classes
+  <a href="#public-functions-documentation" class="md-nav__link">
+    Public Functions Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Functions Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-new" class="md-nav__link">
+    function New
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#source-code" class="md-nav__link">
-    Source code
+        
+          <li class="md-nav__item">
+  <a href="#function-vtktypemacro" class="md-nav__link">
+    function vtkTypeMacro
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-shapeworksvtkoutputwindow" class="md-nav__link">
+    function ShapeWorksVtkOutputWindow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-displayerrortext" class="md-nav__link">
+    function DisplayErrorText
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-displaywarningtext" class="md-nav__link">
+    function DisplayWarningText
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-displaygenericwarningtext" class="md-nav__link">
+    function DisplayGenericWarningText
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-displaydebugtext" class="md-nav__link">
+    function DisplayDebugText
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2507,27 +2555,17 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/StudioVtkOutputWindow_8h.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1ShapeWorksVtkOutputWindow.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="studiovisualizationstudiovtkoutputwindowh">Studio/Visualization/StudioVtkOutputWindow.h</h1>
-<h2 id="namespaces">Namespaces</h2>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="classes">Classes</h2>
+<h1 id="shapeworksshapeworksvtkoutputwindow">shapeworks::ShapeWorksVtkOutputWindow</h1>
+<p>Implementation of vtkOutputWindow to capture and display VTK error messages. </p>
+<p><code>#include &lt;ShapeWorksVtkOutputWindow.h&gt;</code></p>
+<p>Inherits from QObject, vtkOutputWindow</p>
+<h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
 <tr>
@@ -2537,40 +2575,70 @@
 </thead>
 <tbody>
 <tr>
-<td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1StudioVtkOutputWindow.html">shapeworks::StudioVtkOutputWindow</a></strong> <br>Implementation of vtkOutputWindow to capture and display VTK error messages.</td>
+<td><a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html">ShapeWorksVtkOutputWindow</a> *</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html#function-new">New</a></strong>()</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html#function-vtktypemacro">vtkTypeMacro</a></strong>(<a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html">ShapeWorksVtkOutputWindow</a> , vtkOutputWindow )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html#function-shapeworksvtkoutputwindow">ShapeWorksVtkOutputWindow</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html#function-displayerrortext">DisplayErrorText</a></strong>(const char * text) override</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html#function-displaywarningtext">DisplayWarningText</a></strong>(const char * text) override</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html#function-displaygenericwarningtext">DisplayGenericWarningText</a></strong>(const char * text) override</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksVtkOutputWindow.html#function-displaydebugtext">DisplayDebugText</a></strong>(const char * text) override</td>
 </tr>
 </tbody>
 </table>
-<h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkOutputWindow.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioVtkOutputWindow</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">vtkOutputWindow</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StudioVtkOutputWindow</span><span class="o">*</span><span class="w"> </span><span class="n">New</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">vtkTypeMacro</span><span class="p">(</span><span class="n">StudioVtkOutputWindow</span><span class="p">,</span><span class="w"> </span><span class="n">vtkOutputWindow</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">StudioVtkOutputWindow</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisplayErrorText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisplayWarningText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisplayGenericWarningText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisplayDebugText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-new">function New</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">ShapeWorksVtkOutputWindow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">New</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-vtktypemacro">function vtkTypeMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ShapeWorksVtkOutputWindow</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkOutputWindow</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-shapeworksvtkoutputwindow">function ShapeWorksVtkOutputWindow</h3>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeWorksVtkOutputWindow</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-displayerrortext">function DisplayErrorText</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DisplayErrorText</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">text</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
+<h3 id="function-displaywarningtext">function DisplayWarningText</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DisplayWarningText</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">text</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
+<h3 id="function-displaygenericwarningtext">function DisplayGenericWarningText</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DisplayGenericWarningText</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">text</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
+<h3 id="function-displaydebugtext">function DisplayDebugText</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DisplayDebugText</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">text</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-08-16 at 16:54:10 +0000</p>
+<p>Updated on 2025-08-22 at 08:23:43 +0000</p>
 
               
             </article>
