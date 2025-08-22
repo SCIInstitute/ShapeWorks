@@ -198,6 +198,13 @@ def sw_check_abort():
     else:
         return False
 
+def sw_is_cli_mode():
+    """Check if the current mode is CLI mode"""
+    global sw_logger
+    if sw_logger is not None:
+        return sw_logger.is_cli_mode()
+    else:
+        return False
 
 def sw_progress(progress, message=""):
     """If sw_logger is set, use it, otherwise do nothing"""

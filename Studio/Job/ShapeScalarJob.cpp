@@ -1,6 +1,6 @@
 #include <Common/Logging.h>
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Libs/Project/Project.h>
-#include <Python/PythonWorker.h>
 #include <pybind11/eigen.h>
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>

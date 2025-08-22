@@ -5,6 +5,8 @@
 #include <QSharedPointer>
 #include <QWidget>
 
+#include <DeepSSM/DeepSSMJob.h>
+
 // studio
 #include <Data/Preferences.h>
 #include <Project.h>
@@ -26,23 +28,6 @@ class DeepSSMTool : public QWidget {
   Q_OBJECT;
 
  public:
-  enum class ToolMode {
-    DeepSSM_PrepType = 0,
-    DeepSSM_AugmentationType = 1,
-    DeepSSM_TrainingType = 2,
-    DeepSSM_TestingType = 3
-  };
-
-  enum PrepStep {
-    NOT_STARTED = 0,
-    GROOM_TRAINING = 1,
-    OPTIMIZE_TRAINING = 2,
-    OPTIMIZE_VALIDATION = 3,
-    GROOM_IMAGES = 4,
-    DONE = 5
-  };
-
-  enum class SplitType { TRAIN, VAL, TEST };
 
   DeepSSMTool(Preferences& prefs);
   ~DeepSSMTool();
@@ -67,7 +52,6 @@ class DeepSSMTool : public QWidget {
 
   std::string get_display_feature();
 
-  static std::vector<int> get_split(ProjectHandle project, SplitType split_type);
 
  public Q_SLOTS:
 
@@ -96,7 +80,7 @@ class DeepSSMTool : public QWidget {
 
  private:
   void update_meshes();
-  void run_tool(DeepSSMTool::ToolMode type);
+  void run_tool(DeepSSMJob::JobType type);
   void show_augmentation_meshes();
   void update_tables();
   void show_training_meshes();
@@ -120,10 +104,10 @@ class DeepSSMTool : public QWidget {
   Ui_DeepSSMTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
-  PrepStep prep_step_ = PrepStep::NOT_STARTED;
+  DeepSSMJob::PrepStep prep_step_ = DeepSSMJob::PrepStep::NOT_STARTED;
 
   bool tool_is_running_ = false;
-  DeepSSMTool::ToolMode current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
+  DeepSSMJob::JobType current_tool_ = DeepSSMJob::JobType::DeepSSM_AugmentationType;
   QSharedPointer<DeepSSMJob> deep_ssm_;
   QElapsedTimer timer_;
 

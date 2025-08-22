@@ -2,15 +2,8 @@
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
 
-#include "qdir.h"
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
-
-// std
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <random>
 
 // qt
 #include <QFile>
@@ -18,9 +11,8 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 #include <QThread>
 
 // shapeworks
-#include <Data/Session.h>
-#include <DeepSSM/DeepSSMJob.h>
-#include <DeepSSM/DeepSSMParameters.h>
+#include "DeepSSMJob.h"
+#include <Project/DeepSSMParameters.h>
 #include <Groom.h>
 #include <Logging.h>
 #include <Mesh/MeshUtils.h>
@@ -30,11 +22,8 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-DeepSSMJob::DeepSSMJob(QSharedPointer<Session> session, DeepSSMTool::ToolMode tool_mode,
-                       DeepSSMTool::PrepStep prep_step)
-    : session_(session), tool_mode_(tool_mode), prep_step_(prep_step) {
-  project_ = session_->get_project();
-}
+DeepSSMJob::DeepSSMJob(std::shared_ptr<Project> project, DeepSSMJob::JobType tool_mode, DeepSSMJob::PrepStep prep_step)
+    : project_(project), job_type_(tool_mode), prep_step_(prep_step) {}
 
 //---------------------------------------------------------------------------
 DeepSSMJob::~DeepSSMJob() {}
@@ -42,17 +31,17 @@ DeepSSMJob::~DeepSSMJob() {}
 //---------------------------------------------------------------------------
 void DeepSSMJob::run() {
   try {
-    switch (tool_mode_) {
-      case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+    switch (job_type_) {
+      case DeepSSMJob::JobType::DeepSSM_PrepType:
         run_prep();
         break;
-      case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+      case DeepSSMJob::JobType::DeepSSM_AugmentationType:
         run_augmentation();
         break;
-      case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+      case DeepSSMJob::JobType::DeepSSM_TrainingType:
         run_training();
         break;
-      case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+      case DeepSSMJob::JobType::DeepSSM_TestingType:
         run_testing();
         break;
     }
@@ -63,17 +52,17 @@ void DeepSSMJob::run() {
 
 //---------------------------------------------------------------------------
 QString DeepSSMJob::name() {
-  switch (tool_mode_) {
-    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+  switch (job_type_) {
+    case DeepSSMJob::JobType::DeepSSM_PrepType:
       return "DeepSSM: Prep";
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+    case DeepSSMJob::JobType::DeepSSM_AugmentationType:
       return "DeepSSM: Augmentation";
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+    case DeepSSMJob::JobType::DeepSSM_TrainingType:
       return "DeepSSM: Training";
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+    case DeepSSMJob::JobType::DeepSSM_TestingType:
       return "DeepSSM: Testing";
       break;
   }
@@ -85,7 +74,6 @@ QString DeepSSMJob::name() {
 void DeepSSMJob::run_prep() {
   // groom training
   auto subjects = project_->get_subjects();
-  auto shapes = session_->get_shapes();
   SW_LOG("DeepSSM: Grooming Training Data");
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
@@ -96,7 +84,7 @@ void DeepSSMJob::run_prep() {
   params.set_training_step_complete(false);
   params.save_to_project();
 
-  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_TRAINING) {
+  if (prep_step_ == DeepSSMJob::PrepStep::NOT_STARTED || prep_step_ == DeepSSMJob::PrepStep::GROOM_TRAINING) {
     SW_LOG("Creating Split...");
     /////////////////////////////////////////////////////////
     /// Step 1. Create Split
@@ -107,13 +95,12 @@ void DeepSSMJob::run_prep() {
     py::object create_split = py_deep_ssm_utils.attr("create_split");
     create_split(project_, train_split, val_split, test_split);
 
-    int num_train = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::TRAIN).size();
-    int num_val = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::VAL).size();
-    int num_test = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::TEST).size();
+    int num_train = get_split(project_, SplitType::TRAIN).size();
+    int num_val = get_split(project_, SplitType::VAL).size();
+    int num_test = get_split(project_, SplitType::TEST).size();
     if (num_train == 0 || num_val == 0) {
       SW_ERROR("DeepSSM: Not enough subjects in training and validation.  Please check split.");
       abort();
-      //return;
     }
 
     if (is_aborted()) {
@@ -123,7 +110,7 @@ void DeepSSMJob::run_prep() {
     /////////////////////////////////////////////////////////
     /// Step 2. Groom Training Shapes
     /////////////////////////////////////////////////////////
-    update_prep_stage(DeepSSMTool::PrepStep::GROOM_TRAINING);
+    update_prep_stage(DeepSSMJob::PrepStep::GROOM_TRAINING);
     py::object groom_training_shapes = py_deep_ssm_utils.attr("groom_training_shapes");
 
     QElapsedTimer timer;
@@ -153,11 +140,11 @@ void DeepSSMJob::run_prep() {
     }
   }
 
-  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::OPTIMIZE_TRAINING) {
+  if (prep_step_ == DeepSSMJob::PrepStep::NOT_STARTED || prep_step_ == DeepSSMJob::PrepStep::OPTIMIZE_TRAINING) {
     /////////////////////////////////////////////////////////
     /// Step 3. Optimize Training Particles
     /////////////////////////////////////////////////////////
-    update_prep_stage(DeepSSMTool::PrepStep::OPTIMIZE_TRAINING);
+    update_prep_stage(DeepSSMJob::PrepStep::OPTIMIZE_TRAINING);
     QElapsedTimer timer;
     timer.start();
     py::object optimize_training_particles = py_deep_ssm_utils.attr("optimize_training_particles");
@@ -171,11 +158,11 @@ void DeepSSMJob::run_prep() {
     }
   }
 
-  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::OPTIMIZE_VALIDATION) {
+  if (prep_step_ == DeepSSMJob::PrepStep::NOT_STARTED || prep_step_ == DeepSSMJob::PrepStep::OPTIMIZE_VALIDATION) {
     /////////////////////////////////////////////////////////
     /// Step 6. Optimize Validation Particles with Fixed Domains
     /////////////////////////////////////////////////////////
-    update_prep_stage(DeepSSMTool::PrepStep::OPTIMIZE_VALIDATION);
+    update_prep_stage(DeepSSMJob::PrepStep::OPTIMIZE_VALIDATION);
     py::object prep_project_for_val_particles = py_deep_ssm_utils.attr("prep_project_for_val_particles");
     prep_project_for_val_particles(project_);
 
@@ -199,12 +186,12 @@ void DeepSSMJob::run_prep() {
     SW_LOG("DeepSSM: Optimize Validation Particles complete.  Duration: {} seconds", duration.toStdString());
   }
 
-  if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_IMAGES) {
+  if (prep_step_ == DeepSSMJob::PrepStep::NOT_STARTED || prep_step_ == DeepSSMJob::PrepStep::GROOM_IMAGES) {
     /////////////////////////////////////////////////////////
     /// Step 4. Groom Training Images
     /////////////////////////////////////////////////////////
 
-    update_prep_stage(DeepSSMTool::PrepStep::GROOM_IMAGES);
+    update_prep_stage(DeepSSMJob::PrepStep::GROOM_IMAGES);
     QElapsedTimer timer;
     timer.start();
     py::object groom_training_images = py_deep_ssm_utils.attr("groom_training_images");
@@ -221,7 +208,7 @@ void DeepSSMJob::run_prep() {
     /////////////////////////////////////////////////////////
     timer.start();
     py::object groom_val_test_images = py_deep_ssm_utils.attr("groom_val_test_images");
-    groom_val_test_images(project_, DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::VAL));
+    groom_val_test_images(project_, get_split(project_, SplitType::VAL));
     project_->save();
     duration = QString::number(timer.elapsed() / 1000.0, 'f', 1);
     SW_LOG("DeepSSM: Groom Validation Images complete.  Duration: {} seconds", duration.toStdString());
@@ -232,7 +219,7 @@ void DeepSSMJob::run_prep() {
   }
 
   /////////////////////////////////////////////////////////
-  update_prep_stage(DeepSSMTool::PrepStep::DONE);
+  update_prep_stage(DeepSSMJob::PrepStep::DONE);
   params.set_prep_step_complete(true);
   params.set_aug_step_complete(false);
   params.set_training_step_complete(false);
@@ -328,7 +315,7 @@ void DeepSSMJob::run_testing() {
 
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
-  std::vector<int> test_indices = DeepSSMTool::get_split(project_, DeepSSMTool::SplitType::TEST);
+  std::vector<int> test_indices = get_split(project_, SplitType::TEST);
 
   // Groom Test Images
   SW_MESSAGE("Grooming Test Images");
@@ -371,7 +358,37 @@ void DeepSSMJob::run_testing() {
 void DeepSSMJob::python_message(std::string str) { SW_LOG(str); }
 
 //---------------------------------------------------------------------------
-void DeepSSMJob::update_prep_stage(DeepSSMTool::PrepStep step) {
+std::vector<int> DeepSSMJob::get_split(ProjectHandle project, SplitType split_type) {
+  auto subjects = project->get_subjects();
+
+  std::vector<int> list;
+
+  for (int id = 0; id < subjects.size(); id++) {
+    auto extra_values = subjects[id]->get_extra_values();
+
+    std::string split = extra_values["split"];
+
+    if (split_type == DeepSSMJob::SplitType::TRAIN) {
+      if (split != "train") {
+        continue;
+      }
+    } else if (split_type == DeepSSMJob::SplitType::VAL) {
+      if (split != "val") {
+        continue;
+      }
+    } else if (split_type == DeepSSMJob::SplitType::TEST) {
+      if (split != "test") {
+        continue;
+      }
+    }
+
+    list.push_back(id);
+  }
+  return list;
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMJob::update_prep_stage(PrepStep step) {
   /*
   std::lock_guard<std::mutex> lock(mutex_);
 

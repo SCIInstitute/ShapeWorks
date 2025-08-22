@@ -7,16 +7,16 @@
 #include <QThread>
 
 // shapeworks
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Logging.h>
 #include <Mesh/Mesh.h>
-#include <Python/PythonWorker.h>
 
 // studio
 #include <Data/Session.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Data/Worker.h>
 #include <DeepSSM/DeepSSMJob.h>
-#include <DeepSSM/DeepSSMParameters.h>
+#include <Project/DeepSSMParameters.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
@@ -124,16 +124,16 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
 void DeepSSMTool::tab_changed(int tab) {
   switch (tab) {
     case 0:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_PrepType;
+      current_tool_ = DeepSSMJob::JobType::DeepSSM_PrepType;
       break;
     case 1:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
+      current_tool_ = DeepSSMJob::JobType::DeepSSM_AugmentationType;
       break;
     case 2:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TrainingType;
+      current_tool_ = DeepSSMJob::JobType::DeepSSM_TrainingType;
       break;
     case 3:
-      current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TestingType;
+      current_tool_ = DeepSSMJob::JobType::DeepSSM_TestingType;
       break;
   }
   update_panels();
@@ -160,6 +160,8 @@ void DeepSSMTool::load_params() {
 
   ui_->validation_split->setText(QString::number(params.get_validation_split()));
   ui_->testing_split->setText(QString::number(params.get_testing_split()));
+  ui_->training_split->setText(QString::number(params.get_training_split()));
+  update_split();
 
   auto spacing = params.get_spacing();
   ui_->spacing_x->setText(QString::number(spacing[0]));
@@ -249,7 +251,7 @@ void DeepSSMTool::run_clicked() {
   } else {
     session_->trigger_save();
     if (ui_->run_all->isChecked()) {
-      run_tool(DeepSSMTool::ToolMode::DeepSSM_PrepType);
+      run_tool(DeepSSMJob::JobType::DeepSSM_PrepType);
     } else {
       run_tool(current_tool_);
     }
@@ -258,7 +260,7 @@ void DeepSSMTool::run_clicked() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_prep_clicked(int step) {
-  prep_step_ = static_cast<DeepSSMTool::PrepStep>(step);
+  prep_step_ = static_cast<DeepSSMJob::PrepStep>(step);
   run_clicked();
 }
 
@@ -266,16 +268,16 @@ void DeepSSMTool::run_prep_clicked(int step) {
 void DeepSSMTool::handle_thread_complete() {
   try {
     if (!deep_ssm_->is_aborted()) {
-      if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+      if (current_tool_ == DeepSSMJob::JobType::DeepSSM_PrepType) {
         auto params = DeepSSMParameters(session_->get_project());
         params.set_prep_stage(static_cast<int>(prep_step_));
-        if (prep_step_ == DeepSSMTool::PrepStep::NOT_STARTED || prep_step_ == DeepSSMTool::PrepStep::GROOM_IMAGES) {
+        if (prep_step_ == DeepSSMJob::PrepStep::NOT_STARTED || prep_step_ == DeepSSMJob::PrepStep::GROOM_IMAGES) {
           params.set_prep_step_complete(true);
-          params.set_prep_stage(static_cast<int>(DeepSSMTool::PrepStep::DONE));
+          params.set_prep_stage(static_cast<int>(DeepSSMJob::PrepStep::DONE));
         }
         params.save_to_project();
         update_panels();
-        prep_step_ = DeepSSMTool::PrepStep::NOT_STARTED;
+        prep_step_ = DeepSSMJob::PrepStep::NOT_STARTED;
       }
     }
     Q_EMIT progress(100);
@@ -286,12 +288,12 @@ void DeepSSMTool::handle_thread_complete() {
 
     if (!deep_ssm_->is_aborted()) {
       if (ui_->run_all->isChecked()) {
-        if (current_tool_ == ToolMode::DeepSSM_PrepType) {
-          run_tool(DeepSSMTool::ToolMode::DeepSSM_AugmentationType);
-        } else if (current_tool_ == ToolMode::DeepSSM_AugmentationType) {
-          run_tool(DeepSSMTool::ToolMode::DeepSSM_TrainingType);
-        } else if (current_tool_ == ToolMode::DeepSSM_TrainingType) {
-          run_tool(DeepSSMTool::ToolMode::DeepSSM_TestingType);
+        if (current_tool_ == DeepSSMJob::JobType::DeepSSM_PrepType) {
+          run_tool(DeepSSMJob::JobType::DeepSSM_AugmentationType);
+        } else if (current_tool_ == DeepSSMJob::JobType::DeepSSM_AugmentationType) {
+          run_tool(DeepSSMJob::JobType::DeepSSM_TrainingType);
+        } else if (current_tool_ == DeepSSMJob::JobType::DeepSSM_TrainingType) {
+          run_tool(DeepSSMJob::JobType::DeepSSM_TestingType);
         }
       }
     }
@@ -302,7 +304,7 @@ void DeepSSMTool::handle_thread_complete() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_progress(int val, QString message) {
-  if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+  if (current_tool_ == DeepSSMJob::JobType::DeepSSM_PrepType) {
     //?? TODO ui_->prep_text_edit->setText(deep_ssm_->get_prep_message());
     //?? TODO ui_->prep_text_edit->setEnabled(true);
   }
@@ -333,20 +335,20 @@ void DeepSSMTool::update_panels() {
   ui_->training_panel->hide();
   bool enabled = true;
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+    case DeepSSMJob::JobType::DeepSSM_PrepType:
       string = "All Prep Stages";
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+    case DeepSSMJob::JobType::DeepSSM_AugmentationType:
       string = "Data Augmentation";
       ui_->data_panel->show();
       enabled = params.get_prep_step_complete();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+    case DeepSSMJob::JobType::DeepSSM_TrainingType:
       string = "Training";
       ui_->training_panel->show();
       enabled = params.get_aug_step_complete();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+    case DeepSSMJob::JobType::DeepSSM_TestingType:
       string = "Testing";
       enabled = params.get_training_step_complete();
       break;
@@ -406,7 +408,7 @@ void DeepSSMTool::update_split() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_new_mesh() {
-  if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
+  if (current_tool_ == DeepSSMJob::JobType::DeepSSM_TestingType) {
     update_testing_meshes();
   }
 }
@@ -604,8 +606,8 @@ void DeepSSMTool::show_training_meshes() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::show_testing_meshes() {
   shapes_.clear();
-  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
-  auto id_list = get_split(session_->get_project(), SplitType::TEST);
+  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), DeepSSMJob::JobType::DeepSSM_TestingType);
+  auto id_list = DeepSSMJob::get_split(session_->get_project(), DeepSSMJob::SplitType::TEST);
 
   auto subjects = session_->get_project()->get_subjects();
   auto shapes = session_->get_shapes();
@@ -664,8 +666,8 @@ void DeepSSMTool::show_testing_meshes() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::update_testing_meshes() {
   try {
-    deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, DeepSSMTool::ToolMode::DeepSSM_TestingType);
-    auto id_list = get_split(session_->get_project(), SplitType::TEST);
+    deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), DeepSSMJob::JobType::DeepSSM_TestingType);
+    auto id_list = DeepSSMJob::get_split(session_->get_project(), DeepSSMJob::SplitType::TEST);
 
     auto subjects = session_->get_project()->get_subjects();
     auto shapes = session_->get_shapes();
@@ -685,17 +687,17 @@ void DeepSSMTool::update_meshes() {
     return;
   }
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+    case DeepSSMJob::JobType::DeepSSM_PrepType:
       shapes_.clear();
       Q_EMIT update_view();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+    case DeepSSMJob::JobType::DeepSSM_AugmentationType:
       show_augmentation_meshes();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+    case DeepSSMJob::JobType::DeepSSM_TrainingType:
       show_training_meshes();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+    case DeepSSMJob::JobType::DeepSSM_TestingType:
       show_testing_meshes();
       break;
   }
@@ -835,41 +837,11 @@ void DeepSSMTool::resizeEvent(QResizeEvent* event) {
 
 //---------------------------------------------------------------------------
 std::string DeepSSMTool::get_display_feature() {
-  if (current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TrainingType ||
-      current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
+  if (current_tool_ == DeepSSMJob::JobType::DeepSSM_TrainingType ||
+      current_tool_ == DeepSSMJob::JobType::DeepSSM_TestingType) {
     return "deepssm_error";
   }
   return "";
-}
-
-//---------------------------------------------------------------------------
-std::vector<int> DeepSSMTool::get_split(ProjectHandle project, SplitType split_type) {
-  auto subjects = project->get_subjects();
-
-  std::vector<int> list;
-
-  for (int id = 0; id < subjects.size(); id++) {
-    auto extra_values = subjects[id]->get_extra_values();
-
-    std::string split = extra_values["split"];
-
-    if (split_type == SplitType::TRAIN) {
-      if (split != "train") {
-        continue;
-      }
-    } else if (split_type == SplitType::VAL) {
-      if (split != "val") {
-        continue;
-      }
-    } else if (split_type == SplitType::TEST) {
-      if (split != "test") {
-        continue;
-      }
-    }
-
-    list.push_back(id);
-  }
-  return list;
 }
 
 //---------------------------------------------------------------------------
@@ -880,16 +852,16 @@ void DeepSSMTool::restore_defaults() {
   auto params = DeepSSMParameters(session_->get_project());
 
   switch (current_tool_) {
-    case DeepSSMTool::ToolMode::DeepSSM_PrepType:
+    case DeepSSMJob::JobType::DeepSSM_PrepType:
       params.restore_split_defaults();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+    case DeepSSMJob::JobType::DeepSSM_AugmentationType:
       params.restore_augmentation_defaults();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+    case DeepSSMJob::JobType::DeepSSM_TrainingType:
       params.restore_training_defaults();
       break;
-    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+    case DeepSSMJob::JobType::DeepSSM_TestingType:
       // params.restore_inference_defaults();
       break;
   }
@@ -900,17 +872,17 @@ void DeepSSMTool::restore_defaults() {
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
-  current_tool_ = type;
+void DeepSSMTool::run_tool(DeepSSMJob::JobType job_type) {
+  current_tool_ = job_type;
   Q_EMIT progress(-1);
 
-  if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
+  if (job_type == DeepSSMJob::JobType::DeepSSM_AugmentationType) {
     ui_->tab_widget->setCurrentIndex(1);
 
     SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/augmentation/TotalData.csv").remove();
-  } else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
+  } else if (job_type == DeepSSMJob::JobType::DeepSSM_TrainingType) {
     ui_->tab_widget->setCurrentIndex(2);
     SW_LOG("Please Wait: Running Training...");
 
@@ -919,16 +891,14 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
     dir.removeRecursively();
 
     show_training_meshes();
-  } else if (type == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
+  } else if (job_type == DeepSSMJob::JobType::DeepSSM_TestingType) {
     ui_->tab_widget->setCurrentIndex(3);
 
     SW_LOG("Please Wait: Running Testing...");
-  } else if (type == DeepSSMTool::ToolMode::DeepSSM_PrepType) {
+  } else if (job_type == DeepSSMJob::JobType::DeepSSM_PrepType) {
     ui_->tab_widget->setCurrentIndex(0);
 
     // check that there are at least 1 subject in test/val/train each
-
-
 
     SW_LOG("Please Wait: Running Groom/Optimize...");
   } else {
@@ -947,7 +917,7 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
 
   store_params();
 
-  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_, type, prep_step_);
+  deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), job_type, prep_step_);
   connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
 

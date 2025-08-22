@@ -7,15 +7,14 @@
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Logging.h>
-#include <Python/PythonWorker.h>
-#include <Shape.h>
 
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QProcess>
+#include <QThread>
 #include <iostream>
-#include <sstream>
 
 namespace shapeworks {
 
@@ -38,11 +37,18 @@ class PythonLogger {
 
   bool check_abort() { return aborted_; }
 
+  bool is_cli_mode() { return is_cli_mode_; }
+
+  void set_cli_mode(bool cli) { is_cli_mode_ = cli; }
+
  private:
   std::function<void(std::string)> callback_;
   std::function<void(double, std::string)> progress_callback_;
 
   std::atomic<bool> aborted_{false};
+
+  //! Command line interface mode
+  std::atomic<bool> is_cli_mode_{false};
 };
 
 //---------------------------------------------------------------------------
@@ -51,12 +57,15 @@ PYBIND11_EMBEDDED_MODULE(logger, m) {
       .def(py::init<>())
       .def("log", &PythonLogger::cpp_log)
       .def("check_abort", &PythonLogger::check_abort)
-      .def("progress", &PythonLogger::cpp_progress);
+      .def("progress", &PythonLogger::cpp_progress)
+      .def("is_cli_mode", &PythonLogger::is_cli_mode);
 };
 
 //---------------------------------------------------------------------------
 PythonWorker::PythonWorker() {
   python_logger_ = QSharedPointer<PythonLogger>::create();
+
+  qRegisterMetaType<QSharedPointer<Job>>("QSharedPointer<Job>");
 
   // create singular Python thread and move this object to the new thread
   thread_ = new QThread(this);
@@ -67,14 +76,19 @@ PythonWorker::PythonWorker() {
 //---------------------------------------------------------------------------
 PythonWorker::~PythonWorker() {
   end_python();
-  thread_->wait();
-  delete thread_;
+  if (thread_) {
+    thread_->wait();
+    delete thread_;
+  }
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> output_window) {
+void PythonWorker::set_vtk_output_window(vtkSmartPointer<ShapeWorksVtkOutputWindow> output_window) {
   studio_vtk_output_window_ = output_window;
 }
+
+//---------------------------------------------------------------------------
+void PythonWorker::set_cli_mode(bool cli_mode) { python_logger_->set_cli_mode(cli_mode); }
 
 //---------------------------------------------------------------------------
 void PythonWorker::start_job(QSharedPointer<Job> job) {
@@ -108,6 +122,9 @@ void PythonWorker::run_job(QSharedPointer<Job> job) {
   // run on python thread
   QMetaObject::invokeMethod(this, "start_job", Qt::QueuedConnection, Q_ARG(QSharedPointer<Job>, job));
 }
+
+//---------------------------------------------------------------------------
+void PythonWorker::set_current_job(QSharedPointer<Job> job) { current_job_ = job; }
 
 //---------------------------------------------------------------------------
 bool PythonWorker::init() {

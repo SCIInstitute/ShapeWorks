@@ -44,6 +44,8 @@ def log_print(logger, values):
             print(values[i], end='	  ')
         else:
             print('%.5f' % values[i], end='	  ')
+    # print a new line
+    print()
 
     # csv format
     string_values = [str(i) for i in values]
@@ -167,7 +169,8 @@ def supervised_train(config_file):
         if sw_check_abort():
             sw_message("Aborted")
             return
-        sw_message(f"Epoch {e}/{num_epochs}")
+        if not sw_is_cli_mode():
+            sw_message(f"Epoch {e}/{num_epochs}")
         sw_progress(e / (num_epochs + 1))
 
         torch.cuda.empty_cache()
@@ -229,6 +232,7 @@ def supervised_train(config_file):
             log_print(logger,
                       ["Base_Training", e, last_learning_rate, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err,
                        time.time() - t0])
+
             # plot
             epochs.append(e)
             plot_train_losses.append(train_mr_MSE)

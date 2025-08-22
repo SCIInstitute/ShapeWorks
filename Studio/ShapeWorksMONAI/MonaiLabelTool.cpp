@@ -3,8 +3,8 @@
 #include <Data/Worker.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Logging.h>
-#include <Python/PythonWorker.h>
 #include <Shape.h>
 #include <ShapeWorksMONAI/MonaiLabelJob.h>
 #include <ShapeWorksMONAI/MonaiLabelTool.h>

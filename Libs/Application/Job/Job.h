@@ -1,6 +1,7 @@
 #pragma once
 #include <QElapsedTimer>
 #include <QObject>
+#include <QSharedPointer>
 
 namespace shapeworks {
 
@@ -62,3 +63,6 @@ class Job : public QObject {
   QElapsedTimer timer_;
 };
 }  // namespace shapeworks
+
+
+Q_DECLARE_METATYPE(QSharedPointer<shapeworks::Job>);

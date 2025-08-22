@@ -11,8 +11,8 @@
 #include <Job/NetworkAnalysisJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Logging.h>
-#include <Python/PythonWorker.h>
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>
