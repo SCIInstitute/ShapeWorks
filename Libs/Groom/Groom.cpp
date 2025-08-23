@@ -698,7 +698,7 @@ bool Groom::run_alignment() {
 bool Groom::run_shared_boundaries() {
   // only need to check on one domain
   auto params = GroomParameters(project_, project_->get_domain_names()[0]);
-  if (!params.get_shared_boundary()) {
+  if (!params.get_shared_boundaries_enabled()) {
     return true;
   }
 
@@ -708,123 +708,124 @@ bool Groom::run_shared_boundaries() {
   auto original_domain_types = project_->get_original_domain_types();
   auto groomed_domain_types = project_->get_groomed_domain_types();
 
-  std::string first_domain_name = params.get_shared_boundary_first_domain();
-  std::string second_domain_name = params.get_shared_boundary_second_domain();
-  std::string shared_surface_name = "shared_surface";
-  std::string shared_boundary_name = "shared_boundary";
+  for (auto shared_boundary : params.get_shared_boundaries()) {
+    std::string first_domain_name = shared_boundary.first_domain;
+    std::string second_domain_name = shared_boundary.second_domain;
+    std::string shared_surface_name = "shared_surface_" + first_domain_name + "_" + second_domain_name;
+    std::string shared_boundary_name = "shared_boundary_" + first_domain_name + "_" + second_domain_name;
 
-  // if domain_names doesn't have the shared domains, add them
-  if (std::find(domain_names.begin(), domain_names.end(), shared_surface_name) == domain_names.end()) {
-    domain_names.push_back(shared_surface_name);
-    original_domain_types.push_back(DomainType::Mesh);
-    groomed_domain_types.push_back(DomainType::Mesh);
-  }
-  if (std::find(domain_names.begin(), domain_names.end(), shared_boundary_name) == domain_names.end()) {
-    domain_names.push_back(shared_boundary_name);
-    original_domain_types.push_back(DomainType::Contour);
-    groomed_domain_types.push_back(DomainType::Contour);
-  }
-
-  int shared_domain_index =
-      std::find(domain_names.begin(), domain_names.end(), shared_surface_name) - domain_names.begin();
-  int shared_boundary_index =
-      std::find(domain_names.begin(), domain_names.end(), shared_boundary_name) - domain_names.begin();
-
-  // find the index of the first domain and second domain
-  int first_domain = 0;
-  int second_domain = 1;
-  for (int i = 0; i < domain_names.size(); i++) {
-    if (domain_names[i] == first_domain_name) {
-      first_domain = i;
+    // if domain_names doesn't have the shared domains, add them
+    if (std::find(domain_names.begin(), domain_names.end(), shared_surface_name) == domain_names.end()) {
+      domain_names.push_back(shared_surface_name);
+      original_domain_types.push_back(DomainType::Mesh);
+      groomed_domain_types.push_back(DomainType::Mesh);
     }
-    if (domain_names[i] == second_domain_name) {
-      second_domain = i;
+    if (std::find(domain_names.begin(), domain_names.end(), shared_boundary_name) == domain_names.end()) {
+      domain_names.push_back(shared_boundary_name);
+      original_domain_types.push_back(DomainType::Contour);
+      groomed_domain_types.push_back(DomainType::Contour);
     }
-  }
 
-  groomed_domain_types[first_domain] = DomainType::Mesh;
-  groomed_domain_types[second_domain] = DomainType::Mesh;
+    int shared_domain_index =
+        std::find(domain_names.begin(), domain_names.end(), shared_surface_name) - domain_names.begin();
+    int shared_boundary_index =
+        std::find(domain_names.begin(), domain_names.end(), shared_boundary_name) - domain_names.begin();
 
-  project_->set_domain_names(domain_names);
-  project_->set_original_domain_types(original_domain_types);
-  project_->set_groomed_domain_types(groomed_domain_types);
-
-  auto subjects = project_->get_subjects();
-
-  std::mutex progress_mutex;
-  int progress = 0;
-
-  tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
-    for (size_t i = r.begin(); i < r.end(); ++i) {
-      if (abort_) {
-        return;
+    // find the index of the first domain and second domain
+    int first_domain = 0;
+    int second_domain = 1;
+    for (int i = 0; i < domain_names.size(); i++) {
+      if (domain_names[i] == first_domain_name) {
+        first_domain = i;
       }
-
-      auto subject = subjects[i];
-
-      Mesh first_mesh = get_mesh(i, first_domain, false);
-      Mesh second_mesh = get_mesh(i, second_domain, false);
-
-      auto [extracted_l, extracted_r, extracted_s] =
-          MeshUtils::sharedBoundaryExtractor(first_mesh, second_mesh, params.get_shared_boundary_tolerance());
-
-      extracted_l.remeshPercent(.99, 1.0);
-      extracted_r.remeshPercent(.99, 1.0);
-
-      auto output_contour = MeshUtils::boundaryLoopExtractor(extracted_s);
-
-      // overwrite groomed filename for first and second with extracted_l and extracted_r
-      auto first_filename = subject->get_groomed_filenames()[first_domain];
-      auto second_filename = subject->get_groomed_filenames()[second_domain];
-      // change file extension to .vtk if it's not already
-      first_filename = StringUtils::removeExtension(first_filename) + "_extracted.vtk";
-      second_filename = StringUtils::removeExtension(second_filename) + "_extracted.vtk";
-      MeshUtils::threadSafeWriteMesh(first_filename, extracted_l);
-      MeshUtils::threadSafeWriteMesh(second_filename, extracted_r);
-
-      auto shared_surface_filename = get_output_filename("shared_surface", DomainType::Mesh);
-      auto shared_boundary_filename = get_output_filename("shared_boundary", DomainType::Contour);
-
-      extracted_s.write(shared_surface_filename);
-      output_contour.write(shared_boundary_filename);
-
-      // store filenames
-      auto groomed_filenames = subject->get_groomed_filenames();
-      groomed_filenames[first_domain] = first_filename;
-      groomed_filenames[second_domain] = second_filename;
-      if (shared_domain_index >= groomed_filenames.size()) {
-        groomed_filenames.resize(shared_domain_index + 1);
-      }
-      if (shared_boundary_index >= groomed_filenames.size()) {
-        groomed_filenames.resize(shared_boundary_index + 1);
-      }
-      groomed_filenames[shared_domain_index] = shared_surface_filename;
-      groomed_filenames[shared_boundary_index] = shared_boundary_filename;
-      subject->set_groomed_filenames(groomed_filenames);
-      subject->set_number_of_domains(domain_names.size());
-
-      // also store the two new ones as original
-      auto original_filenames = subject->get_original_filenames();
-      if (original_filenames.size() <= shared_domain_index) {
-        original_filenames.resize(shared_domain_index + 1);
-      }
-      if (original_filenames.size() <= shared_boundary_index) {
-        original_filenames.resize(shared_boundary_index + 1);
-      }
-      original_filenames[shared_domain_index] = shared_surface_filename;
-      original_filenames[shared_boundary_index] = shared_boundary_filename;
-      subject->set_original_filenames(original_filenames);
-
-      {
-        // lock
-        std::scoped_lock lock(progress_mutex);
-        progress++;
-        progress_ = static_cast<float>(progress) / static_cast<float>(subjects.size()) * 100.0;
-        SW_PROGRESS(progress_, fmt::format("Processing shared boundaries ({}/{})", progress, subjects.size()));
+      if (domain_names[i] == second_domain_name) {
+        second_domain = i;
       }
     }
-  });
 
+    groomed_domain_types[first_domain] = DomainType::Mesh;
+    groomed_domain_types[second_domain] = DomainType::Mesh;
+
+    project_->set_domain_names(domain_names);
+    project_->set_original_domain_types(original_domain_types);
+    project_->set_groomed_domain_types(groomed_domain_types);
+
+    auto subjects = project_->get_subjects();
+
+    std::mutex progress_mutex;
+    int progress = 0;
+
+    tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
+        if (abort_) {
+          return;
+        }
+
+        auto subject = subjects[i];
+
+        Mesh first_mesh = get_mesh(i, first_domain, false);
+        Mesh second_mesh = get_mesh(i, second_domain, false);
+
+        auto [extracted_l, extracted_r, extracted_s] =
+            MeshUtils::sharedBoundaryExtractor(first_mesh, second_mesh, shared_boundary.tolerance);
+
+        extracted_l.remeshPercent(.99, 1.0);
+        extracted_r.remeshPercent(.99, 1.0);
+
+        auto output_contour = MeshUtils::boundaryLoopExtractor(extracted_s);
+
+        // overwrite groomed filename for first and second with extracted_l and extracted_r
+        auto first_filename = subject->get_groomed_filenames()[first_domain];
+        auto second_filename = subject->get_groomed_filenames()[second_domain];
+        // change file extension to .vtk if it's not already
+        first_filename = StringUtils::removeExtension(first_filename) + "_extracted.vtk";
+        second_filename = StringUtils::removeExtension(second_filename) + "_extracted.vtk";
+        MeshUtils::threadSafeWriteMesh(first_filename, extracted_l);
+        MeshUtils::threadSafeWriteMesh(second_filename, extracted_r);
+
+        auto shared_surface_filename = get_output_filename("shared_surface", DomainType::Mesh);
+        auto shared_boundary_filename = get_output_filename("shared_boundary", DomainType::Contour);
+
+        extracted_s.write(shared_surface_filename);
+        output_contour.write(shared_boundary_filename);
+
+        // store filenames
+        auto groomed_filenames = subject->get_groomed_filenames();
+        groomed_filenames[first_domain] = first_filename;
+        groomed_filenames[second_domain] = second_filename;
+        if (shared_domain_index >= groomed_filenames.size()) {
+          groomed_filenames.resize(shared_domain_index + 1);
+        }
+        if (shared_boundary_index >= groomed_filenames.size()) {
+          groomed_filenames.resize(shared_boundary_index + 1);
+        }
+        groomed_filenames[shared_domain_index] = shared_surface_filename;
+        groomed_filenames[shared_boundary_index] = shared_boundary_filename;
+        subject->set_groomed_filenames(groomed_filenames);
+        subject->set_number_of_domains(domain_names.size());
+
+        // also store the two new ones as original
+        auto original_filenames = subject->get_original_filenames();
+        if (original_filenames.size() <= shared_domain_index) {
+          original_filenames.resize(shared_domain_index + 1);
+        }
+        if (original_filenames.size() <= shared_boundary_index) {
+          original_filenames.resize(shared_boundary_index + 1);
+        }
+        original_filenames[shared_domain_index] = shared_surface_filename;
+        original_filenames[shared_boundary_index] = shared_boundary_filename;
+        subject->set_original_filenames(original_filenames);
+
+        {
+          // lock
+          std::scoped_lock lock(progress_mutex);
+          progress++;
+          progress_ = static_cast<float>(progress) / static_cast<float>(subjects.size()) * 100.0;
+          SW_PROGRESS(progress_, fmt::format("Processing shared boundaries ({}/{})", progress, subjects.size()));
+        }
+      }
+    });
+  }
   return true;
 }
 

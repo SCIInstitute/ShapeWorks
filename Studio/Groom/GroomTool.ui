@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>1361</height>
+    <height>1599</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -355,7 +355,7 @@ QWidget#domain_panel {
                 <widget class="QComboBox" name="shared_boundary_first_domain"/>
                </item>
                <item row="0" column="0" colspan="2">
-                <widget class="QTableWidget" name="tableWidget"/>
+                <widget class="QTableWidget" name="shared_boundary_table"/>
                </item>
                <item row="2" column="1">
                 <widget class="QComboBox" name="shared_boundary_second_domain"/>
@@ -389,6 +389,12 @@ QWidget#domain_panel {
                    <height>24</height>
                   </size>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
                  <property name="maximum">
                   <double>99999.000000000000000</double>
                  </property>
@@ -398,14 +404,14 @@ QWidget#domain_panel {
                 </widget>
                </item>
                <item row="4" column="0">
-                <widget class="QPushButton" name="pushButton">
+                <widget class="QPushButton" name="delete_shared_boundary">
                  <property name="text">
                   <string>Delete Selected</string>
                  </property>
                 </widget>
                </item>
                <item row="4" column="1">
-                <widget class="QPushButton" name="pushButton_2">
+                <widget class="QPushButton" name="add_shared_boundary">
                  <property name="text">
                   <string>Add</string>
                  </property>

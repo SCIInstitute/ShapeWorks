@@ -208,7 +208,7 @@ void PlaneWidget::update_planes() {
 
     double size = 100;
     auto meshes = viewer_->get_meshes();
-    if (meshes.valid()) {
+    if (meshes.valid() && domain_id < meshes.meshes().size()) {
       size = meshes.meshes()[domain_id]->get_largest_dimension_size();
     } else {
       continue;

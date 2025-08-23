@@ -178,13 +178,23 @@ void StudioUtils::window_width_level_to_brightness_contrast(double window_width,
 }
 
 //---------------------------------------------------------------------------
-void StudioUtils::update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session) {
+void StudioUtils::update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session,
+                                         const std::vector<QString>& filters) {
   auto domain_names = session->get_project()->get_domain_names();
 
   int currentIndex = combobox->currentIndex();
   if (domain_names.size() != combobox->count()) {
     combobox->clear();
     for (auto&& item : domain_names) {
+      bool skip = false;
+      for (const auto& filter : filters) {
+        if (QString::fromStdString(item).contains(filter, Qt::CaseInsensitive)) {
+          skip = true;
+        }
+      }
+      if (skip) {
+        continue;
+      }
       combobox->addItem(QString::fromStdString(item));
     }
   }
