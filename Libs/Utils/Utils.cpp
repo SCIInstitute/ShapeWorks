@@ -181,6 +181,19 @@ void Utils::writeParticleIds(char* filename, std::vector<int> ids)
     ofs.close();
 }
 
+//---------------------------------------------------------------------
+// quietly delete a file, if it doesn't exist, no error, if it fails, no error
+void Utils::quiet_delete_file(const std::string &filename)
+{
+  try {
+    if (std::remove(filename.c_str()) != 0) {
+      // file deletion failed, but we don't care
+    }
+  } catch (...) {
+    // no error message, just quietly ignore it.
+  }
+}
+
 //--------------- point cloud queries --------------------------------
 void Utils::computeCenterOfMassForShapeEnsemble (std::vector< std::vector< itk::Point< double, 3 > > > points_list, itk::Point< double, 3 > & center)
 {

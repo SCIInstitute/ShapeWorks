@@ -271,13 +271,15 @@ static bool is_clockwise(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, con
 }
 
 //---------------------------------------------------------------------------
-Mesh MeshUtils::boundaryLoopExtractor(Mesh mesh) {
+Mesh MeshUtils::extract_boundary_loop(Mesh mesh) {
   Eigen::MatrixXd V = mesh.points();
   Eigen::MatrixXi F = mesh.faces();
 
   std::vector<std::vector<int> > loops;
   igl::boundary_loop(F, loops);
-  assert(loops.size() == 1);
+  if (loops.size() != 1) {
+    throw std::runtime_error("Expected exactly one boundary loop in the mesh");
+  }
 
   const auto& loop = loops[0];
   const auto is_cw = is_clockwise(V, F, loop);
@@ -365,6 +367,9 @@ static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> shared_into_eigen_mesh(const
 static bool is_empty(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) { return V.size() == 0 || F.size() == 0; }
 
 //---------------------------------------------------------------------------
+// Identifies faces from the source mesh that lie within tolerance distance of the other mesh surface.
+// Uses spatial queries to determine which faces are "shared" between the two meshes.
+// Returns both the shared faces as one mesh and the remaining non-shared faces as another mesh.
 static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi> find_shared_surface(
     const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F, const Eigen::MatrixXd& other_V,
     const Eigen::MatrixXi& other_F, double tol = 1e-3) {
@@ -408,9 +413,13 @@ static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::Matr
 }
 
 //---------------------------------------------------------------------------
-static void move_to_boundary(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F,
-                             const Eigen::MatrixXd& shared_V, const Eigen::MatrixXi& shared_F, Eigen::MatrixXd& out_V,
-                             Eigen::MatrixXi& out_F) {
+// Snaps boundary vertices of the source mesh to the closest points on the shared mesh boundary.
+// This ensures the boundaries are geometrically aligned, which is typically needed for mesh
+// stitching or boolean operations.
+// Returns a copy of the source mesh with modified boundary vertex positions.
+static void snap_boundary_to_mesh(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F,
+                                  const Eigen::MatrixXd& shared_V, const Eigen::MatrixXi& shared_F,
+                                  Eigen::MatrixXd& out_V, Eigen::MatrixXi& out_F) {
   std::vector<std::vector<int> > src_loops, shared_loops;
   igl::boundary_loop(src_F, src_loops);
   igl::boundary_loop(shared_F, shared_loops);
@@ -450,7 +459,10 @@ static void move_to_boundary(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi
 }
 
 //---------------------------------------------------------------------------
-std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol) {
+// Extracts shared boundary regions between two input meshes and prepares them for operations like stitching.
+// Identifies shared surfaces on both meshes, then aligns the boundary of the remaining geometry to ensure
+// compatibility. Returns three meshes: left remainder with aligned boundary, right remainder, and shared surface.
+std::array<Mesh, 3> MeshUtils::shared_boundary_extractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol) {
   Eigen::MatrixXd V_l, V_r;
   Eigen::MatrixXi F_l, F_r;
   V_l = mesh_l.points();
@@ -473,7 +485,7 @@ std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const
   Eigen::MatrixXd bridge_V;
   Eigen::MatrixXi bridge_F;
 
-  move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r, bridge_V, bridge_F);
+  snap_boundary_to_mesh(rem_V_l, rem_F_l, shared_V_r, shared_F_r, bridge_V, bridge_F);
 
   Mesh out_l(bridge_V, bridge_F);
   Mesh out_r(rem_V_r, rem_F_r);

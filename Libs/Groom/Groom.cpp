@@ -7,6 +7,7 @@
 #include <Optimize/Constraints/Constraints.h>
 #include <Project/ProjectUtils.h>
 #include <Utils/StringUtils.h>
+#include <Utils/Utils.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <tbb/parallel_for.h>
 #include <vtkCenterOfMass.h>
@@ -36,6 +37,8 @@ bool Groom::run() {
   progress_counter_ = 0;
 
   auto subjects = project_->get_subjects();
+
+  Project original_project = *project_;
 
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to groom");
@@ -93,16 +96,29 @@ bool Groom::run() {
     }
   });
 
-  if (!run_shared_boundaries()) {
+  if (success && !run_shared_boundaries()) {
     success = false;
   }
 
-  if (!run_alignment()) {
+  if (success && !run_alignment()) {
     success = false;
   }
+
   increment_progress(10);  // alignment complete
 
+  if (!success) {
+    SW_DEBUG("Grooming failed, restoring original project state");
+
+    SW_LOG("1. Number of domains at the end: {}", project_->get_number_of_domains_per_subject());
+
+    // restore original project state
+    //*project_ = original_project;
+
+    SW_LOG("2. Number of domains at the end: {}", project_->get_number_of_domains_per_subject());
+  }
   project_->update_subjects();
+
+  SW_LOG("Number of domains at the end: {}", project_->get_number_of_domains_per_subject());
   return success;
 }
 
@@ -516,6 +532,7 @@ bool Groom::get_aborted() { return abort_; }
 //---------------------------------------------------------------------------
 bool Groom::run_alignment() {
   size_t num_domains = project_->get_number_of_domains_per_subject();
+  SW_DEBUG("Running alignment, number of domains = {}", num_domains);
   auto subjects = project_->get_subjects();
 
   if (subjects.empty()) {
@@ -708,7 +725,9 @@ bool Groom::run_shared_boundaries() {
   auto original_domain_types = project_->get_original_domain_types();
   auto groomed_domain_types = project_->get_groomed_domain_types();
 
-  for (auto shared_boundary : params.get_shared_boundaries()) {
+  std::atomic<bool> error_encountered = false;
+
+  for (auto& shared_boundary : params.get_shared_boundaries()) {
     std::string first_domain_name = shared_boundary.first_domain;
     std::string second_domain_name = shared_boundary.second_domain;
     std::string shared_surface_name = "shared_surface_" + first_domain_name + "_" + second_domain_name;
@@ -766,13 +785,28 @@ bool Groom::run_shared_boundaries() {
         Mesh first_mesh = get_mesh(i, first_domain, false);
         Mesh second_mesh = get_mesh(i, second_domain, false);
 
-        auto [extracted_l, extracted_r, extracted_s] =
-            MeshUtils::sharedBoundaryExtractor(first_mesh, second_mesh, shared_boundary.tolerance);
+        // create an empty vtk mesh
+        auto empty_mesh = vtkSmartPointer<vtkPolyData>::New();
 
-        extracted_l.remeshPercent(.99, 1.0);
-        extracted_r.remeshPercent(.99, 1.0);
+        Mesh extracted_l(empty_mesh);
+        Mesh extracted_r(empty_mesh);
+        Mesh extracted_s(empty_mesh);
+        Mesh output_contour(empty_mesh);
+        try {
+          // returns left remainder, right remainder, and shared_surface
+          std::tie(extracted_l, extracted_r, extracted_s) =
+              MeshUtils::shared_boundary_extractor(first_mesh, second_mesh, shared_boundary.tolerance);
 
-        auto output_contour = MeshUtils::boundaryLoopExtractor(extracted_s);
+          extracted_l.remeshPercent(.99, 1.0);
+          extracted_r.remeshPercent(.99, 1.0);
+
+          output_contour = MeshUtils::extract_boundary_loop(extracted_s);
+
+        } catch (const std::exception& e) {
+          SW_ERROR("Error extracting shared boundary for subject '{}': {}", subject->get_display_name(), e.what());
+          // need to continue to write the empty meshes out or we will have a broken project that can no longer be saved
+          error_encountered = true;
+        }
 
         // overwrite groomed filename for first and second with extracted_l and extracted_r
         auto first_filename = subject->get_groomed_filenames()[first_domain];
@@ -826,6 +860,43 @@ bool Groom::run_shared_boundaries() {
       }
     });
   }
+
+  if (error_encountered) {
+    SW_ERROR("Errors encountered while processing shared boundaries. Please check the log for details.");
+
+    // remove shared_surface and shared_boundary from domain_names
+    auto domain_names = project_->get_domain_names();
+    domain_names.erase(std::remove_if(domain_names.begin(), domain_names.end(),
+                                      [](const std::string& name) {
+                                        return name.find("shared_surface_") != std::string::npos ||
+                                               name.find("shared_boundary_") != std::string::npos;
+                                      }),
+                       domain_names.end());
+    project_->set_domain_names(domain_names);
+
+    // go back and delete all the shared surfaces and boundaries that were created for all subjects
+    auto subjects = project_->get_subjects();
+    for (auto& subject : subjects) {
+      auto original_filenames = subject->get_original_filenames();
+
+      for (auto it = original_filenames.begin(); it != original_filenames.end();) {
+        if (it->find("shared_surface_") != std::string::npos || it->find("shared_boundary_") != std::string::npos) {
+          SW_DEBUG("Removing original filename: {}", *it);
+          Utils::quiet_delete_file(*it);
+          it = original_filenames.erase(it);
+        } else {
+          ++it;
+        }
+      }
+      subject->set_original_filenames(original_filenames);
+
+      subject->set_groomed_filenames({});
+      subject->set_number_of_domains(domain_names.size());
+    }
+
+    return false;
+  }
+
   return true;
 }
 

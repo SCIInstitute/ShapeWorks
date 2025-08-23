@@ -221,13 +221,8 @@ void GroomTool::delete_shared_boundary_clicked() {
   }
 
   for (int i = selected_rows.size() - 1; i >= 0; i--) {
-    std::cerr << "erasing shared boundary: " << shared_boundaries[selected_rows[i].row()].first_domain << " <-> "
-              << shared_boundaries[selected_rows[i].row()].second_domain << " with tolerance "
-              << shared_boundaries[selected_rows[i].row()].tolerance << "\n";
     shared_boundaries.erase(shared_boundaries.begin() + selected_rows[i].row());
   }
-
-  std::cerr << "There are now " << shared_boundaries.size() << " shared boundaries left.\n";
 
   params.set_shared_boundaries(shared_boundaries);
   params.save_to_project();
@@ -325,8 +320,6 @@ void GroomTool::apply_to_all_domains_changed() {
 void GroomTool::update_shared_boundary_table() {
   auto params = GroomParameters(session_->get_project(), "");
   auto shared_boundaries = params.get_shared_boundaries();
-
-  std::cerr << "There are " << shared_boundaries.size() << " shared boundaries.\n";
 
   QStringList table_headers;
   table_headers << "First Domain";
