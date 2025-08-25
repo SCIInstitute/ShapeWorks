@@ -277,8 +277,8 @@ Mesh MeshUtils::extract_boundary_loop(Mesh mesh) {
 
   std::vector<std::vector<int> > loops;
   igl::boundary_loop(F, loops);
-  if (loops.size() != 1) {
-    throw std::runtime_error("Expected exactly one boundary loop in the mesh");
+  if (loops.size() < 1) {
+    throw std::runtime_error("Expected at least one boundary loop in the mesh");
   }
 
   const auto& loop = loops[0];
@@ -424,9 +424,9 @@ static void snap_boundary_to_mesh(const Eigen::MatrixXd& src_V, const Eigen::Mat
   igl::boundary_loop(src_F, src_loops);
   igl::boundary_loop(shared_F, shared_loops);
 
-  if (src_loops.size() != 1 || shared_loops.size() != 1) {
+  if (src_loops.size() < 1 || shared_loops.size() < 1) {
     SW_DEBUG("src_loops size: {}, shared_loops size: {}", src_loops.size(), shared_loops.size());
-    throw std::runtime_error("Expected exactly one boundary loop in each mesh");
+    throw std::runtime_error("Expected at least one boundary loop in each mesh");
   }
 
   const auto& src_loop = src_loops[0];

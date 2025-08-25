@@ -66,6 +66,9 @@ class Groom {
   //! Create shared boundary surface and contour if requested
   bool run_shared_boundaries();
 
+  //! Remove all shared boundaries
+  void clear_unused_shared_boundaries();
+
   void assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global = false);
 
   static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference);
