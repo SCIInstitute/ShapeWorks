@@ -730,6 +730,8 @@ void GroomTool::on_run_groom_button_clicked() {
 void GroomTool::handle_thread_complete() {
   Q_EMIT progress(95);
 
+  session_->trigger_save();
+
   QString duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1);
   SW_LOG("Groom Complete.  Duration: {} seconds", duration);
 
