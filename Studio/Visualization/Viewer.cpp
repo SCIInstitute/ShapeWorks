@@ -1382,7 +1382,7 @@ std::shared_ptr<Shape> Viewer::get_shape() { return shape_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::initialize_surfaces() {
-  if (number_of_domains_ > surface_mappers_.size()) {
+  if (number_of_domains_ != surface_mappers_.size()) {
     surface_mappers_.resize(number_of_domains_);
     surface_actors_.resize(number_of_domains_);
     unclipped_surface_mappers_.resize(number_of_domains_);
