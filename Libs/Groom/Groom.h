@@ -39,6 +39,8 @@ class Groom {
   std::atomic<int> progress_counter_ = 0;
 
  private:
+  enum class MeshSource { Original, Groomed };
+
   //! Return the number of operations that will be performed
   int get_total_ops();
 
@@ -83,7 +85,8 @@ class Groom {
 
   std::vector<vtkSmartPointer<vtkPoints>> get_combined_points();
 
-  Mesh get_mesh(int subject, int domain, bool transformed = false);
+  Mesh get_mesh(int subject, int domain, bool transformed = false, MeshSource source = MeshSource::Original);
+
 
   vtkSmartPointer<vtkPoints> get_landmarks(int subject, int domain);
 

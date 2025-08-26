@@ -40,10 +40,13 @@ bool Groom::run() {
 
   auto subjects = project_->get_subjects();
 
-  Project original_project = *project_;
-
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to groom");
+  }
+
+  // clear alignment transforms
+  for (auto& subject : subjects) {
+    subject->set_groomed_transforms({});
   }
 
   total_ops_ = get_total_ops();
@@ -57,9 +60,13 @@ bool Groom::run() {
           success = false;
           continue;
         }
+
+        auto domain_name = project_->get_domain_names()[domain];
         // skip "shared_surface" and "shared_boundary"
-        if (project_->get_domain_names()[domain] == "shared_surface" ||
-            project_->get_domain_names()[domain] == "shared_boundary") {
+        bool is_shared_boundary = domain_name.find("shared_surface_") != std::string::npos ||
+                                  domain_name.find("shared_boundary_") != std::string::npos;
+        if (is_shared_boundary) {
+          SW_DEBUG("Skipping shared boundary domain '{}' during grooming", domain_name);
           continue;
         }
 
@@ -108,19 +115,8 @@ bool Groom::run() {
 
   increment_progress(10);  // alignment complete
 
-  if (!success) {
-    SW_DEBUG("Grooming failed, restoring original project state");
-
-    SW_LOG("1. Number of domains at the end: {}", project_->get_number_of_domains_per_subject());
-
-    // restore original project state
-    //*project_ = original_project;
-
-    SW_LOG("2. Number of domains at the end: {}", project_->get_number_of_domains_per_subject());
-  }
   project_->update_subjects();
 
-  SW_LOG("Number of domains at the end: {}", project_->get_number_of_domains_per_subject());
   return success;
 }
 
@@ -130,6 +126,8 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
 
   auto original = subject->get_original_filenames()[domain];
+
+  SW_DEBUG("Grooming image: {}", original);
 
   // load the image
   Image image(original);
@@ -312,6 +310,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
 
   auto original = subject->get_original_filenames()[domain];
+  SW_DEBUG("Grooming mesh: {}", original);
 
   // groomed mesh name
   std::string groom_name = get_output_filename(original, DomainType::Mesh);
@@ -375,6 +374,11 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
   if (params.get_remesh()) {
     auto poly_data = mesh.getVTKMesh();
     if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+      SW_DEBUG("Number of cells: {}", poly_data->GetNumberOfCells());
+      SW_DEBUG("Number of points in first cell: {}", poly_data->GetCell(0)->GetNumberOfPoints());
+      // write out to /tmp
+      std::string tmpname = "/tmp/bad_mesh.vtk";
+      MeshUtils::threadSafeWriteMesh(tmpname, mesh);
       throw std::runtime_error("malformed mesh, mesh should be triangular");
     }
     int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
@@ -788,8 +792,8 @@ bool Groom::run_shared_boundaries() {
 
         auto subject = subjects[i];
 
-        Mesh first_mesh = get_mesh(i, first_domain, false);
-        Mesh second_mesh = get_mesh(i, second_domain, false);
+        Mesh first_mesh = get_mesh(i, first_domain, false, MeshSource::Groomed);
+        Mesh second_mesh = get_mesh(i, second_domain, false, MeshSource::Groomed);
 
         // create an empty vtk mesh
         auto empty_mesh = vtkSmartPointer<vtkPolyData>::New();
@@ -823,8 +827,8 @@ bool Groom::run_shared_boundaries() {
         MeshUtils::threadSafeWriteMesh(first_filename, extracted_l);
         MeshUtils::threadSafeWriteMesh(second_filename, extracted_r);
 
-        auto shared_surface_filename = get_output_filename("shared_surface", DomainType::Mesh);
-        auto shared_boundary_filename = get_output_filename("shared_boundary", DomainType::Contour);
+        auto shared_surface_filename = get_output_filename(shared_surface_name, DomainType::Mesh);
+        auto shared_boundary_filename = get_output_filename(shared_boundary_name, DomainType::Contour);
 
         extracted_s.write(shared_surface_filename);
         output_contour.write(shared_boundary_filename);
@@ -905,130 +909,6 @@ bool Groom::run_shared_boundaries() {
 
   return true;
 }
-
-/*
-//---------------------------------------------------------------------------
-void Groom::clear_unused_shared_boundaries() {
-  auto params = GroomParameters(project_, project_->get_domain_names()[0]);
-
-  std::vector<std::string> shared_surfaces_to_keep;
-  std::vector<std::string> shared_boundaries_to_keep;
-
-  for (const auto& shared_boundary : params.get_shared_boundaries()) {
-    std::string first_domain_name = shared_boundary.first_domain;
-    std::string second_domain_name = shared_boundary.second_domain;
-    std::string shared_surface_name = "shared_surface_" + first_domain_name + "_" + second_domain_name;
-    std::string shared_boundary_name = "shared_boundary_" + first_domain_name + "_" + second_domain_name;
-    shared_surfaces_to_keep.push_back(shared_surface_name);
-    shared_boundaries_to_keep.push_back(shared_boundary_name);
-  }
-
-  // Lambda to check if a name is a shared domain that should be removed
-  auto is_shared_domain_to_remove = [&shared_surfaces_to_keep, &shared_boundaries_to_keep](const std::string& name) {
-    bool is_shared =
-        name.find("shared_surface_") != std::string::npos || name.find("shared_boundary_") != std::string::npos;
-
-    if (!is_shared) {
-      return false;  // Not a shared domain at all
-    }
-
-    // Check if it's in either keep list
-    bool should_keep = std::find(shared_surfaces_to_keep.begin(), shared_surfaces_to_keep.end(), name) !=
-                           shared_surfaces_to_keep.end() ||
-                       std::find(shared_boundaries_to_keep.begin(), shared_boundaries_to_keep.end(), name) !=
-                           shared_boundaries_to_keep.end();
-
-    return !should_keep;  // Remove if it's shared but not in keep lists
-  };
-
-  // Lambda to remove shared files from a vector and delete them from disk
-  auto remove_shared_files = [&is_shared_domain_to_remove](std::vector<std::string>& filenames) {
-    for (auto it = filenames.begin(); it != filenames.end();) {
-      if (is_shared_domain_to_remove(*it)) {
-        Utils::quiet_delete_file(*it);
-        it = filenames.erase(it);
-      } else {
-        ++it;
-      }
-    }
-  };
-
-  auto domain_names = project_->get_domain_names();
-
-  // Remove shared_surface and shared_boundary from domain_names
-  domain_names.erase(std::remove_if(domain_names.begin(), domain_names.end(), is_shared_domain_to_remove),
-                     domain_names.end());
-
-  // Find indices to remove (in reverse order to avoid index shifting issues)
-  std::vector<size_t> indices_to_remove;
-  const auto& original_domain_names = project_->get_domain_names();
-  for (size_t i = 0; i < original_domain_names.size(); ++i) {
-    if (is_shared_domain_to_remove(original_domain_names[i])) {
-      indices_to_remove.push_back(i);
-      std::cerr << "planning to remove domain index: " << i << " with name: " << original_domain_names[i] << "\n";
-    }
-  }
-
-  // Remove corresponding entries from domain types arrays
-  auto original_domain_types = project_->get_original_domain_types();
-  auto groomed_domain_types = project_->get_groomed_domain_types();
-
-  for (auto it = indices_to_remove.rbegin(); it != indices_to_remove.rend(); ++it) {
-    if (*it < original_domain_types.size()) {
-      original_domain_types.erase(original_domain_types.begin() + *it);
-    }
-    if (*it < groomed_domain_types.size()) {
-      groomed_domain_types.erase(groomed_domain_types.begin() + *it);
-    }
-  }
-
-  project_->set_domain_names(domain_names);
-  project_->set_original_domain_types(original_domain_types);
-  project_->set_groomed_domain_types(groomed_domain_types);
-
-  // Clean up files from all subjects
-  auto subjects = project_->get_subjects();
-  for (auto& subject : subjects) {
-    // Remove shared surface/boundary files using lambda
-    auto original_filenames = subject->get_original_filenames();
-    remove_shared_files(original_filenames);
-    subject->set_original_filenames(original_filenames);
-
-    auto groomed_filenames = subject->get_groomed_filenames();
-    remove_shared_files(groomed_filenames);
-    subject->set_groomed_filenames(groomed_filenames);
-
-    // Remove alignment transforms for removed domains
-    auto transforms = subject->get_groomed_transforms();
-    for (auto it = indices_to_remove.rbegin(); it != indices_to_remove.rend(); ++it) {
-      if (*it < transforms.size()) {
-        transforms.erase(transforms.begin() + *it);
-      }
-    }
-    subject->set_groomed_transforms(transforms);
-
-    // Clean up particle files using lambda
-    auto local_particles = subject->get_local_particle_filenames();
-    remove_shared_files(local_particles);
-    subject->set_local_particle_filenames(local_particles);
-
-    auto world_particles = subject->get_world_particle_filenames();
-    remove_shared_files(world_particles);
-    subject->set_world_particle_filenames(world_particles);
-
-    // procrustes
-    auto procrustes = subject->get_procrustes_transforms();
-    for (auto it = indices_to_remove.rbegin(); it != indices_to_remove.rend(); ++it) {
-      if (*it < procrustes.size()) {
-        procrustes.erase(procrustes.begin() + *it);
-      }
-    }
-    subject->set_procrustes_transforms(procrustes);
-
-    subject->set_number_of_domains(domain_names.size());
-  }
-}
-*/
 
 //---------------------------------------------------------------------------
 void Groom::clear_unused_shared_boundaries() {
@@ -1129,27 +1009,13 @@ void Groom::clear_unused_shared_boundaries() {
     remove_by_domain_names(transforms, original_domain_names);
     subject->set_groomed_transforms(transforms);
 
-    // Clean up particle files using lambda
-    auto local_particles = subject->get_local_particle_filenames();
-    remove_shared_files(local_particles);
-    subject->set_local_particle_filenames(local_particles);
+    subject->set_local_particle_filenames({});
+    subject->set_world_particle_filenames({});
 
-    auto world_particles = subject->get_world_particle_filenames();
-    remove_shared_files(world_particles);
-    subject->set_world_particle_filenames(world_particles);
-
-    // procrustes transforms
-    auto procrustes = subject->get_procrustes_transforms();
-    remove_by_domain_names(procrustes, original_domain_names);
-    subject->set_procrustes_transforms(procrustes);
-
+    subject->set_procrustes_transforms({});
     subject->set_number_of_domains(domain_names.size());
   }
 
-  std::cerr << "Final domain names after cleanup:\n";
-  for (const auto& name : domain_names) {
-    std::cerr << " - " << name << "\n";
-  }
   project_->set_domain_names(domain_names);
 }
 //---------------------------------------------------------------------------
@@ -1251,16 +1117,25 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 }
 
 //---------------------------------------------------------------------------
-Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
+Mesh Groom::get_mesh(int subject, int domain, bool transformed, MeshSource source) {
   auto subjects = project_->get_subjects();
   if (subject >= subjects.size()) {
     throw std::out_of_range("subject index out of range");
   }
-  if (domain >= subjects[subject]->get_original_filenames().size()) {
-    throw std::out_of_range("domain index out of range");
-  }
 
-  auto path = subjects[subject]->get_original_filenames()[domain];
+  std::string path;
+
+  if (source == MeshSource::Original) {
+    if (domain >= subjects[subject]->get_original_filenames().size()) {
+      throw std::out_of_range("domain index out of range");
+    }
+    path = subjects[subject]->get_original_filenames()[domain];
+  } else {
+    if (domain >= subjects[subject]->get_groomed_filenames().size()) {
+      throw std::out_of_range("domain index out of range");
+    }
+    path = subjects[subject]->get_groomed_filenames()[domain];
+  }
 
   auto constraint_filename = subjects[subject]->get_constraints_filenames();
   Constraints constraint;

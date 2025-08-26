@@ -355,7 +355,11 @@ QWidget#domain_panel {
                 <widget class="QComboBox" name="shared_boundary_first_domain"/>
                </item>
                <item row="0" column="0" colspan="2">
-                <widget class="QTableWidget" name="shared_boundary_table"/>
+                <widget class="QTableWidget" name="shared_boundary_table">
+                 <property name="sortingEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item row="2" column="1">
                 <widget class="QComboBox" name="shared_boundary_second_domain"/>
@@ -381,28 +385,6 @@ QWidget#domain_panel {
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
-                <widget class="QDoubleSpinBox" name="shared_boundary_tolerance">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="decimals">
-                  <number>3</number>
-                 </property>
-                 <property name="maximum">
-                  <double>99999.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
                <item row="4" column="0">
                 <widget class="QPushButton" name="delete_shared_boundary">
                  <property name="text">
@@ -414,6 +396,13 @@ QWidget#domain_panel {
                 <widget class="QPushButton" name="add_shared_boundary">
                  <property name="text">
                   <string>Add</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLineEdit" name="shared_boundary_tolerance">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
