@@ -804,8 +804,10 @@ bool Groom::run_shared_boundaries() {
         Mesh output_contour(empty_mesh);
         try {
           // returns left remainder, right remainder, and shared_surface
-          std::tie(extracted_l, extracted_r, extracted_s) =
-              MeshUtils::shared_boundary_extractor(first_mesh, second_mesh, shared_boundary.tolerance);
+          auto result = MeshUtils::shared_boundary_extractor(first_mesh, second_mesh, shared_boundary.tolerance);
+          extracted_l = result[0];
+          extracted_r = result[1];
+          extracted_s = result[2];
 
           extracted_l.remeshPercent(.99, 1.0);
           extracted_r.remeshPercent(.99, 1.0);
