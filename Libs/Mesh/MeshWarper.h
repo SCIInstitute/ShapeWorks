@@ -111,6 +111,8 @@ class MeshWarper {
   //! Return the number of bad particles
   size_t bad_particle_count() const { return size_t(reference_particles_.rows()) - good_particles_.size(); }
 
+  void diagnose_biharmonic_failure(const Eigen::MatrixXd& TV, const Eigen::MatrixXi& TF,
+                                   const std::vector<std::vector<int>>& S, int k);
   // Members
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
@@ -123,7 +125,8 @@ class MeshWarper {
 
   bool warp_available_ = false;
 
-  std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the clean Reference mesh
+  std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the
+                                      // clean Reference mesh
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh

@@ -2,6 +2,9 @@
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshWarper.h>
 #include <igl/biharmonic_coordinates.h>
+#include <igl/boundary_loop.h>
+#include <igl/edges.h>
+#include <igl/facet_components.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <igl/remove_unreferenced.h>
 #include <vtkCellLocator.h>
@@ -23,11 +26,11 @@ static std::mutex mutex;
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& particles) {
-  if (!this->warp_available_) {
+  if (!warp_available_) {
     return nullptr;
   }
 
-  if (!this->check_warp_ready()) {
+  if (!check_warp_ready()) {
     return nullptr;
   }
 
@@ -38,7 +41,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
     return blank;
   }
 
-  auto points = this->remove_bad_particles(particles);
+  auto points = remove_bad_particles(particles);
 
   vtkSmartPointer<vtkPolyData> poly_data = MeshWarper::warp_mesh(points);
 
@@ -59,9 +62,9 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   // lock so that we don't swap out the reference mesh while we are using it
   std::scoped_lock lock(mutex);
 
-  if (this->incoming_reference_mesh_ == reference_mesh) {
-    if (this->reference_particles_.size() == reference_particles.size()) {
-      if (this->reference_particles_ == reference_particles && landmarks_points_ == landmarks) {
+  if (incoming_reference_mesh_ == reference_mesh) {
+    if (reference_particles_.size() == reference_particles.size()) {
+      if (reference_particles_ == reference_particles && landmarks_points_ == landmarks) {
         // we can skip, nothing has changed
         return;
       }
@@ -72,18 +75,18 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
   incoming_reference_mesh_ = vtkSmartPointer<vtkPolyData>::New();
   incoming_reference_mesh_->DeepCopy(reference_mesh);
 
-  this->landmarks_points_ = landmarks;
-  this->reference_particles_ = reference_particles;
+  landmarks_points_ = landmarks;
+  reference_particles_ = reference_particles;
 
   // mark that the warp needs to be generated
-  this->needs_warp_ = true;
+  needs_warp_ = true;
 
-  this->warp_available_ = true;
+  warp_available_ = true;
 
   // TODO This is temporary for detecting if contour until the contour type is fully supported
   if (reference_mesh->GetNumberOfCells() > 0 && reference_mesh->GetCell(0)->GetNumberOfPoints() == 2) {
-    this->is_contour_ = true;
-    this->update_progress(1.0);
+    is_contour_ = true;
+    update_progress(1.0);
   }
 }
 
@@ -410,7 +413,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::remove_zero_area_triangles(vtkSmartPoin
   filtered_mesh->SetPoints(points);
 
   // Create a new cell array to store triangles
-  auto newTriangles = vtkSmartPointer<vtkCellArray>::New();
+  auto new_triangles = vtkSmartPointer<vtkCellArray>::New();
 
   // Get the triangle cells from the input mesh
   vtkCellArray* triangles = mesh->GetPolys();
@@ -436,13 +439,13 @@ vtkSmartPointer<vtkPolyData> MeshWarper::remove_zero_area_triangles(vtkSmartPoin
       const double EPSILON = 1e-10;
       if (area > EPSILON) {
         // Add this triangle to the new cell array
-        newTriangles->InsertNextCell(cell_point_ids);
+        new_triangles->InsertNextCell(cell_point_ids);
       }
     }
   }
 
   // Set the triangles in the filtered mesh
-  filtered_mesh->SetPolys(newTriangles);
+  filtered_mesh->SetPolys(new_triangles);
 
   // Copy the point data
   filtered_mesh->GetPointData()->ShallowCopy(mesh->GetPointData());
@@ -558,6 +561,7 @@ bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, co
   const int k = 2;
   if (!igl::biharmonic_coordinates(TV, TF, S, k, W)) {
     SW_ERROR("Mesh Warp Error: igl:biharmonic_coordinates failed");
+    diagnose_biharmonic_failure(TV, TF, S, k);
     return false;
   }
   // Throw away interior tet-vertices, keep weights and indices of boundary
@@ -606,6 +610,115 @@ vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points
   poly_data->SetPolys(polys);
 
   return poly_data;
+}
+
+//---------------------------------------------------------------------------
+void MeshWarper::diagnose_biharmonic_failure(const Eigen::MatrixXd& TV, const Eigen::MatrixXi& TF,
+                                             const std::vector<std::vector<int>>& S, int k) {
+  std::cerr << "\n=== Biharmonic Coordinates Failure Diagnostics ===\n";
+
+  // 1. Check matrix dimensions and consistency
+  std::cerr << "Vertices: " << TV.rows() << "x" << TV.cols() << std::endl;
+  std::cerr << "Faces: " << TF.rows() << "x" << TF.cols() << std::endl;
+  std::cerr << "Handles: " << S.size() << std::endl;
+  std::cerr << "k parameter: " << k << std::endl;
+
+  // 2. Check handle indices validity
+  for (size_t i = 0; i < S.size(); ++i) {
+    for (int handle_idx : S[i]) {
+      if (handle_idx < 0 || handle_idx >= TV.rows()) {
+        std::cerr << "ERROR: Handle " << i << " contains invalid vertex index: " << handle_idx << " (valid range: 0-"
+                  << (TV.rows() - 1) << ")\n";
+      }
+    }
+  }
+
+  // 3. Check face indices validity
+  int max_face_idx = TF.maxCoeff();
+  int min_face_idx = TF.minCoeff();
+  if (min_face_idx < 0 || max_face_idx >= TV.rows()) {
+    std::cerr << "ERROR: Face indices out of range. Min: " << min_face_idx << ", Max: " << max_face_idx
+              << " (valid range: 0-" << (TV.rows() - 1) << ")\n";
+  }
+
+  // 4. Check mesh connectivity
+  Eigen::VectorXi components;
+  int num_components = igl::facet_components(TF, components);
+  std::cerr << "Connected components: " << num_components << std::endl;
+  if (num_components > 1) {
+    std::cerr << "WARNING: Mesh has multiple disconnected components\n";
+  }
+
+  // 5. Check for boundary vertices (important for biharmonic coords)
+  Eigen::VectorXi boundary;
+  igl::boundary_loop(TF, boundary);
+  std::cerr << "Boundary vertices: " << boundary.rows() << std::endl;
+
+  // 6. Check mesh genus/Euler characteristic
+  int V = TV.rows();
+  int F = TF.rows();
+  Eigen::MatrixXi E;
+  igl::edges(TF, E);
+  int euler_char = V - E.rows() + F;
+  std::cerr << "Euler characteristic: " << euler_char << " (genus ≈ " << (2 - euler_char) / 2 << ")\n";
+
+  // 7. Check for numerical issues
+  double min_coord = TV.minCoeff();
+  double max_coord = TV.maxCoeff();
+  double coord_range = max_coord - min_coord;
+  std::cerr << "Coordinate range: [" << min_coord << ", " << max_coord << "] (span: " << coord_range << ")\n";
+
+  if (coord_range < 1e-10) {
+    std::cerr << "ERROR: Coordinates too small - numerical precision issues likely\n";
+  }
+  if (coord_range > 1e6) {
+    std::cerr << "WARNING: Large coordinate range - consider normalizing mesh\n";
+  }
+
+  // 8. Check triangle quality
+  Eigen::VectorXd areas;
+  igl::doublearea(TV, TF, areas);
+  areas *= 0.5;
+
+  double min_area = areas.minCoeff();
+  double max_area = areas.maxCoeff();
+  std::cerr << "Triangle areas - Min: " << min_area << ", Max: " << max_area;
+  if (min_area > 0) {
+    std::cerr << ", Ratio: " << (max_area / min_area);
+  }
+  std::cerr << std::endl;
+
+  if (min_area < 1e-15) {
+    std::cerr << "ERROR: Extremely small triangles detected - likely degenerate\n";
+  }
+
+  // 9. Test if we can build the Laplacian matrix (common failure point)
+  Eigen::SparseMatrix<double> L;
+  try {
+    igl::cotmatrix(TV, TF, L);
+    std::cerr << "Cotangent Laplacian: " << L.rows() << "x" << L.cols() << " (" << L.nonZeros() << " non-zeros)\n";
+
+    // Check for NaN or inf in Laplacian
+    bool has_invalid = false;
+    for (int k = 0; k < L.outerSize(); ++k) {
+      for (Eigen::SparseMatrix<double>::InnerIterator it(L, k); it; ++it) {
+        if (!std::isfinite(it.value())) {
+          has_invalid = true;
+          break;
+        }
+      }
+      if (has_invalid) break;
+    }
+
+    if (has_invalid) {
+      std::cerr << "ERROR: Laplacian matrix contains invalid values (NaN/inf)\n";
+    }
+
+  } catch (const std::exception& e) {
+    std::cerr << "ERROR: Failed to build Laplacian matrix: " << e.what() << std::endl;
+  }
+
+  std::cerr << "=== End Diagnostics ===\n\n";
 }
 
 //---------------------------------------------------------------------------
