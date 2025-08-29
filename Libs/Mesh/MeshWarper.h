@@ -103,7 +103,8 @@ class MeshWarper {
   static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   //! Generate the warp matrix
-  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
+  bool generate_warp_matrix(Eigen::MatrixXd target_vertices, Eigen::MatrixXi target_faces,
+                            const Eigen::MatrixXd& references_vertices, Eigen::MatrixXd& warp);
 
   //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);

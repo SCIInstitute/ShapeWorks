@@ -537,40 +537,37 @@ bool MeshWarper::generate_warp() {
 }
 
 //---------------------------------------------------------------------------
-bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref,
-                                      Eigen::MatrixXd& W) {
-  Eigen::VectorXi b;
-  {
-    Eigen::VectorXi J = Eigen::VectorXi::LinSpaced(TV.rows(), 0, TV.rows() - 1);
-    Eigen::VectorXd sqrD;
-    Eigen::MatrixXd _2;
-    // using J which is N by 1 instead of a matrix that represents faces of N by 3
-    // so that we will find the closest vertices instead of closest point on the face
-    // so far the two meshes are not separated. So what we are really doing here
-    // is computing handles from low resolution and use that for the high resolution one
-    igl::point_mesh_squared_distance(Vref, TV, J, sqrD, b, _2);
-    // assert(sqrD.maxCoeff() < 1e-7 && "Particles must exist on vertices");
-  }
+bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd target_vertices, Eigen::MatrixXi target_faces,
+                                      const Eigen::MatrixXd& references_vertices, Eigen::MatrixXd& warp) {
+  Eigen::VectorXi closest_vertex_indices;
 
-  // list of points --> list of singleton lists
-  std::vector<std::vector<int>> S;
-  igl::matrix_to_list(b, S);
+  Eigen::VectorXi vertex_indices = Eigen::VectorXi::LinSpaced(target_vertices.rows(), 0, target_vertices.rows() - 1);
+  Eigen::VectorXd squared_distances;
+  Eigen::MatrixXd unused_closest_points;
+  igl::point_mesh_squared_distance(references_vertices, target_vertices, vertex_indices, squared_distances,
+                                   closest_vertex_indices, unused_closest_points);
+
+  std::vector<std::vector<int>> handle_sets;
+  igl::matrix_to_list(closest_vertex_indices, handle_sets);
 
   // Technically k should equal 3 for smooth interpolation in 3d, but 2 is
   // faster and looks OK
   const int k = 2;
-  if (!igl::biharmonic_coordinates(TV, TF, S, k, W)) {
+  if (!igl::biharmonic_coordinates(target_vertices, target_faces, handle_sets, k, warp)) {
     SW_ERROR("Mesh Warp Error: igl:biharmonic_coordinates failed");
-    diagnose_biharmonic_failure(TV, TF, S, k);
+    diagnose_biharmonic_failure(target_vertices, target_faces, handle_sets, k);
     return false;
   }
+
   // Throw away interior tet-vertices, keep weights and indices of boundary
-  Eigen::VectorXi I, J;
-  igl::remove_unreferenced(TV.rows(), TF, I, J);
-  std::for_each(TF.data(), TF.data() + TF.size(), [&I](int& a) { a = I(a); });
-  std::for_each(b.data(), b.data() + b.size(), [&I](int& a) { a = I(a); });
-  igl::slice(Eigen::MatrixXd(TV), J, 1, TV);
-  igl::slice(Eigen::MatrixXd(W), J, 1, W);
+  Eigen::VectorXi old_to_new_indices, referenced_vertices;
+  igl::remove_unreferenced(target_vertices.rows(), target_faces, old_to_new_indices, referenced_vertices);
+  std::for_each(target_faces.data(), target_faces.data() + target_faces.size(),
+                [&old_to_new_indices](int& a) { a = old_to_new_indices(a); });
+  std::for_each(closest_vertex_indices.data(), closest_vertex_indices.data() + closest_vertex_indices.size(),
+                [&old_to_new_indices](int& a) { a = old_to_new_indices(a); });
+  igl::slice(Eigen::MatrixXd(target_vertices), referenced_vertices, 1, target_vertices);
+  igl::slice(Eigen::MatrixXd(warp), referenced_vertices, 1, warp);
   return true;
 }
 
