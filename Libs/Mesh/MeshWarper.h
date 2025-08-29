@@ -114,6 +114,8 @@ class MeshWarper {
 
   void diagnose_biharmonic_failure(const Eigen::MatrixXd& TV, const Eigen::MatrixXi& TF,
                                    const std::vector<std::vector<int>>& S, int k);
+
+
   // Members
   Eigen::MatrixXi faces_;
   Eigen::MatrixXd vertices_;
