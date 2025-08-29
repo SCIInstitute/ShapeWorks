@@ -70,7 +70,13 @@ void Logging::log_message(const std::string& message, const int line, const char
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_only(const std::string& message, const int line, const char* file) const {
+void Logging::log_only(const std::string& message, const int line, const char* file, const char* function) const {
+  if (spd::get_level() == spd::level::debug) {
+    // when in debug mode, treat this as a debug message
+    log_debug(message, line, file, function);
+    return;
+  }
+
   spd::info(message);
   if (log_open_) {
     spd::get("file")->info(message);
