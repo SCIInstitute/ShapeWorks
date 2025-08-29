@@ -294,10 +294,13 @@ static void assign_keys(StringMap& j, std::vector<std::string> prefixes, std::ve
   auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {
     SW_DEBUG("filename size: " + std::to_string(filenames.size()));
+    SW_DEBUG("domains size: " + std::to_string(domains.size()));
     for (auto& filename : filenames) {
       SW_DEBUG("filename: " + filename);
     }
-
+    for (auto& domain : domains) {
+      SW_DEBUG("domain: " + domain);
+    }
     throw std::invalid_argument(prefix + " filenames and number of domains mismatch (" +
                                 std::to_string(filenames.size()) + " vs " + std::to_string(domains.size()) + ")");
   }
