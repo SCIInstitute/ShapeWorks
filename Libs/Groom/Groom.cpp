@@ -1125,16 +1125,20 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed, MeshSource sourc
 
   std::string path;
 
+  DomainType domain_type;
+
   if (source == MeshSource::Original) {
     if (domain >= subjects[subject]->get_original_filenames().size()) {
       throw std::out_of_range("domain index out of range");
     }
     path = subjects[subject]->get_original_filenames()[domain];
+    domain_type = project_->get_original_domain_types()[domain];
   } else {
     if (domain >= subjects[subject]->get_groomed_filenames().size()) {
       throw std::out_of_range("domain index out of range");
     }
     path = subjects[subject]->get_groomed_filenames()[domain];
+    domain_type = project_->get_groomed_domain_types()[domain];
   }
 
   auto constraint_filename = subjects[subject]->get_constraints_filenames();
@@ -1143,7 +1147,7 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed, MeshSource sourc
     constraint.read(constraint_filename[domain]);
   }
 
-  if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
+  if (domain_type == DomainType::Contour) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
     mesh.set_id(subject);
     return mesh;
@@ -1151,14 +1155,14 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed, MeshSource sourc
 
   Mesh mesh = vtkSmartPointer<vtkPolyData>::New();
 
-  if (project_->get_original_domain_types()[domain] == DomainType::Image) {
+  if (domain_type == DomainType::Image) {
     Image image(path);
     mesh = image.toMesh(0.5);
     constraint.clipMesh(mesh);
-  } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
+  } else if (domain_type == DomainType::Mesh) {
     mesh = MeshUtils::threadSafeReadMesh(path);
     constraint.clipMesh(mesh);
-  } else if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
+  } else if (domain_type == DomainType::Contour) {
     mesh = MeshUtils::threadSafeReadMesh(path);
   } else {
     throw std::invalid_argument("invalid domain type");
