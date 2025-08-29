@@ -1125,7 +1125,7 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed, MeshSource sourc
 
   std::string path;
 
-  DomainType domain_type;
+  DomainType domain_type = DomainType::Mesh;
 
   if (source == MeshSource::Original) {
     if (domain >= subjects[subject]->get_original_filenames().size()) {
@@ -1133,12 +1133,17 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed, MeshSource sourc
     }
     path = subjects[subject]->get_original_filenames()[domain];
     domain_type = project_->get_original_domain_types()[domain];
+    SW_DEBUG("Getting original mesh for subject {}, domain {}: {}", subject, domain, path);
+    SW_DEBUG("Domain type: {}", static_cast<int>(domain_type));
   } else {
     if (domain >= subjects[subject]->get_groomed_filenames().size()) {
       throw std::out_of_range("domain index out of range");
     }
     path = subjects[subject]->get_groomed_filenames()[domain];
-    domain_type = project_->get_groomed_domain_types()[domain];
+
+    domain_type = ProjectUtils::determine_domain_type(path);
+    SW_DEBUG("Getting groomed mesh for subject {}, domain {}: {}", subject, domain, path);
+    SW_DEBUG("Domain type: {}", static_cast<int>(domain_type));
   }
 
   auto constraint_filename = subjects[subject]->get_constraints_filenames();
@@ -1165,7 +1170,7 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed, MeshSource sourc
   } else if (domain_type == DomainType::Contour) {
     mesh = MeshUtils::threadSafeReadMesh(path);
   } else {
-    throw std::invalid_argument("invalid domain type");
+    throw std::invalid_argument("invalid domain type: " + std::to_string(static_cast<int>(domain_type)));
   }
 
   if (transformed) {
