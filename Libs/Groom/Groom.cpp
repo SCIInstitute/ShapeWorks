@@ -994,9 +994,12 @@ void Groom::clear_unused_shared_boundaries() {
   project_->set_original_domain_types(original_domain_types);
   project_->set_groomed_domain_types(groomed_domain_types);
 
-  // Clean up files from all subjects
+  // Clean up files from all non-fixed subjects
   auto subjects = project_->get_subjects();
   for (auto& subject : subjects) {
+    if (subject->is_fixed()) {
+      continue;  // Skip fixed subjects
+    }
     // Remove shared surface/boundary files using lambda
     auto original_filenames = subject->get_original_filenames();
     remove_shared_files(original_filenames);
