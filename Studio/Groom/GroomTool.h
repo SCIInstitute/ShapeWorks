@@ -78,12 +78,16 @@ class GroomTool : public QWidget {
   void handle_progress(int val);
   void handle_error(QString msg);
 
+  void add_shared_boundary_clicked();
+  void delete_shared_boundary_clicked();
+
  private:
   void set_ui_from_params(GroomParameters params);
 
   void update_page();
   void update_domain_box();
   void apply_to_all_domains_changed();
+  void update_shared_boundary_table();
 
   void update_reflect_columns();
   void update_reflect_choices();

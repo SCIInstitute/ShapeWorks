@@ -62,6 +62,7 @@ const std::string SHARED_BOUNDARY = "shared_boundary";
 const std::string SHARED_BOUNDARY_FIRST_DOMAIN = "shared_boundary_first_domain";
 const std::string SHARED_BOUNDARY_SECOND_DOMAIN = "shared_boundary_second_domain";
 const std::string SHARED_BOUNDARY_TOLERANCE = "shared_boundary_tolerance";
+const std::string SHARED_BOUNDARIES = "shared_boundaries";
 
 }  // namespace Keys
 
@@ -107,59 +108,90 @@ const bool shared_boundary = false;
 const std::string shared_boundary_first_domain = "";
 const std::string shared_boundary_second_domain = "";
 const double shared_boundary_tolerance = 1e-1;
+const std::string shared_boundaries = "";  // Empty string = no boundaries
 
 }  // namespace Defaults
+
+// Helper methods for SharedBoundary struct
+//---------------------------------------------------------------------------
+std::string GroomParameters::SharedBoundary::to_string() const {
+  return first_domain + "|" + second_domain + "|" + std::to_string(tolerance);
+}
+
+//---------------------------------------------------------------------------
+GroomParameters::SharedBoundary GroomParameters::SharedBoundary::from_string(const std::string& str) {
+  std::vector<std::string> parts;
+  std::stringstream ss(str);
+  std::string item;
+
+  while (std::getline(ss, item, '|')) {
+    parts.push_back(item);
+  }
+
+  if (parts.size() != 3) {
+    throw std::runtime_error("Invalid shared boundary string format");
+  }
+
+  SharedBoundary boundary;
+  boundary.first_domain = parts[0];
+  boundary.second_domain = parts[1];
+  boundary.tolerance = std::stod(parts[2]);
+  return boundary;
+}
 
 //---------------------------------------------------------------------------
 GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
     : project_(project), domain_name_(domain_name) {
   params_ = project_->get_parameters(Parameters::GROOM_PARAMS, domain_name_);
 
-  std::vector<std::string> all_params = {Keys::CROP,
-                                         Keys::REFLECT,
-                                         Keys::REFLECT_COLUMN,
-                                         Keys::REFLECT_CHOICE,
-                                         Keys::REFLECT_AXIS,
-                                         Keys::RESAMPLE,
-                                         Keys::ISOTROPIC,
-                                         Keys::ISO_SPACING,
-                                         Keys::SPACING,
-                                         Keys::CONVERT_MESH,
-                                         Keys::FILL_MESH_HOLES,
-                                         Keys::FILL_HOLES,
-                                         Keys::ISOLATE,
-                                         Keys::PAD,
-                                         Keys::PAD_VALUE,
-                                         Keys::ANTIALIAS,
-                                         Keys::ANTIALIAS_AMOUNT,
-                                         Keys::BLUR,
-                                         Keys::BLUR_SIGMA,
-                                         Keys::FASTMARCHING,
-                                         Keys::MESH_SMOOTH,
-                                         Keys::MESH_SMOOTHING_METHOD,
-                                         Keys::MESH_SMOOTHING_VTK_LAPLACIAN_ITERATIONS,
-                                         Keys::MESH_SMOOTHING_VTK_LAPLACIAN_RELAXATION,
-                                         Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_ITERATIONS,
-                                         Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND,
-                                         Keys::ALIGNMENT_METHOD,
-                                         Keys::ALIGNMENT_ENABLED,
-                                         Keys::ALIGNMENT_REFERENCE,
-                                         Keys::ALIGNMENT_REFERENCE_CHOSEN,
-                                         Keys::ALIGNMENT_SUBSET_SIZE,
-                                         Keys::GROOM_OUTPUT_PREFIX,
-                                         Keys::REMESH,
-                                         Keys::REMESH_PERCENT_MODE,
-                                         Keys::REMESH_PERCENT,
-                                         Keys::REMESH_NUM_VERTICES,
-                                         Keys::REMESH_GRADATION,
-                                         Keys::GROOM_ALL_DOMAINS_THE_SAME,
-                                         Keys::SKIP_GROOMING,
-                                         Keys::CENTER,
-                                         Keys::ICP,
-                                         Keys::SHARED_BOUNDARY,
-                                         Keys::SHARED_BOUNDARY_FIRST_DOMAIN,
-                                         Keys::SHARED_BOUNDARY_SECOND_DOMAIN,
-                                         Keys::SHARED_BOUNDARY_TOLERANCE};
+  std::vector<std::string> all_params = {
+      Keys::CROP,
+      Keys::REFLECT,
+      Keys::REFLECT_COLUMN,
+      Keys::REFLECT_CHOICE,
+      Keys::REFLECT_AXIS,
+      Keys::RESAMPLE,
+      Keys::ISOTROPIC,
+      Keys::ISO_SPACING,
+      Keys::SPACING,
+      Keys::CONVERT_MESH,
+      Keys::FILL_MESH_HOLES,
+      Keys::FILL_HOLES,
+      Keys::ISOLATE,
+      Keys::PAD,
+      Keys::PAD_VALUE,
+      Keys::ANTIALIAS,
+      Keys::ANTIALIAS_AMOUNT,
+      Keys::BLUR,
+      Keys::BLUR_SIGMA,
+      Keys::FASTMARCHING,
+      Keys::MESH_SMOOTH,
+      Keys::MESH_SMOOTHING_METHOD,
+      Keys::MESH_SMOOTHING_VTK_LAPLACIAN_ITERATIONS,
+      Keys::MESH_SMOOTHING_VTK_LAPLACIAN_RELAXATION,
+      Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_ITERATIONS,
+      Keys::MESH_SMOOTHING_VTK_WINDOWED_SINC_PASSBAND,
+      Keys::ALIGNMENT_METHOD,
+      Keys::ALIGNMENT_ENABLED,
+      Keys::ALIGNMENT_REFERENCE,
+      Keys::ALIGNMENT_REFERENCE_CHOSEN,
+      Keys::ALIGNMENT_SUBSET_SIZE,
+      Keys::GROOM_OUTPUT_PREFIX,
+      Keys::REMESH,
+      Keys::REMESH_PERCENT_MODE,
+      Keys::REMESH_PERCENT,
+      Keys::REMESH_NUM_VERTICES,
+      Keys::REMESH_GRADATION,
+      Keys::GROOM_ALL_DOMAINS_THE_SAME,
+      Keys::SKIP_GROOMING,
+      Keys::CENTER,
+      Keys::ICP,
+      Keys::SHARED_BOUNDARY,
+      Keys::SHARED_BOUNDARY_FIRST_DOMAIN,
+      Keys::SHARED_BOUNDARY_SECOND_DOMAIN,
+      Keys::SHARED_BOUNDARY_TOLERANCE,
+      Keys::SHARED_BOUNDARIES,
+  };
 
   std::vector<std::string> to_remove;
 
@@ -497,40 +529,93 @@ bool GroomParameters::get_skip_grooming() { return params_.get(Keys::SKIP_GROOMI
 void GroomParameters::set_skip_grooming(bool skip) { params_.set(Keys::SKIP_GROOMING, skip); }
 
 //---------------------------------------------------------------------------
-bool GroomParameters::get_shared_boundary() { return params_.get(Keys::SHARED_BOUNDARY, Defaults::shared_boundary); }
-
-//---------------------------------------------------------------------------
-void GroomParameters::set_shared_boundary(bool shared_boundary) { params_.set(Keys::SHARED_BOUNDARY, shared_boundary); }
-
-//---------------------------------------------------------------------------
-std::string GroomParameters::get_shared_boundary_first_domain() {
-  return params_.get(Keys::SHARED_BOUNDARY_FIRST_DOMAIN, Defaults::shared_boundary_first_domain);
+bool GroomParameters::get_shared_boundaries_enabled() {
+  return params_.get(Keys::SHARED_BOUNDARY, Defaults::shared_boundary);
 }
 
 //---------------------------------------------------------------------------
-void GroomParameters::set_shared_boundary_first_domain(const std::string& domain_name) {
-  params_.set(Keys::SHARED_BOUNDARY_FIRST_DOMAIN, domain_name);
+void GroomParameters::set_shared_boundaries_enabled(bool enabled) { params_.set(Keys::SHARED_BOUNDARY, enabled); }
+
+//---------------------------------------------------------------------------
+std::vector<GroomParameters::SharedBoundary> GroomParameters::get_shared_boundaries() {
+  std::vector<SharedBoundary> boundaries;
+
+  // Try new format first
+  if (params_.key_exists(Keys::SHARED_BOUNDARIES)) {
+    std::string boundaries_str = params_.get(Keys::SHARED_BOUNDARIES, Defaults::shared_boundaries);
+    if (!boundaries_str.empty()) {
+      std::stringstream ss(boundaries_str);
+      std::string boundary_str;
+
+      while (std::getline(ss, boundary_str, ';')) {
+        if (!boundary_str.empty()) {
+          try {
+            boundaries.push_back(SharedBoundary::from_string(boundary_str));
+          } catch (const std::exception& e) {
+            SW_WARN("Failed to parse shared boundary: " + boundary_str);
+          }
+        }
+      }
+    }
+    return boundaries;
+  }
+
+  // Migration: convert old single boundary format
+  if (params_.get(Keys::SHARED_BOUNDARY, Defaults::shared_boundary)) {
+    SharedBoundary boundary;
+    boundary.first_domain =
+        std::string(params_.get(Keys::SHARED_BOUNDARY_FIRST_DOMAIN, Defaults::shared_boundary_first_domain));
+    boundary.second_domain =
+        std::string(params_.get(Keys::SHARED_BOUNDARY_SECOND_DOMAIN, Defaults::shared_boundary_second_domain));
+    boundary.tolerance = params_.get(Keys::SHARED_BOUNDARY_TOLERANCE, Defaults::shared_boundary_tolerance);
+    boundaries.push_back(boundary);
+
+    // Migrate to new format
+    set_shared_boundaries(boundaries);
+  }
+
+  return boundaries;
 }
 
 //---------------------------------------------------------------------------
-std::string GroomParameters::get_shared_boundary_second_domain() {
-  return params_.get(Keys::SHARED_BOUNDARY_SECOND_DOMAIN, Defaults::shared_boundary_second_domain);
+void GroomParameters::set_shared_boundaries(const std::vector<SharedBoundary>& boundaries) {
+  if (boundaries.empty()) {
+    params_.set(Keys::SHARED_BOUNDARIES, "");
+  } else {
+    std::string boundaries_str;
+    for (size_t i = 0; i < boundaries.size(); ++i) {
+      if (i > 0) boundaries_str += ";";
+      boundaries_str += boundaries[i].to_string();
+    }
+    params_.set(Keys::SHARED_BOUNDARIES, boundaries_str);
+  }
+
+  // Clear old format keys to avoid confusion
+  params_.remove_entry(Keys::SHARED_BOUNDARY);
+  params_.remove_entry(Keys::SHARED_BOUNDARY_FIRST_DOMAIN);
+  params_.remove_entry(Keys::SHARED_BOUNDARY_SECOND_DOMAIN);
+  params_.remove_entry(Keys::SHARED_BOUNDARY_TOLERANCE);
 }
 
 //---------------------------------------------------------------------------
-void GroomParameters::set_shared_boundary_second_domain(const std::string& domain_name) {
-  params_.set(Keys::SHARED_BOUNDARY_SECOND_DOMAIN, domain_name);
+void GroomParameters::add_shared_boundary(const std::string& first_domain, const std::string& second_domain,
+                                          double tolerance) {
+  auto boundaries = get_shared_boundaries();
+  boundaries.push_back({first_domain, second_domain, tolerance});
+  set_shared_boundaries(boundaries);
 }
 
 //---------------------------------------------------------------------------
-double GroomParameters::get_shared_boundary_tolerance() {
-  return params_.get(Keys::SHARED_BOUNDARY_TOLERANCE, Defaults::shared_boundary_tolerance);
+void GroomParameters::remove_shared_boundary(size_t index) {
+  auto boundaries = get_shared_boundaries();
+  if (index < boundaries.size()) {
+    boundaries.erase(boundaries.begin() + index);
+    set_shared_boundaries(boundaries);
+  }
 }
 
 //---------------------------------------------------------------------------
-void GroomParameters::set_shared_boundary_tolerance(double tolerance) {
-  params_.set(Keys::SHARED_BOUNDARY_TOLERANCE, tolerance);
-}
+void GroomParameters::clear_shared_boundaries() { set_shared_boundaries({}); }
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

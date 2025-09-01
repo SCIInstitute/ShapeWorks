@@ -50,7 +50,8 @@ class StudioUtils {
                                                         double max_intensity, double& brightness, double& contrast);
 
   //! update a combobox with domain names
-  static void update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session);
+  static void update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session,
+                                     const std::vector<QString>& filters = {});
 };
 
 }  // namespace shapeworks

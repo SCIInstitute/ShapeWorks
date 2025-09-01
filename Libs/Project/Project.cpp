@@ -192,16 +192,14 @@ void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects
 
 //---------------------------------------------------------------------------
 void Project::update_subjects() {
-  if (subjects_.empty()) {
-    originals_present_ = false;
-    groomed_present_ = false;
-    particles_present_ = false;
-    return;
-  }
-
   originals_present_ = false;
   groomed_present_ = false;
   particles_present_ = false;
+
+  if (subjects_.empty()) {
+    return;
+  }
+
   images_present_ = false;
 
   auto groomed_subject = subjects_[0];

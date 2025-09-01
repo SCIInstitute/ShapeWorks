@@ -196,7 +196,7 @@ class Project {
   // map of type (e.g. groom, optimize) to map (domain->Parameters)
   std::map<std::string, std::map<std::string, Parameters>> parameters_;
 
-  const int supported_version_{2};
+  static constexpr int supported_version_{2};
   int version_{2};
 };
 }  // namespace shapeworks

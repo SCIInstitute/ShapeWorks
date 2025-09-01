@@ -799,7 +799,7 @@ TEST(MeshTests, sharedBoundaryExtractor) {
 TEST(MeshTests, boundaryLoopExtractor) {
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");
   Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
-  Mesh loop = MeshUtils::boundaryLoopExtractor(mesh);
+  Mesh loop = MeshUtils::extract_boundary_loop(mesh);
   ASSERT_TRUE(loop == ground_truth);
 }
 

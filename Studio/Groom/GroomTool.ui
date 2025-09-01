@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>1262</height>
+    <height>1599</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -351,48 +351,60 @@ QWidget#domain_panel {
                <property name="bottomMargin">
                 <number>6</number>
                </property>
-               <item row="0" column="1">
+               <item row="1" column="1">
                 <widget class="QComboBox" name="shared_boundary_first_domain"/>
                </item>
-               <item row="2" column="1">
-                <widget class="QDoubleSpinBox" name="shared_boundary_tolerance">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <double>99999.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.100000000000000</double>
+               <item row="0" column="0" colspan="2">
+                <widget class="QTableWidget" name="shared_boundary_table">
+                 <property name="sortingEnabled">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item row="2" column="1">
+                <widget class="QComboBox" name="shared_boundary_second_domain"/>
+               </item>
+               <item row="3" column="0">
                 <widget class="QLabel" name="shared_boundary_tolerance_label">
                  <property name="text">
                   <string>Tolerance</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
+               <item row="1" column="0">
                 <widget class="QLabel" name="shared_boundary_first_domain_label">
                  <property name="text">
                   <string>First Domain</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="shared_boundary_second_domain_label">
                  <property name="text">
                   <string>Second Domain</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="shared_boundary_second_domain"/>
+               <item row="4" column="0">
+                <widget class="QPushButton" name="delete_shared_boundary">
+                 <property name="text">
+                  <string>Delete Selected</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QPushButton" name="add_shared_boundary">
+                 <property name="text">
+                  <string>Add</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLineEdit" name="shared_boundary_tolerance">
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
