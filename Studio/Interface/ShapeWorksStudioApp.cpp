@@ -1318,8 +1318,16 @@ void ShapeWorksStudioApp::handle_groom_start() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_complete() {
   update_view_combo();
-  ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Groomed);
+
+  if (!session_->groomed_present()) {
+    // grooming may have failed, if so, we don't want to switch to groomed that don't exist
+    session_->set_display_mode(DisplayMode::Original);
+  } else {
+    session_->set_display_mode(DisplayMode::Groomed);
+  }
+
   session_->handle_clear_cache();
+
   update_display(true);
   visualizer_->reset_camera();
   enable_possible_actions();

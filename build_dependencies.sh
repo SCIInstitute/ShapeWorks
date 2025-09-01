@@ -251,6 +251,9 @@ build_openvdb()
   cd openvdb
   git checkout ${OpenVDB_VER}
 
+  # patch for Clang 17
+  patch -p1 < ${SCRIPT_DIR}/Support/openvdb-9.1.0.patch
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 

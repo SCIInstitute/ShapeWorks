@@ -47,10 +47,10 @@ class MeshUtils {
     static int findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size = -1);
 
     /// boundary loop extractor for a given mesh
-    static Mesh boundaryLoopExtractor(Mesh mesh);
+    static Mesh extract_boundary_loop(Mesh mesh);
 
     /// shared boundary extractor for the left and right mesh
-    static std::array<Mesh, 3> sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol);
+    static std::array<Mesh, 3> shared_boundary_extractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol);
 
     /// generates and adds normals for points and faces for each mesh in given set of meshes
     static void generateNormals(const std::vector<std::reference_wrapper<Mesh> >& meshes, bool forceRegen = false);

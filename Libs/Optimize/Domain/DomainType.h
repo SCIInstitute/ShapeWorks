@@ -1,11 +1,5 @@
 #pragma once
 
-#define DIMENSION 3
-
 namespace shapeworks {
-  enum class DomainType : char {
-    Image = 'I',
-    Mesh = 'M',
-    Contour = 'C'
-  };
-}
+enum class DomainType { Image, Mesh, Contour };
+}  // namespace shapeworks

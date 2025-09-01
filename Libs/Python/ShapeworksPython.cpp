@@ -1187,13 +1187,13 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def_static("findReferenceMesh", &MeshUtils::findReferenceMesh, "find reference mesh from a set of meshes",
                   "meshes"_a, "random_subset"_a = -1)
 
-      .def_static("boundaryLoopExtractor", &MeshUtils::boundaryLoopExtractor,
+      .def_static("boundaryLoopExtractor", &MeshUtils::extract_boundary_loop,
                   "for a mesh extracts the boundary loop and export the boundary loop as a contour .vtp file", "mesh"_a)
 
       .def_static(
           "sharedBoundaryExtractor",
           [](const Mesh& mesh_l, const Mesh& mesh_r, float tol) -> decltype(auto) {
-            std::array<Mesh, 3> output = MeshUtils::sharedBoundaryExtractor(mesh_l, mesh_r, tol);
+            std::array<Mesh, 3> output = MeshUtils::shared_boundary_extractor(mesh_l, mesh_r, tol);
 
             // std::move passes ownership to Python
             return py::make_tuple(std::move(output[0]), std::move(output[1]), std::move(output[2]));
