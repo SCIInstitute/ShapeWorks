@@ -163,7 +163,13 @@ build_itk()
   git checkout -f tags/${ITK_VER}
 
   # replace <fp.h> with <math.h> in Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
-  sed -i 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  if [ "$(uname)" == "Darwin" ]; then
+    # macOS requires an extension for -i
+    sed -i '' 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  else
+    # Linux/GitHub Actions doesn't need an extension
+    sed -i 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  fi
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
