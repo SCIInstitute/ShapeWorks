@@ -20,8 +20,8 @@ BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="Release"
 BUILD_LOG="build_dependencies.log"
-VTK_VER="v9.1.0"
-VTK_VER_STR="9.1"
+VTK_VER="v9.5.0"
+VTK_VER_STR="9.5"
 ITK_VER="v5.3.0"
 ITK_VER_STR="5.3"
 QT_MIN_VER="5.15.4"
@@ -162,6 +162,15 @@ build_itk()
   cd ITK
   git checkout -f tags/${ITK_VER}
 
+  # replace <fp.h> with <math.h> in Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  if [ "$(uname)" == "Darwin" ]; then
+    # macOS requires an extension for -i
+    sed -i '' 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  else
+    # Linux/GitHub Actions doesn't need an extension
+    sed -i 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  fi
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
@@ -251,6 +260,9 @@ build_openvdb()
   cd openvdb
   git checkout ${OpenVDB_VER}
 
+  # patch for Clang 17
+  patch -p1 < ${SCRIPT_DIR}/Support/openvdb-9.1.0.patch
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
@@ -264,7 +276,7 @@ build_openvdb()
       cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS -Wno-enum-constexpr-conversion" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
   fi
 

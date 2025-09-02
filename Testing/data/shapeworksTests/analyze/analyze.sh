@@ -2,6 +2,8 @@
 
 shapeworks analyze --name ellipsoid.swproj --output analysis_output.json
 if [[ $? != 0 ]]; then exit -1; fi
+
+echo "Comparing analysis output"
 diff analysis_output.json analysis_baseline.json
 if [[ $? != 0 ]]; then exit -1; fi
 

@@ -71,7 +71,7 @@ ColorMaps::ColorMaps() {
     colorSeries->SetColorScheme(colorSeriesEnum);
     ColorMap map;
     map.color_series_ = colorSeries;
-    map.name_ = colorSeries->GetColorSchemeName();
+    map.name_ = QString::fromStdString(colorSeries->GetColorSchemeName());
     push_back(map);
   };
 
