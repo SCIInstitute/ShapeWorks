@@ -162,6 +162,9 @@ build_itk()
   cd ITK
   git checkout -f tags/${ITK_VER}
 
+  # replace <fp.h> with <math.h> in Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  sed -i 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
