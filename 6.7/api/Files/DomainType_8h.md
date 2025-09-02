@@ -13,22 +13,7 @@ title: Libs/Optimize/Domain/DomainType.h
 | -------------- |
 | **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
-## Defines
 
-|                | Name           |
-| -------------- | -------------- |
-|  | **[DIMENSION](../Files/DomainType_8h.md#define-dimension)**  |
-
-
-
-
-## Macros Documentation
-
-### define DIMENSION
-
-```cpp
-#define DIMENSION 3
-```
 
 
 ## Source code
@@ -36,18 +21,12 @@ title: Libs/Optimize/Domain/DomainType.h
 ```cpp
 #pragma once
 
-#define DIMENSION 3
-
 namespace shapeworks {
-  enum class DomainType : char {
-    Image = 'I',
-    Mesh = 'M',
-    Contour = 'C'
-  };
-}
+enum class DomainType { Image, Mesh, Contour };
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:43 +0000
+Updated on 2025-09-02 at 23:07:44 +0000

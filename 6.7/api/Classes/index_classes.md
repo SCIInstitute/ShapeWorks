@@ -129,6 +129,7 @@ title: Classes
     * **class [Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API. 
     * **class [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)** 
     * **class [GroomParameters](../Classes/classshapeworks_1_1GroomParameters.md)** 
+        * **struct [SharedBoundary](../Classes/structshapeworks_1_1GroomParameters_1_1SharedBoundary.md)** 
     * **class [GroomTool](../Classes/classshapeworks_1_1GroomTool.md)** 
     * **class [GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md)** 
     * **class [Image](../Classes/classshapeworks_1_1Image.md)** 
@@ -284,4 +285,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:44 +0000
+Updated on 2025-09-02 at 23:07:45 +0000

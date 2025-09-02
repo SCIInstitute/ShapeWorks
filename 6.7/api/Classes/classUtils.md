@@ -20,6 +20,7 @@ title: Utils
 | void | **[writeSparseShape](../Classes/classUtils.md#function-writesparseshape)**(char * filename, std::vector< itk::Point< double, 3 > > points) |
 | std::vector< int > | **[readParticleIds](../Classes/classUtils.md#function-readparticleids)**(char * filename) |
 | void | **[writeParticleIds](../Classes/classUtils.md#function-writeparticleids)**(char * filename, std::vector< int > ids) |
+| void | **[quiet_delete_file](../Classes/classUtils.md#function-quiet-delete-file)**(const std::string & filename) |
 | void | **[computeCenterOfMassForShapeEnsemble](../Classes/classUtils.md#function-computecenterofmassforshapeensemble)**(std::vector< std::vector< itk::Point< double, 3 > > > points_list, itk::Point< double, 3 > & center) |
 | void | **[computeCenterOfMassForShape](../Classes/classUtils.md#function-computecenterofmassforshape)**(std::vector< itk::Point< double, 3 > > points, itk::Point< double, 3 > & center) |
 | void | **[updateMin](../Classes/classUtils.md#function-updatemin)**(double curVal, double & minVal) |
@@ -107,6 +108,15 @@ static std::vector< int > readParticleIds(
 static void writeParticleIds(
     char * filename,
     std::vector< int > ids
+)
+```
+
+
+### function quiet_delete_file
+
+```cpp
+static void quiet_delete_file(
+    const std::string & filename
 )
 ```
 
@@ -382,4 +392,4 @@ static double averageThetaArc(
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:43 +0000
+Updated on 2025-09-02 at 23:07:44 +0000

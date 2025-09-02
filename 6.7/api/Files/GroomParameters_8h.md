@@ -18,6 +18,7 @@ title: Libs/Groom/GroomParameters.h
 |                | Name           |
 | -------------- | -------------- |
 | class | **[shapeworks::GroomParameters](../Classes/classshapeworks_1_1GroomParameters.md)**  |
+| struct | **[shapeworks::GroomParameters::SharedBoundary](../Classes/structshapeworks_1_1GroomParameters_1_1SharedBoundary.md)**  |
 
 
 
@@ -32,6 +33,17 @@ title: Libs/Groom/GroomParameters.h
 namespace shapeworks {
 
 class GroomParameters {
+ public:
+  struct SharedBoundary {
+    std::string first_domain;
+    std::string second_domain;
+    double tolerance;
+
+    // Helper methods for serialization
+    std::string to_string() const;
+    static SharedBoundary from_string(const std::string& str);
+  };
+
   enum class MeshSmoothingOption { laplacian, sinc };
 
   enum class AlignmentOption { none, center, icp };
@@ -158,17 +170,14 @@ class GroomParameters {
   bool get_skip_grooming();
   void set_skip_grooming(bool skip);
 
-  bool get_shared_boundary();
-  void set_shared_boundary(bool shared_boundary);
+  bool get_shared_boundaries_enabled();
+  void set_shared_boundaries_enabled(bool enabled);
 
-  std::string get_shared_boundary_first_domain();
-  void set_shared_boundary_first_domain(const std::string& domain_name);
-
-  std::string get_shared_boundary_second_domain();
-  void set_shared_boundary_second_domain(const std::string& domain_name);
-
-  double get_shared_boundary_tolerance();
-  void set_shared_boundary_tolerance(double tolerance);
+  std::vector<SharedBoundary> get_shared_boundaries();
+  void set_shared_boundaries(const std::vector<SharedBoundary>& boundaries);
+  void add_shared_boundary(const std::string& first_domain, const std::string& second_domain, double tolerance);
+  void remove_shared_boundary(size_t index);
+  void clear_shared_boundaries();
 
   void restore_defaults();
 
@@ -193,4 +202,4 @@ class GroomParameters {
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:43 +0000
+Updated on 2025-09-02 at 23:07:44 +0000

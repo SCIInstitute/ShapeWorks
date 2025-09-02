@@ -58,9 +58,9 @@ class MeshUtils {
 
     static int findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size = -1);
 
-    static Mesh boundaryLoopExtractor(Mesh mesh);
+    static Mesh extract_boundary_loop(Mesh mesh);
 
-    static std::array<Mesh, 3> sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol);
+    static std::array<Mesh, 3> shared_boundary_extractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol);
 
     static void generateNormals(const std::vector<std::reference_wrapper<Mesh> >& meshes, bool forceRegen = false);
 
@@ -88,4 +88,4 @@ class MeshUtils {
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:43 +0000
+Updated on 2025-09-02 at 23:07:44 +0000

@@ -2475,6 +2475,20 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-classes" class="md-nav__link">
+    Public Classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-types" class="md-nav__link">
+    Public Types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
@@ -2492,6 +2506,33 @@
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-types-documentation" class="md-nav__link">
+    Public Types Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Types Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enum-meshsmoothingoption" class="md-nav__link">
+    enum MeshSmoothingOption
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enum-alignmentoption" class="md-nav__link">
+    enum AlignmentOption
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3092,57 +3133,50 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_shared_boundary" class="md-nav__link">
-    function get_shared_boundary
+  <a href="#function-get_shared_boundaries_enabled" class="md-nav__link">
+    function get_shared_boundaries_enabled
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_shared_boundary" class="md-nav__link">
-    function set_shared_boundary
+  <a href="#function-set_shared_boundaries_enabled" class="md-nav__link">
+    function set_shared_boundaries_enabled
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_shared_boundary_first_domain" class="md-nav__link">
-    function get_shared_boundary_first_domain
+  <a href="#function-get_shared_boundaries" class="md-nav__link">
+    function get_shared_boundaries
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_shared_boundary_first_domain" class="md-nav__link">
-    function set_shared_boundary_first_domain
+  <a href="#function-set_shared_boundaries" class="md-nav__link">
+    function set_shared_boundaries
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_shared_boundary_second_domain" class="md-nav__link">
-    function get_shared_boundary_second_domain
+  <a href="#function-add_shared_boundary" class="md-nav__link">
+    function add_shared_boundary
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_shared_boundary_second_domain" class="md-nav__link">
-    function set_shared_boundary_second_domain
+  <a href="#function-remove_shared_boundary" class="md-nav__link">
+    function remove_shared_boundary
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_shared_boundary_tolerance" class="md-nav__link">
-    function get_shared_boundary_tolerance
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_shared_boundary_tolerance" class="md-nav__link">
-    function set_shared_boundary_tolerance
+  <a href="#function-clear_shared_boundaries" class="md-nav__link">
+    function clear_shared_boundaries
   </a>
   
 </li>
@@ -3235,6 +3269,40 @@
 <h1 id="shapeworksgroomparameters">shapeworks::GroomParameters</h1>
 <p><a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;GroomParameters.h&gt;</code></p>
+<h2 id="public-classes">Public Classes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>struct</td>
+<td><strong><a href="structshapeworks_1_1GroomParameters_1_1SharedBoundary.html">SharedBoundary</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>enum class</td>
+<td laplacian_="laplacian," sinc="sinc"><strong><a href="classshapeworks_1_1GroomParameters.html#enum-meshsmoothingoption">MeshSmoothingOption</a></strong></td>
+</tr>
+<tr>
+<td>enum class</td>
+<td center_="center," icp="icp" none_="none,"><strong><a href="classshapeworks_1_1GroomParameters.html#enum-alignmentoption">AlignmentOption</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -3582,35 +3650,31 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-get-shared-boundary">get_shared_boundary</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-get-shared-boundaries-enabled">get_shared_boundaries_enabled</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-set-shared-boundary">set_shared_boundary</a></strong>(bool shared_boundary)</td>
+<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-set-shared-boundaries-enabled">set_shared_boundaries_enabled</a></strong>(bool enabled)</td>
 </tr>
 <tr>
-<td>std::string</td>
-<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-get-shared-boundary-first-domain">get_shared_boundary_first_domain</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-set-shared-boundary-first-domain">set_shared_boundary_first_domain</a></strong>(const std::string &amp; domain_name)</td>
-</tr>
-<tr>
-<td>std::string</td>
-<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-get-shared-boundary-second-domain">get_shared_boundary_second_domain</a></strong>()</td>
+<td>std::vector&lt; <a href="structshapeworks_1_1GroomParameters_1_1SharedBoundary.html">SharedBoundary</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-get-shared-boundaries">get_shared_boundaries</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-set-shared-boundary-second-domain">set_shared_boundary_second_domain</a></strong>(const std::string &amp; domain_name)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-get-shared-boundary-tolerance">get_shared_boundary_tolerance</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-set-shared-boundaries">set_shared_boundaries</a></strong>(const std::vector&lt; <a href="structshapeworks_1_1GroomParameters_1_1SharedBoundary.html">SharedBoundary</a> &gt; &amp; boundaries)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-set-shared-boundary-tolerance">set_shared_boundary_tolerance</a></strong>(double tolerance)</td>
+<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-add-shared-boundary">add_shared_boundary</a></strong>(const std::string &amp; first_domain, const std::string &amp; second_domain, double tolerance)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-remove-shared-boundary">remove_shared_boundary</a></strong>(size_t index)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1GroomParameters.html#function-clear-shared-boundaries">clear_shared_boundaries</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3657,6 +3721,56 @@
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">GroomParameters</span><span class="p">;</span>
 </code></pre></div>
 <p>This class encapsulated processing of <a href="classshapeworks_1_1Groom.html">Groom</a> parameters </p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="enum-meshsmoothingoption">enum MeshSmoothingOption</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>laplacian</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sinc</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-alignmentoption">enum AlignmentOption</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>center</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>icp</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-groomparameters">function GroomParameters</h3>
 <div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">GroomParameters</span><span class="p">(</span>
@@ -3993,37 +4107,36 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">skip</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-get_shared_boundary">function get_shared_boundary</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_shared_boundary</span><span class="p">()</span>
+<h3 id="function-get_shared_boundaries_enabled">function get_shared_boundaries_enabled</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_shared_boundaries_enabled</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-set_shared_boundary">function set_shared_boundary</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shared_boundary</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">shared_boundary</span>
+<h3 id="function-set_shared_boundaries_enabled">function set_shared_boundaries_enabled</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shared_boundaries_enabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-get_shared_boundary_first_domain">function get_shared_boundary_first_domain</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_shared_boundary_first_domain</span><span class="p">()</span>
+<h3 id="function-get_shared_boundaries">function get_shared_boundaries</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SharedBoundary</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shared_boundaries</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-set_shared_boundary_first_domain">function set_shared_boundary_first_domain</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shared_boundary_first_domain</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">domain_name</span>
+<h3 id="function-set_shared_boundaries">function set_shared_boundaries</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shared_boundaries</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SharedBoundary</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">boundaries</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-get_shared_boundary_second_domain">function get_shared_boundary_second_domain</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_shared_boundary_second_domain</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-set_shared_boundary_second_domain">function set_shared_boundary_second_domain</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shared_boundary_second_domain</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">domain_name</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="function-get_shared_boundary_tolerance">function get_shared_boundary_tolerance</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_shared_boundary_tolerance</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-set_shared_boundary_tolerance">function set_shared_boundary_tolerance</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shared_boundary_tolerance</span><span class="p">(</span>
+<h3 id="function-add_shared_boundary">function add_shared_boundary</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">add_shared_boundary</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">first_domain</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">second_domain</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance</span>
 <span class="p">)</span>
+</code></pre></div>
+<h3 id="function-remove_shared_boundary">function remove_shared_boundary</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove_shared_boundary</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-clear_shared_boundaries">function clear_shared_boundaries</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_shared_boundaries</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-restore_defaults">function restore_defaults</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">restore_defaults</span><span class="p">()</span>
@@ -4048,7 +4161,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_ALIGNMENT_LANDMARK_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-08-22 at 08:23:42 +0000</p>
+<p>Updated on 2025-09-02 at 23:07:42 +0000</p>
 
               
             </article>

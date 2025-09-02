@@ -2540,6 +2540,10 @@
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1GroomParameters.html">shapeworks::GroomParameters</a></strong></td>
 </tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="../Classes/structshapeworks_1_1GroomParameters_1_1SharedBoundary.html">shapeworks::GroomParameters::SharedBoundary</a></strong></td>
+</tr>
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
@@ -2550,6 +2554,17 @@
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GroomParameters</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedBoundary</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">first_domain</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">second_domain</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Helper methods for serialization</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">to_string</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">SharedBoundary</span><span class="w"> </span><span class="nf">from_string</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="w">  </span><span class="p">};</span>
+
 <span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MeshSmoothingOption</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">laplacian</span><span class="p">,</span><span class="w"> </span><span class="n">sinc</span><span class="w"> </span><span class="p">};</span>
 
 <span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">AlignmentOption</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">none</span><span class="p">,</span><span class="w"> </span><span class="n">center</span><span class="p">,</span><span class="w"> </span><span class="n">icp</span><span class="w"> </span><span class="p">};</span>
@@ -2676,17 +2691,14 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_skip_grooming</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_skip_grooming</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">skip</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_shared_boundary</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shared_boundary</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">shared_boundary</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_shared_boundaries_enabled</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shared_boundaries_enabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_shared_boundary_first_domain</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shared_boundary_first_domain</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">domain_name</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_shared_boundary_second_domain</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shared_boundary_second_domain</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">domain_name</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_shared_boundary_tolerance</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shared_boundary_tolerance</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SharedBoundary</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shared_boundaries</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shared_boundaries</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SharedBoundary</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">boundaries</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_shared_boundary</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">first_domain</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">second_domain</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_shared_boundary</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_shared_boundaries</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span>
 
@@ -2708,7 +2720,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-08-22 at 08:23:43 +0000</p>
+<p>Updated on 2025-09-02 at 23:07:44 +0000</p>
 
               
             </article>

@@ -32,6 +32,8 @@ Inherits from QWidget
 | void | **[handle_thread_complete](../Classes/classshapeworks_1_1GroomTool.md#slot-handle-thread-complete)**() |
 | void | **[handle_progress](../Classes/classshapeworks_1_1GroomTool.md#slot-handle-progress)**(int val) |
 | void | **[handle_error](../Classes/classshapeworks_1_1GroomTool.md#slot-handle-error)**(QString msg) |
+| void | **[add_shared_boundary_clicked](../Classes/classshapeworks_1_1GroomTool.md#slot-add-shared-boundary-clicked)**() |
+| void | **[delete_shared_boundary_clicked](../Classes/classshapeworks_1_1GroomTool.md#slot-delete-shared-boundary-clicked)**() |
 
 ## Public Signals
 
@@ -199,6 +201,20 @@ void handle_error(
 ```
 
 
+### slot add_shared_boundary_clicked
+
+```cpp
+void add_shared_boundary_clicked()
+```
+
+
+### slot delete_shared_boundary_clicked
+
+```cpp
+void delete_shared_boundary_clicked()
+```
+
+
 ## Public Signals Documentation
 
 ### signal groom_start
@@ -303,4 +319,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:42 +0000
+Updated on 2025-09-02 at 23:07:42 +0000

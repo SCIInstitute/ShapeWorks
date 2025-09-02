@@ -12,6 +12,19 @@ title: shapeworks::GroomParameters
 
 `#include <GroomParameters.h>`
 
+## Public Classes
+
+|                | Name           |
+| -------------- | -------------- |
+| struct | **[SharedBoundary](../Classes/structshapeworks_1_1GroomParameters_1_1SharedBoundary.md)**  |
+
+## Public Types
+
+|                | Name           |
+| -------------- | -------------- |
+| enum class| **[MeshSmoothingOption](../Classes/classshapeworks_1_1GroomParameters.md#enum-meshsmoothingoption)** { laplacian, sinc} |
+| enum class| **[AlignmentOption](../Classes/classshapeworks_1_1GroomParameters.md#enum-alignmentoption)** { none, center, icp} |
+
 ## Public Functions
 
 |                | Name           |
@@ -100,14 +113,13 @@ title: shapeworks::GroomParameters
 | void | **[set_remesh_gradation](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-gradation)**(double gradation) |
 | bool | **[get_skip_grooming](../Classes/classshapeworks_1_1GroomParameters.md#function-get-skip-grooming)**() |
 | void | **[set_skip_grooming](../Classes/classshapeworks_1_1GroomParameters.md#function-set-skip-grooming)**(bool skip) |
-| bool | **[get_shared_boundary](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary)**() |
-| void | **[set_shared_boundary](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary)**(bool shared_boundary) |
-| std::string | **[get_shared_boundary_first_domain](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary-first-domain)**() |
-| void | **[set_shared_boundary_first_domain](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary-first-domain)**(const std::string & domain_name) |
-| std::string | **[get_shared_boundary_second_domain](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary-second-domain)**() |
-| void | **[set_shared_boundary_second_domain](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary-second-domain)**(const std::string & domain_name) |
-| double | **[get_shared_boundary_tolerance](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundary-tolerance)**() |
-| void | **[set_shared_boundary_tolerance](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundary-tolerance)**(double tolerance) |
+| bool | **[get_shared_boundaries_enabled](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundaries-enabled)**() |
+| void | **[set_shared_boundaries_enabled](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundaries-enabled)**(bool enabled) |
+| std::vector< [SharedBoundary](../Classes/structshapeworks_1_1GroomParameters_1_1SharedBoundary.md) > | **[get_shared_boundaries](../Classes/classshapeworks_1_1GroomParameters.md#function-get-shared-boundaries)**() |
+| void | **[set_shared_boundaries](../Classes/classshapeworks_1_1GroomParameters.md#function-set-shared-boundaries)**(const std::vector< [SharedBoundary](../Classes/structshapeworks_1_1GroomParameters_1_1SharedBoundary.md) > & boundaries) |
+| void | **[add_shared_boundary](../Classes/classshapeworks_1_1GroomParameters.md#function-add-shared-boundary)**(const std::string & first_domain, const std::string & second_domain, double tolerance) |
+| void | **[remove_shared_boundary](../Classes/classshapeworks_1_1GroomParameters.md#function-remove-shared-boundary)**(size_t index) |
+| void | **[clear_shared_boundaries](../Classes/classshapeworks_1_1GroomParameters.md#function-clear-shared-boundaries)**() |
 | void | **[restore_defaults](../Classes/classshapeworks_1_1GroomParameters.md#function-restore-defaults)**() |
 | [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1GroomParameters.md#function-get-parameters)**() const |
 
@@ -129,6 +141,29 @@ class shapeworks::GroomParameters;
 
 
 This class encapsulated processing of [Groom](../Classes/classshapeworks_1_1Groom.md) parameters 
+
+## Public Types Documentation
+
+### enum MeshSmoothingOption
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| laplacian | |   |
+| sinc | |   |
+
+
+
+
+### enum AlignmentOption
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| none | |   |
+| center | |   |
+| icp | |   |
+
+
+
 
 ## Public Functions Documentation
 
@@ -803,67 +838,62 @@ void set_skip_grooming(
 ```
 
 
-### function get_shared_boundary
+### function get_shared_boundaries_enabled
 
 ```cpp
-bool get_shared_boundary()
+bool get_shared_boundaries_enabled()
 ```
 
 
-### function set_shared_boundary
+### function set_shared_boundaries_enabled
 
 ```cpp
-void set_shared_boundary(
-    bool shared_boundary
+void set_shared_boundaries_enabled(
+    bool enabled
 )
 ```
 
 
-### function get_shared_boundary_first_domain
+### function get_shared_boundaries
 
 ```cpp
-std::string get_shared_boundary_first_domain()
+std::vector< SharedBoundary > get_shared_boundaries()
 ```
 
 
-### function set_shared_boundary_first_domain
+### function set_shared_boundaries
 
 ```cpp
-void set_shared_boundary_first_domain(
-    const std::string & domain_name
+void set_shared_boundaries(
+    const std::vector< SharedBoundary > & boundaries
 )
 ```
 
 
-### function get_shared_boundary_second_domain
+### function add_shared_boundary
 
 ```cpp
-std::string get_shared_boundary_second_domain()
-```
-
-
-### function set_shared_boundary_second_domain
-
-```cpp
-void set_shared_boundary_second_domain(
-    const std::string & domain_name
-)
-```
-
-
-### function get_shared_boundary_tolerance
-
-```cpp
-double get_shared_boundary_tolerance()
-```
-
-
-### function set_shared_boundary_tolerance
-
-```cpp
-void set_shared_boundary_tolerance(
+void add_shared_boundary(
+    const std::string & first_domain,
+    const std::string & second_domain,
     double tolerance
 )
+```
+
+
+### function remove_shared_boundary
+
+```cpp
+void remove_shared_boundary(
+    size_t index
+)
+```
+
+
+### function clear_shared_boundaries
+
+```cpp
+void clear_shared_boundaries()
 ```
 
 
@@ -920,4 +950,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:42 +0000
+Updated on 2025-09-02 at 23:07:42 +0000

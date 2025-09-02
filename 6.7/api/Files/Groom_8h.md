@@ -56,6 +56,8 @@ class Groom {
   std::atomic<int> progress_counter_ = 0;
 
  private:
+  enum class MeshSource { Original, Groomed };
+
   int get_total_ops();
 
   void increment_progress(int amount = 1);
@@ -76,6 +78,8 @@ class Groom {
 
   bool run_shared_boundaries();
 
+  void clear_unused_shared_boundaries();
+
   void assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global = false);
 
   static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference);
@@ -90,7 +94,8 @@ class Groom {
 
   std::vector<vtkSmartPointer<vtkPoints>> get_combined_points();
 
-  Mesh get_mesh(int subject, int domain, bool transformed = false);
+  Mesh get_mesh(int subject, int domain, bool transformed = false, MeshSource source = MeshSource::Original);
+
 
   vtkSmartPointer<vtkPoints> get_landmarks(int subject, int domain);
 
@@ -114,4 +119,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:43 +0000
+Updated on 2025-09-02 at 23:07:44 +0000

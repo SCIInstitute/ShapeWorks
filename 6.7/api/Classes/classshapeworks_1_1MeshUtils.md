@@ -26,8 +26,8 @@ title: shapeworks::MeshUtils
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes, bool center =false)<br>calculate bounding box incrementally for meshes  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes, bool center =false)<br>calculate bounding box incrementally for meshes  |
 | int | **[findReferenceMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-findreferencemesh)**(std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes, int random_subset_size =-1)<br>determine the reference mesh  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[boundaryLoopExtractor](../Classes/classshapeworks_1_1MeshUtils.md#function-boundaryloopextractor)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) mesh)<br>boundary loop extractor for a given mesh  |
-| std::array< [Mesh](../Classes/classshapeworks_1_1Mesh.md), 3 > | **[sharedBoundaryExtractor](../Classes/classshapeworks_1_1MeshUtils.md#function-sharedboundaryextractor)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_l, const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_r, double tol)<br>shared boundary extractor for the left and right mesh  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[extract_boundary_loop](../Classes/classshapeworks_1_1MeshUtils.md#function-extract-boundary-loop)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) mesh)<br>boundary loop extractor for a given mesh  |
+| std::array< [Mesh](../Classes/classshapeworks_1_1Mesh.md), 3 > | **[shared_boundary_extractor](../Classes/classshapeworks_1_1MeshUtils.md#function-shared-boundary-extractor)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_l, const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_r, double tol)<br>shared boundary extractor for the left and right mesh  |
 | void | **[generateNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-generatenormals)**(const std::vector< std::reference_wrapper< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes, bool forceRegen =false)<br>generates and adds normals for points and faces for each mesh in given set of meshes  |
 | Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::string > & filenames, bool autoGenerateNormals =true)<br>computes average normals for each point in given set of meshes  |
 | Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes)<br>computes average normals for each point in given set of meshes  |
@@ -136,20 +136,20 @@ static int findReferenceMesh(
 
 determine the reference mesh 
 
-### function boundaryLoopExtractor
+### function extract_boundary_loop
 
 ```cpp
-static Mesh boundaryLoopExtractor(
+static Mesh extract_boundary_loop(
     Mesh mesh
 )
 ```
 
 boundary loop extractor for a given mesh 
 
-### function sharedBoundaryExtractor
+### function shared_boundary_extractor
 
 ```cpp
-static std::array< Mesh, 3 > sharedBoundaryExtractor(
+static std::array< Mesh, 3 > shared_boundary_extractor(
     const Mesh & mesh_l,
     const Mesh & mesh_r,
     double tol
@@ -230,4 +230,4 @@ Used as an auxiliary function for vector field visualizations.
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:43 +0000
+Updated on 2025-09-02 at 23:07:44 +0000

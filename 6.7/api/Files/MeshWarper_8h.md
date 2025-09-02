@@ -95,11 +95,16 @@ class MeshWarper {
 
   static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
-  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
+  bool generate_warp_matrix(Eigen::MatrixXd target_vertices, Eigen::MatrixXi target_faces,
+                            const Eigen::MatrixXd& references_vertices, Eigen::MatrixXd& warp);
 
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
   size_t bad_particle_count() const { return size_t(reference_particles_.rows()) - good_particles_.size(); }
+
+  void diagnose_biharmonic_failure(const Eigen::MatrixXd& TV, const Eigen::MatrixXi& TF,
+                                   const std::vector<std::vector<int>>& S, int k);
+
 
   // Members
   Eigen::MatrixXi faces_;
@@ -113,7 +118,8 @@ class MeshWarper {
 
   bool warp_available_ = false;
 
-  std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the clean Reference mesh
+  std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the
+                                      // clean Reference mesh
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   Eigen::MatrixXd reference_particles_;
@@ -125,4 +131,4 @@ class MeshWarper {
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:43 +0000
+Updated on 2025-09-02 at 23:07:44 +0000

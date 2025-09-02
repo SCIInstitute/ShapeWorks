@@ -144,6 +144,9 @@ public:
     static std::vector<int> readParticleIds(char* filename);
     static void writeParticleIds(char* filename, std::vector<int> ids);
 
+
+    static void quiet_delete_file(const std::string& filename);
+
     //--------------- point cloud queries --------------------------------
     static void computeCenterOfMassForShapeEnsemble (std::vector< std::vector< itk::Point< double, 3 > > > points_list, itk::Point< double, 3 > & center);
     static void computeCenterOfMassForShape (std::vector< itk::Point< double, 3 > >  points, itk::Point< double, 3 > & center);
@@ -217,4 +220,4 @@ private:
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:43 +0000
+Updated on 2025-09-02 at 23:07:44 +0000

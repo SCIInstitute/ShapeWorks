@@ -196,7 +196,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | enum| **[Axis](../Namespaces/namespaceshapeworks.md#enum-axis)** { invalid = -1, X, Y, Z}<br>handy way to specify an axis  |
 | enum class char | **[ConstraintType](../Namespaces/namespaceshapeworks.md#enum-constrainttype)** { CuttingPlane = 'C', FreeForm = 'F'} |
 | enum class int | **[CorrespondenceMode](../Namespaces/namespaceshapeworks.md#enum-correspondencemode)** { MeanEnergy = 0, EnsembleEntropy = 1, EnsembleRegressionEntropy = 3, EnsembleMixedEffectsEntropy = 4, MeshBasedGeneralEntropy = 5, MeshBasedGeneralMeanEnergy = 6, DisentagledEnsembleEntropy = 7, DisentangledEnsembleMeanEnergy = 8} |
-| enum class char | **[DomainType](../Namespaces/namespaceshapeworks.md#enum-domaintype)** { Image = 'I', Mesh = 'M', Contour = 'C'} |
+| enum class| **[DomainType](../Namespaces/namespaceshapeworks.md#enum-domaintype)** { Image, Mesh, Contour} |
 | enum| **[ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions)** { COPY_ARRAY, SHARE_ARRAY, MOVE_ARRAY}<br>ways of tranferring Arrays to Python, copy being the least efficient but most conservative  |
 | enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
 | enum| **[LandmarkVisibility](../Namespaces/namespaceshapeworks.md#enum-landmarkvisibility)** { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E} |
@@ -486,9 +486,9 @@ handy way to specify an axis
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
-| Image | 'I'|   |
-| Mesh | 'M'|   |
-| Contour | 'C'|   |
+| Image | |   |
+| Mesh | |   |
+| Contour | |   |
 
 
 
@@ -2606,4 +2606,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2025-08-22 at 08:23:41 +0000
+Updated on 2025-09-02 at 23:07:42 +0000
