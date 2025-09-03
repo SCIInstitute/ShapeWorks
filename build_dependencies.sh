@@ -22,8 +22,8 @@ BUILD_TYPE="Release"
 BUILD_LOG="build_dependencies.log"
 VTK_VER="v9.5.0"
 VTK_VER_STR="9.5"
-ITK_VER="v5.3.0"
-ITK_VER_STR="5.3"
+ITK_VER="v5.4.4"
+ITK_VER_STR="5.4"
 QT_MIN_VER="5.15.4"
 XLNT_VER="538f80794c7d736afc0a452d21313606cc5538fc"
 JKQTPLOTTER_VER="v2022.11.30-refix-rpath"
@@ -200,6 +200,9 @@ build_xlnt()
 
   # move conflicting file out of the way so it builds on osx
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
+
+  # Fix for GCC 13
+  echo '#include <cstdint>' >> include/xlnt/xlnt_config.hpp
 
   # fix rpath
   sed -i'.original' -e 's/INSTALL_NAME_DIR.*/)/' source/CMakeLists.txt

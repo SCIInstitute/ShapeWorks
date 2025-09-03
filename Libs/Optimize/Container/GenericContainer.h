@@ -28,7 +28,7 @@ class GenericContainer : public itk::DataObject {
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleContainer, itk::DataObject);
+  itkTypeMacro(GenericContainer, itk::DataObject);
 
   /** Returns a reference to the object associated with index k.  If the index
       k does not already exist, this method inserts a new entry for k. */

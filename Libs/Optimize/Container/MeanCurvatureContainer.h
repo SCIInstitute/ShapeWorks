@@ -31,7 +31,7 @@ class MeanCurvatureContainer : public GenericContainerArray<TNumericType> {
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleMeanCurvatureAttribute, GenericContainerArray);
+  itkTypeMacro(MeanCurvatureContainer, GenericContainerArray);
 
   void SetVerbosity(unsigned int val) { m_verbosity = val; }
 
