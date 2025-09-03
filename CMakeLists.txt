@@ -4,15 +4,15 @@ cmake_minimum_required(VERSION 3.20)
 # SHAPEWORKS VERSION
 ###########################################
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
-SET(SHAPEWORKS_MINOR_VERSION 5 CACHE INTERNAL "Minor version number" FORCE)
+SET(SHAPEWORKS_MINOR_VERSION 7 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.5.0")
+SET(SHAPEWORKS_VERSION_STRING "6.7.0-dev")
 SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.${SHAPEWORKS_PATCH_VERSION}")
 
 # First, check that files were checked out properly using git-lfs
 file(MD5 "${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd" HASH)
 if (NOT "${HASH}" STREQUAL "bb94438a695c749b264180019abbbb97")
-  message( FATAL_ERROR "MD5 hash of '${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd' is incorrect.  This most likely means that git-lfs was not installed when ShapeWorks was cloned." )
+  message( FATAL_ERROR "MD5 hash of '${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd' is incorrect.  This most likely means that git-lfs was not installed when ShapeWorks was cloned.  If you have downloaded a zip or tar.gz of the source, then it will be missing Git-LFS objects.  Please use git to clone ShapeWorks or download a source archive containing the Git-LFS objects under releases." )
 endif()
 
 set(CMAKE_CXX_STANDARD 17)             # available options are [98, 11, 14, 17. 20]
@@ -42,7 +42,7 @@ project(ShapeWorks)
 
 
 ### vtk
-find_package(VTK 9.1.0)
+find_package(VTK 9.5.0)
 if (NOT VTK_FOUND)
   message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
 endif()
@@ -135,7 +135,7 @@ endif()
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 ### ITK
-FIND_PACKAGE(ITK 5.2.1 REQUIRED)
+FIND_PACKAGE(ITK 5.3.0 REQUIRED)
 IF (ITK_FOUND)
   INCLUDE(${ITK_USE_FILE})
 ELSE()

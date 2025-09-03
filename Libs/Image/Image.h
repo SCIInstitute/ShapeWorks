@@ -1,5 +1,6 @@
 #pragma once
 
+#include <StringUtils.h>
 #include <itkImage.h>
 #include <itkImageRegionIterator.h>
 #include <itkLinearInterpolateImageFunction.h>
@@ -35,12 +36,13 @@ class Image {
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType>;
 
   // constructors and assignment operators //
-  Image(const Dims dims);
-  Image(const std::string& pathname) : itk_image_(read(pathname)) {}
-  Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
+  explicit Image(const Dims dims);
+  explicit Image(const std::string& pathname) : itk_image_(read(pathname)) {}
+  explicit Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
     if (!itk_image_) throw std::invalid_argument("null imagePtr");
   }
-  Image(const vtkSmartPointer<vtkImageData> vtkImage);
+  explicit Image(const vtkSmartPointer<vtkImageData> vtkImage);
+
   Image(Image&& img) : itk_image_(nullptr) { this->itk_image_.Swap(img.itk_image_); }
   Image(const Image& img) : itk_image_(cloneData(img.itk_image_)) {}
   Image& operator=(const Image& img);  /// lvalue assignment operator
@@ -145,7 +147,7 @@ class Image {
                         const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);
 
   /// applies the given transformation to the image by using resampling filter with reference image
-  Image &applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
+  Image& applyTransform(const TransformPtr transform, const Image& referenceImage, InterpolationType interp = Linear);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary
   /// image
@@ -186,6 +188,9 @@ class Image {
   /// crops the image down to the given region, with optional padding added
   Image& crop(PhysicalRegion region, const int padding = 0);
 
+  /// crops (or pads) the image to fit the given region
+  Image& fitRegion(PhysicalRegion region, const PixelType value = 0.0);
+
   /// clips an image using a cutting plane
   Image& clip(const Plane plane, const PixelType val = 0.0);
 
@@ -212,6 +217,9 @@ class Image {
 
   /// physical dimensions of the image (dims * spacing)
   Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }
+
+  /// largest dimension size
+  double get_largest_dimension_size() const;
 
   /// physical spacing of the image
   Vector spacing() const { return itk_image_->GetSpacing(); }
@@ -271,7 +279,7 @@ class Image {
   ImageIterator iterator();
 
   /// compares this with another image using the region of interest filter
-  bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;
+  bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-6) const;
 
   /// compares this with another image using the region of interest filter
   bool operator==(const Image& other) const { return compare(other); }
@@ -287,9 +295,34 @@ class Image {
   //! Evaluates the image at a given position
   Image::PixelType evaluate(Point p);
 
+  //! Paints a sphere in the image
+  void paintSphere(Point p, double radius, PixelType value);
+
+  //! Paints a circle in the image
+  void paintCircle(Point p, double radius, unsigned int axis, PixelType value);
+
+  //! Returns if the image has been painted
+  bool isPainted() const { return painted_; }
+
+  //! fill with value
+  Image& fill(PixelType value);
+
+  //! Return if the image is a distance transform
+  bool isDistanceTransform() const;
+
   //! Return supported file types
   static std::vector<std::string> getSupportedTypes() {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
+  }
+
+  //! Return if the file type is supported
+  static bool isSupportedType(const std::string& filename) {
+    for (const auto& type : Image::getSupportedTypes()) {
+      if (StringUtils::hasSuffix(filename, type)) {
+        return true;
+      }
+    }
+    return false;
   }
 
  private:
@@ -311,9 +344,11 @@ class Image {
   /// pad image by the given dims (always positive) in each direction
   Image& pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);
 
-  StatsPtr statsFilter();
+  StatsPtr statsFilter() const;
 
   ImageType::Pointer itk_image_;
+
+  bool painted_ = false;
 
   InterpolatorType::Pointer interpolator_;
 };

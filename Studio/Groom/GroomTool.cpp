@@ -4,6 +4,8 @@
 #include <Groom/GroomTool.h>
 #include <Logging.h>
 #include <Shape.h>
+#include <Utils/StudioUtils.h>
+#include <qscrollbar.h>
 #include <ui_GroomTool.h>
 
 #include <QDebug>
@@ -36,6 +38,9 @@ GroomTool::GroomTool(Preferences& prefs, Telemetry& telemetry) : preferences_(pr
   connect(ui_->apply_to_all_domains, &QCheckBox::stateChanged, this, &GroomTool::apply_to_all_domains_changed);
 
   connect(ui_->skip_grooming, &QCheckBox::toggled, this, &GroomTool::skip_grooming_toggled);
+
+  connect(ui_->add_shared_boundary, &QPushButton::clicked, this, &GroomTool::add_shared_boundary_clicked);
+  connect(ui_->delete_shared_boundary, &QPushButton::clicked, this, &GroomTool::delete_shared_boundary_clicked);
 
   ui_->image_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->mesh_label->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -72,6 +77,9 @@ GroomTool::GroomTool(Preferences& prefs, Telemetry& telemetry) : preferences_(pr
   ui_->remesh_gradation_spinbox->setToolTip(
       "Set the adaptivity of remeshing, higher will allocate more triangles around areas of high curvature.");
 
+  ui_->shared_boundary->setToolTip("Check this box to model the shared boundary between two domains.");
+  ui_->shared_boundary_tolerance->setToolTip("Set the tolerance for the shared boundary.");
+
   // connect percent controls
   connect(ui_->remesh_percent_slider, &CustomSlider::valueChanged, this,
           [this](int value) { ui_->remesh_percent_spinbox->setValue(value); });
@@ -105,15 +113,41 @@ GroomTool::GroomTool(Preferences& prefs, Telemetry& telemetry) : preferences_(pr
 
   connect(ui_->remesh_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
 
+  connect(ui_->shared_boundary, &QCheckBox::toggled, this, &GroomTool::update_ui);
+
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
-
   QDoubleValidator* double_validator = new QDoubleValidator(0, std::numeric_limits<double>::max(), 1000, this);
 
   ui_->laplacian_iterations->setValidator(zero_and_up);
   ui_->laplacian_relaxation->setValidator(double_validator);
   ui_->sinc_iterations->setValidator(zero_and_up);
   ui_->sinc_passband->setValidator(double_validator);
+  ui_->shared_boundary_tolerance->setValidator(double_validator);
+
+  auto line_edits = findChildren<QLineEdit*>();
+  for (auto line_edit : line_edits) {
+    connect(line_edit, &QLineEdit::textChanged, this, &GroomTool::set_session_modified);
+  }
+  auto spin_boxes = findChildren<QSpinBox*>();
+  for (auto spin_box : spin_boxes) {
+    connect(spin_box, qOverload<int>(&QSpinBox::valueChanged), this, &GroomTool::set_session_modified);
+  }
+  auto double_spin_boxes = findChildren<QDoubleSpinBox*>();
+  for (auto double_spin_box : double_spin_boxes) {
+    connect(double_spin_box, qOverload<double>(&QDoubleSpinBox::valueChanged), this, &GroomTool::set_session_modified);
+  }
+  auto check_boxes = findChildren<QCheckBox*>();
+  for (auto check_box : check_boxes) {
+    connect(check_box, &QCheckBox::toggled, this, &GroomTool::set_session_modified);
+  }
+  auto combo_boxes = findChildren<QComboBox*>();
+  for (auto combo_box : combo_boxes) {
+    connect(combo_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &GroomTool::set_session_modified);
+  }
+
+  // read only
+  ui_->shared_boundary_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
   update_ui();
 }
@@ -145,6 +179,58 @@ void GroomTool::handle_error(QString msg) {
   SW_ERROR(msg.toStdString());
   Q_EMIT progress(100);
   enable_actions();
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::add_shared_boundary_clicked() {
+  auto params = GroomParameters(session_->get_project(), "");
+
+  auto shared_boundaries = params.get_shared_boundaries();
+  GroomParameters::SharedBoundary boundary;
+  boundary.first_domain = ui_->shared_boundary_first_domain->currentText().toStdString();
+  boundary.second_domain = ui_->shared_boundary_second_domain->currentText().toStdString();
+  boundary.tolerance = ui_->shared_boundary_tolerance->text().toDouble();
+  if (boundary.first_domain == boundary.second_domain) {
+    SW_ERROR("Cannot add a shared boundary between the same domain");
+    return;
+  }
+
+  for (const auto& existing_boundary : shared_boundaries) {
+    if (existing_boundary.first_domain == boundary.first_domain &&
+        existing_boundary.second_domain == boundary.second_domain) {
+      SW_ERROR("Shared boundary already exists");
+      return;
+    }
+    if (existing_boundary.first_domain == boundary.second_domain &&
+        existing_boundary.second_domain == boundary.first_domain) {
+      SW_ERROR("Shared boundary already exists");
+      return;
+    }
+  }
+  shared_boundaries.push_back(boundary);
+  params.set_shared_boundaries(shared_boundaries);
+  params.save_to_project();
+  update_shared_boundary_table();
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::delete_shared_boundary_clicked() {
+  auto params = GroomParameters(session_->get_project(), "");
+  auto shared_boundaries = params.get_shared_boundaries();
+
+  QModelIndexList selected_rows = ui_->shared_boundary_table->selectionModel()->selectedRows();
+  if (selected_rows.empty()) {
+    SW_ERROR("No shared boundary selected to delete");
+    return;
+  }
+
+  for (int i = selected_rows.size() - 1; i >= 0; i--) {
+    shared_boundaries.erase(shared_boundaries.begin() + selected_rows[i].row());
+  }
+
+  params.set_shared_boundaries(shared_boundaries);
+  params.save_to_project();
+  update_shared_boundary_table();
 }
 
 //---------------------------------------------------------------------------
@@ -188,6 +274,7 @@ void GroomTool::update_page() {
 
 //---------------------------------------------------------------------------
 void GroomTool::update_domain_box() {
+  block_signals_ = true;
   auto domain_names = session_->get_project()->get_domain_names();
   ui_->domain_panel->setVisible(domain_names.size() > 1);
 
@@ -204,6 +291,17 @@ void GroomTool::update_domain_box() {
     current_domain_ = "";
     ui_->domain_box->clear();
   }
+
+  StudioUtils::update_domain_combobox(ui_->shared_boundary_first_domain, session_,
+                                      {"shared_boundary", "shared_surface"});
+  StudioUtils::update_domain_combobox(ui_->shared_boundary_second_domain, session_,
+                                      {"shared_boundary", "shared_surface"});
+  if (domain_names.size() > 1) {
+    if (ui_->shared_boundary_first_domain->currentIndex() == ui_->shared_boundary_second_domain->currentIndex()) {
+      ui_->shared_boundary_second_domain->setCurrentIndex(ui_->shared_boundary_second_domain->currentIndex() + 1);
+    }
+  }
+  block_signals_ = false;
 }
 
 //---------------------------------------------------------------------------
@@ -220,6 +318,55 @@ void GroomTool::apply_to_all_domains_changed() {
   params.save_to_project();
 
   update_domain_box();
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::update_shared_boundary_table() {
+  auto params = GroomParameters(session_->get_project(), "");
+  auto shared_boundaries = params.get_shared_boundaries();
+  QStringList table_headers;
+  table_headers << "First Domain";
+  table_headers << "Second Domain";
+  table_headers << "Tolerance";
+  QTableWidget* table = ui_->shared_boundary_table;
+  table->clear();
+  table->setRowCount(shared_boundaries.size());
+  table->setColumnCount(table_headers.size());
+  table->setHorizontalHeaderLabels(table_headers);
+  table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  table->setSelectionBehavior(QAbstractItemView::SelectRows);
+  int row = 0;
+  for (const auto& boundary : shared_boundaries) {
+    table->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(boundary.first_domain)));
+    table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(boundary.second_domain)));
+    table->setItem(row, 2, new QTableWidgetItem(QString::number(boundary.tolerance)));
+    row++;
+  }
+
+  // Calculate the height to fit exactly the number of rows
+  int header_height = table->horizontalHeader()->height();
+  int row_height = table->rowHeight(0);       // Get height of first row (all rows should be same height)
+  int frame_width = table->frameWidth() * 2;  // Top and bottom frame
+  int scrollbar_height = 0;
+
+  // Check if horizontal scrollbar might be visible
+  if (table->horizontalScrollBar()->isVisible()) {
+    scrollbar_height = table->horizontalScrollBar()->height();
+  }
+
+  int total_height;
+  if (table->rowCount() < 1) {
+    total_height = ui_->label->height() * 2;  // Keep your original fallback
+  } else {
+    total_height = header_height + (row_height * table->rowCount()) + frame_width + scrollbar_height;
+  }
+
+  table->setMaximumHeight(total_height);
+  table->setMinimumHeight(total_height);  // Also set minimum to prevent shrinking
+
+  table->resizeColumnsToContents();
+  table->horizontalHeader()->setStretchLastSection(false);
+  table->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
 //---------------------------------------------------------------------------
@@ -268,12 +415,20 @@ void GroomTool::update_reflect_choices() {
 }
 
 //---------------------------------------------------------------------------
+void GroomTool::set_session_modified() {
+  if (session_) {
+    session_->set_modified(true);
+  }
+}
+
+//---------------------------------------------------------------------------
 void GroomTool::load_params() {
   auto params = GroomParameters(session_->get_project(), current_domain_);
   set_ui_from_params(params);
 
   update_page();
   update_reflect_columns();
+  update_shared_boundary_table();
 }
 
 //---------------------------------------------------------------------------
@@ -367,6 +522,11 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
   ui_->remesh_gradation_slider->setValue(params.get_remesh_gradation() * 50.0);
   ui_->remesh_gradation_spinbox->setValue(params.get_remesh_gradation());
 
+  ui_->shared_boundary->setChecked(params.get_shared_boundaries_enabled());
+  ui_->shared_boundary_first_domain->setCurrentText("");
+  ui_->shared_boundary_second_domain->setCurrentText("");
+  ui_->shared_boundary_tolerance->setText("0.01");
+
   auto subjects = session_->get_project()->get_subjects();
   int domain_id = std::max<int>(ui_->domain_box->currentIndex(), 0);
 
@@ -457,6 +617,8 @@ void GroomTool::store_params() {
   params.set_remesh_num_vertices(ui_->remesh_num_vertices->text().toInt());
   params.set_remesh_gradation(ui_->remesh_gradation_spinbox->value());
 
+  params.set_shared_boundaries_enabled(ui_->shared_boundary->isChecked());
+
   params.set_skip_grooming(ui_->skip_grooming->isChecked());
   params.save_to_project();
 
@@ -475,6 +637,9 @@ void GroomTool::store_params() {
     params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
     params.set_groom_all_domains_the_same(ui_->apply_to_all_domains->isChecked());
     params.set_skip_grooming(ui_->skip_grooming->isChecked());
+
+    params.set_shared_boundaries_enabled(ui_->shared_boundary->isChecked());
+
     params.save_to_project();
   }
 }
@@ -530,6 +695,18 @@ void GroomTool::on_run_groom_button_clicked() {
   timer_.start();
 
   SW_LOG("Please wait: running groom step...");
+
+  // log parameters
+  SW_LOG_ONLY("Grooming parameters:");
+
+  for (const auto& domain_name : session_->get_project()->get_domain_names()) {
+    auto params = GroomParameters(session_->get_project(), domain_name);
+    SW_LOG_ONLY("Domain: " + domain_name);
+    for (const auto& pair : params.get_parameters().get_map()) {
+      SW_LOG_ONLY(pair.first + ": " + pair.second);
+    }
+  }
+
   Q_EMIT progress(0);
 
   groom_ = QSharedPointer<Groom>(new Groom(session_->get_project()));
@@ -552,6 +729,8 @@ void GroomTool::on_run_groom_button_clicked() {
 //---------------------------------------------------------------------------
 void GroomTool::handle_thread_complete() {
   Q_EMIT progress(95);
+
+  session_->trigger_save();
 
   QString duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1);
   SW_LOG("Groom Complete.  Duration: {} seconds", duration);
@@ -605,6 +784,7 @@ void GroomTool::skip_grooming_toggled() {
     groom_ = QSharedPointer<Groom>(new Groom(session_->get_project()));
     groom_->run();
     SW_MESSAGE("Skipped Grooming");
+    SW_PROGRESS(100, "Grooming Skipped");
     Q_EMIT groom_complete();
   }
 }
@@ -677,6 +857,10 @@ void GroomTool::shutdown_threads() {
 
 //---------------------------------------------------------------------------
 void GroomTool::domain_changed() {
+  if (block_signals_) {
+    return;
+  }
+
   if (current_domain_ != "") {
     store_params();
   }
@@ -687,7 +871,19 @@ void GroomTool::domain_changed() {
     current_domain_ = ui_->domain_box->currentText().toStdString();
   }
 
+  std::cerr << "calling load_params3\n";
   load_params();
+
+  /*
+  // update the shared boundary domain box to contain all the other domains besides this one
+  auto domain_names = session_->get_project()->get_domain_names();
+  ui_->shared_boundary_domain->clear();
+  for (const auto& domain_name : domain_names) {
+    if (domain_name != current_domain_) {
+      ui_->shared_boundary_domain->addItem(QString::fromStdString(domain_name));
+    }
+  }
+*/
 }
 
 //---------------------------------------------------------------------------
@@ -728,6 +924,8 @@ void GroomTool::update_ui() {
 
   ui_->remesh_num_vertices_label->setVisible(!percent_mode);
   ui_->remesh_num_vertices->setVisible(!percent_mode);
+
+  ui_->shared_boundary_panel->setVisible(ui_->shared_boundary->isChecked());
 }
 
 //---------------------------------------------------------------------------

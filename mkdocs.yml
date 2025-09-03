@@ -37,6 +37,7 @@ nav:
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
    - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
+   - 'AI Assisted Segmentation':             'new/ai-assisted-segmentation.md'
 - ShapeWorks Studio:
    - 'Getting Started':                      'studio/getting-started-with-studio.md'
    - 'Viewer Controls':                      'studio/studio-viewer.md'
@@ -47,6 +48,9 @@ nav:
    - 'Analyze Module':                       'studio/studio-analyze.md'
    - 'DeepSSM Module':                       'studio/deepssm-in-studio.md'
    - 'Multiple Domains SSM':                 'studio/multiple-domains.md'
+   - 'Shared Boundaries':                    'studio/studio-shared-boundary.md'
+   - 'Segmentation Tool':                    'studio/segmentation-tool.md'
+   - 'AI Assisted Segmentation':             'studio/ai-assisted-segmentation.md'
 - ShapeWorks Cloud:
    - 'Getting Started':                      'cloud/getting-started-with-cloud.md'
    - 'Datasets':                             'cloud/cloud-dataset.md'
@@ -112,13 +116,12 @@ nav:
    - 'How to Add Python APIs?':              'dev/python-apis.md'
    - 'How to Add and Run Unit Tests?':       'dev/tests.md'
    - 'How to Add New Use Cases?':            'dev/new-use-case.md'
-   - 'How to Add New Datasets?':             'dev/datasets.md'
    - 'How to Add New Notebooks?':            'dev/new-notebook.md'
-   - 'When Modifying Existing Datasets':     'dev/modify-datasets.md'
    - 'Getting Started with Documentation':   'dev/docs.md'
    - 'Getting Started with GitHub Actions':  'dev/gh-actions.md'
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
+   - 'Release Process':                      'dev/release-process.md'
 
 - Python API Reference: 'python/python-api.md'
      
@@ -129,6 +132,10 @@ nav:
    - Classes:    'api/Classes/index_classes.md'
    - Files:      'api/Files/index_files.md'
 
+- Java/Matlab Interface:
+   - Java Interface: 'java/java.md'
+   - Matlab Interface: 'java/matlab.md'
+     
 - About:
    - 'Meet ShapeWorkers!':  'about/team.md'
    - 'Release Notes':      'about/release-notes.md'

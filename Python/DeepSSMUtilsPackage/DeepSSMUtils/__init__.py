@@ -7,7 +7,7 @@ from DeepSSMUtils import train_viz
 from DeepSSMUtils import image_utils
 from DeepSSMUtils import run_utils
 
-from .run_utils import create_split, groom_training_shapes, groom_training_images, get_reference_index, \
+from .run_utils import create_split, groom_training_shapes, groom_training_images, \
     run_data_augmentation, groom_val_test_images, prep_project_for_val_particles, groom_validation_shapes, \
     prepare_data_loaders, get_deepssm_dir, get_split_indices, optimize_training_particles, process_test_predictions
 
@@ -41,9 +41,9 @@ def prepareConfigFile(config_filename, model_name, embedded_dim, out_dir, loader
                                     fine_tune_epochs, fine_tune_learning_rate)
 
 
-def trainDeepSSM(config_file):
+def trainDeepSSM(project, config_file):
     testPytorch()
-    trainer.train(config_file)
+    trainer.train(project, config_file)
     return
 
 
@@ -70,7 +70,7 @@ def analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
 
 def get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid'):
     itk_transform = image_utils.get_image_registration_transform(fixed_image_file, moving_image_file,
-                                                                 transform_type='rigid')
+                                                                 transform_type=transform_type)
     return itk_transform
 
 

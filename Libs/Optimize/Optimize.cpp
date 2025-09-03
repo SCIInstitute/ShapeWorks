@@ -2,10 +2,12 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
-#include <numeric>
+// #include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "Profiling.h"
 
 #ifdef _WIN32
 #include <direct.h>
@@ -25,7 +27,7 @@
 #include <Libs/Particles/ParticleFile.h>
 #include <Project/Project.h>
 
-#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
@@ -33,6 +35,7 @@
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
+#include "ShapeworksUtils.h"
 
 // pybind
 #include <pybind11/embed.h>
@@ -120,17 +123,8 @@ bool Optimize::Run() {
   }
 
   // Initialize
-  if (m_processing_mode >= 0) {
-    Initialize();
-  }
-  // Introduce adaptivity
-  if (m_processing_mode >= 1 || m_processing_mode == -1) {
-    AddAdaptivity();
-  }
-  // Optimize
-  if (m_processing_mode >= 2 || m_processing_mode == -2) {
-    RunOptimize();
-  }
+  Initialize();
+  RunOptimize();
 
   if (this->m_use_shape_statistics_after > 0) {
     // First phase is done now run iteratively until we reach the final particle counts
@@ -161,15 +155,8 @@ bool Optimize::Run() {
       }
 
       if (!finished) {
-        if (m_processing_mode >= 0) {
-          Initialize();
-        }
-        if (m_processing_mode >= 1 || m_processing_mode == -1) {
-          AddAdaptivity();
-        }
-        if (m_processing_mode >= 2 || m_processing_mode == -2) {
-          RunOptimize();
-        }
+        Initialize();
+        RunOptimize();
       }
     }
   }
@@ -190,6 +177,8 @@ bool Optimize::Run() {
 
 //---------------------------------------------------------------------------
 int Optimize::SetParameters() {
+  TIME_SCOPE("Optimize::SetParameters");
+
   // sanity check
   if (m_domains_per_shape != m_number_of_particles.size()) {
     SW_ERROR("Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()");
@@ -391,15 +380,6 @@ void Optimize::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3>
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetProcessingMode(int mode) { this->m_processing_mode = mode; }
-
-//---------------------------------------------------------------------------
-void Optimize::SetAdaptivityMode(int adaptivity_mode) { this->m_adaptivity_mode = adaptivity_mode; }
-
-//---------------------------------------------------------------------------
-void Optimize::SetAdaptivityStrength(double adaptivity_strength) { this->m_adaptivity_strength = adaptivity_strength; }
-
-//---------------------------------------------------------------------------
 void Optimize::ReadTransformFile() {
   ObjectReader<ParticleSystem::TransformType> reader;
   reader.SetFileName(m_transform_file);
@@ -425,9 +405,7 @@ void Optimize::InitializeSampler() {
   float nbhd_to_sigma = 3.0;  // 3.0 -> 1.0
   float flat_cutoff = 0.3;    // 0.3 -> 0.85
 
-  m_sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
   m_sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
@@ -456,7 +434,7 @@ void Optimize::InitializeSampler() {
 
   m_sampler->SetCorrespondenceOn();
 
-  m_sampler->SetAdaptivityMode(m_adaptivity_mode);
+  m_sampler->SetAdaptivityMode();
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(
       m_recompute_regularization_interval);
@@ -520,6 +498,7 @@ void Optimize::AddSinglePoint() {
 
 //---------------------------------------------------------------------------
 void Optimize::Initialize() {
+  TIME_SCOPE("Optimize::Initialize");
   if (m_verbosity_level > 0) {
     SW_LOG("------------------------------");
     SW_LOG("*** Initialize Step ***");
@@ -538,8 +517,6 @@ void Optimize::Initialize() {
   }
 
   m_sampler->GetParticleSystem()->SynchronizePositions();
-
-  m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
 
   m_sampler->SetCorrespondenceOn();
 
@@ -717,40 +694,9 @@ void Optimize::Initialize() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::AddAdaptivity() {
-  if (m_verbosity_level > 0) {
-    std::cout << "------------------------------\n";
-    std::cout << "*** AddAdaptivity Step\n";
-    std::cout << "------------------------------\n";
-  }
-
-  if (m_adaptivity_strength == 0.0) {
-    return;
-  }
-
-  double minRad = 3.0 * this->GetMinNeighborhoodRadius();
-
-  m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
-  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
-  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
-
-  m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
-  m_sampler->GetOptimizer()->SetNumberOfIterations(0);
-  m_sampler->Execute();
-
-  this->WritePointFiles();
-  this->WritePointFilesWithFeatures();
-  this->WriteTransformFile();
-  this->WriteTransformFiles();
-  this->WriteCuttingPlanePoints();
-
-  if (m_verbosity_level > 0) {
-    std::cout << "Finished adaptivity!!!" << std::endl;
-  }
-}
-
-//---------------------------------------------------------------------------
 void Optimize::RunOptimize() {
+  TIME_SCOPE("Optimize::RunOptimize");
+
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** Optimize Step\n";
@@ -758,7 +704,6 @@ void Optimize::RunOptimize() {
   }
 
   m_optimizing = true;
-  m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
 
@@ -883,30 +828,6 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&) {
     this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
   }
 
-  if (m_perform_good_bad == true) {
-    std::vector<std::vector<int>> tmp;
-    tmp = m_good_bad->run_assessment(m_sampler->GetParticleSystem(), m_sampler->GetMeanCurvatureCache());
-
-    if (!tmp.empty()) {
-      if (this->m_bad_ids.empty()) {
-        this->m_bad_ids.resize(m_domains_per_shape);
-      }
-
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        for (int j = 0; j < tmp[i].size(); j++) {
-          if (m_bad_ids[i].empty()) {
-            this->m_bad_ids[i].push_back(tmp[i][j]);
-          } else {
-            if (std::count(m_bad_ids[i].begin(), m_bad_ids[i].end(), tmp[i][j]) == 0) {
-              this->m_bad_ids[i].push_back(tmp[i][j]);
-            }
-          }
-        }
-      }
-    }
-    ReportBadParticles();
-  }
-
   this->ComputeEnergyAfterIteration();
 
   if (m_optimizing && m_procrustes_interval != 0) {
@@ -1015,10 +936,6 @@ void Optimize::PrintParamInfo() {
     std::cout << std::endl;
   }
 
-  if (m_adaptivity_mode == 3) {
-    std::cout << std::endl << std::endl << "*****Using constraints on shapes*****" << std::endl;
-  }
-
   std::cout << "Target number of particles = ";
   if (m_domains_per_shape == 1) {
     std::cout << m_number_of_particles[0];
@@ -1078,20 +995,9 @@ void Optimize::PrintParamInfo() {
   std::cout << "------------------------------" << std::endl;
 
   std::cout << "Processing modes = ";
-  if (m_processing_mode >= 0) {
-    std::cout << "Initialization";
-  }
-  if ((m_processing_mode >= 1 || m_processing_mode == -1) && m_adaptivity_strength > 0.0) {
-    std::cout << ", Adaptivity";
-  }
-  if (m_processing_mode >= 2 || m_processing_mode == -2) {
-    std::cout << ", Optimization";
-  }
+  std::cout << "Initialization";
+  std::cout << ", Optimization";
   std::cout << std::endl;
-
-  if (m_adaptivity_strength > 0.0) {
-    std::cout << "adaptivity_strength = " << m_adaptivity_strength << std::endl;
-  }
 
   std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
   std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed << std::endl;
@@ -1872,7 +1778,7 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data) {
     double geodesic_remesh_percent = m_geodesics_enabled ? m_geodesic_remesh_percent : 100;
 
     const auto mesh =
-        std::make_shared<shapeworks::MeshWrapper>(poly_data, m_geodesics_enabled, m_geodesic_cache_size_multiplier);
+        std::make_shared<shapeworks::Surface>(poly_data, m_geodesics_enabled, m_geodesic_cache_size_multiplier);
     m_sampler->AddMesh(mesh, geodesic_remesh_percent);
   }
   this->m_num_shapes++;

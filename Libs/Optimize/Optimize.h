@@ -5,7 +5,6 @@
 #endif
 
 // std
-#include <random>
 #include <string>
 #include <vector>
 
@@ -153,17 +152,11 @@ class Optimize {
   void SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3>& va, const vnl_vector_fixed<double, 3>& vb,
                        const vnl_vector_fixed<double, 3>& vc);
 
-  //! Set processing mode (TODO: details)
-  void SetProcessingMode(int mode);
-  //! Set adaptivity mode (TODO: details)
-  void SetAdaptivityMode(int adaptivity_mode);
   //! Set Mesh FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode
   void SetMeshFFCMode(int mesh_ffc_mode) {
     m_mesh_ffc_mode = mesh_ffc_mode;
     m_sampler->SetMeshFFCMode(mesh_ffc_mode);
   }
-  //! Set adaptivity strength (TODO: details)
-  void SetAdaptivityStrength(double adaptivity_strength);
   //! Set the number of time points per subject (TODO: details)
   void SetTimePtsPerSubject(int time_pts_per_subject);
   //! Get the number of time points per subject (TODO: details)
@@ -283,6 +276,7 @@ class Optimize {
 
   //! Set whether or not geodesics are enabled
   void SetGeodesicsEnabled(bool is_enabled);
+  bool GetGeodesicsEnabled() const { return m_geodesics_enabled; }
 
   //! Set cache size multiplier for geodesics. The total number of cache entries will be
   //! n * number_of_triangles
@@ -319,7 +313,6 @@ class Optimize {
   double GetMinNeighborhoodRadius();
   void AddSinglePoint();
   void Initialize();
-  void AddAdaptivity();
   void RunOptimize();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject&);
@@ -391,10 +384,6 @@ class Optimize {
   std::string m_output_cutting_plane_file;
 
   // Optimization Parameters
-  int m_processing_mode = 3;
-  int m_adaptivity_mode = 0;
-  double m_adaptivity_strength = 0.0;
-
   bool m_mesh_ffc_mode = 0;
 
   unsigned int m_timepts_per_subject = 1;
@@ -423,7 +412,7 @@ class Optimize {
   std::string m_python_filename;
   bool m_geodesics_enabled = false;             // geodesics disabled by default
   size_t m_geodesic_cache_size_multiplier = 0;  // 0 => MeshWrapper will use a heuristic to determine cache size
-  double m_geodesic_remesh_percent = 100.0;    // 100% by default (e.g. no remeshing)
+  double m_geodesic_remesh_percent = 100.0;     // 100% by default (e.g. no remeshing)
 
   // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;

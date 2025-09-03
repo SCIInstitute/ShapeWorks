@@ -1,5 +1,6 @@
 #pragma once
 
+#include <oneapi/tbb/global_control.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
@@ -54,6 +55,7 @@ class ShapeWorksUtils {
  private:
   static unsigned rng_seed_;
   static std::mt19937 mt_;
+  static std::unique_ptr<tbb::global_control> tbb_global_control_;
 };
 
 }  // namespace shapeworks

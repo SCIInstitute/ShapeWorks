@@ -1,7 +1,9 @@
 #pragma once
 
+#include <Analyze/Analyze.h>
 #include <Analyze/Particles.h>
 #include <Data/Preferences.h>
+#include <Logging.h>
 #include <MeshManager.h>
 #include <Particles/ParticleSystemEvaluation.h>
 #include <Project/Project.h>
@@ -58,6 +60,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   Q_OBJECT;
 
  public:
+  using AlignmentType = Analyze::AlignmentType;
+
   /// constructor
   Session(QWidget* parent, Preferences& prefs);
 
@@ -156,6 +160,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_feature_range_min(double value);
   void set_feature_range_max(double value);
 
+  void set_feature_uniform_scale(bool value);
+  bool get_feature_uniform_scale();
+
   void handle_ctrl_click(PickResult result);
 
   void trigger_landmarks_changed();
@@ -223,11 +230,20 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_ffc_paint_active(bool enabled);
   bool get_ffc_paint_active();
 
+  void set_seg_paint_active(bool enabled);
+  bool get_seg_paint_active();
+
+  void set_seg_paint_value(int value);
+  int get_seg_paint_value();
+
   void set_ffc_paint_mode_inclusive(bool inclusive);
   bool get_ffc_paint_mode_inclusive();
 
   void set_ffc_paint_size(double size);
   double get_ffc_paint_size();
+
+  void set_seg_paint_size(double size);
+  double get_seg_paint_size();
 
   bool get_show_good_bad_particles();
   void set_show_good_bad_particles(bool enabled);
@@ -267,6 +283,14 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   //! Return all scalars for all shapes, given target feature
   Eigen::MatrixXd get_all_scalars(std::string target_feature);
 
+  void set_current_alignment(AlignmentType alignment) { current_alignment_ = alignment; }
+  AlignmentType get_current_alignment() { return current_alignment_; }
+
+  bool is_modified() { return modified_; }
+  void set_modified(bool modified);
+
+  void recompute_surfaces();
+
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
 
@@ -280,6 +304,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
  Q_SIGNALS:
   /// signal that the data has changed
   void data_changed();
+  void tool_state_changed();
   void points_changed();
   void landmarks_changed();
   void planes_changed();
@@ -291,11 +316,13 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void feature_range_changed();
   void update_view_mode();
   void image_slice_settings_changed();
-  void ffc_paint_mode_changed();
+  void paint_mode_changed();
   void repaint();
   void reinsert_shapes();
   void annotations_changed();
   void save();
+  void session_title_changed();
+  void image_name_changed();
 
  public:
   // constants
@@ -304,6 +331,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string OPTIMIZE_C;
   const static std::string ANALYSIS_C;
   const static std::string DEEPSSM_C;
+  const static std::string MONAI_C;
 
  private:
   void renumber_shapes();
@@ -348,6 +376,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;
   double ffc_paint_size_ = 50;
+  double seg_paint_size_ = 50;
+  bool seg_painting_active_ = false;
+  int seg_painting_value_ = 1;
 
   bool is_loading_ = false;
   CompareSettings compare_settings_;
@@ -355,6 +386,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
 
   QSharedPointer<PythonWorker> py_worker_;
+
+  AlignmentType current_alignment_{AlignmentType::Local};
+
+  bool modified_{false};
 };
 
 }  // namespace shapeworks

@@ -1,292 +1,426 @@
 #include "ShapeEvaluation.h"
 
+#include <Logging.h>
+#include <tbb/parallel_for.h>
+
 #include <Eigen/Core>
 #include <Eigen/SVD>
 #include <fstream>
+
 #include "EvaluationUtil.h"
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
+using RowMajorMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeCompactness(const ParticleSystemEvaluation& ParticleSystemEvaluation, const int nModes,
-                                           const std::string& saveTo) {
-  const int N = ParticleSystemEvaluation.N();
-  if (nModes > N - 1) {
+double ShapeEvaluation::compute_compactness(const ParticleSystemEvaluation& particle_system, const int num_modes,
+                                            const std::string& save_to) {
+  const int n = particle_system.num_samples();
+  if (num_modes > n - 1) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
-  Eigen::VectorXd cumsum = ShapeEvaluation::ComputeFullCompactness(ParticleSystemEvaluation);
+  Eigen::VectorXd cumsum = ShapeEvaluation::compute_full_compactness(particle_system);
 
-  if (!saveTo.empty()) {
-    std::ofstream of(saveTo);
+  if (!save_to.empty()) {
+    std::ofstream of(save_to);
     of << cumsum;
     of.close();
   }
 
-  return cumsum(nModes - 1);
+  return cumsum(num_modes - 1);
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystemEvaluation& ParticleSystemEvaluation,
-                                                        std::function<void(float)> progress_callback) {
-  const int N = ParticleSystemEvaluation.N();
-  const int D = ParticleSystemEvaluation.D();
-  const int num_modes = N - 1;  // the number of modes is one less than the number of samples
+Eigen::VectorXd ShapeEvaluation::compute_full_compactness(const ParticleSystemEvaluation& particle_system,
+                                                          std::function<void(float)> progress_callback) {
+  const int n = particle_system.num_samples();
+  const int d = particle_system.num_dims();
+  const int num_modes = n - 1;  // the number of modes is one less than the number of samples
 
   if (num_modes < 1) {
     return Eigen::VectorXd();
   }
-  Eigen::MatrixXd Y = ParticleSystemEvaluation.Particles();
-  const Eigen::VectorXd mu = Y.rowwise().mean();
-  Y.colwise() -= mu;
+  Eigen::MatrixXd y = particle_system.get_matrix();
+  const Eigen::VectorXd mu = y.rowwise().mean();
+  y.colwise() -= mu;
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
-  const auto S = svd.singularValues().array().pow(2) / (N * D);
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(y);
+  const auto s = svd.singularValues().array().pow(2) / (n * d);
 
   // Compute cumulative sum
   Eigen::VectorXd cumsum(num_modes);
-  cumsum(0) = S(0);
+  cumsum(0) = s(0);
   for (int i = 1; i < num_modes; i++) {
     if (progress_callback) {
-      progress_callback(static_cast<float>(i) / static_cast<float>(N));
+      progress_callback(static_cast<float>(i) / static_cast<float>(n));
     }
-    cumsum(i) = cumsum(i - 1) + S(i);
+    cumsum(i) = cumsum(i - 1) + s(i);
   }
-  cumsum /= S.sum();
+  cumsum /= s.sum();
   return cumsum;
 }
 
 //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeGeneralization(const ParticleSystemEvaluation& ParticleSystemEvaluation,
-                                              const int nModes, const std::string& saveTo) {
-  const int N = ParticleSystemEvaluation.N();
-  const int D = ParticleSystemEvaluation.D();
-  const Eigen::MatrixXd& P = ParticleSystemEvaluation.Particles();
+double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& particle_system, const int num_modes,
+                                               const std::string& save_to, bool surface_distance_mode) {
+  const long n = particle_system.num_samples();
+  const long d = particle_system.num_dims();
+  const Eigen::MatrixXd& p = particle_system.get_matrix();
 
-  if (nModes > N - 1) {
+  if (num_modes > n - 1) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
   // Keep track of the reconstructions so we can visualize them later
   std::vector<Reconstruction> reconstructions;
 
-  double totalDist = 0.0;
-  for (int leave = 0; leave < N; leave++) {
-    Eigen::MatrixXd Y(D, N - 1);
-    Y.leftCols(leave) = P.leftCols(leave);
-    Y.rightCols(N - leave - 1) = P.rightCols(N - leave - 1);
+  int num_values = particle_system.get_num_values_per_particle();
 
-    const Eigen::VectorXd mu = Y.rowwise().mean();
-    Y.colwise() -= mu;
-    const Eigen::VectorXd Ytest = P.col(leave);
+  auto meshes = particle_system.get_meshes();
 
-    Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
-    const auto epsi = svd.matrixU().block(0, 0, D, nModes);
-    const auto betas = epsi.transpose() * (Ytest - mu);
+  double total_dist = 0.0;
+  // leave one out
+  for (int leave = 0; leave < n; leave++) {
+    // Create a new matrix, `y` excluding the column to be left out, `leave`
+    Eigen::MatrixXd y(d, n - 1);
+    y.leftCols(leave) = p.leftCols(leave);
+    y.rightCols(n - leave - 1) = p.rightCols(n - leave - 1);
+
+    // Compute the mean of each row and centralize the data
+    // * Computes the mean (`mu`) of each row of matrix `y`.
+    // * Subtracts the mean from each column to centralize the data around zero.
+    const Eigen::VectorXd mu = y.rowwise().mean();
+    y.colwise() -= mu;
+    // Define the test vector as the column that was left out (`leave`) of `p`
+    const Eigen::VectorXd y_test = p.col(leave);
+
+    // Perform Singular Value Decomposition (SVD) on the data
+    // Conducts SVD on the centralized matrix `y` to decompose it into its singular vectors and singular values.
+    // `Eigen::ComputeFullU` indicates calculation of the full `U` matrix, where `U` is an orthogonal matrix
+    // containing left singular vectors.
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeFullU);
+    // `epsi` contains the first `num_modes` columns of matrix `U` (leading singular vectors).
+    const auto epsi = svd.matrixU().block(0, 0, d, num_modes);
+    // * The test vector (`y_test`) is centralized by subtracting the mean (`mu`), then projected onto the subspace
+    // spanned by leading singular vectors (`epsi`).
+    // * `betas` contains the coefficients of the linear combination of the leading singular vectors to reconstruct the
+    // test vector.
+    const auto betas = epsi.transpose() * (y_test - mu);
+    // Computes the reconstruction (`rec`) of the test vector by mapping it back from the reduced space and adding the
+    // mean.
     const Eigen::VectorXd rec = epsi * betas + mu;
 
-    const int numParticles = D / VDimension;
-    const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, VDimension);
-    const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, VDimension);
-    const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
-    totalDist += dist;
+    // Reshape vectors and calculate distance measure
+    const long num_particles = d / num_values;
+    const Eigen::Map<const RowMajorMatrix> y_test_reshaped(y_test.data(), num_particles, num_values);
+    const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), num_particles, num_values);
+
+    double dist = 0;
+    if (surface_distance_mode) {
+      // distance between each particle and the surface
+      auto mesh = meshes[leave];
+      for (int i = 0; i < num_particles; i++) {
+        vtkIdType face_id = 0;
+        double this_dist = 0;
+        Point3 point;
+        point[0] = rec_reshaped(i, 0);
+        point[1] = rec_reshaped(i, 1);
+        point[2] = rec_reshaped(i, 2);
+        mesh.closestPoint(point, this_dist, face_id);
+        dist += this_dist;
+      }
+
+    } else {
+      // euclidean distance between the original and reconstructed
+      dist = (rec_reshaped - y_test_reshaped).rowwise().norm().sum() / static_cast<double>(num_particles);
+    }
+
+    total_dist += dist;
 
     reconstructions.push_back({dist, leave, rec_reshaped});
   }
-  const double generalization = totalDist / N;
+  const double generalization = total_dist / static_cast<double>(n);
 
   // Save the reconstructions if needed. Generates XML files that can be opened in
   // ShapeWorksView2
-  if (!saveTo.empty()) {
-    SaveReconstructions(reconstructions, ParticleSystemEvaluation.Paths(), saveTo);
+  if (!save_to.empty()) {
+    SaveReconstructions(reconstructions, particle_system.get_paths(), save_to);
   }
 
   return generalization;
 }
 
-Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystemEvaluation& ParticleSystemEvaluation,
-                                                           std::function<void(float)> progress_callback) {
-  const int N = ParticleSystemEvaluation.N();
-  const int D = ParticleSystemEvaluation.D();
-  const Eigen::MatrixXd& P = ParticleSystemEvaluation.Particles();
+//---------------------------------------------------------------------------
+Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSystemEvaluation& particle_system,
+                                                             std::function<void(float)> progress_callback,
+                                                             std::function<bool()> check_abort,
+                                                             bool surface_distance_mode) {
+  const long n = particle_system.num_samples();  // number of samples
+  const long d = particle_system.num_dims();     // number of dimensions (e.g. number of particles * 3)
+  const Eigen::MatrixXd& p = particle_system.get_matrix();
 
-  if (N <= 1) {
-    return Eigen::VectorXd();
+  if (n <= 1) {
+    return {};
   }
 
-  Eigen::VectorXd generalizations(N - 1);
+  Eigen::VectorXd generalizations(n - 1);
 
-  Eigen::VectorXd totalDists = Eigen::VectorXd::Zero(N - 1);
+  Eigen::VectorXd total_dists = Eigen::VectorXd::Zero(n - 1);
 
-  for (int leave = 0; leave < N; leave++) {
+  int num_values = particle_system.get_num_values_per_particle();
+
+  auto meshes = particle_system.get_meshes();
+
+  for (int leave = 0; leave < n; leave++) {
     if (progress_callback) {
-      progress_callback(static_cast<float>(leave) / static_cast<float>(N));
+      progress_callback(static_cast<float>(leave) / static_cast<float>(n));
     }
-    Eigen::MatrixXd Y(D, N - 1);
-    Y.leftCols(leave) = P.leftCols(leave);
-    Y.rightCols(N - leave - 1) = P.rightCols(N - leave - 1);
+    Eigen::MatrixXd y(d, n - 1);
+    y.leftCols(leave) = p.leftCols(leave);
+    y.rightCols(n - leave - 1) = p.rightCols(n - leave - 1);
 
-    const Eigen::VectorXd mu = Y.rowwise().mean();
-    Y.colwise() -= mu;
-    const Eigen::VectorXd Ytest = P.col(leave);
+    const Eigen::VectorXd mu = y.rowwise().mean();
+    y.colwise() -= mu;
+    const Eigen::VectorXd y_test = p.col(leave);
 
-    Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeFullU);
 
-    for (int mode = 1; mode < N; mode++) {
-      const auto epsi = svd.matrixU().block(0, 0, D, mode);
-      const auto betas = epsi.transpose() * (Ytest - mu);
+    for (int mode = 1; mode < n; mode++) {
+      if (check_abort && check_abort()) {
+        return {};
+      }
+      const auto epsi = svd.matrixU().block(0, 0, d, mode);
+      const auto betas = epsi.transpose() * (y_test - mu);
       const Eigen::VectorXd rec = epsi * betas + mu;
 
-      const int numParticles = D / VDimension;
-      const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, VDimension);
-      const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, VDimension);
-      const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
-      totalDists(mode - 1) += dist;
+      const long num_particles = d / num_values;
+      const Eigen::Map<const RowMajorMatrix> ytest_reshaped(y_test.data(), num_particles, num_values);
+      const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), num_particles, num_values);
+      double dist = 0;
+      if (surface_distance_mode) {
+        auto mesh = meshes[leave];
+        for (int i = 0; i < num_particles; i++) {
+          vtkIdType face_id = 0;
+          double this_dist = 0;
+          Point3 point;
+          point[0] = rec_reshaped(i, 0);
+          point[1] = rec_reshaped(i, 1);
+          point[2] = rec_reshaped(i, 2);
+          mesh.closestPoint(point, this_dist, face_id);
+          dist += this_dist / num_particles;
+        }
+      } else {
+        dist = (rec_reshaped - ytest_reshaped).rowwise().norm().sum() / num_particles;
+      }
+      total_dists(mode - 1) += dist;
     }
   }
 
-  generalizations = totalDists / N;
+  generalizations = total_dists / n;
 
   return generalizations;
 }
 
 //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeSpecificity(const ParticleSystemEvaluation& ParticleSystemEvaluation, const int nModes,
-                                           const std::string& saveTo) {
-  const int N = ParticleSystemEvaluation.N();
-  const int D = ParticleSystemEvaluation.D();
+double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& particle_system, const int num_modes,
+                                            const std::string& save_to, bool surface_distance_mode) {
+  const long n = particle_system.num_samples();
+  const long d = particle_system.num_dims();
+  int num_values = particle_system.get_num_values_per_particle();
+  auto meshes = particle_system.get_meshes();
 
-  if (nModes > N - 1) {
+  if (num_modes > n - 1) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
-  const int nSamples = 1000;
+  const int num_samples = 1000;
 
   // Keep track of the reconstructions so we can visualize them later
   std::vector<Reconstruction> reconstructions;
 
-  Eigen::VectorXd meanSpecificity(nModes);
-  Eigen::VectorXd stdSpecificity(nModes);
-  Eigen::MatrixXd spec_store(nModes, 4);
+  Eigen::VectorXd mean_specificity(num_modes);
+  Eigen::VectorXd std_specificity(num_modes);
+  Eigen::MatrixXd spec_store(num_modes, 4);
 
   // PCA calculations
-  const Eigen::MatrixXd& ptsModels = ParticleSystemEvaluation.Particles();
-  const Eigen::VectorXd mu = ptsModels.rowwise().mean();
-  Eigen::MatrixXd Y = ptsModels;
+  const Eigen::MatrixXd& pts_models = particle_system.get_matrix();
+  const Eigen::VectorXd mu = pts_models.rowwise().mean();
+  Eigen::MatrixXd y = pts_models;
 
-  Y.colwise() -= mu;
+  y.colwise() -= mu;
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
-  const auto epsi = svd.matrixU().block(0, 0, D, nModes);
-  const auto allEigenValues = svd.singularValues();
-  const auto eigenValues = allEigenValues.head(nModes);
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeFullU);
+  const auto epsi = svd.matrixU().block(0, 0, d, num_modes);
+  const auto all_eigen_values = svd.singularValues();
+  const auto eigen_values = all_eigen_values.head(num_modes);
 
-  Eigen::MatrixXd samplingBetas(nModes, nSamples);
-  MultiVariateNormalRandom sampling{eigenValues.asDiagonal()};
-  for (int modeNumber = 0; modeNumber < nModes; modeNumber++) {
-    for (int i = 0; i < nSamples; i++) {
-      samplingBetas.col(i) = sampling();
+  Eigen::MatrixXd sampling_betas(num_modes, num_samples);
+  MultiVariateNormalRandom sampling{eigen_values.asDiagonal()};
+  for (int mode_number = 0; mode_number < num_modes; mode_number++) {
+    for (int i = 0; i < num_samples; i++) {
+      sampling_betas.col(i) = sampling();
     }
 
-    Eigen::MatrixXd samplingPoints = (epsi * samplingBetas).colwise() + mu;
+    Eigen::MatrixXd sampling_points = (epsi * sampling_betas).colwise() + mu;
 
-    const int numParticles = D / VDimension;
-    const int nTrain = ptsModels.cols();
+    const long num_particles = d / num_values;
+    const long num_train = pts_models.cols();
 
-    Eigen::VectorXd distanceToClosestTrainingSample(nSamples);
+    Eigen::VectorXd distance_to_closest_training_sample(num_samples);
 
-    for (int i = 0; i < nSamples; i++) {
-      Eigen::VectorXd pts_m = samplingPoints.col(i);
-      Eigen::MatrixXd ptsDistance_vec = ptsModels.colwise() - pts_m;
-      Eigen::MatrixXd ptsDistance(Eigen::MatrixXd::Constant(1, nTrain, 0.0));
+    for (int i = 0; i < num_samples; i++) {
+      Eigen::VectorXd pts_m = sampling_points.col(i);
+      Eigen::MatrixXd pts_distance_vec = pts_models.colwise() - pts_m;
 
-      for (int j = 0; j < nTrain; j++) {
-        Eigen::Map<const RowMajorMatrix> ptsDistance_vec_reshaped(ptsDistance_vec.col(j).data(), numParticles,
-                                                                  VDimension);
-        ptsDistance(j) = (ptsDistance_vec_reshaped).rowwise().norm().sum();
+      if (surface_distance_mode) {
+        // overwrite the distance calculation with the surface distance
+        pts_distance_vec = Eigen::MatrixXd::Zero(num_particles, num_train);
+
+        for (int j = 0; j < n; j++) {  // for each original subject
+          auto mesh = meshes[j];
+          for (int i = 0; i < num_particles; i++) {
+            vtkIdType face_id = 0;
+            double this_dist = 0;
+            Point3 point;
+            point[0] = pts_m(i, 0);
+            point[1] = pts_m(i, 1);
+            point[2] = pts_m(i, 2);
+            mesh.closestPoint(point, this_dist, face_id);
+            pts_distance_vec(i, j) = this_dist;
+          }
+        }
       }
 
-      int closestIdx, _r;
-      distanceToClosestTrainingSample(i) = ptsDistance.minCoeff(&_r, &closestIdx);
+      Eigen::MatrixXd pts_distance(Eigen::MatrixXd::Constant(1, num_train, 0.0));
 
-      Eigen::Map<const RowMajorMatrix> pts_m_reshaped(pts_m.data(), numParticles, VDimension);
+      for (int j = 0; j < num_train; j++) {
+        Eigen::Map<const RowMajorMatrix> pts_distance_vec_reshaped(pts_distance_vec.col(j).data(), num_particles,
+                                                                   num_values);
+        pts_distance(j) = (pts_distance_vec_reshaped).rowwise().norm().sum();
+      }
+
+      int closest_idx, r;
+      distance_to_closest_training_sample(i) = pts_distance.minCoeff(&r, &closest_idx);
+
+      Eigen::Map<const RowMajorMatrix> pts_m_reshaped(pts_m.data(), num_particles, num_values);
       reconstructions.push_back(Reconstruction{
-          distanceToClosestTrainingSample(i),
-          (int)closestIdx,
+          distance_to_closest_training_sample(i),
+          closest_idx,
           pts_m_reshaped,
       });
     }
 
-    meanSpecificity(modeNumber) = distanceToClosestTrainingSample.mean();
+    mean_specificity(mode_number) = distance_to_closest_training_sample.mean();
   }
 
-  if (!saveTo.empty()) {
-    SaveReconstructions(reconstructions, ParticleSystemEvaluation.Paths(), saveTo);
+  if (!save_to.empty()) {
+    SaveReconstructions(reconstructions, particle_system.get_paths(), save_to);
   }
 
-  const int numParticles = D / VDimension;
-  const double specificity = meanSpecificity(nModes - 1) / numParticles;
+  const long num_particles = d / num_values;
+  const double specificity = mean_specificity(num_modes - 1) / static_cast<double>(num_particles);
 
   return specificity;
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystemEvaluation& ParticleSystemEvaluation,
-                                                        std::function<void(float)> progress_callback) {
-  const int N = ParticleSystemEvaluation.N();
-  const int D = ParticleSystemEvaluation.D();
-  const int numParticles = D / VDimension;
+Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEvaluation& particle_system,
+                                                          std::function<void(float)> progress_callback,
+                                                          std::function<bool()> check_abort,
+                                                          bool surface_distance_mode) {
+  const long n = particle_system.num_samples();
+  const long d = particle_system.num_dims();
+  const int num_values = particle_system.get_num_values_per_particle();
+  const int num_particles = d / num_values;
 
-  Eigen::VectorXd specificities(N - 1);
+  Eigen::VectorXd specificities(n - 1);
 
   // PCA calculations
-  const Eigen::MatrixXd& ptsModels = ParticleSystemEvaluation.Particles();
-  const int nTrain = ptsModels.cols();
+  const Eigen::MatrixXd& pts_models = particle_system.get_matrix();
+  const long num_train = pts_models.cols();
 
-  const Eigen::VectorXd mu = ptsModels.rowwise().mean();
-  Eigen::MatrixXd Y = ptsModels;
-  Y.colwise() -= mu;
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
-  const auto allEigenValues = svd.singularValues();
+  const Eigen::VectorXd mu = pts_models.rowwise().mean();
+  Eigen::MatrixXd y = pts_models;
+  y.colwise() -= mu;
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeFullU);
+  const auto all_eigen_values = svd.singularValues();
 
-  for (int nModes = 1; nModes < N; nModes++) {
+  auto meshes = particle_system.get_meshes();
+
+  for (int num_modes = 1; num_modes < n; num_modes++) {
     if (progress_callback) {
-      progress_callback(static_cast<float>(nModes) / static_cast<float>(N));
+      progress_callback(static_cast<float>(num_modes) / static_cast<float>(n));
     }
 
-    const int nSamples = 1000;
+    const int num_samples = 1000;
 
-    Eigen::VectorXd stdSpecificity(nModes);
-    Eigen::MatrixXd spec_store(nModes, 4);
-    const auto eigenValues = allEigenValues.head(nModes);
-    const auto epsi = svd.matrixU().block(0, 0, D, nModes);
+    Eigen::VectorXd std_specificity(num_modes);
+    Eigen::MatrixXd spec_store(num_modes, 4);
+    const auto eigen_values = all_eigen_values.head(num_modes);
+    const auto epsi = svd.matrixU().block(0, 0, d, num_modes);
 
-    Eigen::MatrixXd samplingBetas(nModes, nSamples);
-    MultiVariateNormalRandom sampling{eigenValues.asDiagonal()};
-    for (int i = 0; i < nSamples; i++) {
-      samplingBetas.col(i) = sampling();
+    Eigen::MatrixXd sampling_betas(num_modes, num_samples);
+    MultiVariateNormalRandom sampling{eigen_values.asDiagonal()};
+    for (int i = 0; i < num_samples; i++) {
+      sampling_betas.col(i) = sampling();
     }
 
-    Eigen::MatrixXd samplingPoints = (epsi * samplingBetas).colwise() + mu;
-    Eigen::VectorXd distanceToClosestTrainingSample(nSamples);
+    Eigen::MatrixXd sampling_points = (epsi * sampling_betas).colwise() + mu;
+    Eigen::VectorXd distance_to_closest_training_sample(num_samples);
 
-    for (int i = 0; i < nSamples; i++) {
-      Eigen::VectorXd pts_m = samplingPoints.col(i);
-      Eigen::MatrixXd ptsDistance_vec = ptsModels.colwise() - pts_m;
-      Eigen::MatrixXd ptsDistance(Eigen::MatrixXd::Constant(1, nTrain, 0.0));
-
-      for (int j = 0; j < nTrain; j++) {
-        Eigen::Map<const RowMajorMatrix> ptsDistance_vec_reshaped(ptsDistance_vec.col(j).data(), numParticles,
-                                                                  VDimension);
-        ptsDistance(j) = (ptsDistance_vec_reshaped).rowwise().norm().sum();
+    for (int i = 0; i < num_samples; i++) {
+      if (check_abort && check_abort()) {
+        return {};
       }
 
-      int closestIdx, _r;
-      distanceToClosestTrainingSample(i) = ptsDistance.minCoeff(&_r, &closestIdx);
+      Eigen::VectorXd pts_m = sampling_points.col(i);
+      Eigen::MatrixXd pts_distance_vec = pts_models.colwise() - pts_m;
+
+      Eigen::MatrixXd pts_distance(Eigen::MatrixXd::Constant(1, num_train, 0.0));
+
+      if (surface_distance_mode) {
+        // overwrite the distance calculation with the surface distance
+        pts_distance_vec = Eigen::MatrixXd::Zero(num_particles, num_train);
+
+        unsigned long num_meshes = meshes.size();
+
+        // sum the distances to the surface for each
+        tbb::parallel_for(tbb::blocked_range<size_t>{0, num_meshes}, [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t j = r.begin(); j < r.end(); ++j) {  // for each original subject
+            if (check_abort && check_abort()) {
+              return;
+            }
+
+            auto mesh = meshes[j];
+            double total_dist = 0.0;
+            for (int k = 0; k < num_particles; k++) {
+              vtkIdType face_id = 0;
+              double this_dist = 0;
+              Point3 point;
+              point[0] = pts_m(k * 3 + 0);
+              point[1] = pts_m(k * 3 + 1);
+              point[2] = pts_m(k * 3 + 2);
+              mesh.closestPoint(point, this_dist, face_id);
+              total_dist = total_dist + this_dist;
+            }
+            pts_distance(j) = total_dist;
+          }
+        });
+
+      } else {
+        for (int j = 0; j < num_train; j++) {
+          Eigen::Map<const RowMajorMatrix> pts_distance_vec_reshaped(pts_distance_vec.col(j).data(), num_particles,
+                                                                     num_values);
+          pts_distance(j) = (pts_distance_vec_reshaped).rowwise().norm().sum();
+        }
+      }
+
+      int closest_idx, r;
+      distance_to_closest_training_sample(i) = pts_distance.minCoeff(&r, &closest_idx);
     }
 
-    double meanSpecificity = distanceToClosestTrainingSample.mean();
-    const double specificity = meanSpecificity / numParticles;
-    specificities(nModes - 1) = specificity;
+    double mean_specificity = distance_to_closest_training_sample.mean();
+    const double specificity = mean_specificity / num_particles;
+    specificities(num_modes - 1) = specificity;
   }
   return specificities;
 }

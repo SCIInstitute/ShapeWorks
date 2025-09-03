@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#set -v   #verbose execution for debugging
-#set -x   #tracing execution for debugging (echos all commands from script)
+#set -v   # verbose execution for debugging
+#set -x   # tracing execution for debugging (echos all commands from script)
 
 # check to make sure `source` was not used
 (return 0 2>/dev/null) && sourced=1 || sourced=0
@@ -20,10 +20,10 @@ BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="Release"
 BUILD_LOG="build_dependencies.log"
-VTK_VER="v9.1.0"
-VTK_VER_STR="9.1"
-ITK_VER="v5.2.1"
-ITK_VER_STR="5.2"
+VTK_VER="v9.5.0"
+VTK_VER_STR="9.5"
+ITK_VER="v5.4.4"
+ITK_VER_STR="5.4"
 QT_MIN_VER="5.15.4"
 XLNT_VER="538f80794c7d736afc0a452d21313606cc5538fc"
 JKQTPLOTTER_VER="v2022.11.30-refix-rpath"
@@ -134,8 +134,7 @@ build_vtk()
   cd vtk
   git checkout -f tags/${VTK_VER}
 
-  patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.1.patch
-  cat Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+  patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.5.patch
   
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
@@ -146,7 +145,7 @@ build_vtk()
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
       VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS -Wno-incompatible-function-pointer-types" -DCMAKE_C_FLAGS="$FLAGS -Wno-incompatible-function-pointer-types" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
       VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
@@ -162,11 +161,20 @@ build_itk()
   cd ITK
   git checkout -f tags/${ITK_VER}
 
+  # replace <fp.h> with <math.h> in Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  if [ "$(uname)" == "Darwin" ]; then
+    # macOS requires an extension for -i
+    sed -i '' 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  else
+    # Linux/GitHub Actions doesn't need an extension
+    sed -i 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
+  fi
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -DZLIB_SYMBOL_PREFIX="itkzlib_" -Wno-dev ..
       
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
@@ -192,6 +200,9 @@ build_xlnt()
 
   # move conflicting file out of the way so it builds on osx
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
+
+  # Fix for GCC 13
+  echo '#include <cstdint>' >> include/xlnt/xlnt_config.hpp
 
   # fix rpath
   sed -i'.original' -e 's/INSTALL_NAME_DIR.*/)/' source/CMakeLists.txt
@@ -251,6 +262,9 @@ build_openvdb()
   cd openvdb
   git checkout ${OpenVDB_VER}
 
+  # patch for Clang 17
+  patch -p1 < ${SCRIPT_DIR}/Support/openvdb-9.1.0.patch
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
@@ -264,7 +278,7 @@ build_openvdb()
       cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS -Wno-enum-constexpr-conversion" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
   fi
 

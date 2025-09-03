@@ -37,6 +37,8 @@ class PaintWidget : public vtkAbstractWidget {
 
   void set_viewer(Viewer* viewer);
 
+  void set_circle_mode(bool circle_mode);
+
   // Description:
   // The method for activiating and deactiviating this widget. This method
   // must be overridden because it is a composite widget and does more than
@@ -77,9 +79,7 @@ class PaintWidget : public vtkAbstractWidget {
   ~PaintWidget();
 
   // The state of the widget
-  // BTX
   enum { Start, Paint, Erase };
-  // ETX
 
   int WidgetState;
   vtkPointPlacer* PointPlacer;
@@ -103,6 +103,7 @@ class PaintWidget : public vtkAbstractWidget {
   bool mouse_in_window_;
 
   Viewer* viewer_;
+  bool circle_mode_ = false;
 
  private:
   PaintWidget(const PaintWidget&);     // Not implemented

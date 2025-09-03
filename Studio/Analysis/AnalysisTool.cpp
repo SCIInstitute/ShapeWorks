@@ -11,14 +11,18 @@
 #include <Job/NetworkAnalysisJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Logging.h>
-#include <Python/PythonWorker.h>
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>
+#include <Utils/AnalysisUtils.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
+
+#include <QClipboard>
+#include <QMenu>
 
 #include "ParticleAreaPanel.h"
 #include "ShapeScalarPanel.h"
@@ -30,6 +34,8 @@ const std::string AnalysisTool::MODE_MEAN_C("mean");
 const std::string AnalysisTool::MODE_PCA_C("pca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
+
+constexpr auto MESH_WARP_TEMPLATE_INDEX = "mesh_warp_template_index";
 
 //---------------------------------------------------------------------------
 //! Helper to extract x,y,z from x,y,z,scalar
@@ -59,8 +65,6 @@ static Eigen::VectorXd extract_scalar_only(Eigen::VectorXd values) {
 }
 
 //---------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
@@ -80,8 +84,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
       "QTabBar::tab:selected { border-radius: 4px; background-color: #3784f7; color: white; }");
   ui_->tabWidget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
 #endif
-
-  stats_ready_ = false;
 
   connect(ui_->view_header, &QPushButton::clicked, ui_->view_open_button, &QPushButton::toggle);
   connect(ui_->metrics_header, &QPushButton::clicked, ui_->metrics_open_button, &QPushButton::toggle);
@@ -120,10 +122,14 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
-  connect(ui_->group_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::update_group_values);
+  connect(ui_->group_combo, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::update_group_values);
   connect(ui_->group_left, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_right, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_p_values_checkbox, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
+
+  connect(ui_->pca_group_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::update_pca_group_options);
+  connect(ui_->pca_group_list, &QListWidget::itemChanged, this, &AnalysisTool::handle_pca_group_list_item_changed);
 
   // network analysis
   connect(ui_->network_analysis_button, &QPushButton::clicked, this, &AnalysisTool::network_analysis_clicked);
@@ -133,6 +139,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::handle_alignment_changed);
+
+  connect(ui_->tabWidget, &QTabWidget::currentChanged, this, &AnalysisTool::handle_tab_changed);
 
   ui_->surface_open_button->setChecked(false);
   ui_->metrics_open_button->setChecked(false);
@@ -147,10 +155,10 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->run_good_bad, &QPushButton::clicked, this, &AnalysisTool::run_good_bad_particles);
 
   ui_->reconstruction_options->hide();
+  ui_->mesh_warp_options->hide();
   ui_->particles_open_button->toggle();
   ui_->particles_progress->hide();
 
-  // ui_->lda_panel->hide();
   ui_->lda_graph->hide();
   ui_->lda_hint_label->hide();
   group_lda_job_ = QSharedPointer<StatsGroupLDAJob>::create();
@@ -164,7 +172,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   // when one is checked, turn the other off, connect these first
   connect(ui_->show_difference_to_predicted_scalar, &QPushButton::clicked, this, [this]() {
-    if (ui_->show_difference_to_predicted_scalar->isChecked()) {
+    bool checked = ui_->show_difference_to_predicted_scalar->isChecked();
+    if (checked) {
       ui_->show_predicted_scalar->setChecked(false);
     }
   });
@@ -178,6 +187,25 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
           &AnalysisTool::handle_samples_predicted_scalar_options);
   connect(ui_->show_predicted_scalar, &QPushButton::clicked, this,
           &AnalysisTool::handle_samples_predicted_scalar_options);
+  connect(ui_->show_absolute_difference, &QPushButton::clicked, this,
+          &AnalysisTool::handle_samples_predicted_scalar_options);
+
+  // add a right click menu to the samples table allowing the user to copy the table to the clipboard
+  ui_->samples_table->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(ui_->samples_table, &QTableWidget::customContextMenuRequested, this,
+          &AnalysisTool::samples_table_context_menu);
+
+  // disable editing of the table
+  ui_->samples_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+  // only connect one so that we only get one signal
+  connect(ui_->distance_method_particle, &QRadioButton::toggled, this, &AnalysisTool::handle_distance_method_changed);
+
+  // mesh warp options
+  connect(ui_->mesh_warp_median_button, &QPushButton::clicked, this, &AnalysisTool::mesh_warp_median_clicked);
+  connect(ui_->mesh_warp_sample_spinbox, qOverload<int>(&QSpinBox::valueChanged), this,
+          &AnalysisTool::mesh_warp_sample_changed);
+  connect(ui_->mesh_warp_run_button, &QPushButton::clicked, this, &AnalysisTool::mesh_warp_run_clicked);
 }
 
 //---------------------------------------------------------------------------
@@ -254,6 +282,27 @@ void AnalysisTool::on_reconstructionButton_clicked() {
 }
 
 //---------------------------------------------------------------------------
+QStringList AnalysisTool::get_checked_pca_groups() {
+  QStringList checked_items;
+
+  // Get the number of items in the list
+  int count = ui_->pca_group_list->count();
+
+  // Iterate through all items
+  for (int i = 0; i < count; ++i) {
+    QListWidgetItem* item = ui_->pca_group_list->item(i);
+
+    // Check if the item is checked
+    if (item && item->checkState() == Qt::Checked) {
+      // Add the text of the checked item to our list
+      checked_items.append(item->text());
+    }
+  }
+
+  return checked_items;
+}
+
+//---------------------------------------------------------------------------
 int AnalysisTool::get_pca_mode() { return ui_->pcaModeSpinBox->value() - 1; }
 
 //---------------------------------------------------------------------------
@@ -296,9 +345,12 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
   update_difference_particles();
+  ui_->pcaSlider->setValue(0);
+  ui_->group_slider->setValue(10);
 
   ui_->show_predicted_scalar->setChecked(false);
   ui_->show_difference_to_predicted_scalar->setChecked(false);
+  handle_samples_predicted_scalar_options();
 
   connect(ui_->show_good_bad, &QCheckBox::toggled, session_.data(), &Session::set_show_good_bad_particles);
 }
@@ -308,9 +360,6 @@ QSharedPointer<Session> AnalysisTool::get_session() { return session_; }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
-
-//---------------------------------------------------------------------------
-void AnalysisTool::update_analysis_mode() { handle_analysis_options(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::update_interface() {
@@ -324,7 +373,7 @@ bool AnalysisTool::group_pvalues_valid() {
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::groups_on() { return ui_->group_box->currentText() != "-None-"; }
+bool AnalysisTool::groups_on() { return ui_->group_combo->currentText() != "-None-"; }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options() {
@@ -333,6 +382,7 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaAnimateCheckBox->setEnabled(false);
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
     ui_->pcaSlider->setEnabled(false);
     if (ui_->singleSamplesRadio->isChecked()) {
       // one sample mode
@@ -359,6 +409,7 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaSlider->setEnabled(true);
     ui_->pcaAnimateCheckBox->setEnabled(true);
     ui_->pcaModeSpinBox->setEnabled(true);
+    group_animate_timer_.stop();
     auto domain_names = session_->get_project()->get_domain_names();
     bool multiple_domains = domain_names.size() > 1;
     if (multiple_domains) {
@@ -375,10 +426,12 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaAnimateCheckBox->setEnabled(false);
     ui_->pcaModeSpinBox->setEnabled(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
   }
 
   update_difference_particles();
 
+  Q_EMIT analysis_mode_changed();
   Q_EMIT update_view();
 }
 
@@ -471,8 +524,13 @@ void AnalysisTool::group_p_values_clicked() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::network_analysis_clicked() {
+  if (ui_->network_feature->currentText().isEmpty()) {
+    QMessageBox::warning(this, "Network Analysis", "Project must have a scalar feature for network analysis.");
+    // SW_WARN("Project must have a scalar features for network analysis");
+    return;
+  }
   network_analysis_job_ =
-      QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_box->currentText().toStdString(),
+      QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_combo->currentText().toStdString(),
                                                  ui_->network_feature->currentText().toStdString());
   network_analysis_job_->set_pvalue_of_interest(ui_->network_pvalue_of_interest->text().toDouble());
   network_analysis_job_->set_pvalue_threshold(ui_->network_pvalue_threshold->text().toDouble());
@@ -491,6 +549,10 @@ bool AnalysisTool::compute_stats() {
     return true;
   }
 
+  if (session_->is_loading()) {
+    return false;
+  }
+
   if (session_->get_non_excluded_shapes().size() == 0 || !session_->particles_present()) {
     return false;
   }
@@ -503,11 +565,11 @@ bool AnalysisTool::compute_stats() {
   std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
 
-  std::string group_set = ui_->group_box->currentText().toStdString();
+  std::string group_set = ui_->group_combo->currentText().toStdString();
   std::string left_group = ui_->group_left->currentText().toStdString();
   std::string right_group = ui_->group_right->currentText().toStdString();
 
-  bool groups_enabled = groups_active();
+  auto pca_groups = get_checked_pca_groups();
 
   group1_list_.clear();
   group2_list_.clear();
@@ -527,7 +589,7 @@ bool AnalysisTool::compute_stats() {
       std::string target_feature = ui_->pca_scalar_combo->currentText().toStdString();
       shape->load_feature(DisplayMode::Reconstructed, target_feature);
       particles = shape->get_point_features(ui_->pca_scalar_combo->currentText().toStdString());
-    } else {
+    } else {  // shape and scalar (x,y,z, and scalar)
       stats_.set_num_values_per_particle(4);
       std::string target_feature = ui_->pca_scalar_combo->currentText().toStdString();
       auto positions = shape->get_global_correspondence_points();
@@ -550,18 +612,35 @@ bool AnalysisTool::compute_stats() {
     if (particles.size() == 0) {
       continue;  // skip any that don't have particles
     }
-    if (groups_enabled) {
-      auto value = shape->get_subject()->get_group_value(group_set);
-      if (value == left_group) {
+
+    if (groups_active()) {
+      auto group = shape->get_subject()->get_group_value(group_set);
+      if (group == left_group) {
         points.push_back(particles);
         group_ids.push_back(1);
         group1_list_.push_back(shape);
-      } else if (value == right_group) {
+      } else if (group == right_group) {
         points.push_back(particles);
         group_ids.push_back(2);
         group2_list_.push_back(shape);
       } else {
         // we don't include it
+      }
+    } else if (pca_groups_active()) {
+      auto group = shape->get_subject()->get_group_value(ui_->pca_group_combo->currentText().toStdString());
+      // see if it is in the list of groups
+      bool found = false;
+      for (auto&& pca_group : pca_groups) {
+        if (group == pca_group.toStdString()) {
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        points.push_back(particles);
+        group_ids.push_back(1);
+      } else {
+        // excluded
       }
     } else {
       points.push_back(particles);
@@ -571,6 +650,7 @@ bool AnalysisTool::compute_stats() {
     auto local_particles = shape->get_particles().get_local_particles();
     if (local_particles.size() != domains_per_shape) {
       SW_ERROR("Inconsistency in number of particles size");
+      return false;
     }
     for (unsigned int i = 0; i < domains_per_shape; i++) {
       number_of_particles_array_[i] = local_particles[i].size() / 3;
@@ -608,21 +688,15 @@ bool AnalysisTool::compute_stats() {
 
   stats_ready_ = true;
 
-  /*
-  std::vector<double> vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(stats_.Eigenvalues()[i]);
-  }
-*/
+  ///  Set this to true to export long format sample data (e.g. for import into R)
+  const bool export_long_format = false;
 
-  ////  Uncomment this to write out long format sample data
-  /*
-  if (groups_enabled) {
+  if (export_long_format && groups_active()) {
     auto feature_names = session_->get_project()->get_feature_names();
     std::ofstream file;
     file.open("/tmp/stats.csv");
     file << "subject,group,particle,x,y,z";
-    for (int i=0;i<feature_names.size();i++) {
+    for (int i = 0; i < feature_names.size(); i++) {
       file << "," << feature_names[i];
     }
     file << "\n";
@@ -633,11 +707,11 @@ bool AnalysisTool::compute_stats() {
       auto particles = shape->get_particles();
       auto points = particles.get_world_points(0);
       int point_id = 0;
-      for (int j=0;j<points.size(); j++) {
+      for (int j = 0; j < points.size(); j++) {
         auto point = points[j];
         file << shape_id << "," << group << "," << point_id++ << "," << point[0] << "," << point[1] << "," << point[2];
 
-        for (int i=0;i<feature_names.size();i++) {
+        for (int i = 0; i < feature_names.size(); i++) {
           auto scalars = shape->get_point_features(feature_names[i]);
           file << "," << scalars[j];
         }
@@ -648,7 +722,7 @@ bool AnalysisTool::compute_stats() {
     }
     file.close();
   }
-  */
+
   return true;
 }
 
@@ -839,9 +913,11 @@ void AnalysisTool::load_settings() {
   ui_->network_pvalue_threshold->setText(
       QString::number(static_cast<double>(params.get("network_pvalue_threshold", 0.05))));
 
+  ui_->mesh_warp_sample_spinbox->setValue(params.get(MESH_WARP_TEMPLATE_INDEX, -1));
   update_group_boxes();
 
-  ui_->group_box->setCurrentText(QString::fromStdString(params.get("current_group", "-None-")));
+  ui_->group_combo->setCurrentText(QString::fromStdString(params.get("current_group", "-None-")));
+  ui_->pca_group_combo->setCurrentText(QString::fromStdString(params.get("current_pca_group", "-None-")));
 }
 
 //---------------------------------------------------------------------------
@@ -858,7 +934,16 @@ void AnalysisTool::store_settings() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::shutdown() { pca_animate_timer_.stop(); }
+void AnalysisTool::shutdown() {
+  pca_animate_timer_.stop();
+  group_animate_timer_.stop();
+
+  for (const auto& worker : workers_) {
+    if (worker) {
+      worker->stop();
+    }
+  }
+}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_shape_evaluations() {
@@ -907,6 +992,15 @@ void AnalysisTool::compute_shape_evaluations() {
     job_types = {ShapeEvaluationJob::JobType::CompactnessType};
   }
 
+  stats_.set_particle_to_surface_mode(ui_->distance_method_surface->isChecked());
+
+  // stop any running jobs
+  for (const auto& worker : workers_) {
+    if (worker) {
+      worker->stop();
+    }
+  }
+
   for (auto job_type : job_types) {
     switch (job_type) {
       case ShapeEvaluationJob::JobType::CompactnessType:
@@ -922,8 +1016,9 @@ void AnalysisTool::compute_shape_evaluations() {
         SW_DEBUG("job type: unknown");
     }
 
-    auto worker = Worker::create_worker();
-    auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_);
+    QPointer<Worker> worker = Worker::create_worker();
+    workers_.push_back(worker);
+    auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_, session_);
     connect(job.data(), &ShapeEvaluationJob::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
     connect(job.data(), &ShapeEvaluationJob::report_progress, this, &AnalysisTool::handle_eval_thread_progress);
     worker->run_job(job);
@@ -951,7 +1046,7 @@ bool AnalysisTool::pca_shape_plus_scalar_mode() { return ui_->pca_shape_and_scal
 bool AnalysisTool::pca_shape_only_mode() { return ui_->pca_scalar_shape_only->isChecked(); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_tabWidget_currentChanged() { update_analysis_mode(); }
+void AnalysisTool::on_tabWidget_currentChanged() { handle_analysis_options(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_pcaSlider_valueChanged() {
@@ -1101,9 +1196,9 @@ void AnalysisTool::reset_stats() {
 
   particle_area_panel_->reset();
   shape_scalar_panel_->reset();
-  stats_ready_ = false;
-  evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
+  evals_ready_ = false;
+  stats_ready_ = false;
 
   ui_->pca_scalar_combo->clear();
   if (session_) {
@@ -1116,6 +1211,7 @@ void AnalysisTool::reset_stats() {
     ui_->show_difference_to_predicted_scalar->setChecked(false);
   }
   ui_->show_difference_to_predicted_scalar->setEnabled(has_scalars);
+  ui_->show_predicted_scalar->setEnabled(has_scalars);
 
   ui_->shape_scalar_groupbox->setVisible(ui_->pca_scalar_combo->count() > 0);
 }
@@ -1153,6 +1249,7 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
 
   update_group_boxes();
   ui_->sampleSpinBox->setMaximum(session_->get_num_shapes() - 1);
+  ui_->mesh_warp_sample_spinbox->setMaximum(session_->get_num_shapes() - 1);
 }
 
 //---------------------------------------------------------------------------
@@ -1346,22 +1443,30 @@ void AnalysisTool::update_group_boxes() {
   auto group_names = session_->get_project()->get_group_names();
 
   ui_->group_widget->setEnabled(!group_names.empty());
+  ui_->pca_group_box->setVisible(!group_names.empty());
 
   if (group_names != current_group_names_) {  // only update if different
-    ui_->group_box->clear();
-    ui_->group_box->addItem("-None-");
+    ui_->group_combo->clear();
+    ui_->pca_group_combo->clear();
+    ui_->group_combo->addItem("-None-");
+    ui_->pca_group_combo->addItem("-None-");
     for (const std::string& group : group_names) {
-      ui_->group_box->addItem(QString::fromStdString(group));
+      ui_->group_combo->addItem(QString::fromStdString(group));
+      ui_->pca_group_combo->addItem(QString::fromStdString(group));
     }
+
     current_group_names_ = group_names;
     group_changed();
   }
+  update_pca_group_options();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::update_group_values() {
   block_group_change_ = true;
-  auto values = session_->get_project()->get_group_values(ui_->group_box->currentText().toStdString());
+  stats_ready_ = false;
+
+  auto values = session_->get_project()->get_group_values(ui_->group_combo->currentText().toStdString());
 
   if (values != current_group_values_) {
     // populate group values
@@ -1421,6 +1526,44 @@ void AnalysisTool::update_domain_alignment_box() {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::update_pca_group_options() {
+  auto values = session_->get_project()->get_group_values(ui_->pca_group_combo->currentText().toStdString());
+
+  if (values != current_pca_group_values_) {
+    // populate group values
+    ui_->pca_group_list->clear();
+    for (const std::string& value : values) {
+      QString item = QString::fromStdString(value);
+      // add checkable item
+      ui_->pca_group_list->addItem(item);
+      auto item_widget = ui_->pca_group_list->item(ui_->pca_group_list->count() - 1);
+      item_widget->setFlags(item_widget->flags() | Qt::ItemIsUserCheckable);
+      item_widget->setCheckState(Qt::Checked);
+    }
+    stats_ready_ = false;
+    compute_stats();
+  }
+
+  int count = ui_->pca_group_list->count();
+  // clamp the items to 2-10
+  count = std::max(2, std::min(count, 10));
+
+  // resize the list widget to fit the items
+  ui_->pca_group_list->setMinimumHeight(ui_->pca_group_list->sizeHintForRow(0) * count + 2);
+  ui_->pca_group_list->setMaximumHeight(ui_->pca_group_list->sizeHintForRow(0) * count + 2);
+
+  current_pca_group_values_ = values;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_pca_group_list_item_changed() {
+  stats_ready_ = false;
+  compute_stats();
+  // update display
+  Q_EMIT update_view();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::update_lda_graph() {
   if (groups_active()) {
     if (!lda_computed_ && !group_lda_job_running_) {
@@ -1441,6 +1584,10 @@ void AnalysisTool::update_lda_graph() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::update_difference_particles() {
+  if (!stats_ready_) {
+    return;
+  }
+
   if (session_->get_num_shapes() < 1) {
     return;
   }
@@ -1461,7 +1608,7 @@ void AnalysisTool::update_difference_particles() {
   }
 
   if (all_particles.size() != mean.size()) {
-    SW_ERROR("Inconsistent number of values in particle vector, {} vs. {}", all_particles.size(), mean.size());
+    SW_LOG_ONLY("Inconsistent number of values in particle vector, {} vs. {}", all_particles.size(), mean.size());
     return;
   }
 
@@ -1504,7 +1651,18 @@ bool AnalysisTool::groups_active() {
     return false;
   }
 
-  std::string group_set = ui_->group_box->currentText().toStdString();
+  std::string group_set = ui_->group_combo->currentText().toStdString();
+  bool groups_enabled = group_set != "" && group_set != "-None-";
+  return groups_enabled;
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::pca_groups_active() {
+  if (ui_->tabWidget->currentWidget() != ui_->pca_tab) {
+    return false;
+  }
+
+  std::string group_set = ui_->pca_group_combo->currentText().toStdString();
   bool groups_enabled = group_set != "" && group_set != "-None-";
   return groups_enabled;
 }
@@ -1532,56 +1690,27 @@ void AnalysisTool::on_metrics_open_button_toggled() {
 }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::is_group_active(int shape_index) {
-  std::string group_set = ui_->group_box->currentText().toStdString();
-  std::string left_group = ui_->group_left->currentText().toStdString();
-  std::string right_group = ui_->group_right->currentText().toStdString();
-
-  bool groups_enabled = groups_active();
-
-  auto shapes = session_->get_non_excluded_shapes();
-  auto shape = shapes[shape_index];
-
-  bool left = false;
-  bool right = false;
-  bool both = true;
-  if (ui_->group1_button->isChecked()) {
-    both = false;
-    left = true;
-  } else if (ui_->group2_button->isChecked()) {
-    both = false;
-    right = true;
-  }
-
-  if (groups_enabled) {
-    auto value = shape->get_subject()->get_group_value(group_set);
-    if (left && value == left_group) {
-      return true;
-    } else if (right && value == right_group) {
-      return true;
-    } else if (both) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::initialize_mesh_warper() {
   if (session_->particles_present() && session_->get_groomed_present()) {
-    compute_stats();
-    int median = stats_.compute_median_shape(-32);  //-32 = both groups
+    if (!compute_stats()) {
+      return;
+    }
+
+    auto params = session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
+
+    int template_shape = params.get(MESH_WARP_TEMPLATE_INDEX, -1);
+    if (template_shape < 0 || template_shape >= session_->get_num_shapes()) {
+      template_shape = stats_.compute_median_shape(-32);  //-32 = both groups
+      ui_->mesh_warp_sample_spinbox->setValue(template_shape);
+    }
 
     auto shapes = session_->get_non_excluded_shapes();
 
-    if (median < 0 || median >= shapes.size()) {
-      SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
+    if (template_shape < 0 || template_shape >= shapes.size()) {
+      SW_ERROR("Unable to set reference mesh, invalid template shape");
       return;
     }
-    std::shared_ptr<Shape> median_shape = shapes[median];
+    std::shared_ptr<Shape> median_shape = shapes[template_shape];
 
     auto mesh_group = median_shape->get_groomed_meshes(true);
 
@@ -1600,9 +1729,7 @@ void AnalysisTool::initialize_mesh_warper() {
       Mesh mesh(poly_data);
       median_shape->get_constraints(i).clipMesh(mesh);
 
-      // std::cerr << "domain: " << i << "\n";
       session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
-      // session_->get_mesh_manager()->get_mesh_warper(i)->generate_warp();
     }
   }
 }
@@ -1613,23 +1740,23 @@ void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_t
 
   switch (job_type) {
     case ShapeEvaluationJob::JobType::CompactnessType:
-      SW_DEBUG("compactness go");
       eval_compactness_ = data;
-      create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
-      ui_->compactness_graph->show();
       ui_->compactness_progress_widget->hide();
+      ui_->compactness_graph->show();
+      AnalysisUtils::create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
       break;
     case ShapeEvaluationJob::JobType::SpecificityType:
-      create_plot(ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
       eval_specificity_ = data;
-      ui_->specificity_graph->show();
       ui_->specificity_progress_widget->hide();
+      ui_->specificity_graph->show();
+      AnalysisUtils::create_plot(ui_->specificity_graph, data, "Specificity", "Number of Modes", "Specificity");
       break;
     case ShapeEvaluationJob::JobType::GeneralizationType:
-      create_plot(ui_->generalization_graph, data, "Generalization", "Number of Modes", "Generalization");
       eval_generalization_ = data;
-      ui_->generalization_graph->show();
       ui_->generalization_progress_widget->hide();
+      ui_->generalization_graph->show();
+      AnalysisUtils::create_plot(ui_->generalization_graph, data, "Generalization", "Number of Modes",
+                                 "Generalization");
       break;
   }
 }
@@ -1673,24 +1800,25 @@ void AnalysisTool::handle_group_pvalues_complete() {
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_alignment_changed(int new_alignment) {
   new_alignment -= 2;  // minus two for local and global that come first (local == -1, global == -2)
-  if (new_alignment == current_alignment_) {
+  if (new_alignment == session_->get_current_alignment()) {
     return;
   }
-  current_alignment_ = static_cast<AlignmentType>(new_alignment);
+
+  session_->set_current_alignment(static_cast<AlignmentType>(new_alignment));
 
   Q_FOREACH (ShapeHandle shape, session_->get_non_excluded_shapes()) {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    if (current_alignment_ == AlignmentType::Local) {
+    if (session_->get_current_alignment() == AlignmentType::Local) {
       transform = nullptr;
-    } else if (current_alignment_ == AlignmentType::Global) {
+    } else if (session_->get_current_alignment() == AlignmentType::Global) {
       auto domain_names = session_->get_project()->get_domain_names();
       transform = shape->get_groomed_transform(domain_names.size());
     } else {
       transform = shape->get_groomed_transform(new_alignment);
     }
 
-    shape->set_particle_transform(transform);
     shape->set_alignment_type(new_alignment);
+    shape->set_particle_transform(transform);
   }
 
   evals_ready_ = false;
@@ -1699,8 +1827,14 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::handle_distance_method_changed() {
+  evals_ready_ = false;
+  compute_shape_evaluations();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::run_good_bad_particles() {
-  auto worker = Worker::create_worker();
+  auto* worker = Worker::create_worker();
   ui_->particles_progress->show();
   ui_->run_good_bad->setEnabled(false);
   auto job = QSharedPointer<ParticleNormalEvaluationJob>::create(session_, ui_->good_bad_max_angle->value());
@@ -1826,31 +1960,157 @@ Eigen::VectorXd AnalysisTool::construct_mean_shape() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_samples_predicted_scalar_options() {
+  bool show_difference_to_predicted_scalar = ui_->show_difference_to_predicted_scalar->isChecked();
+  ui_->samples_plot->setVisible(show_difference_to_predicted_scalar);
+  ui_->samples_table->setVisible(show_difference_to_predicted_scalar);
+  ui_->show_absolute_difference->setEnabled(show_difference_to_predicted_scalar);
+
   if (ui_->show_difference_to_predicted_scalar->isChecked() || ui_->show_predicted_scalar->isChecked()) {
     // iterate over all samples, predict scalars, compute the difference and store as a new scalar field
     auto shapes = session_->get_non_excluded_shapes();
-    for (auto& shape : shapes) {
+
+    int num_particles = shapes[0]->get_particles().get_total_number_of_particles();
+
+    Eigen::VectorXd diffs(shapes.size() * num_particles);
+    diffs.setZero();
+
+    ui_->samples_table->clear();
+    ui_->samples_table->setRowCount(shapes.size());
+    QStringList headers = {"subject", "mean_diff", "std_dev", "max_diff", "min_diff"};
+    ui_->samples_table->setColumnCount(headers.size());
+    ui_->samples_table->setHorizontalHeaderLabels(headers);
+
+    for (int i = 0; i < shapes.size(); i++) {
+      auto& shape = shapes[i];
       auto particles = shape->get_particles();
       auto target_feature = ui_->pca_scalar_combo->currentText();
+      if (target_feature == "") {
+        return;
+      }
       auto predicted =
           ShapeScalarJob::predict_scalars(session_, target_feature, particles.get_combined_global_particles());
+
+      if (predicted.size() == 0) {
+        // This indicates that an error occurred, which should already have been reported
+        return;
+      }
 
       // load the mesh and feature
       shape->get_meshes(session_->get_display_mode(), true);
       shape->load_feature(session_->get_display_mode(), target_feature.toStdString());
-      auto scalars = shape->get_point_features(target_feature.toStdString());
+      Eigen::VectorXd scalars = shape->get_point_features(target_feature.toStdString());
+
+      if (scalars.size() != predicted.size()) {
+        SW_LOG_ONLY("Inconsistent number of values in particle vector, {} vs. {}", scalars.size(), predicted.size());
+        return;
+      }
       // compute difference
-      auto diff = predicted - scalars;
+      Eigen::VectorXd diff = predicted - scalars;
+      if (ui_->show_absolute_difference->isChecked()) {
+        diff = diff.array().abs();
+      }
       shape->set_point_features("predicted_scalar_diff", diff);
       shape->set_point_features("predicted_scalar", predicted);
+
+      // now iterate over point values and compute the mean, max, and std deviation
+      double mean = diff.mean();
+      double max = diff.maxCoeff();
+      double min = diff.minCoeff();
+
+      // place in the diffs vector
+      diffs.segment(i * num_particles, num_particles) = diff;
+
+      // Calculate the squared differences
+      diff = diff.array().square();
+      // Calculate the variance
+      double variance = diff.sum() / (predicted.size() - 1);
+      // Calculate the standard deviation
+      double std_dev = sqrt(variance);
+
+      ui_->samples_table->setItem(
+          i, 0, new QTableWidgetItem(QString::fromStdString(shape->get_subject()->get_display_name())));
+      ui_->samples_table->setItem(i, 1, new QTableWidgetItem(QString::number(mean)));
+      ui_->samples_table->setItem(i, 2, new QTableWidgetItem(QString::number(std_dev)));
+      ui_->samples_table->setItem(i, 3, new QTableWidgetItem(QString::number(max)));
+      ui_->samples_table->setItem(i, 4, new QTableWidgetItem(QString::number(min)));
     }
+
+    AnalysisUtils::create_box_plot(ui_->samples_plot, diffs, "Difference to Predicted Scalar", "Sample");
   }
   Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::samples_table_context_menu() {
+  QMenu menu;
+  QAction* action = menu.addAction("Copy to Clipboard");
+  connect(action, &QAction::triggered, this, &AnalysisTool::samples_table_copy_to_clipboard);
+  menu.exec(QCursor::pos());
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::samples_table_copy_to_clipboard() {
+  QTableWidget* table = ui_->samples_table;
+  QString text;
+  // start with headers
+  for (int i = 0; i < table->columnCount(); i++) {
+    text += table->horizontalHeaderItem(i)->text();
+    if (i < table->columnCount() - 1) {
+      text += ",";
+    }
+  }
+  text += "\n";
+  for (int i = 0; i < table->rowCount(); i++) {
+    for (int j = 0; j < table->columnCount(); j++) {
+      auto item = table->item(i, j);
+      if (item) {
+        text += item->text();
+      }
+      if (j < table->columnCount() - 1) {
+        text += ",";
+      }
+    }
+    text += "\n";
+  }
+  QApplication::clipboard()->setText(text);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::mesh_warp_median_clicked() {
+  ui_->mesh_warp_sample_spinbox->setValue(stats_.compute_median_shape(-32));  //-32 = both groups
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::mesh_warp_sample_changed() {
+  int index = ui_->mesh_warp_sample_spinbox->value();
+  auto params = session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
+  params.set(MESH_WARP_TEMPLATE_INDEX, index);
+  session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
+  auto shapes = session_->get_non_excluded_shapes();
+  if (index < 0 || index >= shapes.size()) {
+    ui_->template_mesh_name_label->setText("");
+    return;
+  }
+  ui_->template_mesh_name_label->setText(QString::fromStdString(shapes[index]->get_subject()->get_display_name()));
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::mesh_warp_run_clicked() {
+  session_->handle_clear_cache();
+  initialize_mesh_warper();
+  Q_EMIT reconstruction_complete();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_tab_changed() {
+  stats_ready_ = false;
+  compute_stats();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::reconstruction_method_changed() {
   ui_->reconstruction_options->setVisible(ui_->distance_transform_radio_button->isChecked());
+  ui_->mesh_warp_options->setVisible(ui_->mesh_warping_radio_button->isChecked());
   std::string method = MeshGenerator::RECONSTRUCTION_LEGACY_C;
   if (ui_->distance_transform_radio_button->isChecked()) {
     method = MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C;
@@ -1862,6 +2122,9 @@ void AnalysisTool::reconstruction_method_changed() {
   if (previous_method != method) {
     session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
     session_->handle_clear_cache();
+    if (method == MeshGenerator::RECONSTRUCTION_MESH_WARPER_C) {
+      initialize_mesh_warper();
+    }
     Q_EMIT reconstruction_complete();
   }
 }
@@ -1870,7 +2133,9 @@ void AnalysisTool::reconstruction_method_changed() {
 void AnalysisTool::set_active(bool active) {
   if (!active) {
     ui_->pcaAnimateCheckBox->setChecked(false);
+    ui_->group_animate_checkbox->setChecked(false);
     pca_animate_timer_.stop();
+    group_animate_timer_.stop();
   } else {
     auto features = session_->get_project()->get_feature_names();
     ui_->network_feature->clear();
@@ -1900,6 +2165,12 @@ Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
   int idx = 0;
   for (int d = 0; d < worlds.size(); d++) {
     Eigen::VectorXd new_world(worlds[d].size());
+
+    if (idx + new_world.size() > points.size()) {
+      SW_LOG_ONLY("Inconsistent number of values in particle vector");
+      return {};
+    }
+
     for (int i = 0; i < worlds[d].size(); i++) {
       new_world[i] = points[idx++];
     }
@@ -1913,7 +2184,7 @@ Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_reconstructed_domain_transforms() {
   auto shapes = session_->get_non_excluded_shapes();
-  if (current_alignment_ == AlignmentType::Local) {
+  if (session_->get_current_alignment() == AlignmentType::Local) {
     reconstruction_transforms_.resize(session_->get_domains_per_shape());
     for (int domain = 0; domain < session_->get_domains_per_shape(); domain++) {
       int num_shapes = shapes.size();
@@ -1938,48 +2209,6 @@ void AnalysisTool::compute_reconstructed_domain_transforms() {
   for (int s = 0; s < shapes.size(); s++) {
     shapes[s]->set_reconstruction_transforms(reconstruction_transforms_);
   }
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label,
-                               QString y_label) {
-  JKQTPDatastore* ds = plot->getDatastore();
-  ds->clear();
-
-  QVector<double> x, y;
-  for (int i = 0; i < data.size(); i++) {
-    x << i + 1;
-    y << data[i];
-  }
-  size_t column_x = ds->addCopiedColumn(x, x_label);
-  size_t column_y = ds->addCopiedColumn(y, y_label);
-
-  plot->clearGraphs();
-  JKQTPXYLineGraph* graph = new JKQTPXYLineGraph(plot);
-  graph->setColor(Qt::blue);
-  graph->setSymbolType(JKQTPNoSymbol);
-  graph->setXColumn(column_x);
-  graph->setYColumn(column_y);
-  graph->setTitle(title);
-
-  plot->getPlotter()->setUseAntiAliasingForGraphs(true);
-  plot->getPlotter()->setUseAntiAliasingForSystem(true);
-  plot->getPlotter()->setUseAntiAliasingForText(true);
-  plot->getPlotter()->setPlotLabelFontSize(18);
-  plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
-  plot->getPlotter()->setDefaultTextSize(14);
-  plot->getPlotter()->setShowKey(false);
-
-  plot->getXAxis()->setAxisLabel(x_label);
-  plot->getXAxis()->setLabelFontSize(14);
-  plot->getYAxis()->setAxisLabel(y_label);
-  plot->getYAxis()->setLabelFontSize(14);
-
-  plot->clearAllMouseWheelActions();
-  plot->setMousePositionShown(false);
-  plot->setMinimumSize(250, 250);
-  plot->addGraph(graph);
-  plot->zoomToFit();
 }
 
 }  // namespace shapeworks

@@ -13,11 +13,11 @@ namespace shapeworks {
 static std::string create_header(const int line, const char* filename, const char* function = "") {
   const char* name = (strrchr(filename, '/') ? strrchr(filename, '/') + 1 : filename);
   const char* name2 = (strrchr(name, '\\') ? strrchr(name, '\\') + 1 : name);
-  const char* function_name = (strrchr(function, ':') ? strrchr(function, ':') + 1 : function);
   if (!function) {
     std::string header = "[" + std::string(name2) + "|" + std::to_string(line) + "]";
     return header;
   } else {
+    const char* function_name = (strrchr(function, ':') ? strrchr(function, ':') + 1 : function);
     std::string header = "[" + std::string(name2) + "|" + std::string(function_name) + "|" + std::to_string(line) + "]";
     return header;
   }
@@ -70,6 +70,20 @@ void Logging::log_message(const std::string& message, const int line, const char
 }
 
 //-----------------------------------------------------------------------------
+void Logging::log_only(const std::string& message, const int line, const char* file, const char* function) const {
+  if (spd::get_level() == spd::level::debug) {
+    // when in debug mode, treat this as a debug message
+    log_debug(message, line, file, function);
+    return;
+  }
+
+  spd::info(message);
+  if (log_open_) {
+    spd::get("file")->info(message);
+  }
+}
+
+//-----------------------------------------------------------------------------
 void Logging::log_stack(const std::string& message) const {
   spd::error(message);
   if (log_open_) {
@@ -79,12 +93,16 @@ void Logging::log_stack(const std::string& message) const {
 
 //-----------------------------------------------------------------------------
 void Logging::log_error(const std::string& message, const int line, const char* file) const {
-  spd::error(message);
+  std::string str = message;
+  if (spd::get_level() == spd::level::debug) {
+    str = create_header(line, file) + " Error: " + message;
+  }
+  spd::error(str);
   if (log_open_) {
-    spd::get("file")->error(message);
+    spd::get("file")->error(str);
   }
   if (error_callback_) {
-    error_callback_(message);
+    error_callback_(str);
   }
 }
 

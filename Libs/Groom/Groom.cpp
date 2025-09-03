@@ -7,6 +7,7 @@
 #include <Optimize/Constraints/Constraints.h>
 #include <Project/ProjectUtils.h>
 #include <Utils/StringUtils.h>
+#include <Utils/Utils.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <tbb/parallel_for.h>
 #include <vtkCenterOfMass.h>
@@ -18,14 +19,16 @@
 
 using namespace shapeworks;
 
+namespace {
 // for concurrent access
 static std::mutex mutex;
+}  // namespace
 
-typedef float PixelType;
-typedef itk::Image<PixelType, 3> ImageType;
+using PixelType = float;
+using ImageType = itk::Image<PixelType, 3>;
 
 //---------------------------------------------------------------------------
-Groom::Groom(ProjectHandle project) { project_ = project; }
+Groom::Groom(ProjectHandle project) : project_{project} {}
 
 //---------------------------------------------------------------------------
 bool Groom::run() {
@@ -41,6 +44,11 @@ bool Groom::run() {
     throw std::invalid_argument("No subjects to groom");
   }
 
+  // clear alignment transforms
+  for (auto& subject : subjects) {
+    subject->set_groomed_transforms({});
+  }
+
   total_ops_ = get_total_ops();
 
   std::atomic<bool> success = true;
@@ -50,6 +58,15 @@ bool Groom::run() {
       for (int domain = 0; domain < project_->get_number_of_domains_per_subject(); domain++) {
         if (abort_) {
           success = false;
+          continue;
+        }
+
+        auto domain_name = project_->get_domain_names()[domain];
+        // skip "shared_surface" and "shared_boundary"
+        bool is_shared_boundary = domain_name.find("shared_surface_") != std::string::npos ||
+                                  domain_name.find("shared_boundary_") != std::string::npos;
+        if (is_shared_boundary) {
+          SW_DEBUG("Skipping shared boundary domain '{}' during grooming", domain_name);
           continue;
         }
 
@@ -88,12 +105,18 @@ bool Groom::run() {
     }
   });
 
-  if (!run_alignment()) {
+  if (success && !run_shared_boundaries()) {
     success = false;
   }
+
+  if (success && !run_alignment()) {
+    success = false;
+  }
+
   increment_progress(10);  // alignment complete
 
   project_->update_subjects();
+
   return success;
 }
 
@@ -103,6 +126,8 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
 
   auto original = subject->get_original_filenames()[domain];
+
+  SW_DEBUG("Grooming image: {}", original);
 
   // load the image
   Image image(original);
@@ -285,6 +310,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
 
   auto original = subject->get_original_filenames()[domain];
+  SW_DEBUG("Grooming mesh: {}", original);
 
   // groomed mesh name
   std::string groom_name = get_output_filename(original, DomainType::Mesh);
@@ -348,6 +374,11 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
   if (params.get_remesh()) {
     auto poly_data = mesh.getVTKMesh();
     if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+      SW_DEBUG("Number of cells: {}", poly_data->GetNumberOfCells());
+      SW_DEBUG("Number of points in first cell: {}", poly_data->GetCell(0)->GetNumberOfPoints());
+      // write out to /tmp
+      std::string tmpname = "/tmp/bad_mesh.vtk";
+      MeshUtils::threadSafeWriteMesh(tmpname, mesh);
       throw std::runtime_error("malformed mesh, mesh should be triangular");
     }
     int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
@@ -507,67 +538,28 @@ bool Groom::get_aborted() { return abort_; }
 //---------------------------------------------------------------------------
 bool Groom::run_alignment() {
   size_t num_domains = project_->get_number_of_domains_per_subject();
+  SW_DEBUG("Running alignment, number of domains = {}", num_domains);
   auto subjects = project_->get_subjects();
+
+  if (subjects.empty()) {
+    SW_ERROR("No subjects to groom");
+    return false;
+  }
 
   auto base_params = GroomParameters(project_);
 
   bool global_icp = false;
   bool global_landmarks = false;
+  bool any_alignment = false;
 
   int reference_index = -1;
   int subset_size = -1;
 
   // per-domain alignment
   for (size_t domain = 0; domain < num_domains; domain++) {
-    if (abort_) {
-      return false;
-    }
-
     auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
-
     if (params.get_use_icp()) {
       global_icp = true;
-      std::vector<Mesh> reference_meshes;
-      std::vector<Mesh> meshes;
-      for (size_t i = 0; i < subjects.size(); i++) {
-        if (!subjects[i]->is_excluded()) {
-          Mesh mesh = get_mesh(i, domain, true);
-          // if fixed subjects are present, only add the fixed subjects
-          if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
-            reference_meshes.push_back(mesh);
-          }
-          meshes.push_back(mesh);
-        }
-      }
-
-      reference_index = params.get_alignment_reference();
-      subset_size = params.get_alignment_subset_size();
-
-      Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
-      if (reference_index < 0 || reference_index >= reference_meshes.size()) {
-        reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
-        reference_index = reference_meshes[reference_index].get_id();
-      }
-      reference_mesh = get_mesh(reference_index, domain, true);
-
-      params.set_alignment_reference_chosen(reference_index);
-      params.save_to_project();
-
-      auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
-      assign_transforms(transforms, domain);
-    } else if (params.get_use_landmarks()) {
-      global_landmarks = true;
-      std::vector<vtkSmartPointer<vtkPoints>> landmarks;
-      for (size_t i = 0; i < subjects.size(); i++) {
-        landmarks.push_back(get_landmarks(i, domain));
-      }
-
-      int reference_index = Groom::find_reference_landmarks(landmarks);
-      params.set_alignment_reference_chosen(reference_index);
-      params.save_to_project();
-
-      auto transforms = Groom::get_landmark_transforms(landmarks, reference_index);
-      assign_transforms(transforms, domain);
     }
   }
 
@@ -594,16 +586,21 @@ bool Groom::run_alignment() {
         meshes.push_back(mesh);
       } else {
         // insert blank for each excluded shape
-        meshes.push_back(vtkSmartPointer<vtkPolyData>::New());
+        meshes.emplace_back(vtkSmartPointer<vtkPolyData>::New());
       }
     }
 
     if (global_icp) {
-      std::vector<Mesh> reference_meshes;
-
       Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
+      if (reference_meshes.empty()) {
+        SW_ERROR("No reference meshes available");
+        return false;
+      }
       if (reference_index < 0 || reference_index >= reference_meshes.size()) {
         reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
+        if (reference_index < 0 || reference_index >= reference_meshes.size()) {
+          throw std::runtime_error("could not find reference mesh");
+        }
         reference_mesh = reference_meshes[reference_index];
       } else {
         reference_mesh = get_mesh(reference_index, 0, true);
@@ -623,12 +620,14 @@ bool Groom::run_alignment() {
       size_t domain = num_domains;  // end
       assign_transforms(transforms, domain, true /* global */);
 
-    } else {  // just center
+    } else {
       std::vector<std::vector<double>> transforms;
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
         auto transform = vtkSmartPointer<vtkTransform>::New();
-        Groom::add_center_transform(transform, meshes[i]);
+        if (any_alignment) {  // just center
+          Groom::add_center_transform(transform, meshes[i]);
+        }
         transforms.push_back(ProjectUtils::convert_transform(transform));
       }
       size_t domain = num_domains;  // end
@@ -636,9 +635,394 @@ bool Groom::run_alignment() {
     }
   }
 
+  // per-domain alignment
+  for (size_t domain = 0; domain < num_domains; domain++) {
+    if (abort_) {
+      return false;
+    }
+
+    auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
+    if (params.get_alignment_enabled()) {
+      any_alignment = true;
+    }
+
+    if (params.get_use_icp()) {
+      global_icp = true;
+      std::vector<Mesh> reference_meshes;
+      std::vector<Mesh> meshes;
+      for (size_t i = 0; i < subjects.size(); i++) {
+        if (!subjects[i]->is_excluded()) {
+          Mesh mesh = get_mesh(i, domain, true);
+          // if fixed subjects are present, only add the fixed subjects
+          if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
+            reference_meshes.push_back(mesh);
+          }
+          meshes.push_back(mesh);
+        }
+      }
+
+      reference_index = params.get_alignment_reference();
+      subset_size = params.get_alignment_subset_size();
+
+      if (reference_meshes.empty()) {
+        SW_ERROR("No reference meshes available");
+        return false;
+      }
+
+      Mesh reference_mesh = vtkSmartPointer<vtkPolyData>::New();
+      if (reference_index < 0 || reference_index >= subjects.size()) {
+        reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
+        reference_index = reference_meshes[reference_index].get_id();
+      }
+      reference_mesh = get_mesh(reference_index, domain, true);
+
+      params.set_alignment_reference_chosen(reference_index);
+      params.save_to_project();
+
+      auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
+      assign_transforms(transforms, domain);
+    } else if (params.get_use_landmarks()) {
+      global_landmarks = true;
+      std::vector<vtkSmartPointer<vtkPoints>> landmarks;
+      for (size_t i = 0; i < subjects.size(); i++) {
+        landmarks.push_back(get_landmarks(i, domain));
+      }
+
+      // confirm that each subject has landmarks and has the same number of landmarks
+      for (size_t i = 0; i < subjects.size(); i++) {
+        if (landmarks[i]->GetNumberOfPoints() == 0) {
+          SW_ERROR(
+              "Unable to perform landmark-based alignment.  Subject '{}' does not have landmarks defined for domain {}",
+              subjects[i]->get_display_name(), domain);
+          return false;
+        }
+        if (i > 0 && landmarks[i]->GetNumberOfPoints() != landmarks[0]->GetNumberOfPoints()) {
+          SW_ERROR(
+              "Unable to perform landmark-based alignment.  Subject '{}' has a different number of landmarks than "
+              "subject '{}'",
+              subjects[i]->get_display_name(), subjects[0]->get_display_name());
+          return false;
+        }
+      }
+
+      int reference_index = Groom::find_reference_landmarks(landmarks);
+      params.set_alignment_reference_chosen(reference_index);
+      params.save_to_project();
+
+      auto transforms = Groom::get_landmark_transforms(landmarks, reference_index);
+      assign_transforms(transforms, domain);
+    }
+  }
+
   return true;
 }
 
+//---------------------------------------------------------------------------
+bool Groom::run_shared_boundaries() {
+  // only need to check on one domain
+  auto params = GroomParameters(project_, project_->get_domain_names()[0]);
+
+  // first, we must remove any existing shared surfaces and boundaries from the project
+  clear_unused_shared_boundaries();
+
+  if (!params.get_shared_boundaries_enabled()) {
+    return true;
+  }
+
+  SW_LOG("Processing shared boundaries...");
+
+  auto domain_names = project_->get_domain_names();
+  auto original_domain_types = project_->get_original_domain_types();
+  auto groomed_domain_types = project_->get_groomed_domain_types();
+
+  std::atomic<bool> error_encountered = false;
+
+  for (const auto& shared_boundary : params.get_shared_boundaries()) {
+    std::string first_domain_name = shared_boundary.first_domain;
+    std::string second_domain_name = shared_boundary.second_domain;
+    std::string shared_surface_name = "shared_surface_" + first_domain_name + "_" + second_domain_name;
+    std::string shared_boundary_name = "shared_boundary_" + first_domain_name + "_" + second_domain_name;
+
+    // if domain_names doesn't have the shared domains, add them
+    if (std::find(domain_names.begin(), domain_names.end(), shared_surface_name) == domain_names.end()) {
+      domain_names.push_back(shared_surface_name);
+      original_domain_types.push_back(DomainType::Mesh);
+      groomed_domain_types.push_back(DomainType::Mesh);
+    }
+    if (std::find(domain_names.begin(), domain_names.end(), shared_boundary_name) == domain_names.end()) {
+      domain_names.push_back(shared_boundary_name);
+      original_domain_types.push_back(DomainType::Contour);
+      groomed_domain_types.push_back(DomainType::Contour);
+    }
+
+    int shared_domain_index =
+        std::find(domain_names.begin(), domain_names.end(), shared_surface_name) - domain_names.begin();
+    int shared_boundary_index =
+        std::find(domain_names.begin(), domain_names.end(), shared_boundary_name) - domain_names.begin();
+
+    // find the index of the first domain and second domain
+    int first_domain = 0;
+    int second_domain = 1;
+    for (int i = 0; i < domain_names.size(); i++) {
+      if (domain_names[i] == first_domain_name) {
+        first_domain = i;
+      }
+      if (domain_names[i] == second_domain_name) {
+        second_domain = i;
+      }
+    }
+
+    groomed_domain_types[first_domain] = DomainType::Mesh;
+    groomed_domain_types[second_domain] = DomainType::Mesh;
+
+    project_->set_domain_names(domain_names);
+    project_->set_original_domain_types(original_domain_types);
+    project_->set_groomed_domain_types(groomed_domain_types);
+
+    auto subjects = project_->get_subjects();
+
+    std::mutex progress_mutex;
+    int progress = 0;
+
+    tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
+        if (abort_) {
+          return;
+        }
+
+        auto subject = subjects[i];
+
+        Mesh first_mesh = get_mesh(i, first_domain, false, MeshSource::Groomed);
+        Mesh second_mesh = get_mesh(i, second_domain, false, MeshSource::Groomed);
+
+        // create an empty vtk mesh
+        auto empty_mesh = vtkSmartPointer<vtkPolyData>::New();
+
+        Mesh extracted_l(empty_mesh);
+        Mesh extracted_r(empty_mesh);
+        Mesh extracted_s(empty_mesh);
+        Mesh output_contour(empty_mesh);
+        try {
+          // returns left remainder, right remainder, and shared_surface
+          auto result = MeshUtils::shared_boundary_extractor(first_mesh, second_mesh, shared_boundary.tolerance);
+          extracted_l = result[0];
+          extracted_r = result[1];
+          extracted_s = result[2];
+
+          extracted_l.remeshPercent(.99, 1.0);
+          extracted_r.remeshPercent(.99, 1.0);
+
+          output_contour = MeshUtils::extract_boundary_loop(extracted_s);
+
+        } catch (const std::exception& e) {
+          SW_ERROR("Error extracting shared boundary for subject '{}': {}", subject->get_display_name(), e.what());
+          // need to continue to write the empty meshes out or we will have a broken project that can no longer be saved
+          error_encountered = true;
+        }
+
+        // overwrite groomed filename for first and second with extracted_l and extracted_r
+        auto first_filename = subject->get_groomed_filenames()[first_domain];
+        auto second_filename = subject->get_groomed_filenames()[second_domain];
+        // change file extension to .vtk if it's not already
+        first_filename = StringUtils::removeExtension(first_filename) + "_extracted.vtk";
+        second_filename = StringUtils::removeExtension(second_filename) + "_extracted.vtk";
+        MeshUtils::threadSafeWriteMesh(first_filename, extracted_l);
+        MeshUtils::threadSafeWriteMesh(second_filename, extracted_r);
+
+        auto shared_surface_filename = get_output_filename(shared_surface_name, DomainType::Mesh);
+        auto shared_boundary_filename = get_output_filename(shared_boundary_name, DomainType::Contour);
+
+        extracted_s.write(shared_surface_filename);
+        output_contour.write(shared_boundary_filename);
+
+        // store filenames
+        auto groomed_filenames = subject->get_groomed_filenames();
+        groomed_filenames[first_domain] = first_filename;
+        groomed_filenames[second_domain] = second_filename;
+        if (shared_domain_index >= groomed_filenames.size()) {
+          groomed_filenames.resize(shared_domain_index + 1);
+        }
+        if (shared_boundary_index >= groomed_filenames.size()) {
+          groomed_filenames.resize(shared_boundary_index + 1);
+        }
+        groomed_filenames[shared_domain_index] = shared_surface_filename;
+        groomed_filenames[shared_boundary_index] = shared_boundary_filename;
+        subject->set_groomed_filenames(groomed_filenames);
+        subject->set_number_of_domains(domain_names.size());
+
+        // also store the two new ones as original
+        auto original_filenames = subject->get_original_filenames();
+        if (original_filenames.size() <= shared_domain_index) {
+          original_filenames.resize(shared_domain_index + 1);
+        }
+        if (original_filenames.size() <= shared_boundary_index) {
+          original_filenames.resize(shared_boundary_index + 1);
+        }
+        original_filenames[shared_domain_index] = shared_surface_filename;
+        original_filenames[shared_boundary_index] = shared_boundary_filename;
+        subject->set_original_filenames(original_filenames);
+
+        {
+          // lock
+          std::scoped_lock lock(progress_mutex);
+          progress++;
+          progress_ = static_cast<float>(progress) / static_cast<float>(subjects.size()) * 100.0;
+          SW_PROGRESS(progress_, fmt::format("Processing shared boundaries ({}/{})", progress, subjects.size()));
+        }
+      }
+    });
+  }
+
+  if (error_encountered) {
+    SW_ERROR("Errors encountered while processing shared boundaries. Please check the log for details.");
+
+    // remove shared_surface and shared_boundary from domain_names
+    auto domain_names = project_->get_domain_names();
+    domain_names.erase(std::remove_if(domain_names.begin(), domain_names.end(),
+                                      [](const std::string& name) {
+                                        return name.find("shared_surface_") != std::string::npos ||
+                                               name.find("shared_boundary_") != std::string::npos;
+                                      }),
+                       domain_names.end());
+    project_->set_domain_names(domain_names);
+
+    // go back and delete all the shared surfaces and boundaries that were created for all subjects
+    auto subjects = project_->get_subjects();
+    for (auto& subject : subjects) {
+      auto original_filenames = subject->get_original_filenames();
+
+      for (auto it = original_filenames.begin(); it != original_filenames.end();) {
+        if (it->find("shared_surface_") != std::string::npos || it->find("shared_boundary_") != std::string::npos) {
+          SW_DEBUG("Removing original filename: {}", *it);
+          Utils::quiet_delete_file(*it);
+          it = original_filenames.erase(it);
+        } else {
+          ++it;
+        }
+      }
+      subject->set_original_filenames(original_filenames);
+
+      subject->set_groomed_filenames({});
+      subject->set_number_of_domains(domain_names.size());
+    }
+
+    return false;
+  }
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+void Groom::clear_unused_shared_boundaries() {
+  auto params = GroomParameters(project_, project_->get_domain_names()[0]);
+
+  std::vector<std::string> shared_surfaces_to_keep;
+  std::vector<std::string> shared_boundaries_to_keep;
+
+  if (params.get_shared_boundaries_enabled()) {
+    for (const auto& shared_boundary : params.get_shared_boundaries()) {
+      std::string first_domain_name = shared_boundary.first_domain;
+      std::string second_domain_name = shared_boundary.second_domain;
+      std::string shared_surface_name = "shared_surface_" + first_domain_name + "_" + second_domain_name;
+      std::string shared_boundary_name = "shared_boundary_" + first_domain_name + "_" + second_domain_name;
+      shared_surfaces_to_keep.push_back(shared_surface_name);
+      shared_boundaries_to_keep.push_back(shared_boundary_name);
+    }
+  }
+
+  // Lambda to check if a name is a shared domain that should be removed
+  auto is_shared_domain_to_remove = [&shared_surfaces_to_keep, &shared_boundaries_to_keep](const std::string& name) {
+    // name may be dir/file and we only care about file
+    std::string filename = StringUtils::getFilename(name);
+
+    bool is_shared =
+        filename.find("shared_surface_") != std::string::npos || filename.find("shared_boundary_") != std::string::npos;
+
+    if (!is_shared) {
+      return false;  // Not a shared domain at all
+    }
+
+    // Check if it's in either keep list
+    bool should_keep = std::find(shared_surfaces_to_keep.begin(), shared_surfaces_to_keep.end(), name) !=
+                           shared_surfaces_to_keep.end() ||
+                       std::find(shared_boundaries_to_keep.begin(), shared_boundaries_to_keep.end(), name) !=
+                           shared_boundaries_to_keep.end();
+
+    return !should_keep;  // Remove if it's shared but not in keep lists
+  };
+
+  // Lambda to remove shared files from a vector and delete them from disk
+  auto remove_shared_files = [&is_shared_domain_to_remove](std::vector<std::string>& filenames) {
+    for (auto it = filenames.begin(); it != filenames.end();) {
+      if (is_shared_domain_to_remove(*it)) {
+        std::cerr << "Removing file: " << *it << "\n";
+        Utils::quiet_delete_file(*it);
+        it = filenames.erase(it);
+      } else {
+        ++it;
+      }
+    }
+  };
+
+  // Lambda to remove elements from vector by matching domain names
+  auto remove_by_domain_names = [&is_shared_domain_to_remove](auto& vec, const std::vector<std::string>& domain_names) {
+    for (auto it = vec.begin(); it != vec.end();) {
+      size_t index = std::distance(vec.begin(), it);
+      if (index < domain_names.size() && is_shared_domain_to_remove(domain_names[index])) {
+        it = vec.erase(it);
+      } else {
+        ++it;
+      }
+    }
+  };
+
+  auto domain_names = project_->get_domain_names();
+  auto original_domain_names = domain_names;  // Save original for reference
+
+  // Remove shared domains from domain_names
+  domain_names.erase(std::remove_if(domain_names.begin(), domain_names.end(), is_shared_domain_to_remove),
+                     domain_names.end());
+
+  // Remove corresponding entries from domain types arrays using original domain names as reference
+  auto original_domain_types = project_->get_original_domain_types();
+  auto groomed_domain_types = project_->get_groomed_domain_types();
+
+  remove_by_domain_names(original_domain_types, original_domain_names);
+  remove_by_domain_names(groomed_domain_types, original_domain_names);
+
+  project_->set_domain_names(domain_names);
+  project_->set_original_domain_types(original_domain_types);
+  project_->set_groomed_domain_types(groomed_domain_types);
+
+  // Clean up files from all non-fixed subjects
+  auto subjects = project_->get_subjects();
+  for (auto& subject : subjects) {
+    if (subject->is_fixed()) {
+      continue;  // Skip fixed subjects
+    }
+    // Remove shared surface/boundary files using lambda
+    auto original_filenames = subject->get_original_filenames();
+    remove_shared_files(original_filenames);
+    subject->set_original_filenames(original_filenames);
+
+    auto groomed_filenames = subject->get_groomed_filenames();
+    remove_shared_files(groomed_filenames);
+    subject->set_groomed_filenames(groomed_filenames);
+
+    // Remove alignment transforms for removed domains
+    auto transforms = subject->get_groomed_transforms();
+    remove_by_domain_names(transforms, original_domain_names);
+    subject->set_groomed_transforms(transforms);
+
+    subject->set_local_particle_filenames({});
+    subject->set_world_particle_filenames({});
+
+    subject->set_procrustes_transforms({});
+    subject->set_number_of_domains(domain_names.size());
+  }
+
+  project_->set_domain_names(domain_names);
+}
 //---------------------------------------------------------------------------
 void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global) {
   auto subjects = project_->get_subjects();
@@ -693,7 +1077,7 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 
   // if the project is not saved, use the path of the input filename
   auto filename = project_->get_filename();
-  if (filename == "") {
+  if (filename.empty()) {
     filename = input;
   }
 
@@ -706,6 +1090,8 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 
   std::string suffix = "_DT.nrrd";
   if (domain_type == DomainType::Mesh) {
+    suffix = "_groomed.vtk";
+  } else if (domain_type == DomainType::Contour) {
     suffix = "_groomed.vtk";
   }
 
@@ -736,11 +1122,34 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
 }
 
 //---------------------------------------------------------------------------
-Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
+Mesh Groom::get_mesh(int subject, int domain, bool transformed, MeshSource source) {
   auto subjects = project_->get_subjects();
-  assert(subject < subjects.size());
-  assert(domain < subjects[subject]->get_original_filenames().size());
-  auto path = subjects[subject]->get_original_filenames()[domain];
+  if (subject >= subjects.size()) {
+    throw std::out_of_range("subject index out of range");
+  }
+
+  std::string path;
+
+  DomainType domain_type = DomainType::Mesh;
+
+  if (source == MeshSource::Original) {
+    if (domain >= subjects[subject]->get_original_filenames().size()) {
+      throw std::out_of_range("domain index out of range");
+    }
+    path = subjects[subject]->get_original_filenames()[domain];
+    domain_type = project_->get_original_domain_types()[domain];
+    SW_DEBUG("Getting original mesh for subject {}, domain {}: {}", subject, domain, path);
+    SW_DEBUG("Domain type: {}", static_cast<int>(domain_type));
+  } else {
+    if (domain >= subjects[subject]->get_groomed_filenames().size()) {
+      throw std::out_of_range("domain index out of range");
+    }
+    path = subjects[subject]->get_groomed_filenames()[domain];
+
+    domain_type = ProjectUtils::determine_domain_type(path);
+    SW_DEBUG("Getting groomed mesh for subject {}, domain {}: {}", subject, domain, path);
+    SW_DEBUG("Domain type: {}", static_cast<int>(domain_type));
+  }
 
   auto constraint_filename = subjects[subject]->get_constraints_filenames();
   Constraints constraint;
@@ -748,7 +1157,7 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
     constraint.read(constraint_filename[domain]);
   }
 
-  if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
+  if (domain_type == DomainType::Contour) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
     mesh.set_id(subject);
     return mesh;
@@ -756,15 +1165,17 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
 
   Mesh mesh = vtkSmartPointer<vtkPolyData>::New();
 
-  if (project_->get_original_domain_types()[domain] == DomainType::Image) {
+  if (domain_type == DomainType::Image) {
     Image image(path);
     mesh = image.toMesh(0.5);
     constraint.clipMesh(mesh);
-  } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
+  } else if (domain_type == DomainType::Mesh) {
     mesh = MeshUtils::threadSafeReadMesh(path);
     constraint.clipMesh(mesh);
+  } else if (domain_type == DomainType::Contour) {
+    mesh = MeshUtils::threadSafeReadMesh(path);
   } else {
-    throw std::invalid_argument("invalid domain type");
+    throw std::invalid_argument("invalid domain type: " + std::to_string(static_cast<int>(domain_type)));
   }
 
   if (transformed) {
@@ -784,7 +1195,11 @@ Mesh Groom::get_mesh(int subject, int domain, bool transformed) {
 vtkSmartPointer<vtkPoints> Groom::get_landmarks(int subject, int domain) {
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
   auto subjects = project_->get_subjects();
-  auto path = subjects[subject]->get_landmarks_filenames()[domain];
+  auto landmarks_filenames = subjects[subject]->get_landmarks_filenames();
+  if (domain >= landmarks_filenames.size()) {
+    return vtk_points;
+  }
+  auto path = landmarks_filenames[domain];
 
   std::ifstream in(path.c_str());
   if (!in.good()) {
@@ -872,28 +1287,28 @@ int Groom::find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> land
 std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference) {
   std::vector<std::vector<double>> transforms(meshes.size());
 
-  // tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
-  // for (size_t i = r.begin(); i < r.end(); ++i) {
-  for (size_t i = 0; i < meshes.size(); i++) {
-    vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    matrix->Identity();
+  tbb::parallel_for(tbb::blocked_range<size_t>{0, meshes.size()}, [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i < r.end(); ++i) {
+      // for (size_t i = 0; i < meshes.size(); i++) {
+      vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+      matrix->Identity();
 
-    Mesh source = meshes[i];
-    if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
-      // create copies for thread safety
-      auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
-      poly_data1->DeepCopy(source.getVTKMesh());
-      auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
-      poly_data2->DeepCopy(reference.getVTKMesh());
+      Mesh source = meshes[i];
+      if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
+        // create copies for thread safety
+        auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data1->DeepCopy(source.getVTKMesh());
+        auto poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+        poly_data2->DeepCopy(reference.getVTKMesh());
 
-      matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+        matrix = MeshUtils::createICPTransform(poly_data1, poly_data2, Mesh::Rigid, 100, true);
+      }
+      auto transform = createMeshTransform(matrix);
+      transform->PostMultiply();
+      Groom::add_center_transform(transform, reference);
+      transforms[i] = ProjectUtils::convert_transform(transform);
     }
-    auto transform = createMeshTransform(matrix);
-    transform->PostMultiply();
-    Groom::add_center_transform(transform, reference);
-    transforms[i] = ProjectUtils::convert_transform(transform);
-  }
-  //  });
+  });
 
   return transforms;
 }

@@ -1,3 +1,4 @@
+#include <Data/Session.h>
 #include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Utils/StudioUtils.h>
@@ -10,6 +11,7 @@
 #include <vtkRenderer.h>
 #include <vtkReverseSense.h>
 
+#include <QComboBox>
 #include <QMessageBox>
 
 namespace shapeworks {
@@ -90,7 +92,7 @@ QString StudioUtils::get_platform_string() {
   QString platform = "windows";
 #ifdef Q_OS_MACOS
   platform = "macos";
-#elifdef Q_OS_LINUX
+#elif defined(Q_OS_LINUX)
   platform = "linux";
 #endif
   return platform;
@@ -173,5 +175,34 @@ void StudioUtils::window_width_level_to_brightness_contrast(double window_width,
 
   // Calculate contrast
   contrast = (window_width / (max_intensity - min_intensity)) * 100.0;
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session,
+                                         const std::vector<QString>& filters) {
+  auto domain_names = session->get_project()->get_domain_names();
+
+  int currentIndex = combobox->currentIndex();
+  if (domain_names.size() != combobox->count()) {
+    combobox->clear();
+    for (auto&& item : domain_names) {
+      bool skip = false;
+      for (const auto& filter : filters) {
+        if (QString::fromStdString(item).contains(filter, Qt::CaseInsensitive)) {
+          skip = true;
+        }
+      }
+      if (skip) {
+        continue;
+      }
+      combobox->addItem(QString::fromStdString(item));
+    }
+  }
+  if (currentIndex < 0) {
+    currentIndex = 0;
+  }
+  if (currentIndex < combobox->count()) {
+    combobox->setCurrentIndex(currentIndex);
+  }
 }
 }  // namespace shapeworks

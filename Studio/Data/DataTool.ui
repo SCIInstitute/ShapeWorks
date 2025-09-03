@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>2256</height>
+    <height>2495</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -100,7 +100,6 @@ QWidget#notes_panel {
     border: 1px solid rgb(60, 60, 60);
     color: rgb(90, 90, 90);
 }
-
 
 
 /********************** constraints panel ***********************/
@@ -748,16 +747,16 @@ QWidget#specificity_panel {
        <widget class="QWidget" name="constraints_content" native="true">
         <layout class="QGridLayout" name="gridLayout_14">
          <property name="leftMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>6</number>
          </property>
          <item row="0" column="0" colspan="2">
           <widget class="QWidget" name="constraints_domain_widget_" native="true">
@@ -1109,19 +1108,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

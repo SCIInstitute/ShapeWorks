@@ -3,12 +3,14 @@ set(Utils_sources
   Utils.cpp
   StringUtils.cpp
   EigenUtils.cpp
+  PlatformUtils.cpp
   )
 
 set(Utils_headers
   Utils.h
   StringUtils.h
   EigenUtils.h
+  PlatformUtils.h
   )
 
 add_library(Utils STATIC

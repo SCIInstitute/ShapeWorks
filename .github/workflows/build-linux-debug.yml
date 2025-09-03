@@ -28,12 +28,6 @@ jobs:
     
     steps:
 
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2.7.0
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
     - name: Conda info
       run: conda info
 
@@ -60,10 +54,6 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: Restore Caches
-      shell: bash -l {0}
-      run: .github/workflows/restore_caches.sh
-
     - name: Check space3
       run: df -h
 
@@ -83,7 +73,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DITK_DIR=$HOME/install/lib/cmake/ITK-5.2 -DVTK_DIR=$HOME/install/lib/cmake/vtk-9.1 -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRYCENTRAL_DIR=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DUSE_ORIGIN_RPATH=ON ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DITK_DIR=$HOME/install/lib/cmake/ITK-5.4 -DVTK_DIR=$HOME/install/lib/cmake/vtk-9.5 -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRYCENTRAL_DIR=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DUSE_ORIGIN_RPATH=ON ..
 
     - name: Check space6
       run: df -h
@@ -106,9 +96,4 @@ jobs:
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
-  
-    - name: Store ccache
-      shell: bash -l {0}
-      run: .github/workflows/store_ccache.sh
-
       

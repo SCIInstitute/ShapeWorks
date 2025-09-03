@@ -1,3 +1,4 @@
+
 #include <Optimize/Optimize.h>
 
 #include <Eigen/Eigen>
@@ -20,7 +21,6 @@ using namespace pybind11::literals;
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
 
-#include <bitset>
 #include <boost/filesystem.hpp>
 #include <sstream>
 
@@ -343,8 +343,11 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def("gaussianBlur", &Image::gaussianBlur, "applies gaussian blur", "sigma"_a = 0.0)
 
-      .def("crop", &Image::crop, "crops the image down to the given (physica) region, with optional padding",
+      .def("crop", &Image::crop, "crops the image down to the given (physical) region, with optional padding",
            "region"_a, "padding"_a = 0)
+
+      .def("fitRegion", &Image::fitRegion, "crops or pads the image to fit a region with optional padding value",
+           "region"_a, "value"_a = 0)
 
       .def(
           "clip",
@@ -465,7 +468,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
           "converts a physical coordinate to a logical (index) space", "p"_a)
 
       .def("compare", &Image::compare, "compares two images", "other"_a, "verifyall"_a = true, "tolerance"_a = 0.0,
-           "precision"_a = 1e-12)
+           "precision"_a = 1e-6)
 
       .def(
           "toArray",
@@ -970,19 +973,17 @@ PYBIND11_MODULE(shapeworks_py, m) {
           },
           "returns closest point id in this mesh to the given point in space", "point"_a)
 
-   .def("interpolateFieldAtPoint",
-       [](Mesh &mesh, const std::string& name, std::vector<double> p) -> decltype(auto) {
-         return mesh.interpolateFieldAtPoint(name, Point({p[0], p[1], p[2]}));
-       },
-       "Interpolate the feature at the location using barycentric coordinate",
-       "field"_a,
-       "point"_a)
+      .def(
+          "interpolateFieldAtPoint",
+          [](Mesh& mesh, const std::string& name, std::vector<double> p) -> decltype(auto) {
+            return mesh.interpolateFieldAtPoint(name, Point({p[0], p[1], p[2]}));
+          },
+          "Interpolate the feature at the location using barycentric coordinate", "field"_a, "point"_a)
 
-  .def("geodesicDistance",
-       static_cast<double (Mesh::*)(int,int) const>(&Mesh::geodesicDistance),
-       //py::overload_cast_const<int, int>(&Mesh::geodesicDistance),
-       "computes geodesic distance between two vertices (specified by their indices) on mesh",
-       "source"_a, "target"_a)
+      .def("geodesicDistance", static_cast<double (Mesh::*)(int, int) const>(&Mesh::geodesicDistance),
+           // py::overload_cast_const<int, int>(&Mesh::geodesicDistance),
+           "computes geodesic distance between two vertices (specified by their indices) on mesh", "source"_a,
+           "target"_a)
 
       .def(
           "geodesicDistance",
@@ -997,7 +998,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
           [](Mesh& mesh, const std::vector<std::vector<double>> p) -> decltype(auto) {
             std::vector<Point> points;
             for (int i = 0; i < p.size(); i++) {
-              points.push_back(Point({p[i][0], p[i][0], p[i][2]}));
+              points.push_back(Point({p[i][0], p[i][1], p[i][2]}));
             }
             auto array = mesh.geodesicDistance(points);
             return arrToPy(array, MOVE_ARRAY);
@@ -1022,7 +1023,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
           [](Mesh& mesh, PhysicalRegion& region, std::vector<double>& spacing) -> decltype(auto) {
             return mesh.toImage(region, Point({spacing[0], spacing[1], spacing[2]}));
           },
-          "rasterizes specified region to create binary image of desired dims (default: unit spacing)",
+          "rasterize specified region to create binary image of desired dims (default: unit spacing)",
           "region"_a = PhysicalRegion(), "spacing"_a = std::vector<double>({1.0, 1.0, 1.0}))
 
       .def(
@@ -1099,6 +1100,9 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def("computeThickness", &Mesh::computeThickness, "Computes cortical thickness", "ct"_a, "dt"_a = nullptr,
            "maxDist"_a = 10000, "medianRadius"_a = 5.0, "distanceMesh"_a = "")
+
+      .def("interpolate_scalars_to_mesh", &Mesh::interpolate_scalars_to_mesh, "Interpolate scalars to mesh", "name"_a,
+           "positions"_a, "scalar_values"_a)
 
       ;
 
@@ -1183,13 +1187,13 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def_static("findReferenceMesh", &MeshUtils::findReferenceMesh, "find reference mesh from a set of meshes",
                   "meshes"_a, "random_subset"_a = -1)
 
-      .def_static("boundaryLoopExtractor", &MeshUtils::boundaryLoopExtractor,
+      .def_static("boundaryLoopExtractor", &MeshUtils::extract_boundary_loop,
                   "for a mesh extracts the boundary loop and export the boundary loop as a contour .vtp file", "mesh"_a)
 
       .def_static(
           "sharedBoundaryExtractor",
           [](const Mesh& mesh_l, const Mesh& mesh_r, float tol) -> decltype(auto) {
-            std::array<Mesh, 3> output = MeshUtils::sharedBoundaryExtractor(mesh_l, mesh_r, tol);
+            std::array<Mesh, 3> output = MeshUtils::shared_boundary_extractor(mesh_l, mesh_r, tol);
 
             // std::move passes ownership to Python
             return py::make_tuple(std::move(output[0]), std::move(output[1]), std::move(output[2]));
@@ -1228,51 +1232,51 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def(
           "ShapeAsPointSet",
           [](ParticleSystemEvaluation& p, int id_shape) -> decltype(auto) {
-            Eigen::MatrixXd points = p.Particles().col(id_shape);
+            Eigen::MatrixXd points = p.get_matrix().col(id_shape);
             points.resize(3, points.size() / 3);
             points.transposeInPlace();
             return points;
           },
           "Return the particle pointset [Nx3] of the specified shape", "id_shape"_a)
 
-      .def("Particles", &ParticleSystemEvaluation::Particles)
+      .def("Particles", &ParticleSystemEvaluation::get_matrix)
 
-      .def("Paths", &ParticleSystemEvaluation::Paths)
+      .def("Paths", &ParticleSystemEvaluation::get_paths)
 
-      .def("N", &ParticleSystemEvaluation::N)
+      .def("N", &ParticleSystemEvaluation::num_samples)
 
-      .def("D", &ParticleSystemEvaluation::D)
+      .def("D", &ParticleSystemEvaluation::num_dims)
 
-      .def("ExactCompare", &ParticleSystemEvaluation::ExactCompare)
+      .def("ExactCompare", &ParticleSystemEvaluation::exact_compare)
 
-      .def("EvaluationCompare", &ParticleSystemEvaluation::EvaluationCompare);
+      .def("EvaluationCompare", &ParticleSystemEvaluation::evaluation_compare);
 
   // ShapeEvaluation
   py::class_<ShapeEvaluation>(m, "ShapeEvaluation")
 
-      .def_static("ComputeCompactness", &ShapeEvaluation::ComputeCompactness,
+      .def_static("ComputeCompactness", &ShapeEvaluation::compute_compactness,
                   "Computes the compactness measure for a particle system", "particleSystem"_a, "nModes"_a,
                   "saveTo"_a = "")
 
-      .def_static("ComputeGeneralization", &ShapeEvaluation::ComputeGeneralization,
+      .def_static("ComputeGeneralization", &ShapeEvaluation::compute_generalization,
                   "Computes the generalization measure for a particle system", "particleSystem"_a, "nModes"_a,
-                  "saveTo"_a = "")
+                  "saveTo"_a = "", "surface_distance_mode"_a = false)
 
-      .def_static("ComputeSpecificity", &ShapeEvaluation::ComputeSpecificity,
+      .def_static("ComputeSpecificity", &ShapeEvaluation::compute_specificity,
                   "Computes the specificity measure for a particle system", "particleSystem"_a, "nModes"_a,
-                  "saveTo"_a = "")
+                  "saveTo"_a = "", "surface_distance_mode"_a = false)
 
-      .def_static("ComputeFullCompactness", &ShapeEvaluation::ComputeFullCompactness,
+      .def_static("ComputeFullCompactness", &ShapeEvaluation::compute_full_compactness,
                   "Computes the compactness measure for a particle system, all modes", "particleSystem"_a,
                   "progress_callback"_a = nullptr)
 
-      .def_static("ComputeFullGeneralization", &ShapeEvaluation::ComputeFullGeneralization,
+      .def_static("ComputeFullGeneralization", &ShapeEvaluation::compute_full_generalization,
                   "Computes the generalization measure for a particle system, all modes", "particleSystem"_a,
-                  "progress_callback"_a = nullptr)
+                  "progress_callback"_a = nullptr, "check_abort"_a = nullptr, "surface_distance_mode"_a = false)
 
-      .def_static("ComputeFullSpecificity", &ShapeEvaluation::ComputeFullSpecificity,
+      .def_static("ComputeFullSpecificity", &ShapeEvaluation::compute_full_specificity,
                   "Computes the specificity measure for a particle system, all modes", "particleSystem"_a,
-                  "progress_callback"_a = nullptr);
+                  "progress_callback"_a = nullptr, "check_abort"_a = nullptr, "surface_distance_mode"_a = false);
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
 

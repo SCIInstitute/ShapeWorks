@@ -21,6 +21,7 @@ class Parameters {
   static constexpr const char* STUDIO_PARAMS = "studio";
   static constexpr const char* PROJECT_PARAMS = "project";
   static constexpr const char* DEEPSSM_PARAMS = "deepssm";
+  static constexpr const char* MONAI_PARAMS = "monai";
 
   //! default constructor
   Parameters();

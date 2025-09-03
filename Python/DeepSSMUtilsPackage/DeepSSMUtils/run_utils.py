@@ -6,14 +6,16 @@ import json
 
 import shapeworks as sw
 from bokeh.util.terminal import trace
-from shapeworks.utils import sw_message
-from shapeworks.utils import sw_progress
-from shapeworks.utils import sw_check_abort
+from shapeworks.utils import sw_message, sw_progress, sw_check_abort
 
 import DataAugmentationUtils
 import DeepSSMUtils
 import DeepSSMUtils.eval_utils as eval_utils
 
+import itk
+# this is here to cause the ITK libraries to be loaded at a safe time when other threads won't be doing file I/O
+# See #2315
+temporary_parameter_object = itk.ParameterObject.New()
 
 def create_split(project, train, val, test):
     # Create split
@@ -125,21 +127,6 @@ def prep_project_for_val_particles(project):
     project.set_subjects(subjects)
 
 
-def get_reference_index(project):
-    """ Get the index of the reference subject chosen by grooming alignment."""
-    params = project.get_parameters("groom")
-    reference_index = params.get("alignment_reference_chosen")
-    return int(reference_index)
-
-
-def get_image_filename(subject):
-    """ Get the image filename for a subject. """
-    image_map = subject.get_feature_filenames()
-    # get the first image
-    image_name = list(image_map.values())[0]
-    return image_name
-
-
 def get_deepssm_dir(project):
     """ Get the directory for deepssm data"""
     project_path = project.get_project_path()
@@ -197,8 +184,8 @@ def groom_training_images(project):
 
     deepssm_dir = get_deepssm_dir(project)
 
-    ref_index = get_reference_index(project)
-    ref_image = sw.Image(get_image_filename(subjects[ref_index]))
+    ref_index = sw.utils.get_reference_index(project)
+    ref_image = sw.Image(sw.utils.get_image_filename(subjects[ref_index]))
     ref_mesh = sw.utils.load_mesh(subjects[ref_index].get_groomed_filenames()[0])
 
     # apply alignment transform
@@ -248,7 +235,7 @@ def groom_training_images(project):
             sw_message("Aborted")
             return
 
-        image_name = get_image_filename(subjects[i])
+        image_name = sw.utils.get_image_filename(subjects[i])
         sw_progress(i / (len(subjects) + 1), f"Grooming Training Image: {image_name}")
         image = sw.Image(image_name)
         subject = subjects[i]
@@ -265,7 +252,7 @@ def groom_training_images(project):
                              sw.InterpolationType.Linear, meshTransform=True)
 
         # apply bounding box
-        image.crop(bounding_box)
+        image.fitRegion(bounding_box)
 
         # write image using the index of the subject
         image.write(deepssm_dir + f"/train_images/{i}.nrrd")
@@ -273,6 +260,7 @@ def groom_training_images(project):
 
 def run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler, mixture_num=0, processes=1):
     """ Run data augmentation on the training images. """
+    sw.utils.initialize_project_mesh_warper(project)
     deepssm_dir = get_deepssm_dir(project)
     aug_dir = deepssm_dir + "augmentation/"
 
@@ -356,14 +344,14 @@ def groom_val_test_images(project, indices):
     # Slightly cropped ref image
     large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(80)
     large_cropped_ref_image_file = deepssm_dir + 'large_cropped_reference_image.nrrd'
-    large_cropped_ref_image = sw.Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file)
+    large_cropped_ref_image = sw.Image(ref_image_file).fitRegion(large_bb).write(large_cropped_ref_image_file)
     # Further cropped ref image
     medium_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(20)
     medium_cropped_ref_image_file = deepssm_dir + 'medium_cropped_reference_image.nrrd'
-    medium_cropped_ref_image = sw.Image(ref_image_file).crop(medium_bb).write(medium_cropped_ref_image_file)
+    medium_cropped_ref_image = sw.Image(ref_image_file).fitRegion(medium_bb).write(medium_cropped_ref_image_file)
     # Fully cropped ref image
     cropped_ref_image_file = deepssm_dir + 'cropped_reference_image.nrrd'
-    cropped_ref_image = sw.Image(ref_image_file).crop(bounding_box).write(cropped_ref_image_file)
+    cropped_ref_image = sw.Image(ref_image_file).fitRegion(bounding_box).write(cropped_ref_image_file)
 
     # Make dirs
     val_test_images_dir = deepssm_dir + 'val_and_test_images/'
@@ -381,7 +369,7 @@ def groom_val_test_images(project, indices):
             sw_message("Aborted")
             return
 
-        image_name = get_image_filename(subjects[i])
+        image_name = sw.utils.get_image_filename(subjects[i])
         sw_progress(count / (len(val_test_indices) + 1),
                     f"Grooming val/test image {image_name} ({count}/{len(val_test_indices)})")
         count = count + 1
@@ -408,7 +396,7 @@ def groom_val_test_images(project, indices):
         transform[:3, -1] += translation
 
         # 3. Translate with respect to slightly cropped ref
-        image = sw.Image(image_file).crop(large_bb).write(image_file)
+        image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
         itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file,
                                                                                   image_file,
                                                                                   transform_type='translation')
@@ -421,7 +409,7 @@ def groom_val_test_images(project, indices):
         transform = np.matmul(vtk_translation_transform, transform)
 
         # 5. Crop with medium bounding box and find rigid transform
-        image.crop(medium_bb).write(image_file)
+        image.fitRegion(medium_bb).write(image_file)
         itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
                                                                             image_file, transform_type='rigid')
 
@@ -434,7 +422,7 @@ def groom_val_test_images(project, indices):
         transform = np.matmul(vtk_rigid_transform, transform)
 
         # 7. Get similarity transform from image registration and apply
-        image.crop(bounding_box).write(image_file)
+        image.fitRegion(bounding_box).write(image_file)
         itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
                                                                                  image_file,
                                                                                  transform_type='similarity')
@@ -516,7 +504,7 @@ def process_test_predictions(project, config_file):
     if not os.path.exists(world_predictions_dir):
         os.makedirs(world_predictions_dir)
 
-    reference_index = DeepSSMUtils.get_reference_index(project)
+    reference_index = sw.utils.get_reference_index(project)
     template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
     template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
 
@@ -550,6 +538,7 @@ def process_test_predictions(project, config_file):
                                               template_particles, template_mesh, pred_dir)
 
     print("Distances: ", distances)
+    print("Mean distance: ", np.mean(distances))
 
     # write to csv file in deepssm_dir
     csv_file = f"{deepssm_dir}/test_distances.csv"

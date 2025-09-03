@@ -76,6 +76,11 @@ class PCA_Embbeder(Embedder):
         centered_data_matrix_2d = (data_matrix_2d.T - mean).T
         trick_cov_matrix = np.dot(centered_data_matrix_2d.T, centered_data_matrix_2d) * 1.0 / np.sqrt(N - 1)
         # get eignevectors and eigenvalues
+
+		# Check if percent_variability is within valid range
+		if percent_variability < 0 or percent_variability > 100:
+			percent_variability = 100
+
         eigen_values, eigen_vectors = np.linalg.eigh(trick_cov_matrix)
         eigen_vectors = np.dot(centered_data_matrix_2d, eigen_vectors)
         for i in range(N):
@@ -87,7 +92,12 @@ class PCA_Embbeder(Embedder):
         # matrix, but the last column is not used in the model because it describes no variation.
         cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
         if num_dim == 0:
-            num_dim = np.where(cumDst >= float(percent_variability))[0][0] + 1
+			cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
+			num_dim = np.where(cumDst >= float(percent_variability))
+			if num_dim and len(num_dim[0]) > 0:
+				num_dim = num_dim[0][0] + 1
+			else:
+				num_dim = len(cumDst)
         W = eigen_vectors[:, :num_dim]
         PCA_scores = np.matmul(centered_data_matrix_2d.T, W)
         sw_message(f"The PCA modes of particles being retained : {num_dim}")

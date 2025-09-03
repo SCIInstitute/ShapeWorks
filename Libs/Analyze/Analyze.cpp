@@ -13,14 +13,20 @@ using json = nlohmann::ordered_json;
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
+static double round(double value, int digits = 6) {
+  double multiplier = pow(10.0, digits);
+  return std::round(value * multiplier) / multiplier;
+}
+
+//---------------------------------------------------------------------------
 static json get_eigen_vectors(ParticleShapeStatistics* stats) {
-    auto values = stats->get_eigen_vectors();
+  auto values = stats->get_eigen_vectors();
 
   std::vector<double> vals;
   for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
     auto col = values.col(i);
     for (int j = 0; j < col.size(); j++) {
-      vals.push_back(col[j]);
+      vals.push_back(round(col[j]));
     }
   }
 
@@ -69,14 +75,14 @@ static void write_good_bad_angles(json& json_object, ProjectHandle project, Anal
   std::vector<json> good_bad_angles;
 
   for (int d = 0; d < project->get_number_of_domains_per_subject(); d++) {
-    std::vector<std::shared_ptr<MeshWrapper>> meshes;
+    std::vector<std::shared_ptr<Surface>> meshes;
     for (auto& shape : analyze.get_shapes()) {
       meshes.push_back(shape->get_groomed_mesh_wrappers()[d]);
     }
 
     auto base = analyze.get_local_particle_system(d);
-    auto normals = ParticleNormalEvaluation::compute_particle_normals(base.Particles(), meshes);
-    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(base.Particles(), normals);
+    auto normals = ParticleNormalEvaluation::compute_particle_normals(base.get_matrix(), meshes);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(base.get_matrix(), normals);
 
     // round angles to 2 decimal places
     for (auto& angle : angles) {
@@ -217,7 +223,7 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
     json jmode;
     jmode["mode"] = mode + 1;
     double eigen_value = eigen_vals[mode];
-    jmode["eigen_value"] = eigen_value;
+    jmode["eigen_value"] = round(eigen_value);
     SW_LOG("eigen value [{}]: {}", mode, eigen_value);
 
     double cumulation = 0;
@@ -227,11 +233,11 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
 
     double explained_variance = eigen_vals[mode] / sum * 100;
     double cumulative_explained_variance = cumulation / sum * 100;
-    jmode["explained_variance"] = explained_variance;
-    jmode["cumulative_explained_variance"] = cumulative_explained_variance;
+    jmode["explained_variance"] = round(explained_variance);
+    jmode["cumulative_explained_variance"] = round(cumulative_explained_variance);
     SW_LOG("explained_variance [{}]: {:.2f}", mode, explained_variance);
     SW_LOG("cumulative_explained_variance [{}]: {:.2f}", mode, cumulative_explained_variance);
-    
+
     double lambda = sqrt(stats_.get_eigen_values()[m]);
 
     std::vector<json> jmodes;
@@ -244,8 +250,8 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
         auto mode_meshes = shape->get_reconstructed_meshes(true);
 
         json item;
-        item["pca_value"] = pca_value_param;
-        item["lambda"] = lambda * pca_value_param;
+        item["pca_value"] = round(pca_value_param);
+        item["lambda"] = round(lambda * pca_value_param);
 
         std::vector<std::string> items;
         std::vector<std::string> worlds;
@@ -278,7 +284,12 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   }
 
   j["eigen_vectors"] = get_eigen_vectors(&stats_);
-  j["eigen_values"] = stats_.get_eigen_values();
+  auto eigen_values = stats_.get_eigen_values();
+  // round them
+  for (auto& value : eigen_values) {
+    value = round(value);
+  }
+  j["eigen_values"] = eigen_values;
   j["modes"] = modes;
   j["charts"] = create_charts(&stats_);
 
@@ -342,11 +353,11 @@ Particles Analyze::get_shape_points(int mode, double value) {
   if (mode + 2 > stats_.get_eigen_values().size()) {
     mode = stats_.get_eigen_values().size() - 2;
   }
-  
+
   unsigned int m = stats_.get_eigen_vectors().cols() - (mode + 1);
-  
+
   Eigen::VectorXd e = stats_.get_eigen_vectors().col(m);
-  
+
   double lambda = sqrt(stats_.get_eigen_values()[m]);
 
   std::vector<double> vals;
@@ -489,7 +500,7 @@ bool Analyze::compute_stats() {
       return false;
     }
   }
-  
+
   stats_.import_points(points, group_ids);
   stats_.compute_modes();
 
@@ -617,7 +628,7 @@ Particles Analyze::get_group_shape_particles(double ratio) {
   if (!compute_stats()) {
     return Particles();
   }
-  
+
   auto particles = stats_.get_group1_mean() + (stats_.get_group_difference() * ratio);
 
   return convert_from_combined(particles);

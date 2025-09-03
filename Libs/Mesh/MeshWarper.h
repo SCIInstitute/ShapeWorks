@@ -96,17 +96,25 @@ class MeshWarper {
   //! Clean mesh (remove deleted)
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
+  //! Remove zero area triangles from a mesh
+  static vtkSmartPointer<vtkPolyData> remove_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh);
+
   //! Recreate mesh, dropping deleted cells
   static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   //! Generate the warp matrix
-  bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
+  bool generate_warp_matrix(Eigen::MatrixXd target_vertices, Eigen::MatrixXi target_faces,
+                            const Eigen::MatrixXd& references_vertices, Eigen::MatrixXd& warp);
 
   //! Generate a polydata from a set of points (e.g. warp the reference mesh)
   vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd& points);
 
   //! Return the number of bad particles
   size_t bad_particle_count() const { return size_t(reference_particles_.rows()) - good_particles_.size(); }
+
+  void diagnose_biharmonic_failure(const Eigen::MatrixXd& TV, const Eigen::MatrixXi& TF,
+                                   const std::vector<std::vector<int>>& S, int k);
+
 
   // Members
   Eigen::MatrixXi faces_;
@@ -120,7 +128,8 @@ class MeshWarper {
 
   bool warp_available_ = false;
 
-  std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the clean Reference mesh
+  std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the
+                                      // clean Reference mesh
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh

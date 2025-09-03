@@ -12,8 +12,7 @@ namespace shapeworks {
 Sampler::Sampler() {
   m_ParticleSystem = ParticleSystem::New();
 
-  m_GradientFunction = SamplingFunction::New();
-  m_CurvatureGradientFunction = CurvatureSamplingFunction::New();
+  m_SamplingFunction = SamplingFunction::New();
 
   m_Optimizer = OptimizerType::New();
 
@@ -54,16 +53,7 @@ void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
   m_Sigma1Cache = GenericContainerArray<double>::New();
   m_ParticleSystem->RegisterObserver(m_Sigma1Cache);
-  m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-  m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-
-  m_Sigma2Cache = GenericContainerArray<double>::New();
-  m_ParticleSystem->RegisterObserver(m_Sigma2Cache);
-
-  m_MeanCurvatureCache = MeanCurvatureContainer<ImageType::PixelType, Dimension>::New();
-  m_MeanCurvatureCache->SetVerbosity(m_verbosity);
-  m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
-  m_ParticleSystem->RegisterObserver(m_MeanCurvatureCache);
+  m_SamplingFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 }
 
 //---------------------------------------------------------------------------
@@ -74,6 +64,8 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   // Here, the Constraints actually get added to the constraints class
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
+    m_ParticleSystem->AddDomain(domain);
+    m_ParticleSystem->GetNeighborhood(i)->set_domain(domain);
 
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
       // Adding cutting planes to constraint object
@@ -90,7 +82,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       }
 
       // Adding free-form constraints to constraint object
-      // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
       if (m_FFCs.size() > i) {
         SW_LOG("Initializing FFCs for domain {} / {}", i, m_DomainList.size());
         initialize_ffcs(i);
@@ -99,7 +90,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
     } else if (domain->GetDomainType() == shapeworks::DomainType::Mesh) {
       if (m_meshFFCMode == 1) {
         // Adding free-form constraints to constraint object
-        // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
         if (m_FFCs.size() > i) {
           initialize_ffcs(i);
         }
@@ -117,11 +107,13 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
           }
         }
       }
-    }
+      // cast to MeshDomain
+      auto mesh_domain = std::dynamic_pointer_cast<MeshDomain>(domain);
 
-    // END TEST CUTTING PLANE
-    m_ParticleSystem->AddDomain(domain);
-    m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
+      m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(!mesh_domain->get_surface()->is_geodesics_enabled());
+    } else if (domain->GetDomainType() == DomainType::Contour) {
+      m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(false);
+    }
   }
 }
 
@@ -161,16 +153,13 @@ void Sampler::InitializeOptimizationFunctions() {
     }
   }
 
-  m_GradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_GradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-
-  m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_CurvatureGradientFunction->SetParticleSystem(m_ParticleSystem);
-  m_CurvatureGradientFunction->SetDomainNumber(0);
+  m_SamplingFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
+  m_SamplingFunction->SetMaximumNeighborhoodRadius(maxradius);
+  m_SamplingFunction->SetParticleSystem(m_ParticleSystem);
+  m_SamplingFunction->SetDomainNumber(0);
   if (m_IsSharedBoundaryEnabled) {
-    m_CurvatureGradientFunction->SetSharedBoundaryEnabled(true);
-    m_CurvatureGradientFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
+    m_SamplingFunction->SetSharedBoundaryEnabled(true);
+    m_SamplingFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
   }
 
   m_LinearRegressionShapeMatrix->Initialize();
@@ -185,7 +174,7 @@ void Sampler::InitializeOptimizationFunctions() {
 void Sampler::Execute() {
   if (this->GetInitialized() == false) {
     this->AllocateDataCaches();
-    this->SetAdaptivityMode(m_AdaptivityMode);
+    this->SetAdaptivityMode();
     this->SetCorrespondenceMode(m_CorrespondenceMode);
     this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
     m_LinkingFunction->SetAOn();
@@ -271,37 +260,34 @@ void Sampler::ReadTransforms() {
 }
 
 void Sampler::ReInitialize() {
-  this->SetAdaptivityMode(m_AdaptivityMode);
+  this->SetAdaptivityMode();
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
   this->m_LinkingFunction->SetAOn();
   this->m_LinkingFunction->SetBOn();
   this->InitializeOptimizationFunctions();
   this->m_Sigma1Cache->ZeroAllValues();
-  this->m_Sigma2Cache->ZeroAllValues();
-  this->m_MeanCurvatureCache->ZeroAllValues();
 }
 
-void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh, double geodesic_remesh_percent) {
+void Sampler::AddMesh(std::shared_ptr<shapeworks::Surface> mesh, double geodesic_remesh_percent) {
   auto domain = std::make_shared<MeshDomain>();
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
+
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh, geodesic_remesh_percent);
-    this->m_meshes.push_back(mesh->GetPolydata());
-    m_NeighborhoodList.back()->SetWeightingEnabled(!mesh->IsGeodesicsEnabled());  // disable weighting for geodesics
+    this->m_meshes.push_back(mesh->get_polydata());
   }
   m_DomainList.push_back(domain);
 }
 
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   auto domain = std::make_shared<ContourDomain>();
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
+
   if (poly_data != nullptr) {
     this->m_Spacing = 1;
     domain->SetPolyLine(poly_data);
   }
-  m_NeighborhoodList.back()->SetWeightingEnabled(false);
+
   m_DomainList.push_back(domain);
 }
 
@@ -397,8 +383,6 @@ void Sampler::AddFreeFormConstraint(int domain, const FreeFormConstraint& ffc) {
 
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
   auto domain = std::make_shared<ImplicitSurfaceDomain<ImageType::PixelType>>();
-
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];

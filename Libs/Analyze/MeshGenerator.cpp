@@ -7,6 +7,7 @@
 #include <QMeshWarper.h>
 #include <SurfaceReconstructor.h>
 #include <Utils/StringUtils.h>
+#include <itkConstantPadImageFilter.h>
 #include <itkImageFileReader.h>
 #include <itkOrientImageFilter.h>
 #include <itkPoint.h>
@@ -16,7 +17,6 @@
 #include <vtkPolyDataNormals.h>
 
 #include <QFileInfo>
-#include <limits>
 
 namespace shapeworks {
 
@@ -98,6 +98,17 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
   MeshHandle mesh(new StudioMesh);
 
   try {
+    // only interested in 1's and 0's
+    Image sw_image = Image(image);
+    if (!sw_image.isDistanceTransform()) {
+      sw_image.binarize();
+      image = sw_image.getITKImage();
+    }
+
+    // pad the image in case the segmentation is on the edge
+    sw_image.pad(1);
+    image = sw_image.getITKImage();
+
     // connect to VTK
     vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
     itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
@@ -158,6 +169,8 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
     }
   } else if (is_image) {
     try {
+      ImageUtils::register_itk_factories();
+
       // read file using ITK
       using ReaderType = itk::ImageFileReader<ImageType>;
       ReaderType::Pointer reader = ReaderType::New();
@@ -177,7 +190,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       mesh = this->build_mesh_from_image(image, iso_value);
 
       if (mesh->get_poly_data()->GetNumberOfPoints() == 0) {
-        SW_ERROR("Mesh generated for {} with iso-level {} is empty",filename, iso_value);
+        SW_ERROR("Mesh generated for {} with iso-level {} is empty", filename, iso_value);
       }
 
     } catch (itk::ExceptionObject& excep) {

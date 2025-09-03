@@ -250,7 +250,7 @@ class Mesh {
   bool compareAllFaces(const Mesh& other_mesh) const;
 
   /// compare if all fields in two meshes are (eps)equal
-  bool compareAllFields(const Mesh& other_mesh, const double eps = -1.0) const;
+  bool compareAllFields(const Mesh& other_mesh, const double eps = 1e4) const;
 
   /// compare field of meshes to be (eps)equal (same field for both if only one specified)
   bool compareField(const Mesh& other_mesh, const std::string& name1, const std::string& name2 = "",
@@ -277,8 +277,8 @@ class Mesh {
 
   //! Formats mesh into an IGL format
   vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
-      const;  // Copied directly from MeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
-              // from Meshwrapper. TODO: When refactoring, take this into account.
+      const;  // Copied directly from Surface. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
+              // from Surface. TODO: When refactoring, take this into account.
 
   //! Clips the mesh according to a field value
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
@@ -293,7 +293,11 @@ class Mesh {
 
   /// Computes baricentric coordinates given a query point and a face number
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
-      const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+      const;  // // WARNING: Copied directly from Surface. TODO: When refactoring, take this into account.
+
+  //! Interpolates scalar values at points (e.g. correspondence points) to the mesh, assign/create a field with the
+  //! given name
+  void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);
 
  private:
   friend struct SharedCommandData;

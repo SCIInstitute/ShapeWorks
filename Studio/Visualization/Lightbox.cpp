@@ -103,6 +103,7 @@ void Lightbox::reset_camera_clipping_range() {
   }
   double bounds[6];
   bbox.GetBounds(bounds);
+  ///SW_LOG("computed bbox: {} {} {} {} {} {}", bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
   renderer_->ResetCameraClippingRange(bounds);
 }
 
@@ -273,22 +274,26 @@ void Lightbox::redraw() {
 ViewerList Lightbox::get_viewers() { return viewers_; }
 
 //-----------------------------------------------------------------------------
-void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl) {
+void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl, vtkRenderer* renderer) {
   if (ctrl) {
     for (int i = 0; i < viewers_.size(); i++) {
-      auto result = viewers_[i]->handle_ctrl_click(click_pos);
-      if (result.domain_ != -1) {
-        result.subject_ = i + get_start_shape();
-        visualizer_->handle_ctrl_click(result);
-        return;
+      if (viewers_[i]->get_renderer() == renderer) {
+        auto result = viewers_[i]->handle_ctrl_click(click_pos);
+        if (result.domain_ != -1) {
+          result.subject_ = i + get_start_shape();
+          visualizer_->handle_ctrl_click(result);
+          return;
+        }
       }
     }
   } else {
     int id = -1;
     Q_FOREACH (ViewerHandle viewer, viewers_) {
-      int vid = viewer->handle_pick(click_pos);
-      if (vid != -1) {
-        id = vid;
+      if (viewer->get_renderer() == renderer) {
+        int vid = viewer->handle_pick(click_pos);
+        if (vid != -1) {
+          id = vid;
+        }
       }
     }
 
@@ -509,9 +514,14 @@ void Lightbox::set_orientation_marker_viewport() {
 
 //-----------------------------------------------------------------------------
 void Lightbox::update_feature_range() {
-  if (visualizer_->get_feature_map() != "" && visualizer_->get_uniform_feature_range()) {
-    for (int i = 0; i < viewers_.size(); i++) {
+  if (visualizer_->get_feature_map() == "") {
+    return;
+  }
+  for (int i = 0; i < viewers_.size(); i++) {
+    if (visualizer_->get_uniform_feature_range()) {
       viewers_[i]->update_feature_range(visualizer_->get_feature_range());
+    } else {
+      viewers_[i]->reset_feature_range();
     }
   }
 }

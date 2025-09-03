@@ -5,6 +5,7 @@
 #include <exception>
 #include "Executable.h"
 #include "Commands.h"
+#include <Profiling.h>
 
 using namespace shapeworks;
 
@@ -109,11 +110,17 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(GroomCommand::getCommand());
   shapeworks.addCommand(AnalyzeCommand::getCommand());
   shapeworks.addCommand(ConvertProjectCommand::getCommand());
+  shapeworks.addCommand(DeepSSMCommand::getCommand());
 
   try {
-    return shapeworks.run(argc, argv);
+    TIME_START("shapeworks");
+    int rc = shapeworks.run(argc, argv);
+    TIME_STOP("shapeworks");
+    TIME_FINALIZE();
+    return rc;
   } catch (const std::exception &e) {
     std::cout << e.what() << std::endl;
+    TIME_FINALIZE();
     return EXIT_FAILURE;
   }
 }

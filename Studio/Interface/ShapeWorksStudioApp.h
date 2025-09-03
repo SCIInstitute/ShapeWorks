@@ -6,7 +6,7 @@
 #include <Interface/LogWindow.h>
 #include <Interface/StudioLogger.h>
 #include <Interface/UpdateChecker.h>
-#include <Visualization/StudioVtkOutputWindow.h>
+#include <Libs/Application/ShapeWorksVtkOutputWindow.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
@@ -25,6 +25,10 @@
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
+
+namespace monailabel {
+  class MonaiLabelTool;
+}
 
 namespace shapeworks {
 class Lightbox;
@@ -78,6 +82,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_optimize_mode_triggered();
   void on_action_analysis_mode_triggered();
   void on_action_deepssm_mode_triggered();
+  void on_action_monai_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
   void on_actionExport_Eigenvalues_triggered();
@@ -143,6 +148,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_feature_map_scale();
 
   void image_combo_changed(int index);
+  void handle_image_name_changed();
 
   void show_splash_screen();
   void hide_splash_screen();
@@ -211,6 +217,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   void create_iso_submenu();
   void create_compare_submenu();
 
+  void update_window_title();
+
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
@@ -222,10 +230,11 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<DeepSSMTool> deepssm_tool_;
+  QSharedPointer<monailabel::MonaiLabelTool> monai_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
   CompareWidget* compare_widget_ = nullptr;
-  vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
+  vtkSmartPointer<ShapeWorksVtkOutputWindow> studio_vtk_output_window_;
 
   // all the preferences
   Preferences preferences_;

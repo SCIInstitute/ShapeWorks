@@ -24,28 +24,21 @@ concurrency:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: macos-13
     
     steps:
 
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-    
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3.0.4
+
     - name: OS Setup
       run: |
+        echo CONDA=$CONDA
         sudo chown -R $UID $CONDA
         conda init zsh
         source ~/.zshrc
         brew install ccache pigz gnu-tar coreutils
 
-    - name: Acquire 10.15 SDK
-      run: |
-        curl -L -o $HOME/MacOSX10.15.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.15.sdk.tar.xz
-        cd $HOME && tar -xJf MacOSX10.15.sdk.tar.xz
-        
     - name: Checkout code
       uses: actions/checkout@v3
       with:
@@ -54,10 +47,6 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: Restore Caches
-      shell: bash -l {0}
-      run: .github/workflows/restore_caches.sh
-    
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
@@ -68,7 +57,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.15.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
 
     - name: make
       shell: bash -l {0}
@@ -92,7 +81,7 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: artifact-${{github.sha}}-mac
         path: ${{runner.workspace}}/ShapeWorks/artifacts
@@ -109,20 +98,3 @@ jobs:
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
              ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg
-
-    - name: Deploy Docs
-      if: github.ref == 'refs/heads/master'
-      shell: bash -l {0}
-      run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
-      env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-             
-    - name: Store ccache
-      shell: bash -l {0}
-      run: .github/workflows/store_ccache.sh
-
-    - name: Copy artifact
-      shell: bash -l {0}
-      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac artifacts
-      

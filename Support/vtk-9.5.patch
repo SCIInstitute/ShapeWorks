@@ -1,0 +1,38 @@
+diff --git a/Common/Core/vtkRandomPool.cxx b/Common/Core/vtkRandomPool.cxx
+index c2bcf67d18..69ca63654a 100644
+--- a/Common/Core/vtkRandomPool.cxx
++++ b/Common/Core/vtkRandomPool.cxx
+@@ -332,6 +332,9 @@ const double* vtkRandomPool::GeneratePool()
+     if (actualThreads < numThreads) // readjust work load
+     {
+       numThreads = actualThreads;
++      // Alan : Bug fix here, if the number of threads is reduced, then the chunk size
++      // must be increased or the rest of the random numbers won't get filled out
++      seqChunk = (seqSize / numThreads) + 1;
+     }
+ 
+     // Now distribute work
+diff --git a/Filters/Modeling/vtkSelectEnclosedPoints.cxx b/Filters/Modeling/vtkSelectEnclosedPoints.cxx
+index 7d5122297e..998e3f888e 100644
+--- a/Filters/Modeling/vtkSelectEnclosedPoints.cxx
++++ b/Filters/Modeling/vtkSelectEnclosedPoints.cxx
+@@ -80,6 +80,9 @@ struct SelectInOutCheck
+     // Precompute a sufficiently large enough random sequence
+     this->Sequence = vtkRandomPool::New();
+     this->Sequence->SetSize((numPts > 1500 ? numPts : 1500));
++    // Alan : I see no reason to ever generate more than 1000 random numbers
++    // each vector will use 3 and only a few vectors for each point
++    // this also works around the bug in vtkRandomPool
+     this->Sequence->GeneratePool();
+   }
+ 
+@@ -325,7 +328,8 @@ int vtkSelectEnclosedPoints::IsInsideSurface(double x[3])
+ // supporting the precomputation of a random sequence (see vtkRandomPool).
+ //
+ #define VTK_MAX_ITER 10      // Maximum iterations for ray-firing
+-#define VTK_VOTE_THRESHOLD 2 // Vote margin for test
++// Alan: I've changed the vote margin to 3
++#define VTK_VOTE_THRESHOLD 3 // Vote margin for test
+ 
+ int vtkSelectEnclosedPoints::IsInsideSurface(double x[3], vtkPolyData* surface, double bds[6],
+   double length, double tolerance, vtkAbstractCellLocator* locator, vtkIdList* cellIds,

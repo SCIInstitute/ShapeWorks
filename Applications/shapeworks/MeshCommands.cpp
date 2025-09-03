@@ -1439,14 +1439,14 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     if (warp_along_with_landmarks) {
       std::vector<std::string> landmarks_ar = {landmarkFilename};
       ParticleSystemEvaluation landmarksystem(landmarks_ar);
-      Eigen::MatrixXd landmarksPoints = landmarksystem.Particles().col(0);
+      Eigen::MatrixXd landmarksPoints = landmarksystem.get_matrix().col(0);
       numLandmarks = landmarksPoints.rows() / 3;
       landmarksPoints.resize(3, numLandmarks);
       landmarksPoints.transposeInPlace();
       landmarks = landmarksPoints;
     }
 
-    Eigen::MatrixXd allPts = particlesystem.Particles();
+    Eigen::MatrixXd allPts = particlesystem.get_matrix();
     Eigen::MatrixXd staticPoints = allPts.col(targetPointsFilenames.size() - 1);
     int numParticles = staticPoints.rows() / 3;
     staticPoints.resize(3, numParticles);
@@ -1614,7 +1614,7 @@ bool LandmarkGeodesics::execute(const optparse::Values &options, SharedCommandDa
   }
 
   Eigen::VectorXd points;
-  if (!ParticleSystemEvaluation::ReadParticleFile(filename, points)) {
+  if (!ParticleSystemEvaluation::read_particle_file(filename, points)) {
     SW_ERROR("Unable to read landmark file: {}", filename);
     return false;
   }

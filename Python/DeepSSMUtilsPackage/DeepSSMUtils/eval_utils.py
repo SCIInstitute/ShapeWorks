@@ -1,10 +1,8 @@
-# Jadie Adams
 import os
-import re
-import shutil
-import subprocess
 import numpy as np
+
 import shapeworks as sw
+from shapeworks.utils import *
 
 
 def get_distance_meshes(out_dir, DT_dir, prediction_dir, mean_prefix):
@@ -45,37 +43,14 @@ def get_prefix(path):
     return prefix
 
 
-def get_mesh_from_DT(DT_list, mesh_dir):
-    if not os.path.exists(mesh_dir):
-        os.makedirs(mesh_dir)
-    mesh_files = []
-    for input_file in DT_list:
-        print('	' + get_prefix(input_file))
-        output_vtk = mesh_dir + "original_" + get_prefix(input_file) + ".vtk"
-        image = sw.Image(input_file)
-        image.toMesh(isovalue=0).write(output_vtk)
-        mesh_files.append(output_vtk)
-    return sorted(mesh_files)
-
-
-def get_mesh(filename, iso_value=0):
-    if filename.endswith('.nrrd'):
-        image = sw.Image(filename)
-        return image.toMesh(iso_value)
-    else:
-        return sw.Mesh(filename)
-
-
 def get_mesh_from_particles(particle_list, mesh_dir, template_particles, template_mesh, planes=None):
     if not os.path.exists(mesh_dir):
         os.makedirs(mesh_dir)
 
-    warp = sw.MeshWarper()
-
     # Create mesh from file (mesh or segmentation)
-    sw_mesh = get_mesh(template_mesh)
+    sw_mesh = get_mesh_from_file(template_mesh)
     sw_particles = np.loadtxt(template_particles)
-    warp.generateWarp(sw_mesh, sw_particles)
+    initialize_mesh_warper(sw_mesh, sw_particles)
 
     particle_dir = os.path.dirname(particle_list[0]) + '/'
 
@@ -85,7 +60,7 @@ def get_mesh_from_particles(particle_list, mesh_dir, template_particles, templat
         out_filename = out_filename.replace(particle_dir, mesh_dir)
         out_mesh_filenames.append(out_filename)
         sw_particles = np.loadtxt(particle_list[i])
-        out_mesh = warp.buildMesh(sw_particles)
+        out_mesh = reconstruct_mesh(sw_particles)
         out_mesh.write(out_filename)
 
     if planes is not None:
@@ -144,7 +119,7 @@ def get_mesh_distances(pred_particle_files, mesh_list, template_particles, templ
             mean_distances.append(-1)
             continue
         print(f"Computing distance between {mesh_list[index]} and {pred_mesh_list[index]}")
-        orig_mesh = get_mesh(mesh_list[index], iso_value=0.5)
+        orig_mesh = get_mesh_from_file(mesh_list[index], iso_value=0.5)
         if planes is not None:
             orig_mesh.clip(planes[index][0], planes[index][1], planes[index][2])
         pred_mesh = sw.Mesh(pred_mesh_list[index])

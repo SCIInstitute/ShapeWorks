@@ -350,3 +350,7 @@ TEST(pythonTests, projectTest) {
 TEST(pythonTests, thicknessTest) {
   run_test("thickness.py");
 }
+
+TEST(pythonTests, fitRegionTest) {
+  run_test("fitregion.py");
+}

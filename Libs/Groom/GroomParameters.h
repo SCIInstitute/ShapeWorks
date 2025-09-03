@@ -11,6 +11,17 @@ namespace shapeworks {
  * This class encapsulated processing of Groom parameters
  */
 class GroomParameters {
+ public:
+  struct SharedBoundary {
+    std::string first_domain;
+    std::string second_domain;
+    double tolerance;
+
+    // Helper methods for serialization
+    std::string to_string() const;
+    static SharedBoundary from_string(const std::string& str);
+  };
+
   enum class MeshSmoothingOption { laplacian, sinc };
 
   enum class AlignmentOption { none, center, icp };
@@ -137,7 +148,18 @@ class GroomParameters {
   bool get_skip_grooming();
   void set_skip_grooming(bool skip);
 
+  bool get_shared_boundaries_enabled();
+  void set_shared_boundaries_enabled(bool enabled);
+
+  std::vector<SharedBoundary> get_shared_boundaries();
+  void set_shared_boundaries(const std::vector<SharedBoundary>& boundaries);
+  void add_shared_boundary(const std::string& first_domain, const std::string& second_domain, double tolerance);
+  void remove_shared_boundary(size_t index);
+  void clear_shared_boundaries();
+
   void restore_defaults();
+
+  Parameters get_parameters() const { return params_; }
 
   // constants
   const static std::string GROOM_SMOOTH_VTK_LAPLACIAN_C;

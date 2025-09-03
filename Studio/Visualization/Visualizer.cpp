@@ -50,7 +50,7 @@ void Visualizer::set_session(SessionHandle session) {
   connect(session_.data(), &Session::planes_changed, this, &Visualizer::update_planes);
   connect(session_.data(), &Session::image_slice_settings_changed, this,
           &Visualizer::handle_image_slice_settings_changed);
-  connect(session_.data(), &Session::ffc_paint_mode_changed, this, &Visualizer::update_ffc_mode);
+  connect(session_.data(), &Session::paint_mode_changed, this, &Visualizer::update_paint_mode);
   connect(session_.data(), &Session::repaint, this, &Visualizer::redraw);
   connect(session_.data(), &Session::annotations_changed, this, &Visualizer::update_annotations);
 }
@@ -90,9 +90,9 @@ void Visualizer::update_planes() {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::update_ffc_mode() {
+void Visualizer::update_paint_mode() {
   Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
-    viewer->update_ffc_mode();
+    viewer->update_paint_mode();
   }
   lightbox_->redraw();
 }
@@ -245,6 +245,8 @@ void Visualizer::update_viewer_properties() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::handle_feature_range_changed() {
+  set_uniform_feature_range(session_->get_feature_uniform_scale());
+
   feature_manual_range_[0] = session_->get_feature_range_min();
   feature_manual_range_[1] = std::max<double>(feature_manual_range_[0], session_->get_feature_range_max());
   lightbox_->update_feature_range();
@@ -428,6 +430,9 @@ const std::string& Visualizer::get_feature_map() const { return feature_map_; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_feature_map(const std::string& feature_map) {
+  if (feature_map_ == feature_map) {
+    return;
+  }
   feature_map_ = feature_map;
   reset_feature_range();
 }

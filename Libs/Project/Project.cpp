@@ -34,7 +34,6 @@ bool Project::load(const std::string& filename) {
   if (project_path_ == "") {
     project_path_ = ".";
   }
-  std::cerr << "Setting Project path: " << project_path_ << std::endl;
 
   bool return_value = false;
   if (StringUtils::hasSuffix(filename, "swproj")) {
@@ -193,16 +192,14 @@ void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects
 
 //---------------------------------------------------------------------------
 void Project::update_subjects() {
-  if (subjects_.empty()) {
-    originals_present_ = false;
-    groomed_present_ = false;
-    particles_present_ = false;
-    return;
-  }
-
   originals_present_ = false;
   groomed_present_ = false;
   particles_present_ = false;
+
+  if (subjects_.empty()) {
+    return;
+  }
+
   images_present_ = false;
 
   auto groomed_subject = subjects_[0];
@@ -347,6 +344,11 @@ void Project::determine_feature_names() {
             if (poly_data) {
               vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
               for (vtkIdType i = 0; i < num_arrays; i++) {
+                std::string array_name = StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i));
+                // ignore "normals" and "Normals" arrays
+                if (array_name == "normals" || array_name == "Normals") {
+                  continue;
+                }
                 mesh_scalars.push_back(StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i)));
               }
             }

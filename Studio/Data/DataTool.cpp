@@ -3,9 +3,11 @@
 #include <Data/LandmarkTableModel.h>
 #include <Data/Session.h>
 #include <Data/ShapeWorksWorker.h>
+#include <Interface/Style.h>
 #include <Logging.h>
 #include <Shape.h>
 #include <StudioMesh.h>
+#include <Utils/StudioUtils.h>
 #include <ui_DataTool.h>
 #include <vtkPointData.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -14,7 +16,8 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QThread>
-#include <iostream>
+
+#include "SegmentationToolPanel.h"
 
 #ifdef __APPLE__
 static QString click_message = "⌘+click";
@@ -28,6 +31,8 @@ namespace shapeworks {
 DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_DataTool;
   ui_->setupUi(this);
+  segmentation_tool_panel_ = new SegmentationToolPanel(this);
+  layout()->addWidget(segmentation_tool_panel_);
 
   connect(ui_->add_button, &QPushButton::clicked, this, &DataTool::import_button_clicked);
   connect(ui_->delete_button, &QPushButton::clicked, this, &DataTool::delete_button_clicked);
@@ -48,6 +53,8 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->delete_plane_, &QPushButton::clicked, this, &DataTool::delete_planes_clicked);
   connect(ui_->delete_ffc_, &QPushButton::clicked, this, &DataTool::delete_ffc_clicked);
+
+  connect(ui_->notes, &QTextEdit::textChanged, this, [this] { session_->set_modified(true); });
 
   ui_->table_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->landmarks_label->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -110,6 +117,9 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->landmark_table->verticalHeader()->setVisible(true);
   ui_->landmark_table->horizontalHeader()->setVisible(true);
   ui_->landmark_table->resizeColumnsToContents();
+
+  auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  layout()->addItem(spacer);
 }
 
 //---------------------------------------------------------------------------
@@ -118,6 +128,7 @@ DataTool::~DataTool() {}
 //---------------------------------------------------------------------------
 void DataTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+  segmentation_tool_panel_->set_session(session);
 
   // set (reset) values
   ui_->ffc_brush_size_->setValue(static_cast<int>(session->get_ffc_paint_size()));
@@ -162,6 +173,7 @@ void DataTool::update_table(bool clean) {
   block_table_update_ = true;
   auto shapes = session_->get_shapes();
   auto project = session_->get_project();
+  segmentation_tool_panel_->set_session(session_);
   auto headers = project->get_headers();
   auto& subjects = project->get_subjects();
 
@@ -210,7 +222,7 @@ void DataTool::update_table(bool clean) {
 
 //---------------------------------------------------------------------------
 void DataTool::update_landmark_table() {
-  update_domain_box(ui_->landmark_domain_box_);
+  StudioUtils::update_domain_combobox(ui_->landmark_domain_box_, session_);
 
   auto domain_names = session_->get_project()->get_domain_names();
   ui_->landmark_domain_widget_->setVisible(domain_names.size() > 1);
@@ -268,25 +280,6 @@ void DataTool::delete_ffc_clicked() {
   session_->trigger_ffc_changed();
   session_->trigger_reinsert_shapes();
   session_->trigger_repaint();
-}
-
-//---------------------------------------------------------------------------
-void DataTool::update_domain_box(QComboBox* box) {
-  auto domain_names = session_->get_project()->get_domain_names();
-
-  int currentIndex = box->currentIndex();
-  if (domain_names.size() != box->count()) {
-    box->clear();
-    for (auto&& item : domain_names) {
-      box->addItem(QString::fromStdString(item));
-    }
-  }
-  if (currentIndex < 0) {
-    currentIndex = 0;
-  }
-  if (currentIndex < box->count()) {
-    box->setCurrentIndex(currentIndex);
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -639,6 +632,7 @@ void DataTool::subject_notes_changed() {
       shape->get_subject()->set_notes(new_notes);
       // update the table
       update_table(false);
+      session_->set_modified(true);
     }
   }
 }
@@ -656,19 +650,32 @@ void DataTool::table_data_edited() {
   }
 
   bool change = false;
+
+  // find name and notes columns
+  int name_column = -1;
+  int notes_column = -1;
+  for (int i = 0; i < ui_->table->columnCount(); i++) {
+    if (ui_->table->horizontalHeaderItem(i)->text() == "name") {
+      name_column = i;
+    } else if (ui_->table->horizontalHeaderItem(i)->text() == "notes") {
+      notes_column = i;
+    }
+  }
+
   // iterate over all rows, not just selected
   for (int row = 0; row < ui_->table->rowCount(); row++) {
     auto shape = session_->get_shapes()[row];
     auto old_name = shape->get_subject()->get_display_name();
     auto old_notes = shape->get_subject()->get_notes();
-    if (ui_->table->item(row, 0) == nullptr) {
-      continue;
+
+    std::string new_name;
+    if (name_column != -1) {
+      new_name = ui_->table->item(row, name_column)->text().toStdString();
     }
-    auto new_name = ui_->table->item(row, 0)->text().toStdString();
-    if (ui_->table->item(row, 1) == nullptr) {
-      continue;
+    std::string new_notes;
+    if (notes_column != -1) {
+      new_notes = ui_->table->item(row, notes_column)->text().toStdString();
     }
-    auto new_notes = ui_->table->item(row, 1)->text().toStdString();
     if (old_name != new_name) {
       shape->get_subject()->set_display_name(new_name);
       shape->update_annotations();

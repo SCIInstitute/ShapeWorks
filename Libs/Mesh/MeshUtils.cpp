@@ -1,5 +1,6 @@
 #include "MeshUtils.h"
 
+#include <Logging.h>
 #include <igl/matrix_to_list.h>
 #include <vtkArrowSource.h>
 #include <vtkCellData.h>
@@ -24,6 +25,7 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <vtkTriangle.h>
 #include <vtkXMLPolyDataWriter.h>
 
 #include <iostream>
@@ -40,7 +42,6 @@
 #include <tbb/parallel_for.h>
 
 namespace shapeworks {
-
 // locking to handle non-thread-safe code
 static std::mutex mesh_mutex;
 
@@ -95,10 +96,9 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
   if (meshTransform) {
     m = icp->GetMatrix();
   } else {
-    vtkMatrix4x4::Invert(
-        icp->GetMatrix(),
-        m);  // It's inversed because when an image is transformed,
-             // a new image is created in the target space and samples through the transform back to the original space
+    vtkMatrix4x4::Invert(icp->GetMatrix(),
+                         m);  // It's inversed because when an image is transformed,
+    // a new image is created in the target space and samples through the transform back to the original space
   }
 
   return m;
@@ -153,7 +153,7 @@ PhysicalRegion MeshUtils::boundingBox(const std::vector<std::string>& filenames,
   return bbox;
 }
 
-PhysicalRegion MeshUtils::boundingBox(const std::vector<std::reference_wrapper<const Mesh>>& meshes, bool center) {
+PhysicalRegion MeshUtils::boundingBox(const std::vector<std::reference_wrapper<const Mesh> >& meshes, bool center) {
   if (meshes.empty()) throw std::invalid_argument("No meshes provided to compute a bounding box");
 
   PhysicalRegion bbox(meshes[0].get().boundingBox());
@@ -186,7 +186,7 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_si
     subset = get_random_subset(random_subset_size, meshes.size());
   }
 
-  std::vector<std::pair<int, int>> pairs;
+  std::vector<std::pair<int, int> > pairs;
 
   // enumerate all pairs of meshes
   for (size_t i = 0; i < num_meshes; i++) {
@@ -253,7 +253,8 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_si
  * Given a .ply mesh, extract the boundary loop and export the boundary loop as a VTK .vtp file
  */
 
-bool is_clockwise(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const std::vector<int>& loop) {
+//---------------------------------------------------------------------------
+static bool is_clockwise(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const std::vector<int>& loop) {
   Eigen::RowVector3d centroid{0.0, 0.0, 0.0};
   for (const auto& i : loop) {
     centroid += V.row(i);
@@ -269,13 +270,16 @@ bool is_clockwise(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const std:
   return angle0 > angle1;
 }
 
-Mesh MeshUtils::boundaryLoopExtractor(Mesh mesh) {
+//---------------------------------------------------------------------------
+Mesh MeshUtils::extract_boundary_loop(Mesh mesh) {
   Eigen::MatrixXd V = mesh.points();
   Eigen::MatrixXi F = mesh.faces();
 
-  std::vector<std::vector<int>> loops;
+  std::vector<std::vector<int> > loops;
   igl::boundary_loop(F, loops);
-  assert(loops.size() == 1);
+  if (loops.size() < 1) {
+    throw std::runtime_error("Expected at least one boundary loop in the mesh");
+  }
 
   const auto& loop = loops[0];
   const auto is_cw = is_clockwise(V, F, loop);
@@ -316,9 +320,10 @@ Mesh MeshUtils::boundaryLoopExtractor(Mesh mesh) {
  * defines the threshold for two surfaces to be "close"
  */
 
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> rem_into_eigen_mesh(const std::vector<int>& faces,
-                                                                 const Eigen::MatrixXd& src_V,
-                                                                 const Eigen::MatrixXi& src_F) {
+//---------------------------------------------------------------------------
+static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> rem_into_eigen_mesh(const std::vector<int>& faces,
+                                                                        const Eigen::MatrixXd& src_V,
+                                                                        const Eigen::MatrixXi& src_F) {
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
   const std::unordered_set<int> faces_set(faces.begin(), faces.end());
@@ -337,9 +342,10 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> rem_into_eigen_mesh(const std::vect
   return std::make_tuple(V, F);
 }
 
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> shared_into_eigen_mesh(const std::vector<int>& faces,
-                                                                    const Eigen::MatrixXd& src_V,
-                                                                    const Eigen::MatrixXi& src_F) {
+//---------------------------------------------------------------------------
+static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> shared_into_eigen_mesh(const std::vector<int>& faces,
+                                                                           const Eigen::MatrixXd& src_V,
+                                                                           const Eigen::MatrixXi& src_F) {
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
   const std::unordered_set<int> faces_set(faces.begin(), faces.end());
@@ -357,9 +363,14 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> shared_into_eigen_mesh(const std::v
   return std::make_tuple(V, F);
 }
 
-bool is_empty(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) { return V.size() == 0 || F.size() == 0; }
+//---------------------------------------------------------------------------
+static bool is_empty(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) { return V.size() == 0 || F.size() == 0; }
 
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi> find_shared_surface(
+//---------------------------------------------------------------------------
+// Identifies faces from the source mesh that lie within tolerance distance of the other mesh surface.
+// Uses spatial queries to determine which faces are "shared" between the two meshes.
+// Returns both the shared faces as one mesh and the remaining non-shared faces as another mesh.
+static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi> find_shared_surface(
     const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F, const Eigen::MatrixXd& other_V,
     const Eigen::MatrixXi& other_F, double tol = 1e-3) {
   Eigen::MatrixXd out_V;
@@ -401,14 +412,22 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi> f
   return std::make_tuple(out_V, out_F, rem_V, rem_F);
 }
 
-void move_to_boundary(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F, const Eigen::MatrixXd& shared_V,
-                      const Eigen::MatrixXi& shared_F, Eigen::MatrixXd& out_V, Eigen::MatrixXi& out_F) {
-  std::vector<std::vector<int>> src_loops, shared_loops;
+//---------------------------------------------------------------------------
+// Snaps boundary vertices of the source mesh to the closest points on the shared mesh boundary.
+// This ensures the boundaries are geometrically aligned, which is typically needed for mesh
+// stitching or boolean operations.
+// Returns a copy of the source mesh with modified boundary vertex positions.
+static void snap_boundary_to_mesh(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F,
+                                  const Eigen::MatrixXd& shared_V, const Eigen::MatrixXi& shared_F,
+                                  Eigen::MatrixXd& out_V, Eigen::MatrixXi& out_F) {
+  std::vector<std::vector<int> > src_loops, shared_loops;
   igl::boundary_loop(src_F, src_loops);
   igl::boundary_loop(shared_F, shared_loops);
 
-  assert(src_loops.size() == 1);
-  assert(shared_loops.size() == 1);
+  if (src_loops.size() < 1 || shared_loops.size() < 1) {
+    SW_DEBUG("src_loops size: {}, shared_loops size: {}", src_loops.size(), shared_loops.size());
+    throw std::runtime_error("Expected at least one boundary loop in each mesh");
+  }
 
   const auto& src_loop = src_loops[0];
   const auto& shared_loop = shared_loops[0];
@@ -439,7 +458,11 @@ void move_to_boundary(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F
   }
 }
 
-std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol) {
+//---------------------------------------------------------------------------
+// Extracts shared boundary regions between two input meshes and prepares them for operations like stitching.
+// Identifies shared surfaces on both meshes, then aligns the boundary of the remaining geometry to ensure
+// compatibility. Returns three meshes: left remainder with aligned boundary, right remainder, and shared surface.
+std::array<Mesh, 3> MeshUtils::shared_boundary_extractor(const Mesh& mesh_l, const Mesh& mesh_r, double tol) {
   Eigen::MatrixXd V_l, V_r;
   Eigen::MatrixXi F_l, F_r;
   V_l = mesh_l.points();
@@ -462,7 +485,7 @@ std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const
   Eigen::MatrixXd bridge_V;
   Eigen::MatrixXi bridge_F;
 
-  move_to_boundary(rem_V_l, rem_F_l, shared_V_r, shared_F_r, bridge_V, bridge_F);
+  snap_boundary_to_mesh(rem_V_l, rem_F_l, shared_V_r, shared_F_r, bridge_V, bridge_F);
 
   Mesh out_l(bridge_V, bridge_F);
   Mesh out_r(rem_V_r, rem_F_r);
@@ -472,7 +495,8 @@ std::array<Mesh, 3> MeshUtils::sharedBoundaryExtractor(const Mesh& mesh_l, const
   return std::array<Mesh, 3>{std::move(out_l), std::move(out_r), std::move(out_s)};
 }
 
-void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>& meshes, bool forceRegen) {
+//---------------------------------------------------------------------------
+void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh> >& meshes, bool forceRegen) {
   if (meshes.empty()) throw std::invalid_argument("No meshes provided to compute average normals");
 
   for (int i = 0; i < meshes.size(); i++) {
@@ -487,6 +511,7 @@ void MeshUtils::generateNormals(const std::vector<std::reference_wrapper<Mesh>>&
   }
 }
 
+//---------------------------------------------------------------------------
 Field MeshUtils::computeMeanNormals(const std::vector<std::string>& filenames, bool autoGenerateNormals) {
   if (filenames.empty()) throw std::invalid_argument("No filenames provided to compute mean normals");
 
@@ -496,7 +521,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::string>& filenames, b
     meshes.push_back(Mesh(filename));
   }
 
-  std::vector<std::reference_wrapper<Mesh>> rmeshes;
+  std::vector<std::reference_wrapper<Mesh> > rmeshes;
   rmeshes.reserve(meshes.size());
   for (Mesh& mesh : meshes) rmeshes.push_back(std::reference_wrapper<Mesh>(mesh));
 
@@ -504,20 +529,21 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::string>& filenames, b
     MeshUtils::generateNormals(rmeshes);
   }
 
-  std::vector<std::reference_wrapper<const Mesh>> cmeshes;
+  std::vector<std::reference_wrapper<const Mesh> > cmeshes;
   for (Mesh& mesh : meshes) cmeshes.push_back(std::reference_wrapper<const Mesh>(mesh));
 
   return computeMeanNormals(cmeshes);
 }
 
-Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh>>& meshes) {
+//---------------------------------------------------------------------------
+Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<const Mesh> >& meshes) {
   if (meshes.empty()) throw std::invalid_argument("No meshes provided to compute average normals");
 
   auto num_normals = meshes[0].get().numPoints();
   auto num_meshes = meshes.size();
 
   // convert all normals from all meshes to spherical coords
-  std::vector<std::vector<Point3>> sphericals(num_normals, std::vector<Point3>(num_meshes));
+  std::vector<std::vector<Point3> > sphericals(num_normals, std::vector<Point3>(num_meshes));
   for (int j = 0; j < num_meshes; j++) {
     if (meshes[j].get().numPoints() != num_normals)
       throw std::invalid_argument("Input meshes do not all have the same number of points");
@@ -537,8 +563,8 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
   }
 
   // prep data in 1d theta/phi arrays for averageThetaArc function
-  std::vector<std::vector<double>> phis(num_normals, std::vector<double>(num_meshes));
-  std::vector<std::vector<double>> thetas(num_normals, std::vector<double>(num_meshes));
+  std::vector<std::vector<double> > phis(num_normals, std::vector<double>(num_meshes));
+  std::vector<std::vector<double> > thetas(num_normals, std::vector<double>(num_meshes));
   for (int i = 0; i < num_normals; i++) {
     for (int j = 0; j < num_meshes; j++) {
       phis[i][j] = sphericals[i][j][1];
@@ -568,6 +594,7 @@ Field MeshUtils::computeMeanNormals(const std::vector<std::reference_wrapper<con
   return normals;
 }
 
+//---------------------------------------------------------------------------
 void MeshUtils::visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh) {
   // std::cout << "VTK rendering" << std::endl;
 
@@ -646,12 +673,14 @@ void MeshUtils::visualizeVectorFieldForFFCs(std::shared_ptr<Mesh> mesh) {
   renderWindowInteractor->Start();
 }
 
+//---------------------------------------------------------------------------
 void CreateArrowMidPoint(double midPoint[], double startPoint[], double endPoint[]) {
   midPoint[0] = (startPoint[0] + endPoint[0]) / 3;
   midPoint[1] = (startPoint[1] + endPoint[1]) / 3;
   midPoint[2] = (startPoint[2] + endPoint[2]) / 3;
 }
 
+//---------------------------------------------------------------------------
 void PrintArray(std::string arrayName, double* arr, int size) {
   std::cout << arrayName << std::endl;
 
@@ -662,12 +691,14 @@ void PrintArray(std::string arrayName, double* arr, int size) {
   std::cout << std::endl;
 }
 
+//---------------------------------------------------------------------------
 void PrintTransformParams(vtkSmartPointer<vtkTransform> transform) {
   PrintArray("Transform orientation: ", transform->GetOrientation(), 3);
   PrintArray("Transform position: ", transform->GetPosition(), 3);
   PrintArray("Transform scale: ", transform->GetScale(), 3);
 }
 
+//---------------------------------------------------------------------------
 void Print4x4Matrix(std::string matrixName, vtkSmartPointer<vtkMatrix4x4> matrix) {
   std::cout << matrixName << std::endl;
   for (unsigned int i = 0; i < sizeof(matrix->Element) / sizeof(matrix->Element[0]); i++) {
@@ -678,6 +709,7 @@ void Print4x4Matrix(std::string matrixName, vtkSmartPointer<vtkMatrix4x4> matrix
   std::cout << std::endl;
 }
 
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkActor> MeshUtils::getArrow(Eigen::Vector3d start, Eigen::Vector3d end) {
   // Create an arrow source
   vtkSmartPointer<vtkArrowSource> arrowSource = vtkSmartPointer<vtkArrowSource>::New();
@@ -766,4 +798,148 @@ vtkSmartPointer<vtkActor> MeshUtils::getArrow(Eigen::Vector3d start, Eigen::Vect
   return arrowActor;
 }
 
+//-------------------------------------------------------------------------
+//! From vtkTriangle::EvaluatePosition
+int MeshUtils::evaluate_triangle_position(const double x[3], double closestPoint[3], int& subId, double pcoords[3],
+                                          double& dist2, double weights[], double pt3[3], double pt1[3],
+                                          double pt2[3]) {
+  int i, j;
+  double n[3], fabsn;
+  double rhs[2], c1[2], c2[2];
+  double det;
+  double maxComponent;
+  int idx = 0, indices[2];
+  double dist2Point, dist2Line1, dist2Line2;
+  double *closest, closestPoint1[3], closestPoint2[3], cp[3];
+
+  subId = 0;
+  pcoords[2] = 0.0;
+
+  // Get normal for triangle, only the normal direction is needed, i.e. the
+  // normal need not be normalized (unit length)
+  vtkTriangle::ComputeNormalDirection(pt1, pt2, pt3, n);
+
+  // Project point to plane
+  vtkPlane::GeneralizedProjectPoint(x, pt1, n, cp);
+
+  // Construct matrices.  Since we have over determined system, need to find
+  // which 2 out of 3 equations to use to develop equations. (Any 2 should
+  // work since we've projected point to plane.)
+  //
+  for (maxComponent = 0.0, i = 0; i < 3; i++) {
+    // trying to avoid an expensive call to fabs()
+    if (n[i] < 0) {
+      fabsn = -n[i];
+    } else {
+      fabsn = n[i];
+    }
+    if (fabsn > maxComponent) {
+      maxComponent = fabsn;
+      idx = i;
+    }
+  }
+  for (j = 0, i = 0; i < 3; i++) {
+    if (i != idx) {
+      indices[j++] = i;
+    }
+  }
+
+  for (i = 0; i < 2; i++) {
+    rhs[i] = cp[indices[i]] - pt3[indices[i]];
+    c1[i] = pt1[indices[i]] - pt3[indices[i]];
+    c2[i] = pt2[indices[i]] - pt3[indices[i]];
+  }
+
+  if ((det = vtkMath::Determinant2x2(c1, c2)) == 0.0) {
+    pcoords[0] = pcoords[1] = 0.0;
+    return -1;
+  }
+
+  pcoords[0] = vtkMath::Determinant2x2(rhs, c2) / det;
+  pcoords[1] = vtkMath::Determinant2x2(c1, rhs) / det;
+
+  // Okay, now find closest point to element
+  //
+  weights[0] = 1 - (pcoords[0] + pcoords[1]);
+  weights[1] = pcoords[0];
+  weights[2] = pcoords[1];
+
+  if (weights[0] >= 0.0 && weights[0] <= 1.0 && weights[1] >= 0.0 && weights[1] <= 1.0 && weights[2] >= 0.0 &&
+      weights[2] <= 1.0) {
+    // projection distance
+    if (closestPoint) {
+      dist2 = vtkMath::Distance2BetweenPoints(cp, x);
+      closestPoint[0] = cp[0];
+      closestPoint[1] = cp[1];
+      closestPoint[2] = cp[2];
+    }
+    return 1;
+  } else {
+    double t;
+    if (closestPoint) {
+      if (weights[1] < 0.0 && weights[2] < 0.0) {
+        dist2Point = vtkMath::Distance2BetweenPoints(x, pt3);
+        dist2Line1 = vtkLine::DistanceToLine(x, pt1, pt3, t, closestPoint1);
+        dist2Line2 = vtkLine::DistanceToLine(x, pt3, pt2, t, closestPoint2);
+        if (dist2Point < dist2Line1) {
+          dist2 = dist2Point;
+          closest = pt3;
+        } else {
+          dist2 = dist2Line1;
+          closest = closestPoint1;
+        }
+        if (dist2Line2 < dist2) {
+          dist2 = dist2Line2;
+          closest = closestPoint2;
+        }
+        for (i = 0; i < 3; i++) {
+          closestPoint[i] = closest[i];
+        }
+      } else if (weights[2] < 0.0 && weights[0] < 0.0) {
+        dist2Point = vtkMath::Distance2BetweenPoints(x, pt1);
+        dist2Line1 = vtkLine::DistanceToLine(x, pt1, pt3, t, closestPoint1);
+        dist2Line2 = vtkLine::DistanceToLine(x, pt1, pt2, t, closestPoint2);
+        if (dist2Point < dist2Line1) {
+          dist2 = dist2Point;
+          closest = pt1;
+        } else {
+          dist2 = dist2Line1;
+          closest = closestPoint1;
+        }
+        if (dist2Line2 < dist2) {
+          dist2 = dist2Line2;
+          closest = closestPoint2;
+        }
+        for (i = 0; i < 3; i++) {
+          closestPoint[i] = closest[i];
+        }
+      } else if (weights[1] < 0.0 && weights[0] < 0.0) {
+        dist2Point = vtkMath::Distance2BetweenPoints(x, pt2);
+        dist2Line1 = vtkLine::DistanceToLine(x, pt2, pt3, t, closestPoint1);
+        dist2Line2 = vtkLine::DistanceToLine(x, pt1, pt2, t, closestPoint2);
+        if (dist2Point < dist2Line1) {
+          dist2 = dist2Point;
+          closest = pt2;
+        } else {
+          dist2 = dist2Line1;
+          closest = closestPoint1;
+        }
+        if (dist2Line2 < dist2) {
+          dist2 = dist2Line2;
+          closest = closestPoint2;
+        }
+        for (i = 0; i < 3; i++) {
+          closestPoint[i] = closest[i];
+        }
+      } else if (weights[0] < 0.0) {
+        dist2 = vtkLine::DistanceToLine(x, pt1, pt2, t, closestPoint);
+      } else if (weights[1] < 0.0) {
+        dist2 = vtkLine::DistanceToLine(x, pt2, pt3, t, closestPoint);
+      } else if (weights[2] < 0.0) {
+        dist2 = vtkLine::DistanceToLine(x, pt1, pt3, t, closestPoint);
+      }
+    }
+    return 0;
+  }
+}
 }  // namespace shapeworks

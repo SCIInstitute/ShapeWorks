@@ -27,15 +27,15 @@ void ParticleNormalEvaluationJob::run() {
   for (int domain = 0; domain < num_domains; domain++) {
     ParticleSystemEvaluation particles = session_->get_local_particle_system(domain);
 
-    std::vector<std::shared_ptr<MeshWrapper>> meshes;
+    std::vector<std::shared_ptr<Surface>> meshes;
     for (auto& shape : session_->get_shapes()) {
       meshes.push_back(shape->get_groomed_mesh_wrappers()[domain]);
       count++;
       Q_EMIT progress(count / total);
     }
 
-    auto normals = ParticleNormalEvaluation::compute_particle_normals(particles.Particles(), meshes);
-    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(particles.Particles(), normals);
+    auto normals = ParticleNormalEvaluation::compute_particle_normals(particles.get_matrix(), meshes);
+    auto angles = ParticleNormalEvaluation::evaluate_particle_normals(particles.get_matrix(), normals);
     auto domain_good_bad = ParticleNormalEvaluation::threshold_particle_normals(angles, max_angle_degrees_);
 
     good_bad.insert(good_bad.end(), domain_good_bad.begin(), domain_good_bad.end());

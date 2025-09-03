@@ -13,9 +13,8 @@ from DeepSSMUtils import model
 from DeepSSMUtils import losses
 from DeepSSMUtils import train_viz
 from DeepSSMUtils import loaders
-from shapeworks.utils import sw_message
-from shapeworks.utils import sw_progress
-from shapeworks.utils import sw_check_abort
+import DeepSSMUtils
+from shapeworks.utils import *
 
 '''
 Train helper
@@ -45,6 +44,8 @@ def log_print(logger, values):
             print(values[i], end='	  ')
         else:
             print('%.5f' % values[i], end='	  ')
+    # print a new line
+    print()
 
     # csv format
     string_values = [str(i) for i in values]
@@ -66,7 +67,9 @@ def set_scheduler(opt, sched_params):
     return scheduler
 
 
-def train(config_file):
+def train(project, config_file):
+    sw.utils.initialize_project_mesh_warper(project)
+
     with open(config_file) as json_file:
         parameters = json.load(json_file)
     if parameters["tl_net"]["enabled"]:
@@ -166,7 +169,8 @@ def supervised_train(config_file):
         if sw_check_abort():
             sw_message("Aborted")
             return
-        sw_message(f"Epoch {e}/{num_epochs}")
+        if not sw_is_cli_mode():
+            sw_message(f"Epoch {e}/{num_epochs}")
         sw_progress(e / (num_epochs + 1))
 
         torch.cuda.empty_cache()
@@ -228,6 +232,7 @@ def supervised_train(config_file):
             log_print(logger,
                       ["Base_Training", e, last_learning_rate, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err,
                        time.time() - t0])
+
             # plot
             epochs.append(e)
             plot_train_losses.append(train_mr_MSE)

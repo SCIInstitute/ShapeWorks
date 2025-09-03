@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Libs/Mesh/Mesh.h>
 #include <itkImage.h>
 #include <vnl/vnl_vector.h>
 #include <vtkPolyData.h>
@@ -67,6 +68,9 @@ class StudioMesh {
 
   //! Does this mesh have free form constraint paint?
   bool has_ffc_paint();
+
+  //! Return a shapeworks Mesh library class mesh
+  Mesh get_sw_mesh();
 
   static constexpr const char* const FFC_PAINT = "ffc_paint";
 

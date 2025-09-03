@@ -9,6 +9,7 @@ from DataAugmentationUtils import Sampler
 from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
+import shapeworks as sw
 
 ################################# Augmentation Pipelines ###############################################
 
@@ -59,9 +60,13 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 	gen_image_dir = out_dir + "Generated-Images/"
 	if not os.path.exists(gen_image_dir):
 		os.makedirs(gen_image_dir)
+	get_mesh_dir = out_dir + "Generated-Meshes/"
+	if not os.path.exists(get_mesh_dir):
+		os.makedirs(get_mesh_dir)
 	gen_embeddings = []
 	gen_points_paths = []
 	gen_image_paths = []
+	gen_mesh_paths = []
 	if processes != 1:
 		generate_image_params_list = []
 	# Sample to generate new examples
@@ -87,6 +92,9 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 		gen_points_path = gen_point_dir + name + ".particles"
 		np.savetxt(gen_points_path, gen_points)
 		gen_points_paths.append(gen_points_path)
+		# Generate mesh
+		gen_mesh_path = get_mesh_dir + name + ".vtk"
+		sw.utils.reconstruct_mesh(gen_points).write(gen_mesh_path)
 		# Generate image
 		base_image_path = orig_img_list[base_index]
 		base_particles_path = orig_point_list[base_index]

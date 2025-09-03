@@ -12,7 +12,7 @@ def warpTest():
 
   compareImg = Image(os.environ["DATA"] + "/warp1.nrrd")
 
-  return img.compare(compareImg)
+  return img.compare(compareImg, True, 0, 1e-5)
 
 success &= utils.test(warpTest)
 

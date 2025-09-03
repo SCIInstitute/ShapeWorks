@@ -13,7 +13,7 @@ namespace shapeworks {
  *
  */
 
-class MeshWrapper;
+class Surface;
 class ParticleNormalEvaluation {
  public:
   static std::vector<double> evaluate_particle_normals(const Eigen::MatrixXd& particles,
@@ -23,7 +23,7 @@ class ParticleNormalEvaluation {
 
   //! Compute normals at particle positions
   static Eigen::MatrixXd compute_particle_normals(const Eigen::MatrixXd& particles,
-                                                  std::vector<std::shared_ptr<MeshWrapper>> meshes);
+                                                  std::vector<std::shared_ptr<Surface>> meshes);
 
  private:
 };

@@ -16,7 +16,7 @@
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
 
-#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/Surface.h"
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -100,20 +100,68 @@ MeshGroup Shape::get_original_meshes(bool wait) {
     return original_meshes_;
   }
 
-  if (!original_meshes_.valid()) {
+  if (!original_meshes_.valid() || original_meshes_.meshes().size() != subject_->get_original_filenames().size()) {
+    original_meshes_ = MeshGroup(subject_->get_number_of_domains());
     generate_meshes(subject_->get_original_filenames(), original_meshes_, true, wait);
   }
   return original_meshes_;
 }
 
 //---------------------------------------------------------------------------
-MeshGroup Shape::get_groomed_meshes(bool wait) {
-  if (!subject_) {
-    std::cerr << "Error: asked for groomed meshes when none are present!\n";
-    assert(0);
+void Shape::recompute_original_surface() {
+  auto seg = get_segmentation();
+  if (!seg) {
+    return;
+  }
+  if (original_meshes_.meshes().empty()) {
+    return;
+  }
+  auto meshes = original_meshes_.meshes();
+  Image copy = *seg;
+  copy.binarize(0, 2);
+  Mesh mesh = copy.toMesh(0.001);
+  MeshHandle mesh_handle = std::make_shared<StudioMesh>();
+  mesh_handle->set_poly_data(mesh.getVTKMesh());
+  original_meshes_.set_mesh(0, mesh_handle);
+}
+
+//---------------------------------------------------------------------------
+void Shape::ensure_segmentation() {
+  if (get_segmentation()) {
+    return;
   }
 
-  if (!groomed_meshes_.valid()) {
+  if (!subject_) {
+    return;
+  }
+
+  if (subject_->get_feature_filenames().empty()) {
+    return;
+  }
+
+  // get image volume
+  auto image_name = subject_->get_feature_filenames().begin()->first;
+  auto base_image = get_image_volume(image_name);
+  if (!base_image) {
+    return;
+  }
+
+  // deep copy
+  Image blank = *base_image;
+  blank.fill(0);
+  segmentation_ = std::make_shared<Image>(blank);
+  // remove extension and add "_seg.nrrd"
+  segmentation_filename_ = StringUtils::removeExtension(image_volume_filename_) + "_seg.nrrd";
+}
+
+//---------------------------------------------------------------------------
+MeshGroup Shape::get_groomed_meshes(bool wait) {
+  if (!subject_) {
+    return {};
+  }
+
+  if (!groomed_meshes_.valid() || groomed_meshes_.meshes().size() != subject_->get_number_of_domains()) {
+    groomed_meshes_ = MeshGroup(subject_->get_number_of_domains());
     generate_meshes(subject_->get_groomed_filenames(), groomed_meshes_, true, wait);
   }
   return groomed_meshes_;
@@ -330,6 +378,9 @@ void Shape::set_id(int id) { id_ = id; }
 
 //---------------------------------------------------------------------------
 void Shape::update_annotations() {
+  if (!subject_) {
+    return;
+  }
   if (!subject_->get_original_filenames().empty()) {
     /// TODO: Show multiple lines of filenames for multiple domains?
     std::string filename = subject_->get_original_filenames()[0];
@@ -495,7 +546,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
 //---------------------------------------------------------------------------
 bool Shape::import_point_file(std::string filename, Eigen::VectorXd& points) {
-  return ParticleSystemEvaluation::ReadParticleFile(filename, points);
+  return ParticleSystemEvaluation::read_particle_file(filename, points);
 }
 
 //---------------------------------------------------------------------------
@@ -558,8 +609,8 @@ void Shape::load_feature(DisplayMode display_mode, std::string feature) {
             ImageType::Pointer image = reader->GetOutput();
             group.meshes()[d]->apply_feature_map(feature, image);
             apply_feature_to_points(feature, image);
-          } catch (itk::ExceptionObject& excep) {
-            SW_ERROR("Unable to open file: " + filename);
+          } catch (std::exception& ex) {
+            SW_ERROR("Unable to open file \"{}\": {}", filename, ex.what());
           }
         }
       }
@@ -582,13 +633,40 @@ std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
         image_volume_ = image;
         image_volume_filename_ = filename;
       } catch (std::exception& ex) {
-        SW_ERROR("Unable to open file: {}", filename);
+        SW_ERROR("Unable to open file \"{}\": {}", filename, ex.what());
       }
     }
 
     return image_volume_;
   }
   return nullptr;
+}
+
+//---------------------------------------------------------------------------
+std::shared_ptr<Image> Shape::get_segmentation() {
+  if (segmentation_) {
+    return segmentation_;
+  }
+  if (!subject_) {
+    return nullptr;
+  }
+  auto filenames = subject_->get_original_filenames();
+  if (filenames.empty()) {
+    return nullptr;
+  }
+  auto filename = filenames[0];
+
+  if (Image::isSupportedType(filename)) {
+    try {
+      std::shared_ptr<Image> image = std::make_shared<Image>(filename);
+      segmentation_ = image;
+      segmentation_filename_ = filename;
+    } catch (std::exception& ex) {
+      SW_ERROR("Unable to open file \"{}\": {}", filename, ex.what());
+    }
+  }
+
+  return segmentation_;
 }
 
 //---------------------------------------------------------------------------
@@ -850,14 +928,14 @@ bool Shape::has_planes() {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<MeshWrapper>> Shape::get_groomed_mesh_wrappers() {
+std::vector<std::shared_ptr<Surface>> Shape::get_groomed_mesh_wrappers() {
   if (!groomed_mesh_wrappers_.empty()) {
     return groomed_mesh_wrappers_;
   }
 
   auto group = get_groomed_meshes(true /* wait */);
   for (auto& mesh : group.meshes()) {
-    auto wrapper = std::make_shared<MeshWrapper>(mesh->get_poly_data());
+    auto wrapper = std::make_shared<Surface>(mesh->get_poly_data());
     groomed_mesh_wrappers_.push_back(wrapper);
   }
   return groomed_mesh_wrappers_;

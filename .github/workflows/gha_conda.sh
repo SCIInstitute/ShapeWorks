@@ -14,13 +14,9 @@ else
 
     # run install
     source ./install_shapeworks.sh --developer
-    conda clean -p -t
-
-    echo "Create and store cache"
-    cd /
-    compress_file /tmp/${CONDA_FILE} "${CONDA_PATH}"
-    scp /tmp/${CONDA_FILE} runner@${CACHE_HOST}:github
-    rm /tmp/${CONDA_FILE}
+    conda clean -p -t -y
+    pip cache info
+    pip cache purge
 fi
 
 conda init bash

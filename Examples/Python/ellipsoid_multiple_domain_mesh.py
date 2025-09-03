@@ -13,8 +13,10 @@ import os
 import glob
 import shapeworks as sw
 import AnalyzeUtils
-import numpy as np 
+import numpy as np
 import subprocess
+
+
 def Run_Pipeline(args):
     print("\nStep 1. Acquire Data\n")
     """
@@ -33,18 +35,16 @@ def Run_Pipeline(args):
         sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_joint_rotation"
         mesh_files = sorted(glob.glob(output_directory +
-                                     dataset_name + "/meshes/*.vtk"))[:6]
+                                      dataset_name + "/meshes/*.vtk"))[:6]
     # Else download the entire dataset
     else:
         dataset_name = "ellipsoid_multiple_domain_mesh"
         sw.download_dataset(dataset_name, output_directory)
-        dataset_name = "ellipsoid_joint_rotation"
-        mesh_files = sorted(glob.glob(output_directory +
-                                     dataset_name + "/meshes/*.vtk"))
+        mesh_files = sorted(glob.glob(output_directory + "/meshes/*.vtk"))
 
         if args.use_subsample:
-            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
-            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample),domains_per_shape=2)
+            inputMeshes = [sw.Mesh(filename) for filename in mesh_files]
+            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample), domains_per_shape=2)
             mesh_files = [mesh_files[i] for i in sample_idx]
 
     print("\nStep 2. Groom - Data Pre-processing\n")
@@ -78,7 +78,7 @@ def Run_Pipeline(args):
         mesh_names.append(mesh_name)
         # get domain identifiers
         domain_ids.append(mesh_name.split(".")[0].split("_")[-1])
-        
+
         # load mesh
         mesh = sw.Mesh(mesh_file)
         # do initial grooming steps
@@ -87,12 +87,11 @@ def Run_Pipeline(args):
         # append to the mesh list
         mesh_list.append(mesh)
 
-    
-    #domain identifiers for all shapes
+    # domain identifiers for all shapes
     domain_ids = np.array(domain_ids)
-    #shape index for all shapes in domain 1 
+    # shape index for all shapes in domain 1
     domain1_indx = list(np.where(domain_ids == 'd1')[0])
-    #shape index for all shapes in domain 2
+    # shape index for all shapes in domain 2
     domain2_indx = list(np.where(domain_ids == 'd2')[0])
     """
     Grooming Step 2: Select a reference
@@ -101,7 +100,7 @@ def Run_Pipeline(args):
     """
     domains_per_shape = 2
     domain_1_meshes = []
-    # get domain 1 shapes 
+    # get domain 1 shapes
     for i in range(int(len(mesh_list)/domains_per_shape)):
         domain_1_meshes.append(mesh_list[i*domains_per_shape])
 
@@ -110,8 +109,13 @@ def Run_Pipeline(args):
     domain2_reference = mesh_list[ref_index*domains_per_shape+1].copy()
     domain1_ref_name = mesh_names[ref_index*domains_per_shape]
     domain2_ref_name = mesh_names[ref_index*domains_per_shape+1]
-    reference = [domain1_reference,domain2_reference]
-    ref_name = [domain1_ref_name,domain2_ref_name]
+    reference = [domain1_reference, domain2_reference]
+    ref_name = [domain1_ref_name, domain2_ref_name]
+
+    # Create a combined mesh for the global alignment
+    combined_reference = domain1_reference.copy()
+    combined_reference += domain2_reference
+
     """
     Grooming Step 3: Rigid alignment
     Now we can loop over all of the meshes again to find the rigid
@@ -120,18 +124,27 @@ def Run_Pipeline(args):
 
     transforms = []
     for i in range(len(domain_1_meshes)):
-            
-        # calculate the transformation 
+
+        # calculate the transformation
         for d in range(domains_per_shape):
             # compute rigid transformation
-            rigidTransform = mesh_list[i*domains_per_shape+d].createTransform(reference[d],sw.Mesh.AlignmentType.Rigid,100)
+            rigidTransform = mesh_list[i*domains_per_shape +
+                                       d].createTransform(reference[d], sw.Mesh.AlignmentType.Rigid, 100)
             name = mesh_names[i*domains_per_shape+d]
-            print('Aligning ' + name + ' to ' + ref_name[d])    
+            print('Aligning ' + name + ' to ' + ref_name[d])
             transforms.append(rigidTransform)
+
+        combined_mesh = mesh_list[i*domains_per_shape].copy()
+        for d in range(domains_per_shape):
+            # skip the first domain
+            if d == 0:
+                continue
+            combined_mesh += mesh_list[i*domains_per_shape+d]
+        transform = combined_mesh.createTransform(combined_reference, sw.Mesh.AlignmentType.Rigid, 100)
+        transforms.append(transform)
 
     # Save groomed meshes
     groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
-
 
     print("\nStep 3. Optimize - Particle Based Optimization\n")
     """
@@ -139,7 +152,7 @@ def Run_Pipeline(args):
 
     Now we can run optimization directly on the meshes.
     For more details on the plethora of parameters for shapeworks please refer 
-    to docs/workflow/optimze.md
+    to docs/workflow/optimize.md
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
@@ -149,7 +162,7 @@ def Run_Pipeline(args):
         os.makedirs(project_location)
     # Set subjects
     subjects = []
-    
+
     for i in range(len(domain_1_meshes)):
         subject = sw.Subject()
         subject.set_number_of_domains(domains_per_shape)
@@ -157,9 +170,13 @@ def Run_Pipeline(args):
         rel_groom_files = []
         transform = []
         for d in range(domains_per_shape):
-            rel_mesh_files += sw.utils.get_relative_paths([os.getcwd() + '/' + mesh_files[i*domains_per_shape+d]], project_location)
-            rel_groom_files += sw.utils.get_relative_paths([os.getcwd() + '/' + groomed_mesh_files[i*domains_per_shape+d]], project_location)
-            transform.append(transforms[i*domains_per_shape+d].flatten())
+            rel_mesh_files += sw.utils.get_relative_paths([os.getcwd() +
+                                                          '/' + mesh_files[i*domains_per_shape+d]], project_location)
+            rel_groom_files += sw.utils.get_relative_paths([os.getcwd() + '/' +
+                                                           groomed_mesh_files[i*domains_per_shape+d]], project_location)
+            transform.append(transforms[i*(domains_per_shape+1)+d].flatten())
+        # add the global alignment transform
+        transform.append(transforms[i*(domains_per_shape+1)+domains_per_shape].flatten())
         subject.set_groomed_transforms(transform)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_original_filenames(rel_mesh_files)
@@ -170,36 +187,36 @@ def Run_Pipeline(args):
     parameters = sw.Parameters()
 
     parameter_dictionary = {
-        "checkpointing_interval" : 200,
-        "keep_checkpoints" : 0,
-        "iterations_per_split" : 200,
-        "optimization_iterations" : 200,
-        "starting_regularization" :1000,
-        "ending_regularization" : 0.1,
-        "relative_weighting" : 10, 
-        "initial_relative_weighting" : 0.1,
-        "procrustes_interval" : 0,
-        "procrustes_scaling" : 0,
-        "save_init_splits" : 0,
-        "verbosity" : 0
+        "checkpointing_interval": 200,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 200,
+        "optimization_iterations": 200,
+        "starting_regularization": 1000,
+        "ending_regularization": 0.1,
+        "relative_weighting": 10,
+        "initial_relative_weighting": 0.1,
+        "procrustes_interval": 0,
+        "procrustes_scaling": 0,
+        "save_init_splits": 0,
+        "verbosity": 0
 
-      }
-    num_particles = [128,128]
+    }
+    num_particles = [128, 128]
 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        num_particles = [32,32]
+        num_particles = [32, 32]
         parameter_dictionary["optimization_iterations"] = 30
 
-    #setting the argument to singlescale for the output filename
+    # setting the argument to singlescale for the output filename
     args.use_single_scale = True
-    args.option_set = args.option_set.replace("multiscale","singlescale")
+    args.option_set = args.option_set.replace("multiscale", "singlescale")
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("number_of_particles" ,sw.Variant(num_particles))
+    parameters.set("number_of_particles", sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
-    
+
     spreadsheet_file = output_directory + "ellipsoid_multiple_domain_mesh_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 

@@ -30,7 +30,7 @@ class GenericContainerArray : public std::vector<typename GenericContainer<T>::P
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleContainer, Observer);
+  itkTypeMacro(GenericContainerArray, Observer);
 
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
       of these callback methods, the corresponding flag in m_DefinedCallbacks

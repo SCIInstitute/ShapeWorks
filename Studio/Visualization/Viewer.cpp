@@ -7,6 +7,8 @@
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
 #include <vtkHandleWidget.h>
+#include <vtkImageActor.h>
+#include <Visualization/StudioImageActorPointPlacer.h>
 #include <vtkImageData.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
@@ -56,6 +58,7 @@ Viewer::Viewer() {
   prop_picker_->SetPickFromList(1);
   point_placer_ = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
   point_placer_->SetDistanceOffset(0);
+  slice_point_placer_ = vtkSmartPointer<StudioImageActorPointPlacer>::New();
 
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
   plane_widget_ = std::make_shared<PlaneWidget>(this);
@@ -234,7 +237,6 @@ void Viewer::display_vector_field() {
     // restore things to normal
     glyphs_->ScalingOn();
     glyphs_->ClampingOff();
-    glyphs_->SetScaleModeToDataScalingOff();
     glyph_mapper_->SetLookupTable(glyph_lut_);
 
     glyph_points_->SetDataTypeToDouble();
@@ -545,7 +547,21 @@ void Viewer::update_clipping_planes() {
 vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::handle_ffc_paint(double display_pos[2], double world_pos[3]) {
+void Viewer::handle_paint(double display_pos[2], double world_pos[3]) {
+  if (session_->get_seg_paint_active()) {
+    // segmentation paint
+    int axis = slice_view_.get_orientation_index();
+    shape_->ensure_segmentation();
+    if (!shape_->get_segmentation()) {
+      return;
+    }
+    shape_->get_segmentation()->paintCircle(world_pos, paint_widget_->get_brush_size(), axis,
+                                            session_->get_seg_paint_value());
+    slice_view_.update();
+    return;
+  }
+
+  // else ffc paint
   if (!meshes_.valid()) {
     return;
   }
@@ -575,6 +591,7 @@ void Viewer::handle_ffc_paint(double display_pos[2], double world_pos[3]) {
     ffc.setPainted(true);
     session_->trigger_ffc_changed();
   }
+  session_->set_modified(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -588,22 +605,40 @@ void Viewer::update_planes() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_ffc_mode() {
+void Viewer::update_paint_mode() {
   paint_widget_->SetDefaultRenderer(renderer_);
   paint_widget_->SetRenderer(renderer_);
   paint_widget_->SetInteractor(renderer_->GetRenderWindow()->GetInteractor());
   paint_widget_->SetEnabled(0);
-  paint_widget_->SetEnabled(session_->get_ffc_paint_active());
+  paint_widget_->SetEnabled(session_->get_ffc_paint_active() || session_->get_seg_paint_active());
 
-  double paint_size = session_->get_ffc_paint_size() * 0.10;
+  paint_widget_->set_circle_mode(session_->get_seg_paint_active());
 
-  // scale based on dimension of data
-  if (meshes_.valid()) {
-    paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
+  double paint_size = 0;
+  if (session_->get_seg_paint_active()) {
+    paint_size = session_->get_seg_paint_size() * 0.10;
+
+    // scale based on dimension of image
+    auto image = shape_->get_segmentation();
+    if (image) {
+      paint_size = paint_size / 100.0 * image->get_largest_dimension_size();
+    }
+
+  } else {
+    paint_size = session_->get_ffc_paint_size() * 0.10;
+
+    // scale based on dimension of mesh
+    if (meshes_.valid()) {
+      paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
+    }
   }
 
   paint_widget_->set_brush_size(paint_size);
-  paint_widget_->SetPointPlacer(point_placer_);
+  if (session_->get_ffc_paint_active()) {
+    paint_widget_->SetPointPlacer(point_placer_);
+  } else {
+    paint_widget_->SetPointPlacer(slice_point_placer_);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -721,13 +756,13 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         auto compare_poly_data = compare_meshes_.meshes()[i]->get_poly_data();
 
         if (compare_settings.get_mean_shape_checked()) {
-          auto transform = visualizer_->get_transform(shape_, compare_settings.get_display_mode(),
+          auto mean_transform = visualizer_->get_transform(shape_, compare_settings.get_display_mode(),
                                                       visualizer_->get_alignment_domain(), i);
 
-          transform->Inverse();
+          mean_transform->Inverse();
           auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
           transform_filter->SetInputData(compare_poly_data);
-          transform_filter->SetTransform(transform);
+          transform_filter->SetTransform(mean_transform);
           transform_filter->Update();
 
           compare_poly_data = transform_filter->GetOutput();
@@ -777,7 +812,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   plane_widget_->clear_planes();
   update_landmarks();
   update_planes();
-  update_ffc_mode();
+  update_paint_mode();
   renderer_->AddViewProp(corner_annotation_);
 
   /**************
@@ -942,45 +977,47 @@ void Viewer::update_points() {
   if (domain_visibility.size() != correspondence_points.size()) {
     domain_visibility.resize(correspondence_points.size(), true);
   }
-  if (num_points > 0) {
-    viewer_ready_ = true;
-    glyphs_->SetRange(0.0, (double)num_points + 1);
-    glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
-    glyph_points_->Reset();
-    scalars->Reset();
+  if (!arrows_visible_) {
+    if (num_points > 0) {
+      viewer_ready_ = true;
+      glyphs_->SetRange(0.0, (double)num_points + 1);
+      glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
-    int point_index = 0;
-    for (int d = 0; d < correspondence_points.size(); d++) {
-      int num_points_this_domain = correspondence_points[d].size() / 3;
+      glyph_points_->Reset();
+      scalars->Reset();
 
-      int d_index = 0;
-      for (int j = 0; j < num_points_this_domain; j++) {
-        double x = correspondence_points[d][d_index++];
-        double y = correspondence_points[d][d_index++];
-        double z = correspondence_points[d][d_index++];
+      int point_index = 0;
+      for (int d = 0; d < correspondence_points.size(); d++) {
+        int num_points_this_domain = correspondence_points[d].size() / 3;
 
-        if (slice_view_.should_point_show(x, y, z) && domain_visibility[d]) {
-          if (scalar_values.size() > point_index) {
-            scalars->InsertNextValue(scalar_values[point_index]);
-          } else {
-            scalars->InsertNextValue(point_index);
+        int d_index = 0;
+        for (int j = 0; j < num_points_this_domain; j++) {
+          double x = correspondence_points[d][d_index++];
+          double y = correspondence_points[d][d_index++];
+          double z = correspondence_points[d][d_index++];
+
+          if (slice_view_.should_point_show(x, y, z) && domain_visibility[d]) {
+            if (scalar_values.size() > point_index) {
+              scalars->InsertNextValue(scalar_values[point_index]);
+            } else {
+              scalars->InsertNextValue(point_index);
+            }
+            glyph_points_->InsertNextPoint(x, y, z);
           }
-          glyph_points_->InsertNextPoint(x, y, z);
+          point_index++;
         }
-        point_index++;
       }
+    } else {
+      glyph_points_->Reset();
+      scalars->Reset();
     }
-  } else {
-    glyph_points_->Reset();
-    scalars->Reset();
   }
 
   if (showing_feature_map()) {
     glyph_mapper_->SetScalarRange(surface_lut_->GetRange());
     glyph_point_set_->GetPointData()->SetScalars(scalars);
     glyphs_->SetColorModeToColorByScalar();
-    glyphs_->SetScaleModeToDataScalingOff();
     glyph_mapper_->SetColorModeToMapScalars();
     glyph_mapper_->ScalarVisibilityOn();
     glyph_mapper_->SetLookupTable(surface_lut_);
@@ -1026,6 +1063,7 @@ void Viewer::update_actors() {
   prop_picker_->InitializePickList();
   point_placer_->RemoveAllProps();
   point_placer_->GetPolys()->RemoveAllItems();
+
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
   }
@@ -1037,6 +1075,8 @@ void Viewer::update_actors() {
     renderer_->RemoveActor(compare_actors_[i]);
   }
 
+  // now add back
+
   if (show_glyphs_) {
     renderer_->AddActor(glyph_actor_);
 
@@ -1045,14 +1085,15 @@ void Viewer::update_actors() {
     }
   }
 
-  if ((show_glyphs_ && arrows_visible_) || showing_feature_map()) {
-    renderer_->AddActor(scalar_bar_actor_);
-  }
-
   if (show_surface_ && meshes_.valid()) {
+    // if (true && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
+      if (meshes_.meshes().size() <= i) {
+        continue;
+      }
       renderer_->AddActor(unclipped_surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
+
       if (session_->get_compare_settings().compare_enabled_ &&
           !session_->get_compare_settings().surface_distance_mode_) {
         renderer_->AddActor(compare_actors_[i]);
@@ -1060,6 +1101,7 @@ void Viewer::update_actors() {
 
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
       unclipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
+
       cell_picker_->AddPickList(unclipped_surface_actors_[i]);
       prop_picker_->AddPickList(unclipped_surface_actors_[i]);
       point_placer_->AddProp(unclipped_surface_actors_[i]);
@@ -1070,7 +1112,14 @@ void Viewer::update_actors() {
     }
   }
 
+  if ((show_glyphs_ && arrows_visible_) || showing_feature_map()) {
+    renderer_->AddActor(scalar_bar_actor_);
+  }
+
   slice_view_.update_renderer();
+  renderer_->ResetCameraClippingRange();
+
+  slice_point_placer_->SetImageActor(slice_view_.get_image_actor());
 
   update_opacities();
 }
@@ -1138,6 +1187,8 @@ void Viewer::set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSm
   if (scalars) {
     double range[2];
     scalars->GetRange(range);
+    lut_min_ = range[0];
+    lut_max_ = range[1];
     update_difference_lut(range[0], range[1]);
     mapper->SetScalarRange(range[0], range[1]);
     visualizer_->update_feature_range(range);
@@ -1153,16 +1204,24 @@ void Viewer::update_image_volume(bool force) {
 
   if (meshes_.valid()) {
     slice_view_.clear_meshes();
-    auto poly_data = meshes_.meshes()[0]->get_poly_data();
-    slice_view_.add_mesh(poly_data);
+    for (size_t i = 0; i < meshes_.meshes().size(); i++) {
+      auto poly_data = meshes_.meshes()[i]->get_poly_data();
+      slice_view_.add_mesh(poly_data);
 
-    if (session_->get_image_thickness_feature()) {
-      auto target_feature = session_->get_feature_map();
-      if (target_feature != "" && target_feature != "-none-") {
-        Mesh inner = mesh::compute_inner_mesh(poly_data, target_feature);
-        slice_view_.add_mesh(inner.getVTKMesh());
+      if (session_->get_image_thickness_feature()) {
+        auto target_feature = session_->get_feature_map();
+        if (target_feature != "" && target_feature != "-none-") {
+          Mesh inner = mesh::compute_inner_mesh(poly_data, target_feature);
+          slice_view_.add_mesh(inner.getVTKMesh());
+        }
       }
     }
+  }
+
+  if (session_->get_seg_paint_active()) {
+    slice_view_.set_mask(shape_->get_segmentation());
+  } else {
+    slice_view_.set_mask(nullptr);
   }
 
   slice_view_.update_particles();
@@ -1282,6 +1341,7 @@ void Viewer::update_difference_lut(float r0, float r1) {
   arrow_glyph_mapper_->SetScalarRange(range);
   glyph_mapper_->SetScalarRange(range);
   scalar_bar_actor_->SetLookupTable(surface_lut_);
+  slice_view_.update_colormap();
   if (rd > 100) {
     scalar_bar_actor_->SetLabelFormat("%.0f");
   } else if (rd > 1) {
@@ -1303,6 +1363,9 @@ bool Viewer::showing_feature_map() {
 void Viewer::update_feature_range(double* range) { update_difference_lut(range[0], range[1]); }
 
 //-----------------------------------------------------------------------------
+void Viewer::reset_feature_range() { update_difference_lut(lut_min_, lut_max_); }
+
+//-----------------------------------------------------------------------------
 void Viewer::update_opacities() {
   auto opacities = visualizer_->get_opacities();
   if (opacities.size() == surface_mappers_.size()) {
@@ -1319,7 +1382,7 @@ std::shared_ptr<Shape> Viewer::get_shape() { return shape_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::initialize_surfaces() {
-  if (number_of_domains_ > surface_mappers_.size()) {
+  if (number_of_domains_ != surface_mappers_.size()) {
     surface_mappers_.resize(number_of_domains_);
     surface_actors_.resize(number_of_domains_);
     unclipped_surface_mappers_.resize(number_of_domains_);
@@ -1377,6 +1440,15 @@ vtkSmartPointer<vtkTransform> Viewer::get_inverse_landmark_transform(int domain)
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Viewer::get_image_transform() {
   return visualizer_->get_transform(shape_, visualizer_->get_alignment_domain(), 0);
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Viewer::get_inverse_image_transform() {
+  auto transform = get_image_transform();
+  auto inverse = vtkSmartPointer<vtkTransform>::New();
+  inverse->DeepCopy(transform);
+  inverse->Inverse();
+  return inverse;
 }
 
 //-----------------------------------------------------------------------------

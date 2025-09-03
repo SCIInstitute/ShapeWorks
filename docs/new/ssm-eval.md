@@ -43,7 +43,7 @@ shapeworks readparticlesystem --name *.particles -- specificity    --nmodes 1
 particle_data = sw.ParticleSystem(<list of local point files>)
 #evaluation tools
 shapeworks.ShapeEvaluation.ComputeCompactness(particleSystem=particle_data, nModes=1, saveTo="scree.txt")
-shapeworks.ShapeEvaluation.ComputeGeneralization(particleSystem=particle_data, nModes=1, saveTo=save_dir)
+shapeworks.ShapeEvaluation.compute_generalization(particleSystem=particle_data, nModes=1, saveTo=save_dir)
 shapeworks.ShapeEvaluation.ComputeSpecificity(particleSystem=particle_data, nModes=1, saveTo=save_dir)
 ```
 Details about the evaluation functions can be found [in the API Reference](http://sciinstitute.github.io/ShapeWorks/latest/api/Classes/classshapeworks_1_1ShapeEvaluation.html#function-shapeevaluation)

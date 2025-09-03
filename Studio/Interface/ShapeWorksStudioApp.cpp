@@ -41,9 +41,10 @@
 #include <Interface/StatusBarWidget.h>
 #include <Interface/UpdateChecker.h>
 #include <Interface/WheelEventForwarder.h>
+#include <Libs/Application/Job/PythonWorker.h>
 #include <Optimize/OptimizeTool.h>
-#include <Python/PythonWorker.h>
 #include <Shape.h>
+#include <ShapeWorksMONAI/MonaiLabelTool.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
@@ -68,7 +69,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   status_bar_ = new StatusBarWidget(this);
   connect(status_bar_, &StatusBarWidget::toggle_log_window, this, &ShapeWorksStudioApp::toggle_log_window);
 
-  studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
+  studio_vtk_output_window_ = vtkSmartPointer<ShapeWorksVtkOutputWindow>::New();
   vtkOutputWindow::SetInstance(studio_vtk_output_window_);
 
   logger_.register_callbacks();
@@ -116,6 +117,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->stacked_widget->addWidget(analysis_tool_.data());
   connect(analysis_tool_.data(), &AnalysisTool::update_view, this,
           &ShapeWorksStudioApp::handle_display_setting_changed);
+  connect(analysis_tool_.data(), &AnalysisTool::analysis_mode_changed, this, &ShapeWorksStudioApp::reset_num_viewers);
   connect(analysis_tool_.data(), &AnalysisTool::pca_update, this, &ShapeWorksStudioApp::handle_pca_update);
   connect(analysis_tool_.data(), &AnalysisTool::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(analysis_tool_.data(), &AnalysisTool::reconstruction_complete, this,
@@ -127,6 +129,16 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->stacked_widget->addWidget(deepssm_tool_.data());
   connect(deepssm_tool_.data(), &DeepSSMTool::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(deepssm_tool_.data(), &DeepSSMTool::update_view, this, &ShapeWorksStudioApp::handle_display_setting_changed);
+
+  // monai tool init
+  monai_tool_ = QSharedPointer<monailabel::MonaiLabelTool>::create(preferences_);
+  monai_tool_->set_app(this);
+  ui_->stacked_widget->addWidget(monai_tool_.data());
+  connect(monai_tool_.data(), &monailabel::MonaiLabelTool::progress, this, &ShapeWorksStudioApp::handle_progress);
+  connect(monai_tool_.data(), &monailabel::MonaiLabelTool::update_view, this,
+          &ShapeWorksStudioApp::handle_display_setting_changed);
+  connect(monai_tool_.data(), &monailabel::MonaiLabelTool::sampleChanged, this,
+          &ShapeWorksStudioApp::reset_num_viewers);
 
   // resize from preferences
   if (!preferences_.get_window_geometry().isEmpty()) {
@@ -146,6 +158,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   action_group_->addAction(ui_->action_optimize_mode);
   action_group_->addAction(ui_->action_analysis_mode);
   action_group_->addAction(ui_->action_deepssm_mode);
+  action_group_->addAction(ui_->action_monai_mode);
 
   lightbox_ = LightboxHandle(new Lightbox());
   connect(lightbox_.get(), &Lightbox::right_click, this, &ShapeWorksStudioApp::handle_lightbox_right_click);
@@ -213,7 +226,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->glyphs_visible_button, &QPushButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(ui_->surface_visible_button, &QPushButton::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
 
-  preferences_.set_saved();
   enable_possible_actions();
 
   connect(ui_->actionAbout, &QAction::triggered, this, &ShapeWorksStudioApp::about);
@@ -252,11 +264,11 @@ void ShapeWorksStudioApp::initialize_vtk() { lightbox_->set_render_window(ui_->q
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered() {
-  if (preferences_.not_saved() && ui_->action_save_project->isEnabled()) {
+  bool needs_save = session_ ? session_->is_modified() : false;
+  if (needs_save && ui_->action_save_project->isEnabled()) {
     // save the size of the window to preferences
     QMessageBox msgBox;
-    msgBox.setText("Do you want to save your changes as a project file?");
-    msgBox.setInformativeText("This will reload generated files and changed settings.");
+    msgBox.setText("Do you want to save your changes?");
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
@@ -424,10 +436,15 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
     if (first_load) {
       // On first load, we can check if there was an active scalar on loaded meshes
       session_->set_feature_map(session_->get_default_feature_map());
+      // reload groom parameters because iso spacing depends on the images loaded
+      groom_tool_->load_params();
     }
   } catch (std::runtime_error& e) {
     handle_error(e.what());
   }
+
+  visualizer_->reset_camera();
+
   handle_message("Files loaded");
   handle_progress(100);
 }
@@ -512,10 +529,16 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   }
   ui_->action_analysis_mode->setEnabled(analysis_ready);
   ui_->action_deepssm_mode->setEnabled(session_->get_project()->get_images_present() && original_present);
+  ui_->action_monai_mode->setEnabled(session_->get_project()->get_images_present());
 
   // verification step for broken projects
   if (session_->get_tool_state() == Session::DEEPSSM_C && !ui_->action_deepssm_mode->isEnabled()) {
     session_->set_tool_state(Session::DATA_C);
+    ui_->action_import_mode->setChecked(true);
+  }
+
+  if (session_->get_tool_state() == Session::MONAI_C && !ui_->action_monai_mode->isEnabled()) {
+    session_->set_tool_state(Session::MONAI_C);
     ui_->action_import_mode->setChecked(true);
   }
 
@@ -524,6 +547,7 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   groom_tool_->enable_actions();
   optimize_tool_->enable_actions();
   analysis_tool_->enable_actions(new_analysis);
+  monai_tool_->enable_actions();
   // recent
   QStringList recent_files = preferences_.get_recent_files();
   int num_recent_files = qMin(recent_files.size(), 8);
@@ -874,6 +898,15 @@ void ShapeWorksStudioApp::create_compare_submenu() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_window_title() {
+  if (!session_) {
+    return;
+  }
+
+  setWindowTitle(session_->get_display_name());
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_new_mesh() {
   visualizer_->handle_new_mesh();
 
@@ -960,7 +993,7 @@ void ShapeWorksStudioApp::new_session() {
   session_ = QSharedPointer<Session>::create(this, preferences_);
   session_->set_parent(this);
   session_->set_py_worker(get_py_worker());
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 
   connect(session_->get_mesh_manager().get(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(session_->get_mesh_manager().get(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
@@ -974,6 +1007,9 @@ void ShapeWorksStudioApp::new_session() {
   connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
   connect(session_.data(), &Session::reinsert_shapes, this, [&]() { update_display(true); });
   connect(session_.data(), &Session::save, this, &ShapeWorksStudioApp::on_action_save_project_triggered);
+  connect(session_.data(), &Session::tool_state_changed, this, &ShapeWorksStudioApp::update_tool_mode);
+  connect(session_.data(), &Session::session_title_changed, this, &ShapeWorksStudioApp::update_window_title);
+  connect(session_.data(), &Session::image_name_changed, this, &ShapeWorksStudioApp::handle_image_name_changed);
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
@@ -998,11 +1034,12 @@ void ShapeWorksStudioApp::new_session() {
   visualizer_->clear_viewers();
 
   data_tool_->set_session(session_);
-  analysis_tool_->set_session(session_);
   visualizer_->set_session(session_);
+  analysis_tool_->set_session(session_);
   groom_tool_->set_session(session_);
   optimize_tool_->set_session(session_);
   deepssm_tool_->set_session(session_);
+  monai_tool_->set_session(session_);
   create_glyph_submenu();
   create_iso_submenu();
 
@@ -1018,12 +1055,12 @@ void ShapeWorksStudioApp::new_session() {
   ui_->action_analysis_mode->setChecked(false);
   ui_->stacked_widget->setCurrentWidget(data_tool_.data());
   ui_->controlsDock->setWindowTitle("Data");
-  preferences_.set_saved();
   enable_possible_actions();
   update_display(true);
   visualizer_->update_viewer_properties();
 
   ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Original);
+  session_->set_modified(false);
 }
 
 //---------------------------------------------------------------------------
@@ -1066,6 +1103,13 @@ void ShapeWorksStudioApp::update_tool_mode() {
     update_display();
     ui_->action_deepssm_mode->setChecked(true);
     session_->set_display_mode(DisplayMode::Reconstructed);
+  } else if (tool_state == Session::MONAI_C) {
+    ui_->stacked_widget->setCurrentWidget(monai_tool_.data());
+    ui_->controlsDock->setWindowTitle("MONAI");
+    update_display();
+    monai_tool_->activate();
+    ui_->action_monai_mode->setChecked(true);
+    session_->set_display_mode(DisplayMode::Original);
   } else {  // DATA
     ui_->stacked_widget->setCurrentWidget(data_tool_.data());
     ui_->controlsDock->setWindowTitle("Data");
@@ -1076,6 +1120,9 @@ void ShapeWorksStudioApp::update_tool_mode() {
   ui_->stacked_widget->widget(ui_->stacked_widget->currentIndex())
       ->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   ui_->stacked_widget->adjustSize();
+
+  reset_num_viewers();
+  visualizer_->reset_camera();
 
   update_view_combo();
 
@@ -1110,7 +1157,9 @@ void ShapeWorksStudioApp::update_view_mode() {
       if (deepssm_tool_->get_display_feature() != "") {
         feature_map_override = deepssm_tool_->get_display_feature();
       }
-    } else if (session_->get_tool_state() == Session::ANALYSIS_C) {
+    }
+
+    else if (session_->get_tool_state() == Session::ANALYSIS_C) {
       if (analysis_tool_->get_display_feature_map() != feature_map) {
         feature_map_override = analysis_tool_->get_display_feature_map();
       }
@@ -1148,37 +1197,22 @@ bool ShapeWorksStudioApp::is_view_combo_item_enabled(int item) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_import_mode_triggered() {
-  session_->set_tool_state(Session::DATA_C);
-  update_tool_mode();
-}
+void ShapeWorksStudioApp::on_action_import_mode_triggered() { session_->set_tool_state(Session::DATA_C); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_groom_mode_triggered() {
-  session_->set_tool_state(Session::GROOM_C);
-  update_tool_mode();
-}
+void ShapeWorksStudioApp::on_action_groom_mode_triggered() { session_->set_tool_state(Session::GROOM_C); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_optimize_mode_triggered() {
-  session_->set_tool_state(Session::OPTIMIZE_C);
-  update_tool_mode();
-  visualizer_->reset_camera();
-}
+void ShapeWorksStudioApp::on_action_optimize_mode_triggered() { session_->set_tool_state(Session::OPTIMIZE_C); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_analysis_mode_triggered() {
-  session_->set_tool_state(Session::ANALYSIS_C);
-  update_tool_mode();
-  visualizer_->reset_camera();
-}
+void ShapeWorksStudioApp::on_action_analysis_mode_triggered() { session_->set_tool_state(Session::ANALYSIS_C); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_deepssm_mode_triggered() {
-  session_->set_tool_state(Session::DEEPSSM_C);
-  update_tool_mode();
-  visualizer_->reset_camera();
-}
+void ShapeWorksStudioApp::on_action_deepssm_mode_triggered() { session_->set_tool_state(Session::DEEPSSM_C); }
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_monai_mode_triggered() { session_->set_tool_state(Session::MONAI_C); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed() {
@@ -1187,7 +1221,6 @@ void ShapeWorksStudioApp::handle_project_changed() {
   }
 
   if (session_->get_shapes().size() == 0) {
-    new_session();
     analysis_tool_->reset_stats();
     lightbox_->clear_renderers();
   }
@@ -1285,11 +1318,26 @@ void ShapeWorksStudioApp::handle_groom_start() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_complete() {
   update_view_combo();
-  ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Groomed);
+
+  if (!session_->groomed_present()) {
+    // grooming may have failed, if so, we don't want to switch to groomed that don't exist
+    session_->set_display_mode(DisplayMode::Original);
+  } else {
+    session_->set_display_mode(DisplayMode::Groomed);
+  }
+
   session_->handle_clear_cache();
+
   update_display(true);
   visualizer_->reset_camera();
   enable_possible_actions();
+
+  // domains may have changed (shared boundary)
+  create_iso_submenu();
+  create_glyph_submenu();
+
+  // force optimize tool to reload since there are potentially more domains now
+  optimize_tool_->load_params();
 }
 
 //---------------------------------------------------------------------------
@@ -1364,7 +1412,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display(bool force) {
-  if (!visualizer_) {
+  if (!visualizer_ || !session_) {
     return;
   }
 
@@ -1398,7 +1446,12 @@ void ShapeWorksStudioApp::update_display(bool force) {
   update_view_mode();
   update_view_combo();
 
-  if (session_->get_tool_state() == Session::DEEPSSM_C) {
+  if (session_->get_tool_state() == Session::MONAI_C) {
+    visualizer_->display_sample(monai_tool_->getCurrentSampleNumber());
+    visualizer_->reset_camera();
+  }
+  // disable for now, enable when monai prediction works alright
+  else if (session_->get_tool_state() == Session::DEEPSSM_C) {
     visualizer_->display_shapes(deepssm_tool_->get_shapes());
   } else {
     current_display_mode_ = mode;
@@ -1429,8 +1482,9 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   lightbox_->update_interactor_style();
 
-  if ((force || change) && !session_->is_loading()) {  // do not override if loading
-    reset_num_viewers();
+  //  if ((force || change) && !session_->is_loading()) {  // do not override if loading
+  if (change && !session_->is_loading()) {  // do not override if loading
+    // reset_num_viewers();
   }
 
   update_scrollbar();
@@ -1459,6 +1513,12 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   session_->set_loading(true);
 
   try {
+    if (!QFile::exists(filename)) {
+      QMessageBox::critical(nullptr, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
+      handle_progress(100);
+      return;
+    }
+
     if (!session_->load_project(filename)) {
       enable_possible_actions();
       handle_error("Project failed to load");
@@ -1479,7 +1539,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   }
 
   analysis_tool_->reset_stats();
-  analysis_tool_->initialize_mesh_warper();
 
   block_update_ = true;
 
@@ -1489,12 +1548,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   update_tool_mode();
 
-  // set the zoom state
-  // ui_->thumbnail_size_slider->setValue(
-  //  preferences_.get_preference("zoom_state", 1));
-
   visualizer_->update_lut();
-  preferences_.set_saved();
   enable_possible_actions();
   visualizer_->reset_camera();
 
@@ -1521,6 +1575,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   on_zoom_slider_valueChanged();
 
   session_->set_loading(false);
+  analysis_tool_->initialize_mesh_warper();
 
   if (ui_->action_analysis_mode->isChecked() && !ui_->action_analysis_mode->isEnabled()) {
     on_action_import_mode_triggered();
@@ -1537,7 +1592,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   session_->update_auto_glyph_size();
 
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 
   // final check after loading that the view mode isn't set to something invalid
   if (!is_view_combo_item_enabled(ui_->view_mode_combobox->currentIndex())) {
@@ -1551,6 +1606,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   handle_glyph_changed();
   update_display(true);
   handle_progress(100);
+  session_->set_modified(false);
   SW_LOG("Project loaded: " + filename.toStdString());
 }
 
@@ -1782,10 +1838,10 @@ void ShapeWorksStudioApp::action_export_screenshot_triggered() {
 void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   // close the preferences window in case it is open
   preferences_window_->close();
-  if (preferences_.not_saved() && ui_->action_save_project->isEnabled()) {
+  bool needs_save = session_ ? session_->is_modified() : false;
+  if (needs_save && ui_->action_save_project->isEnabled()) {
     QMessageBox msgBox;
-    msgBox.setText("Do you want to save your changes as a project file?");
-    msgBox.setInformativeText("This will reload generated files and changed settings.");
+    msgBox.setText("Do you want to save your changes?");
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
@@ -1806,6 +1862,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
 
   optimize_tool_->shutdown_threads();
   deepssm_tool_->shutdown();
+  monai_tool_->shutdown();
+
   SW_CLOSE_LOG();
 
   QCoreApplication::quit();
@@ -1864,7 +1922,7 @@ void ShapeWorksStudioApp::save_project(QString filename) {
   }
 
   update_table();
-  setWindowTitle(session_->get_display_name());
+  update_window_title();
 }
 
 //---------------------------------------------------------------------------
@@ -2050,6 +2108,7 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
   bool auto_mode = ui_->feature_auto_scale->isChecked();
   ui_->feature_min->setEnabled(!auto_mode);
   ui_->feature_max->setEnabled(!auto_mode);
+  ui_->feature_auto_scale->setEnabled(ui_->feature_uniform_scale->isChecked());
   if (!auto_mode) {
     if (session_->get_feature_range_min() == 0 && session_->get_feature_range_max() == 0) {
       if (visualizer_->get_feature_range_valid()) {
@@ -2067,16 +2126,17 @@ void ShapeWorksStudioApp::image_combo_changed(int index) {
 }
 
 //---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::get_feature_uniform_scale() {
-  return session_->parameters().get("feature_uniform_scale", true);
+void ShapeWorksStudioApp::handle_image_name_changed() {
+  ui_->image_combo_->setCurrentText(QString::fromStdString(session_->get_image_name()));
 }
 
 //---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::get_feature_uniform_scale() { return session_->get_feature_uniform_scale(); }
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::set_feature_uniform_scale(bool value) {
-  if (!session_->is_loading()) {
-    session_->parameters().set("feature_uniform_scale", value);
-    update_view_mode();
-  }
+  session_->set_feature_uniform_scale(value);
+  update_feature_map_scale();
 }
 
 //---------------------------------------------------------------------------
@@ -2127,6 +2187,9 @@ void ShapeWorksStudioApp::reset_num_viewers() {
     } else if (num_samples > 9) {
       value = 4;  // 4x4
     }
+    if (session_->get_tool_state() == Session::MONAI_C) {
+      value = 0;  // single viewer always for MONAI tool state
+    }
     if (value != ui_->zoom_slider->value()) {
       ui_->zoom_slider->setValue(value);
     }
@@ -2157,6 +2220,11 @@ void ShapeWorksStudioApp::update_view_combo() {
     set_view_combo_item_enabled(DisplayMode::Original, false);
     set_view_combo_item_enabled(DisplayMode::Groomed, false);
     set_view_combo_item_enabled(DisplayMode::Reconstructed, true);
+  }
+  if (tool_state == Session::MONAI_C) {
+    set_view_combo_item_enabled(DisplayMode::Original, session_->original_present());
+    set_view_combo_item_enabled(DisplayMode::Groomed, session_->groomed_present());
+    set_view_combo_item_enabled(DisplayMode::Reconstructed, should_reconstruct_view_show());
   }
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;

@@ -102,6 +102,9 @@ class Logging {
   //! Log a message, use SW_LOG macro
   void log_message(const std::string& message, const int line, const char* file) const;
 
+  //! Log a message, use SW_LOG_ONLY macro
+  void log_only(const std::string& message, const int line, const char* file, const char *function) const;
+
   //! Log a stack trace message, use SW_LOG_STACK macro
   void log_stack(const std::string& message) const;
 
@@ -170,6 +173,10 @@ class Logging {
 //! Log message macro
 #define SW_LOG(message, ...) \
   shapeworks::Logging::Instance().log_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);
+
+//! Log only macro
+#define SW_LOG_ONLY(message, ...) \
+  shapeworks::Logging::Instance().log_only(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__);
 
 //! Log warning macro
 #define SW_WARN(message, ...) \

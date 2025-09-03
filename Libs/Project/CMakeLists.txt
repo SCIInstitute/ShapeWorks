@@ -1,6 +1,7 @@
 set(SOURCES
   ExcelProjectReader.cpp
   ExcelProjectWriter.cpp
+  DeepSSMParameters.cpp
   JsonProjectReader.cpp
   JsonProjectWriter.cpp
   Parameters.cpp
@@ -12,6 +13,7 @@ set(SOURCES
   )
 
 set(HEADERS
+  DeepSSMParameters.h
   Project.h
   Subject.h
   Parameters.h

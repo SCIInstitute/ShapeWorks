@@ -24,7 +24,7 @@ concurrency:
 jobs:
   build:
 
-    runs-on: windows-2019
+    runs-on: windows-2022
     
     steps:
 
@@ -39,7 +39,7 @@ jobs:
     - name: Init conda
       shell: bash -l {0}
       run: /c/Miniconda/condabin/conda.bat init --all
-      
+
     # - name: link
     #   shell: bash -l {0}
     #   run: cd /usr/bin && ln -s /c/Miniconda/condabin/conda.bat conda
@@ -65,12 +65,6 @@ jobs:
     #   with:
     #       miniconda-version: 'latest'
 
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-        
     - name: Checkout code
       uses: actions/checkout@v3
       with:
@@ -79,16 +73,16 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
+
     - name: Get NSIS
       working-directory: ${{runner.workspace}}
       run: |
-        curl -o nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
+        curl -o nsis.zip https://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
         Expand-Archive -LiteralPath nsis.zip -DestinationPath .
           
-    - name: Restore Caches
-      shell: bash -l {0}
-      run: .github/workflows/restore_caches.sh
-      
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
@@ -115,7 +109,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_CXX_FLAGS_RELEASE="-FS /Zm500 /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_C_FLAGS_RELEASE="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DITK_DIR="C:\deps\lib\cmake\ITK-5.2" -DVTK_DIR="C:\deps\lib\cmake\vtk-9.1" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRYCENTRAL_DIR="C:\deps" -DACVD_DIR="C:\deps" -DBuild_Studio=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET
+      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_CXX_FLAGS_RELEASE="-FS /Zm500 /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_C_FLAGS_RELEASE="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DITK_DIR="C:\deps\lib\cmake\ITK-5.4" -DVTK_DIR="C:\deps\lib\cmake\vtk-9.5" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRYCENTRAL_DIR="C:\deps" -DACVD_DIR="C:\deps" -DBuild_Studio=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET
 
     - name: Build
       working-directory: "C:/build"
@@ -154,7 +148,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && ctest --output-on-failure -VV -C $BUILD_TYPE --debug
       
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: artifact-${{github.sha}}-windows
         path: ${{runner.workspace}}\ShapeWorks\artifacts
@@ -174,8 +168,3 @@ jobs:
         title: "Development Build for Windows"
         files: |
              d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe
-
-    - name: Copy artifact
-      shell: bash -l {0}
-      run: cd /d/a/ShapeWorks/ShapeWorks/artifacts && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-windows *
-      

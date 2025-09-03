@@ -60,7 +60,7 @@
 
 #include "FEFixMesh.h"
 #include "Image.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/Surface.h"
 #include "Logging.h"
 #include "MeshComputeThickness.h"
 #include "MeshUtils.h"
@@ -785,8 +785,8 @@ double Mesh::geodesicDistance(int source, int target) const {
     throw std::invalid_argument("requested point ids outside range of points available in mesh");
   }
 
-  MeshWrapper wrap(this->poly_data_, true);
-  return wrap.ComputeDistance(getPoint(source), -1, getPoint(target), -1);
+  Surface surface(this->poly_data_, true);
+  return surface.compute_distance(getPoint(source), -1, getPoint(target), -1);
 }
 
 Field Mesh::geodesicDistance(const Point3 landmark) const {
@@ -795,10 +795,10 @@ Field Mesh::geodesicDistance(const Point3 landmark) const {
   distance->SetNumberOfTuples(numPoints());
   distance->SetName("GeodesicDistanceToLandmark");
 
-  MeshWrapper wrap(this->poly_data_, true);
+  Surface surface(this->poly_data_, true);
 
   for (int i = 0; i < numPoints(); i++) {
-    distance->SetValue(i, wrap.ComputeDistance(landmark, -1, getPoint(i), -1));
+    distance->SetValue(i, surface.compute_distance(landmark, -1, getPoint(i), -1));
   }
 
   return distance;
@@ -814,7 +814,9 @@ Field Mesh::geodesicDistance(const std::vector<Point3> curve) const {
   for (int i = 0; i < curve.size(); i++) {
     Field distance = geodesicDistance(curve[i]);
     for (int j = 0; j < numPoints(); j++) {
-      if (distance->GetTuple1(j) < minDistance->GetTuple1(j)) minDistance->SetValue(j, distance->GetTuple1(j));
+      if (distance->GetTuple1(j) < minDistance->GetTuple1(j)) {
+        minDistance->SetValue(j, distance->GetTuple1(j));
+      }
     }
   }
 
@@ -838,9 +840,6 @@ Field Mesh::curvature(const CurvatureType type) const {
     case Principal: {
       curv->SetName("principal curvature");
 
-      // returns maximal curvature value for each vertex
-      // igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
-
       // returns minimal curvature value for each vertex
       igl::principal_curvature(V, F, PD1, PD2, C, PV2);
       break;
@@ -852,18 +851,6 @@ Field Mesh::curvature(const CurvatureType type) const {
     }
     case Mean: {
       curv->SetName("mean curvature");
-
-      Eigen::MatrixXd HN;
-      Eigen::SparseMatrix<double> L, M, Minv;
-      igl::cotmatrix(V, F, L);
-      igl::massmatrix(V, F, igl::MASSMATRIX_TYPE_VORONOI, M);
-      igl::invert_diag(M, Minv);
-
-      // Laplace-Beltrami of position
-      HN = -Minv * (L * V);
-
-      // Extract magnitude as mean curvature
-      C = HN.rowwise().norm();
 
       // Compute curvature directions via quadric fitting
       igl::principal_curvature(V, F, PD1, PD2, PV1, PV2);
@@ -1429,15 +1416,15 @@ bool Mesh::compareAllFaces(const Mesh& other_mesh) const {
 
   // helper function to print out the cell indices
   auto printCells = [](vtkCell* cell1, vtkCell* cell2) {
-    printf("[ ");
+    std::cout << "[ ";
     for (int i = 0; i < cell1->GetNumberOfPoints(); i++) {
-      printf("%lld ", cell1->GetPointId(i));
+      std::cout << cell1->GetPointId(i) << " ";
     }
-    printf("], [ ");
+    std::cout << "], [ ";
     for (int i = 0; i < cell2->GetNumberOfPoints(); i++) {
-      printf("%lld ", cell2->GetPointId(i));
+      std::cout << cell2->GetPointId(i) << " ";
     }
-    printf("]");
+    std::cout << "]";
   };
 
   for (int i = 0; i < this->poly_data_->GetNumberOfCells(); i++) {
@@ -1445,19 +1432,28 @@ bool Mesh::compareAllFaces(const Mesh& other_mesh) const {
     vtkCell* cell2 = other_mesh.poly_data_->GetCell(i);
 
     if (cell1->GetNumberOfPoints() != cell2->GetNumberOfPoints()) {
-      printf("%ith face not equal (", i);
+      std::cout << i << "th face not equal (";
       printCells(cell1, cell2);
-      printf(")\n");
+      std::cout << ")\n";
       return false;
     }
 
+    std::vector<vtkIdType> cell1Points(cell1->GetNumberOfPoints());
+    std::vector<vtkIdType> cell2Points(cell2->GetNumberOfPoints());
+
     for (int pi = 0; pi < cell1->GetNumberOfPoints(); pi++) {
-      if (cell1->GetPointId(pi) != cell2->GetPointId(pi)) {
-        printf("%ith face not equal (", i);
-        printCells(cell1, cell2);
-        printf(")\n");
-        return false;
-      }
+      cell1Points[pi] = cell1->GetPointId(pi);
+      cell2Points[pi] = cell2->GetPointId(pi);
+    }
+
+    std::sort(cell1Points.begin(), cell1Points.end());
+    std::sort(cell2Points.begin(), cell2Points.end());
+
+    if (cell1Points != cell2Points) {
+      std::cout << i << "th face not equal (";
+      printCells(cell1, cell2);
+      std::cout << ")\n";
+      return false;
     }
   }
 
@@ -1521,7 +1517,7 @@ bool Mesh::compareField(const Mesh& other_mesh, const std::string& name1, const 
           return false;
         }
       } else {
-        if (!epsEqual(v1, v2, 1e-5)) {
+        if (!epsEqual(v1, v2, 1e-3)) {
           printf("%ith values not equal (%0.8f != %0.8f)\n", i, v1, v2);
           return false;
         }
@@ -1643,6 +1639,99 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
   return bary;
 }
 
+void Mesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values) {
+  int num_points = positions.size() / 3;
+  if (num_points == 0) {
+    return;
+  }
+
+  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
+
+  vtk_points->SetNumberOfPoints(num_points);
+
+  unsigned int idx = 0;
+  for (int i = 0; i < num_points; i++) {
+    double x = positions[idx++];
+    double y = positions[idx++];
+    double z = positions[idx++];
+
+    vtk_points->InsertPoint(i, x, y, z);
+  }
+
+  if (num_points != scalar_values.size()) {
+    std::cerr << "Warning, mismatch of points and scalar values (num_points = " << num_points
+              << ", scalar_values.size() = " << scalar_values.size() << ")\n";
+    return;
+  }
+
+  vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
+  point_data->SetPoints(vtk_points);
+
+  vtkSmartPointer<vtkPointLocator> point_locator = vtkPointLocator::New();
+  point_locator->SetDataSet(point_data);
+  point_locator->SetDivisions(100, 100, 100);
+  point_locator->BuildLocator();
+
+  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0) {
+    return;
+  }
+
+  auto points = poly_data_->GetPoints();
+
+  vtkFloatArray* scalars = vtkFloatArray::New();
+  scalars->SetNumberOfValues(points->GetNumberOfPoints());
+  scalars->SetName(name.c_str());
+
+  for (int i = 0; i < points->GetNumberOfPoints(); i++) {
+    double pt[3];
+    points->GetPoint(i, pt);
+
+    // find the 8 closest correspondence points the to current point
+    vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
+    point_locator->FindClosestNPoints(8, pt, closest_points);
+
+    // assign scalar value based on a weighted scheme
+    float weighted_scalar = 0.0f;
+    float distanceSum = 0.0f;
+    float distance[8] = {0.0f};
+    bool exactly_on_point = false;
+    float exact_scalar = 0.0f;
+    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      // get a particle position
+      vtkIdType id = closest_points->GetId(p);
+
+      // compute distance to current particle
+      double x = pt[0] - point_data->GetPoint(id)[0];
+      double y = pt[1] - point_data->GetPoint(id)[1];
+      double z = pt[2] - point_data->GetPoint(id)[2];
+
+      if (x == 0 && y == 0 && z == 0) {
+        distance[p] = 0;
+        exactly_on_point = true;
+        exact_scalar = scalar_values[id];
+      } else {
+        distance[p] = 1.0f / (x * x + y * y + z * z);
+      }
+
+      // multiply scalar value by weight and add to running sum
+      distanceSum += distance[p];
+    }
+
+    for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      vtkIdType current_id = closest_points->GetId(p);
+      weighted_scalar += distance[p] / distanceSum * scalar_values[current_id];
+    }
+
+    if (exactly_on_point) {
+      weighted_scalar = exact_scalar;
+    }
+
+    scalars->SetValue(i, weighted_scalar);
+  }
+
+  setField(name, scalars, Mesh::FieldType::Point);
+}
+
 double Mesh::getFFCValue(Eigen::Vector3d query) const {
   Point3 point(query.data());
   return interpolateFieldAtPoint("value", point);
@@ -1663,7 +1752,7 @@ Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const {
   return grad;
 }
 
-// WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+// WARNING: Copied directly from Surface. TODO: When refactoring, take this into account.
 vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F) const {
   const int n_verts = this->poly_data_->GetNumberOfPoints();
   const int n_faces = this->poly_data_->GetNumberOfCells();

@@ -212,12 +212,13 @@ void ParticleShapeStatistics::compute_multi_level_analysis_statistics(std::vecto
     m += (this->num_particles_array_[idx]);
   }
   super_matrix_.resize(m, n);
+
   for (unsigned int i = 0; i < points.size(); i++) {
     unsigned int p = super_matrix_.rows();
     for (unsigned int j = 0; j < p; j++) {
-      super_matrix_(j, i * values_per_particle_) = points[i][j * values_per_particle_];
-      super_matrix_(j, i * values_per_particle_ + 1) = points[i][j * values_per_particle_ + 1];
-      super_matrix_(j, i * values_per_particle_ + 2) = points[i][j * values_per_particle_ + 2];
+      for (int k = 0; k < values_per_particle_; k++) {
+        super_matrix_(j, i * values_per_particle_ + k) = points[i][j * values_per_particle_ + k];
+      }
     }
   }
 
@@ -263,9 +264,9 @@ void ParticleShapeStatistics::compute_multi_level_analysis_statistics(std::vecto
   for (unsigned int i = 0; i < num_samples_; i++) {
     unsigned int p = m;
     for (unsigned int j = 0; j < p; j++) {
-      z_shape_dev_objective(j * values_per_particle_, i) = z_shape_dev_centered(j, i * values_per_particle_);
-      z_shape_dev_objective(j * values_per_particle_ + 1, i) = z_shape_dev_centered(j, i * values_per_particle_ + 1);
-      z_shape_dev_objective(j * values_per_particle_ + 2, i) = z_shape_dev_centered(j, i * values_per_particle_ + 2);
+      for (int k = 0; k < values_per_particle_; k++) {
+        z_shape_dev_objective(j * values_per_particle_ + k, i) = z_shape_dev_centered(j, i * values_per_particle_ + k);
+      }
     }
   }
   points_minus_mean_shape_dev_.resize(M, num_samples_);
@@ -277,9 +278,9 @@ void ParticleShapeStatistics::compute_multi_level_analysis_statistics(std::vecto
   z_rel_pose_objective.resize(domains_per_shape_ * values_per_particle_, num_samples_);
   for (unsigned int k = 0; k < domains_per_shape_; k++) {
     for (unsigned int i = 0; i < num_samples_; i++) {
-      z_rel_pose_objective(k * values_per_particle_, i) = z_rel_pose_centered(k, i * values_per_particle_);
-      z_rel_pose_objective(k * values_per_particle_ + 1, i) = z_rel_pose_centered(k, i * values_per_particle_ + 1);
-      z_rel_pose_objective(k * values_per_particle_ + 2, i) = z_rel_pose_centered(k, i * values_per_particle_ + 2);
+      for (int j = 0; j < values_per_particle_; j++) {
+        z_rel_pose_objective(k * values_per_particle_ + j, i) = z_rel_pose_centered(k, i * values_per_particle_ + j);
+      }
     }
   }
   points_minus_mean_rel_pose_.resize(domains_per_shape_ * values_per_particle_, num_samples_);
@@ -483,7 +484,7 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
     Eigen::VectorXd particles;
     for (auto& file : world_files) {
       Eigen::VectorXd domain_particles;
-      ParticleSystemEvaluation::ReadParticleFile(file, domain_particles);
+      ParticleSystemEvaluation::read_particle_file(file, domain_particles);
       Eigen::VectorXd combined(particles.size() + domain_particles.size());
       combined << particles, domain_particles;
       particles = combined;
@@ -551,7 +552,7 @@ int ParticleShapeStatistics::do_pca(std::vector<std::vector<Point>> global_pts, 
 
 //---------------------------------------------------------------------------
 int ParticleShapeStatistics::do_pca(ParticleSystemEvaluation ParticleSystemEvaluation, int domainsPerShape) {
-  Eigen::MatrixXd p = ParticleSystemEvaluation.Particles();
+  Eigen::MatrixXd p = ParticleSystemEvaluation.get_matrix();
 
   std::vector<std::vector<Point>> particlePoints;
 
@@ -650,14 +651,14 @@ int ParticleShapeStatistics::write_csv_file(const std::string& s) {
   for (unsigned int i = 0; i < num_samples_; i++) {
     outfile << ",P" << i;
   }
-  outfile << std::endl;
+  outfile << "\n";
 
   for (unsigned int r = 0; r < num_samples_; r++) {
     outfile << group_ids_[r];
     for (unsigned int c = 0; c < num_samples_; c++) {
       outfile << "," << principals_(r, c);
     }
-    outfile << std::endl;
+    outfile << "\n";
   }
 
   outfile.close();
@@ -666,26 +667,32 @@ int ParticleShapeStatistics::write_csv_file(const std::string& s) {
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_compactness(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
-  return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps, progress_callback);
+  auto ps = ParticleSystemEvaluation(matrix_);
+  return shapeworks::ShapeEvaluation::compute_full_compactness(ps, progress_callback);
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ParticleShapeStatistics::get_specificity(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
-  return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
+Eigen::VectorXd ParticleShapeStatistics::get_specificity(const std::function<void(float)>& progress_callback,
+                                                         const std::function<bool(void)>& check_abort) const {
+  auto ps = ParticleSystemEvaluation(matrix_);
+  ps.set_meshes(meshes_);
+  return shapeworks::ShapeEvaluation::compute_full_specificity(ps, progress_callback, check_abort,
+                                                               particle_to_surface_mode_);
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ParticleShapeStatistics::get_generalization(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystemEvaluation(this->matrix_);
-  return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
+Eigen::VectorXd ParticleShapeStatistics::get_generalization(const std::function<void(float)>& progress_callback,
+                                                            const std::function<bool(void)>& check_abort) const {
+  auto ps = ParticleSystemEvaluation(matrix_);
+  ps.set_meshes(meshes_);
+  return shapeworks::ShapeEvaluation::compute_full_generalization(ps, progress_callback, check_abort,
+                                                                  particle_to_surface_mode_);
 }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix() const { return this->group1_matrix_; }
+Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix() const { return group1_matrix_; }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix() const { return this->group2_matrix_; }
+Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix() const { return group2_matrix_; }
 
 }  // namespace shapeworks

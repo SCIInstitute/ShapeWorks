@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MonaiLabelTool</class>
+ <widget class="QWidget" name="MonaiLabelTool">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>1451</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+                QToolButton{
+                border: 1px solid rgba( 0, 0, 0, 0 );
+                margin: 0, 0, 0, 0;
+                padding: 0, 0, 0, 0;
+                }
+
+                QToolButton:hover{
+                background-color: rgba( 140, 140, 140, 50 );
+                }
+
+                QToolButton:pressed{
+                border: 1px solid rgba( 100, 100, 100, 120 );
+                background-color: rgba( 100, 100, 100, 200 );
+                }
+
+
+                /********************** monai_params panel ***********************/
+
+                QLabel#monai_top_label {
+                color: white;
+                font: bold;
+                }
+
+                QPushButton#monai_label_header {
+                background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227,
+                stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
+                border-radius: 3px;
+                }
+
+                QWidget#monai_label_header_background {
+                background-color: rgb( 192, 92, 0);
+                border-radius: 3px;
+                border: 1px solid rgb(90, 90, 90);
+                }
+
+                QWidget#monai_params_panel {
+                border-radius: 4px;
+                border: 1px solid rgb(60, 60, 60);
+                color: rgb(90, 90, 90);
+                }
+
+                /********************** edit panel ***********************/
+                QLabel#edit_label {
+                color: white;
+                font: bold;
+                }
+
+
+                QPushButton#edit_header {
+                    background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227,
+                    stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
+                    border-radius: 3px;
+                }
+
+                QWidget#edit_header_background {
+                background-color: rgb( 192, 92, 0);
+                border-radius: 3px;
+                border: 1px solid rgb(90 90, 90);
+                }
+
+                QWidget#edit_panel {
+                border-radius: 4px;
+                border: 1px solid rgb(60, 60, 60);
+                color: rgb(90, 90, 90);
+                }
+            </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="monai_params_panel" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_20">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="monai_label_header_background" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_21">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="monai_label_header">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>215</width>
+             <height>21</height>
+            </size>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_19">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QToolButton" name="monai_label_open_button">
+              <property name="minimumSize">
+               <size>
+                <width>21</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>21</width>
+                <height>21</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                <normaloff>:/Studio/Images/RightArrowWhite.png</normaloff>
+                <normalon>:/Studio/Images/DownArrowWhite.png</normalon>:/Studio/Images/RightArrowWhite.png</iconset>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="monai_top_label">
+              <property name="text">
+               <string>AI Assisted Segmentation</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="monai_panel_content" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="rightMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QWidget" name="monai_panel_contents" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_12">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QWidget" name="group_box" native="true">
+              <layout class="QGridLayout" name="gridLayout">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="server_address_label">
+                 <property name="text">
+                  <string>MONAI Label Server</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="serverAddressField">
+                 <property name="text">
+                  <string>http://127.0.0.1:8000</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="monai_model_type_label">
+                 <property name="text">
+                  <string>Model Type</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="monaiModelTypeCombo">
+                 <item>
+                  <property name="text">
+                   <string>Segmentation</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="monai_model_name_label">
+                 <property name="text">
+                  <string>Model Name</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QComboBox" name="monaiModelNameCombo">
+                 <item>
+                  <property name="text">
+                   <string>--Model Name--</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QPushButton" name="connectServerButton">
+                 <property name="text">
+                  <string>Connect Server</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/connect.png</normaloff>:/Studio/Images/connect.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QPushButton" name="submitLabelButton">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Submit Label</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/save.png</normaloff>:/Studio/Images/save.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <widget class="QPushButton" name="runSegmentationButton">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Run</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/segment.png</normaloff>:/Studio/Images/segment.png</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="monai_sample_number_label">
+                 <property name="text">
+                  <string>Source Volume</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="currentSampleSpinBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>Sample selection</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QPushButton" name="uploadSampleButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Upload Sample</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../Resources/ShapeWorksStudio.qrc">
+                   <normaloff>:/Studio/Images/upload.png</normaloff>:/Studio/Images/upload.png</iconset>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Important: Users are responsible for de-identifying scans prior to uploading them to a remote MONAI Label Server.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../Resources/ShapeWorksStudio.qrc"/>
+ </resources>
+ <connections/>
+</ui>

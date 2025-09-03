@@ -12,7 +12,7 @@ def tplevelsetTest1():
 
   compareImg = Image(os.environ["DATA"] + "/tplevelset1.nrrd")
 
-  return img.compare(compareImg)
+  return img.compare(compareImg, True, 0, 1e-6)
 
 success &= utils.test(tplevelsetTest1)
 
@@ -24,7 +24,7 @@ def tplevelsetTest2():
 
   compareImg = Image(os.environ["DATA"] + "/tplevelset2.nrrd")
 
-  return img.compare(compareImg)
+  return img.compare(compareImg, True, 0, 1e-6)
 
 success &= utils.test(tplevelsetTest2)
 

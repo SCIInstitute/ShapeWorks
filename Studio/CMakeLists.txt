@@ -85,6 +85,7 @@ SET(STUDIO_DATA_SRCS
   Data/ShapeWorksWorker.cpp
   Data/Telemetry.cpp
   Data/Worker.cpp
+  Data/SegmentationToolPanel.cpp
   )
 
 SET(STUDIO_DATA_MOC_HDRS
@@ -97,10 +98,10 @@ SET(STUDIO_DATA_MOC_HDRS
   Data/ShapeWorksWorker.h
   Data/Telemetry.h
   Data/Worker.h
+  Data/SegmentationToolPanel.h
   )
 
 SET(STUDIO_JOB_SRCS
-  Job/Job.cpp
   Job/GroupPvalueJob.cpp
   Job/ParticleAreaJob.cpp
   Job/NetworkAnalysisJob.cpp
@@ -110,7 +111,6 @@ SET(STUDIO_JOB_SRCS
   )
 
 SET(STUDIO_JOB_MOC_HDRS
-  Job/Job.h
   Job/GroupPvalueJob.h
   Job/NetworkAnalysisJob.h
   Job/ParticleAreaJob.h
@@ -124,13 +124,6 @@ SET(STUDIO_GROOM_SRCS
   )
 SET(STUDIO_GROOM_MOC_HDRS
   Groom/GroomTool.h
-  )
-
-SET(STUDIO_PYTHON_SRCS
-  Python/PythonWorker.cpp
-  )
-SET(STUDIO_PYTHON_MOC_HDRS
-  Python/PythonWorker.h
   )
 
 SET(STUDIO_OPTIMIZE_SRCS
@@ -157,12 +150,21 @@ SET(STUDIO_ANALYSIS_MOC_HDRS
 
 SET(STUDIO_DEEPSSM_SRCS
   DeepSSM/DeepSSMTool.cpp
-  DeepSSM/DeepSSMParameters.cpp
-  DeepSSM/DeepSSMJob.cpp
   )
 SET(STUDIO_DEEPSSM_MOC_HDRS
   DeepSSM/DeepSSMTool.h
-  DeepSSM/DeepSSMJob.h
+  )
+
+
+SET(STUDIO_MONAILABEL_SRCS
+ShapeWorksMONAI/MonaiLabelTool.cpp
+ShapeWorksMONAI/MonaiLabelJob.cpp
+ShapeWorksMONAI/MonaiLabelUtils.cpp
+)
+
+SET(STUDIO_MONAILABEL_MOC_HDRS
+  ShapeWorksMONAI/MonaiLabelTool.h
+  ShapeWorksMONAI/MonaiLabelJob.h
   )
 
 SET(STUDIO_UTILS_SRCS
@@ -214,18 +216,17 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/ParticleColors.cpp
   Visualization/StudioInteractorStyle.cpp
   Visualization/StudioSliceInteractorStyle.cpp
+  Visualization/StudioImageActorPointPlacer.cpp
   Visualization/SliceView.cpp
   Visualization/MeshSlice.cpp
   Visualization/Viewer.cpp
   Visualization/Visualizer.cpp
-  Visualization/StudioVtkOutputWindow.cpp
   Visualization/StudioHandleWidget.cpp
 )
 
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/Lightbox.h
   Visualization/ParticleColors.h
-  Visualization/StudioVtkOutputWindow.h
   Visualization/Visualizer.h
 )
 
@@ -234,8 +235,8 @@ SET(STUDIO_SRCS
   ${STUDIO_DATA_SRCS}
   ${STUDIO_JOB_SRCS}
   ${STUDIO_DEEPSSM_SRCS}
+  ${STUDIO_MONAILABEL_SRCS}
   ${STUDIO_GROOM_SRCS}
-  ${STUDIO_PYTHON_SRCS}
   ${STUDIO_INTERFACE_SRCS}
   ${STUDIO_OPTIMIZE_SRCS}
   ${STUDIO_UTILS_SRCS}
@@ -247,8 +248,8 @@ SET(STUDIO_MOC_HDRS
   ${STUDIO_DATA_MOC_HDRS}
   ${STUDIO_JOB_MOC_HDRS}
   ${STUDIO_DEEPSSM_MOC_HDRS}
+  ${STUDIO_MONAILABEL_MOC_HDRS}
   ${STUDIO_GROOM_MOC_HDRS}
-  ${STUDIO_PYTHON_MOC_HDRS}
   ${STUDIO_INTERFACE_MOC_HDRS}
   ${STUDIO_OPTIMIZE_MOC_HDRS}
   ${STUDIO_UTILS_MOC_HDRS}
@@ -282,6 +283,10 @@ IF(APPLE)
   SET(MACOSX_BUNDLE_ICON_FILE ShapeWorksStudio.icns)
   # set the bundle identifier
   SET(MACOSX_BUNDLE_GUI_IDENTIFIER edu.utah.sci.shapeworks.studio)
+  # set the version ($SHAPEWORKS_VERSION)
+  SET(MACOSX_BUNDLE_SHORT_VERSION_STRING ${SHAPEWORKS_VERSION})
+  SET(MACOSX_BUNDLE_VERSION_STRING_STRING ${SHAPEWORKS_VERSION})
+
   # set where in the bundle to put the icns file
   SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   # include the icns file in the target
@@ -364,6 +369,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
   tinyxml
+  Application
   Alignment
   Analyze
   OptimizeLibraries

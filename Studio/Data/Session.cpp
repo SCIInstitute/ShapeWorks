@@ -46,6 +46,7 @@ const std::string Session::GROOM_C("groom");
 const std::string Session::OPTIMIZE_C("optimize");
 const std::string Session::ANALYSIS_C("analysis");
 const std::string Session::DEEPSSM_C("deepssm");
+const std::string Session::MONAI_C("monailabel");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs)
@@ -133,7 +134,7 @@ bool Session::save_project(QString filename) {
 
     set_project_path(QFileInfo(filename).absolutePath());
 
-    preferences_.set_saved();
+    modified_ = false;
 
     progress.setValue(5);
     QApplication::processEvents();
@@ -145,6 +146,18 @@ bool Session::save_project(QString filename) {
         original_list.push_back(shapes_[i]->get_original_filename_with_path());
       }
       // session_->set_original_files(original_list);
+    }
+
+    // save segmentations
+    for (int i = 0; i < shapes_.size(); i++) {
+      auto seg = shapes_[i]->get_segmentation();
+      if (seg && seg->isPainted()) {
+        auto seg_filename = shapes_[i]->get_segmentation_filename();
+        SW_LOG("Saving segmentation: {}", seg_filename)
+        seg->write(seg_filename);
+
+        shapes_[i]->get_subject()->set_original_filenames({seg_filename});
+      }
     }
 
     // landmarks
@@ -188,10 +201,8 @@ bool Session::save_project(QString filename) {
 
 //---------------------------------------------------------------------------
 bool Session::load_project(QString filename) {
-  if (!QFile::exists(filename)) {
-    QMessageBox::critical(nullptr, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
-    return false;
-  }
+  modified_ = false;
+
 
   // clear the project out first
   filename_ = QFileInfo(filename).absoluteFilePath();
@@ -843,6 +854,10 @@ QString Session::get_display_name() {
     name = name + " (read-only)";
   }
 
+  if (modified_) {
+    name = name + "*";
+  }
+
   return name;
 }
 
@@ -945,6 +960,18 @@ void Session::set_feature_range_max(double value) {
 }
 
 //---------------------------------------------------------------------------
+void Session::set_feature_uniform_scale(bool value) {
+  if (!is_loading()) {
+    set_modified(true);
+    params_.set("feature_uniform_scale", value);
+    Q_EMIT feature_range_changed();
+  }
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_feature_uniform_scale() { return params_.get("feature_uniform_scale", true); }
+
+//---------------------------------------------------------------------------
 void Session::handle_ctrl_click(PickResult result) {
   if (get_tool_state() != Session::DATA_C) {
     return;
@@ -952,8 +979,10 @@ void Session::handle_ctrl_click(PickResult result) {
 
   if (landmarks_active_) {
     new_landmark(result);
+    set_modified(true);
   } else if (planes_active_) {
     new_plane_point(result);
+    set_modified(true);
   }
 }
 
@@ -1063,6 +1092,7 @@ bool Session::set_image_name(std::string image_name) {
   }
   params_.set("image_name", image_name);
   Q_EMIT image_slice_settings_changed();
+  Q_EMIT image_name_changed();
   return true;
 }
 
@@ -1174,11 +1204,17 @@ bool Session::is_loading() { return is_loading_; }
 
 //---------------------------------------------------------------------------
 void Session::set_tool_state(std::string state) {
+  std::string current_state = get_tool_state();
+  if (state == current_state) {
+    return;
+  }
+
   parameters().set("tool_state", state);
   // these need to be updated so that the handles appear/disappear
   trigger_landmarks_changed();
   trigger_planes_changed();
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
+  Q_EMIT tool_state_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -1190,7 +1226,7 @@ bool Session::is_analysis_mode() { return get_tool_state() == Session::ANALYSIS_
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_mode_inclusive(bool inclusive) {
   ffc_painting_inclusive_mode_ = inclusive;
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -1199,11 +1235,20 @@ bool Session::get_ffc_paint_mode_inclusive() { return ffc_painting_inclusive_mod
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_size(double size) {
   ffc_paint_size_ = size;
-  Q_EMIT ffc_paint_mode_changed();
+  Q_EMIT paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
 double Session::get_ffc_paint_size() { return ffc_paint_size_; }
+
+//---------------------------------------------------------------------------
+void Session::set_seg_paint_size(double size) {
+  seg_paint_size_ = size;
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+double Session::get_seg_paint_size() { return seg_paint_size_; }
 
 //---------------------------------------------------------------------------
 bool Session::get_show_good_bad_particles() { return params_.get("show_good_bad_particles", false); }
@@ -1295,9 +1340,7 @@ Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
 
     // check that the scalars are the right size
     if (scalars.size() != num_particles) {
-      SW_ERROR("scalars.size() : {}", scalars.size());
-      SW_ERROR("num_particles : {}", num_particles);
-      SW_ERROR("Error: scalars size does not match number of particles");
+      SW_LOG("Size of scalars ({}) does not match number of particles ({})", scalars.size(), num_particles);
       return Eigen::MatrixXd();
     }
 
@@ -1309,13 +1352,48 @@ Eigen::MatrixXd Session::get_all_scalars(std::string target_feature) {
 }
 
 //---------------------------------------------------------------------------
-void Session::set_ffc_paint_active(bool enabled) {
-  ffc_painting_active_ = enabled;
-  Q_EMIT ffc_paint_mode_changed();
+void Session::set_modified(bool modified) {
+  if (modified == modified_) {
+    return;
+  }
+  modified_ = modified;
+  Q_EMIT session_title_changed();
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_ffc_paint_active() { return ffc_painting_active_ && get_tool_state() == Session::DATA_C; }
+void Session::set_ffc_paint_active(bool enabled) {
+  ffc_painting_active_ = enabled;
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_ffc_paint_active() {
+  // if both are active, prioritize segmentation one
+  return ffc_painting_active_ && !seg_painting_active_ && get_tool_state() == Session::DATA_C;
+}
+
+//---------------------------------------------------------------------------
+void Session::set_seg_paint_active(bool enabled) {
+  seg_painting_active_ = enabled;
+
+  for (auto& shape : shapes_) {
+    shape->ensure_segmentation();
+  }
+  Q_EMIT image_slice_settings_changed();
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_seg_paint_active() { return seg_painting_active_ && get_tool_state() == Session::DATA_C; }
+
+//---------------------------------------------------------------------------
+void Session::set_seg_paint_value(int value) {
+  seg_painting_value_ = value;
+  Q_EMIT paint_mode_changed();
+}
+
+//---------------------------------------------------------------------------
+int Session::get_seg_paint_value() { return seg_painting_value_; }
 
 //---------------------------------------------------------------------------
 void Session::set_landmark_drag_mode(bool mode) {
@@ -1325,5 +1403,12 @@ void Session::set_landmark_drag_mode(bool mode) {
 
 //---------------------------------------------------------------------------
 bool Session::get_landmark_drag_mode() { return landmark_drag_mode_ && get_landmarks_active(); }
+
 //---------------------------------------------------------------------------
+void Session::recompute_surfaces() {
+  for (auto& shape : shapes_) {
+    shape->recompute_original_surface();
+  }
+  Q_EMIT update_display();
+}
 }  // namespace shapeworks
