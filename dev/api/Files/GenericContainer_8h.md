@@ -46,7 +46,7 @@ class GenericContainer : public itk::DataObject {
 
   itkNewMacro(Self);
 
-  itkTypeMacro(ParticleContainer, itk::DataObject);
+  itkTypeMacro(GenericContainer, itk::DataObject);
 
   inline T& operator[](size_t k) {
     if (k >= data.size()) {
@@ -81,4 +81,4 @@ class GenericContainer : public itk::DataObject {
 
 -------------------------------
 
-Updated on 2025-09-03 at 03:28:35 +0000
+Updated on 2025-09-03 at 17:42:44 +0000

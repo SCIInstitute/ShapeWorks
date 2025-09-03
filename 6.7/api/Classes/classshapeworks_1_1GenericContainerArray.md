@@ -31,7 +31,7 @@ Inherits from std::vector< GenericContainer< T >::Pointer >, [shapeworks::Observ
 |                | Name           |
 | -------------- | -------------- |
 | | **[itkNewMacro](../Classes/classshapeworks_1_1GenericContainerArray.md#function-itknewmacro)**([Self](../Classes/classshapeworks_1_1GenericContainerArray.md) ) |
-| | **[itkTypeMacro](../Classes/classshapeworks_1_1GenericContainerArray.md#function-itktypemacro)**(ParticleContainer , [Observer](../Classes/classshapeworks_1_1Observer.md) ) |
+| | **[itkTypeMacro](../Classes/classshapeworks_1_1GenericContainerArray.md#function-itktypemacro)**([GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md) , [Observer](../Classes/classshapeworks_1_1Observer.md) ) |
 | virtual void | **[DomainAddEventCallback](../Classes/classshapeworks_1_1GenericContainerArray.md#function-domainaddeventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[PositionAddEventCallback](../Classes/classshapeworks_1_1GenericContainerArray.md#function-positionaddeventcallback)**(Object * o, const itk::EventObject & e) |
 | virtual void | **[PositionRemoveEventCallback](../Classes/classshapeworks_1_1GenericContainerArray.md#function-positionremoveeventcallback)**(Object * , const itk::EventObject & ) |
@@ -148,7 +148,7 @@ Method for creation through the object factory.
 
 ```cpp
 itkTypeMacro(
-    ParticleContainer ,
+    GenericContainerArray ,
     Observer 
 )
 ```
@@ -234,4 +234,4 @@ inline void PrintSelf(
 
 -------------------------------
 
-Updated on 2025-09-03 at 03:28:34 +0000
+Updated on 2025-09-03 at 17:42:43 +0000

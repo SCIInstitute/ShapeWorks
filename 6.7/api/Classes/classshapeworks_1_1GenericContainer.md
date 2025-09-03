@@ -31,7 +31,7 @@ Inherits from itk::DataObject
 |                | Name           |
 | -------------- | -------------- |
 | | **[itkNewMacro](../Classes/classshapeworks_1_1GenericContainer.md#function-itknewmacro)**([Self](../Classes/classshapeworks_1_1GenericContainer.md) ) |
-| | **[itkTypeMacro](../Classes/classshapeworks_1_1GenericContainer.md#function-itktypemacro)**(ParticleContainer , itk::DataObject ) |
+| | **[itkTypeMacro](../Classes/classshapeworks_1_1GenericContainer.md#function-itktypemacro)**([GenericContainer](../Classes/classshapeworks_1_1GenericContainer.md) , itk::DataObject ) |
 | T & | **[operator[]](../Classes/classshapeworks_1_1GenericContainer.md#function-operator[])**(size_t k) |
 | T & | **[Get](../Classes/classshapeworks_1_1GenericContainer.md#function-get)**(size_t k) |
 | unsigned long int | **[GetSize](../Classes/classshapeworks_1_1GenericContainer.md#function-getsize)**() const |
@@ -120,7 +120,7 @@ Method for creation through the object factory.
 
 ```cpp
 itkTypeMacro(
-    ParticleContainer ,
+    GenericContainer ,
     itk::DataObject 
 )
 ```
@@ -191,4 +191,4 @@ inline virtual ~GenericContainer()
 
 -------------------------------
 
-Updated on 2025-09-03 at 03:28:34 +0000
+Updated on 2025-09-03 at 17:42:43 +0000

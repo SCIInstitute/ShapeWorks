@@ -55,7 +55,7 @@ class GradientDescentOptimizer : public itk::Object {
 
   typedef shapeworks::ImageDomainWithGradients<TGradientNumericType> DomainType;
 
-  itkTypeMacro(ParticleGradientDescentPositionOptimizer, Object);
+  itkTypeMacro(GradientDescentOptimizer, Object);
 
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
@@ -141,4 +141,4 @@ class GradientDescentOptimizer : public itk::Object {
 
 -------------------------------
 
-Updated on 2025-09-03 at 03:28:35 +0000
+Updated on 2025-09-03 at 17:42:44 +0000

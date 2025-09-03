@@ -49,7 +49,7 @@ class GenericContainerArray : public std::vector<typename GenericContainer<T>::P
 
   itkNewMacro(Self);
 
-  itkTypeMacro(ParticleContainer, Observer);
+  itkTypeMacro(GenericContainerArray, Observer);
 
   virtual void DomainAddEventCallback(Object*, const itk::EventObject&) {
     this->resize(this->size() + 1);
@@ -94,4 +94,4 @@ class GenericContainerArray : public std::vector<typename GenericContainer<T>::P
 
 -------------------------------
 
-Updated on 2025-09-03 at 03:28:35 +0000
+Updated on 2025-09-03 at 17:42:44 +0000

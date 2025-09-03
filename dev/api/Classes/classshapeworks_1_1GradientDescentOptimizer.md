@@ -32,7 +32,7 @@ Inherits from itk::Object
 |                | Name           |
 | -------------- | -------------- |
 | | **[itkNewMacro](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-itknewmacro)**([Self](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#typedef-self) ) |
-| | **[itkTypeMacro](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-itktypemacro)**([ParticleGradientDescentPositionOptimizer](../Classes/classParticleGradientDescentPositionOptimizer.md) , Object ) |
+| | **[itkTypeMacro](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-itktypemacro)**([GradientDescentOptimizer](../Classes/classshapeworks_1_1GradientDescentOptimizer.md) , Object ) |
 | | **[itkStaticConstMacro](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-itkstaticconstmacro)**(Dimension , unsigned int , VDimension ) |
 | void | **[StartOptimization](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-startoptimization)**() |
 | void | **[StartAdaptiveGaussSeidelOptimization](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-startadaptivegaussseideloptimization)**() |
@@ -188,7 +188,7 @@ Method for creation through the object factory.
 
 ```cpp
 itkTypeMacro(
-    ParticleGradientDescentPositionOptimizer ,
+    GradientDescentOptimizer ,
     Object 
 )
 ```
@@ -497,4 +497,4 @@ static constexpr static unsigned int VDimension = 3;
 
 -------------------------------
 
-Updated on 2025-09-03 at 03:28:34 +0000
+Updated on 2025-09-03 at 17:42:43 +0000

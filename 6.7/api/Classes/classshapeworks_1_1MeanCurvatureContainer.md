@@ -30,7 +30,7 @@ Inherits from [shapeworks::GenericContainerArray< TNumericType >](../Classes/cla
 |                | Name           |
 | -------------- | -------------- |
 | | **[itkNewMacro](../Classes/classshapeworks_1_1MeanCurvatureContainer.md#function-itknewmacro)**([Self](../Classes/classshapeworks_1_1MeanCurvatureContainer.md) ) |
-| | **[itkTypeMacro](../Classes/classshapeworks_1_1MeanCurvatureContainer.md#function-itktypemacro)**([ParticleMeanCurvatureAttribute](../Classes/classParticleMeanCurvatureAttribute.md) , [GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md) ) |
+| | **[itkTypeMacro](../Classes/classshapeworks_1_1MeanCurvatureContainer.md#function-itktypemacro)**([MeanCurvatureContainer](../Classes/classshapeworks_1_1MeanCurvatureContainer.md) , [GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md) ) |
 | void | **[SetVerbosity](../Classes/classshapeworks_1_1MeanCurvatureContainer.md#function-setverbosity)**(unsigned int val) |
 | unsigned int | **[GetVerbosity](../Classes/classshapeworks_1_1MeanCurvatureContainer.md#function-getverbosity)**() |
 | virtual void | **[PositionAddEventCallback](../Classes/classshapeworks_1_1MeanCurvatureContainer.md#function-positionaddeventcallback)**(itk::Object * o, const itk::EventObject & e) |
@@ -196,7 +196,7 @@ Method for creation through the object factory.
 
 ```cpp
 itkTypeMacro(
-    ParticleMeanCurvatureAttribute ,
+    MeanCurvatureContainer ,
     GenericContainerArray 
 )
 ```
@@ -321,4 +321,4 @@ inline void PrintSelf(
 
 -------------------------------
 
-Updated on 2025-09-03 at 03:28:34 +0000
+Updated on 2025-09-03 at 17:42:43 +0000
