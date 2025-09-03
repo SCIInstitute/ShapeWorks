@@ -1,6 +1,9 @@
 # GTest setup
 #find_package(GTest REQUIRED)
 
+set(BUILD_SHARED_LIBS_SAVED ${BUILD_SHARED_LIBS})
+set(BUILD_SHARED_LIBS OFF)
+
 # fetch googletest
 include(FetchContent)
 FetchContent_Declare(
@@ -14,6 +17,10 @@ if(NOT googletest_POPULATED)
   add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
 endif()
 
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+# Restore BUILD_SHARED_LIBS
+set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_SAVED})
 
 # NOTE: must call enable_testing() before this in the top-level CMakeLists.txt
 
