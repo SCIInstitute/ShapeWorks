@@ -201,9 +201,9 @@ build_xlnt()
   # move conflicting file out of the way so it builds on osx
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
 
-  # patch for GCC 13
-  patch -p1 < ${SCRIPT_DIR}/Support/xlnt.patch
-  
+  # Fix for GCC 13
+  echo '#include <cstdint>' >> include/xlnt/xlnt_config.hpp
+
   # fix rpath
   sed -i'.original' -e 's/INSTALL_NAME_DIR.*/)/' source/CMakeLists.txt
 
