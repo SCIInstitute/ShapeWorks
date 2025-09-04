@@ -36,7 +36,7 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 	else:
 		PointEmbedder = Embedder.PCA_Embbeder(point_matrix, num_dim, percent_variability)
 	num_dim = PointEmbedder.num_dim
-	PointEmbedder.write_PCA(out_dir + "PCA_Particle_Info/", "particles") # write PCA info for DeepSSM testing
+	PointEmbedder.write_PCA(out_dir + "PCA_Particle_Info/", suffix="particles") # write PCA info for DeepSSM testing
 	embedded_matrix = PointEmbedder.getEmbeddedMatrix()
 	# Get sampler
 	if sampler_type == "gaussian":
