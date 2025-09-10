@@ -34,7 +34,7 @@ target_link_libraries(Optimize PUBLIC
   ${ITK_LIBRARIES}
   igl::core
   ${Boost_LIBRARIES}
-  ${GEOMETRYCENTRAL_LIBRARY}
+  ${GEOMETRYCENTRAL_LIBRARIES}
   nlohmann_json::nlohmann_json
   ${SW_PYTHON_LIBS}
   )
