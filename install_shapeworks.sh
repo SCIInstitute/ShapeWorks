@@ -103,7 +103,7 @@ function install_conda() {
 		     ilmbase=2.5.5 \
 		     pybind11=3.0.1 \
 		     nlohmann_json=3.12.0 \
-		     spdlog=1.15.3 \
+		     spdlog=1.10.0 \
 		     pkg-config=0.29.2 \
 		     openh264=2.6.0 \
 		     libhwloc=2.12.1 \
