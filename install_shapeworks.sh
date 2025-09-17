@@ -139,9 +139,9 @@ function install_conda() {
   # for network analysis
   # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt
   if [[ "$(uname)" == "Linux" ]]; then
-      if ! pip install open3d-cpu=0.19.0;       then return 1; fi
+      if ! pip install open3d-cpu==0.19.0;       then return 1; fi
   elif [[ "$(uname)" == "Darwin" ]]; then
-      if ! pip install open3d=0.19.0;           then return 1; fi
+      if ! pip install open3d==0.19.0;           then return 1; fi
       
       if [[ "$(uname -m)" == "arm64" ]]; then
         pushd $CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu
@@ -151,7 +151,7 @@ function install_conda() {
         ln -sf "$CONDA_PREFIX/lib/libomp.dylib" "$CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu/../../../libomp.dylib"
       fi
   else
-      if ! pip install open3d=0.19.0;           then return 1; fi
+      if ! pip install open3d==0.19.0;           then return 1; fi
   fi
 
   for package in DataAugmentationUtilsPackage DatasetUtilsPackage MONAILabelPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
