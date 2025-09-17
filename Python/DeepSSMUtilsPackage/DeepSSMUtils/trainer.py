@@ -104,8 +104,8 @@ def supervised_train(config_file):
     train_loader_path = loader_dir + "train"
     validation_loader_path = loader_dir + "validation"
     print("Loading data loaders...")
-    train_loader = torch.load(train_loader_path)
-    val_loader = torch.load(validation_loader_path)
+    train_loader = torch.load(train_loader_path, weights_only=False)
+    val_loader = torch.load(validation_loader_path, weights_only=False)
     print("Done.")
     # initializations
     num_pca = train_loader.dataset.pca_target[0].shape[0]
@@ -164,7 +164,7 @@ def supervised_train(config_file):
     plot_train_losses = []
     plot_val_losses = []
     t0 = time.time()
-    best_val_rel_error = np.Inf
+    best_val_rel_error = np.inf
     for e in range(1, num_epochs + 1):
         if sw_check_abort():
             sw_message("Aborted")
@@ -300,7 +300,7 @@ def supervised_train(config_file):
         for param in net.decoder.fc_fine.parameters():
             param.requires_grad = True
         # train on the corr loss
-        best_ft_val_rel_error = np.Inf
+        best_ft_val_rel_error = np.inf
         for e in range(1, ft_epochs + 1):
             if sw_check_abort():
                 sw_message("Aborted")
@@ -453,7 +453,7 @@ def supervised_train_tl(config_file):
     plot_train_losses = []
     plot_val_losses = []
     t0 = time.time()
-    best_val_rel_error = np.Inf
+    best_val_rel_error = np.inf
 
     # train the AE first
 

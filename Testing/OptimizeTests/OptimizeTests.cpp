@@ -11,7 +11,7 @@
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"
-#include "Testing.h"
+#include "../Testing.h"
 
 using namespace shapeworks;
 

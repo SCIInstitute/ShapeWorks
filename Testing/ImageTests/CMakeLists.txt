@@ -6,11 +6,14 @@ add_executable(ImageTests
   ${TEST_SRCS}
   )
 
+add_dependencies(ImageTests gtest gtest_main)
+
+
 target_link_libraries(ImageTests
+  Testing
   Image
   Common
   ${ITK_LIBRARIES}
-  Testing
   Project
   )
 

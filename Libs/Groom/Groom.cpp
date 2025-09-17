@@ -535,7 +535,7 @@ void Groom::increment_progress(int amount) {
   std::scoped_lock lock(mutex);
   progress_counter_ += amount;
   progress_ = static_cast<float>(progress_counter_) / static_cast<float>(total_ops_) * 100.0;
-  SW_PROGRESS(progress_, fmt::format("Grooming ({}/{} ops)", progress_counter_, total_ops_));
+  SW_PROGRESS(progress_, fmt::format("Grooming ({}/{} ops)", progress_counter_.load(), total_ops_.load()));
 }
 
 //---------------------------------------------------------------------------

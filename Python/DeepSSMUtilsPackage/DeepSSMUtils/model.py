@@ -105,7 +105,7 @@ class DeepSSMNet(nn.Module):
 			parameters = json.load(json_file)
 		self.num_latent = parameters['num_latent_dim']
 		self.loader_dir = parameters['paths']['loader_dir']
-		loader = torch.load(self.loader_dir + "validation")
+		loader = torch.load(self.loader_dir + "validation", weights_only=False)
 		self.num_corr = loader.dataset.mdl_target[0].shape[0]
 		img_dims = loader.dataset.img[0].shape
 		self.img_dims = img_dims[1:]

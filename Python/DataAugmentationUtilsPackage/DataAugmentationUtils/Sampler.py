@@ -71,7 +71,7 @@ class KDE_Sampler(Sampler):
 		nearest_neighbor_dists = []
 		cov = np.cov(embedded_matrix.T)
 		for i in embedded_matrix:
-			smallest = np.Inf
+			smallest = np.inf
 			for j in embedded_matrix:
 				dist = Mdist(i,j,cov)
 				if dist < smallest and dist != 0:

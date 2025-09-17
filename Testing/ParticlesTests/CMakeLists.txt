@@ -7,8 +7,8 @@ add_executable(ParticlesTests
   )
 
 target_link_libraries(ParticlesTests
-  Mesh Optimize Utils trimesh2 Particles
-  Testing pybind11::embed Project Image
+  Testing Mesh Optimize Utils trimesh2 Particles
+  pybind11::embed Project Image
   )
 
 add_test(NAME ParticlesTests COMMAND ParticlesTests)
