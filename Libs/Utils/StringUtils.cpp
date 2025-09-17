@@ -70,7 +70,7 @@ std::vector<std::string> StringUtils::getFileNamesFromPaths(const std::vector<st
 
 //---------------------------------------------------------------------------
 std::string StringUtils::getLowerExtension(const std::string& filename) {
-  return boost::algorithm::to_lower_copy(boost::filesystem::extension(filename));
+  return boost::algorithm::to_lower_copy(boost::filesystem::path(filename).extension().string());
 }
 
 //---------------------------------------------------------------------------
