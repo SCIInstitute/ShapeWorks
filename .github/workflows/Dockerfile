@@ -1,11 +1,11 @@
 # Based on old ubuntu to create more compatible binaries
 
-# To build (e.g. for ShapeWorks 6.5):
-#    docker build --progress=plain -t akenmorris/ubuntu-build-box-focal-sw65 .
+# To build (e.g. for ShapeWorks 6.7):
+#    docker build --progress=plain -t akenmorris/ubuntu-build-box-jammy-sw67 .
 # To publish:
-#    docker push akenmorris/ubuntu-build-box-focal-sw65
+#    docker push akenmorris/ubuntu-build-box-jammy-sw67
 
-FROM ubuntu:focal-20240123 AS env
+FROM ubuntu:jammy-20250819 AS env
 MAINTAINER akenmorris@gmail.com
 
 # Set environment variables
@@ -36,6 +36,8 @@ RUN apt-get install rsync freeglut3-dev libgl1-mesa-dev libegl1-mesa zip libcups
 RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/Miniconda3-latest-Linux-x86_64.sh \
     && bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda \
     && ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh \
+    && /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main \
+    && /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r \
     && conda update -n base -c defaults conda \
     && conda install pip \
     && echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc \
