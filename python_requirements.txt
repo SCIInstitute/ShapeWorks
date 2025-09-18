@@ -274,7 +274,7 @@ itk-io==5.4.4.post1
     # via
     #   -r requirements.in
     #   itk
-itk-meshtopolydata==0.11.1
+itk-meshtopolydata==0.11.0
     # via
     #   -r requirements.in
     #   itkwidgets

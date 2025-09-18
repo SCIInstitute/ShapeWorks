@@ -93,12 +93,12 @@ function install_conda() {
     CONDA_PACKAGES+=(cmake=4.1.1 \
 		     gmock=1.17.0 \
 		     doxygen=1.13.2 \
-		     graphviz=13.1.2 \
+		     graphviz \
 		     eigen=3.4.0 \
-		     hdf5=1.14.6 \
+		     hdf5 \
 		     tbb=2021.5.0 \
 		     tbb-devel=2021.5.0 \
-		     boost=1.85.0 \
+		     boost \
 		     openexr=3.4.0 \
 		     ilmbase=2.5.5 \
 		     pybind11=3.0.1 \
@@ -106,14 +106,15 @@ function install_conda() {
 		     spdlog=1.10.0 \
 		     pkg-config=0.29.2 \
 		     openh264=2.6.0 \
-		     libhwloc=2.12.1 \
-		     qt-main=5.15.15 \
+		     libhwloc \
+		     icu=70.1
+		     qt-main=5.15.4 \
 		    )
     
     # linux (only) deps
     if [[ "$(uname)" == "Linux" ]]; then
 	# required by install_python_module.sh
-	CONDA_PACKAGES+=(zlib=1.3.1 patchelf=0.17.2)
+	CONDA_PACKAGES+=(zlib patchelf=0.17.2)
     fi
   fi
 
