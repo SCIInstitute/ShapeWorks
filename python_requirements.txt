@@ -261,7 +261,7 @@ itk-core==5.4.4.post1
     #   itk-meshtopolydata
     #   itk-numerics
     #   itkwidgets
-itk-elastix==0.23.0
+itk-elastix==0.21.0
     # via -r requirements.in
 itk-filtering==5.4.4.post1
     # via
