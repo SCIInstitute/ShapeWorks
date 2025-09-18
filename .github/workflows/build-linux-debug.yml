@@ -24,7 +24,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-focal-sw65
+    container: akenmorris/ubuntu-build-box-jammy-sw67
     
     steps:
 
