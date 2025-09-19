@@ -416,6 +416,22 @@ Image& Image::resample(double isoSpacing, Image::InterpolationType interp) {
   return resample(makeVector({isoSpacing, isoSpacing, isoSpacing}), interp);
 }
 
+Image& Image::resize(Dims dims, Image::InterpolationType interp) {
+  // use existing dims for any that are unspecified
+  Dims inputDims(this->dims());
+  if (dims[0] == 0) dims[0] = inputDims[0];
+  if (dims[1] == 0) dims[1] = inputDims[1];
+  if (dims[2] == 0) dims[2] = inputDims[2];
+
+  // compute new spacing so physical image size remains the same
+  Vector3 inputSpacing(spacing());
+  Vector3 spacing(makeVector({inputSpacing[0] * inputDims[0] / dims[0], inputSpacing[1] * inputDims[1] / dims[1],
+                              inputSpacing[2] * inputDims[2] / dims[2]}));
+
+  return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp);
+}
+
+
 Image& Image::toAxisAligned(InterpolationType interp) {
   // Check if image is already axis-aligned
   auto direction = itk_image_->GetDirection();
