@@ -98,10 +98,10 @@ function install_conda() {
 		     hdf5=1.12.2 \
 		     tbb=2021.5.0 \
 		     tbb-devel=2021.5.0 \
-		     boost=1.74.0 \
+		     boost \
 		     openexr=3.1.5 \
 		     ilmbase=2.5.5 \
-		     pybind11=2.9.2 \
+		     pybind11 \
 		     nlohmann_json=3.10.5 \
 		     spdlog=1.10.0 \
 		     pkg-config=0.29.2 \
