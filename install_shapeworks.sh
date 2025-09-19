@@ -90,30 +90,30 @@ function install_conda() {
   if [[ "$DEVELOPER" == "YES" ]] ; then
     echo "Developer packages enabled"
 
-    CONDA_PACKAGES+=(cmake=4.1.1 \
-		     gmock=1.17.0 \
-		     doxygen=1.13.2 \
-		     graphviz=13.1.2 \
+    CONDA_PACKAGES+=(cmake=3.23.2 \
+		     gmock=1.11.0 \
+		     doxygen=1.9.2 \
+		     graphviz=4.0.0 \
 		     eigen=3.4.0 \
-		     hdf5=1.14.6 \
+		     hdf5=1.12.2 \
 		     tbb=2021.5.0 \
 		     tbb-devel=2021.5.0 \
-		     boost=1.85.0 \
-		     openexr=3.4.0 \
+		     boost=1.74.0 \
+		     openexr=3.1.5 \
 		     ilmbase=2.5.5 \
-		     pybind11=3.0.1 \
-		     nlohmann_json=3.12.0 \
+		     pybind11=2.9.2 \
+		     nlohmann_json=3.10.5 \
 		     spdlog=1.10.0 \
 		     pkg-config=0.29.2 \
-		     openh264=2.6.0 \
-		     libhwloc=2.12.1 \
-		     qt-main=5.15.15 \
+		     openh264==2.3.0 \
+		     libhwloc=2.8.0 \
+		     qt-main=5.15.4 \
 		    )
     
     # linux (only) deps
     if [[ "$(uname)" == "Linux" ]]; then
 	# required by install_python_module.sh
-	CONDA_PACKAGES+=(zlib=1.3.1 patchelf=0.17.2)
+	CONDA_PACKAGES+=(zlib=1.2.12 patchelf=0.14.5)
     fi
   fi
 
