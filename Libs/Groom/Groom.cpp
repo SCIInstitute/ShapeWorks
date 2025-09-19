@@ -216,6 +216,10 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
 //---------------------------------------------------------------------------
 bool Groom::run_image_pipeline(Image& image, GroomParameters params) {
+
+  // ensure axis aligned
+  image.toAxisAligned();
+
   // isolate
   if (params.get_isolate_tool()) {
     image.isolate();

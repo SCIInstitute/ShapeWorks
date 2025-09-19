@@ -105,6 +105,9 @@ class Image {
   /// resamples image using isotropic physical spacing
   Image& resample(double isoSpacing = 1.0, InterpolationType interp = Linear);
 
+  /// resamples image to be axis-aligned (i.e., identity direction matrix) if needed
+  Image& toAxisAligned(InterpolationType interp = NearestNeighbor);
+
   /// changes logical image size, computing new physical spacing based on this size (i.e., physical image size remains
   /// the same)
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
