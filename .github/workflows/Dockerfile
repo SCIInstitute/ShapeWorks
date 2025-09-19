@@ -9,7 +9,7 @@ FROM ubuntu:jammy-20250819 AS env
 MAINTAINER akenmorris@gmail.com
 
 # Set environment variables
-ENV PATH=/opt/conda/bin:/opt/rh/devtoolset-9/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV LDFLAGS=-L/opt/conda/lib
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -17,10 +17,6 @@ ENV TZ=Etc/UTC
 
 # Update
 RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get install build-essential software-properties-common -y && add-apt-repository ppa:ubuntu-toolchain-r/test -y && apt-get update -y
-
-# Install GCC 9
-RUN apt-get install gcc-9 g++-9 -y
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9 && update-alternatives --config gcc
 
 # Install git and git-lfs
 RUN add-apt-repository ppa:git-core/ppa
