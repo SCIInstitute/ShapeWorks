@@ -113,7 +113,7 @@ function install_conda() {
     # linux (only) deps
     if [[ "$(uname)" == "Linux" ]]; then
 	# required by install_python_module.sh
-	CONDA_PACKAGES+=(zlib=1.2.12 patchelf=0.14.5)
+	CONDA_PACKAGES+=(zlib patchelf)
     fi
   fi
 
