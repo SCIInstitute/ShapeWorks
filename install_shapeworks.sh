@@ -98,22 +98,22 @@ function install_conda() {
 		     hdf5=1.12.2 \
 		     tbb=2021.5.0 \
 		     tbb-devel=2021.5.0 \
-		     boost \
+		     boost=1.85.0 \
 		     openexr=3.1.5 \
 		     ilmbase=2.5.5 \
-		     pybind11 \
+		     pybind11=3.0.1 \
 		     nlohmann_json=3.10.5 \
 		     spdlog=1.10.0 \
 		     pkg-config=0.29.2 \
 		     openh264==2.3.0 \
 		     libhwloc=2.8.0 \
-		     qt-main=5.15.4 \
+		     qt-main=5.15.8 \
 		    )
     
     # linux (only) deps
     if [[ "$(uname)" == "Linux" ]]; then
 	# required by install_python_module.sh
-	CONDA_PACKAGES+=(zlib patchelf)
+	CONDA_PACKAGES+=(zlib=1.2.13 patchelf=0.17.2)
     fi
   fi
 
