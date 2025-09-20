@@ -108,6 +108,8 @@ class Image {
 
   Image& resample(double isoSpacing = 1.0, InterpolationType interp = Linear);
 
+  Image& toAxisAligned(InterpolationType interp = NearestNeighbor);
+
   Image& resize(Dims logicalDims, InterpolationType interp = Linear);
 
   Image& pad(int padding, PixelType value = 0.0);
@@ -296,4 +298,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2025-09-10 at 05:54:56 +0000
+Updated on 2025-09-20 at 02:22:47 +0000
