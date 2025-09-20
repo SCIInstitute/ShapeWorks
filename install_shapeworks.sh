@@ -133,7 +133,14 @@ function install_conda() {
   if ! python -m pip install -r python_requirements.txt;          then return 1; fi
 
   # install pytorch using light-the-torch
-  if ! ltt install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi 
+  if [[ $(uname -s) == "Darwin" ]] && [[ $(uname -m) == "x86_64" ]]; then
+    # Intel Mac - use older versions with NumPy 1.x
+    if ! ltt install torch==2.2.2 torchaudio==2.2.2 torchvision==0.17.2; then return 1; fi 
+    pip install "numpy<2"
+  else
+    # Apple Silicon, Linux, Windows - use latest with NumPy 2.x support
+    if ! ltt install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi 
+  fi
 
   # for network analysis
   # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt
