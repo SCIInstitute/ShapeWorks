@@ -431,6 +431,90 @@ Image& Image::resize(Dims dims, Image::InterpolationType interp) {
   return resample(IdentityTransform::New(), origin(), dims, spacing, coordsys(), interp);
 }
 
+
+Image& Image::toAxisAligned(InterpolationType interp) {
+  // Check if image is already axis-aligned
+  auto direction = itk_image_->GetDirection();
+  bool is_oblique = false;
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
+      double expected = (i == j) ? 1.0 : 0.0;
+      if (std::abs(direction(i, j) - expected) > 1e-6) {
+        is_oblique = true;
+        break;
+      }
+    }
+  }
+
+  // If already axis-aligned, return immediately
+  if (!is_oblique) {
+    return *this;
+  }
+
+  // The key insight: we need to create a transform that represents
+  // the DIFFERENCE between the oblique and axis-aligned coordinate systems
+
+  using TransformType = itk::AffineTransform<double, 3>;
+  auto transform = TransformType::New();
+
+  // The direction matrix rotates from index space to physical space
+  // To go from new axis-aligned indices to old oblique physical space,
+  // we need: newPhysical = identity * newIndex
+  //          oldIndex = direction^-1 * oldPhysical
+  // So: oldIndex = direction^-1 * identity * newIndex = direction^-1 * newIndex
+
+  TransformType::MatrixType matrix;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      matrix(i, j) = direction(i, j);
+    }
+  }
+  transform->SetMatrix(matrix);
+
+  // Get bounding box
+  auto size = itk_image_->GetLargestPossibleRegion().GetSize();
+  auto spacing = itk_image_->GetSpacing();
+  auto origin = itk_image_->GetOrigin();
+
+  Point3 minPt, maxPt;
+  for (int i = 0; i < 3; i++) {
+    minPt[i] = std::numeric_limits<double>::max();
+    maxPt[i] = std::numeric_limits<double>::lowest();
+  }
+
+  for (int corner = 0; corner < 8; corner++) {
+    Coord index;
+    index[0] = (corner & 1) ? size[0] - 1 : 0;
+    index[1] = (corner & 2) ? size[1] - 1 : 0;
+    index[2] = (corner & 4) ? size[2] - 1 : 0;
+
+    Point3 point;
+    itk_image_->TransformIndexToPhysicalPoint(index, point);
+
+    for (int dim = 0; dim < 3; dim++) {
+      minPt[dim] = std::min(minPt[dim], point[dim]);
+      maxPt[dim] = std::max(maxPt[dim], point[dim]);
+    }
+  }
+
+  ImageType::DirectionType identityDir;
+  identityDir.SetIdentity();
+
+  ImageType::SizeType outputSize;
+  for (int i = 0; i < 3; i++) {
+    outputSize[i] = static_cast<size_t>(std::ceil((maxPt[i] - minPt[i]) / spacing[i])) + 1;
+  }
+
+  Vector3 spacingVec;
+  Dims dims;
+  for (int i = 0; i < 3; i++) {
+    spacingVec[i] = spacing[i];
+    dims[i] = outputSize[i];
+  }
+
+  return resample(transform, minPt, dims, spacingVec, identityDir, interp);
+}
+
 bool Image::compare(const Image& other, bool verifyall, double tolerance, double precision) const {
   if (tolerance > 1 || tolerance < 0) {
     throw std::invalid_argument("tolerance value must be between 0 and 1 (inclusive)");
