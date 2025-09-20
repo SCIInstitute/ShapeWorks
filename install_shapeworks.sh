@@ -133,8 +133,7 @@ function install_conda() {
   if ! python -m pip install -r python_requirements.txt;          then return 1; fi
 
   # install pytorch using light-the-torch
-#  if ! ltt install torch==1.13.1 torchaudio==0.13.1 torchvision==0.14.1; then return 1; fi 
-  if ! ltt install torch torchaudio torchvision; then return 1; fi 
+  if ! ltt install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi 
 
   # for network analysis
   # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt

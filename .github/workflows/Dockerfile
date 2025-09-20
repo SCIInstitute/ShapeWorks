@@ -10,7 +10,6 @@ MAINTAINER akenmorris@gmail.com
 
 # Set environment variables
 ENV PATH=/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV LDFLAGS=-L/opt/conda/lib
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
