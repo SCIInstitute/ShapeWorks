@@ -115,6 +115,11 @@ function install_conda() {
 	# required by install_python_module.sh
 	CONDA_PACKAGES+=(zlib=1.2.13 patchelf=0.17.2)
     fi
+
+    if [[ $OSTYPE == "msys" ]]; then
+	CONDA_PACKAGES+=(zlib)
+    fi
+    
   fi
 
   echo "Installing CONDA_PACKAGES = ${CONDA_PACKAGES[@]}"
