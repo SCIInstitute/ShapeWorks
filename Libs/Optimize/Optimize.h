@@ -239,6 +239,11 @@ class Optimize {
   void SetSharedBoundaryEnabled(bool enabled);
   void SetSharedBoundaryWeight(double weight);
 
+  //! Early Stopping params
+  void SetEarlyStoppingEnabled(bool enabled);
+  void SetEarlyStoppingThreshold(double threshold);
+  void SetEarlyStoppingInterval(int interval);
+
   const std::vector<int>& GetDomainFlags();
 
   //! Set if file output is enabled

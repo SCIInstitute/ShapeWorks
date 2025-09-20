@@ -53,6 +53,9 @@ const std::string particle_format = "particle_format";
 const std::string geodesic_remesh_percent = "geodesic_remesh_percent";
 const std::string shared_boundary = "shared_boundary";
 const std::string shared_boundary_weight = "shared_boundary_weight";
+const std::string early_stopping_threshold = "early_stopping_threshold";
+const std::string early_stopping_interval = "early_stopping_interval";
+
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -96,7 +99,9 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::particle_format,
                                          Keys::geodesic_remesh_percent,
                                          Keys::shared_boundary,
-                                         Keys::shared_boundary_weight};
+                                         Keys::shared_boundary_weight,
+                                         Keys::early_stopping_threshold,
+                                         Keys::early_stopping_interval};
 
   std::vector<std::string> to_remove;
 
@@ -435,6 +440,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->set_particle_format(get_particle_format());
   optimize->SetSharedBoundaryEnabled(get_shared_boundary());
   optimize->SetSharedBoundaryWeight(get_shared_boundary_weight());
+  optimize->SetEarlyStoppingInterval(get_early_stopping_interval());
+  optimize->SetEarlyStoppingThreshold(get_early_stopping_threshold());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -864,6 +871,18 @@ double OptimizeParameters::get_shared_boundary_weight() { return params_.get(Key
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_shared_boundary_weight(double value) { params_.set(Keys::shared_boundary_weight, value); }
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_early_stopping_threshold() { return params_.get(Keys::early_stopping_threshold, 0.0001); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_early_stopping_threshold(double value) { params_.set(Keys::early_stopping_threshold, value); }
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_early_stopping_interval() { return params_.get(Keys::early_stopping_interval, 500); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_early_stopping_interval(int value) { params_.set(Keys::shared_boundary_weight, value); }
 
 //---------------------------------------------------------------------------
 Parameters OptimizeParameters::get_parameters() const { return params_; }

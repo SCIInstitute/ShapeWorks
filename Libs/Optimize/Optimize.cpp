@@ -2024,6 +2024,15 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled) { m_sampler->SetSharedBoun
 void Optimize::SetSharedBoundaryWeight(double weight) { m_sampler->SetSharedBoundaryWeight(weight); }
 
 //---------------------------------------------------------------------------
+void Optimize::SetEarlyStoppingEnabled(bool enabled) { m_sampler->SetEarlyStoppingEnabled(enabled); }
+
+//---------------------------------------------------------------------------
+void Optimize::SetEarlyStoppingThreshold(double threshold) { m_sampler->SetEarlyStoppingThreshold(threshold); }
+
+void Optimize::SetEarlyStoppingInterval(int interval) { m_sampler->SetEarlyStoppingInterval(interval); }
+
+
+//---------------------------------------------------------------------------
 void Optimize::ComputeTotalIterations() {
   total_particle_iterations_ = 0;
 

@@ -238,6 +238,10 @@ class Sampler {
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }
 
+  void SetEarlyStoppingEnabled(bool enabled) { m_IsEarlyStoppingEnabled = enabled; }
+  void SetEarlyStoppingThreshold(double threshold) { m_EarlyStoppingThreshold = threshold; }
+  void SetEarlyStoppingInterval(int interval) { m_EarlyStoppingInterval = interval; }
+
   void ReadTransforms();
   void ReadPointsFiles();
   void AllocateDataCaches();
@@ -322,6 +326,11 @@ class Sampler {
   double m_Spacing{0};
   bool m_IsSharedBoundaryEnabled;
   double m_SharedBoundaryWeight{0.5};
+  
+  // member variables for early stopping
+  double m_EarlyStoppingThreshold{0.0001};
+  bool m_IsEarlyStoppingEnabled;
+  int m_EarlyStoppingInterval{500};
 
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;
