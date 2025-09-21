@@ -78,15 +78,27 @@ bool Optimize::Run() {
 
   if (m_python_filename != "") {
 #ifdef _WIN32
+    // Save current directory
+    char original_dir[MAX_PATH];
+    _getcwd(original_dir, MAX_PATH);
+
     // need to set PYTHONHOME to the same directory as python.exe on Windows
     std::string found_path = find_in_path("python.exe");
     if (found_path != "") {
       std::cerr << "python.exe found in: " << found_path << "\n";
       _putenv_s("PYTHONHOME", found_path.c_str());
     }
+
+    // Change to safe directory for Python init
+    _chdir("C:\\");
 #endif
 
     py::initialize_interpreter();
+
+#ifdef _WIN32
+    // Restore original directory
+    _chdir(original_dir);
+#endif
 
     auto dir = m_python_filename;
 
