@@ -87,7 +87,17 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
+    - name: Cache Dependencies
+      id: cache-deps
+      uses: actions/cache@v3
+      with:
+        path: C:\deps
+        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-
+
     - name: Build Dependencies
+      if: steps.cache-deps.outputs.cache-hit != 'true'
       shell: bash -l {0}
       run: .github/workflows/gha_deps.sh
       
