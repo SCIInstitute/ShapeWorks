@@ -99,6 +99,18 @@ bool Optimize::Run() {
     py::initialize_interpreter();
     std::cerr << "Done calling py::initialize_interpreter\n";
 
+
+    // Test the actual failing import to get the real error
+    std::cerr << "Testing numpy.__config__ import directly...\n";
+    try {
+      py::exec("from numpy.__config__ import show_config");
+      std::cerr << "numpy.__config__ import: SUCCESS\n";
+    } catch (py::error_already_set &e) {
+      std::cerr << "REAL ERROR from numpy.__config__: " << e.what() << "\n";
+    }
+
+
+
     std::cerr << "Attempting to call import numpy\n";
     // Right after py::initialize_interpreter()
     try { py::exec("import numpy; print('NumPy version:', numpy.__version__)"); }
