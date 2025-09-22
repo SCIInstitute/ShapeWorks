@@ -95,7 +95,29 @@ bool Optimize::Run() {
     _chdir("C:\\");
 #endif
 
+    std::cerr << "about to call py::initialize_interpreter\n";
     py::initialize_interpreter();
+    std::cerr << "Done calling py::initialize_interpreter\n";
+
+    py::exec(R"(
+import sys
+print("Python executable:", sys.executable)
+print("Python version:", sys.version)
+
+# Test if numpy.__config__ can be imported directly
+try:
+    from numpy.__config__ import show_config
+    print("numpy.__config__ import: SUCCESS")
+except ImportError as e:
+    print("numpy.__config__ import FAILED:", str(e))
+
+# Test basic numpy import
+try:
+    import numpy
+    print("numpy import: SUCCESS")
+except ImportError as e:
+    print("numpy import FAILED:", str(e))
+)");
 
 #ifdef _WIN32
     // Restore original directory
