@@ -103,11 +103,13 @@ bool Optimize::Run() {
 #endif
 
     auto dir = m_python_filename;
-    auto filename = dir.substr(dir.find_last_of("/") + 1);
+    auto filename = dir.substr(dir.find_last_of("/\\") + 1);  // Handle both / and \ on Windows
     SW_LOG("Running Python File: {}", filename);
     filename = filename.substr(0, filename.length() - 3);  // remove .py
-    dir = dir.substr(0, dir.find_last_of("/") + 1);
+    dir = dir.substr(0, dir.find_last_of("/\\") + 1);      // Handle both / and \ on Windows
 
+    // Debug the actual values
+    std::cerr << "m_python_filename: '" << m_python_filename << "'\n";
     std::cerr << "Parsed dir: '" << dir << "'\n";
     std::cerr << "Parsed filename: '" << filename << "'\n";
 
