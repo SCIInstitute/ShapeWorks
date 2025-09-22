@@ -100,6 +100,34 @@ bool Optimize::Run() {
     std::cerr << "Done calling py::initialize_interpreter\n";
 
 
+    // Test if we can import the core numpy extension directly
+    std::cerr << "Testing numpy core extension import...\n";
+    try {
+      py::exec("import numpy.core.multiarray");
+      std::cerr << "numpy.core.multiarray import: SUCCESS\n";
+    } catch (py::error_already_set &e) {
+      std::cerr << "numpy.core.multiarray FAILED: " << e.what() << "\n";
+    }
+
+    // Test if we can import numpy's _internal module
+    std::cerr << "Testing numpy._internal import...\n";
+    try {
+      py::exec("import numpy._internal");
+      std::cerr << "numpy._internal import: SUCCESS\n";
+    } catch (py::error_already_set &e) {
+      std::cerr << "numpy._internal FAILED: " << e.what() << "\n";
+    }
+
+    // Test basic DLL loading capability
+    std::cerr << "Testing basic extension import...\n";
+    try {
+      py::exec("import _ctypes");  // This is a built-in extension
+      std::cerr << "_ctypes import: SUCCESS\n";
+    } catch (py::error_already_set &e) {
+      std::cerr << "_ctypes FAILED: " << e.what() << "\n";
+    }
+
+
     // Test the actual failing import to get the real error
     std::cerr << "Testing numpy.__config__ import directly...\n";
     try {
