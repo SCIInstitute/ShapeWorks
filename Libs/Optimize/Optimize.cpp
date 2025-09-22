@@ -99,25 +99,40 @@ bool Optimize::Run() {
     py::initialize_interpreter();
     std::cerr << "Done calling py::initialize_interpreter\n";
 
-    py::exec(R"(
-import sys
-print("Python executable:", sys.executable)
-print("Python version:", sys.version)
+    std::cerr << "Attempting to call import numpy\n";
+    // Right after py::initialize_interpreter()
+    try { py::exec("import numpy; print('NumPy version:', numpy.__version__)"); }
+    catch (py::error_already_set &e) { std::cerr << "NumPy test: " << e.what() << "\n"; }
+    std::cerr << "Finished calling import numpy\n";
 
-# Test if numpy.__config__ can be imported directly
+    // Diagnostic with explicit error handling
+    try {
+      std::cerr << "Starting diagnostic...\n";
+      py::exec("import sys");
+      py::exec("print('Python executable:', sys.executable)");
+      py::exec("print('Python version:', sys.version)");
+
+      std::cerr << "Testing numpy.__config__ import...\n";
+      py::exec(R"(
 try:
     from numpy.__config__ import show_config
     print("numpy.__config__ import: SUCCESS")
 except ImportError as e:
     print("numpy.__config__ import FAILED:", str(e))
+)");
 
-# Test basic numpy import
+      std::cerr << "Testing basic numpy import...\n";
+      py::exec(R"(
 try:
     import numpy
     print("numpy import: SUCCESS")
 except ImportError as e:
     print("numpy import FAILED:", str(e))
 )");
+
+    } catch (py::error_already_set &e) {
+      std::cerr << "Diagnostic failed with Python error: " << e.what() << "\n";
+    }
 
 #ifdef _WIN32
     // Restore original directory
