@@ -27,6 +27,8 @@
 #include <Libs/Particles/ParticleFile.h>
 #include <Project/Project.h>
 
+#include <iostream>
+
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
@@ -37,8 +39,6 @@
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
 #include "ShapeworksUtils.h"
-
-#include <iostream>
 
 // pybind
 #include <pybind11/embed.h>
@@ -77,6 +77,7 @@ bool Optimize::Run() {
   m_last_update_time = m_start_time;
 
   ShapeWorksUtils::setup_threads();
+
   if (m_python_filename != "") {
 #ifdef _WIN32
     // Save current directory
@@ -92,23 +93,13 @@ bool Optimize::Run() {
     }
     // Change to safe directory for Python init
     _chdir("C:\\");
-    char cwd_after_change[MAX_PATH];
-    _getcwd(cwd_after_change, MAX_PATH);
-    std::cerr << "CWD after change to C:\\: " << cwd_after_change << "\n";
 #endif
+
     py::initialize_interpreter();
 
 #ifdef _WIN32
-    // Debug: Check CWD from Python's perspective
-    py::exec("import os; print('Python CWD after init:', os.getcwd())");
-
     // Restore original directory
     _chdir(original_dir);
-    char cwd_restored[MAX_PATH];
-    _getcwd(cwd_restored, MAX_PATH);
-    std::cerr << "CWD after restore: " << cwd_restored << "\n";
-
-    py::exec("import os; print('Python CWD after restore:', os.getcwd())");
 #endif
 
     auto dir = m_python_filename;
@@ -117,18 +108,26 @@ bool Optimize::Run() {
     filename = filename.substr(0, filename.length() - 3);  // remove .py
     dir = dir.substr(0, dir.find_last_of("/") + 1);
 
-    py::module sys = py::module::import("sys");
-    std::cerr << "sys.path before insert:\n";
-    py::print(sys.attr("path"));
+    std::cerr << "Parsed dir: '" << dir << "'\n";
+    std::cerr << "Parsed filename: '" << filename << "'\n";
 
-    sys.attr("path").attr("insert")(1, dir);
-    std::cerr << "sys.path after insert of dir '" << dir << "':\n";
-    py::print(sys.attr("path"));
+    // Do sys.path manipulation in raw Python to avoid triggering imports
+    std::string python_code = R"(
+import sys
+print("sys.path before:", sys.path)
+sys.path.insert(1, r")" + dir +
+                              R"(")
+print("sys.path after:", sys.path)
+)";
+
+    std::cerr << "About to execute Python code:\n" << python_code << "\n";
+    py::exec(python_code);
 
     std::cerr << "About to import module: " << filename << "\n";
     py::module module = py::module::import(filename.c_str());
     py::object result = module.attr("run")(this);
   }
+
   if (!SetParameters()) {
     return false;
   }
