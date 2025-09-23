@@ -35,13 +35,13 @@ def test(config_file, loader="test"):
 
     # load the loaders
     sw_message("Loading " + loader + " data loader...")
-    test_loader = torch.load(loader_dir + loader)
+    test_loader = torch.load(loader_dir + loader, weights_only=False)
 
     # initialization
     sw_message("Loading trained model...")
     if parameters['tl_net']['enabled']:
         model_tl = model.DeepSSMNet_TLNet(config_file)
-        model_tl.load_state_dict(torch.load(model_path))
+        model_tl.load_state_dict(torch.load(model_path, weights_only=False))
         device = model_tl.device
         model_tl.to(device)
         model_tl.eval()

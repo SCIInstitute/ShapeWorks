@@ -7,9 +7,9 @@ add_executable(MeshTests
   )
 
 target_link_libraries(MeshTests
-  tinyxml Optimize Mesh Utils Particles trimesh2 Eigen3::Eigen igl::core
+  Testing tinyxml Optimize Mesh Utils Particles trimesh2 Eigen3::Eigen igl::core
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
-  Testing Project
+  Project
   )
 
 add_test(NAME MeshTests COMMAND MeshTests)

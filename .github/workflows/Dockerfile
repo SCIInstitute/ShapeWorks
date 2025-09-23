@@ -1,26 +1,21 @@
 # Based on old ubuntu to create more compatible binaries
 
-# To build (e.g. for ShapeWorks 6.5):
-#    docker build --progress=plain -t akenmorris/ubuntu-build-box-focal-sw65 .
+# To build (e.g. for ShapeWorks 6.7):
+#    docker build --progress=plain -t akenmorris/ubuntu-build-box-jammy-sw67 .
 # To publish:
-#    docker push akenmorris/ubuntu-build-box-focal-sw65
+#    docker push akenmorris/ubuntu-build-box-jammy-sw67
 
-FROM ubuntu:focal-20240123 AS env
+FROM ubuntu:jammy-20250819 AS env
 MAINTAINER akenmorris@gmail.com
 
 # Set environment variables
-ENV PATH=/opt/conda/bin:/opt/rh/devtoolset-9/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV LDFLAGS=-L/opt/conda/lib
+ENV PATH=/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
 # Update
 RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get install build-essential software-properties-common -y && add-apt-repository ppa:ubuntu-toolchain-r/test -y && apt-get update -y
-
-# Install GCC 9
-RUN apt-get install gcc-9 g++-9 -y
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9 && update-alternatives --config gcc
 
 # Install git and git-lfs
 RUN add-apt-repository ppa:git-core/ppa
@@ -36,6 +31,8 @@ RUN apt-get install rsync freeglut3-dev libgl1-mesa-dev libegl1-mesa zip libcups
 RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/Miniconda3-latest-Linux-x86_64.sh \
     && bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda \
     && ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh \
+    && /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main \
+    && /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r \
     && conda update -n base -c defaults conda \
     && conda install pip \
     && echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc \

@@ -7,11 +7,11 @@
 
 #include <cstdio>
 
+#include "../Testing.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"
-#include "Testing.h"
 
 using namespace shapeworks;
 
@@ -273,6 +273,13 @@ TEST(OptimizeTests, mesh_use_normals_test) {
 TEST(OptimizeTests, embedded_python_test) {
   prep_temp("/simple", "embedded_python");
 
+  // disable test on windows
+  // Note that this test works fine on native windows, but something about GitHub Actions Runner is causing
+  // An error when importing numpy.  For now, we are just going to skip this test on windows
+#ifdef _WIN32
+  GTEST_SKIP() << "Skipping embedded_python_test on Windows";
+#endif
+
   // run with parameter file
   std::string paramfile = std::string("python_embedded.xml");
   Optimize app;
@@ -523,7 +530,7 @@ TEST(OptimizeTests, cutting_plane_test) {
 
   // make sure we clean out at least one output file
   std::remove("optimize_particles/sphere10_DT_world.particles");
-  
+
   auto start = shapeworks::ShapeWorksUtils::now();
 
   // run with parameter file
@@ -541,7 +548,7 @@ TEST(OptimizeTests, cutting_plane_test) {
   stats.principal_component_projections();
 
   bool good = check_constraint_violations(app, 1.5e-1);
-  
+
   auto end = shapeworks::ShapeWorksUtils::now();
   std::cout << "Time taken to run cutting_plane optimize test: "
             << shapeworks::ShapeWorksUtils::elapsed(start, end, false) << "sec \n";

@@ -7,8 +7,8 @@ add_executable(UtilsTests
   )
 
 target_link_libraries(UtilsTests
-  Utils
   Testing
+  Utils
   )
 
 add_test(NAME UtilsTests COMMAND UtilsTests)
