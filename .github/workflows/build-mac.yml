@@ -55,11 +55,10 @@ jobs:
       id: cache-deps-restore
       uses: actions/cache/restore@v3
       with:
-        path: ${{ env.HOME }}/install
+        path: /Users/runner/install
         key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
         restore-keys: |
           ${{ runner.os }}-deps-
-
 
     - name: Build Dependencies
       if: steps.cache-deps-restore.outputs.cache-hit != 'true'
@@ -67,10 +66,10 @@ jobs:
       run: .github/workflows/gha_deps.sh
 
     - name: Save Dependencies Cache
-      if: steps.cache-deps-restore.outputs.cache-hit != 'true' && always()
+      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
       with:
-        path: ${{ env.HOME }}/install
+        path: /Users/runner/install
         key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: cmake

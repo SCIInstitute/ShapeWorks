@@ -102,7 +102,7 @@ jobs:
       run: .github/workflows/gha_deps.sh
 
     - name: Save Dependencies Cache
-      if: steps.cache-deps-restore.outputs.cache-hit != 'true' && always()
+      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
       with:
         path: C:\deps
