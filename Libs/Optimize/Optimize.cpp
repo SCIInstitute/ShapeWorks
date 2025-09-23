@@ -79,6 +79,29 @@ bool Optimize::Run() {
   ShapeWorksUtils::setup_threads();
 
   if (m_python_filename != "") {
+
+
+#ifdef _WIN32
+    std::string found_path = find_in_path("python.exe");
+    if (found_path != "") {
+      std::cerr << "python.exe found in: " << found_path << "\n";
+      _putenv_s("PYTHONHOME", found_path.c_str());
+
+      // Add all potential conda DLL directories to PATH
+      std::string dll_paths = found_path + "\\Library\\bin;" +
+                              found_path + "\\Library\\mingw-w64\\bin;" +
+                              found_path + "\\DLLs;" +
+                              found_path + "\\bin;" +
+                              found_path + "\\Scripts";
+
+      char* current_path = getenv("PATH");
+      std::string new_path = dll_paths + ";" + (current_path ? current_path : "");
+      _putenv_s("PATH", new_path.c_str());
+
+      std::cerr << "Updated PATH for conda DLLs\n";
+    }
+#endif
+
 #ifdef _WIN32
     // Save current directory
     char original_dir[MAX_PATH];
