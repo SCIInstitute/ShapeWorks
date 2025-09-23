@@ -27,8 +27,6 @@
 #include <Libs/Particles/ParticleFile.h>
 #include <Project/Project.h>
 
-#include <iostream>
-
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
@@ -79,165 +77,29 @@ bool Optimize::Run() {
   ShapeWorksUtils::setup_threads();
 
   if (m_python_filename != "") {
-
-
 #ifdef _WIN32
-    {
-    std::string found_path = find_in_path("python.exe");
-    if (found_path != "") {
-      std::cerr << "python.exe found in: " << found_path << "\n";
-      _putenv_s("PYTHONHOME", found_path.c_str());
-
-      // Add all potential conda DLL directories to PATH
-      std::string dll_paths = found_path + "\\Library\\bin;" +
-                              found_path + "\\Library\\mingw-w64\\bin;" +
-                              found_path + "\\DLLs;" +
-                              found_path + "\\bin;" +
-                              found_path + "\\Scripts";
-
-      char* current_path = getenv("PATH");
-      std::string new_path = dll_paths + ";" + (current_path ? current_path : "");
-      _putenv_s("PATH", new_path.c_str());
-
-      std::cerr << "Updated PATH for conda DLLs\n";
-    }
-    }
-#endif
-
-#ifdef _WIN32
-    // Save current directory
-    char original_dir[MAX_PATH];
-    _getcwd(original_dir, MAX_PATH);
-    std::cerr << "Original CWD: " << original_dir << "\n";
-
     // need to set PYTHONHOME to the same directory as python.exe on Windows
     std::string found_path = find_in_path("python.exe");
     if (found_path != "") {
       std::cerr << "python.exe found in: " << found_path << "\n";
       _putenv_s("PYTHONHOME", found_path.c_str());
     }
-    // Change to safe directory for Python init
-    _chdir("C:\\");
 #endif
 
-    std::cerr << "about to call py::initialize_interpreter\n";
     py::initialize_interpreter();
-    std::cerr << "Done calling py::initialize_interpreter\n";
-
-    // Before importing anything numpy-related
-    py::exec(R"(
-import sys
-import types
-
-# Create a fake numpy.__config__ module
-config_module = types.ModuleType('numpy.__config__')
-config_module.show_config = lambda: None
-sys.modules['numpy.__config__'] = config_module
-)");
-
-    // Test if we can import the core numpy extension directly
-    std::cerr << "Testing numpy core extension import...\n";
-    try {
-      py::exec("import numpy.core.multiarray");
-      std::cerr << "numpy.core.multiarray import: SUCCESS\n";
-    } catch (py::error_already_set& e) {
-      std::cerr << "numpy.core.multiarray FAILED: " << e.what() << "\n";
-    }
-
-    // Test if we can import numpy's _internal module
-    std::cerr << "Testing numpy._internal import...\n";
-    try {
-      py::exec("import numpy._internal");
-      std::cerr << "numpy._internal import: SUCCESS\n";
-    } catch (py::error_already_set& e) {
-      std::cerr << "numpy._internal FAILED: " << e.what() << "\n";
-    }
-
-    // Test basic DLL loading capability
-    std::cerr << "Testing basic extension import...\n";
-    try {
-      py::exec("import _ctypes");  // This is a built-in extension
-      std::cerr << "_ctypes import: SUCCESS\n";
-    } catch (py::error_already_set& e) {
-      std::cerr << "_ctypes FAILED: " << e.what() << "\n";
-    }
-
-    // Test the actual failing import to get the real error
-    std::cerr << "Testing numpy.__config__ import directly...\n";
-    try {
-      py::exec("from numpy.__config__ import show_config");
-      std::cerr << "numpy.__config__ import: SUCCESS\n";
-    } catch (py::error_already_set& e) {
-      std::cerr << "REAL ERROR from numpy.__config__: " << e.what() << "\n";
-    }
-
-    std::cerr << "Attempting to call import numpy\n";
-    // Right after py::initialize_interpreter()
-    try {
-      py::exec("import numpy; print('NumPy version:', numpy.__version__)");
-    } catch (py::error_already_set& e) {
-      std::cerr << "NumPy test: " << e.what() << "\n";
-    }
-    std::cerr << "Finished calling import numpy\n";
-
-    // Diagnostic with explicit error handling
-    try {
-      std::cerr << "Starting diagnostic...\n";
-      py::exec("import sys");
-      py::exec("print('Python executable:', sys.executable)");
-      py::exec("print('Python version:', sys.version)");
-
-      std::cerr << "Testing numpy.__config__ import...\n";
-      py::exec(R"(
-try:
-    from numpy.__config__ import show_config
-    print("numpy.__config__ import: SUCCESS")
-except ImportError as e:
-    print("numpy.__config__ import FAILED:", str(e))
-)");
-
-      std::cerr << "Testing basic numpy import...\n";
-      py::exec(R"(
-try:
-    import numpy
-    print("numpy import: SUCCESS")
-except ImportError as e:
-    print("numpy import FAILED:", str(e))
-)");
-
-    } catch (py::error_already_set& e) {
-      std::cerr << "Diagnostic failed with Python error: " << e.what() << "\n";
-    }
-
-#ifdef _WIN32
-    // Restore original directory
-    _chdir(original_dir);
-#endif
 
     auto dir = m_python_filename;
-    auto filename = dir.substr(dir.find_last_of("/\\") + 1);  // Handle both / and \ on Windows
+
+    auto filename = dir.substr(dir.find_last_of("/") + 1);
     SW_LOG("Running Python File: {}", filename);
     filename = filename.substr(0, filename.length() - 3);  // remove .py
-    dir = dir.substr(0, dir.find_last_of("/\\") + 1);      // Handle both / and \ on Windows
+    dir = dir.substr(0, dir.find_last_of("/") + 1);
 
-    // Debug the actual values
-    std::cerr << "m_python_filename: '" << m_python_filename << "'\n";
-    std::cerr << "Parsed dir: '" << dir << "'\n";
-    std::cerr << "Parsed filename: '" << filename << "'\n";
+    py::module sys = py::module::import("sys");
+    py::print(sys.attr("path"));
+    sys.attr("path").attr("insert")(1, dir);
+    py::print(sys.attr("path"));
 
-    // Do sys.path manipulation in raw Python to avoid triggering imports
-    std::string python_code = R"(
-import sys
-print("sys.path before:", sys.path)
-sys.path.insert(1, r")" + dir +
-                              R"(")
-print("sys.path after:", sys.path)
-)";
-
-    std::cerr << "About to execute Python code:\n" << python_code << "\n";
-    py::exec(python_code);
-
-    std::cerr << "About to import module: " << filename << "\n";
     py::module module = py::module::import(filename.c_str());
     py::object result = module.attr("run")(this);
   }
