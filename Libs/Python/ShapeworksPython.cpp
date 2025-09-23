@@ -1302,7 +1302,11 @@ PYBIND11_MODULE(shapeworks_py, m) {
        components are constructed")
 
       .def("percentVarByMode", &ParticleShapeStatistics::get_percent_variance_by_mode,
-           "return the variance accounted for by the principal components");
+           "return the variance accounted for by the principal components")
+
+      .def("projectNewSample", &ParticleShapeStatistics::project_new_sample,
+           "project a new sample into the PCA space", "newSample"_a)
+      ;
 
   define_python_analyze(m);
   define_python_groom(m);

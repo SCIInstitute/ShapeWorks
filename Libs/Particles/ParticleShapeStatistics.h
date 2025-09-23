@@ -57,6 +57,9 @@ class ParticleShapeStatistics {
   //!  principal componenent axes for each of the samples.  ComputeModes must be called first.
   int principal_component_projections();
 
+  //! Projects a new sample into the PCA space defined by the original samples.
+  Eigen::VectorXd project_new_sample(const Eigen::VectorXd& new_sample);
+
   //! Returns the sample size
   int get_num_samples() const { return num_samples_; }
   int get_group1_num_samples() const { return num_samples_group1_; }

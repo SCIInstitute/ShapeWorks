@@ -497,7 +497,7 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
 
 //---------------------------------------------------------------------------
 int ParticleShapeStatistics::do_pca(std::vector<std::vector<Point>> global_pts, int domainsPerShape) {
-  this->domains_per_shape_ = domainsPerShape;
+  domains_per_shape_ = domainsPerShape;
 
   // Assumes all the same size.
   num_samples_ = global_pts.size() / domains_per_shape_;
@@ -507,11 +507,6 @@ int ParticleShapeStatistics::do_pca(std::vector<std::vector<Point>> global_pts, 
   shapes_.resize(num_dimensions_, num_samples_);
   mean_.resize(num_dimensions_);
   mean_.fill(0);
-
-  std::cout << "VDimension = " << values_per_particle_ << "-------------\n";
-  std::cout << "m_numSamples = " << num_samples_ << "-------------\n";
-  std::cout << "m_domainsPerShape = " << domains_per_shape_ << "-------------\n";
-  std::cout << "global_pts.size() = " << global_pts.size() << "-------------\n";
 
   // Compile the "meta shapes"
   for (unsigned int i = 0; i < num_samples_; i++) {
@@ -636,6 +631,13 @@ int ParticleShapeStatistics::principal_component_projections() {
   }
 
   return 0;
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ParticleShapeStatistics::project_new_sample(const Eigen::VectorXd& new_sample) {
+  // Subtract mean and project onto principal components
+  Eigen::VectorXd centered_sample = new_sample - mean_;
+  return eigenvectors_.transpose() * centered_sample;
 }
 
 //---------------------------------------------------------------------------
