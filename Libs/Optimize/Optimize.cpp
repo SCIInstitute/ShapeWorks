@@ -99,13 +99,23 @@ bool Optimize::Run() {
     py::initialize_interpreter();
     std::cerr << "Done calling py::initialize_interpreter\n";
 
+    // Before importing anything numpy-related
+    py::exec(R"(
+import sys
+import types
+
+# Create a fake numpy.__config__ module
+config_module = types.ModuleType('numpy.__config__')
+config_module.show_config = lambda: None
+sys.modules['numpy.__config__'] = config_module
+)");
 
     // Test if we can import the core numpy extension directly
     std::cerr << "Testing numpy core extension import...\n";
     try {
       py::exec("import numpy.core.multiarray");
       std::cerr << "numpy.core.multiarray import: SUCCESS\n";
-    } catch (py::error_already_set &e) {
+    } catch (py::error_already_set& e) {
       std::cerr << "numpy.core.multiarray FAILED: " << e.what() << "\n";
     }
 
@@ -114,7 +124,7 @@ bool Optimize::Run() {
     try {
       py::exec("import numpy._internal");
       std::cerr << "numpy._internal import: SUCCESS\n";
-    } catch (py::error_already_set &e) {
+    } catch (py::error_already_set& e) {
       std::cerr << "numpy._internal FAILED: " << e.what() << "\n";
     }
 
@@ -123,26 +133,26 @@ bool Optimize::Run() {
     try {
       py::exec("import _ctypes");  // This is a built-in extension
       std::cerr << "_ctypes import: SUCCESS\n";
-    } catch (py::error_already_set &e) {
+    } catch (py::error_already_set& e) {
       std::cerr << "_ctypes FAILED: " << e.what() << "\n";
     }
-
 
     // Test the actual failing import to get the real error
     std::cerr << "Testing numpy.__config__ import directly...\n";
     try {
       py::exec("from numpy.__config__ import show_config");
       std::cerr << "numpy.__config__ import: SUCCESS\n";
-    } catch (py::error_already_set &e) {
+    } catch (py::error_already_set& e) {
       std::cerr << "REAL ERROR from numpy.__config__: " << e.what() << "\n";
     }
 
-
-
     std::cerr << "Attempting to call import numpy\n";
     // Right after py::initialize_interpreter()
-    try { py::exec("import numpy; print('NumPy version:', numpy.__version__)"); }
-    catch (py::error_already_set &e) { std::cerr << "NumPy test: " << e.what() << "\n"; }
+    try {
+      py::exec("import numpy; print('NumPy version:', numpy.__version__)");
+    } catch (py::error_already_set& e) {
+      std::cerr << "NumPy test: " << e.what() << "\n";
+    }
     std::cerr << "Finished calling import numpy\n";
 
     // Diagnostic with explicit error handling
@@ -170,7 +180,7 @@ except ImportError as e:
     print("numpy import FAILED:", str(e))
 )");
 
-    } catch (py::error_already_set &e) {
+    } catch (py::error_already_set& e) {
       std::cerr << "Diagnostic failed with Python error: " << e.what() << "\n";
     }
 
