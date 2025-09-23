@@ -61,7 +61,6 @@ jobs:
           ${{ runner.os }}-deps-
 
     - name: Build Dependencies
-      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
       shell: bash -l {0}
       run: .github/workflows/gha_deps.sh
 
