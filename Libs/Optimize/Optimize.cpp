@@ -81,6 +81,7 @@ bool Optimize::Run() {
 
 
 #ifdef _WIN32
+    {
     std::string found_path = find_in_path("python.exe");
     if (found_path != "") {
       std::cerr << "python.exe found in: " << found_path << "\n";
@@ -98,6 +99,7 @@ bool Optimize::Run() {
       _putenv_s("PATH", new_path.c_str());
 
       std::cerr << "Updated PATH for conda DLLs\n";
+    }
     }
 #endif
 
