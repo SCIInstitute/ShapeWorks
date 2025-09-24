@@ -216,7 +216,6 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
 //---------------------------------------------------------------------------
 bool Groom::run_image_pipeline(Image& image, GroomParameters params) {
-
   // ensure axis aligned
   image.toAxisAligned();
 
@@ -572,9 +571,9 @@ bool Groom::run_alignment() {
     std::vector<Mesh> meshes;
 
     for (size_t i = 0; i < subjects.size(); i++) {
-      Mesh mesh = get_mesh(i, 0, true);
+      Mesh mesh = get_mesh(i, 0, true /* combine */, MeshSource::Groomed);
       for (size_t domain = 1; domain < num_domains; domain++) {
-        mesh += get_mesh(i, domain, true);  // combine
+        mesh += get_mesh(i, domain, true /* combine */, MeshSource::Groomed);
       }
 
       // grab the first domain's initial transform (e.g. potentially reflect) and use before ICP
@@ -607,9 +606,9 @@ bool Groom::run_alignment() {
         }
         reference_mesh = reference_meshes[reference_index];
       } else {
-        reference_mesh = get_mesh(reference_index, 0, true);
+        reference_mesh = get_mesh(reference_index, 0, true /* combine */, MeshSource::Groomed);
         for (size_t domain = 1; domain < num_domains; domain++) {
-          reference_mesh += get_mesh(reference_index, domain, true);  // combine
+          reference_mesh += get_mesh(reference_index, domain, true /* combine */, MeshSource::Groomed);
         }
       }
       auto transforms = Groom::get_icp_transforms(meshes, reference_mesh);
@@ -656,7 +655,7 @@ bool Groom::run_alignment() {
       std::vector<Mesh> meshes;
       for (size_t i = 0; i < subjects.size(); i++) {
         if (!subjects[i]->is_excluded()) {
-          Mesh mesh = get_mesh(i, domain, true);
+          Mesh mesh = get_mesh(i, domain, true /* combine */, MeshSource::Groomed);
           // if fixed subjects are present, only add the fixed subjects
           if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
             reference_meshes.push_back(mesh);
@@ -678,7 +677,7 @@ bool Groom::run_alignment() {
         reference_index = MeshUtils::findReferenceMesh(reference_meshes, subset_size);
         reference_index = reference_meshes[reference_index].get_id();
       }
-      reference_mesh = get_mesh(reference_index, domain, true);
+      reference_mesh = get_mesh(reference_index, domain, true /* combine */, MeshSource::Groomed);
 
       params.set_alignment_reference_chosen(reference_index);
       params.save_to_project();
