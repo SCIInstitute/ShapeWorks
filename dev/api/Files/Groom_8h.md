@@ -94,7 +94,7 @@ class Groom {
 
   std::vector<vtkSmartPointer<vtkPoints>> get_combined_points();
 
-  Mesh get_mesh(int subject, int domain, bool transformed = false, MeshSource source = MeshSource::Original);
+  Mesh get_mesh(int subject, int domain, bool transformed = false, MeshSource source = MeshSource::Groomed);
 
 
   vtkSmartPointer<vtkPoints> get_landmarks(int subject, int domain);
@@ -119,4 +119,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2025-09-20 at 02:22:47 +0000
+Updated on 2025-09-24 at 22:11:19 +0000
