@@ -44,9 +44,11 @@ bool Groom::run() {
     throw std::invalid_argument("No subjects to groom");
   }
 
-  // clear alignment transforms
+  // clear alignment transforms (except fixed subjects)
   for (auto& subject : subjects) {
-    subject->set_groomed_transforms({});
+    if (!subject->is_fixed()) {
+      subject->set_groomed_transforms({});
+    }
   }
 
   total_ops_ = get_total_ops();
