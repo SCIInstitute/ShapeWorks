@@ -51,9 +51,26 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
+    - name: Restore Dependencies Cache
+      id: cache-deps-restore
+      uses: actions/cache/restore@v3
+      with:
+        path: /Users/runner/install
+        key: ${{ runner.os }}-intel-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-
+
     - name: Build Dependencies
+      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
       shell: bash -l {0}
       run: .github/workflows/gha_deps.sh
+
+    - name: Save Dependencies Cache
+      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: /Users/runner/install
+        key: ${{ runner.os }}-intel-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: cmake
       shell: bash -l {0}

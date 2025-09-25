@@ -6,6 +6,9 @@
 #include <itkMetaImageIOFactory.h>
 #include <itkNiftiImageIOFactory.h>
 #include <itkNrrdImageIOFactory.h>
+#include <itkResampleImageFilter.h>
+
+#include "Logging.h"
 
 namespace shapeworks {
 
@@ -44,8 +47,7 @@ PhysicalRegion ImageUtils::boundingBox(const std::vector<std::reference_wrapper<
   return bbox;
 }
 
-void ImageUtils::register_itk_factories()
-{
+void ImageUtils::register_itk_factories() {
   static bool registered = false;
   if (!registered) {
     // register all the factories
@@ -56,6 +58,95 @@ void ImageUtils::register_itk_factories()
   }
 }
 
+//------------------------------------------------------------------------------
+ImageType::Pointer ImageUtils::make_axis_aligned(ImageType::Pointer input) {
+  // Check if image is already axis-aligned
+  auto direction = input->GetDirection();
+  bool is_oblique = false;
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
+      double expected = (i == j) ? 1.0 : 0.0;
+      if (std::abs(direction(i, j) - expected) > 1e-6) {
+        is_oblique = true;
+        break;
+      }
+    }
+    if (is_oblique) {
+      break;
+    }
+  }
+
+  // If already axis-aligned, return as-is
+  if (!is_oblique) {
+    return input;
+  }
+
+  SW_DEBUG("Image is oblique, resampling to axis-aligned");
+
+  using ResampleFilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  auto resampler = ResampleFilterType::New();
+
+  // Set identity direction
+  ImageType::DirectionType identity_direction;
+  identity_direction.SetIdentity();
+
+  // Calculate bounding box and PROPER SPACING
+  auto region = input->GetLargestPossibleRegion();
+  auto size = region.GetSize();
+  auto spacing = input->GetSpacing();
+
+  // Find bounding box corners
+  Point3 min_pt, max_pt;
+  for (int i = 0; i < 3; i++) {
+    min_pt[i] = std::numeric_limits<double>::max();
+    max_pt[i] = std::numeric_limits<double>::lowest();
+  }
+
+  for (int corner = 0; corner < 8; corner++) {
+    ImageType::IndexType index;
+    index[0] = (corner & 1) ? size[0] - 1 : 0;
+    index[1] = (corner & 2) ? size[1] - 1 : 0;
+    index[2] = (corner & 4) ? size[2] - 1 : 0;
+
+    Point3 point;
+    input->TransformIndexToPhysicalPoint(index, point);
+
+    for (int dim = 0; dim < 3; dim++) {
+      min_pt[dim] = std::min(min_pt[dim], point[dim]);
+      max_pt[dim] = std::max(max_pt[dim], point[dim]);
+    }
+  }
+
+  // Calculate spacing for axis-aligned coordinate system
+  ImageType::SpacingType output_spacing;
+  for (int i = 0; i < 3; i++) {
+    // Find the minimum effective spacing along this axis
+    double min_spacing = std::numeric_limits<double>::max();
+    for (int j = 0; j < 3; j++) {
+      if (std::abs(direction(i, j)) > 1e-6) {
+        min_spacing = std::min(min_spacing, spacing[j] / std::abs(direction(i, j)));
+      }
+    }
+    output_spacing[i] = min_spacing;
+  }
+
+  // Calculate output size with corrected spacing
+  ImageType::SizeType output_size;
+  for (int i = 0; i < 3; i++) {
+    output_size[i] = static_cast<size_t>(std::ceil((max_pt[i] - min_pt[i]) / output_spacing[i])) + 1;
+  }
+
+  resampler->SetInput(input);
+  resampler->SetOutputDirection(identity_direction);
+  resampler->SetOutputOrigin(min_pt);
+  resampler->SetOutputSpacing(output_spacing);
+  resampler->SetSize(output_size);
+
+  resampler->Update();
+  return resampler->GetOutput();
+}
+
+//------------------------------------------------------------------------------
 ImageUtils::TPSTransform::Pointer ImageUtils::createWarpTransform(const std::string& source_landmarks_file,
                                                                   const std::string& target_landmarks_file,
                                                                   const int stride) {

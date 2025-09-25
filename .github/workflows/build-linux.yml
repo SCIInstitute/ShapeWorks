@@ -59,13 +59,31 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
+    - name: Restore Dependencies Cache
+      id: cache-deps-restore
+      uses: actions/cache/restore@v3
+      with:
+        path: /github/home/install
+        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-
+
     - name: try import vtk
       shell: bash -l {0}
       run: conda activate shapeworks && python -c "import vtk"
 
+
     - name: Build Dependencies
+      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
       shell: bash -l {0}
       run: .github/workflows/gha_deps.sh
+
+    - name: Save Dependencies Cache
+      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: /github/home/install
+        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: Check space4
       run: df -h

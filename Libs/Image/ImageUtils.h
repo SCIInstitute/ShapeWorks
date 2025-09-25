@@ -3,9 +3,11 @@
 #include <itkThinPlateSplineKernelTransform.h>
 
 #include "Image.h"
-//#include "ShapeworksUtils.h"
 
 namespace shapeworks {
+
+using PixelType = float;
+using ImageType = itk::Image<PixelType, 3>;
 
 /// Helper functions for image
 class ImageUtils {
@@ -25,6 +27,7 @@ class ImageUtils {
 
   static void register_itk_factories();
 
+  static ImageType::Pointer make_axis_aligned(ImageType::Pointer input);
 };
 
 }  // namespace shapeworks
