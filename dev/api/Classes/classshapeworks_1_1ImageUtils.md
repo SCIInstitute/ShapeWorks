@@ -27,6 +27,7 @@ Helper functions for image.
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1ImageUtils.md#function-boundingbox)**(const std::vector< std::reference_wrapper< const [Image](../Classes/classshapeworks_1_1Image.md) > > & images, Image::PixelType isoValue =1.0)<br>calculate bounding box for shapework images using the region of data <= the given isoValue  |
 | TPSTransform::Pointer | **[createWarpTransform](../Classes/classshapeworks_1_1ImageUtils.md#function-createwarptransform)**(const std::string & source_landmarks_file, const std::string & target_landmarks_file, const int stride =1) |
 | void | **[register_itk_factories](../Classes/classshapeworks_1_1ImageUtils.md#function-register-itk-factories)**() |
+| ImageType::Pointer | **[make_axis_aligned](../Classes/classshapeworks_1_1ImageUtils.md#function-make-axis-aligned)**(ImageType::Pointer input) |
 
 ## Public Types Documentation
 
@@ -82,6 +83,15 @@ static void register_itk_factories()
 ```
 
 
+### function make_axis_aligned
+
+```cpp
+static ImageType::Pointer make_axis_aligned(
+    ImageType::Pointer input
+)
+```
+
+
 -------------------------------
 
-Updated on 2025-09-24 at 22:11:18 +0000
+Updated on 2025-09-25 at 21:39:35 +0000

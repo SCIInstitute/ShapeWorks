@@ -30,9 +30,11 @@ title: Libs/Image/ImageUtils.h
 #include <itkThinPlateSplineKernelTransform.h>
 
 #include "Image.h"
-//#include "ShapeworksUtils.h"
 
 namespace shapeworks {
+
+using PixelType = float;
+using ImageType = itk::Image<PixelType, 3>;
 
 class ImageUtils {
  public:
@@ -47,6 +49,7 @@ class ImageUtils {
 
   static void register_itk_factories();
 
+  static ImageType::Pointer make_axis_aligned(ImageType::Pointer input);
 };
 
 }  // namespace shapeworks
@@ -55,4 +58,4 @@ class ImageUtils {
 
 -------------------------------
 
-Updated on 2025-09-24 at 22:11:19 +0000
+Updated on 2025-09-25 at 21:39:36 +0000

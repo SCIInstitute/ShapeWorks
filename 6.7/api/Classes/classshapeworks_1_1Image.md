@@ -59,7 +59,6 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[resample](../Classes/classshapeworks_1_1Image.md#function-resample)**(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing, const ImageType::DirectionType direction, InterpolationType interp =NearestNeighbor) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[resample](../Classes/classshapeworks_1_1Image.md#function-resample)**(const Vector & physicalSpacing, InterpolationType interp =Linear)<br>resamples image using new physical spacing, updating logical dims to keep all image data for this spacing  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[resample](../Classes/classshapeworks_1_1Image.md#function-resample)**(double isoSpacing =1.0, InterpolationType interp =Linear)<br>resamples image using isotropic physical spacing  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[toAxisAligned](../Classes/classshapeworks_1_1Image.md#function-toaxisaligned)**(InterpolationType interp =NearestNeighbor)<br>resamples image to be axis-aligned (i.e., identity direction matrix) if needed  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[resize](../Classes/classshapeworks_1_1Image.md#function-resize)**(Dims logicalDims, InterpolationType interp =Linear) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[pad](../Classes/classshapeworks_1_1Image.md#function-pad)**(int padding, PixelType value =0.0)<br>pads an image by same number of voxels in all directions with constant value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[pad](../Classes/classshapeworks_1_1Image.md#function-pad)**(int padx, int pady, int padz, PixelType value =0.0)<br>pads an image by desired number of voxels in each direction with constant value  |
@@ -482,16 +481,6 @@ Image & resample(
 ```
 
 resamples image using isotropic physical spacing 
-
-### function toAxisAligned
-
-```cpp
-Image & toAxisAligned(
-    InterpolationType interp =NearestNeighbor
-)
-```
-
-resamples image to be axis-aligned (i.e., identity direction matrix) if needed 
 
 ### function resize
 
@@ -1175,4 +1164,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2025-09-24 at 22:11:19 +0000
+Updated on 2025-09-25 at 21:39:36 +0000

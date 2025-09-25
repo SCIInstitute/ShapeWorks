@@ -229,6 +229,8 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | using itk::AffineTransform< double, 3 > | **[AffineTransform](../Namespaces/namespaceshapeworks.md#using-affinetransform)** <br>Affine transforms are used for many [Image]() manipulation commands.  |
 | using AffineTransform::Pointer | **[AffineTransformPtr](../Namespaces/namespaceshapeworks.md#using-affinetransformptr)**  |
 | using vtkSmartPointer< vtkTransform > | **[MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform)** <br>[Mesh]() transforms.  |
+| using float | **[PixelType](../Namespaces/namespaceshapeworks.md#using-pixeltype)**  |
+| using itk::Image< PixelType, 3 > | **[ImageType](../Namespaces/namespaceshapeworks.md#using-imagetype)**  |
 | using [itk::ThinPlateSplineKernelTransform2](../Classes/classitk_1_1ThinPlateSplineKernelTransform2.md)< double, 3 > | **[ThinPlateSplineTransform](../Namespaces/namespaceshapeworks.md#using-thinplatesplinetransform)** <br>Transforms that can be used for [ReconstructSurface]().  |
 | using [itk::CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md)< double, 3 > | **[RBFSSparseTransform](../Namespaces/namespaceshapeworks.md#using-rbfssparsetransform)**  |
 | using std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > | **[ProjectHandle](../Namespaces/namespaceshapeworks.md#using-projecthandle)**  |
@@ -742,6 +744,20 @@ using shapeworks::MeshTransform = typedef vtkSmartPointer<vtkTransform>;
 ```
 
 [Mesh]() transforms. 
+
+### using PixelType
+
+```cpp
+using shapeworks::PixelType = typedef float;
+```
+
+
+### using ImageType
+
+```cpp
+using shapeworks::ImageType = typedef itk::Image<PixelType, 3>;
+```
+
 
 ### using ThinPlateSplineTransform
 
@@ -2606,4 +2622,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2025-09-24 at 22:11:18 +0000
+Updated on 2025-09-25 at 21:39:35 +0000
