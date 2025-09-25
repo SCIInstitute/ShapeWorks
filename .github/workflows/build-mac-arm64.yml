@@ -55,7 +55,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: /Users/runner/install
-        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-arm64-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
         restore-keys: |
           ${{ runner.os }}-deps-
 
@@ -69,7 +69,7 @@ jobs:
       uses: actions/cache/save@v3
       with:
         path: /Users/runner/install
-        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-arm64-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: cmake
       shell: bash -l {0}
