@@ -561,6 +561,10 @@ PYBIND11_MODULE(shapeworks_py, m) {
           },
           "evaluate the image at any given point in space", "pt"_a)
 
+      .def(
+          "toAxisAligned", [](Image& image) -> decltype(auto) { return image.toAxisAligned(); },
+          "resample image to be axis-aligned (i.e., identity direction matrix) if needed")
+
       ;
 
   // PhysicalRegion
