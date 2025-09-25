@@ -87,7 +87,6 @@ class Groom {
 
   Mesh get_mesh(int subject, int domain, bool transformed = false, MeshSource source = MeshSource::Groomed);
 
-
   vtkSmartPointer<vtkPoints> get_landmarks(int subject, int domain);
 
   int find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> landmarks);
