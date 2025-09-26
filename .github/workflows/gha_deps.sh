@@ -1,4 +1,6 @@
 #!/bin/bash -x
+set -e  # Exit on any error
+set -o pipefail  # Exit on pipe failures
 
 echo "#############################"
 echo "# Build dependencies        #"
