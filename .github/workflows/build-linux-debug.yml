@@ -70,18 +70,32 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-deps-
 
+    - name: Check space3.5
+      run: df -h
 
     - name: Clean before deps build
       if: steps.cache-deps-restore.outputs.cache-hit != 'true'
       run: |
-        # Clean conda cache
+        # Clean package manager caches
+        if command -v apt-get >/dev/null; then
+          apt-get clean
+          rm -rf /var/lib/apt/lists/*
+        fi
+        
+        # Clean conda
         conda clean -all -y
-        # Clean apt cache
-        apt-get clean
-        # Clean tmp directories
-        rm -rf /tmp/*
-        # Clean GitHub Actions tool cache
-        rm -rf /opt/hostedtoolcache/CodeQL /opt/hostedtoolcache/go /opt/hostedtoolcache/PyPy
+        
+        # Remove common temporary locations
+        rm -rf /tmp/* /var/tmp/*
+        
+        # Clean pip cache if it exists
+        if command -v pip >/dev/null; then
+          pip cache purge
+        fi
+        
+        # Show what's using space
+        echo "=== Disk usage by directory ==="
+        du -sh /* 2>/dev/null | sort -hr | head -15
 
     - name: Check space4
       run: df -h
