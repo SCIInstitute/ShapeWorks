@@ -70,6 +70,19 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-deps-
 
+
+    - name: Clean before deps build
+      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
+      run: |
+        # Clean conda cache
+        conda clean -all -y
+        # Clean apt cache
+        apt-get clean
+        # Clean tmp directories
+        rm -rf /tmp/*
+        # Clean GitHub Actions tool cache
+        rm -rf /opt/hostedtoolcache/CodeQL /opt/hostedtoolcache/go /opt/hostedtoolcache/PyPy
+
     - name: Check space4
       run: df -h
 
