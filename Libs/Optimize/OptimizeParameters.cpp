@@ -54,7 +54,14 @@ const std::string geodesic_remesh_percent = "geodesic_remesh_percent";
 const std::string shared_boundary = "shared_boundary";
 const std::string shared_boundary_weight = "shared_boundary_weight";
 const std::string early_stopping_threshold = "early_stopping_threshold";
-const std::string early_stopping_interval = "early_stopping_interval";
+const std::string early_stopping_frequency = "early_stopping_frequency";
+const std::string early_stopping_window = "early_stopping_window";
+const std::string early_stopping_strategy = "early_stopping_strategy";
+const std::string early_stopping_ema_alpha = "early_stopping_ema_alpha";
+const std::string early_stopping_enabled = "early_stopping_enabled";
+const std::string early_stopping_warmup_iters = "early_stopping_warmup_iters";
+const std::string early_stopping_enable_logging = "early_stopping_enable_logging";
+
 
 }  // namespace Keys
 
@@ -101,7 +108,13 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::shared_boundary,
                                          Keys::shared_boundary_weight,
                                          Keys::early_stopping_threshold,
-                                         Keys::early_stopping_interval};
+                                         Keys::early_stopping_frequency,
+                                         Keys::early_stopping_window,
+                                         Keys::early_stopping_strategy,
+                                         Keys::early_stopping_ema_alpha,
+                                         Keys::early_stopping_enabled,
+                                         Keys::early_stopping_warmup_iters,
+                                         Keys::early_stopping_enable_logging };
 
   std::vector<std::string> to_remove;
 
@@ -440,8 +453,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->set_particle_format(get_particle_format());
   optimize->SetSharedBoundaryEnabled(get_shared_boundary());
   optimize->SetSharedBoundaryWeight(get_shared_boundary_weight());
-  optimize->SetEarlyStoppingInterval(get_early_stopping_interval());
-  optimize->SetEarlyStoppingThreshold(get_early_stopping_threshold());
+  optimize->SetEarlyStoppingConfig(get_early_stopping_config());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -873,16 +885,27 @@ double OptimizeParameters::get_shared_boundary_weight() { return params_.get(Key
 void OptimizeParameters::set_shared_boundary_weight(double value) { params_.set(Keys::shared_boundary_weight, value); }
 
 //---------------------------------------------------------------------------
-double OptimizeParameters::get_early_stopping_threshold() { return params_.get(Keys::early_stopping_threshold, 0.0001); }
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_early_stopping_threshold(double value) { params_.set(Keys::early_stopping_threshold, value); }
-
-//---------------------------------------------------------------------------
-int OptimizeParameters::get_early_stopping_interval() { return params_.get(Keys::early_stopping_interval, 500); }
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_early_stopping_interval(int value) { params_.set(Keys::shared_boundary_weight, value); }
+EarlyStoppingConfig OptimizeParameters::get_early_stopping_config() {
+  EarlyStoppingConfig config;
+  config.enabled = params_.get(Keys::early_stopping_enabled, false);
+  config.frequency = params_.get(Keys::early_stopping_frequency, 1000);
+  config.window_size = params_.get(Keys::early_stopping_window, 5);
+  config.threshold = params_.get(Keys::early_stopping_threshold, 0.0001);
+  std::string strategy =
+      params_.get(Keys::early_stopping_strategy, "relative_difference");
+  if (strategy == "exponential_moving_average") {
+    config.strategy = EarlyStoppingStrategy::ExponentialMovingAverage;
+  } else if (strategy == "relative_difference"{
+    config.strategy = EarlyStoppingStrategy::RelativeDifference;
+  }
+  else {
+    throw std::invalid_argument("Invalid strategy for early stopping " + strategy);
+  }
+  config.ema_alpha = params_.get(Keys::early_stopping_ema_alpha, 0.2);
+  config.warmup_iters = params_.get(Keys::early_stopping_warmup_iters, 1000);
+  config.enable_logging = params_.get(Keys::early_stopping_enable_logging, false);
+  return config;
+}
 
 //---------------------------------------------------------------------------
 Parameters OptimizeParameters::get_parameters() const { return params_; }
