@@ -1281,8 +1281,13 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def(py::init<>())
 
+      // int do_pca(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
       .def("PCA", py::overload_cast<ParticleSystemEvaluation, int>(&ParticleShapeStatistics::do_pca),
            "calculates the eigen values and eigen vectors of the data", "particleSystem"_a, "domainsPerShape"_a = 1)
+
+      // int do_pca(std::shared_ptr<Project> project);
+      .def("PCA", py::overload_cast<std::shared_ptr<Project>>(&ParticleShapeStatistics::do_pca),
+           "calculates the eigen values and eigen vectors of the data from a project", "project"_a)
 
       .def("principalComponentProjections", &ParticleShapeStatistics::principal_component_projections,
            "projects the original data on the calculated principal components")

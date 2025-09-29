@@ -476,7 +476,10 @@ int ParticleShapeStatistics::read_point_files(const std::string& s) {
 }
 
 //---------------------------------------------------------------------------
-ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> project) {
+ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> project) { load_from_project(project); }
+
+//---------------------------------------------------------------------------
+void ParticleShapeStatistics::load_from_project(std::shared_ptr<Project> project) {
   std::vector<Eigen::VectorXd> points;
   std::vector<int> groups;
   for (auto& s : project->get_subjects()) {
@@ -564,6 +567,13 @@ int ParticleShapeStatistics::do_pca(ParticleSystemEvaluation ParticleSystemEvalu
   }
 
   return do_pca(particlePoints, domainsPerShape);
+}
+
+//---------------------------------------------------------------------------
+int ParticleShapeStatistics::do_pca(std::shared_ptr<Project> project) {
+  load_from_project(project);
+  compute_modes();
+  return 0;
 }
 
 //---------------------------------------------------------------------------
