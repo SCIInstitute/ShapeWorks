@@ -895,7 +895,7 @@ EarlyStoppingConfig OptimizeParameters::get_early_stopping_config() {
       params_.get(Keys::early_stopping_strategy, "relative_difference");
   if (strategy == "exponential_moving_average") {
     config.strategy = EarlyStoppingStrategy::ExponentialMovingAverage;
-  } else if (strategy == "relative_difference"{
+  } else if (strategy == "relative_difference"){
     config.strategy = EarlyStoppingStrategy::RelativeDifference;
   }
   else {
