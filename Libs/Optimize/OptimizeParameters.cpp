@@ -61,8 +61,6 @@ const std::string early_stopping_ema_alpha = "early_stopping_ema_alpha";
 const std::string early_stopping_enabled = "early_stopping_enabled";
 const std::string early_stopping_warmup_iters = "early_stopping_warmup_iters";
 const std::string early_stopping_enable_logging = "early_stopping_enable_logging";
-
-
 }  // namespace Keys
 
 //---------------------------------------------------------------------------

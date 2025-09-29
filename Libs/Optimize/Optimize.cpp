@@ -789,7 +789,6 @@ void Optimize::RunOptimize() {
 
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->GetOptimizer()->SetTolerance(0.0);
-  // m_sampler->SetEarlyStoppingConfig(EarlyStoppingConfig& config);
   m_sampler->Execute();
 
   this->WritePointFiles();

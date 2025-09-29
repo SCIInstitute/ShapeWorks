@@ -325,7 +325,7 @@ class Sampler {
   double m_Spacing{0};
   bool m_IsSharedBoundaryEnabled;
   double m_SharedBoundaryWeight{0.5};
-  
+
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
