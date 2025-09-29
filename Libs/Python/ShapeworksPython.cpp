@@ -559,8 +559,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
           [](Image& image, std::vector<double>& pt) -> decltype(auto) {
             return image.evaluate(Point({pt[0], pt[1], pt[2]}));
           },
-          "evaluate the image at any given point in space", "pt"_a)
-      ;
+          "evaluate the image at any given point in space", "pt"_a);
 
   // PhysicalRegion
   py::class_<PhysicalRegion>(m, "PhysicalRegion")
@@ -1281,8 +1280,13 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def(py::init<>())
 
+      // int do_pca(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
       .def("PCA", py::overload_cast<ParticleSystemEvaluation, int>(&ParticleShapeStatistics::do_pca),
            "calculates the eigen values and eigen vectors of the data", "particleSystem"_a, "domainsPerShape"_a = 1)
+
+      // int do_pca(std::shared_ptr<Project> project);
+      .def("PCA", py::overload_cast<std::shared_ptr<Project>>(&ParticleShapeStatistics::do_pca),
+           "calculates the eigen values and eigen vectors of the data from a project", "project"_a)
 
       .def("principalComponentProjections", &ParticleShapeStatistics::principal_component_projections,
            "projects the original data on the calculated principal components")
@@ -1302,7 +1306,12 @@ PYBIND11_MODULE(shapeworks_py, m) {
        components are constructed")
 
       .def("percentVarByMode", &ParticleShapeStatistics::get_percent_variance_by_mode,
-           "return the variance accounted for by the principal components");
+           "return the variance accounted for by the principal components")
+
+      .def("projectNewSample", &ParticleShapeStatistics::project_new_sample, "project a new sample into the PCA space",
+           "newSample"_a)
+
+      .def("getMean", &ParticleShapeStatistics::get_mean, "returns the mean shape particles");
 
   define_python_analyze(m);
   define_python_groom(m);

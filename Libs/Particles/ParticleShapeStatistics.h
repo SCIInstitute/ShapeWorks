@@ -19,12 +19,14 @@ class Project;
 class ParticleShapeStatistics {
  public:
   ParticleShapeStatistics(){};
-  ParticleShapeStatistics(std::shared_ptr<Project> project);
+  explicit ParticleShapeStatistics(std::shared_ptr<Project> project);
   ~ParticleShapeStatistics(){};
 
   int do_pca(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
   int do_pca(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
+
+  int do_pca(std::shared_ptr<Project> project);
 
   //! Loads a set of point files and pre-computes some statistics.
   int import_points(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
@@ -56,6 +58,9 @@ class ParticleShapeStatistics {
   //! Computes the principal component loadings, or projections onto the
   //!  principal componenent axes for each of the samples.  ComputeModes must be called first.
   int principal_component_projections();
+
+  //! Projects a new sample into the PCA space defined by the original samples.
+  Eigen::VectorXd project_new_sample(const Eigen::VectorXd& new_sample);
 
   //! Returns the sample size
   int get_num_samples() const { return num_samples_; }
@@ -134,6 +139,8 @@ class ParticleShapeStatistics {
   bool get_particle_to_surface_mode() const { return particle_to_surface_mode_; }
   //! Set the meshes for each sample (used for some evaluation metrics)
   void set_meshes(const std::vector<Mesh>& meshes) { meshes_ = meshes; }
+
+  void load_from_project(std::shared_ptr<Project> project);
 
  private:
   unsigned int num_samples_group1_;
