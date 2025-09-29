@@ -3889,6 +3889,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#shapeworks_py.ParticleShapeStatistics.getMean" class="md-nav__link">
+    getMean()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#shapeworks_py.ParticleShapeStatistics.numDims" class="md-nav__link">
     numDims()
   </a>
@@ -3912,6 +3919,13 @@
           <li class="md-nav__item">
   <a href="#shapeworks_py.ParticleShapeStatistics.principalComponentProjections" class="md-nav__link">
     principalComponentProjections()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks_py.ParticleShapeStatistics.projectNewSample" class="md-nav__link">
+    projectNewSample()
   </a>
   
 </li>
@@ -6895,6 +6909,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#shapeworks_py.ParticleShapeStatistics.getMean" class="md-nav__link">
+    getMean()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#shapeworks_py.ParticleShapeStatistics.numDims" class="md-nav__link">
     numDims()
   </a>
@@ -6918,6 +6939,13 @@
           <li class="md-nav__item">
   <a href="#shapeworks_py.ParticleShapeStatistics.principalComponentProjections" class="md-nav__link">
     principalComponentProjections()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks_py.ParticleShapeStatistics.projectNewSample" class="md-nav__link">
+    projectNewSample()
   </a>
   
 </li>
@@ -13339,8 +13367,16 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>PCA(self: shapeworks_py.ParticleShapeStatistics, particleSystem: shapeworks_py.ParticleSystem, domainsPerShape: int = 1) -&gt; int</p>
+      <p>PCA(<em>args, </em>*kwargs)
+Overloaded function.</p>
+<ol>
+<li>PCA(self: shapeworks_py.ParticleShapeStatistics, particleSystem: shapeworks_py.ParticleSystem, domainsPerShape: int = 1) -&gt; int</li>
+</ol>
 <p>calculates the eigen values and eigen vectors of the data</p>
+<ol>
+<li>PCA(self: shapeworks_py.ParticleShapeStatistics, project: shapeworks::Project) -&gt; int</li>
+</ol>
+<p>calculates the eigen values and eigen vectors of the data from a project</p>
 
   </div>
 
@@ -13387,6 +13423,29 @@ Overloaded function.</p>
   
       <p>eigenVectors(self: shapeworks_py.ParticleShapeStatistics) -&gt; numpy.ndarray[numpy.float64[m, n]]</p>
 <p>returns the eigenvectors</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="shapeworks_py.ParticleShapeStatistics.getMean" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">getMean</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method descriptor"><code>method descriptor</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>getMean(self: shapeworks_py.ParticleShapeStatistics) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
+<p>returns the mean shape particles</p>
 
   </div>
 
@@ -13479,6 +13538,29 @@ Overloaded function.</p>
   
       <p>principalComponentProjections(self: shapeworks_py.ParticleShapeStatistics) -&gt; int</p>
 <p>projects the original data on the calculated principal components</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="shapeworks_py.ParticleShapeStatistics.projectNewSample" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">projectNewSample</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method descriptor"><code>method descriptor</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>projectNewSample(self: shapeworks_py.ParticleShapeStatistics, newSample: numpy.ndarray[numpy.float64[m, 1]]) -&gt; numpy.ndarray[numpy.float64[m, 1]]</p>
+<p>project a new sample into the PCA space</p>
 
   </div>
 
@@ -16699,7 +16781,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>seed(seed: int = 1758904439509259) -&gt; None</p>
+      <p>seed(seed: int = 1759183360880642) -&gt; None</p>
 <p>sets the seed for random number generation (internal use)</p>
 
   </div>

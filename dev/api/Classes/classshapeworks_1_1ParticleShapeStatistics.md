@@ -21,6 +21,7 @@ title: shapeworks::ParticleShapeStatistics
 | | **[~ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-~particleshapestatistics)**() |
 | int | **[do_pca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-do-pca)**(std::vector< std::vector< Point > > global_pts, int domainsPerShape =1) |
 | int | **[do_pca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-do-pca)**([ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) particleSystem, int domainsPerShape =1) |
+| int | **[do_pca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-do-pca)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project) |
 | int | **[import_points](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-import-points)**(std::vector< Eigen::VectorXd > points, std::vector< int > group_ids)<br>Loads a set of point files and pre-computes some statistics.  |
 | void | **[compute_multi_level_analysis_statistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-compute-multi-level-analysis-statistics)**(std::vector< Eigen::VectorXd > points, unsigned int dps)<br>Loads a set of point files and pre-computes statistics for multi-level analysis.  |
 | int | **[compute_shape_dev_modes_for_mca](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-compute-shape-dev-modes-for-mca)**()<br>Compute shape variations for MLCA.  |
@@ -31,6 +32,7 @@ title: shapeworks::ParticleShapeStatistics
 | int | **[compute_modes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-compute-modes)**()<br>Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first.  |
 | int | **[get_num_modes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-num-modes)**() const<br>Return the number of modes.  |
 | int | **[principal_component_projections](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-principal-component-projections)**() |
+| Eigen::VectorXd | **[project_new_sample](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-project-new-sample)**(const Eigen::VectorXd & new_sample)<br>Projects a new sample into the PCA space defined by the original samples.  |
 | int | **[get_num_samples](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-num-samples)**() const<br>Returns the sample size.  |
 | int | **[get_group1_num_samples](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group1-num-samples)**() const |
 | int | **[get_group2_num_samples](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group2-num-samples)**() const |
@@ -65,6 +67,7 @@ title: shapeworks::ParticleShapeStatistics
 | void | **[set_particle_to_surface_mode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-set-particle-to-surface-mode)**(bool value) |
 | bool | **[get_particle_to_surface_mode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-particle-to-surface-mode)**() const |
 | void | **[set_meshes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-set-meshes)**(const std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes)<br>Set the meshes for each sample (used for some evaluation metrics)  |
+| void | **[load_from_project](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-load-from-project)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project) |
 | int | **[simple_linear_regression](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-simple-linear-regression)**(const std::vector< double > & y, const std::vector< double > & x, double & a, double & b) |
 
 ## Detailed Description
@@ -88,7 +91,7 @@ inline ParticleShapeStatistics()
 ### function ParticleShapeStatistics
 
 ```cpp
-ParticleShapeStatistics(
+explicit ParticleShapeStatistics(
     std::shared_ptr< Project > project
 )
 ```
@@ -117,6 +120,15 @@ int do_pca(
 int do_pca(
     ParticleSystemEvaluation particleSystem,
     int domainsPerShape =1
+)
+```
+
+
+### function do_pca
+
+```cpp
+int do_pca(
+    std::shared_ptr< Project > project
 )
 ```
 
@@ -214,6 +226,16 @@ int principal_component_projections()
 
 Computes the principal component loadings, or projections onto the principal componenent axes for each of the samples. ComputeModes must be called first. 
 
+
+### function project_new_sample
+
+```cpp
+Eigen::VectorXd project_new_sample(
+    const Eigen::VectorXd & new_sample
+)
+```
+
+Projects a new sample into the PCA space defined by the original samples. 
 
 ### function get_num_samples
 
@@ -491,6 +513,15 @@ inline void set_meshes(
 
 Set the meshes for each sample (used for some evaluation metrics) 
 
+### function load_from_project
+
+```cpp
+void load_from_project(
+    std::shared_ptr< Project > project
+)
+```
+
+
 ### function simple_linear_regression
 
 ```cpp
@@ -508,4 +539,4 @@ Computes a simple linear regression of the first list of values with respect to 
 
 -------------------------------
 
-Updated on 2025-09-26 at 16:33:39 +0000
+Updated on 2025-09-29 at 22:02:15 +0000

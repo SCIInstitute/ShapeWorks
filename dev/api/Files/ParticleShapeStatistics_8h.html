@@ -2559,12 +2559,14 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">ParticleShapeStatistics</span><span class="w"> </span><span class="p">{</span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="p">(){};</span>
-<span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="p">);</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">ParticleShapeStatistics</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="p">);</span>
 <span class="w">  </span><span class="o">~</span><span class="n">ParticleShapeStatistics</span><span class="p">(){};</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">do_pca</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">do_pca</span><span class="p">(</span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">do_pca</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">import_points</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_ids</span><span class="p">);</span>
 
@@ -2585,6 +2587,8 @@
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_modes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">principal_component_projections</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">project_new_sample</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">new_sample</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_samples</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">num_samples_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_group1_num_samples</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">num_samples_group1_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
@@ -2640,6 +2644,8 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_particle_to_surface_mode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">particle_to_surface_mode_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_meshes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">meshes_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meshes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_from_project</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="p">);</span>
+
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_samples_group1_</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_samples_group2_</span><span class="p">;</span>
@@ -2688,7 +2694,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-09-26 at 16:33:40 +0000</p>
+<p>Updated on 2025-09-29 at 22:02:16 +0000</p>
 
               
             </article>

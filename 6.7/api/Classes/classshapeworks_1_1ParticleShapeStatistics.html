@@ -2532,6 +2532,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-do_pca_2" class="md-nav__link">
+    function do_pca
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-import_points" class="md-nav__link">
     function import_points
   </a>
@@ -2597,6 +2604,13 @@
           <li class="md-nav__item">
   <a href="#function-principal_component_projections" class="md-nav__link">
     function principal_component_projections
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-project_new_sample" class="md-nav__link">
+    function project_new_sample
   </a>
   
 </li>
@@ -2840,6 +2854,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-load_from_project" class="md-nav__link">
+    function load_from_project
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-simple_linear_regression" class="md-nav__link">
     function simple_linear_regression
   </a>
@@ -2903,6 +2924,10 @@
 </tr>
 <tr>
 <td>int</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-do-pca">do_pca</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt; project)</td>
+</tr>
+<tr>
+<td>int</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-import-points">import_points</a></strong>(std::vector&lt; Eigen::VectorXd &gt; points, std::vector&lt; int &gt; group_ids)<br>Loads a set of point files and pre-computes some statistics.</td>
 </tr>
 <tr>
@@ -2940,6 +2965,10 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-principal-component-projections">principal_component_projections</a></strong>()</td>
+</tr>
+<tr>
+<td>Eigen::VectorXd</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-project-new-sample">project_new_sample</a></strong>(const Eigen::VectorXd &amp; new_sample)<br>Projects a new sample into the PCA space defined by the original samples.</td>
 </tr>
 <tr>
 <td>int</td>
@@ -3078,6 +3107,10 @@
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-set-meshes">set_meshes</a></strong>(const std::vector&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; &amp; meshes)<br>Set the meshes for each sample (used for some evaluation metrics)</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-load-from-project">load_from_project</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt; project)</td>
+</tr>
+<tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-simple-linear-regression">simple_linear_regression</a></strong>(const std::vector&lt; double &gt; &amp; y, const std::vector&lt; double &gt; &amp; x, double &amp; a, double &amp; b)</td>
 </tr>
@@ -3092,7 +3125,7 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleShapeStatistics</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-particleshapestatistics_1">function ParticleShapeStatistics</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleShapeStatistics</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">ParticleShapeStatistics</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -3109,6 +3142,11 @@
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">do_pca</span><span class="p">(</span>
 <span class="w">    </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-do_pca_2">function do_pca</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">do_pca</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-import_points">function import_points</h3>
@@ -3163,6 +3201,12 @@
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">principal_component_projections</span><span class="p">()</span>
 </code></pre></div>
 <p>Computes the principal component loadings, or projections onto the principal componenent axes for each of the samples. ComputeModes must be called first. </p>
+<h3 id="function-project_new_sample">function project_new_sample</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">project_new_sample</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">new_sample</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Projects a new sample into the PCA space defined by the original samples. </p>
 <h3 id="function-get_num_samples">function get_num_samples</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">get_num_samples</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -3301,6 +3345,11 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set the meshes for each sample (used for some evaluation metrics) </p>
+<h3 id="function-load_from_project">function load_from_project</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_from_project</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-simple_linear_regression">function simple_linear_regression</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">simple_linear_regression</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">y</span><span class="p">,</span>
@@ -3311,7 +3360,7 @@
 </code></pre></div>
 <p>Computes a simple linear regression of the first list of values with respect to the second y=a + bx. Returns the estimated parameters a &amp; b. Returns 0 on success and -1 on fail.*/ </p>
 <hr />
-<p>Updated on 2025-09-26 at 16:33:39 +0000</p>
+<p>Updated on 2025-09-29 at 22:02:15 +0000</p>
 
               
             </article>

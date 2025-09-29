@@ -41,12 +41,14 @@ class Project;
 class ParticleShapeStatistics {
  public:
   ParticleShapeStatistics(){};
-  ParticleShapeStatistics(std::shared_ptr<Project> project);
+  explicit ParticleShapeStatistics(std::shared_ptr<Project> project);
   ~ParticleShapeStatistics(){};
 
   int do_pca(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
   int do_pca(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
+
+  int do_pca(std::shared_ptr<Project> project);
 
   int import_points(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
 
@@ -67,6 +69,8 @@ class ParticleShapeStatistics {
   int get_num_modes() const;
 
   int principal_component_projections();
+
+  Eigen::VectorXd project_new_sample(const Eigen::VectorXd& new_sample);
 
   int get_num_samples() const { return num_samples_; }
   int get_group1_num_samples() const { return num_samples_group1_; }
@@ -122,6 +126,8 @@ class ParticleShapeStatistics {
   bool get_particle_to_surface_mode() const { return particle_to_surface_mode_; }
   void set_meshes(const std::vector<Mesh>& meshes) { meshes_ = meshes; }
 
+  void load_from_project(std::shared_ptr<Project> project);
+
  private:
   unsigned int num_samples_group1_;
   unsigned int num_samples_group2_;
@@ -173,4 +179,4 @@ class ParticleShapeStatistics {
 
 -------------------------------
 
-Updated on 2025-09-26 at 16:33:40 +0000
+Updated on 2025-09-29 at 22:02:16 +0000
