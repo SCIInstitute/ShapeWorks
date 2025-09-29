@@ -33,6 +33,7 @@
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
 #include "Logging.h"
 #include "Optimize.h"
+#include "EarlyStoppingConfig.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
 #include "ShapeworksUtils.h"
@@ -788,6 +789,7 @@ void Optimize::RunOptimize() {
 
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->GetOptimizer()->SetTolerance(0.0);
+  // m_sampler->SetEarlyStoppingConfig(EarlyStoppingConfig& config);
   m_sampler->Execute();
 
   this->WritePointFiles();
@@ -2024,13 +2026,7 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled) { m_sampler->SetSharedBoun
 void Optimize::SetSharedBoundaryWeight(double weight) { m_sampler->SetSharedBoundaryWeight(weight); }
 
 //---------------------------------------------------------------------------
-void Optimize::SetEarlyStoppingEnabled(bool enabled) { m_sampler->SetEarlyStoppingEnabled(enabled); }
-
-//---------------------------------------------------------------------------
-void Optimize::SetEarlyStoppingThreshold(double threshold) { m_sampler->SetEarlyStoppingThreshold(threshold); }
-
-void Optimize::SetEarlyStoppingInterval(int interval) { m_sampler->SetEarlyStoppingInterval(interval); }
-
+void Optimize::SetEarlyStoppingConfig(EarlyStoppingConfig config) { m_sampler->SetEarlyStoppingConfig(config); }
 
 //---------------------------------------------------------------------------
 void Optimize::ComputeTotalIterations() {
