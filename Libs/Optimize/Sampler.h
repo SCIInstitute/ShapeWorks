@@ -18,6 +18,7 @@
 #include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"
 #include "ParticleSystem.h"
 #include "vnl/vnl_matrix_fixed.h"
+#include "EarlyStoppingConfig.h"
 
 // Uncomment to visualize FFCs with scalar and vector fields
 // #define VIZFFC
@@ -238,9 +239,7 @@ class Sampler {
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }
 
-  void SetEarlyStoppingEnabled(bool enabled) { m_IsEarlyStoppingEnabled = enabled; }
-  void SetEarlyStoppingThreshold(double threshold) { m_EarlyStoppingThreshold = threshold; }
-  void SetEarlyStoppingInterval(int interval) { m_EarlyStoppingInterval = interval; }
+  void SetEarlyStoppingConfig(EarlyStoppingConfig config) { early_stopping_config_ = config; }
 
   void ReadTransforms();
   void ReadPointsFiles();
@@ -327,11 +326,6 @@ class Sampler {
   bool m_IsSharedBoundaryEnabled;
   double m_SharedBoundaryWeight{0.5};
   
-  // member variables for early stopping
-  double m_EarlyStoppingThreshold{0.0001};
-  bool m_IsEarlyStoppingEnabled;
-  int m_EarlyStoppingInterval{500};
-
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
@@ -343,6 +337,8 @@ class Sampler {
   std::vector<std::string> fieldAttributes_;
 
   std::vector<std::vector<itk::Point<double>>> initial_points_;
+
+  EarlyStoppingConfig early_stopping_config_; // config for early stopping
 
   unsigned int m_verbosity;
 };
