@@ -152,8 +152,8 @@ void Visualizer::handle_new_mesh() {
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh(int index) {
-  auto meshes = get_current_meshes_transformed(index);
+vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh(int index, bool clip_constraints) {
+  auto meshes = get_current_meshes_transformed(index, clip_constraints);
   if (meshes.empty()) {
     return nullptr;
   }
@@ -167,7 +167,7 @@ vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh(int index) {
 }
 
 //-----------------------------------------------------------------------------
-std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transformed(int index) {
+std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transformed(int index, bool clip_constraints) {
   std::vector<vtkSmartPointer<vtkPolyData>> list;
   auto shapes = lightbox_->get_shapes();
   if (shapes.size() > index) {
@@ -178,10 +178,17 @@ std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transfo
         if (!meshes[domain]->get_poly_data()) {
           return list;
         }
+
+        Mesh mesh(meshes[domain]->get_poly_data());
+        if (clip_constraints) {
+          auto constraint = shapes[index]->get_constraints(domain);
+          constraint.clipMesh(mesh);
+        }
+
         // we have to transform each domain to its location in order to export an appended mesh
         auto filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
         filter->SetTransform(get_transform(shapes[index], get_alignment_domain(), domain));
-        filter->SetInputData(meshes[domain]->get_poly_data());
+        filter->SetInputData(mesh.getVTKMesh());
         filter->Update();
         list.push_back(filter->GetOutput());
       }

@@ -23,6 +23,9 @@ class ExportUtils {
   static bool write_particle_scalars(ShapeWorksStudioApp* app, std::shared_ptr<Shape> shape, QString filename);
 
   static bool write_pca_scores(ShapeWorksStudioApp* app, ParticleShapeStatistics* stats, QString filename);
+
+  static QString get_mesh_file_filter();
+
 };
 
 }  // namespace shapeworks

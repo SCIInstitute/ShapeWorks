@@ -7,12 +7,14 @@
 #include <Shape.h>
 #include <StringUtils.h>
 #include <Utils/StudioUtils.h>
+#include <Visualization/Visualizer.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QObject>
 #include <QProgressDialog>
 
 namespace shapeworks {
@@ -223,6 +225,11 @@ bool ExportUtils::write_pca_scores(ShapeWorksStudioApp* app, ParticleShapeStatis
 
   output.close();
   return true;
+}
+
+//----------------------------------------------------------------------------
+QString ExportUtils::get_mesh_file_filter() {
+  return QObject::tr("VTK files (*.vtk);;PLY files (*.ply);;VTP files (*.vtp);;OBJ files (*.obj);;STL files (*.stl)");
 }
 
 }  // namespace shapeworks

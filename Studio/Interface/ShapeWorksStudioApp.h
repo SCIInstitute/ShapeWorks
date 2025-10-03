@@ -27,7 +27,7 @@
 class Ui_ShapeWorksStudioApp;
 
 namespace monailabel {
-  class MonaiLabelTool;
+class MonaiLabelTool;
 }
 
 namespace shapeworks {
@@ -89,7 +89,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
   void on_action_preferences_triggered();
-  void action_export_current_mesh_triggered(int index = 0);
+  void action_export_current_mesh_triggered(int index = 0, bool clip_constraints = false);
   void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
@@ -162,6 +162,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   Preferences& prefs() { return preferences_; }
   QSharedPointer<Session> session() { return session_; }
 
+  QSharedPointer<Visualizer> get_visualizer() { return visualizer_; }
+
  protected:
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dragLeaveEvent(QDragLeaveEvent* event) override;
@@ -179,8 +181,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   bool should_reconstruct_view_show();
 
   static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
-
-  static QString get_mesh_file_filter();
 
   static const std::string SETTING_ZOOM_C;
 

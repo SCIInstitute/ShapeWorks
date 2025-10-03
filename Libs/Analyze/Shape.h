@@ -185,6 +185,8 @@ class Shape {
 
   Constraints& get_constraints(int domain_id);
 
+  bool has_constraints();
+
   bool has_planes();
 
   std::vector<std::shared_ptr<Surface>> get_groomed_mesh_wrappers();
