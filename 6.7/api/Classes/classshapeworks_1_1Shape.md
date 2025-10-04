@@ -91,6 +91,7 @@ Representation of a single shape/patient/subject.
 | Eigen::MatrixXd & | **[landmarks](../Classes/classshapeworks_1_1Shape.md#function-landmarks)**() |
 | std::vector< [Constraints](../Classes/classshapeworks_1_1Constraints.md) > & | **[constraints](../Classes/classshapeworks_1_1Shape.md#function-constraints)**() |
 | [Constraints](../Classes/classshapeworks_1_1Constraints.md) & | **[get_constraints](../Classes/classshapeworks_1_1Shape.md#function-get-constraints)**(int domain_id) |
+| bool | **[has_constraints](../Classes/classshapeworks_1_1Shape.md#function-has-constraints)**() |
 | bool | **[has_planes](../Classes/classshapeworks_1_1Shape.md#function-has-planes)**() |
 | std::vector< std::shared_ptr< [Surface](../Classes/classshapeworks_1_1Surface.md) > > | **[get_groomed_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-mesh-wrappers)**() |
 | void | **[recompute_original_surface](../Classes/classshapeworks_1_1Shape.md#function-recompute-original-surface)**() |
@@ -673,6 +674,13 @@ Constraints & get_constraints(
 ```
 
 
+### function has_constraints
+
+```cpp
+bool has_constraints()
+```
+
+
 ### function has_planes
 
 ```cpp
@@ -704,4 +712,4 @@ If a segmentation doesn't exist, create a blank canvas.
 
 -------------------------------
 
-Updated on 2025-09-29 at 22:02:15 +0000
+Updated on 2025-10-04 at 01:42:58 +0000

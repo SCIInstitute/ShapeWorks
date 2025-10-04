@@ -3063,6 +3063,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#slot-get_visualizer" class="md-nav__link">
+    slot get_visualizer
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3279,7 +3286,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-action-export-current-mesh-triggered">action_export_current_mesh_triggered</a></strong>(int index =0)</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-action-export-current-mesh-triggered">action_export_current_mesh_triggered</a></strong>(int index =0, bool clip_constraints =false)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3497,6 +3504,10 @@
 <td>QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-session">session</a></strong>()</td>
 </tr>
+<tr>
+<td>QSharedPointer&lt; <a href="classshapeworks_1_1Visualizer.html">Visualizer</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-get-visualizer">get_visualizer</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions">Public Functions</h2>
@@ -3637,7 +3648,8 @@
 </code></pre></div>
 <h3 id="slot-action_export_current_mesh_triggered">slot action_export_current_mesh_triggered</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">action_export_current_mesh_triggered</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">clip_constraints</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="slot-on_action_export_current_particles_triggered">slot on_action_export_current_particles_triggered</h3>
@@ -3827,6 +3839,9 @@
 <h3 id="slot-session">slot session</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="slot-get_visualizer">slot get_visualizer</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Visualizer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_visualizer</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-shapeworksstudioapp">function ShapeWorksStudioApp</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeWorksStudioApp</span><span class="p">()</span>
@@ -3864,7 +3879,7 @@
 <span class="p">)</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-09-29 at 22:02:15 +0000</p>
+<p>Updated on 2025-10-04 at 01:42:58 +0000</p>
 
               
             </article>

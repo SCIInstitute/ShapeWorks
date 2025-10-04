@@ -63,6 +63,7 @@ Inherits from QObject
 | void | **[update_interactor_style](../Classes/classshapeworks_1_1Lightbox.md#function-update-interactor-style)**() |
 | void | **[set_shared_brightness_and_contrast](../Classes/classshapeworks_1_1Lightbox.md#function-set-shared-brightness-and-contrast)**(double brightness, double contrast) |
 | vtkRenderWindow * | **[get_render_window](../Classes/classshapeworks_1_1Lightbox.md#function-get-render-window)**() |
+| int | **[get_start_shape](../Classes/classshapeworks_1_1Lightbox.md#function-get-start-shape)**() |
 
 ## Detailed Description
 
@@ -357,6 +358,13 @@ vtkRenderWindow * get_render_window()
 ```
 
 
+### function get_start_shape
+
+```cpp
+int get_start_shape()
+```
+
+
 -------------------------------
 
-Updated on 2025-09-29 at 22:02:15 +0000
+Updated on 2025-10-04 at 01:42:58 +0000

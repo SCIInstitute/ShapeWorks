@@ -57,8 +57,8 @@ Inherits from QObject
 | vtkFloatArray * | **[get_current_particle_scalars](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-scalars)**() |
 | vtkSmartPointer< vtkPolyData > | **[get_current_particle_poly_data](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-poly-data)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-handle-new-mesh)**() |
-| vtkSmartPointer< vtkPolyData > | **[get_current_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-mesh)**(int index) |
-| std::vector< vtkSmartPointer< vtkPolyData > > | **[get_current_meshes_transformed](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-meshes-transformed)**(int index) |
+| vtkSmartPointer< vtkPolyData > | **[get_current_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-mesh)**(int index, bool clip_constraints) |
+| std::vector< vtkSmartPointer< vtkPolyData > > | **[get_current_meshes_transformed](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-meshes-transformed)**(int index, bool clip_constraints =false) |
 | const std::string & | **[get_feature_map](../Classes/classshapeworks_1_1Visualizer.md#function-get-feature-map)**() const<br>Get the currently selected feature map.  |
 | void | **[set_uniform_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-set-uniform-feature-range)**(bool value)<br>Set if we are using a uniform feature range.  |
 | bool | **[get_uniform_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-get-uniform-feature-range)**(void )<br>Return if we are using a uniform feature range.  |
@@ -370,7 +370,8 @@ void handle_new_mesh()
 
 ```cpp
 vtkSmartPointer< vtkPolyData > get_current_mesh(
-    int index
+    int index,
+    bool clip_constraints
 )
 ```
 
@@ -379,7 +380,8 @@ vtkSmartPointer< vtkPolyData > get_current_mesh(
 
 ```cpp
 std::vector< vtkSmartPointer< vtkPolyData > > get_current_meshes_transformed(
-    int index
+    int index,
+    bool clip_constraints =false
 )
 ```
 
@@ -601,4 +603,4 @@ inline LightboxHandle get_lightbox()
 
 -------------------------------
 
-Updated on 2025-09-29 at 22:02:15 +0000
+Updated on 2025-10-04 at 01:42:58 +0000

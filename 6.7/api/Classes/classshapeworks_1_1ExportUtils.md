@@ -22,6 +22,7 @@ Export utilities for Studio.
 | bool | **[write_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-write-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, vtkSmartPointer< vtkPolyData > poly_data, QString filename) |
 | bool | **[write_particle_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-write-particle-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, QString filename) |
 | bool | **[write_pca_scores](../Classes/classshapeworks_1_1ExportUtils.md#function-write-pca-scores)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) * stats, QString filename) |
+| QString | **[get_mesh_file_filter](../Classes/classshapeworks_1_1ExportUtils.md#function-get-mesh-file-filter)**() |
 
 ## Public Functions Documentation
 
@@ -80,6 +81,13 @@ static bool write_pca_scores(
 ```
 
 
+### function get_mesh_file_filter
+
+```cpp
+static QString get_mesh_file_filter()
+```
+
+
 -------------------------------
 
-Updated on 2025-09-29 at 22:02:14 +0000
+Updated on 2025-10-04 at 01:42:57 +0000

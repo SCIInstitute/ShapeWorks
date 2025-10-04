@@ -43,7 +43,7 @@ Inherits from QMainWindow
 | void | **[on_actionExport_Eigenvectors_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-eigenvectors-triggered)**() |
 | void | **[on_actionExport_PCA_Mode_Points_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-pca-mode-points-triggered)**() |
 | void | **[on_action_preferences_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-preferences-triggered)**() |
-| void | **[action_export_current_mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-current-mesh-triggered)**(int index =0) |
+| void | **[action_export_current_mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-current-mesh-triggered)**(int index =0, bool clip_constraints =false) |
 | void | **[on_action_export_current_particles_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-current-particles-triggered)**() |
 | void | **[on_action_export_mesh_scalars_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-mesh-scalars-triggered)**() |
 | void | **[on_action_export_pca_scores_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-pca-scores-triggered)**() |
@@ -98,6 +98,7 @@ Inherits from QMainWindow
 | QSharedPointer< [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md) > | **[get_py_worker](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-get-py-worker)**() |
 | [Preferences](../Classes/classPreferences.md) & | **[prefs](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-prefs)**() |
 | QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[session](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-session)**() |
+| QSharedPointer< [Visualizer](../Classes/classshapeworks_1_1Visualizer.md) > | **[get_visualizer](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-get-visualizer)**() |
 
 ## Public Functions
 
@@ -305,7 +306,8 @@ void on_action_preferences_triggered()
 
 ```cpp
 void action_export_current_mesh_triggered(
-    int index =0
+    int index =0,
+    bool clip_constraints =false
 )
 ```
 
@@ -713,6 +715,13 @@ inline QSharedPointer< Session > session()
 ```
 
 
+### slot get_visualizer
+
+```cpp
+inline QSharedPointer< Visualizer > get_visualizer()
+```
+
+
 ## Public Functions Documentation
 
 ### function ShapeWorksStudioApp
@@ -785,4 +794,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2025-09-29 at 22:02:15 +0000
+Updated on 2025-10-04 at 01:42:58 +0000
