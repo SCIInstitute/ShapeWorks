@@ -183,6 +183,7 @@ void Sampler::Execute() {
     this->AllocateDomainsAndNeighborhoods();
 
     // Point the optimizer to the particle system.
+    this->GetOptimizer()->SetEarlyStoppingConfig(early_stopping_config_);
     this->GetOptimizer()->SetParticleSystem(m_ParticleSystem);
     this->ReadTransforms();
     this->ReadPointsFiles();

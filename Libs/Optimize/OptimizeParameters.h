@@ -5,7 +5,7 @@
 #include <itkPoint.h>
 
 #include <functional>
-
+#include "EarlyStoppingConfig.h"
 namespace shapeworks {
 
 class Optimize;
@@ -137,6 +137,8 @@ class OptimizeParameters {
 
   double get_shared_boundary_weight();
   void set_shared_boundary_weight(double value);
+
+  EarlyStoppingConfig get_early_stopping_config();
 
   Parameters get_parameters() const;
 

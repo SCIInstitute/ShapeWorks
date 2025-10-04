@@ -33,6 +33,7 @@
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
 #include "Logging.h"
 #include "Optimize.h"
+#include "EarlyStoppingConfig.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
 #include "ShapeworksUtils.h"
@@ -2022,6 +2023,9 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled) { m_sampler->SetSharedBoun
 
 //---------------------------------------------------------------------------
 void Optimize::SetSharedBoundaryWeight(double weight) { m_sampler->SetSharedBoundaryWeight(weight); }
+
+//---------------------------------------------------------------------------
+void Optimize::SetEarlyStoppingConfig(EarlyStoppingConfig config) { m_sampler->SetEarlyStoppingConfig(config); }
 
 //---------------------------------------------------------------------------
 void Optimize::ComputeTotalIterations() {

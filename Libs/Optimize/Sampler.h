@@ -18,6 +18,7 @@
 #include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"
 #include "ParticleSystem.h"
 #include "vnl/vnl_matrix_fixed.h"
+#include "EarlyStoppingConfig.h"
 
 // Uncomment to visualize FFCs with scalar and vector fields
 // #define VIZFFC
@@ -238,6 +239,8 @@ class Sampler {
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }
 
+  void SetEarlyStoppingConfig(EarlyStoppingConfig config) { early_stopping_config_ = config; }
+
   void ReadTransforms();
   void ReadPointsFiles();
   void AllocateDataCaches();
@@ -334,6 +337,8 @@ class Sampler {
   std::vector<std::string> fieldAttributes_;
 
   std::vector<std::vector<itk::Point<double>>> initial_points_;
+
+  EarlyStoppingConfig early_stopping_config_; // config for early stopping
 
   unsigned int m_verbosity;
 };
