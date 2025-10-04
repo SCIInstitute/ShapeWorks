@@ -80,8 +80,8 @@ class Visualizer : public QObject {
   vtkSmartPointer<vtkPolyData> get_current_particle_poly_data();
 
   void handle_new_mesh();
-  vtkSmartPointer<vtkPolyData> get_current_mesh(int index);
-  std::vector<vtkSmartPointer<vtkPolyData>> get_current_meshes_transformed(int index);
+  vtkSmartPointer<vtkPolyData> get_current_mesh(int index, bool clip_constraints);
+  std::vector<vtkSmartPointer<vtkPolyData>> get_current_meshes_transformed(int index, bool clip_constraints = false);
 
   //! Get the currently selected feature map
   const std::string& get_feature_map() const;

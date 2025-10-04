@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1243</width>
+    <width>1310</width>
     <height>705</height>
    </rect>
   </property>
@@ -714,7 +714,7 @@ QToolBar QToolButton::checked {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1243</width>
+     <width>1310</width>
      <height>33</height>
     </rect>
    </property>
@@ -727,6 +727,7 @@ QToolBar QToolButton::checked {
       <string>Export...</string>
      </property>
      <addaction name="action_export_current_mesh"/>
+     <addaction name="action_export_current_mesh_clipped"/>
      <addaction name="action_export_current_particles"/>
      <addaction name="action_export_particle_scalars"/>
      <addaction name="action_export_mesh_scalars"/>
@@ -1171,16 +1172,16 @@ QToolBar QToolButton::checked {
    </property>
   </action>
   <action name="action_monai_mode">
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="icon">
-     <iconset resource="../Resources/ShapeWorksStudio.qrc">
-      <normaloff>:/Studio/Images/MONAI-Label.png</normaloff>:/Studio/Images/MONAI-Label.png</iconset>
-    </property>
-    <property name="text">
-     <string>MONAI</string>
-    </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+     <normaloff>:/Studio/Images/MONAI-Label.png</normaloff>:/Studio/Images/MONAI-Label.png</iconset>
+   </property>
+   <property name="text">
+    <string>MONAI</string>
+   </property>
   </action>
   <action name="action_export_pca_montage">
    <property name="text">
@@ -1218,6 +1219,11 @@ QToolBar QToolButton::checked {
    </property>
    <property name="menuRole">
     <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
+  </action>
+  <action name="action_export_current_mesh_clipped">
+   <property name="text">
+    <string>Export Current Mesh Clipped...</string>
    </property>
   </action>
  </widget>

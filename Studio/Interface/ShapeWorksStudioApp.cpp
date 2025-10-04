@@ -241,8 +241,17 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->action_export_all_subjects_particle_scalars, &QAction::triggered, this,
           &ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered);
 
-  connect(ui_->action_export_current_mesh, &QAction::triggered, this,
-          &ShapeWorksStudioApp::action_export_current_mesh_triggered);
+  connect(ui_->action_export_current_mesh, &QAction::triggered, this, [&]() {
+    // get the first index of the visualizer (top left lightbox item)
+    int index = visualizer_->get_lightbox()->get_start_shape();
+    ShapeWorksStudioApp::action_export_current_mesh_triggered(index);
+  });
+
+  connect(ui_->action_export_current_mesh_clipped, &QAction::triggered, this, [&]() {
+    // get the first index of the visualizer (top left lightbox item)
+    int index = visualizer_->get_lightbox()->get_start_shape();
+    ShapeWorksStudioApp::action_export_current_mesh_triggered(index, true);
+  });
 
   connect(ui_->save_as_swproj, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_swproj_clicked);
   connect(ui_->save_as_xlsx, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_xlsx_clicked);
@@ -951,10 +960,15 @@ void ShapeWorksStudioApp::handle_lightbox_right_click(int index) {
   QMenu* menu = new QMenu(nullptr);
   menu->setAttribute(Qt::WA_DeleteOnClose);
   QAction* export_mesh_action = menu->addAction("Export Mesh");
+  QAction* export_clipped_mesh_action = nullptr;
   QAction* mark_excluded_action = nullptr;
   QAction* unmark_excluded_action = nullptr;
   QAction* mark_fixed_action = nullptr;
   QAction* unmark_fixed_action = nullptr;
+
+  if (shape->has_constraints()) {
+    export_clipped_mesh_action = menu->addAction("Export Clipped Mesh");
+  }
   if (shape->is_subject() && !shape->is_excluded()) {
     mark_excluded_action = menu->addAction("Mark as excluded");
   }
@@ -971,7 +985,9 @@ void ShapeWorksStudioApp::handle_lightbox_right_click(int index) {
   menu->popup(QCursor::pos());
   connect(menu, &QMenu::triggered, menu, [=](QAction* action) {
     if (action == export_mesh_action) {
-      action_export_current_mesh_triggered(index);
+      action_export_current_mesh_triggered(index, false);
+    } else if (action == export_clipped_mesh_action) {
+      action_export_current_mesh_triggered(index, true);
     } else if (action == mark_excluded_action) {
       shape->get_subject()->set_excluded(true);
     } else if (action == unmark_excluded_action) {
@@ -1617,19 +1633,20 @@ void ShapeWorksStudioApp::on_action_preferences_triggered() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index) {
+void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index, bool clip_constraints) {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename = ExportUtils::get_save_filename(this, tr("Export Mesh"), get_mesh_file_filter(), ".vtk");
+  QString filename =
+      ExportUtils::get_save_filename(this, tr("Export Mesh"), ExportUtils::get_mesh_file_filter(), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
 
   if (single) {
-    StudioUtils::write_mesh(visualizer_->get_current_mesh(index), filename);
+    StudioUtils::write_mesh(visualizer_->get_current_mesh(index, clip_constraints), filename);
     SW_MESSAGE("Wrote: " + filename.toStdString());
   } else {
-    auto meshes = visualizer_->get_current_meshes_transformed(index);
+    auto meshes = visualizer_->get_current_meshes_transformed(index, clip_constraints);
     auto domain_names = session_->get_project()->get_domain_names();
 
     if (meshes.empty()) {
@@ -1756,7 +1773,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
   }
 
   if (single) {
-    auto poly_data = visualizer_->get_current_mesh(0);
+    auto poly_data = visualizer_->get_current_mesh(0, false);
     write_scalars(poly_data, filename);
   } else {
     auto meshes = visualizer_->get_current_meshes_transformed(0);
@@ -2090,11 +2107,6 @@ bool ShapeWorksStudioApp::write_particle_file(std::string filename, Eigen::Vecto
   }
 
   return true;
-}
-
-//---------------------------------------------------------------------------
-QString ShapeWorksStudioApp::get_mesh_file_filter() {
-  return tr("VTK files (*.vtk);;PLY files (*.ply);;VTP files (*.vtp);;OBJ files (*.obj);;STL files (*.stl)");
 }
 
 //---------------------------------------------------------------------------
