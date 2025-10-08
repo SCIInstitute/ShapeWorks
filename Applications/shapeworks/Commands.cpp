@@ -364,6 +364,13 @@ void DeepSSMCommand::buildParser() {
 
   parser.add_option("--all").action("store_true").help("Run all steps");
 
+  // add num_workers option
+  parser.add_option("--num_workers")
+      .action("store")
+      .type("int")
+      .set_default(0)
+      .help("Number of data loader workers (default: 0)");
+
   Command::buildParser();
 }
 
@@ -405,10 +412,13 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
   bool do_train = options.is_set("train") || options.is_set("all");
   bool do_test = options.is_set("test") || options.is_set("all");
 
+  int num_workers = static_cast<int>(options.get("num_workers"));
+
   std::cout << "Prep step:    " << (do_prep ? "on" : "off") << "\n";
   std::cout << "Augment step: " << (do_augment ? "on" : "off") << "\n";
   std::cout << "Train step:   " << (do_train ? "on" : "off") << "\n";
   std::cout << "Test step:    " << (do_test ? "on" : "off") << "\n";
+  std::cout << "Num dataloader workers:  " << num_workers << "\n";
 
   if (!do_prep && !do_augment && !do_train && !do_test) {
     do_prep = true;
@@ -437,6 +447,7 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
 
   if (do_prep) {
     auto job = QSharedPointer<DeepSSMJob>::create(project, DeepSSMJob::JobType::DeepSSM_PrepType);
+    job->set_num_dataloader_workers(num_workers);
     if (prep_step == "all") {
       job->set_prep_step(DeepSSMJob::PrepStep::NOT_STARTED);
     } else if (prep_step == "groom_training") {

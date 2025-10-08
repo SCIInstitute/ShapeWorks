@@ -52,6 +52,9 @@ class DeepSSMJob : public Job {
 
   static std::vector<int> get_split(ProjectHandle project, DeepSSMJob::SplitType split_type);
 
+  void set_num_dataloader_workers(int num_workers);
+  int get_num_dataloader_workers();
+
   void set_prep_step(DeepSSMJob::PrepStep step) {
     std::lock_guard<std::mutex> lock(mutex_);
     prep_step_ = step;
@@ -67,6 +70,8 @@ class DeepSSMJob : public Job {
 
   QString prep_message_;
   DeepSSMJob::PrepStep prep_step_{DeepSSMJob::NOT_STARTED};
+
+  int num_dataloader_workers_{0};
 
   // mutex
   std::mutex mutex_;

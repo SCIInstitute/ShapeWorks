@@ -16,22 +16,22 @@ from .config_file import prepare_config_file
 import torch
 
 
-def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
+def getTrainValLoaders(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80, num_workers=0):
     testPytorch()
-    loaders.get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split)
+    loaders.get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split, num_workers)
 
 
-def getTrainLoader(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
+def getTrainLoader(loader_dir, aug_data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80, num_workers=0):
     testPytorch()
-    loaders.get_train_loader(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split)
+    loaders.get_train_loader(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split, num_workers)
 
 
-def getValidationLoader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
-    loaders.get_validation_loader(loader_dir, val_img_list, val_particles, down_factor, down_dir)
+def getValidationLoader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None, num_workers=0):
+    loaders.get_validation_loader(loader_dir, val_img_list, val_particles, down_factor, down_dir, num_workers)
 
 
-def getTestLoader(loader_dir, test_img_list, down_factor=1, down_dir=None):
-    loaders.get_test_loader(loader_dir, test_img_list, down_factor, down_dir)
+def getTestLoader(loader_dir, test_img_list, down_factor=1, down_dir=None, num_workers=0):
+    loaders.get_test_loader(loader_dir, test_img_list, down_factor, down_dir, num_workers)
 
 
 def prepareConfigFile(config_filename, model_name, embedded_dim, out_dir, loader_dir, aug_dir, epochs, learning_rate,

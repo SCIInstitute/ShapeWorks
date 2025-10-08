@@ -1,5 +1,6 @@
 #include <Data/Preferences.h>
 #include <Logging.h>
+#include <Utils/PlatformUtils.h>
 
 // std
 #include <iostream>
@@ -71,6 +72,21 @@ int Preferences::get_num_threads() {
 void Preferences::set_num_threads(int num_threads) {
   settings_.setValue("Studio/num_threads", num_threads);
   update_threads();
+}
+
+//-----------------------------------------------------------------------------
+int Preferences::get_dataloader_num_workers() {
+  int default_workers = 0;
+  // if mac or linux, set to 4
+  if (shapeworks::PlatformUtils::is_macos() || shapeworks::PlatformUtils::is_linux()) {
+    default_workers = 4;
+  }
+  return settings_.value("Studio/dataloader_num_workers", default_workers).toInt();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_dataloader_num_workers(int num_workers) {
+  settings_.setValue("Studio/dataloader_num_workers", num_workers);
 }
 
 //-----------------------------------------------------------------------------

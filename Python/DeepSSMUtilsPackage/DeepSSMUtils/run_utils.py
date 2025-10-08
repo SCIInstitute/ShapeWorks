@@ -443,7 +443,7 @@ def groom_val_test_images(project, indices):
     project.set_subjects(subjects)
 
 
-def prepare_data_loaders(project, batch_size, split="all"):
+def prepare_data_loaders(project, batch_size, split="all", num_workers=0):
     """ Prepare PyTorch laoders """
     deepssm_dir = get_deepssm_dir(project)
     loader_dir = deepssm_dir + 'torch_loaders/'
@@ -458,19 +458,19 @@ def prepare_data_loaders(project, batch_size, split="all"):
             val_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
             particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
             val_world_particles.append(particle_file)
-        DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles)
+        DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles, num_workers=num_workers)
 
     if split == "all" or split == "train":
         aug_dir = deepssm_dir + "augmentation/"
         aug_data_csv = aug_dir + "TotalData.csv"
-        DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size)
+        DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size, num_workers=num_workers)
 
     if split == "all" or split == "test":
         test_image_files = []
         test_indices = get_split_indices(project, "test")
         for i in test_indices:
             test_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
-        DeepSSMUtils.getTestLoader(loader_dir, test_image_files)
+        DeepSSMUtils.getTestLoader(loader_dir, test_image_files, num_workers=num_workers)
 
 
 def get_test_alignment_transform(project, index):
