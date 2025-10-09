@@ -47,6 +47,9 @@ class Preferences : public QObject {
   int get_num_threads();
   void set_num_threads(int num_threads);
 
+  int get_dataloader_num_workers();
+  void set_dataloader_num_workers(int num_workers);
+
   float get_glyph_size();
   void set_glyph_size(float value);
 

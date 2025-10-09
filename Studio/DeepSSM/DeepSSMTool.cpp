@@ -918,6 +918,7 @@ void DeepSSMTool::run_tool(DeepSSMJob::JobType job_type) {
   store_params();
 
   deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), job_type, prep_step_);
+  deep_ssm_->set_num_dataloader_workers(preferences_.get_dataloader_num_workers());
   connect(deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
 

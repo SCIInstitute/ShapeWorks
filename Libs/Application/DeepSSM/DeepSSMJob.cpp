@@ -11,13 +11,14 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 #include <QThread>
 
 // shapeworks
-#include "DeepSSMJob.h"
-#include <Project/DeepSSMParameters.h>
 #include <Groom.h>
 #include <Logging.h>
 #include <Mesh/MeshUtils.h>
 #include <Optimize.h>
 #include <Optimize/OptimizeParameters.h>
+#include <Project/DeepSSMParameters.h>
+
+#include "DeepSSMJob.h"
 
 namespace shapeworks {
 
@@ -274,8 +275,8 @@ void DeepSSMJob::run_training() {
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
   py::object prepare_data_loaders = py_deep_ssm_utils.attr("prepare_data_loaders");
-  prepare_data_loaders(project_, batch_size, "train");
-  prepare_data_loaders(project_, batch_size, "val");
+  prepare_data_loaders(project_, batch_size, "train", num_dataloader_workers_);
+  prepare_data_loaders(project_, batch_size, "val", num_dataloader_workers_);
 
   std::string out_dir = "deepssm/";
   std::string aug_dir = out_dir + "augmentation/";
@@ -386,6 +387,12 @@ std::vector<int> DeepSSMJob::get_split(ProjectHandle project, SplitType split_ty
   }
   return list;
 }
+
+//---------------------------------------------------------------------------
+void DeepSSMJob::set_num_dataloader_workers(int num_workers) { num_dataloader_workers_ = num_workers; }
+
+//---------------------------------------------------------------------------
+int DeepSSMJob::get_num_dataloader_workers() { return num_dataloader_workers_; }
 
 //---------------------------------------------------------------------------
 void DeepSSMJob::update_prep_stage(PrepStep step) {

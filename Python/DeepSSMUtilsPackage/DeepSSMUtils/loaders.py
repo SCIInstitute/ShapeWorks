@@ -23,7 +23,7 @@ def make_dir(dirPath):
 '''
 Reads csv and makes both train and validation data loaders from it
 '''
-def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
+def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80, num_workers=0):
 	sw_message("Creating training and validation torch loaders:")
 	make_dir(loader_dir)
 	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
@@ -41,7 +41,7 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 			train_data,
 			batch_size=batch_size,
 			shuffle=True,
-			num_workers=8,
+			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
 	train_path = loader_dir + 'train'
@@ -51,7 +51,7 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 			val_data,
 			batch_size=1,
 			shuffle=True,
-			num_workers=8,
+			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
 	val_path = loader_dir + 'validation'
@@ -62,7 +62,7 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 '''
 Reads csv and makes just train data loaders
 '''
-def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
+def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80, num_workers=0):
 	sw_message("Creating training torch loader...")
 	# Get data
 	make_dir(loader_dir)
@@ -74,7 +74,7 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
 			train_data,
 			batch_size=batch_size,
 			shuffle=True,
-			num_workers=8,
+			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
 	train_path = loader_dir + 'train'
@@ -85,7 +85,7 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
 '''
 Makes validation data loader
 '''
-def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
+def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None, num_workers=0):
 	sw_message("Creating validation torch loader:")
 	# Get data
 	image_paths = []
@@ -113,7 +113,7 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 			val_data,
 			batch_size=1,
 			shuffle=False,
-			num_workers=8,
+			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
 	val_path = loader_dir + 'validation'
@@ -124,7 +124,7 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 '''
 Makes test data loader
 '''
-def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
+def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None, num_workers=0):
 	sw_message("Creating test torch loader...")
 	# get data
 	image_paths = []
@@ -152,7 +152,7 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 			test_data,
 			batch_size=1,
 			shuffle=False,
-			num_workers=8,
+			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
 	test_path = loader_dir + 'test'
