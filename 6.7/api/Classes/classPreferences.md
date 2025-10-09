@@ -55,6 +55,8 @@ Inherits from QObject
 | void | **[set_memory_cache_percent](../Classes/classPreferences.md#function-set-memory-cache-percent)**(int value) |
 | int | **[get_num_threads](../Classes/classPreferences.md#function-get-num-threads)**() |
 | void | **[set_num_threads](../Classes/classPreferences.md#function-set-num-threads)**(int num_threads) |
+| int | **[get_dataloader_num_workers](../Classes/classPreferences.md#function-get-dataloader-num-workers)**() |
+| void | **[set_dataloader_num_workers](../Classes/classPreferences.md#function-set-dataloader-num-workers)**(int num_workers) |
 | float | **[get_glyph_size](../Classes/classPreferences.md#function-get-glyph-size)**() |
 | void | **[set_glyph_size](../Classes/classPreferences.md#function-set-glyph-size)**(float value) |
 | float | **[get_glyph_quality](../Classes/classPreferences.md#function-get-glyph-quality)**() |
@@ -339,6 +341,22 @@ int get_num_threads()
 ```cpp
 void set_num_threads(
     int num_threads
+)
+```
+
+
+### function get_dataloader_num_workers
+
+```cpp
+int get_dataloader_num_workers()
+```
+
+
+### function set_dataloader_num_workers
+
+```cpp
+void set_dataloader_num_workers(
+    int num_workers
 )
 ```
 
@@ -816,4 +834,4 @@ void set_pending_telemetry_events(
 
 -------------------------------
 
-Updated on 2025-10-04 at 01:42:58 +0000
+Updated on 2025-10-09 at 04:04:23 +0000

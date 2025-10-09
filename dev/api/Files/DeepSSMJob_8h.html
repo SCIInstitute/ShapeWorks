@@ -2593,6 +2593,9 @@
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_split</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"> </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">SplitType</span><span class="w"> </span><span class="n">split_type</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_num_dataloader_workers</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_workers</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_dataloader_workers</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_prep_step</span><span class="p">(</span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">step</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">mutex_</span><span class="p">);</span>
 <span class="w">    </span><span class="n">prep_step_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">step</span><span class="p">;</span>
@@ -2609,13 +2612,15 @@
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">prep_message_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step_</span><span class="p">{</span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">NOT_STARTED</span><span class="p">};</span>
 
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_dataloader_workers_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
 <span class="w">  </span><span class="c1">// mutex</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="w"> </span><span class="n">mutex_</span><span class="p">;</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-10-04 at 01:42:58 +0000</p>
+<p>Updated on 2025-10-09 at 04:04:23 +0000</p>
 
               
             </article>

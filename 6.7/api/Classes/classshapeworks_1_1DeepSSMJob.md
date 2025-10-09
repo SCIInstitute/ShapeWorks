@@ -36,6 +36,8 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 | void | **[run_training](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-training)**() |
 | void | **[run_testing](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run-testing)**() |
 | void | **[python_message](../Classes/classshapeworks_1_1DeepSSMJob.md#function-python-message)**(std::string str) |
+| void | **[set_num_dataloader_workers](../Classes/classshapeworks_1_1DeepSSMJob.md#function-set-num-dataloader-workers)**(int num_workers) |
+| int | **[get_num_dataloader_workers](../Classes/classshapeworks_1_1DeepSSMJob.md#function-get-num-dataloader-workers)**() |
 | void | **[set_prep_step](../Classes/classshapeworks_1_1DeepSSMJob.md#function-set-prep-step)**(DeepSSMJob::PrepStep step) |
 | std::vector< int > | **[get_split](../Classes/classshapeworks_1_1DeepSSMJob.md#function-get-split)**(ProjectHandle project, DeepSSMJob::SplitType split_type) |
 
@@ -194,6 +196,22 @@ void python_message(
 ```
 
 
+### function set_num_dataloader_workers
+
+```cpp
+void set_num_dataloader_workers(
+    int num_workers
+)
+```
+
+
+### function get_num_dataloader_workers
+
+```cpp
+int get_num_dataloader_workers()
+```
+
+
 ### function set_prep_step
 
 ```cpp
@@ -215,4 +233,4 @@ static std::vector< int > get_split(
 
 -------------------------------
 
-Updated on 2025-10-04 at 01:42:57 +0000
+Updated on 2025-10-09 at 04:04:22 +0000

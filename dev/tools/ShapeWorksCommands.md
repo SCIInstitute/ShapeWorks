@@ -93,7 +93,9 @@ shapeworks  deepssm [args]...
 
 **--test:** Run testing
 
-**--all:** Run all steps  
+**--all:** Run all steps
+
+**--num_workers=INT:** Number of data loader workers (default: 0)  
   
 <a href="#top">Back to Top</a>
   
