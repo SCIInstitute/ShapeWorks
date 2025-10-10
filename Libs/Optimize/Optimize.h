@@ -22,6 +22,7 @@
 #include "Libs/Optimize/Utils/OptimizationVisualizer.h"
 #include "ProcrustesRegistration.h"
 #include "Sampler.h"
+#include "EarlyStoppingConfig.h"
 
 namespace shapeworks {
 
@@ -238,6 +239,9 @@ class Optimize {
   //! Shared boundary settings
   void SetSharedBoundaryEnabled(bool enabled);
   void SetSharedBoundaryWeight(double weight);
+
+  //! Early Stopping params
+  void SetEarlyStoppingConfig(EarlyStoppingConfig config);
 
   const std::vector<int>& GetDomainFlags();
 

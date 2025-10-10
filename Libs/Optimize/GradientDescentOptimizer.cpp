@@ -19,9 +19,13 @@ const int global_iteration = 1;
 #include "Libs/Optimize/Utils/MemoryUsage.h"
 
 #include <Profiling.h>
+#include "Libs/Optimize/Function/EarlyStop/EarlyStopping.h"
+#include <Logging.h>
 
 namespace shapeworks {
-GradientDescentOptimizer::GradientDescentOptimizer() {
+GradientDescentOptimizer::GradientDescentOptimizer() 
+  : m_EarlyStopping()
+{
   m_StopOptimization = false;
   m_NumberOfIterations = 0;
   m_MaximumNumberOfIterations = 0;
@@ -46,6 +50,33 @@ void GradientDescentOptimizer::ResetTimeStepVectors() {
       m_TimeSteps[i][j] = 1.0;
     }
   }
+}
+
+void GradientDescentOptimizer::SetEarlyStoppingConfig(const EarlyStoppingConfig& config) {
+    m_EarlyStopping.SetConfigParams(
+        config.frequency,
+        config.window_size,
+        config.threshold,
+        config.strategy,
+        config.ema_alpha,
+        config.enable_logging,
+        config.logger_name,
+        config.warmup_iters
+    );
+    m_EarlyStoppingEnabled = config.enabled;
+}
+
+void GradientDescentOptimizer::InitializeEarlyStoppingScoreFunction(
+    const ParticleSystemType* p) {
+  bool early_stopping_status = m_EarlyStopping.SetControlShapes(p);
+  if (early_stopping_status == false) {
+    SW_WARN(
+        "Early stopping has been forcibly disabled. Possible causes: no fixed "
+        "shapes/domains "
+        "to fit PCA, or PCA fitting failed. Check logs for details.");
+  }
+  m_EarlyStoppingScoreFunctionReady = early_stopping_status;
+  m_EarlyStoppingEnabled = early_stopping_status;
 }
 
 void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
@@ -78,6 +109,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
   unsigned int counter = 0;
 
   double maxchange = 0.0;
+  if (m_EarlyStoppingEnabled) m_EarlyStopping.reset(); // reset early stopping cache before starting optimization
   while (m_StopOptimization == false)  // iterations loop
   {
     TIME_SCOPE("optimizer_iteration");
@@ -93,6 +125,16 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
     const auto accTimerBegin = std::chrono::steady_clock::now();
     m_GradientFunction->SetParticleSystem(m_ParticleSystem);
+    if (m_EarlyStoppingEnabled && !m_EarlyStoppingScoreFunctionReady) {
+      bool early_stopping_status = m_EarlyStopping.SetControlShapes(m_ParticleSystem);
+      if (early_stopping_status == false) {
+        SW_WARN(
+            "Early stopping has been forcibly disabled. Possible causes: no fixed shapes/domains "
+            "to fit PCA, or PCA fitting failed. Check logs.");
+      }
+      m_EarlyStoppingEnabled = early_stopping_status; // forcibly turn off early stopping if no fixed domains present
+      m_EarlyStoppingScoreFunctionReady = early_stopping_status;
+    }
 
     TIME_START("gradient_before_iteration");
     if (counter % global_iteration == 0) m_GradientFunction->BeforeIteration();
@@ -232,6 +274,17 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
     if (m_NumberOfIterations >= m_MaximumNumberOfIterations) {
       m_StopOptimization = true;
+    }
+
+    if (m_EarlyStoppingEnabled) {
+      m_EarlyStopping.update(m_NumberOfIterations, m_ParticleSystem);
+      if (m_EarlyStopping.ShouldStop()) {
+        std::cerr << "Early stopping triggered at optimization iteration "
+                  << m_NumberOfIterations << std::endl;
+        SW_LOG("Early stopping triggered at optimization iteration {}",
+                 m_NumberOfIterations);
+        m_StopOptimization = true;
+      }
     }
 
   }  // end while stop optimization

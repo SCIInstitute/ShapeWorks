@@ -4,6 +4,7 @@ FILE(GLOB Optimize_sources
   Container/*.cpp
   Domain/*.cpp
   Function/*.cpp
+  Function/EarlyStop/*.cpp
   Matrix/*.cpp
   Neighborhood/*.cpp
   Utils/*.cpp
