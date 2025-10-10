@@ -844,3 +844,36 @@ TEST(MeshTests, interpolateFieldAtPoint) {
   ASSERT_DOUBLE_EQ(mesh.interpolateFieldAtPoint(fieldName, Point3({0, 0, 50})), 0);
 }
 
+TEST(MeshTests, extractLargestComponentTest) {
+  // Test extractLargestComponent on two_spheres.vtk which has two disconnected spheres
+  // Created with VTK: large sphere (82 points) + small sphere (12 points) = 94 points total
+  Mesh multi_component(std::string(TEST_DATA_DIR) + "/two_spheres.vtk");
+
+  // Verify initial state: should have both spheres
+  ASSERT_EQ(multi_component.numPoints(), 94);
+  ASSERT_EQ(multi_component.numFaces(), 180);
+
+  // Extract the largest component (should keep the larger sphere with 82 points)
+  multi_component.extractLargestComponent();
+
+  // After extraction, should have only the larger sphere
+  ASSERT_EQ(multi_component.numPoints(), 82);
+  ASSERT_GT(multi_component.numFaces(), 0);
+}
+
+TEST(MeshTests, extractLargestComponentSingleComponentTest) {
+  // Test that extracting from a mesh with only one component preserves count
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+
+  int original_points = femur.numPoints();
+  int original_faces = femur.numFaces();
+
+  // Extract largest component from a mesh that's already a single component
+  femur.extractLargestComponent();
+
+  // Should have the same number of points and faces
+  // (even though VTK may reorder vertices internally)
+  ASSERT_EQ(femur.numPoints(), original_points);
+  ASSERT_EQ(femur.numFaces(), original_faces);
+}
+

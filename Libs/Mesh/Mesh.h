@@ -128,6 +128,9 @@ class Mesh {
   /// Attempt to fix non-manifold edges
   Mesh& fixNonManifold();
 
+  /// Extract the largest connected component from the mesh
+  Mesh& extractLargestComponent();
+
   /// Detect if mesh contain non-manifold edges
   bool detectNonManifold();
 

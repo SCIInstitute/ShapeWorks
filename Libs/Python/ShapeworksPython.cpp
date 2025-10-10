@@ -935,6 +935,8 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def("fixElement", &Mesh::fixElement, "fix element winding of mesh")
 
+      .def("extractLargestComponent", &Mesh::extractLargestComponent, "extract the largest connected component from the mesh")
+
       .def(
           "distance",
           [](Mesh& mesh, const Mesh& target, const Mesh::DistanceMethod method) -> decltype(auto) {
