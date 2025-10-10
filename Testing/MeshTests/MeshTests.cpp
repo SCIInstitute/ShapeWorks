@@ -856,9 +856,9 @@ TEST(MeshTests, extractLargestComponentTest) {
   // Extract the largest component (should keep the larger sphere with 82 points)
   multi_component.extractLargestComponent();
 
-  // After extraction, should have only the larger sphere
-  ASSERT_EQ(multi_component.numPoints(), 82);
-  ASSERT_GT(multi_component.numFaces(), 0);
+  // Compare with baseline
+  Mesh baseline(std::string(TEST_DATA_DIR) + "/two_spheres_largest.vtk");
+  ASSERT_TRUE(multi_component == baseline);
 }
 
 TEST(MeshTests, extractLargestComponentSingleComponentTest) {

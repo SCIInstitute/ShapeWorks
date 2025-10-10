@@ -154,3 +154,5 @@ TEST(shapeworksTests, isolateTest) { run_test("isolate.sh"); }
 TEST(shapeworksTests, analyzeTest) { run_sandboxed_test("analyze"); }
 
 TEST(shapeworksTests, thicknessTest) { run_test("thickness.sh"); }
+
+TEST(shapeworksTests, meshlargestcomponentTest) { run_test("meshlargestcomponent.sh"); }

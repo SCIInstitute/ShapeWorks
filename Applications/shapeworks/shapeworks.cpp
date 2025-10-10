@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(MeshBounds::getCommand());
   shapeworks.addCommand(Distance::getCommand());
   shapeworks.addCommand(FixElement::getCommand());
+  shapeworks.addCommand(MeshLargestComponent::getCommand());
   shapeworks.addCommand(ClipClosedSurface::getCommand());
   shapeworks.addCommand(ComputeNormals::getCommand());
   shapeworks.addCommand(ClosestPoint::getCommand());
