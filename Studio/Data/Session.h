@@ -172,6 +172,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void trigger_save();
   void trigger_data_changed();
   void reload_particles();
+  void trigger_fill_all_ffc();
 
   void set_active_landmark_domain(int id);
   int get_active_landmark_domain();
@@ -323,6 +324,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void save();
   void session_title_changed();
   void image_name_changed();
+  void fill_all_ffc_requested();
 
  public:
   // constants

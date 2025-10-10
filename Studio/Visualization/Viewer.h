@@ -145,6 +145,8 @@ class Viewer {
 
   void handle_paint(double display_pos[2], double world_pos[3]);
 
+  void fill_all_ffc();
+
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
   void update_actors();

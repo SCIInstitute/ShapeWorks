@@ -138,6 +138,14 @@ void StudioMesh::paint_ffc(double world_pos[], double radius, bool inclusive) {
 }
 
 //---------------------------------------------------------------------------
+void StudioMesh::fill_ffc(bool inclusive) {
+  auto scalars = get_or_create_array(FFC_PAINT, 1.0);
+  float value = inclusive ? 1.0f : 0.0f;
+  scalars->FillComponent(0, value);
+  scalars->Modified();
+}
+
+//---------------------------------------------------------------------------
 bool StudioMesh::has_ffc_paint() {
   auto result = poly_data_->GetPointData()->GetArray(FFC_PAINT);
   return result != nullptr;

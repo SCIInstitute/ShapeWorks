@@ -66,6 +66,9 @@ class StudioMesh {
   //! Paint free form constraint
   void paint_ffc(double world_pos[], double radius, bool inclusive);
 
+  //! Fill all vertices with specified inclusion/exclusion value
+  void fill_ffc(bool inclusive);
+
   //! Does this mesh have free form constraint paint?
   bool has_ffc_paint();
 
