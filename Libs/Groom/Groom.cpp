@@ -368,6 +368,12 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
 //---------------------------------------------------------------------------
 bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
+  // Extract largest component (should be first)
+  if (params.get_mesh_largest_component()) {
+    mesh.extractLargestComponent();
+    increment_progress();
+  }
+
   if (params.get_fill_mesh_holes_tool()) {
     mesh.fillHoles();
     increment_progress();
@@ -505,6 +511,7 @@ int Groom::get_total_ops() {
                     (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
+      num_tools += params.get_mesh_largest_component() ? 1 : 0;
       num_tools += params.get_fill_mesh_holes_tool() ? 1 : 0;
       num_tools += params.get_mesh_smooth() ? 1 : 0;
       num_tools += params.get_remesh() ? 1 : 0;
