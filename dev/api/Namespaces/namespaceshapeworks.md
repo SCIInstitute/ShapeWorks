@@ -40,6 +40,8 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
 | class | **[shapeworks::DisentangledCorrespondenceFunction](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md)**  |
 | class | **[shapeworks::DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md)**  |
+| class | **[shapeworks::EarlyStopping](../Classes/classshapeworks_1_1EarlyStopping.md)**  |
+| struct | **[shapeworks::EarlyStoppingConfig](../Classes/structshapeworks_1_1EarlyStoppingConfig.md)** <br>Configuration for early stopping criteria.  |
 | class | **[shapeworks::EigenUtils](../Classes/classshapeworks_1_1EigenUtils.md)**  |
 | class | **[shapeworks::ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project]().  |
 | class | **[shapeworks::ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project]().  |
@@ -98,6 +100,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction.  |
 | class | **[shapeworks::MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)**  |
 | class | **[shapeworks::MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)**  |
+| class | **[shapeworks::MorphologicalDeviationScore](../Classes/classshapeworks_1_1MorphologicalDeviationScore.md)**  |
 | struct | **[shapeworks::MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)**  |
 | class | **[shapeworks::NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md)**  |
 | class | **[shapeworks::Observer](../Classes/classshapeworks_1_1Observer.md)** <br>This class is an observer interface for classes to monitor for changes to the optimizer (observer pattern)  |
@@ -197,6 +200,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | enum class char | **[ConstraintType](../Namespaces/namespaceshapeworks.md#enum-constrainttype)** { CuttingPlane = 'C', FreeForm = 'F'} |
 | enum class int | **[CorrespondenceMode](../Namespaces/namespaceshapeworks.md#enum-correspondencemode)** { MeanEnergy = 0, EnsembleEntropy = 1, EnsembleRegressionEntropy = 3, EnsembleMixedEffectsEntropy = 4, MeshBasedGeneralEntropy = 5, MeshBasedGeneralMeanEnergy = 6, DisentagledEnsembleEntropy = 7, DisentangledEnsembleMeanEnergy = 8} |
 | enum class| **[DomainType](../Namespaces/namespaceshapeworks.md#enum-domaintype)** { Image, Mesh, Contour} |
+| enum class| **[EarlyStoppingStrategy](../Namespaces/namespaceshapeworks.md#enum-earlystoppingstrategy)** { RelativeDifference, ExponentialMovingAverage}<br>strategies for early stopping  |
 | enum| **[ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions)** { COPY_ARRAY, SHARE_ARRAY, MOVE_ARRAY}<br>ways of tranferring Arrays to Python, copy being the least efficient but most conservative  |
 | enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
 | enum| **[LandmarkVisibility](../Namespaces/namespaceshapeworks.md#enum-landmarkvisibility)** { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E} |
@@ -494,6 +498,17 @@ handy way to specify an axis
 
 
 
+
+### enum EarlyStoppingStrategy
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| RelativeDifference | | stop when relative improvement falls below a threshold   |
+| ExponentialMovingAverage | | stop using EMA of improvements to detect convergence   |
+
+
+
+strategies for early stopping 
 
 ### enum ArrayTransferOptions
 
@@ -2622,4 +2637,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2025-10-09 at 04:04:21 +0000
+Updated on 2025-10-10 at 18:15:59 +0000

@@ -33,6 +33,8 @@ title: Libs/Optimize/GradientDescentOptimizer.h
 
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
+#include "Libs/Optimize/Function/EarlyStop/EarlyStopping.h"
+#include "EarlyStoppingConfig.h"
 #include "ParticleSystem.h"
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -69,6 +71,8 @@ class GradientDescentOptimizer : public itk::Object {
 
   void StartOptimization() { this->StartAdaptiveGaussSeidelOptimization(); }
   void StartAdaptiveGaussSeidelOptimization();
+  void SetEarlyStoppingConfig(const EarlyStoppingConfig& config);
+  void InitializeEarlyStoppingScoreFunction(const ParticleSystemType* p);
 
   void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
                                       const double& maximumUpdateAllowed, size_t index);
@@ -126,6 +130,9 @@ class GradientDescentOptimizer : public itk::Object {
   double m_TimeStep;
   std::vector<std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
+  EarlyStopping m_EarlyStopping;
+  bool m_EarlyStoppingEnabled = false;
+  bool m_EarlyStoppingScoreFunctionReady = false;
 
   // Adaptive Initialization variables
   bool m_initialization_mode = false;
@@ -141,4 +148,4 @@ class GradientDescentOptimizer : public itk::Object {
 
 -------------------------------
 
-Updated on 2025-10-09 at 04:04:23 +0000
+Updated on 2025-10-10 at 18:16:01 +0000

@@ -116,6 +116,8 @@ title: Classes
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
     * **class [DisentangledCorrespondenceFunction](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md)** 
     * **class [DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md)** 
+    * **class [EarlyStopping](../Classes/classshapeworks_1_1EarlyStopping.md)** 
+    * **struct [EarlyStoppingConfig](../Classes/structshapeworks_1_1EarlyStoppingConfig.md)** <br>Configuration for early stopping criteria. 
     * **class [EigenUtils](../Classes/classshapeworks_1_1EigenUtils.md)** 
     * **class [ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project](). 
     * **class [ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project](). 
@@ -175,6 +177,7 @@ title: Classes
     * **class [MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)** 
     * **class [MeshWorker](../Classes/classshapeworks_1_1MeshWorker.md)** 
     * **class [MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)** 
+    * **class [MorphologicalDeviationScore](../Classes/classshapeworks_1_1MorphologicalDeviationScore.md)** 
     * **struct [MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)** 
     * **class [NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md)** 
     * **class [Observer](../Classes/classshapeworks_1_1Observer.md)** <br>This class is an observer interface for classes to monitor for changes to the optimizer (observer pattern) 
@@ -285,4 +288,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2025-10-09 at 04:04:24 +0000
+Updated on 2025-10-10 at 18:16:01 +0000

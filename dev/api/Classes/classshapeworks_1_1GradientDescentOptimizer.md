@@ -36,6 +36,8 @@ Inherits from itk::Object
 | | **[itkStaticConstMacro](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-itkstaticconstmacro)**(Dimension , unsigned int , VDimension ) |
 | void | **[StartOptimization](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-startoptimization)**() |
 | void | **[StartAdaptiveGaussSeidelOptimization](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-startadaptivegaussseideloptimization)**() |
+| void | **[SetEarlyStoppingConfig](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-setearlystoppingconfig)**(const [EarlyStoppingConfig](../Classes/structshapeworks_1_1EarlyStoppingConfig.md) & config) |
+| void | **[InitializeEarlyStoppingScoreFunction](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-initializeearlystoppingscorefunction)**(const [ParticleSystemType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#typedef-particlesystemtype) * p) |
 | void | **[AugmentedLagrangianConstraints](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-augmentedlagrangianconstraints)**([VectorType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#typedef-vectortype) & gradient, const [PointType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#typedef-pointtype) & pt, const size_t & dom, const double & maximumUpdateAllowed, size_t index) |
 | void | **[StopOptimization](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-stopoptimization)**() |
 | void | **[AbortProcessing](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-abortprocessing)**() |
@@ -225,6 +227,24 @@ Start the optimization.
 
 ```cpp
 void StartAdaptiveGaussSeidelOptimization()
+```
+
+
+### function SetEarlyStoppingConfig
+
+```cpp
+void SetEarlyStoppingConfig(
+    const EarlyStoppingConfig & config
+)
+```
+
+
+### function InitializeEarlyStoppingScoreFunction
+
+```cpp
+void InitializeEarlyStoppingScoreFunction(
+    const ParticleSystemType * p
+)
 ```
 
 
@@ -497,4 +517,4 @@ static constexpr static unsigned int VDimension = 3;
 
 -------------------------------
 
-Updated on 2025-10-09 at 04:04:22 +0000
+Updated on 2025-10-10 at 18:15:59 +0000

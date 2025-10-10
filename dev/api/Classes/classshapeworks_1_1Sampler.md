@@ -92,6 +92,7 @@ title: shapeworks::Sampler
 | unsigned int | **[GetVerbosity](../Classes/classshapeworks_1_1Sampler.md#function-getverbosity)**() |
 | void | **[SetSharedBoundaryEnabled](../Classes/classshapeworks_1_1Sampler.md#function-setsharedboundaryenabled)**(bool enabled) |
 | void | **[SetSharedBoundaryWeight](../Classes/classshapeworks_1_1Sampler.md#function-setsharedboundaryweight)**(double weight) |
+| void | **[SetEarlyStoppingConfig](../Classes/classshapeworks_1_1Sampler.md#function-setearlystoppingconfig)**([EarlyStoppingConfig](../Classes/structshapeworks_1_1EarlyStoppingConfig.md) config) |
 | void | **[ReadTransforms](../Classes/classshapeworks_1_1Sampler.md#function-readtransforms)**() |
 | void | **[ReadPointsFiles](../Classes/classshapeworks_1_1Sampler.md#function-readpointsfiles)**() |
 | void | **[AllocateDataCaches](../Classes/classshapeworks_1_1Sampler.md#function-allocatedatacaches)**() |
@@ -669,6 +670,15 @@ inline void SetSharedBoundaryWeight(
 ```
 
 
+### function SetEarlyStoppingConfig
+
+```cpp
+inline void SetEarlyStoppingConfig(
+    EarlyStoppingConfig config
+)
+```
+
+
 ### function ReadTransforms
 
 ```cpp
@@ -777,4 +787,4 @@ static constexpr unsigned int Dimension = 3;
 
 -------------------------------
 
-Updated on 2025-10-09 at 04:04:22 +0000
+Updated on 2025-10-10 at 18:16:00 +0000

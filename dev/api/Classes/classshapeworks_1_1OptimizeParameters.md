@@ -96,6 +96,7 @@ title: shapeworks::OptimizeParameters
 | void | **[set_shared_boundary](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-shared-boundary)**(bool value) |
 | double | **[get_shared_boundary_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-shared-boundary-weight)**() |
 | void | **[set_shared_boundary_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-shared-boundary-weight)**(double value) |
+| [EarlyStoppingConfig](../Classes/structshapeworks_1_1EarlyStoppingConfig.md) | **[get_early_stopping_config](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-early-stopping-config)**() |
 | [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-parameters)**() const |
 
 ## Detailed Description
@@ -753,6 +754,13 @@ void set_shared_boundary_weight(
 ```
 
 
+### function get_early_stopping_config
+
+```cpp
+EarlyStoppingConfig get_early_stopping_config()
+```
+
+
 ### function get_parameters
 
 ```cpp
@@ -762,4 +770,4 @@ Parameters get_parameters() const
 
 -------------------------------
 
-Updated on 2025-10-09 at 04:04:22 +0000
+Updated on 2025-10-10 at 18:16:00 +0000

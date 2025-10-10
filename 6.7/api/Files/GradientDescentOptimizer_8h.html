@@ -2551,6 +2551,8 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/ImageDomainWithGradients.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/VectorFunction.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/EarlyStop/EarlyStopping.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;EarlyStoppingConfig.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObject.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObjectFactory.h&quot;</span>
@@ -2587,6 +2589,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">StartOptimization</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">StartAdaptiveGaussSeidelOptimization</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">StartAdaptiveGaussSeidelOptimization</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetEarlyStoppingConfig</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">EarlyStoppingConfig</span><span class="o">&amp;</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">InitializeEarlyStoppingScoreFunction</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AugmentedLagrangianConstraints</span><span class="p">(</span><span class="n">VectorType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gradient</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dom</span><span class="p">,</span>
 <span class="w">                                      </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">maximumUpdateAllowed</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
@@ -2644,6 +2648,9 @@
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_TimeStep</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_TimeSteps</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span>
+<span class="w">  </span><span class="n">EarlyStopping</span><span class="w"> </span><span class="n">m_EarlyStopping</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_EarlyStoppingEnabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_EarlyStoppingScoreFunctionReady</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// Adaptive Initialization variables</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_initialization_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
@@ -2656,7 +2663,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-10-09 at 04:04:23 +0000</p>
+<p>Updated on 2025-10-10 at 18:16:01 +0000</p>
 
               
             </article>

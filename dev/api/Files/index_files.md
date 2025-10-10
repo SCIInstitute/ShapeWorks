@@ -93,6 +93,7 @@ title: Files
         * **file [Libs/Mesh/meshFIM.h](../Files/meshFIM_8h.md#file-meshfim.h)** 
     * **dir [Libs/Optimize](../Files/dir_f02d5d8e81e1edd3722111e50e18938d.md#dir-libs/optimize)** 
         * **file [Libs/Optimize/CorrespondenceMode.h](../Files/CorrespondenceMode_8h.md#file-correspondencemode.h)** 
+        * **file [Libs/Optimize/EarlyStoppingConfig.h](../Files/EarlyStoppingConfig_8h.md#file-earlystoppingconfig.h)** 
         * **file [Libs/Optimize/GradientDescentOptimizer.h](../Files/GradientDescentOptimizer_8h.md#file-gradientdescentoptimizer.h)** 
         * **dir [Libs/Optimize/Constraints](../Files/dir_aee3ea6bcd7d0f0da850c3e9fd33d5af.md#dir-libs/optimize/constraints)** 
             * **file [Libs/Optimize/Constraints/Constraint.h](../Files/Constraint_8h.md#file-constraint.h)** 
@@ -122,6 +123,9 @@ title: Files
             * **file [Libs/Optimize/Function/DisentangledCorrespondenceFunction.h](../Files/DisentangledCorrespondenceFunction_8h.md#file-disentangledcorrespondencefunction.h)** 
             * **file [Libs/Optimize/Function/DualVectorFunction.h](../Files/DualVectorFunction_8h.md#file-dualvectorfunction.h)** 
             * **file [Libs/Optimize/Function/LegacyCorrespondenceFunction.h](../Files/LegacyCorrespondenceFunction_8h.md#file-legacycorrespondencefunction.h)** 
+            * **dir [Libs/Optimize/Function/EarlyStop](../Files/dir_714a13efdf7ee1e2759ceed0978ff76a.md#dir-libs/optimize/function/earlystop)** 
+                * **file [Libs/Optimize/Function/EarlyStop/EarlyStopping.h](../Files/EarlyStopping_8h.md#file-earlystopping.h)** 
+                * **file [Libs/Optimize/Function/EarlyStop/MorphologicalDeviationScore.h](../Files/MorphologicalDeviationScore_8h.md#file-morphologicaldeviationscore.h)** 
             * **file [Libs/Optimize/Function/SamplingFunction.h](../Files/SamplingFunction_8h.md#file-samplingfunction.h)** 
             * **file [Libs/Optimize/Function/VectorFunction.h](../Files/VectorFunction_8h.md#file-vectorfunction.h)** 
         * **dir [Libs/Optimize/Matrix](../Files/dir_18c9fb63c9ecb061d3bfcf14463b37a6.md#dir-libs/optimize/matrix)** 
@@ -257,4 +261,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2025-10-09 at 04:04:24 +0000
+Updated on 2025-10-10 at 18:16:01 +0000

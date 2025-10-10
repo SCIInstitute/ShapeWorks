@@ -2560,6 +2560,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#enum-earlystoppingstrategy" class="md-nav__link">
+    enum EarlyStoppingStrategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enum-arraytransferoptions" class="md-nav__link">
     enum ArrayTransferOptions
   </a>
@@ -4246,6 +4253,14 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1EarlyStopping.html">shapeworks::EarlyStopping</a></strong></td>
+</tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="../Classes/structshapeworks_1_1EarlyStoppingConfig.html">shapeworks::EarlyStoppingConfig</a></strong> <br>Configuration for early stopping criteria.</td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1EigenUtils.html">shapeworks::EigenUtils</a></strong></td>
 </tr>
 <tr>
@@ -4475,6 +4490,10 @@
 <tr>
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.html">shapeworks::MixedEffectsShapeMatrix</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1MorphologicalDeviationScore.html">shapeworks::MorphologicalDeviationScore</a></strong></td>
 </tr>
 <tr>
 <td>struct</td>
@@ -4862,6 +4881,10 @@
 <tr>
 <td>enum class</td>
 <td Contour="Contour" Image_="Image," Mesh_="Mesh,"><strong><a href="namespaceshapeworks.html#enum-domaintype">DomainType</a></strong></td>
+</tr>
+<tr>
+<td>enum class</td>
+<td><strong><a href="namespaceshapeworks.html#enum-earlystoppingstrategy">EarlyStoppingStrategy</a></strong> { RelativeDifference, ExponentialMovingAverage}<br>strategies for early stopping</td>
 </tr>
 <tr>
 <td>enum</td>
@@ -5924,6 +5947,29 @@
 </tr>
 </tbody>
 </table>
+<h3 id="enum-earlystoppingstrategy">enum EarlyStoppingStrategy</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RelativeDifference</td>
+<td></td>
+<td>stop when relative improvement falls below a threshold</td>
+</tr>
+<tr>
+<td>ExponentialMovingAverage</td>
+<td></td>
+<td>stop using EMA of improvements to detect convergence</td>
+</tr>
+</tbody>
+</table>
+<p>strategies for early stopping </p>
 <h3 id="enum-arraytransferoptions">enum ArrayTransferOptions</h3>
 <table>
 <thead>
@@ -7267,7 +7313,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2025-10-09 at 04:04:21 +0000</p>
+<p>Updated on 2025-10-10 at 18:15:59 +0000</p>
 
               
             </article>

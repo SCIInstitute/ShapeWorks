@@ -127,6 +127,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetFixedDomains](../Classes/classshapeworks_1_1Optimize.md#function-setfixeddomains)**(std::vector< int > flags)<br>Set Domain Flags (TODO: details)  |
 | void | **[SetSharedBoundaryEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setsharedboundaryenabled)**(bool enabled)<br>Shared boundary settings.  |
 | void | **[SetSharedBoundaryWeight](../Classes/classshapeworks_1_1Optimize.md#function-setsharedboundaryweight)**(double weight) |
+| void | **[SetEarlyStoppingConfig](../Classes/classshapeworks_1_1Optimize.md#function-setearlystoppingconfig)**([EarlyStoppingConfig](../Classes/structshapeworks_1_1EarlyStoppingConfig.md) config)<br>Early Stopping params.  |
 | const std::vector< int > & | **[GetDomainFlags](../Classes/classshapeworks_1_1Optimize.md#function-getdomainflags)**() |
 | void | **[SetFileOutputEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setfileoutputenabled)**(bool enabled)<br>Set if file output is enabled.  |
 | std::vector< bool > | **[GetUseXYZ](../Classes/classshapeworks_1_1Optimize.md#function-getusexyz)**()<br>Return if XYZ is used, per shape.  |
@@ -384,4 +385,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2025-10-09 at 04:04:22 +0000
+Updated on 2025-10-10 at 18:16:00 +0000

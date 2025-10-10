@@ -2571,6 +2571,7 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Neighborhood/ParticleNeighborhood.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_matrix_fixed.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;EarlyStoppingConfig.h&quot;</span>
 
 <span class="c1">// Uncomment to visualize FFCs with scalar and vector fields</span>
 <span class="c1">// #define VIZFFC</span>
@@ -2773,6 +2774,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_IsSharedBoundaryEnabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryWeight</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SharedBoundaryWeight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weight</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetEarlyStoppingConfig</span><span class="p">(</span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">config</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">early_stopping_config_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadTransforms</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadPointsFiles</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AllocateDataCaches</span><span class="p">();</span>
@@ -2869,13 +2872,15 @@
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">initial_points_</span><span class="p">;</span>
 
+<span class="w">  </span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">early_stopping_config_</span><span class="p">;</span><span class="w"> </span><span class="c1">// config for early stopping</span>
+
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-10-09 at 04:04:23 +0000</p>
+<p>Updated on 2025-10-10 at 18:16:01 +0000</p>
 
               
             </article>
