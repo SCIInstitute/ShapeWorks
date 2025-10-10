@@ -1,10 +1,9 @@
 #include "MorphologicalDeviationScore.h"
 #include <Logging.h>
-
 namespace shapeworks {
 
 MorphologicalDeviationScore::MorphologicalDeviationScore() = default;
-
+f
 //---------------------------------------------------------------------------
 bool MorphologicalDeviationScore::SetControlShapes(const Eigen::MatrixXd& X) {
   try {
@@ -32,44 +31,31 @@ bool MorphologicalDeviationScore::FitPPCA(const Eigen::MatrixXd& X) {
         X_c, Eigen::ComputeThinU | Eigen::ComputeThinV);
     Eigen::VectorXd s = svd.singularValues();  // (r,)
     Eigen::MatrixXd V = svd.matrixV();         // (d x r)
-    Eigen::VectorXd eigvals =
-        (s.array().square()) / std::max(1, n - 1);  // (r,)
+    Eigen::VectorXd eigvals = (s.array().square()) / (n - 1);
 
-    double total_var = eigvals.sum();
-    if (total_var <= 0.0) {
-      throw std::runtime_error(
-          "Total variance is non-positive. Cannot fit PCA on control shapes");
-    }
+    // save_matrix(X, std::string(DEBUG_FILES_PTH) + "/X.npy");
+    // save_matrix(X_c, std::string(DEBUG_FILES_PTH) + "/X_c.npy");
+    // save_matrix(V, std::string(DEBUG_FILES_PTH) + "/V.npy");
+    // save_vector(eigvals, std::string(DEBUG_FILES_PTH) + "/eigvals.npy");
 
-    Eigen::VectorXd cum_var = eigvals;
-    for (int i = 1; i < cum_var.size(); ++i) {
-      cum_var(i) += cum_var(i - 1);
-    }
-    cum_var /= total_var;
-
-    int q = 0;
-    for (int i = 0; i < cum_var.size(); ++i) {
-      if (cum_var(i) > 0.95) {
-        q = i + 1;
-        break;
-      }
-    }
-    if (q == 0) q = cum_var.size();
-
-    eigvals_ = eigvals.head(q);   // (q,)
-    components_ = V.leftCols(q);  // (d x q)
-
-    if (q < d) {
-      double rem_sum = eigvals.tail(eigvals.size() - q).sum();
-      noise_variance_ = rem_sum / (d - q);
-    } else {
-      noise_variance_ = 0.0;
-    }
+    Eigen::VectorXd cumsum = eigvals;
+    for (int i = 1; i < eigvals.size(); ++i) cumsum[i] += cumsum[i - 1];
+    Eigen::VectorXd cumvar = cumsum / eigvals.sum();
+    n_components_ = 0;
+    while (n_components_ < cumvar.size() && cumvar[n_components_] <= retained_variance_ratio_)
+      ++n_components_;
+    int q = n_components_;
+    principal_components_variance_ = eigvals.head(q);  // (q,)
+    components_ = V.leftCols(q);                       // (d x q)
+    // save_matrix(components_, std::string(DEBUG_FILES_PTH) + "/components.npy");
+    // save_vector(principal_components_variance_,
+    //             std::string(DEBUG_FILES_PTH) + "/eigvals.npy");
+    noise_variance_ = eigvals.tail(eigvals.size() - q).sum() / double(d - q);
     return true;
 
   } catch (std::exception& e) {
     SW_ERROR(
-        "Exception in SVD computation for early stopping score function {}",
+        "SVD computation failed for MorphologicalDeviationScore:  {}",
         e.what());
     return false;
   }
@@ -84,7 +70,7 @@ Eigen::MatrixXd MorphologicalDeviationScore::ComputeCovarianceMatrix() {
     return noise_variance_ * Eigen::MatrixXd::Identity(d, d);
   }
 
-  Eigen::MatrixXd diag_lambda = eigvals_.asDiagonal();  // (q x q)
+  Eigen::MatrixXd diag_lambda = principal_components_variance_.asDiagonal();  // (q x q)
   Eigen::MatrixXd cov =
       components_ *
           (diag_lambda - noise_variance_ * Eigen::MatrixXd::Identity(q, q)) *
@@ -99,56 +85,52 @@ Eigen::MatrixXd MorphologicalDeviationScore::ComputePrecisionMatrix() {
     const int d = components_.rows();
     const int q = components_.cols();
 
-    if (q == 0) {
-      if (noise_variance_ <= 0.0)
-        throw std::runtime_error(
-            "Noise variance is zero; precision undefined.");
-      return (1.0 / noise_variance_) * Eigen::MatrixXd::Identity(d, d);
-    }
+    Eigen::MatrixXd A_inv = (1 / noise_variance_) * Eigen::MatrixXd::Identity(d, d);
 
-    Eigen::MatrixXd P = components_ * components_.transpose();  // (d x d)
-    Eigen::MatrixXd term_principal = components_ *
-                                     eigvals_.cwiseInverse().asDiagonal() *
-                                     components_.transpose();  // (d x d)
+    Eigen::MatrixXd U = components_;
+    Eigen::MatrixXd C_inv = principal_components_variance_.cwiseInverse().asDiagonal();
+    Eigen::MatrixXd V = components_.transpose();
+    // Woodbury matrix identity
+    // (A + U C V)^(-1)
+    //   = A^(-1)
+    //   - A^(-1) * U * (C^(-1) + V * A^(-1) * U)^(-1) * V * A^(-1)
 
-    if (noise_variance_ <= 0.0) {
-      if (q != d)
-        throw std::runtime_error(
-            "Noise variance is zero and q < d; covariance is singular.");
-      return term_principal;
-    }
+    Eigen::MatrixXd precision = A_inv - A_inv * U * (C_inv + V * A_inv * U).inverse() * V * A_inv;
+    // save_matrix(precision, std::string(DEBUG_FILES_PTH)+"/precision.npy");
 
-    Eigen::MatrixXd precision =
-        term_principal + (1.0 / noise_variance_) *
-                             (Eigen::MatrixXd::Identity(d, d) - P);  // (d x d)
     return precision;
-
   } catch (std::exception& e) {
     SW_ERROR(
-        "Exception in computation of precision matrix in early stopping score "
-        "function {}",
+        "Failed to compute precision matrix in the early stopping score function: {}",
         e.what());
     return Eigen::MatrixXd();
   }
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd MorphologicalDeviationScore::GetMahalanobisDistance(
+Eigen::VectorXd MorphologicalDeviationScore::GetMorphoDevScore(
     const Eigen::MatrixXd& X) {
   try {
+
     if (!is_fitted_) {
       throw std::runtime_error(
-          "PCA model has not been fitted yet on control shapes.");
+          "PPCA model is not fitted on control shapes.");
     }
     const int n = X.rows();
-    Eigen::MatrixXd X_c = X.rowwise() - mean_;
-    Eigen::VectorXd dist(n);
-    for (int i = 0; i < n; ++i) {
-      Eigen::RowVectorXd xi = X_c.row(i);
-      dist(i) = std::sqrt(
-          std::max(0.0, (xi * precision_matrix_ * xi.transpose())(0)));
-    }
-    return dist;
+    // Eigen::MatrixXd X_c = X.rowwise() - mean_;
+    // Eigen::VectorXd dist(n);
+    // for (int i = 0; i < n; ++i) {
+    //   Eigen::RowVectorXd xi = X_c.row(i);
+    //   dist(i) = std::sqrt(
+    //       std::max(0.0, (xi * precision_matrix_ * xi.transpose())(0)));
+    // }
+
+    Eigen::MatrixXd X_bar = X.rowwise() - mean_;
+    Eigen::MatrixXd Y = X_bar * precision_matrix_; // (n_samples × n_features)
+    Eigen::VectorXd sq_mahal = (X_bar.array() * Y.array()).rowwise().sum(); // quadratic forms
+    Eigen::VectorXd mahalanobis = sq_mahal.array().sqrt(); // final distances
+    return mahalanobis;
+
   } catch (std::exception& e) {
     SW_ERROR(
         "Exception in computing Mahalanobis distance for early stopping score "
@@ -157,16 +139,5 @@ Eigen::VectorXd MorphologicalDeviationScore::GetMahalanobisDistance(
     return Eigen::VectorXd();
   }
 }
-
-//---------------------------------------------------------------------------
-// double MorphologicalDeviationScore::GetDeviationScore(const Eigen::MatrixXd&
-// X_test) {
-//     if (!is_fitted_) {
-//         throw std::runtime_error("PPCA model has not been fitted. Call
-//         SetControlShapes() first.");
-//     }
-//     Eigen::VectorXd dists = GetMahalanobisDistance(X_test);
-//     return dists(0);
-// }
 
 }  // namespace shapeworks
