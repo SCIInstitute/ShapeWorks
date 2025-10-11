@@ -597,6 +597,22 @@ Mesh& Mesh::fixNonManifold() {
   return *this;
 }
 
+Mesh& Mesh::extractLargestComponent() {
+  auto connectivityFilter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  connectivityFilter->SetExtractionModeToLargestRegion();
+  connectivityFilter->SetInputData(poly_data_);
+  connectivityFilter->Update();
+
+  // Clean to remove unused points from other components
+  auto cleanFilter = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleanFilter->SetInputData(connectivityFilter->GetOutput());
+  cleanFilter->Update();
+  poly_data_ = cleanFilter->GetOutput();
+
+  this->invalidateLocators();
+  return *this;
+}
+
 bool Mesh::detectNonManifold() {
   auto features = vtkSmartPointer<vtkFeatureEdges>::New();
   features->SetInputData(this->poly_data_);

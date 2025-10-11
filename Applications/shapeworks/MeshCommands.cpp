@@ -766,6 +766,27 @@ bool FixElement::execute(const optparse::Values &options, SharedCommandData &sha
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// MeshLargestComponent
+///////////////////////////////////////////////////////////////////////////////
+void MeshLargestComponent::buildParser() {
+  const std::string prog = "mesh-largest-component";
+  const std::string desc = "extract the largest connected component from the mesh";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool MeshLargestComponent::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  sharedData.mesh->extractLargestComponent();
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // ClipClosedSurface
 ///////////////////////////////////////////////////////////////////////////////
 void ClipClosedSurface::buildParser() {

@@ -489,6 +489,7 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
   ui_->blur_checkbox->setChecked(params.get_blur_tool());
   ui_->isolate_checkbox->setChecked(params.get_isolate_tool());
   ui_->fill_holes_checkbox->setChecked(params.get_fill_holes_tool());
+  ui_->mesh_largest_component->setChecked(params.get_mesh_largest_component());
   ui_->mesh_fill_holes->setChecked(params.get_fill_mesh_holes_tool());
   ui_->antialias_iterations->setValue(params.get_antialias_iterations());
   ui_->blur_sigma->setValue(params.get_blur_amount());
@@ -586,6 +587,7 @@ void GroomTool::store_params() {
   params.set_blur_amount(ui_->blur_sigma->value());
   params.set_isolate_tool(ui_->isolate_checkbox->isChecked());
   params.set_fill_holes_tool(ui_->fill_holes_checkbox->isChecked());
+  params.set_mesh_largest_component(ui_->mesh_largest_component->isChecked());
   params.set_fill_mesh_holes_tool(ui_->mesh_fill_holes->isChecked());
   params.set_antialias_iterations(ui_->antialias_iterations->value());
   params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
