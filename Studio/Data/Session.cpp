@@ -1005,6 +1005,9 @@ void Session::trigger_save() { Q_EMIT save(); }
 void Session::trigger_data_changed() { Q_EMIT data_changed(); }
 
 //---------------------------------------------------------------------------
+void Session::trigger_fill_all_ffc() { Q_EMIT fill_all_ffc_requested(); }
+
+//---------------------------------------------------------------------------
 void Session::reload_particles() {
   int num_subjects = project_->get_number_of_subjects();
 

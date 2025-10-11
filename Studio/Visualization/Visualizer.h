@@ -56,6 +56,7 @@ class Visualizer : public QObject {
   void update_landmarks();
   void update_planes();
   void update_paint_mode();
+  void handle_fill_all_ffc();
 
   void display_sample(int i);
 

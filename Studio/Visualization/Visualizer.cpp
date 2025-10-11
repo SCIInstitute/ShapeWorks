@@ -53,6 +53,15 @@ void Visualizer::set_session(SessionHandle session) {
   connect(session_.data(), &Session::paint_mode_changed, this, &Visualizer::update_paint_mode);
   connect(session_.data(), &Session::repaint, this, &Visualizer::redraw);
   connect(session_.data(), &Session::annotations_changed, this, &Visualizer::update_annotations);
+  connect(session_.data(), &Session::fill_all_ffc_requested, this, &Visualizer::handle_fill_all_ffc);
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::handle_fill_all_ffc() {
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->fill_all_ffc();
+  }
+  lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------

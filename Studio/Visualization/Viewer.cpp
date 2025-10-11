@@ -595,6 +595,31 @@ void Viewer::handle_paint(double display_pos[2], double world_pos[3]) {
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::fill_all_ffc() {
+  // fill all vertices of all meshes with the current paint mode (included/excluded)
+  if (!meshes_.valid()) {
+    return;
+  }
+
+  bool inclusive = session_->get_ffc_paint_mode_inclusive();
+
+  for (int domain = 0; domain < meshes_.meshes().size(); domain++) {
+    auto mesh = meshes_.meshes()[domain];
+    mesh->fill_ffc(inclusive);
+
+    auto& ffc = shape_->get_constraints(domain).getFreeformConstraint();
+    ffc.setDefinition(mesh->get_poly_data());
+    if (!ffc.isSet()) {
+      ffc.setPainted(true);
+      session_->trigger_ffc_changed();
+    }
+  }
+
+  session_->set_modified(true);
+  session_->trigger_repaint();
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
 
 //-----------------------------------------------------------------------------
