@@ -52,6 +52,8 @@ title: shapeworks::GroomParameters
 | void | **[set_fill_holes_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-set-fill-holes-tool)**(bool value) |
 | bool | **[get_fill_mesh_holes_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-get-fill-mesh-holes-tool)**() |
 | void | **[set_fill_mesh_holes_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-set-fill-mesh-holes-tool)**(bool value) |
+| bool | **[get_mesh_largest_component](../Classes/classshapeworks_1_1GroomParameters.md#function-get-mesh-largest-component)**() |
+| void | **[set_mesh_largest_component](../Classes/classshapeworks_1_1GroomParameters.md#function-set-mesh-largest-component)**(bool value) |
 | bool | **[get_auto_pad_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-get-auto-pad-tool)**() |
 | void | **[set_auto_pad_tool](../Classes/classshapeworks_1_1GroomParameters.md#function-set-auto-pad-tool)**(bool value) |
 | int | **[get_padding_amount](../Classes/classshapeworks_1_1GroomParameters.md#function-get-padding-amount)**() |
@@ -348,6 +350,22 @@ bool get_fill_mesh_holes_tool()
 
 ```cpp
 void set_fill_mesh_holes_tool(
+    bool value
+)
+```
+
+
+### function get_mesh_largest_component
+
+```cpp
+bool get_mesh_largest_component()
+```
+
+
+### function set_mesh_largest_component
+
+```cpp
+void set_mesh_largest_component(
     bool value
 )
 ```
@@ -950,4 +968,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2025-10-10 at 18:15:59 +0000
+Updated on 2025-10-11 at 04:45:07 +0000

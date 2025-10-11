@@ -83,6 +83,9 @@ class GroomParameters {
   bool get_fill_mesh_holes_tool();
   void set_fill_mesh_holes_tool(bool value);
 
+  bool get_mesh_largest_component();
+  void set_mesh_largest_component(bool value);
+
   bool get_auto_pad_tool();
   void set_auto_pad_tool(bool value);
 
@@ -202,4 +205,4 @@ class GroomParameters {
 
 -------------------------------
 
-Updated on 2025-10-10 at 18:16:01 +0000
+Updated on 2025-10-11 at 04:45:08 +0000

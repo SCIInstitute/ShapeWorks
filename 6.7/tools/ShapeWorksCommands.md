@@ -1754,6 +1754,26 @@ shapeworks  mesh-info [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
+### mesh-largest-component
+
+
+**Usage:**
+
+```
+shapeworks  mesh-largest-component [args]...
+```  
+
+
+**Description:** extract the largest connected component from the mesh  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
 ### mesh-to-dt
 
 

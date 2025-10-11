@@ -103,6 +103,7 @@ COMMAND_DECLARE(FieldMean, MeshCommand);
 COMMAND_DECLARE(FieldStd, MeshCommand);
 COMMAND_DECLARE(FieldNames, MeshCommand);
 COMMAND_DECLARE(FixElement, MeshCommand);
+COMMAND_DECLARE(MeshLargestComponent, MeshCommand);
 COMMAND_DECLARE(ClipClosedSurface, MeshCommand);
 COMMAND_DECLARE(ClosestPoint, MeshCommand);
 COMMAND_DECLARE(GeodesicDistance, MeshCommand);
@@ -130,4 +131,4 @@ COMMAND_DECLARE(DeepSSMCommand, DeepSSMCommandGroup);
 
 -------------------------------
 
-Updated on 2025-10-10 at 18:16:00 +0000
+Updated on 2025-10-11 at 04:45:08 +0000

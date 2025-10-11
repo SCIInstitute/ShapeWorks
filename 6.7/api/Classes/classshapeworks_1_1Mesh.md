@@ -59,6 +59,7 @@ title: shapeworks::Mesh
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1Mesh.md#function-boundingbox)**() const<br>computes bounding box of current mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fixElement](../Classes/classshapeworks_1_1Mesh.md#function-fixelement)**()<br>fix element winding of mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fixNonManifold](../Classes/classshapeworks_1_1Mesh.md#function-fixnonmanifold)**()<br>Attempt to fix non-manifold edges.  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[extractLargestComponent](../Classes/classshapeworks_1_1Mesh.md#function-extractlargestcomponent)**()<br>Extract the largest connected component from the mesh.  |
 | bool | **[detectNonManifold](../Classes/classshapeworks_1_1Mesh.md#function-detectnonmanifold)**()<br>Detect if mesh contain non-manifold edges.  |
 | bool | **[detectTriangular](../Classes/classshapeworks_1_1Mesh.md#function-detecttriangular)**()<br>Detect if mesh is triangular;.  |
 | std::vector< Field > | **[distance](../Classes/classshapeworks_1_1Mesh.md#function-distance)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, const DistanceMethod method =PointToCell) const |
@@ -481,6 +482,14 @@ Mesh & fixNonManifold()
 ```
 
 Attempt to fix non-manifold edges. 
+
+### function extractLargestComponent
+
+```cpp
+Mesh & extractLargestComponent()
+```
+
+Extract the largest connected component from the mesh. 
 
 ### function detectNonManifold
 
@@ -1000,4 +1009,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2025-10-10 at 18:16:00 +0000
+Updated on 2025-10-11 at 04:45:08 +0000

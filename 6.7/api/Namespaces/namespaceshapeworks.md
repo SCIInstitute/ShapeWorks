@@ -323,6 +323,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(FieldStd , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(FieldNames , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(FixElement , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
+| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(MeshLargestComponent , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(ClipClosedSurface , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(ClosestPoint , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(GeodesicDistance , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
@@ -1584,6 +1585,16 @@ COMMAND_DECLARE(
 
 ```cpp
 COMMAND_DECLARE(
+    MeshLargestComponent ,
+    MeshCommand 
+)
+```
+
+
+### function COMMAND_DECLARE
+
+```cpp
+COMMAND_DECLARE(
     ClipClosedSurface ,
     MeshCommand 
 )
@@ -2637,4 +2648,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2025-10-10 at 18:15:59 +0000
+Updated on 2025-10-11 at 04:45:07 +0000
