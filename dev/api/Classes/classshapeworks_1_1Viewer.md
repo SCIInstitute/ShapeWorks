@@ -68,6 +68,7 @@ summary: 3D Viewer
 | void | **[update_clipping_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-clipping-planes)**() |
 | vtkSmartPointer< vtkPolygonalSurfacePointPlacer > | **[get_point_placer](../Classes/classshapeworks_1_1Viewer.md#function-get-point-placer)**() |
 | void | **[handle_paint](../Classes/classshapeworks_1_1Viewer.md#function-handle-paint)**(double display_pos[2], double world_pos[3]) |
+| void | **[fill_all_ffc](../Classes/classshapeworks_1_1Viewer.md#function-fill-all-ffc)**() |
 | void | **[update_actors](../Classes/classshapeworks_1_1Viewer.md#function-update-actors)**() |
 | void | **[remove_scalar_bar](../Classes/classshapeworks_1_1Viewer.md#function-remove-scalar-bar)**() |
 | bool | **[is_ready](../Classes/classshapeworks_1_1Viewer.md#function-is-ready)**() |
@@ -495,6 +496,13 @@ void handle_paint(
 ```
 
 
+### function fill_all_ffc
+
+```cpp
+void fill_all_ffc()
+```
+
+
 ### function update_actors
 
 ```cpp
@@ -573,4 +581,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2025-10-11 at 04:45:08 +0000
+Updated on 2025-10-11 at 18:16:34 +0000

@@ -56,6 +56,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[save](../Classes/classshapeworks_1_1Session.md#signal-save)**() |
 | void | **[session_title_changed](../Classes/classshapeworks_1_1Session.md#signal-session-title-changed)**() |
 | void | **[image_name_changed](../Classes/classshapeworks_1_1Session.md#signal-image-name-changed)**() |
+| void | **[fill_all_ffc_requested](../Classes/classshapeworks_1_1Session.md#signal-fill-all-ffc-requested)**() |
 
 ## Public Functions
 
@@ -114,6 +115,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[trigger_save](../Classes/classshapeworks_1_1Session.md#function-trigger-save)**() |
 | void | **[trigger_data_changed](../Classes/classshapeworks_1_1Session.md#function-trigger-data-changed)**() |
 | void | **[reload_particles](../Classes/classshapeworks_1_1Session.md#function-reload-particles)**() |
+| void | **[trigger_fill_all_ffc](../Classes/classshapeworks_1_1Session.md#function-trigger-fill-all-ffc)**() |
 | void | **[set_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-set-active-landmark-domain)**(int id) |
 | int | **[get_active_landmark_domain](../Classes/classshapeworks_1_1Session.md#function-get-active-landmark-domain)**() |
 | void | **[set_placing_landmark](../Classes/classshapeworks_1_1Session.md#function-set-placing-landmark)**(int id) |
@@ -408,6 +410,13 @@ void session_title_changed()
 
 ```cpp
 void image_name_changed()
+```
+
+
+### signal fill_all_ffc_requested
+
+```cpp
+void fill_all_ffc_requested()
 ```
 
 
@@ -841,6 +850,13 @@ void trigger_data_changed()
 
 ```cpp
 void reload_particles()
+```
+
+
+### function trigger_fill_all_ffc
+
+```cpp
+void trigger_fill_all_ffc()
 ```
 
 
@@ -1490,4 +1506,4 @@ static const std::string MONAI_C;
 
 -------------------------------
 
-Updated on 2025-10-11 at 04:45:08 +0000
+Updated on 2025-10-11 at 18:16:33 +0000

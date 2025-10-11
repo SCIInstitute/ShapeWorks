@@ -169,6 +169,8 @@ class Viewer {
 
   void handle_paint(double display_pos[2], double world_pos[3]);
 
+  void fill_all_ffc();
+
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
   void update_actors();
@@ -292,4 +294,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2025-10-11 at 04:45:09 +0000
+Updated on 2025-10-11 at 18:16:35 +0000

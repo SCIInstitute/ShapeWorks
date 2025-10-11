@@ -98,6 +98,8 @@ class StudioMesh {
 
   void paint_ffc(double world_pos[], double radius, bool inclusive);
 
+  void fill_ffc(bool inclusive);
+
   bool has_ffc_paint();
 
   Mesh get_sw_mesh();
@@ -118,4 +120,4 @@ class StudioMesh {
 
 -------------------------------
 
-Updated on 2025-10-11 at 04:45:08 +0000
+Updated on 2025-10-11 at 18:16:34 +0000

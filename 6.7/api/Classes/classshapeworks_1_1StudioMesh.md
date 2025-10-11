@@ -29,6 +29,7 @@ Representation of a single mesh.  [More...](#detailed-description)
 | double | **[get_largest_dimension_size](../Classes/classshapeworks_1_1StudioMesh.md#function-get-largest-dimension-size)**()<br>Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100)  |
 | vtkFloatArray * | **[get_or_create_array](../Classes/classshapeworks_1_1StudioMesh.md#function-get-or-create-array)**(std::string name, float default_value)<br>Get or create and return an array with a given name.  |
 | void | **[paint_ffc](../Classes/classshapeworks_1_1StudioMesh.md#function-paint-ffc)**(double world_pos[], double radius, bool inclusive)<br>Paint free form constraint.  |
+| void | **[fill_ffc](../Classes/classshapeworks_1_1StudioMesh.md#function-fill-ffc)**(bool inclusive)<br>Fill all vertices with specified inclusion/exclusion value.  |
 | bool | **[has_ffc_paint](../Classes/classshapeworks_1_1StudioMesh.md#function-has-ffc-paint)**()<br>Does this mesh have free form constraint paint?  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[get_sw_mesh](../Classes/classshapeworks_1_1StudioMesh.md#function-get-sw-mesh)**()<br>Return a shapeworks [Mesh](../Classes/classshapeworks_1_1Mesh.md) library class mesh.  |
 
@@ -168,6 +169,16 @@ void paint_ffc(
 
 Paint free form constraint. 
 
+### function fill_ffc
+
+```cpp
+void fill_ffc(
+    bool inclusive
+)
+```
+
+Fill all vertices with specified inclusion/exclusion value. 
+
 ### function has_ffc_paint
 
 ```cpp
@@ -195,4 +206,4 @@ static constexpr const char *const FFC_PAINT = "ffc_paint";
 
 -------------------------------
 
-Updated on 2025-10-11 at 04:45:08 +0000
+Updated on 2025-10-11 at 18:16:33 +0000
