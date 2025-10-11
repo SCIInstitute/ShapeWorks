@@ -3,7 +3,7 @@
 namespace shapeworks {
 
 MorphologicalDeviationScore::MorphologicalDeviationScore() = default;
-f
+
 //---------------------------------------------------------------------------
 bool MorphologicalDeviationScore::SetControlShapes(const Eigen::MatrixXd& X) {
   try {
