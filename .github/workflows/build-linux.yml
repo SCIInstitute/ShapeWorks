@@ -65,8 +65,6 @@ jobs:
       with:
         path: /github/home/install
         key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
-        restore-keys: |
-          ${{ runner.os }}-deps-
 
     - name: try import vtk
       shell: bash -l {0}
