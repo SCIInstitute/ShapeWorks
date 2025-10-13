@@ -2546,34 +2546,48 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
+<span class="c1">// #include &quot;cnpy.h&quot;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MorphologicalDeviationScore</span><span class="w"> </span><span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">    </span><span class="n">MorphologicalDeviationScore</span><span class="p">();</span>
-<span class="w">    </span><span class="c1">// Fit PPCA model on control shapes</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SetControlShapes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span><span class="w"> </span><span class="c1">// (n_samples x n_features)</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">GetMahalanobisDistance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span><span class="w"> </span><span class="c1">// (n,)</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">MorphologicalDeviationScore</span><span class="p">();</span>
+<span class="w">  </span><span class="c1">// Fit PPCA model on control shapes</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SetControlShapes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span><span class="w">  </span><span class="c1">// (n_samples x n_features)</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">GetMorphoDevScore</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span><span class="w">  </span><span class="c1">// (n,)</span>
 
-<span class="k">private</span><span class="o">:</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_fitted_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">              </span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_fitted_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
-<span class="w">    </span><span class="c1">// Fitted model parameters</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">RowVectorXd</span><span class="w"> </span><span class="n">mean_</span><span class="p">;</span><span class="w"> </span><span class="c1">// (1 x d)</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">components_</span><span class="p">;</span><span class="w"> </span><span class="c1">// (d x q)</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">eigvals_</span><span class="p">;</span><span class="w"> </span><span class="c1">// (q,)</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">noise_variance_</span><span class="p">;</span>
-<span class="w">    </span><span class="c1">// Derived matrices</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">precision_matrix_</span><span class="p">;</span><span class="w"> </span><span class="c1">// (d x d)</span>
-<span class="w">    </span><span class="c1">// Helper functions</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">FitPPCA</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">ComputeCovarianceMatrix</span><span class="p">();</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">ComputePrecisionMatrix</span><span class="p">();</span>
+<span class="w">  </span><span class="c1">// Fitted model parameters</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">RowVectorXd</span><span class="w"> </span><span class="n">mean_</span><span class="p">;</span><span class="w">                        </span><span class="c1">// (1 x d)</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">components_</span><span class="p">;</span><span class="w">                     </span><span class="c1">// (d x q)</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">principal_components_variance_</span><span class="p">;</span><span class="w">  </span><span class="c1">// (q,)</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">n_components_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">noise_variance_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">retained_variance_ratio_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.95</span><span class="p">;</span>
+<span class="w">  </span><span class="c1">// Derived matrices</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">precision_matrix_</span><span class="p">;</span><span class="w">  </span><span class="c1">// (d x d)</span>
+<span class="w">  </span><span class="c1">// Helper functions</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">FitPPCA</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">ComputeCovarianceMatrix</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">ComputePrecisionMatrix</span><span class="p">();</span>
+<span class="c1">//   inline static void save_vector(const Eigen::VectorXd&amp; v,</span>
+<span class="c1">//                                  const std::string&amp; fname) {</span>
+<span class="c1">//     cnpy::npy_save(fname, v.data(), {(size_t)v.size()}, &quot;w&quot;);</span>
+<span class="c1">//   };</span>
+<span class="c1">//   inline static void save_matrix(const Eigen::MatrixXd m,</span>
+<span class="c1">//                                  const std::string&amp; fname) {</span>
+<span class="c1">//     Eigen::Matrix&lt;double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor&gt;</span>
+<span class="c1">//         X_rm = m;</span>
+<span class="c1">//     cnpy::npy_save(fname, X_rm.data(), {(size_t)m.rows(), (size_t)m.cols()},</span>
+<span class="c1">//                    &quot;w&quot;);</span>
+<span class="c1">//   };</span>
 <span class="p">};</span>
-<span class="p">}</span><span class="w"> </span><span class="c1">// namespace shapeworks</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-10-11 at 18:16:34 +0000</p>
+<p>Updated on 2025-10-13 at 17:18:12 +0000</p>
 
               
             </article>

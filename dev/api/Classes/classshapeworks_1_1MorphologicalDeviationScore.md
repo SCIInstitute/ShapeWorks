@@ -15,7 +15,7 @@ title: shapeworks::MorphologicalDeviationScore
 | -------------- | -------------- |
 | | **[MorphologicalDeviationScore](../Classes/classshapeworks_1_1MorphologicalDeviationScore.md#function-morphologicaldeviationscore)**() |
 | bool | **[SetControlShapes](../Classes/classshapeworks_1_1MorphologicalDeviationScore.md#function-setcontrolshapes)**(const Eigen::MatrixXd & X) |
-| Eigen::VectorXd | **[GetMahalanobisDistance](../Classes/classshapeworks_1_1MorphologicalDeviationScore.md#function-getmahalanobisdistance)**(const Eigen::MatrixXd & X)<br>Get Mahalanobis-based deviation score for test samples (non-fixed shapes/domains)  |
+| Eigen::VectorXd | **[GetMorphoDevScore](../Classes/classshapeworks_1_1MorphologicalDeviationScore.md#function-getmorphodevscore)**(const Eigen::MatrixXd & X) |
 
 ## Public Functions Documentation
 
@@ -35,16 +35,18 @@ bool SetControlShapes(
 ```
 
 
-### function GetMahalanobisDistance
+### function GetMorphoDevScore
 
 ```cpp
-Eigen::VectorXd GetMahalanobisDistance(
+Eigen::VectorXd GetMorphoDevScore(
     const Eigen::MatrixXd & X
 )
 ```
 
+
 Get Mahalanobis-based deviation score for test samples (non-fixed shapes/domains) 
+
 
 -------------------------------
 
-Updated on 2025-10-11 at 18:16:33 +0000
+Updated on 2025-10-13 at 17:18:11 +0000
