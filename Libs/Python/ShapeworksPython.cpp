@@ -94,6 +94,12 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .value("NearestNeighbor", Image::InterpolationType::NearestNeighbor)
       .export_values();
 
+  // Image::DistanceTransformType
+  py::enum_<Image::DistanceTransformType>(m, "DistanceTransformType")
+      .value("SignedMaurer", Image::DistanceTransformType::SignedMaurer)
+      .value("ReinitializeLevelSet", Image::DistanceTransformType::ReinitializeLevelSet)
+      .export_values();
+
   m.def(
       "mean", [](py::array& field) { return mean(pyToArr(field, false /*take_ownership*/)); },
       "incrementally compute (single-component) mean of field");
@@ -323,7 +329,8 @@ PYBIND11_MODULE(shapeworks_py, m) {
            "outerVal"_a = 0.0)
 
       .def("computeDT", &Image::computeDT,
-           "computes signed distance transform volume from an image at the specified isovalue", "isovalue"_a = 0.0)
+           "computes signed distance transform volume from an image at the specified isovalue using the specified method (SignedMaurer is default, faster and more robust)",
+           "isovalue"_a = 0.0, "method"_a = Image::DistanceTransformType::SignedMaurer)
 
       .def("applyCurvatureFilter", &Image::applyCurvatureFilter,
            "denoises an image using curvature driven flow using curvature flow image filter", "iterations"_a = 10)

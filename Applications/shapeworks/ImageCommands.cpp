@@ -548,6 +548,8 @@ void ComputeDT::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--isovalue").action("store").type("double").set_default(0.0).help("Level set value that defines the interface between foreground and background [default: %default].");
+  std::list<std::string> methods{"maurer", "levelset"};
+  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("maurer").help("Distance transform method: 'maurer' (SignedMaurerDistanceMapImageFilter - faster, more robust, default) or 'levelset' (ReinitializeLevelSetImageFilter - legacy) [default: %default].");
 
   Command::buildParser();
 }
@@ -561,8 +563,10 @@ bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &shar
   }
 
   double isoValue = static_cast<double>(options.get("isovalue"));
+  std::string method_str(static_cast<std::string>(options.get("method")));
+  Image::DistanceTransformType method = (method_str == "levelset") ? Image::ReinitializeLevelSet : Image::SignedMaurer;
 
-  sharedData.image.computeDT(isoValue);
+  sharedData.image.computeDT(isoValue, method);
   return true;
 }
 

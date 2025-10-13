@@ -28,13 +28,14 @@ class Mesh;
 class Image {
  public:
   enum InterpolationType { Linear, NearestNeighbor };
+  enum DistanceTransformType { SignedMaurer, ReinitializeLevelSet };
 
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
   using ImageIterator = itk::ImageRegionIterator<ImageType>;
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType>;
-
+  
   // constructors and assignment operators //
   explicit Image(const Dims dims);
   explicit Image(const std::string& pathname) : itk_image_(read(pathname)) {}
@@ -161,7 +162,7 @@ class Image {
                   PixelType innerVal = 1.0, PixelType outerVal = 0.0);
 
   /// computes distance transform volume from a (preferably antialiased) binary image using the specified isovalue
-  Image& computeDT(PixelType isoValue = 0.0);
+  Image& computeDT(PixelType isoValue = 0.0, DistanceTransformType method = SignedMaurer);
 
   /// denoises an image using curvature driven flow using curvature flow image filter
   Image& applyCurvatureFilter(unsigned iterations = 10);

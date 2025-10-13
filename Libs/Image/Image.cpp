@@ -24,6 +24,7 @@
 #include <itkOrientImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
+#include <itkSignedMaurerDistanceMapImageFilter.h>
 #include <itkRelabelComponentImageFilter.h>
 #include <itkResampleImageFilter.h>
 #include <itkScalableAffineTransform.h>
@@ -628,15 +629,28 @@ Image& Image::binarize(PixelType minVal, PixelType maxVal, PixelType innerVal, P
   return *this;
 }
 
-Image& Image::computeDT(PixelType isoValue) {
-  using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
-  FilterType::Pointer filter = FilterType::New();
+Image& Image::computeDT(PixelType isoValue, DistanceTransformType method) {
+  if (method == SignedMaurer) {
+    using FilterType = itk::SignedMaurerDistanceMapImageFilter<ImageType, ImageType>;
+    FilterType::Pointer filter = FilterType::New();
 
-  filter->SetInput(this->itk_image_);
-  filter->NarrowBandingOff();
-  filter->SetLevelSetValue(isoValue);
-  filter->Update();
-  this->itk_image_ = filter->GetOutput();
+    filter->SetInput(this->itk_image_);
+    filter->SetBackgroundValue(isoValue);
+    filter->SetInsideIsPositive(false);
+    filter->SetSquaredDistance(false);
+    filter->SetUseImageSpacing(true);
+    filter->Update();
+    this->itk_image_ = filter->GetOutput();
+  } else {  // ReinitializeLevelSet
+    using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
+    FilterType::Pointer filter = FilterType::New();
+
+    filter->SetInput(this->itk_image_);
+    filter->NarrowBandingOff();
+    filter->SetLevelSetValue(isoValue);
+    filter->Update();
+    this->itk_image_ = filter->GetOutput();
+  }
 
   return *this;
 }

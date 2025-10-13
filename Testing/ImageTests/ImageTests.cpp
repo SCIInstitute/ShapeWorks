@@ -280,7 +280,8 @@ TEST(ImageTests, binarizeTest2) {
 
 TEST(ImageTests, computedtTest1) {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image.computeDT();
+  // Use legacy method to match existing ground truth
+  image.computeDT(0.0, Image::ReinitializeLevelSet);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/computedt1.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -288,10 +289,31 @@ TEST(ImageTests, computedtTest1) {
 
 TEST(ImageTests, computedtTest2) {
   Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
-  image.computeDT(1.0);
+  // Use legacy method to match existing ground truth
+  image.computeDT(1.0, Image::ReinitializeLevelSet);
   Image ground_truth(std::string(TEST_DATA_DIR) + "/computedt2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
+}
+
+// Test the new default SignedMaurer method
+TEST(ImageTests, computedtTest3) {
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  // Use new default SignedMaurer method - should work without anti-aliasing
+  image.computeDT(0.0, Image::SignedMaurer);
+
+  // Should produce a distance transform (negative inside, positive outside)
+  ASSERT_TRUE(image.isDistanceTransform());
+}
+
+TEST(ImageTests, computedtTest4) {
+  Image image(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  // Test that default is SignedMaurer
+  Image image_default(std::string(TEST_DATA_DIR) + "/1x2x2.nrrd");
+  image.computeDT(0.0, Image::SignedMaurer);
+  image_default.computeDT(0.0);  // Should use SignedMaurer by default
+
+  ASSERT_TRUE(image == image_default);
 }
 
 TEST(ImageTests, curvatureTest) {
