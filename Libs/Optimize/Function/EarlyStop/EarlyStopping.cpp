@@ -42,7 +42,6 @@ void EarlyStopping::reset() {
   ema_initialized_ = false;
   ema_diff_ = Eigen::VectorXd();
   last_checked_iter_ = -1;
-  // stop_flag_ = false;
   stop_flag_.store(false);
 }
 
@@ -81,16 +80,12 @@ void EarlyStopping::update(int iteration, const ParticleSystem* p) {
 
 }
 
-// bool EarlyStopping::ShouldStop() const {
-//     return stop_flag_;
-// }
-
 //---------------------------------------------------------------------------
 bool EarlyStopping::ShouldStop() const { return stop_flag_.load(); }
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd EarlyStopping::ComputeScore(const Eigen::MatrixXd& X) {
-  return score_func_.GetMahalanobisDistance(X);
+  return score_func_.GetMorphoDevScore(X);
 }
 
 //---------------------------------------------------------------------------
@@ -202,8 +197,7 @@ bool EarlyStopping::SetControlShapes(const ParticleSystem* p) {
         Eigen::RowVectorXd shape_vector(VDimension * num_points);
 
         for (int k = 0; k < num_points; ++k) {
-        //   PointType pt = p->GetTransformedPosition(dom, k);
-        PointType pt = p->GetPositions(dom)->Get(k);
+        PointType pt = p->GetTransformedPosition(k, dom);
 
           shape_vector(VDimension * k + 0) = pt[0];
           shape_vector(VDimension * k + 1) = pt[1];
@@ -252,8 +246,7 @@ Eigen::MatrixXd EarlyStopping::GetTestShapes(const ParticleSystem* p) {
         Eigen::RowVectorXd shape_vector(VDimension * num_points);
 
         for (int k = 0; k < num_points; ++k) {
-        //   PointType pt = p->GetTransformedPosition(dom, k);
-            PointType pt = p->GetPositions(dom)->Get(k);
+          PointType pt = p->GetTransformedPosition(k, dom);
           shape_vector(3 * k + 0) = pt[0];
           shape_vector(3 * k + 1) = pt[1];
           shape_vector(3 * k + 2) = pt[2];

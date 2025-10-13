@@ -45,7 +45,7 @@ using namespace pybind11::literals;
 #include "Variant.h"
 #include "VectorImage.h"
 #include "pybind_utils.h"
-
+#include <Optimize/Function/EarlyStop/MorphologicalDeviationScore.h>
 namespace fs = boost::filesystem;
 
 using namespace shapeworks;
@@ -1701,4 +1701,38 @@ PYBIND11_MODULE(shapeworks_py, m) {
           "Return the variant string content")
 
       ;  // Variant
+
+  py::class_<MorphologicalDeviationScore>(m, "MorphologicalDeviationScore")
+      .def(py::init<>(), "Create an instance for MorphologicalDeviationScore")
+      .def("SetControlShapes", &MorphologicalDeviationScore::SetControlShapes,
+           py::arg("X"),
+           R"pbdoc(
+                 Fit PPCA model on control shapes.
+
+                 Parameters
+                 ----------
+                 X : numpy.ndarray
+                     Matrix of control shapes (n_samples x n_features)
+
+                 Returns
+                 -------
+                 bool
+                     True if fitting was successful, False otherwise.
+             )pbdoc")
+
+      .def("GetMorphoDevScore",
+           &MorphologicalDeviationScore::GetMorphoDevScore, py::arg("X"),
+           R"pbdoc(
+                 Compute Mahalanobis-based deviation score for test samples.
+
+                 Parameters
+                 ----------
+                 X : numpy.ndarray
+                     Matrix of test samples (n_samples x n_features)
+
+                 Returns
+                 -------
+                 numpy.ndarray
+                     Vector of Mahalanobis distances for each sample.
+             )pbdoc");
 }  // PYBIND11_MODULE(shapeworks_py)
