@@ -51,15 +51,13 @@ static bool check_constraint_violations(Optimize &app, double slack) {
       for (int j = 0; j < 2; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {
           if (violation_report_data[j][k] > slack) {
-            std::cout << "VIOLATION: Shape# " << int(domain / domains_per_shape) << " domain# "
-                      << domain % domains_per_shape << " point# " << i << " " << types[j] << " constraint " << k
-                      << " of magnitude " << violation_report_data[j][k] << " by point " << p << std::endl;
-          }
-          // else std::cout << "Good point: Shape# " << int(domain/domains_per_shape) << " domain# "
-          // << domain%domains_per_shape  << " point# " << i << " " << types[j] << " constraint "
-          // << k << " with evaluation " << violation_report_data[j][k] << " by point "
-          // << p << std::endl;
-          if (violation_report_data[j][k] > slack) {
+            std::cout << "CONSTRAINT VIOLATION:" << std::endl;
+            std::cout << "  Shape:      " << int(domain / domains_per_shape) << std::endl;
+            std::cout << "  Domain:     " << domain % domains_per_shape << std::endl;
+            std::cout << "  Particle:   " << i << " at position [" << p[0] << ", " << p[1] << ", " << p[2] << "]" << std::endl;
+            std::cout << "  Type:       " << types[j] << " constraint #" << k << std::endl;
+            std::cout << "  Violation:  " << violation_report_data[j][k] << " (threshold: " << slack << ")" << std::endl;
+            std::cout << std::endl;
             good = false;
           }
         }
