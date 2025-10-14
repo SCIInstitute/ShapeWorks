@@ -87,7 +87,7 @@ TEST(shapeworksTests, closeholesTest) { run_test("closeholes.sh"); }
 
 TEST(shapeworksTests, binarizeTest) { run_test("binarize.sh"); }
 
-TEST(shapeworksTests, computedtTest) { run_test("computedt.sh"); }
+TEST(shapeworksTests, computetTest) { run_test("computedt.sh"); }
 
 TEST(shapeworksTests, curvatureTest) { run_test("curvature.sh"); }
 
