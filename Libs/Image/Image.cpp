@@ -24,11 +24,11 @@
 #include <itkOrientImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
-#include <itkSignedMaurerDistanceMapImageFilter.h>
 #include <itkRelabelComponentImageFilter.h>
 #include <itkResampleImageFilter.h>
 #include <itkScalableAffineTransform.h>
 #include <itkSigmoidImageFilter.h>
+#include <itkSignedMaurerDistanceMapImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkThresholdImageFilter.h>
 #include <itkVTKImageExport.h>
@@ -636,7 +636,7 @@ Image& Image::computeDT(PixelType isoValue, DistanceTransformType method) {
 
     filter->SetInput(this->itk_image_);
     filter->SetBackgroundValue(isoValue);
-    filter->SetInsideIsPositive(false);
+    filter->SetInsideIsPositive(true);
     filter->SetSquaredDistance(false);
     filter->SetUseImageSpacing(true);
     filter->Update();
