@@ -32,6 +32,7 @@ else
 	NPROCS=2
     fi
 
-    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=$NPROCS --clean-after
+    # Always build dependencies in Release mode now.  There is not enough disk space for linux-debug on GHA anymore.
+    ./build_dependencies.sh --build-type=Release --num-procs=$NPROCS --clean-after
     rm -rf $BUILD_DIR
 fi
