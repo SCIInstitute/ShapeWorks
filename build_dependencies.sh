@@ -133,9 +133,7 @@ build_vtk()
   git clone https://gitlab.kitware.com/vtk/vtk.git
   cd vtk
   git checkout -f tags/${VTK_VER}
-
   patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.5.patch
-  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
@@ -145,7 +143,15 @@ build_vtk()
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
       VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS -Wno-incompatible-function-pointer-types" -DCMAKE_C_FLAGS="$FLAGS -Wno-incompatible-function-pointer-types" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
+      # Fix for newer libtbb requiring updated libstdc++ from conda environment
+      if [[ -n "${CONDA_PREFIX}" ]]; then
+          export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH}"
+          CONDA_LINK_FLAGS="-L${CONDA_PREFIX}/lib -Wl,-rpath,${CONDA_PREFIX}/lib"
+      else
+          CONDA_LINK_FLAGS=""
+      fi
+      
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS -Wno-incompatible-function-pointer-types" -DCMAKE_C_FLAGS="$FLAGS -Wno-incompatible-function-pointer-types" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -DCMAKE_EXE_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCMAKE_SHARED_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCMAKE_MODULE_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
       VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
@@ -215,7 +221,7 @@ build_xlnt()
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=OFF -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_DEBUG_POSTFIX="" ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=OFF -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_DEBUG_POSTFIX="" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -245,7 +251,7 @@ build_jkqtplotter()
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DJKQtPlotter_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DJKQtPlotter_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -355,7 +361,7 @@ build_acvd()
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_DIR="${VTK_DIR}" -DBUILD_EXAMPLES:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_DIR="${VTK_DIR}" -DBUILD_EXAMPLES:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
       make -j${NUM_PROCS} install || exit 1
   fi
 

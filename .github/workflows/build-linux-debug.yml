@@ -24,7 +24,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-focal-sw65
+    container: akenmorris/ubuntu-build-box-jammy-sw67
     
     steps:
 
@@ -67,8 +67,6 @@ jobs:
       with:
         path: /github/home/install
         key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
-        restore-keys: |
-          ${{ runner.os }}-deps-
 
     - name: Check space3.5
       run: df -h
@@ -101,7 +99,6 @@ jobs:
       run: df -h
 
     - name: Build Dependencies
-      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
       shell: bash -l {0}
       run: .github/workflows/gha_deps.sh
 

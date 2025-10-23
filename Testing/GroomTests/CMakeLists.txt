@@ -7,9 +7,8 @@ add_executable(GroomTests
   )
 
 target_link_libraries(GroomTests
-  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
+  Testing ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   Mesh Groom Project Image
-  Testing
   )
 
 add_test(NAME GroomTests COMMAND GroomTests)

@@ -7,9 +7,8 @@ add_executable(ProjectTests
   )
 
 target_link_libraries(ProjectTests
-  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
+  Testing ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   Mesh Project Project Image
-  Testing
   )
 
 add_test(NAME ProjectTests COMMAND ProjectTests)

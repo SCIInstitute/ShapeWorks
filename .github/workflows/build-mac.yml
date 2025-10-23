@@ -57,11 +57,8 @@ jobs:
       with:
         path: /Users/runner/install
         key: ${{ runner.os }}-intel-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
-        restore-keys: |
-          ${{ runner.os }}-deps-
 
     - name: Build Dependencies
-      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
       shell: bash -l {0}
       run: .github/workflows/gha_deps.sh
 

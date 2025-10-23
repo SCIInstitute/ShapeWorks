@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 
-SW_MAJOR_VERSION=6.6
+SW_MAJOR_VERSION=6.7
 
 echo ""
 echo "Note: this script only supports bash and zsh shells "
@@ -82,39 +82,43 @@ function install_conda() {
   conda config --add channels anaconda
   conda config --add channels conda-forge
 
-  CONDA_PACKAGES=(python=3.9.13 \
-    openblas=0.3.20 \
-    pip=22.1.2
+  CONDA_PACKAGES=(python=3.12 \
+    openblas=0.3.30 \
+    pip=24.3.1
    )		      
 
   if [[ "$DEVELOPER" == "YES" ]] ; then
     echo "Developer packages enabled"
 
     CONDA_PACKAGES+=(cmake=3.23.2 \
-		     gmock=1.11.0 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
 		     eigen=3.4.0 \
 		     hdf5=1.12.2 \
 		     tbb=2021.5.0 \
 		     tbb-devel=2021.5.0 \
-		     boost=1.74.0 \
+		     boost=1.85.0 \
 		     openexr=3.1.5 \
 		     ilmbase=2.5.5 \
-		     pybind11=2.9.2 \
+		     pybind11=3.0.1 \
 		     nlohmann_json=3.10.5 \
 		     spdlog=1.10.0 \
 		     pkg-config=0.29.2 \
 		     openh264==2.3.0 \
 		     libhwloc=2.8.0 \
-		     qt-main=5.15.4 \
+		     qt-main=5.15.8 \
 		    )
     
     # linux (only) deps
     if [[ "$(uname)" == "Linux" ]]; then
 	# required by install_python_module.sh
-	CONDA_PACKAGES+=(zlib=1.2.12 patchelf=0.14.5)
+	CONDA_PACKAGES+=(zlib=1.2.13 patchelf=0.17.2)
     fi
+
+    if [[ $OSTYPE == "msys" ]]; then
+	CONDA_PACKAGES+=(zlib)
+    fi
+    
   fi
 
   echo "Installing CONDA_PACKAGES = ${CONDA_PACKAGES[@]}"
@@ -133,24 +137,31 @@ function install_conda() {
   if ! python -m pip install -r python_requirements.txt;          then return 1; fi
 
   # install pytorch using light-the-torch
-  if ! ltt install torch==1.13.1 torchaudio==0.13.1 torchvision==0.14.1; then return 1; fi 
+  if [[ $(uname -s) == "Darwin" ]] && [[ $(uname -m) == "x86_64" ]]; then
+    # Intel Mac - use older versions with NumPy 1.x
+    if ! ltt install torch==2.2.2 torchaudio==2.2.2 torchvision==0.17.2; then return 1; fi 
+    pip install "numpy<2"
+  else
+    # Apple Silicon, Linux, Windows - use latest with NumPy 2.x support
+    if ! ltt install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi 
+  fi
 
   # for network analysis
   # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt
   if [[ "$(uname)" == "Linux" ]]; then
-      if ! pip install open3d-cpu==0.17.0;              then return 1; fi
+      if ! pip install open3d-cpu==0.19.0;       then return 1; fi
   elif [[ "$(uname)" == "Darwin" ]]; then
-      if ! pip install open3d==0.17.0;                  then return 1; fi
+      if ! pip install open3d==0.19.0;           then return 1; fi
       
       if [[ "$(uname -m)" == "arm64" ]]; then
-        pushd $CONDA_PREFIX/lib/python3.9/site-packages/open3d/cpu
-        install_name_tool -change /opt/homebrew/opt/libomp/lib/libomp.dylib @rpath/libomp.dylib pybind.cpython-39-darwin.so
-        install_name_tool -add_rpath @loader_path/../../../ pybind.cpython-39-darwin.so
+        pushd $CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu
+        install_name_tool -change /opt/homebrew/opt/libomp/lib/libomp.dylib @rpath/libomp.dylib pybind.cpython-312-darwin.so
+        install_name_tool -add_rpath @loader_path/../../../ pybind.cpython-312-darwin.so
         popd
-        ln -sf "$CONDA_PREFIX/lib/libomp.dylib" "$CONDA_PREFIX/lib/python3.9/site-packages/open3d/cpu/../../../libomp.dylib"
+        ln -sf "$CONDA_PREFIX/lib/libomp.dylib" "$CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu/../../../libomp.dylib"
       fi
   else
-      if ! pip install open3d==0.17.0;                  then return 1; fi
+      if ! pip install open3d==0.19.0;           then return 1; fi
   fi
 
   for package in DataAugmentationUtilsPackage DatasetUtilsPackage MONAILabelPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
@@ -168,8 +179,8 @@ function install_conda() {
     if [[ "$(uname -m)" == "arm64" ]]; then
       echo "copying file to fix!"
       # fix for broken packages that overwrite itk/__init__.py
-      echo cp Support/itk-arm64-fix $CONDA_PREFIX/lib/python3.9/site-packages/itk/__init__.py
-      cp Support/itk-arm64-fix $CONDA_PREFIX/lib/python3.9/site-packages/itk/__init__.py
+      echo cp Support/itk-arm64-fix $CONDA_PREFIX/lib/python3.12/site-packages/itk/__init__.py
+      cp Support/itk-arm64-fix $CONDA_PREFIX/lib/python3.12/site-packages/itk/__init__.py
     fi
   fi
   
