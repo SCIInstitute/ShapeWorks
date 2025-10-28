@@ -123,6 +123,10 @@ function install_conda() {
 
   echo "Installing CONDA_PACKAGES = ${CONDA_PACKAGES[@]}"
 
+  # Accept Anaconda TOS for required channels
+  conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+  conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
   # create and activate shapeworks env
   if ! conda create --yes --name $CONDAENV ${CONDA_PACKAGES[@]} ; then
       return 1;
