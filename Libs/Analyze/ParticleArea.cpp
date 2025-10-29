@@ -12,7 +12,7 @@
 #include <geometrycentral/surface/heat_method_distance.h>
 #include <geometrycentral/surface/surface_mesh.h>
 #include <geometrycentral/surface/surface_mesh_factories.h>
-
+#include <nlohmann/json.hpp>
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
@@ -158,6 +158,92 @@ Eigen::VectorXd ParticleArea::compute_particle_triangle_areas(vtkSmartPointer<vt
   areas *= num_particles / total_area * 100;
 
   return areas;
+}
+
+//-----------------------------------------------------------------------------
+void ParticleArea::create_ffc_from_particles(
+    const std::string& mesh_path, const Eigen::MatrixXd& particles,
+    const std::string& ffc_filename,
+    bool constraints_flag,
+    double alpha
+) {
+
+  using json = nlohmann::json;
+
+  Mesh mesh(mesh_path);
+  auto poly_data = mesh.getVTKMesh();
+
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  vtkSmartPointer<vtkPoints> points;
+  points = mesh.getIGLMesh(V, F);
+
+  using namespace geometrycentral::surface;
+  std::unique_ptr<SurfaceMesh> gcmesh;
+  std::unique_ptr<VertexPositionGeometry> gcgeometry;
+  std::tie(gcmesh, gcgeometry) = makeSurfaceMeshAndGeometry(V, F);
+
+  HeatMethodDistanceSolver heat_solver(*gcgeometry, 1.0, true);
+
+  std::vector<SurfacePoint> sources;
+  sources.reserve(particles.rows());
+
+  for (int i = 0; i < particles.rows(); ++i) {
+    Eigen::Vector3d pt = particles.row(i).transpose();
+    auto face_id = mesh.getClosestFace(Point3({pt[0], pt[1], pt[2]}));
+    auto bary = mesh.computeBarycentricCoordinates(pt, face_id);
+
+    Face f = gcmesh->face(face_id);
+    geometrycentral::Vector3 bary_vec{bary[0], bary[1], bary[2]};
+    sources.emplace_back(f, bary_vec);
+  }
+
+  // Compute geodesic distances to all sources at once
+  VertexData<double> distToSources = heat_solver.computeDistance(sources);
+
+  double totalLength = 0.0;
+  int edgeCount = 0;
+  for (Edge e : gcmesh->edges()) {
+    totalLength += gcgeometry->edgeLength(e);
+    edgeCount++;
+  }
+  double meanEdge = (edgeCount > 0) ? totalLength / edgeCount : 1.0;
+
+  // double radius = 2.5 * meanEdge;
+  double radius = alpha * meanEdge;
+
+  std::vector<int> scalars(poly_data->GetNumberOfPoints(), 1);
+  for (Vertex v : gcmesh->vertices()) {
+    if (distToSources[v] < radius) {
+      // scalars[v.getIndex()] = 0;  // inside constraint region
+      scalars[v.getIndex()] = constraints_flag;  // inside constraint region
+    }
+    else {
+      scalars[v.getIndex()] = !constraints_flag;  // outside constraint region
+      
+    }
+  }
+
+  json ffcJson;
+  json pointsJson;
+
+  for (int j = 0; j < poly_data->GetNumberOfPoints(); j++) {
+    double p[3];
+    poly_data->GetPoint(j, p);
+    pointsJson.push_back({p[0], p[1], p[2]});
+  }
+
+  ffcJson["field"] = {{"points", pointsJson}, {"scalars", scalars}};
+
+  json constraints_json;
+  constraints_json["free_form_constraints"] = ffcJson;
+
+  std::ofstream file(ffc_filename);
+  if (!file.good()) {
+    throw std::runtime_error("Unable to open constraint file \"" +
+                             ffc_filename + "\" for writing");
+  }
+  file << constraints_json.dump(4);
 }
 
 }  // namespace shapeworks

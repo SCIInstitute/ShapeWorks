@@ -27,6 +27,10 @@ class ParticleArea {
   //! compute the area assigned to each particle
   static Eigen::VectorXd compute_particle_triangle_areas(vtkSmartPointer<vtkPolyData> poly_data,
                                                          std::vector<itk::Point<double>> particles);
+
+  static void create_ffc_from_particles(
+      const std::string& mesh_path, const Eigen::MatrixXd& particles,
+      const std::string& ffc_filename, bool constraints_flag = false, double alpha = 3.0);
 };
 
 }  // namespace shapeworks
