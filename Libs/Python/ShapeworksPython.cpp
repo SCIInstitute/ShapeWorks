@@ -46,6 +46,8 @@ using namespace pybind11::literals;
 #include "VectorImage.h"
 #include "pybind_utils.h"
 #include <Optimize/Function/EarlyStop/MorphologicalDeviationScore.h>
+#include <Analyze/ParticleArea.h>
+
 namespace fs = boost::filesystem;
 
 using namespace shapeworks;
@@ -1735,4 +1737,30 @@ PYBIND11_MODULE(shapeworks_py, m) {
                  numpy.ndarray
                      Vector of Mahalanobis distances for each sample.
              )pbdoc");
+
+  py::class_<shapeworks::ParticleArea>(m, "ParticleArea")
+      .def_static(
+          "create_ffc_from_particles",
+          &shapeworks::ParticleArea::create_ffc_from_particles,
+          py::arg("mesh_path"),
+          py::arg("particles"),
+          py::arg("ffc_filename"),
+          py::arg("constraints_flag") = false,
+          py::arg("alpha") = 3.0,
+          R"pbdoc(
+              Create an FFC constraints JSON file from a given mesh and particle positions.
+
+              Parameters
+              ----------
+              mesh_path : str
+                  Path to the input mesh file.
+              particles : numpy.ndarray of shape (N, 3)
+                  Particle positions used for FFC generation.
+              ffc_filename : str
+                  Output path for the generated FFC JSON file.
+              constrains_flag : bool, optional
+                  Specify whether to include or exclude the particles specified in argument. Default is false.
+              alpha : float, optional
+                  Hyperparameter controlling the radius of particle spread. Default is 3.0.
+          )pbdoc");
 }  // PYBIND11_MODULE(shapeworks_py)
