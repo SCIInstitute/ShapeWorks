@@ -81,16 +81,23 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
       // Normalize gradient to get direction
       vnl_vector_fixed<double, DIMENSION> direction = grad / gradient_magnitude;
 
-      // KEY INSIGHT: Use a damped step that accounts for the fact that
-      // the gradient magnitude may not be 1.0
-      // For smoothed distance fields, we take a more conservative step
-      double step_size = double(value) / gradient_magnitude;
+      // For smoothed distance fields:
+      // - Neither value nor gradient_magnitude are exactly correct
+      // - But their RATIO is approximately correct (within ~20%)
+      // - Use damping to handle the residual error
 
-      // Damping factor to prevent overshooting (especially important for smoothed fields)
-      const double DAMPING = 0.75;
-      step_size *= DAMPING;
+      const double DAMPING = 0.7;  // Conservative for ~20% overshoot
+      double step_size = (double(value) / gradient_magnitude) * DAMPING;
 
-      // Update position
+      // Safety check: if gradient is very weak, cap step by distance value
+      // This handles pathological cases (critical points, field edges)
+      if (gradient_magnitude < 0.5) {
+        double max_step = fabs(double(value)) * DAMPING;
+        if (fabs(step_size) > max_step) {
+          step_size = (step_size > 0 ? max_step : -max_step);
+        }
+      }
+
       for (unsigned int i = 0; i < DIMENSION; i++) {
         p[i] -= step_size * direction[i];
       }
