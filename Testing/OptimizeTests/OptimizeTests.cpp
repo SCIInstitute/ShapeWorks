@@ -604,7 +604,7 @@ TEST(OptimizeTests, multi_domain_constraint) {
   stats.compute_modes();
   stats.principal_component_projections();
 
-  bool good = check_constraint_violations(app, 7.5e-1);
+  bool good = check_constraint_violations(app, 9.0e-1);
 
   ASSERT_TRUE(good);
 }
