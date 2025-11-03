@@ -51,43 +51,89 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
     // guarantee the point starts in the correct image domain.
     bool flag = Superclass::ApplyConstraints(p);
 
-    unsigned int k = 0;
-    double mult = 1.0;
-
     const T epsilon = m_Tolerance * 0.001;
-    T f = this->Sample(p);
+    T value = this->Sample(p);
 
-    T gradmag = 1.0;
-    while (fabs(f) > (m_Tolerance * mult) || gradmag < epsilon)
-    //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
-    {
-      PointType p_old = p;
-      // vnl_vector_fixed<T, DIMENSION> grad = -this->SampleGradientAtPoint(p);
-      vnl_vector_fixed<T, DIMENSION> gradf = this->SampleGradientAtPoint(p, idx);
+    // Early exit if already close enough
+    if (fabs(value) <= m_Tolerance) {
+      return flag;
+    }
+
+    const unsigned int MAX_ITERATIONS = 50;
+    unsigned int k = 0;
+    T prev_value = value;
+
+    while (k < MAX_ITERATIONS) {
+      // Sample gradient
+      vnl_vector_fixed<float, DIMENSION> gradf = this->SampleGradientAtPoint(p, idx);
       vnl_vector_fixed<double, DIMENSION> grad;
       grad[0] = double(gradf[0]);
       grad[1] = double(gradf[1]);
       grad[2] = double(gradf[2]);
 
-      gradmag = grad.magnitude();
-      // vnl_vector_fixed<T, DIMENSION> vec = grad * (f / (gradmag + epsilon));
-      vnl_vector_fixed<double, DIMENSION> vec = grad * (double(f) / (gradmag + double(epsilon)));
+      double gradient_magnitude = grad.magnitude();
+
+      // If gradient is too small, we're stuck
+      if (gradient_magnitude < epsilon) {
+        break;
+      }
+
+      // Normalize gradient to get direction
+      vnl_vector_fixed<double, DIMENSION> direction = grad / gradient_magnitude;
+
+      // For smoothed distance fields:
+      // - Neither value nor gradient_magnitude are exactly correct
+      // - But their RATIO is approximately correct (within ~20%)
+      // - Use damping to handle the residual error
+
+      const double DAMPING = 0.7;  // Conservative for ~20% overshoot
+      double step_size = (double(value) / gradient_magnitude) * DAMPING;
+
+      // Safety check: if gradient is very weak, cap step by distance value
+      // This handles pathological cases (critical points, field edges)
+      if (gradient_magnitude < 0.5) {
+        double max_step = fabs(double(value)) * DAMPING;
+        if (fabs(step_size) > max_step) {
+          step_size = (step_size > 0 ? max_step : -max_step);
+        }
+      }
 
       for (unsigned int i = 0; i < DIMENSION; i++) {
-        p[i] -= vec[i];
+        p[i] -= step_size * direction[i];
       }
 
-      f = this->Sample(p);
+      // Re-evaluate
+      prev_value = value;
+      value = this->Sample(p);
 
-      // Raise the tolerance if we have done too many iterations.
+      // Check convergence
+      if (fabs(value) <= m_Tolerance) {
+        break;  // Success!
+      }
+
+      // Check if we're oscillating or making no progress
+      if (k > 5) {
+        double value_change = fabs(value - prev_value);
+        if (value_change < m_Tolerance * 0.1) {
+          // Making very little progress, close enough
+          break;
+        }
+
+        // Check for oscillation (sign keeps flipping)
+        if ((value > 0 && prev_value < 0) || (value < 0 && prev_value > 0)) {
+          // We're bouncing across the surface
+          // If we're close enough, accept it
+          if (fabs(value) < m_Tolerance * 2.0) {
+            break;
+          }
+        }
+      }
+
       k++;
-      if (k > 10000) {
-        mult *= 2.0;
-        k = 0;
-      }
-    }  // end while
+    }
+
     return flag;
-  };
+  }
 
   inline PointType UpdateParticlePosition(const PointType& point, int idx,
                                           vnl_vector_fixed<double, DIMENSION>& update) const override {
@@ -102,7 +148,6 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
     return newpoint;
   }
 
-
   /** Get any valid point on the domain. This is used to place the first particle. */
   PointType GetZeroCrossingPoint() const override {
     PointType p;
@@ -111,7 +156,7 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
     return p;
   }
 
-  ImplicitSurfaceDomain() : m_Tolerance(1.0e-4) { }
+  ImplicitSurfaceDomain() : m_Tolerance(1.0e-4) {}
   void PrintSelf(std::ostream& os, itk::Indent indent) const {
     Superclass::PrintSelf(os, indent);
     os << indent << "m_Tolerance = " << m_Tolerance << std::endl;
@@ -120,8 +165,6 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
 
  private:
   T m_Tolerance;
-
-
 };
 
 }  // end namespace shapeworks
