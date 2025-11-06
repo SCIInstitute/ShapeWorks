@@ -105,6 +105,7 @@ int main(int argc, char** argv) {
     SW_LOG("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
 
     OverrideQApplication app(argc, argv);
+    QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
 
     auto studio_app = QSharedPointer<ShapeWorksStudioApp>::create();
     QResource::registerResource(RSCS_FILE);
