@@ -155,8 +155,8 @@ void Sampler::InitializeOptimizationFunctions() {
 
   m_SamplingFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
   m_SamplingFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_SamplingFunction->SetParticleSystem(m_ParticleSystem);
-  m_SamplingFunction->SetDomainNumber(0);
+  m_SamplingFunction->set_particle_system(m_ParticleSystem);
+  m_SamplingFunction->set_domain_number(0);
   if (m_IsSharedBoundaryEnabled) {
     m_SamplingFunction->SetSharedBoundaryEnabled(true);
     m_SamplingFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
@@ -177,8 +177,8 @@ void Sampler::Execute() {
     this->SetAdaptivityMode();
     this->SetCorrespondenceMode(m_CorrespondenceMode);
     this->GetOptimizer()->set_gradient_function(m_LinkingFunction);
-    m_LinkingFunction->SetAOn();
-    m_LinkingFunction->SetBOn();
+    m_LinkingFunction->set_a_on();
+    m_LinkingFunction->set_b_on();
 
     this->AllocateDomainsAndNeighborhoods();
 
@@ -264,8 +264,8 @@ void Sampler::ReInitialize() {
   this->SetAdaptivityMode();
   this->SetCorrespondenceMode(m_CorrespondenceMode);
   this->GetOptimizer()->set_gradient_function(m_LinkingFunction);
-  this->m_LinkingFunction->SetAOn();
-  this->m_LinkingFunction->SetBOn();
+  this->m_LinkingFunction->set_a_on();
+  this->m_LinkingFunction->set_b_on();
   this->InitializeOptimizationFunctions();
   this->m_Sigma1Cache->ZeroAllValues();
 }
@@ -314,27 +314,27 @@ void Sampler::TransformCuttingPlanes(unsigned int i) {
 
 void Sampler::SetCorrespondenceMode(CorrespondenceMode mode) {
   if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
-    m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
-    m_EnsembleEntropyFunction->UseMeanEnergy();
+    m_LinkingFunction->set_function_b(m_EnsembleEntropyFunction);
+    m_EnsembleEntropyFunction->UseMeanenergy();
   } else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy) {
-    m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
+    m_LinkingFunction->set_function_b(m_EnsembleEntropyFunction);
     m_EnsembleEntropyFunction->UseEntropy();
   } else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
-    m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
+    m_LinkingFunction->set_function_b(m_EnsembleRegressionEntropyFunction);
   } else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy) {
-    m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
+    m_LinkingFunction->set_function_b(m_EnsembleMixedEffectsEntropyFunction);
   } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy) {
-    m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
+    m_LinkingFunction->set_function_b(m_CorrespondenceFunction);
     m_CorrespondenceFunction->UseEntropy();
   } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy) {
-    m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
-    m_CorrespondenceFunction->UseMeanEnergy();
+    m_LinkingFunction->set_function_b(m_CorrespondenceFunction);
+    m_CorrespondenceFunction->UseMeanenergy();
   } else if (mode == shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy) {
-    m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
+    m_LinkingFunction->set_function_b(m_DisentangledEnsembleEntropyFunction);
     m_DisentangledEnsembleEntropyFunction->UseEntropy();
   } else if (mode == shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy) {
-    m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
-    m_DisentangledEnsembleEntropyFunction->UseMeanEnergy();
+    m_LinkingFunction->set_function_b(m_DisentangledEnsembleEntropyFunction);
+    m_DisentangledEnsembleEntropyFunction->UseMeanenergy();
   }
 
   m_CorrespondenceMode = mode;

@@ -36,15 +36,15 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
       argument is the index of the domain within that particle system.  The
       third argument is the index of the particle location within the given
       domain. */
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
-  virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
+  virtual VectorType evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
+  virtual VectorType evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
     double e;
-    return this->Evaluate(a, b, c, d, e);
+    return this->evaluate(a, b, c, d, e);
   }
 
-  virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
+  virtual double energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
     double e, d;
-    this->Evaluate(a, b, c, d, e);
+    this->evaluate(a, b, c, d, e);
     return e;
   }
 
@@ -59,8 +59,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
   const ShapeMatrixType* GetShapeMatrix() const { return m_ShapeMatrix.GetPointer(); }
 
   /** Called before each iteration of a solver. */
-  virtual void BeforeIteration() {
-    m_ShapeMatrix->BeforeIteration();
+  virtual void before_iteration() {
+    m_ShapeMatrix->before_iteration();
 
     if (m_Counter == 0) {
       this->ComputeCovarianceMatrices();
@@ -68,8 +68,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
   }
 
   /** Called after each iteration of the solver. */
-  virtual void AfterIteration() {
-    m_ShapeMatrix->AfterIteration();
+  virtual void after_iteration() override {
+    m_ShapeMatrix->after_iteration();
     // Update the annealing parameter.
     if (m_HoldMinimumVariance != true && !m_UseMeanEnergy) {
       m_Counter++;
@@ -93,7 +93,7 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
 
   void PrintShapeMatrix() { m_ShapeMatrix->PrintMatrix(); }
 
-  void UseMeanEnergy() { m_UseMeanEnergy = true; }
+  void UseMeanenergy() { m_UseMeanEnergy = true; }
   void UseEntropy() { m_UseMeanEnergy = false; }
 
   /** */
@@ -103,7 +103,7 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
   void SetRecomputeCovarianceInterval(int i) { m_RecomputeCovarianceInterval = i; }
   int GetRecomputeCovarianceInterval() const { return m_RecomputeCovarianceInterval; }
 
-  std::shared_ptr<VectorFunction> Clone() override {
+  std::shared_ptr<VectorFunction> clone() override {
     auto copy = DisentangledCorrespondenceFunction::New();
 
     copy->m_Shape_PointsUpdate = this->m_Shape_PointsUpdate;
@@ -118,8 +118,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
     copy->m_Counter = m_Counter;
 
-    copy->m_DomainNumber = this->m_DomainNumber;
-    copy->m_ParticleSystem = this->m_ParticleSystem;
+    copy->domain_number_ = this->domain_number_;
+    copy->particle_system_ = this->particle_system_;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
 
 

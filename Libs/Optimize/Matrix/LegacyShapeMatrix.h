@@ -148,8 +148,8 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
   void SetDomainsPerShape(int i) { m_DomainsPerShape = i; }
   int GetDomainsPerShape() const { return m_DomainsPerShape; }
 
-  virtual void BeforeIteration() {}
-  virtual void AfterIteration() {}
+  virtual void before_iteration() {}
+  virtual void after_iteration() {}
 
   virtual void SetMatrix(const vnl_matrix<double>& m) { vnl_matrix<double>::operator=(m); }
 

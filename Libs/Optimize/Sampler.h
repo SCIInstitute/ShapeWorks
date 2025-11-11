@@ -126,19 +126,19 @@ class Sampler {
   /** Optionally add spheres that may be used as constraints to the domain. */
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-  void SetAdaptivityMode() { m_LinkingFunction->SetFunctionA(GetCurvatureGradientFunction()); }
+  void SetAdaptivityMode() { m_LinkingFunction->set_function_a(GetCurvatureGradientFunction()); }
 
-  void SetCorrespondenceOn() { m_LinkingFunction->SetBOn(); }
+  void SetCorrespondenceOn() { m_LinkingFunction->set_b_on(); }
 
-  void SetCorrespondenceOff() { m_LinkingFunction->SetBOff(); }
+  void SetCorrespondenceOff() { m_LinkingFunction->set_b_off(); }
 
-  void SetSamplingOn() { m_LinkingFunction->SetAOn(); }
+  void SetSamplingOn() { m_LinkingFunction->set_a_on(); }
 
-  void SetSamplingOff() { m_LinkingFunction->SetAOff(); }
+  void SetSamplingOff() { m_LinkingFunction->set_a_off(); }
 
-  bool GetCorrespondenceOn() const { return m_LinkingFunction->GetBOn(); }
+  bool GetCorrespondenceOn() const { return m_LinkingFunction->get_b_on(); }
 
-  bool GetSamplingOn() const { return m_LinkingFunction->GetAOn(); }
+  bool GetSamplingOn() const { return m_LinkingFunction->get_a_on(); }
 
   /** This method sets the optimization function for correspondences between surfaces (domains). */
   void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode);

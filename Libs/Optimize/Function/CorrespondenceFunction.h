@@ -47,24 +47,24 @@ class CorrespondenceFunction : public VectorFunction {
        third argument is the index of the particle location within the given
        domain. */
 
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
+  virtual VectorType evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
 
-  virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
+  virtual VectorType evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
     double e;
-    return this->Evaluate(a, b, c, d, e);
+    return this->evaluate(a, b, c, d, e);
   }
 
-  virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
+  virtual double energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
     double e, d;
-    this->Evaluate(a, b, c, d, e);
+    this->evaluate(a, b, c, d, e);
     return e;
   }
 
   /** Called before each iteration of a solver. */
-  virtual void BeforeIteration() { this->ComputeUpdates(this->m_ParticleSystem); }
+  virtual void before_iteration() { this->ComputeUpdates(this->particle_system_); }
 
   /** Called after each iteration of the solver. */
-  virtual void AfterIteration() {
+  virtual void after_iteration() {
     // Update the annealing parameter.
     if (m_HoldMinimumVariance != true && !m_UseMeanEnergy) {
       m_Counter++;
@@ -97,7 +97,7 @@ class CorrespondenceFunction : public VectorFunction {
 
   void SetAttributesPerDomain(const std::vector<int>& i) { m_AttributesPerDomain = i; }
 
-  void UseMeanEnergy() { m_UseMeanEnergy = true; }
+  void UseMeanenergy() { m_UseMeanEnergy = true; }
   void UseEntropy() { m_UseMeanEnergy = false; }
 
   void SetXYZ(int i, bool val) {
@@ -122,12 +122,12 @@ class CorrespondenceFunction : public VectorFunction {
     return flag;
   }
 
-  std::shared_ptr<VectorFunction> Clone() override {
+  std::shared_ptr<VectorFunction> clone() override {
     auto copy = CorrespondenceFunction::New();
 
     // from itkParticleVectorFunction
-    copy->m_DomainNumber = this->m_DomainNumber;
-    copy->m_ParticleSystem = this->m_ParticleSystem;
+    copy->domain_number_ = this->domain_number_;
+    copy->particle_system_ = this->particle_system_;
 
     // local
     copy->m_AttributeScales = this->m_AttributeScales;

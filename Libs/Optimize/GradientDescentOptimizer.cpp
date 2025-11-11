@@ -110,7 +110,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
     max_change = 0.0;
 
     const auto acc_timer_begin = std::chrono::steady_clock::now();
-    gradient_function_->SetParticleSystem(particle_system_.GetPointer());
+    gradient_function_->set_particle_system(particle_system_.GetPointer());
     if (early_stopping_enabled_ && !early_stopping_score_ready_) {
       bool early_stopping_status = early_stopping_.SetControlShapes(particle_system_.GetPointer());
       if (early_stopping_status == false) {
@@ -124,7 +124,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
 
     TIME_START("gradient_before_iteration");
     if (counter % GLOBAL_ITERATION == 0) {
-      gradient_function_->BeforeIteration();
+      gradient_function_->before_iteration();
     }
     TIME_STOP("gradient_before_iteration");
     counter++;
@@ -148,10 +148,10 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
               const ParticleDomain* domain = particle_system_->GetDomain(dom);
 
               // must clone this as we are in a thread and the gradient function is not thread-safe
-              std::shared_ptr<VectorFunction> local_gradient_function = gradient_function_->Clone();
+              std::shared_ptr<VectorFunction> local_gradient_function = gradient_function_->clone();
 
               // Tell function which domain we are working on.
-              local_gradient_function->SetDomainNumber(dom);
+              local_gradient_function->set_domain_number(dom);
 
               // Iterate over each particle position
               for (auto k = 0; k < particle_system_->GetPositions(dom)->GetSize(); k++) {
@@ -161,11 +161,11 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
 
                 // Compute gradient update.
                 double energy = 0.0;
-                local_gradient_function->BeforeEvaluate(k, dom, particle_system_.GetPointer());
+                local_gradient_function->before_evaluate(k, dom, particle_system_.GetPointer());
                 // maximum_update_allowed is set based on some fraction of the distance between particles
                 // This is to avoid particles shooting past their neighbors
                 double maximum_update_allowed;
-                VectorType original_gradient = local_gradient_function->Evaluate(k, dom, particle_system_.GetPointer(),
+                VectorType original_gradient = local_gradient_function->evaluate(k, dom, particle_system_.GetPointer(),
                                                                                  maximum_update_allowed, energy);
 
                 PointType pt = particle_system_->GetPositions(dom)->Get(k);
@@ -201,7 +201,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
                   particle_system_->SetPosition(new_point, k, dom);
 
                   // Step G compute the new energy of the particle system
-                  new_energy = local_gradient_function->Energy(k, dom, particle_system_.GetPointer());
+                  new_energy = local_gradient_function->energy(k, dom, particle_system_.GetPointer());
 
                   if (new_energy < energy) {
                     // good move, increase timestep for next time
@@ -233,7 +233,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
 
     TIME_STOP("parallel_sampling");
     number_of_iterations_++;
-    gradient_function_->AfterIteration();
+    gradient_function_->after_iteration();
 
     const auto acc_timer_end = std::chrono::steady_clock::now();
     const auto ms_elapsed =

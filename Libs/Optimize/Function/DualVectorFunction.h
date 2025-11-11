@@ -21,17 +21,16 @@ class DualVectorFunction : public VectorFunction {
   constexpr static int VDimension = 3;
   constexpr static unsigned int Dimension = VDimension;
 
-  /** Vector type. */
-  typedef VectorFunction::VectorType VectorType;
+  /// Type of vectors
+  using VectorType = VectorFunction::VectorType;
 
   /// Factory method for creating instances
   static std::shared_ptr<DualVectorFunction> New() { return std::make_shared<DualVectorFunction>(); }
 
-  /** The first argument is a pointer to the particle system.  The second
-    argument is the index of the domain within that particle system.  The
-    third argument is the index of the particle location within the given
-    domain. */
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove) const {
+  /// The first argument is a pointer to the particle system.  The second
+  /// argument is the index of the domain within that particle system.  The
+  /// third argument is the index of the particle location within the given domain.
+  VectorType evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove) const override {
     double maxA = 0;
     double maxB = 0;
     VectorType ansA;
@@ -39,20 +38,20 @@ class DualVectorFunction : public VectorFunction {
     VectorType ansB;
     ansB.fill(0.0);
 
-    const_cast<DualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
+    const_cast<DualVectorFunction*>(this)->counter_ = counter_ + 1.0;
 
     // evaluate individual functions: A = surface energy, B = correspondence
-    if (m_AOn) {
-      ansA = m_FunctionA->Evaluate(idx, d, system, maxA);
-      const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
+    if (a_on_) {
+      ansA = function_a_->evaluate(idx, d, system, maxA);
+      const_cast<DualVectorFunction*>(this)->average_grad_mag_a_ = average_grad_mag_a_ + ansA.magnitude();
     }
 
-    if (m_BOn) {
-      ansB = m_FunctionB->Evaluate(idx, d, system, maxB);
-      const_cast<DualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
+    if (b_on_) {
+      ansB = function_b_->evaluate(idx, d, system, maxB);
+      const_cast<DualVectorFunction*>(this)->average_grad_mag_b_ = average_grad_mag_b_ + ansB.magnitude();
     }
 
-    if (m_RelativeGradientScaling == 0.0) {
+    if (relative_gradient_scaling_ == 0.0) {
       ansB.fill(0.0);
       maxB = 0.0;
     }
@@ -62,14 +61,14 @@ class DualVectorFunction : public VectorFunction {
     predictedMove.fill(0.0);
 
     // both A and B are active
-    if (m_AOn && m_BOn) {
+    if (a_on_ && b_on_) {
       maxmove = maxA;  // always driven by the sampling to decrease the sensitivity to covariance regularization
-      predictedMove = ansA + m_RelativeGradientScaling * ansB;
+      predictedMove = ansA + relative_gradient_scaling_ * ansB;
       return predictedMove;
     }
 
     // B is active, A is not active
-    if (m_BOn) {
+    if (b_on_) {
       maxmove = maxB;
       predictedMove = ansB;
       return predictedMove;
@@ -80,49 +79,49 @@ class DualVectorFunction : public VectorFunction {
     return ansA;
   }
 
-  virtual double EnergyA(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
-    m_FunctionA->BeforeEvaluate(idx, d, system);
+  double EnergyA(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
+    function_a_->before_evaluate(idx, d, system);
     double ansA = 0.0;
-    if (m_AOn == true) {
-      ansA = m_FunctionA->Energy(idx, d, system);
+    if (a_on_) {
+      ansA = function_a_->energy(idx, d, system);
     }
     return ansA;
   }
 
   virtual double EnergyB(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
-    m_FunctionB->BeforeEvaluate(idx, d, system);
+    function_b_->before_evaluate(idx, d, system);
     double ansB = 0.0;
-    if (m_BOn == true) {
-      ansB = m_FunctionB->Energy(idx, d, system);
+    if (b_on_ == true) {
+      ansB = function_b_->energy(idx, d, system);
     }
-    ansB *= m_RelativeEnergyScaling;
+    ansB *= relative_energy_scaling_;
     return ansB;
   }
 
-  virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
+  virtual double energy(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
     double ansA = 0.0;
     double ansB = 0.0;
     double ansC = 0.0;
     double finalEnergy = 0.0;
 
     // evaluate individual functions: A = surface energy, B = correspondence
-    if (m_AOn == true) {
-      ansA = m_FunctionA->Energy(idx, d, system);
+    if (a_on_ == true) {
+      ansA = function_a_->energy(idx, d, system);
     }
 
-    if (m_BOn == true) {
-      ansB = m_FunctionB->Energy(idx, d, system);
+    if (b_on_ == true) {
+      ansB = function_b_->energy(idx, d, system);
     }
 
-    if (m_RelativeEnergyScaling == 0) {
+    if (relative_energy_scaling_ == 0) {
       ansB = 0.0;
     }
 
     // compute final energy for current configuration
-    if (m_BOn == true) {
-      if (m_AOn == true)  // both A and B are active
+    if (b_on_ == true) {
+      if (a_on_ == true)  // both A and B are active
       {
-        finalEnergy = ansA + m_RelativeEnergyScaling * ansB;
+        finalEnergy = ansA + relative_energy_scaling_ * ansB;
         return (finalEnergy);
       } else  // B is active, A is not active
       {
@@ -137,7 +136,7 @@ class DualVectorFunction : public VectorFunction {
     return 0.0;
   }
 
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove,
+  virtual VectorType evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove,
                               double& energy) const {
     double maxA = 0.0;
     double maxB = 0.0;
@@ -148,29 +147,29 @@ class DualVectorFunction : public VectorFunction {
     VectorType ansB;
     ansB.fill(0.0);
 
-    const_cast<DualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
+    const_cast<DualVectorFunction*>(this)->counter_ = counter_ + 1.0;
 
     // evaluate individual functions: A = surface energy, B = correspondence
-    if (m_AOn == true) {
-      ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
+    if (a_on_ == true) {
+      ansA = function_a_->evaluate(idx, d, system, maxA, energyA);
 
-      const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
-      const_cast<DualVectorFunction*>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
+      const_cast<DualVectorFunction*>(this)->average_grad_mag_a_ = average_grad_mag_a_ + ansA.magnitude();
+      const_cast<DualVectorFunction*>(this)->average_energy_a_ = average_energy_a_ + energyA;
     }
 
-    if (m_BOn == true) {
-      ansB = m_FunctionB->Evaluate(idx, d, system, maxB, energyB);
+    if (b_on_ == true) {
+      ansB = function_b_->evaluate(idx, d, system, maxB, energyB);
 
-      const_cast<DualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
-      const_cast<DualVectorFunction*>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
+      const_cast<DualVectorFunction*>(this)->average_grad_mag_b_ = average_grad_mag_b_ + ansB.magnitude();
+      const_cast<DualVectorFunction*>(this)->average_energy_b_ = average_energy_b_ + energyB;
     }
 
-    if (m_RelativeEnergyScaling == 0.0) {
+    if (relative_energy_scaling_ == 0.0) {
       energyB = 0.0;
       ansB.fill(0.0);
     }
 
-    if (m_RelativeGradientScaling == 0.0) {
+    if (relative_gradient_scaling_ == 0.0) {
       maxB = 0.0;
       ansB.fill(0.0);
     }
@@ -178,8 +177,8 @@ class DualVectorFunction : public VectorFunction {
     // compute final energy, maxmove and predicted move based on current configuration
     VectorType predictedMove;
     predictedMove.fill(0.0);
-    if (m_BOn == true) {
-      if (m_AOn == true)  // both A and B are active
+    if (b_on_ == true) {
+      if (a_on_ == true)  // both A and B are active
       {
         if (maxB > maxA) {
           maxmove = maxB;
@@ -187,11 +186,11 @@ class DualVectorFunction : public VectorFunction {
           maxmove = maxA;
         }
 
-        energy = energyA + m_RelativeEnergyScaling * energyB;
+        energy = energyA + relative_energy_scaling_ * energyB;
 
         maxmove = maxA;  // always driven by the sampling to decrease the senstivity to covariance regularization
 
-        predictedMove = ansA + m_RelativeGradientScaling * ansB;
+        predictedMove = ansA + relative_gradient_scaling_ * ansB;
 
         return (predictedMove);
       } else  // only B is active, A is not active
@@ -212,138 +211,158 @@ class DualVectorFunction : public VectorFunction {
     return ansA;
   }
 
-  virtual void BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
-    if (m_AOn == true) {
-      m_FunctionA->BeforeEvaluate(idx, d, system);
+  virtual void before_evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
+    if (a_on_ == true) {
+      function_a_->before_evaluate(idx, d, system);
     }
 
-    if (m_BOn == true) {
-      m_FunctionB->BeforeEvaluate(idx, d, system);
-    }
-  }
-
-  /** This method is called by a solver after each iteration.  Subclasses may
-    or may not implement this method.*/
-  virtual void AfterIteration() {
-    if (m_AOn) m_FunctionA->AfterIteration();
-    if (m_BOn) {
-      m_FunctionB->AfterIteration();
+    if (b_on_ == true) {
+      function_b_->before_evaluate(idx, d, system);
     }
   }
 
-  /** This method is called by a solver before each iteration.  Subclasses may
-    or may not implement this method.*/
-  virtual void BeforeIteration() {
-    if (m_AOn) m_FunctionA->BeforeIteration();
-    if (m_BOn) {
-      m_FunctionB->BeforeIteration();
+  /// This method is called by a solver after each iteration
+  void after_iteration() override {
+    if (a_on_) {
+      function_a_->after_iteration();
     }
-    m_AverageGradMagA = 0.0;
-    m_AverageGradMagB = 0.0;
-    m_AverageEnergyA = 0.0;
-    m_Counter = 0.0;
+    if (b_on_) {
+      function_b_->after_iteration();
+    }
   }
 
-  /** Some subclasses may require a pointer to the particle system and its
-    domain number.  These methods set/get those values. */
-  void SetParticleSystem(ParticleSystem* p) override {
-    VectorFunction::SetParticleSystem(p);
-    if (m_FunctionA != nullptr) m_FunctionA->SetParticleSystem(p);
-    if (m_FunctionB != nullptr) m_FunctionB->SetParticleSystem(p);
+  /// This method is called by a solver before each iteration
+  void before_iteration() override {
+    if (a_on_) {
+      function_a_->before_iteration();
+    }
+    if (b_on_) {
+      function_b_->before_iteration();
+    }
+    average_grad_mag_a_ = 0.0;
+    average_grad_mag_b_ = 0.0;
+    average_energy_a_ = 0.0;
+    counter_ = 0.0;
   }
 
-  void SetDomainNumber(unsigned int i) override {
-    VectorFunction::SetDomainNumber(i);
-    if (m_FunctionA != nullptr) m_FunctionA->SetDomainNumber(i);
-    if (m_FunctionB != nullptr) m_FunctionB->SetDomainNumber(i);
+  /// Some subclasses may require a pointer to the particle system and its domain number
+  void set_particle_system(ParticleSystem* p) override {
+    VectorFunction::set_particle_system(p);
+    if (function_a_ != nullptr) {
+      function_a_->set_particle_system(p);
+    }
+    if (function_b_ != nullptr) {
+      function_b_->set_particle_system(p);
+    }
   }
 
-  void SetFunctionA(std::shared_ptr<VectorFunction> o) {
-    m_FunctionA = o;
-    m_FunctionA->SetDomainNumber(this->GetDomainNumber());
-    m_FunctionA->SetParticleSystem(this->GetParticleSystem());
+  void set_domain_number(unsigned int i) override {
+    VectorFunction::set_domain_number(i);
+    if (function_a_ != nullptr) {
+      function_a_->set_domain_number(i);
+    }
+    if (function_b_ != nullptr) {
+      function_b_->set_domain_number(i);
+    }
   }
 
-  std::shared_ptr<VectorFunction> GetFunctionA() { return m_FunctionA; }
-
-  std::shared_ptr<VectorFunction> GetFunctionB() { return m_FunctionB; }
-
-  void SetFunctionB(std::shared_ptr<VectorFunction> o) {
-    m_FunctionB = o;
-    m_FunctionB->SetDomainNumber(this->GetDomainNumber());
-    m_FunctionB->SetParticleSystem(this->GetParticleSystem());
+  void set_function_a(std::shared_ptr<VectorFunction> o) {
+    function_a_ = o;
+    function_a_->set_domain_number(this->get_domain_number());
+    function_a_->set_particle_system(this->get_particle_system());
   }
 
-  /** Turn each term on and off. */
-  void SetAOn() { m_AOn = true; }
-  void SetAOff() { m_AOn = false; }
-  void SetAOn(bool s) { m_AOn = s; }
-  bool GetAOn() const { return m_AOn; }
-  void SetBOn() { m_BOn = true; }
-  void SetBOff() { m_BOn = false; }
-  void SetBOn(bool s) { m_BOn = s; }
-  bool GetBOn() const { return m_BOn; }
+  std::shared_ptr<VectorFunction> get_function_a() { return function_a_; }
 
-  /** The relative scaling scales the gradient B relative to A.  By default
-    this value is 1.0. */
-  void SetRelativeEnergyScaling(double r) override { m_RelativeEnergyScaling = r; }
-  double GetRelativeEnergyScaling() const override { return m_RelativeEnergyScaling; }
+  std::shared_ptr<VectorFunction> get_function_b() { return function_b_; }
 
-  void SetRelativeGradientScaling(double r) { m_RelativeGradientScaling = r; }
-  double GetRelativeGradientScaling() const { return m_RelativeGradientScaling; }
+  void set_function_b(std::shared_ptr<VectorFunction> o) {
+    function_b_ = o;
+    function_b_->set_domain_number(this->get_domain_number());
+    function_b_->set_particle_system(this->get_particle_system());
+  }
 
-  double GetAverageGradMagA() const {
-    if (m_Counter != 0.0)
-      return m_AverageGradMagA / m_Counter;
-    else
+  /// Turn each term on and off
+  void set_a_on() { a_on_ = true; }
+  void set_a_off() { a_on_ = false; }
+  void set_a_on(bool s) { a_on_ = s; }
+  bool get_a_on() const { return a_on_; }
+  void set_b_on() { b_on_ = true; }
+  void set_b_off() { b_on_ = false; }
+  void set_b_on(bool s) { b_on_ = s; }
+  bool get_b_on() const { return b_on_; }
+
+  /// The relative scaling scales the gradient B relative to A. By default this value is 1.0.
+  void set_relative_energy_scaling(double r) override { relative_energy_scaling_ = r; }
+  double get_relative_energy_scaling() const override { return relative_energy_scaling_; }
+
+  void set_relative_gradient_scaling(double r) { relative_gradient_scaling_ = r; }
+  double get_relative_gradient_scaling() const { return relative_gradient_scaling_; }
+
+  double get_average_grad_mag_a() const {
+    if (counter_ != 0.0) {
+      return average_grad_mag_a_ / counter_;
+    } else {
       return 0.0;
+    }
   }
-  double GetAverageGradMagB() const {
-    if (m_Counter != 0.0)
-      return m_AverageGradMagB / m_Counter;
-    else
+  double get_average_grad_mag_b() const {
+    if (counter_ != 0.0) {
+      return average_grad_mag_b_ / counter_;
+    } else {
       return 0.0;
+    }
   }
 
-  double GetAverageEnergyA() const {
-    if (m_Counter != 0.0)
-      return m_AverageEnergyA / m_Counter;
-    else
+  double get_average_energy_a() const {
+    if (counter_ != 0.0) {
+      return average_energy_a_ / counter_;
+    } else {
       return 0.0;
+    }
   }
-  double GetAverageEnergyB() const {
-    if (m_Counter != 0.0)
-      return m_AverageEnergyB / m_Counter;
-    else
+  double get_average_energy_b() const {
+    if (counter_ != 0.0) {
+      return average_energy_b_ / counter_;
+    } else {
       return 0.0;
+    }
   }
 
-  std::shared_ptr<VectorFunction> Clone() override {
+  std::shared_ptr<VectorFunction> clone() override {
     auto copy = DualVectorFunction::New();
-    copy->m_AOn = this->m_AOn;
-    copy->m_BOn = this->m_BOn;
+    copy->a_on_ = this->a_on_;
+    copy->b_on_ = this->b_on_;
 
-    copy->m_RelativeGradientScaling = this->m_RelativeGradientScaling;
-    copy->m_RelativeEnergyScaling = this->m_RelativeEnergyScaling;
-    copy->m_AverageGradMagA = this->m_AverageGradMagA;
-    copy->m_AverageGradMagB = this->m_AverageGradMagB;
-    copy->m_AverageEnergyA = this->m_AverageEnergyA;
-    copy->m_AverageEnergyB = this->m_AverageEnergyB;
-    copy->m_Counter = this->m_Counter;
+    copy->relative_gradient_scaling_ = this->relative_gradient_scaling_;
+    copy->relative_energy_scaling_ = this->relative_energy_scaling_;
+    copy->average_grad_mag_a_ = this->average_grad_mag_a_;
+    copy->average_grad_mag_b_ = this->average_grad_mag_b_;
+    copy->average_energy_a_ = this->average_energy_a_;
+    copy->average_energy_b_ = this->average_energy_b_;
+    copy->counter_ = this->counter_;
 
-    if (this->m_FunctionA) copy->m_FunctionA = this->m_FunctionA->Clone();
-    if (this->m_FunctionB) copy->m_FunctionB = this->m_FunctionB->Clone();
+    if (this->function_a_) {
+      copy->function_a_ = this->function_a_->clone();
+    }
+    if (this->function_b_) {
+      copy->function_b_ = this->function_b_->clone();
+    }
 
-    if (!copy->m_FunctionA) copy->m_AOn = false;
-    if (!copy->m_FunctionB) copy->m_BOn = false;
+    if (!copy->function_a_) {
+      copy->a_on_ = false;
+    }
+    if (!copy->function_b_) {
+      copy->b_on_ = false;
+    }
 
-    copy->m_DomainNumber = this->m_DomainNumber;
-    copy->m_ParticleSystem = this->m_ParticleSystem;
+    copy->domain_number_ = this->domain_number_;
+    copy->particle_system_ = this->particle_system_;
 
     return copy;
   }
 
-  DualVectorFunction() : m_AOn(true), m_BOn(false), m_RelativeGradientScaling(1.0), m_RelativeEnergyScaling(1.0) {}
+  DualVectorFunction() : a_on_(true), b_on_(false), relative_gradient_scaling_(1.0), relative_energy_scaling_(1.0) {}
 
   ~DualVectorFunction() override = default;
 
@@ -351,18 +370,18 @@ class DualVectorFunction : public VectorFunction {
   DualVectorFunction(const DualVectorFunction&) = delete;
   DualVectorFunction& operator=(const DualVectorFunction&) = delete;
 
-  bool m_AOn;
-  bool m_BOn;
-  double m_RelativeGradientScaling;
-  double m_RelativeEnergyScaling;
-  double m_AverageGradMagA;
-  double m_AverageGradMagB;
-  double m_AverageEnergyA;
-  double m_AverageEnergyB;
-  double m_Counter;
+  bool a_on_;
+  bool b_on_;
+  double relative_gradient_scaling_;
+  double relative_energy_scaling_;
+  double average_grad_mag_a_;
+  double average_grad_mag_b_;
+  double average_energy_a_;
+  double average_energy_b_;
+  double counter_;
 
-  std::shared_ptr<VectorFunction> m_FunctionA;
-  std::shared_ptr<VectorFunction> m_FunctionB;
+  std::shared_ptr<VectorFunction> function_a_;
+  std::shared_ptr<VectorFunction> function_b_;
 };
 
 }  // namespace shapeworks

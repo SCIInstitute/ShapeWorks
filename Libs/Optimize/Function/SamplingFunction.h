@@ -27,18 +27,18 @@ class SamplingFunction : public VectorFunction {
   using GradientVectorType = vnl_vector_fixed<float, 3>;
   using SigmaCacheType = GenericContainerArray<double>;
 
-  VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const override {
+  VectorType evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const override {
     double e;
-    return Evaluate(a, b, c, d, e);
+    return evaluate(a, b, c, d, e);
   }
 
-  VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const override;
+  VectorType evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const override;
 
-  void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystem*) override;
+  void before_evaluate(unsigned int, unsigned int, const ParticleSystem*) override;
 
-  double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const override {
+  double energy(unsigned int a, unsigned int b, const ParticleSystem* c) const override {
     double d, e;
-    Evaluate(a, b, c, d, e);
+    evaluate(a, b, c, d, e);
     return e;
   }
 
@@ -78,9 +78,9 @@ class SamplingFunction : public VectorFunction {
   void SetNeighborhoodToSigmaRatio(double s) { m_NeighborhoodToSigmaRatio = s; }
   double GetNeighborhoodToSigmaRatio() const { return m_NeighborhoodToSigmaRatio; }
 
-  void ResetBuffers() override { m_SpatialSigmaCache->ZeroAllValues(); }
+  void reset_buffers() override { m_SpatialSigmaCache->ZeroAllValues(); }
 
-  std::shared_ptr<VectorFunction> Clone() override;
+  std::shared_ptr<VectorFunction> clone() override;
 
   SamplingFunction() {}
   ~SamplingFunction() override = default;

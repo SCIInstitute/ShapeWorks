@@ -551,8 +551,8 @@ void Optimize::Initialize() {
     }
   }
 
-  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
-  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->set_relative_gradient_scaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->set_relative_energy_scaling(m_initial_relative_weighting);
 
   this->AddSinglePoint();
 
@@ -705,8 +705,8 @@ void Optimize::RunOptimize() {
   }
 
   m_optimizing = true;
-  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
-  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
+  m_sampler->GetLinkingFunction()->set_relative_gradient_scaling(m_relative_weighting);
+  m_sampler->GetLinkingFunction()->set_relative_energy_scaling(m_relative_weighting);
 
   if (m_procrustes_interval != 0) {  // Initial registration
     m_procrustes->RunRegistration();
@@ -827,7 +827,7 @@ void Optimize::ComputeEnergyAfterIteration() {
 
   double sampEnergy = 0.0;
   for (int i = 0; i < numShapes; i++) {
-    m_sampler->GetLinkingFunction()->SetDomainNumber(i);
+    m_sampler->GetLinkingFunction()->set_domain_number(i);
     for (int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
       if (m_sampler->GetParticleSystem()->GetDomainFlag(i)) {
         sampEnergy += 0.0;
