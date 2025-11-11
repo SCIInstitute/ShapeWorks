@@ -31,19 +31,27 @@ void QOptimize::UpdateExportablePoints() {
 
 //---------------------------------------------------------------------------
 void QOptimize::SetIterationCallback() {
-  iterate_command_ = itk::MemberCommand<QOptimize>::New();
-  iterate_command_->SetCallbackFunction(this, &QOptimize::IterateCallback);
-  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), iterate_command_);
+  // First call parent class to set up the base iteration callback
+  Optimize::SetIterationCallback();
+
+  // Now extend it to add our Qt-specific behavior
+  auto parent_callback = m_sampler->GetOptimizer()->GetIterationCallback();
+  m_sampler->GetOptimizer()->SetIterationCallback([this, parent_callback]() {
+    // Call the parent callback first (if it exists)
+    if (parent_callback) {
+      parent_callback();
+    }
+
+    // Then call our Qt-specific callback
+    this->IterateCallbackInternal();
+  });
 }
 
 //---------------------------------------------------------------------------
-void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e) {
+void QOptimize::IterateCallbackInternal() {
   if (m_aborted) {
     return;
   }
-
-  // run superclass iterateCallback
-  Optimize::IterateCallback(caller, e);
 
   auto transform = m_sampler->GetParticleSystem()->GetTransform();
 

@@ -72,8 +72,8 @@ class Sampler {
   SamplingFunction* GetCurvatureGradientFunction() { return m_SamplingFunction; }
 
   //! Return a pointer to the optimizer object
-  OptimizerType* GetOptimizer() { return m_Optimizer; }
-  const OptimizerType* GetOptimizer() const { return m_Optimizer.GetPointer(); }
+  std::shared_ptr<OptimizerType> GetOptimizer() { return m_Optimizer; }
+  std::shared_ptr<const OptimizerType> GetOptimizer() const { return m_Optimizer; }
 
   /**Optionally provide a filename for an initial point set.*/
   void SetPointsFile(unsigned int i, const std::string& s) {
@@ -283,7 +283,7 @@ class Sampler {
   bool m_Initialized{false};
   bool m_Initializing{false};
 
-  OptimizerType::Pointer m_Optimizer;
+  std::shared_ptr<OptimizerType> m_Optimizer;
 
   SamplingFunction::Pointer m_SamplingFunction;
 

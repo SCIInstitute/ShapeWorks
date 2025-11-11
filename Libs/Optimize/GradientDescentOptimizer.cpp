@@ -124,9 +124,9 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
     maxchange = 0.0;
 
     const auto accTimerBegin = std::chrono::steady_clock::now();
-    m_GradientFunction->SetParticleSystem(m_ParticleSystem);
+    m_GradientFunction->SetParticleSystem(m_ParticleSystem.GetPointer());
     if (m_EarlyStoppingEnabled && !m_EarlyStoppingScoreFunctionReady) {
-      bool early_stopping_status = m_EarlyStopping.SetControlShapes(m_ParticleSystem);
+      bool early_stopping_status = m_EarlyStopping.SetControlShapes(m_ParticleSystem.GetPointer());
       if (early_stopping_status == false) {
         SW_WARN(
             "Early stopping has been forcibly disabled. Possible causes: no fixed shapes/domains "
@@ -159,10 +159,8 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
               const shapeworks::ParticleDomain* domain = m_ParticleSystem->GetDomain(dom);
 
-              typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
-
               // must clone this as we are in a thread and the gradient function is not thread-safe
-              localGradientFunction = m_GradientFunction->Clone();
+              typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction->Clone();
 
               // Tell function which domain we are working on.
               localGradientFunction->SetDomainNumber(dom);
@@ -174,12 +172,12 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 }
                 // Compute gradient update.
                 double energy = 0.0;
-                localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
+                localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem.GetPointer());
                 // maximumUpdateAllowed is set based on some fraction of the distance between particles
                 // This is to avoid particles shooting past their neighbors
                 double maximumUpdateAllowed;
                 VectorType original_gradient =
-                    localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+                    localGradientFunction->Evaluate(k, dom, m_ParticleSystem.GetPointer(), maximumUpdateAllowed, energy);
 
                 PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
@@ -214,7 +212,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   m_ParticleSystem->SetPosition(newpoint, k, dom);
 
                   // Step G compute the new energy of the particle system
-                  newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
+                  newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem.GetPointer());
 
                   if (newenergy < energy)  // good move, increase timestep for next time
                   {
@@ -262,7 +260,10 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
       }
     }
 
-    this->InvokeEvent(itk::IterationEvent());
+    // Call iteration callback if set
+    if (m_iteration_callback) {
+      m_iteration_callback();
+    }
 
     // Check for convergence.  Optimization is considered to have converged if
     // max number of iterations is reached or maximum distance moved by any
@@ -277,7 +278,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
     }
 
     if (m_EarlyStoppingEnabled) {
-      m_EarlyStopping.update(m_NumberOfIterations, m_ParticleSystem);
+      m_EarlyStopping.update(m_NumberOfIterations, m_ParticleSystem.GetPointer());
       if (m_EarlyStopping.ShouldStop()) {
         std::cerr << "Early stopping triggered at optimization iteration "
                   << m_NumberOfIterations << std::endl;

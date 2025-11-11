@@ -29,14 +29,12 @@ class QOptimize : public QObject, public Optimize {
 
  protected:
   virtual void SetIterationCallback() override;
-  virtual void IterateCallback(itk::Object* caller, const itk::EventObject&) override;
+  void IterateCallbackInternal();
 
  Q_SIGNALS:
   void progress(int, QString);
 
  private:
-  itk::MemberCommand<QOptimize>::Pointer iterate_command_;
-
   // for concurrent access
   QMutex qmutex_;
 

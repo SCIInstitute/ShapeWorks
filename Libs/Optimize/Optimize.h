@@ -319,8 +319,6 @@ class Optimize {
   void Initialize();
   void RunOptimize();
 
-  virtual void IterateCallback(itk::Object*, const itk::EventObject&);
-
   void ComputeEnergyAfterIteration();
 
   void SetCotanSigma();

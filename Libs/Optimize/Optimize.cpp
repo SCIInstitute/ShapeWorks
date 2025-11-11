@@ -814,64 +814,6 @@ void Optimize::AbortOptimization() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::IterateCallback(itk::Object*, const itk::EventObject&) {
-  if (this->iteration_callback_) {
-    this->iteration_callback_();
-  }
-
-  this->m_iteration_count++;
-
-  for (int d = 0; d < m_domains_per_shape; d++) {
-    current_particle_iterations_ += m_sampler->GetParticleSystem()->GetNumberOfParticles(d);
-  }
-
-  if (this->GetShowVisualizer()) {
-    this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
-  }
-
-  this->ComputeEnergyAfterIteration();
-
-  if (m_optimizing && m_procrustes_interval != 0) {
-    m_procrustes_counter++;
-
-    if (m_procrustes_counter >= (int)m_procrustes_interval) {
-      m_procrustes_counter = 0;
-      m_procrustes->RunRegistration();
-
-      if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
-        // transform cutting planes
-        m_sampler->TransformCuttingPlanes(m_distribution_domain_id);
-      }
-    }
-  }
-
-  // Checkpointing after procrustes
-  if (m_checkpointing_interval != 0) {
-    m_checkpoint_counter++;
-    if (m_checkpoint_counter == (int)m_checkpointing_interval) {
-      m_checkpoint_counter = 0;
-
-      this->WritePointFiles();
-      this->WriteTransformFile();
-      this->WriteTransformFiles();
-      this->WritePointFilesWithFeatures();
-      this->WriteModes();
-      this->WriteParameters();
-      this->WriteEnergyFiles();
-
-      if (m_keep_checkpoints) {
-        this->WritePointFiles(this->GetCheckpointDir());
-        this->WritePointFilesWithFeatures(this->GetCheckpointDir());
-        this->WriteTransformFile(this->GetCheckpointDir() + "/transform");
-        this->WriteTransformFiles(this->GetCheckpointDir());
-        this->WriteParameters(this->GetCheckpointDir());
-      }
-    }
-  }
-  UpdateProgress();
-}
-
-//---------------------------------------------------------------------------
 void Optimize::ComputeEnergyAfterIteration() {
   // The energy computed here is only used for writing to file
   if (!this->m_file_output_enabled) {
@@ -1884,9 +1826,62 @@ int Optimize::GetUseShapeStatisticsAfter() { return this->m_use_shape_statistics
 
 //---------------------------------------------------------------------------
 void Optimize::SetIterationCallback() {
-  itk::MemberCommand<Optimize>::Pointer m_iterate_command = itk::MemberCommand<Optimize>::New();
-  m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
-  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
+  m_sampler->GetOptimizer()->SetIterationCallback([this]() {
+    if (this->iteration_callback_) {
+      this->iteration_callback_();
+    }
+
+    this->m_iteration_count++;
+
+    for (int d = 0; d < m_domains_per_shape; d++) {
+      current_particle_iterations_ += m_sampler->GetParticleSystem()->GetNumberOfParticles(d);
+    }
+
+    if (this->GetShowVisualizer()) {
+      this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
+    }
+
+    this->ComputeEnergyAfterIteration();
+
+    if (m_optimizing && m_procrustes_interval != 0) {
+      m_procrustes_counter++;
+
+      if (m_procrustes_counter >= (int)m_procrustes_interval) {
+        m_procrustes_counter = 0;
+        m_procrustes->RunRegistration();
+
+        if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
+          // transform cutting planes
+          m_sampler->TransformCuttingPlanes(m_distribution_domain_id);
+        }
+      }
+    }
+
+    // Checkpointing after procrustes
+    if (m_checkpointing_interval != 0) {
+      m_checkpoint_counter++;
+      if (m_checkpoint_counter == (int)m_checkpointing_interval) {
+        m_checkpoint_counter = 0;
+
+        this->WritePointFiles();
+        this->WriteTransformFile();
+        this->WriteTransformFiles();
+        this->WritePointFilesWithFeatures();
+        this->WriteModes();
+        this->WriteParameters();
+        this->WriteEnergyFiles();
+
+        if (m_keep_checkpoints) {
+          this->WritePointFiles(this->GetCheckpointDir());
+          this->WritePointFilesWithFeatures(this->GetCheckpointDir());
+          this->WriteTransformFile(this->GetCheckpointDir() + "/transform");
+          this->WriteTransformFiles(this->GetCheckpointDir());
+          this->WriteParameters(this->GetCheckpointDir());
+        }
+      }
+    }
+    UpdateProgress();
+  });
 }
 
 //---------------------------------------------------------------------------

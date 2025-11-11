@@ -14,7 +14,7 @@ Sampler::Sampler() {
 
   m_SamplingFunction = SamplingFunction::New();
 
-  m_Optimizer = OptimizerType::New();
+  m_Optimizer = std::make_shared<OptimizerType>();
 
   m_PointsFiles.push_back("");
 

@@ -1,18 +1,14 @@
 #pragma once
 
-#include <algorithm>
-#include <limits>
 #include <vector>
+#include <memory>
+#include <functional>
 
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
 #include "Libs/Optimize/Function/EarlyStop/EarlyStopping.h"
 #include "EarlyStoppingConfig.h"
 #include "ParticleSystem.h"
-#include "itkObject.h"
-#include "itkObjectFactory.h"
-#include "itkWeakPointer.h"
-#include "vnl/vnl_vector_fixed.h"
 
 namespace shapeworks {
 
@@ -27,28 +23,16 @@ namespace shapeworks {
  * computed).
  *
  */
-class GradientDescentOptimizer : public itk::Object {
+class GradientDescentOptimizer {
  public:
   using TGradientNumericType = float;
   constexpr static unsigned int VDimension = 3;
-  /** Standard class typedefs */
-  typedef GradientDescentOptimizer Self;
-  typedef itk::Object Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef itk::WeakPointer<const Self> ConstWeakPointer;
-
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
 
   /** Type of the domain. */
   typedef shapeworks::ImageDomainWithGradients<TGradientNumericType> DomainType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientDescentOptimizer, Object);
-
   /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  static constexpr unsigned int Dimension = VDimension;
 
   /** Particle System type is based on the dimensionality. */
   typedef ParticleSystem ParticleSystemType;
@@ -81,33 +65,34 @@ class GradientDescentOptimizer : public itk::Object {
   }
 
   /** Get/Set the number of iterations performed by the solver. */
-  itkGetMacro(NumberOfIterations, unsigned int);
-  itkSetMacro(NumberOfIterations, unsigned int);
+  unsigned int GetNumberOfIterations() const { return m_NumberOfIterations; }
+  void SetNumberOfIterations(unsigned int val) { m_NumberOfIterations = val; }
 
   void SetVerbosity(unsigned int val) { m_verbosity = val; }
-
-  unsigned int GetVerbosity() { return m_verbosity; }
+  unsigned int GetVerbosity() const { return m_verbosity; }
 
   /** Get/Set a time step parameter for the update.  Each update is simply
       scaled by this value. */
-  itkGetMacro(TimeStep, double);
-  itkSetMacro(TimeStep, double);
+  double GetTimeStep() const { return m_TimeStep; }
+  void SetTimeStep(double val) { m_TimeStep = val; }
 
   /** Get/Set the maximum iterations to allow this solver to use. */
-  itkGetMacro(MaximumNumberOfIterations, unsigned int);
-  itkSetMacro(MaximumNumberOfIterations, unsigned int);
+  unsigned int GetMaximumNumberOfIterations() const { return m_MaximumNumberOfIterations; }
+  void SetMaximumNumberOfIterations(unsigned int val) { m_MaximumNumberOfIterations = val; }
 
   /** Get/Set the precision of the solution. */
-  itkGetMacro(Tolerance, double);
-  itkSetMacro(Tolerance, double);
+  double GetTolerance() const { return m_Tolerance; }
+  void SetTolerance(double val) { m_Tolerance = val; }
 
   /** Get/Set the ParticleSystem modified by this optimizer. */
-  itkGetObjectMacro(ParticleSystem, ParticleSystemType);
-  itkSetObjectMacro(ParticleSystem, ParticleSystemType);
+  ParticleSystemType* GetParticleSystem() { return m_ParticleSystem.GetPointer(); }
+  const ParticleSystemType* GetParticleSystem() const { return m_ParticleSystem.GetPointer(); }
+  void SetParticleSystem(ParticleSystemType* val) { m_ParticleSystem = val; }
 
   /** Get/Set the gradient function used by this optimizer. */
-  itkGetObjectMacro(GradientFunction, GradientFunctionType);
-  itkSetObjectMacro(GradientFunction, GradientFunctionType);
+  GradientFunctionType* GetGradientFunction() { return m_GradientFunction.GetPointer(); }
+  const GradientFunctionType* GetGradientFunction() const { return m_GradientFunction.GetPointer(); }
+  void SetGradientFunction(GradientFunctionType* val) { m_GradientFunction = val; }
 
   /// Determines if this is an initialization (true) or an optimization (false)
   void SetInitializationMode(bool b) { m_initialization_mode = b; }
@@ -118,14 +103,21 @@ class GradientDescentOptimizer : public itk::Object {
   /// Sets the scaling factor at the beginning of the initialization
   void SetInitializationStartScalingFactor(double si) { m_initialization_start_scaling_factor = si; }
 
- protected:
+  /// Set a callback to be called after each iteration
+  void SetIterationCallback(std::function<void()> callback) { m_iteration_callback = callback; }
+
+  /// Get the current iteration callback
+  std::function<void()> GetIterationCallback() const { return m_iteration_callback; }
+
+  // Constructor and destructor are now public for std::shared_ptr usage
   GradientDescentOptimizer();
-  GradientDescentOptimizer(const GradientDescentOptimizer&);
-  const GradientDescentOptimizer& operator=(const GradientDescentOptimizer&);
-  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
   virtual ~GradientDescentOptimizer(){};
 
  private:
+  // Disable copy and assignment
+  GradientDescentOptimizer(const GradientDescentOptimizer&) = delete;
+  GradientDescentOptimizer& operator=(const GradientDescentOptimizer&) = delete;
+
   typename ParticleSystemType::Pointer m_ParticleSystem;
   typename GradientFunctionType::Pointer m_GradientFunction;
   bool m_StopOptimization;
@@ -144,6 +136,9 @@ class GradientDescentOptimizer : public itk::Object {
   bool m_initialization_mode = false;
   size_t m_check_iterations = 50;
   double m_initialization_start_scaling_factor;
+
+  // Iteration callback
+  std::function<void()> m_iteration_callback;
 
   void ResetTimeStepVectors();
 };
