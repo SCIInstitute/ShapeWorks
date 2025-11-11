@@ -12,7 +12,6 @@ const int global_iteration = 1;
 #include <algorithm>
 #include <chrono>
 #include <ctime>
-#include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -24,6 +23,7 @@ const int global_iteration = 1;
 namespace shapeworks {
 GradientDescentOptimizer::GradientDescentOptimizer() : early_stopping_() {}
 
+//---------------------------------------------------------------------------------------------------
 void GradientDescentOptimizer::reset_time_step_vectors() {
   // Make sure the time step vector is the right size
   while (time_steps_.size() != particle_system_->GetNumberOfDomains()) {
@@ -43,12 +43,14 @@ void GradientDescentOptimizer::reset_time_step_vectors() {
   }
 }
 
+//---------------------------------------------------------------------------------------------------
 void GradientDescentOptimizer::set_early_stopping_config(const EarlyStoppingConfig& config) {
   early_stopping_.SetConfigParams(config.frequency, config.window_size, config.threshold, config.strategy,
                                   config.ema_alpha, config.enable_logging, config.logger_name, config.warmup_iters);
   early_stopping_enabled_ = config.enabled;
 }
 
+//---------------------------------------------------------------------------------------------------
 void GradientDescentOptimizer::initialize_early_stopping_score_function(const ParticleSystem* p) {
   bool early_stopping_status = early_stopping_.SetControlShapes(p);
   if (early_stopping_status == false) {
@@ -61,6 +63,7 @@ void GradientDescentOptimizer::initialize_early_stopping_score_function(const Pa
   early_stopping_enabled_ = early_stopping_status;
 }
 
+//---------------------------------------------------------------------------------------------------
 void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
   TIME_SCOPE("GradientDescentOptimizer");
   /// uncomment this to run single threaded
@@ -83,25 +86,23 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
   reset_time_step_vectors();
   double minimumTimeStep = 1.0;
 
-  const double pi = std::acos(-1.0);
-  unsigned int numdomains = particle_system_->GetNumberOfDomains();
+  unsigned int num_domains = particle_system_->GetNumberOfDomains();
 
   unsigned int counter = 0;
 
-  double maxchange = 0.0;
+  double max_change = 0.0;
   if (early_stopping_enabled_) early_stopping_.reset();  // reset early stopping cache before starting optimization
-  while (stop_optimization_ == false)                   // iterations loop
+  while (stop_optimization_ == false)                    // iterations loop
   {
     TIME_SCOPE("optimizer_iteration");
     double dampening = 1;
     int startDampening = max_iterations_ / 2;
     if (number_of_iterations_ > startDampening) {
-      dampening = exp(-double(number_of_iterations_ - startDampening) * 5.0 /
-                      double(max_iterations_ - startDampening));
+      dampening = exp(-double(number_of_iterations_ - startDampening) * 5.0 / double(max_iterations_ - startDampening));
     }
     minimumTimeStep = dampening;
 
-    maxchange = 0.0;
+    max_change = 0.0;
 
     const auto accTimerBegin = std::chrono::steady_clock::now();
     gradient_function_->SetParticleSystem(particle_system_.GetPointer());
@@ -124,7 +125,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
     TIME_START("parallel_sampling");
     // Iterate over each domain
     const auto domains_per_shape = particle_system_->GetDomainsPerShape();
-    tbb::parallel_for(tbb::blocked_range<size_t>{0, numdomains / domains_per_shape},
+    tbb::parallel_for(tbb::blocked_range<size_t>{0, num_domains / domains_per_shape},
                       [&](const tbb::blocked_range<size_t>& r) {
                         for (size_t shape = r.begin(); shape < r.end(); ++shape) {
                           for (int shape_dom_idx = 0; shape_dom_idx < domains_per_shape; shape_dom_idx++) {
@@ -197,7 +198,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
                                 if (newenergy < energy)  // good move, increase timestep for next time
                                 {
                                   time_steps_[dom][k] *= factor;
-                                  if (gradmag > maxchange) maxchange = gradmag;
+                                  if (gradmag > max_change) max_change = gradmag;
                                   break;
                                 } else {  // bad move, reset point position and back off on timestep
                                   if (time_steps_[dom][k] > minimumTimeStep) {
@@ -208,7 +209,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
                                     time_steps_[dom][k] /= factor;
                                   } else  // keep the move with timestep 1.0 anyway
                                   {
-                                    if (gradmag > maxchange) maxchange = gradmag;
+                                    if (gradmag > max_change) max_change = gradmag;
                                     break;
                                   }
                                 }
@@ -235,7 +236,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
       std::cout << std::endl;
     } else if (verbosity_ > 1) {
       if (number_of_iterations_ % (max_iterations_ / 10) == 0) {
-        std::cerr << "Iteration " << number_of_iterations_ << ", maxchange = " << maxchange
+        std::cerr << "Iteration " << number_of_iterations_ << ", maxchange = " << max_change
                   << ", minimumTimeStep = " << minimumTimeStep << std::endl;
       }
     }
@@ -248,8 +249,8 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
     // Check for convergence.  Optimization is considered to have converged if
     // max number of iterations is reached or maximum distance moved by any
     // particle is less than the specified precision.
-    if (maxchange < tolerance_) {
-      std::cerr << "Iteration " << number_of_iterations_ << ", maxchange = " << maxchange << std::endl;
+    if (max_change < tolerance_) {
+      std::cerr << "Iteration " << number_of_iterations_ << ", maxchange = " << max_change << std::endl;
       stop_optimization_ = true;
     }
 
@@ -269,6 +270,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
   }  // end while stop optimization
 }
 
+//---------------------------------------------------------------------------------------------------
 void GradientDescentOptimizer::augmented_lagrangian_constraints(VectorType& gradient, const PointType& pt,
                                                                 const size_t& dom, const double& maximum_update_allowed,
                                                                 size_t index) {
