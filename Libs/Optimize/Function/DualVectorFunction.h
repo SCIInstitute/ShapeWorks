@@ -25,36 +25,29 @@ class DualVectorFunction : public VectorFunction {
   typedef VectorFunction::VectorType VectorType;
 
   /// Factory method for creating instances
-  static std::shared_ptr<DualVectorFunction> New() {
-    return std::make_shared<DualVectorFunction>();
-  }
+  static std::shared_ptr<DualVectorFunction> New() { return std::make_shared<DualVectorFunction>(); }
 
   /** The first argument is a pointer to the particle system.  The second
     argument is the index of the domain within that particle system.  The
     third argument is the index of the particle location within the given
     domain. */
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system,
-                              double& maxmove) const {
-    double maxA, maxB, maxC;
-    maxA = 0;
-    maxB = 0;
-    maxC = 0;
+  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove) const {
+    double maxA = 0;
+    double maxB = 0;
     VectorType ansA;
     ansA.fill(0.0);
     VectorType ansB;
     ansB.fill(0.0);
-    VectorType ansC;
-    ansC.fill(0.0);
 
     const_cast<DualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
 
     // evaluate individual functions: A = surface energy, B = correspondence
-    if (m_AOn == true) {
+    if (m_AOn) {
       ansA = m_FunctionA->Evaluate(idx, d, system, maxA);
       const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
     }
 
-    if (m_BOn == true) {
+    if (m_BOn) {
       ansB = m_FunctionB->Evaluate(idx, d, system, maxB);
       const_cast<DualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
     }
@@ -67,34 +60,23 @@ class DualVectorFunction : public VectorFunction {
     // get maxmove and predicted move for current configuration
     VectorType predictedMove;
     predictedMove.fill(0.0);
-    if (m_BOn == true) {
-      if (m_AOn == true)  // both A and B are active
-      {
-        if (maxB > maxA) {
-          maxmove = maxB;
-        } else {
-          maxmove = maxA;
-        }
 
-        maxmove = maxA;  // always driven by the sampling to decrease the senstivity to covariance regularization
-
-        predictedMove = ansA + m_RelativeGradientScaling * ansB;
-
-        return (predictedMove);
-      } else  // B is active, A is not active
-      {
-        maxmove = maxB;
-
-        predictedMove = ansB;
-
-        return (predictedMove);
-      }
-    } else  // only A is active
-    {
-      maxmove = maxA;
-      return ansA;
+    // both A and B are active
+    if (m_AOn && m_BOn) {
+      maxmove = maxA;  // always driven by the sampling to decrease the sensitivity to covariance regularization
+      predictedMove = ansA + m_RelativeGradientScaling * ansB;
+      return predictedMove;
     }
-    maxmove = 0.0;
+
+    // B is active, A is not active
+    if (m_BOn) {
+      maxmove = maxB;
+      predictedMove = ansB;
+      return predictedMove;
+    }
+
+    // else only A is active (or if both are off, 0 will be return)
+    maxmove = maxA;
     return ansA;
   }
 
@@ -361,8 +343,7 @@ class DualVectorFunction : public VectorFunction {
     return copy;
   }
 
-  DualVectorFunction()
-      : m_AOn(true), m_BOn(false), m_RelativeGradientScaling(1.0), m_RelativeEnergyScaling(1.0) {}
+  DualVectorFunction() : m_AOn(true), m_BOn(false), m_RelativeGradientScaling(1.0), m_RelativeEnergyScaling(1.0) {}
 
   ~DualVectorFunction() override = default;
 
