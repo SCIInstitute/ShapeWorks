@@ -33,67 +33,67 @@ class GradientDescentOptimizer {
   using PointType = ParticleSystem::PointType;
 
   /** Start the optimization. */
-  void StartOptimization() { StartAdaptiveGaussSeidelOptimization(); }
-  void StartAdaptiveGaussSeidelOptimization();
-  void SetEarlyStoppingConfig(const EarlyStoppingConfig& config);
-  void InitializeEarlyStoppingScoreFunction(const ParticleSystem* p);
+  void start_optimization() { start_adaptive_gauss_seidel_optimization(); }
+  void start_adaptive_gauss_seidel_optimization();
+  void set_early_stopping_config(const EarlyStoppingConfig& config);
+  void initialize_early_stopping_score_function(const ParticleSystem* p);
 
-  void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
-                                      const double& maximumUpdateAllowed, size_t index);
+  void augmented_lagrangian_constraints(VectorType& gradient, const PointType& pt, const size_t& dom,
+                                        const double& maximum_update_allowed, size_t index);
 
   /** Stop the optimization.  This method sets a flag that aborts the
-      StartOptimization method after the current iteration. */
-  void StopOptimization() { stop_optimization_ = true; }
+      start_optimization method after the current iteration. */
+  void stop_optimization() { stop_optimization_ = true; }
 
-  void AbortProcessing() {
+  void abort_processing() {
     stop_optimization_ = true;
     abort_processing_ = true;
   }
 
   /** Get/Set the number of iterations performed by the solver. */
-  unsigned int GetNumberOfIterations() const { return number_of_iterations_; }
-  void SetNumberOfIterations(unsigned int val) { number_of_iterations_ = val; }
+  unsigned int get_number_of_iterations() const { return number_of_iterations_; }
+  void set_number_of_iterations(unsigned int val) { number_of_iterations_ = val; }
 
-  void SetVerbosity(unsigned int val) { verbosity_ = val; }
-  unsigned int GetVerbosity() const { return verbosity_; }
+  void set_verbosity(unsigned int val) { verbosity_ = val; }
+  unsigned int get_verbosity() const { return verbosity_; }
 
   /** Get/Set a time step parameter for the update.  Each update is simply
       scaled by this value. */
-  double GetTimeStep() const { return time_step_; }
-  void SetTimeStep(double val) { time_step_ = val; }
+  double get_time_step() const { return time_step_; }
+  void set_time_step(double val) { time_step_ = val; }
 
   /** Get/Set the maximum iterations to allow this solver to use. */
-  unsigned int GetMaximumNumberOfIterations() const { return max_iterations_; }
-  void SetMaximumNumberOfIterations(unsigned int val) { max_iterations_ = val; }
+  unsigned int get_maximum_number_of_iterations() const { return max_iterations_; }
+  void set_maximum_number_of_iterations(unsigned int val) { max_iterations_ = val; }
 
   /** Get/Set the precision of the solution. */
-  double GetTolerance() const { return tolerance_; }
-  void SetTolerance(double val) { tolerance_ = val; }
+  double get_tolerance() const { return tolerance_; }
+  void set_tolerance(double val) { tolerance_ = val; }
 
   /** Get/Set the ParticleSystem modified by this optimizer. */
-  ParticleSystem* GetParticleSystem() { return particle_system_.GetPointer(); }
-  const ParticleSystem* GetParticleSystem() const { return particle_system_.GetPointer(); }
-  void SetParticleSystem(ParticleSystem* val) { particle_system_ = val; }
+  ParticleSystem* get_particle_system() { return particle_system_.GetPointer(); }
+  const ParticleSystem* get_particle_system() const { return particle_system_.GetPointer(); }
+  void set_particle_system(ParticleSystem* val) { particle_system_ = val; }
 
   /** Get/Set the gradient function used by this optimizer. */
-  VectorFunction* GetGradientFunction() { return gradient_function_.GetPointer(); }
-  const VectorFunction* GetGradientFunction() const { return gradient_function_.GetPointer(); }
-  void SetGradientFunction(VectorFunction* val) { gradient_function_ = val; }
+  VectorFunction* get_gradient_function() { return gradient_function_.GetPointer(); }
+  const VectorFunction* get_gradient_function() const { return gradient_function_.GetPointer(); }
+  void set_gradient_function(VectorFunction* val) { gradient_function_ = val; }
 
   /// Determines if this is an initialization (true) or an optimization (false)
-  void SetInitializationMode(bool b) { initialization_mode_ = b; }
+  void set_initialization_mode(bool b) { initialization_mode_ = b; }
 
   /// Sets the number of iterations when we check for convergence
-  void SetCheckIterations(size_t si) { check_iterations_ = si; }
+  void set_check_iterations(size_t si) { check_iterations_ = si; }
 
   /// Sets the scaling factor at the beginning of the initialization
-  void SetInitializationStartScalingFactor(double si) { init_start_scaling_factor_ = si; }
+  void set_initialization_start_scaling_factor(double si) { init_start_scaling_factor_ = si; }
 
   /// Set a callback to be called after each iteration
-  void SetIterationCallback(std::function<void()> callback) { iteration_callback_ = callback; }
+  void set_iteration_callback(std::function<void()> callback) { iteration_callback_ = callback; }
 
   /// Get the current iteration callback
-  std::function<void()> GetIterationCallback() const { return iteration_callback_; }
+  std::function<void()> get_iteration_callback() const { return iteration_callback_; }
 
   // Constructor and destructor are now public for std::shared_ptr usage
   GradientDescentOptimizer();
@@ -104,7 +104,7 @@ class GradientDescentOptimizer {
   GradientDescentOptimizer(const GradientDescentOptimizer&) = delete;
   GradientDescentOptimizer& operator=(const GradientDescentOptimizer&) = delete;
 
-  void ResetTimeStepVectors();
+  void reset_time_step_vectors();
 
   ParticleSystem::Pointer particle_system_;
   VectorFunction::Pointer gradient_function_;

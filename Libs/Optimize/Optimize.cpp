@@ -429,7 +429,7 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
 
-  m_sampler->GetOptimizer()->SetTimeStep(1.0);
+  m_sampler->GetOptimizer()->set_time_step(1.0);
 
   m_sampler->SetSamplingOn();
 
@@ -453,7 +453,7 @@ void Optimize::InitializeSampler() {
 
   m_sampler->Initialize();
 
-  m_sampler->GetOptimizer()->SetTolerance(0.0);
+  m_sampler->GetOptimizer()->set_tolerance(0.0);
 
   // These flags have to be set after Initialize, since Initialize will set them all to zero
   for (unsigned int i = 0; i < this->m_particle_flags.size() / 2; i++) {
@@ -568,7 +568,7 @@ void Optimize::Initialize() {
       50;  // The initialization optimization will check every check_iterations iterations for sampling quality
   double initialization_start_scaling_factor = 3.;
 
-  m_sampler->GetOptimizer()->SetInitializationStartScalingFactor(initialization_start_scaling_factor);
+  m_sampler->GetOptimizer()->set_initialization_start_scaling_factor(initialization_start_scaling_factor);
 
   /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
@@ -657,14 +657,14 @@ void Optimize::Initialize() {
     }
     m_str_energy += "pts_init";
 
-    m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
-    m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+    m_sampler->GetOptimizer()->set_maximum_number_of_iterations(m_iterations_per_split);
+    m_sampler->GetOptimizer()->set_number_of_iterations(0);
     if (adaptive_initialization &&
         m_sampler->GetParticleSystem()->GetNumberOfParticles(0) >= particles_before_adaptive_initialization) {
-      m_sampler->GetOptimizer()->SetInitializationMode(true);
+      m_sampler->GetOptimizer()->set_initialization_mode(true);
     }
     m_sampler->Execute();
-    m_sampler->GetOptimizer()->SetInitializationMode(false);
+    m_sampler->GetOptimizer()->set_initialization_mode(false);
 
     if (m_save_init_splits == true) {
       WriteSplitFiles("pts_w_init");
@@ -776,10 +776,10 @@ void Optimize::RunOptimize() {
   }
 
   if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
-    m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations -
+    m_sampler->GetOptimizer()->set_maximum_number_of_iterations(m_optimization_iterations -
                                                             m_optimization_iterations_completed);
   } else {
-    m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);
+    m_sampler->GetOptimizer()->set_maximum_number_of_iterations(0);
   }
 
   m_energy_a.clear();
@@ -787,8 +787,8 @@ void Optimize::RunOptimize() {
   m_total_energy.clear();
   m_str_energy = "opt";
 
-  m_sampler->GetOptimizer()->SetNumberOfIterations(0);
-  m_sampler->GetOptimizer()->SetTolerance(0.0);
+  m_sampler->GetOptimizer()->set_number_of_iterations(0);
+  m_sampler->GetOptimizer()->set_tolerance(0.0);
   m_sampler->Execute();
 
   this->WritePointFiles();
@@ -805,12 +805,12 @@ void Optimize::RunOptimize() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::OptimizerStop() { m_sampler->GetOptimizer()->StopOptimization(); }
+void Optimize::OptimizerStop() { m_sampler->GetOptimizer()->stop_optimization(); }
 
 //---------------------------------------------------------------------------
 void Optimize::AbortOptimization() {
   this->m_aborted = true;
-  m_sampler->GetOptimizer()->AbortProcessing();
+  m_sampler->GetOptimizer()->abort_processing();
 }
 
 //---------------------------------------------------------------------------
@@ -1826,7 +1826,7 @@ int Optimize::GetUseShapeStatisticsAfter() { return this->m_use_shape_statistics
 
 //---------------------------------------------------------------------------
 void Optimize::SetIterationCallback() {
-  m_sampler->GetOptimizer()->SetIterationCallback([this]() {
+  m_sampler->GetOptimizer()->set_iteration_callback([this]() {
     if (this->iteration_callback_) {
       this->iteration_callback_();
     }
@@ -2083,8 +2083,8 @@ void Optimize::UpdateProgress() {
       message = "Initializing";
     }
 
-    int stage_num_iterations = m_sampler->GetOptimizer()->GetNumberOfIterations();
-    int stage_total_iterations = m_sampler->GetOptimizer()->GetMaximumNumberOfIterations();
+    int stage_num_iterations = m_sampler->GetOptimizer()->get_number_of_iterations();
+    int stage_total_iterations = m_sampler->GetOptimizer()->get_maximum_number_of_iterations();
     int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
 
     message = fmt::format("{} : Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,

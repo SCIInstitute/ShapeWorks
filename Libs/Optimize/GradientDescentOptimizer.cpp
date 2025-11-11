@@ -24,7 +24,7 @@ const int global_iteration = 1;
 namespace shapeworks {
 GradientDescentOptimizer::GradientDescentOptimizer() : early_stopping_() {}
 
-void GradientDescentOptimizer::ResetTimeStepVectors() {
+void GradientDescentOptimizer::reset_time_step_vectors() {
   // Make sure the time step vector is the right size
   while (time_steps_.size() != particle_system_->GetNumberOfDomains()) {
     std::vector<double> tmp;
@@ -43,13 +43,13 @@ void GradientDescentOptimizer::ResetTimeStepVectors() {
   }
 }
 
-void GradientDescentOptimizer::SetEarlyStoppingConfig(const EarlyStoppingConfig& config) {
+void GradientDescentOptimizer::set_early_stopping_config(const EarlyStoppingConfig& config) {
   early_stopping_.SetConfigParams(config.frequency, config.window_size, config.threshold, config.strategy,
                                   config.ema_alpha, config.enable_logging, config.logger_name, config.warmup_iters);
   early_stopping_enabled_ = config.enabled;
 }
 
-void GradientDescentOptimizer::InitializeEarlyStoppingScoreFunction(const ParticleSystem* p) {
+void GradientDescentOptimizer::initialize_early_stopping_score_function(const ParticleSystem* p) {
   bool early_stopping_status = early_stopping_.SetControlShapes(p);
   if (early_stopping_status == false) {
     SW_WARN(
@@ -61,7 +61,7 @@ void GradientDescentOptimizer::InitializeEarlyStoppingScoreFunction(const Partic
   early_stopping_enabled_ = early_stopping_status;
 }
 
-void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
+void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
   TIME_SCOPE("GradientDescentOptimizer");
   /// uncomment this to run single threaded
   // tbb::task_scheduler_init init(1);
@@ -80,7 +80,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
   }
   // gradient_function_->SetParticleSystem(particle_system_);
 
-  ResetTimeStepVectors();
+  reset_time_step_vectors();
   double minimumTimeStep = 1.0;
 
   const double pi = std::acos(-1.0);
@@ -173,7 +173,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                                 // Step B Constrain the gradient so that the resulting position will not violate any
                                 // domain constraints
                                 if (particle_system_->GetDomain(dom)->GetConstraints()->GetActive()) {
-                                  AugmentedLagrangianConstraints(gradient, pt, dom, maximumUpdateAllowed, k);
+                                  augmented_lagrangian_constraints(gradient, pt, dom, maximumUpdateAllowed, k);
                                 }
 
                                 gradmag = gradient.magnitude();
@@ -269,14 +269,14 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
   }  // end while stop optimization
 }
 
-void GradientDescentOptimizer::AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt,
-                                                              const size_t& dom, const double& maximumUpdateAllowed,
-                                                              size_t index) {
+void GradientDescentOptimizer::augmented_lagrangian_constraints(VectorType& gradient, const PointType& pt,
+                                                                const size_t& dom, const double& maximum_update_allowed,
+                                                                size_t index) {
   // Step B 2: Augmented lagrangian constraint method
   double gradmag = gradient.magnitude();
 
-  if (gradmag > maximumUpdateAllowed) {
-    gradient = gradient * maximumUpdateAllowed / gradmag;
+  if (gradmag > maximum_update_allowed) {
+    gradient = gradient * maximum_update_allowed / gradmag;
     gradmag = gradient.magnitude();
   }
 

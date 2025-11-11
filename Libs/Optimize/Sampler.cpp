@@ -176,15 +176,15 @@ void Sampler::Execute() {
     this->AllocateDataCaches();
     this->SetAdaptivityMode();
     this->SetCorrespondenceMode(m_CorrespondenceMode);
-    this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
+    this->GetOptimizer()->set_gradient_function(m_LinkingFunction);
     m_LinkingFunction->SetAOn();
     m_LinkingFunction->SetBOn();
 
     this->AllocateDomainsAndNeighborhoods();
 
     // Point the optimizer to the particle system.
-    this->GetOptimizer()->SetEarlyStoppingConfig(early_stopping_config_);
-    this->GetOptimizer()->SetParticleSystem(m_ParticleSystem);
+    this->GetOptimizer()->set_early_stopping_config(early_stopping_config_);
+    this->GetOptimizer()->set_particle_system(m_ParticleSystem);
     this->ReadTransforms();
     this->ReadPointsFiles();
     initialize_initial_positions();
@@ -196,7 +196,7 @@ void Sampler::Execute() {
   if (this->GetInitializing() == true) return;
 
   // this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
-  this->GetOptimizer()->StartOptimization();
+  this->GetOptimizer()->start_optimization();
 }
 
 //---------------------------------------------------------------------------
@@ -263,7 +263,7 @@ void Sampler::ReadTransforms() {
 void Sampler::ReInitialize() {
   this->SetAdaptivityMode();
   this->SetCorrespondenceMode(m_CorrespondenceMode);
-  this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
+  this->GetOptimizer()->set_gradient_function(m_LinkingFunction);
   this->m_LinkingFunction->SetAOn();
   this->m_LinkingFunction->SetBOn();
   this->InitializeOptimizationFunctions();

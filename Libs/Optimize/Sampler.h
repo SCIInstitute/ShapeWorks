@@ -231,7 +231,7 @@ class Sampler {
 
   void SetVerbosity(unsigned int val) {
     m_verbosity = val;
-    m_Optimizer->SetVerbosity(val);
+    m_Optimizer->set_verbosity(val);
   }
 
   unsigned int GetVerbosity() { return m_verbosity; }

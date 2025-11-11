@@ -35,8 +35,8 @@ void QOptimize::SetIterationCallback() {
   Optimize::SetIterationCallback();
 
   // Now extend it to add our Qt-specific behavior
-  auto parent_callback = m_sampler->GetOptimizer()->GetIterationCallback();
-  m_sampler->GetOptimizer()->SetIterationCallback([this, parent_callback]() {
+  auto parent_callback = m_sampler->GetOptimizer()->get_iteration_callback();
+  m_sampler->GetOptimizer()->set_iteration_callback([this, parent_callback]() {
     // Call the parent callback first (if it exists)
     if (parent_callback) {
       parent_callback();
