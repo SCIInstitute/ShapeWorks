@@ -148,7 +148,7 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
               const ParticleDomain* domain = particle_system_->GetDomain(dom);
 
               // must clone this as we are in a thread and the gradient function is not thread-safe
-              VectorFunction::Pointer local_gradient_function = gradient_function_->Clone();
+              std::shared_ptr<VectorFunction> local_gradient_function = gradient_function_->Clone();
 
               // Tell function which domain we are working on.
               local_gradient_function->SetDomainNumber(dom);

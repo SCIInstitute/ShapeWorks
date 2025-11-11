@@ -16,28 +16,22 @@ namespace shapeworks {
 class LegacyCorrespondenceFunction : public VectorFunction {
  public:
   constexpr static unsigned int VDimension = 3;
-  /** Standard class typedefs. */
-  typedef LegacyCorrespondenceFunction Self;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef VectorFunction Superclass;
-  itkTypeMacro(LegacyCorrespondenceFunction, VectorFunction);
+  constexpr static unsigned int Dimension = VDimension;
 
   typedef LegacyShapeMatrix ShapeMatrixType;
 
   typedef typename ShapeMatrixType::DataType DataType;
 
   /** Vector & Point types. */
-  typedef typename Superclass::VectorType VectorType;
-  typedef typename ParticleSystem::PointType PointType;
+  typedef VectorFunction::VectorType VectorType;
+  typedef ParticleSystem::PointType PointType;
   typedef vnl_vector<DataType> vnl_vector_type;
   typedef vnl_matrix<DataType> vnl_matrix_type;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  /// Factory method for creating instances
+  static std::shared_ptr<LegacyCorrespondenceFunction> New() {
+    return std::make_shared<LegacyCorrespondenceFunction>();
+  }
 
   /** The first argument is a pointer to the particle system.  The second
       argument is the index of the domain within that particle system.  The
@@ -110,8 +104,8 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   void SetRecomputeCovarianceInterval(int i) { m_RecomputeCovarianceInterval = i; }
   int GetRecomputeCovarianceInterval() const { return m_RecomputeCovarianceInterval; }
 
-  virtual VectorFunction::Pointer Clone() {
-    LegacyCorrespondenceFunction::Pointer copy = LegacyCorrespondenceFunction::New();
+  std::shared_ptr<VectorFunction> Clone() override {
+    auto copy = LegacyCorrespondenceFunction::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
     copy->m_MinimumVariance = this->m_MinimumVariance;
@@ -130,10 +124,9 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
-    return (VectorFunction::Pointer)copy;
+    return copy;
   }
 
- protected:
   LegacyCorrespondenceFunction() {
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
@@ -147,9 +140,11 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     m_InverseCovMatrix = std::make_shared<Eigen::MatrixXd>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
-  virtual ~LegacyCorrespondenceFunction() {}
-  void operator=(const LegacyCorrespondenceFunction&);
-  LegacyCorrespondenceFunction(const LegacyCorrespondenceFunction&);
+  ~LegacyCorrespondenceFunction() override = default;
+
+ protected:
+  LegacyCorrespondenceFunction(const LegacyCorrespondenceFunction&) = delete;
+  LegacyCorrespondenceFunction& operator=(const LegacyCorrespondenceFunction&) = delete;
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
   virtual void ComputeCovarianceMatrix();

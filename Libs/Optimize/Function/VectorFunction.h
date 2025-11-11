@@ -1,9 +1,7 @@
 #pragma once
 
-#include "itkLightObject.h"
-#include "itkObjectFactory.h"
+#include <memory>
 #include "Libs/Optimize/ParticleSystem.h"
-#include "itkWeakPointer.h"
 #include "vnl/vnl_vector_fixed.h"
 
 namespace shapeworks {
@@ -16,24 +14,13 @@ namespace shapeworks {
  * result.
  *
  */
-class VectorFunction : public itk::LightObject {
+class VectorFunction {
  public:
   constexpr static unsigned int VDimension = 3;
-  /** Standard class typedefs. */
-  typedef VectorFunction Self;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef itk::LightObject Superclass;
-  itkTypeMacro(VectorFunction, LightObject);
+  constexpr static unsigned int Dimension = VDimension;
 
   /** Type of vectors. */
   typedef vnl_vector_fixed<double, VDimension> VectorType;
-
-  /** Method for object allocation through the factory. */
-  //  itkNewMacro(Self);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** The first argument is a pointer to the particle system.  The second
       argument is the index of the domain within that particle system.  The
@@ -69,7 +56,7 @@ class VectorFunction : public itk::LightObject {
   virtual void SetDomainNumber(unsigned int i) { m_DomainNumber = i; }
   virtual int GetDomainNumber() const { return m_DomainNumber; }
 
-  virtual VectorFunction::Pointer Clone() {
+  virtual std::shared_ptr<VectorFunction> Clone() {
     std::cerr << "Error: base class VectorFunction Clone method called!\n";
     std::cerr << "Threaded run of current parameters not supported!\n";
     return nullptr;
@@ -78,11 +65,13 @@ class VectorFunction : public itk::LightObject {
   virtual double GetRelativeEnergyScaling() const { return 1.0; }
   virtual void SetRelativeEnergyScaling(double r) { return; }
 
+  /// Virtual destructor for proper cleanup of derived classes
+  virtual ~VectorFunction() = default;
+
  protected:
   VectorFunction() : m_ParticleSystem(0), m_DomainNumber(0) {}
-  virtual ~VectorFunction() {}
-  void operator=(const VectorFunction&);
-  VectorFunction(const VectorFunction&);
+  VectorFunction(const VectorFunction&) = delete;
+  VectorFunction& operator=(const VectorFunction&) = delete;
 
   ParticleSystem* m_ParticleSystem;
   unsigned int m_DomainNumber;

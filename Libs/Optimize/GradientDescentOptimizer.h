@@ -91,13 +91,13 @@ class GradientDescentOptimizer {
   void set_particle_system(ParticleSystem* val) { particle_system_ = val; }
 
   /// Get the gradient function used by this optimizer
-  VectorFunction* get_gradient_function() { return gradient_function_.GetPointer(); }
+  std::shared_ptr<VectorFunction> get_gradient_function() { return gradient_function_; }
 
   /// Get the gradient function used by this optimizer (const version)
-  const VectorFunction* get_gradient_function() const { return gradient_function_.GetPointer(); }
+  std::shared_ptr<const VectorFunction> get_gradient_function() const { return gradient_function_; }
 
   /// Set the gradient function used by this optimizer
-  void set_gradient_function(VectorFunction* val) { gradient_function_ = val; }
+  void set_gradient_function(std::shared_ptr<VectorFunction> val) { gradient_function_ = val; }
 
   /// Determines if this is an initialization (true) or an optimization (false)
   void set_initialization_mode(bool b) { initialization_mode_ = b; }
@@ -130,7 +130,7 @@ class GradientDescentOptimizer {
   void reset_time_step_vectors();
 
   ParticleSystem::Pointer particle_system_;
-  VectorFunction::Pointer gradient_function_;
+  std::shared_ptr<VectorFunction> gradient_function_;
   bool stop_optimization_ = false;
   bool abort_processing_ = false;
   unsigned int number_of_iterations_ = 0;

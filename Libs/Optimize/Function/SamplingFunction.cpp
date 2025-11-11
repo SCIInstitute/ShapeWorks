@@ -78,8 +78,8 @@ double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom, const
 }
 
 //---------------------------------------------------------------------------
-VectorFunction::Pointer SamplingFunction::Clone() {
-  SamplingFunction::Pointer copy = SamplingFunction::New();
+std::shared_ptr<VectorFunction> SamplingFunction::Clone() {
+  auto copy = SamplingFunction::New();
   copy->m_ParticleSystem = m_ParticleSystem;
   copy->m_Counter = m_Counter;
   copy->m_avgKappa = m_avgKappa;
@@ -98,7 +98,7 @@ VectorFunction::Pointer SamplingFunction::Clone() {
   copy->m_DomainNumber = m_DomainNumber;
   copy->m_ParticleSystem = m_ParticleSystem;
 
-  return (VectorFunction::Pointer)copy;
+  return copy;
 }
 
 //---------------------------------------------------------------------------

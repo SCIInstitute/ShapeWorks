@@ -16,11 +16,11 @@ namespace shapeworks {
 class SamplingFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
-  /** Standard class typedefs. */
-  typedef SamplingFunction Self;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  itkNewMacro(Self);
+
+  /// Factory method for creating instances
+  static std::shared_ptr<SamplingFunction> New() {
+    return std::make_shared<SamplingFunction>();
+  }
 
   using VectorType = vnl_vector_fixed<double, 3>;
   using PointType = ParticleSystem::PointType;
@@ -80,13 +80,14 @@ class SamplingFunction : public VectorFunction {
 
   void ResetBuffers() override { m_SpatialSigmaCache->ZeroAllValues(); }
 
-  VectorFunction::Pointer Clone() override;
+  std::shared_ptr<VectorFunction> Clone() override;
+
+  SamplingFunction() {}
+  ~SamplingFunction() override = default;
 
  private:
-  SamplingFunction() {}
-  virtual ~SamplingFunction() {}
-  void operator=(const SamplingFunction&);
-  SamplingFunction(const SamplingFunction&);
+  SamplingFunction(const SamplingFunction&) = delete;
+  SamplingFunction& operator=(const SamplingFunction&) = delete;
 
   struct CrossDomainNeighborhood {
     ParticlePointIndexPair pi_pair;

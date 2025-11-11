@@ -19,21 +19,15 @@ namespace shapeworks {
 class DualVectorFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
-  /** Standard class typedefs. */
-  typedef DualVectorFunction Self;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef VectorFunction Superclass;
-  itkTypeMacro(DualVectorFunction, VectorFunction);
+  constexpr static unsigned int Dimension = VDimension;
 
   /** Vector type. */
-  typedef typename Superclass::VectorType VectorType;
+  typedef VectorFunction::VectorType VectorType;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  /// Factory method for creating instances
+  static std::shared_ptr<DualVectorFunction> New() {
+    return std::make_shared<DualVectorFunction>();
+  }
 
   /** The first argument is a pointer to the particle system.  The second
     argument is the index of the domain within that particle system.  The
@@ -270,29 +264,29 @@ class DualVectorFunction : public VectorFunction {
 
   /** Some subclasses may require a pointer to the particle system and its
     domain number.  These methods set/get those values. */
-  virtual void SetParticleSystem(ParticleSystem* p) {
-    Superclass::SetParticleSystem(p);
-    if (m_FunctionA.GetPointer() != 0) m_FunctionA->SetParticleSystem(p);
-    if (m_FunctionB.GetPointer() != 0) m_FunctionB->SetParticleSystem(p);
+  void SetParticleSystem(ParticleSystem* p) override {
+    VectorFunction::SetParticleSystem(p);
+    if (m_FunctionA != nullptr) m_FunctionA->SetParticleSystem(p);
+    if (m_FunctionB != nullptr) m_FunctionB->SetParticleSystem(p);
   }
 
-  void SetDomainNumber(unsigned int i) {
-    Superclass::SetDomainNumber(i);
-    if (m_FunctionA.GetPointer() != 0) m_FunctionA->SetDomainNumber(i);
-    if (m_FunctionB.GetPointer() != 0) m_FunctionB->SetDomainNumber(i);
+  void SetDomainNumber(unsigned int i) override {
+    VectorFunction::SetDomainNumber(i);
+    if (m_FunctionA != nullptr) m_FunctionA->SetDomainNumber(i);
+    if (m_FunctionB != nullptr) m_FunctionB->SetDomainNumber(i);
   }
 
-  void SetFunctionA(VectorFunction* o) {
+  void SetFunctionA(std::shared_ptr<VectorFunction> o) {
     m_FunctionA = o;
     m_FunctionA->SetDomainNumber(this->GetDomainNumber());
     m_FunctionA->SetParticleSystem(this->GetParticleSystem());
   }
 
-  VectorFunction* GetFunctionA() { return m_FunctionA.GetPointer(); }
+  std::shared_ptr<VectorFunction> GetFunctionA() { return m_FunctionA; }
 
-  VectorFunction* GetFunctionB() { return m_FunctionB.GetPointer(); }
+  std::shared_ptr<VectorFunction> GetFunctionB() { return m_FunctionB; }
 
-  void SetFunctionB(VectorFunction* o) {
+  void SetFunctionB(std::shared_ptr<VectorFunction> o) {
     m_FunctionB = o;
     m_FunctionB->SetDomainNumber(this->GetDomainNumber());
     m_FunctionB->SetParticleSystem(this->GetParticleSystem());
@@ -342,8 +336,8 @@ class DualVectorFunction : public VectorFunction {
       return 0.0;
   }
 
-  virtual typename VectorFunction::Pointer Clone() {
-    typename DualVectorFunction::Pointer copy = DualVectorFunction::New();
+  std::shared_ptr<VectorFunction> Clone() override {
+    auto copy = DualVectorFunction::New();
     copy->m_AOn = this->m_AOn;
     copy->m_BOn = this->m_BOn;
 
@@ -364,16 +358,17 @@ class DualVectorFunction : public VectorFunction {
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
 
-    return (VectorFunction::Pointer)copy;
+    return copy;
   }
 
- protected:
   DualVectorFunction()
       : m_AOn(true), m_BOn(false), m_RelativeGradientScaling(1.0), m_RelativeEnergyScaling(1.0) {}
 
-  virtual ~DualVectorFunction() {}
-  void operator=(const DualVectorFunction&);
-  DualVectorFunction(const DualVectorFunction&);
+  ~DualVectorFunction() override = default;
+
+ protected:
+  DualVectorFunction(const DualVectorFunction&) = delete;
+  DualVectorFunction& operator=(const DualVectorFunction&) = delete;
 
   bool m_AOn;
   bool m_BOn;
@@ -385,8 +380,8 @@ class DualVectorFunction : public VectorFunction {
   double m_AverageEnergyB;
   double m_Counter;
 
-  VectorFunction::Pointer m_FunctionA;
-  VectorFunction::Pointer m_FunctionB;
+  std::shared_ptr<VectorFunction> m_FunctionA;
+  std::shared_ptr<VectorFunction> m_FunctionB;
 };
 
 }  // namespace shapeworks
