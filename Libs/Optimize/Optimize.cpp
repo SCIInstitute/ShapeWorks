@@ -429,7 +429,7 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
 
-  m_sampler->GetOptimizer()->SetTimeStep(1.0);
+  m_sampler->GetOptimizer()->set_time_step(1.0);
 
   m_sampler->SetSamplingOn();
 
@@ -453,7 +453,7 @@ void Optimize::InitializeSampler() {
 
   m_sampler->Initialize();
 
-  m_sampler->GetOptimizer()->SetTolerance(0.0);
+  m_sampler->GetOptimizer()->set_tolerance(0.0);
 
   // These flags have to be set after Initialize, since Initialize will set them all to zero
   for (unsigned int i = 0; i < this->m_particle_flags.size() / 2; i++) {
@@ -551,8 +551,8 @@ void Optimize::Initialize() {
     }
   }
 
-  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
-  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->set_relative_gradient_scaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->set_relative_energy_scaling(m_initial_relative_weighting);
 
   this->AddSinglePoint();
 
@@ -568,7 +568,7 @@ void Optimize::Initialize() {
       50;  // The initialization optimization will check every check_iterations iterations for sampling quality
   double initialization_start_scaling_factor = 3.;
 
-  m_sampler->GetOptimizer()->SetInitializationStartScalingFactor(initialization_start_scaling_factor);
+  m_sampler->GetOptimizer()->set_initialization_start_scaling_factor(initialization_start_scaling_factor);
 
   /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
@@ -657,14 +657,14 @@ void Optimize::Initialize() {
     }
     m_str_energy += "pts_init";
 
-    m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
-    m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+    m_sampler->GetOptimizer()->set_maximum_number_of_iterations(m_iterations_per_split);
+    m_sampler->GetOptimizer()->set_number_of_iterations(0);
     if (adaptive_initialization &&
         m_sampler->GetParticleSystem()->GetNumberOfParticles(0) >= particles_before_adaptive_initialization) {
-      m_sampler->GetOptimizer()->SetInitializationMode(true);
+      m_sampler->GetOptimizer()->set_initialization_mode(true);
     }
     m_sampler->Execute();
-    m_sampler->GetOptimizer()->SetInitializationMode(false);
+    m_sampler->GetOptimizer()->set_initialization_mode(false);
 
     if (m_save_init_splits == true) {
       WriteSplitFiles("pts_w_init");
@@ -705,8 +705,8 @@ void Optimize::RunOptimize() {
   }
 
   m_optimizing = true;
-  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
-  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
+  m_sampler->GetLinkingFunction()->set_relative_gradient_scaling(m_relative_weighting);
+  m_sampler->GetLinkingFunction()->set_relative_energy_scaling(m_relative_weighting);
 
   if (m_procrustes_interval != 0) {  // Initial registration
     m_procrustes->RunRegistration();
@@ -776,10 +776,10 @@ void Optimize::RunOptimize() {
   }
 
   if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
-    m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations -
+    m_sampler->GetOptimizer()->set_maximum_number_of_iterations(m_optimization_iterations -
                                                             m_optimization_iterations_completed);
   } else {
-    m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);
+    m_sampler->GetOptimizer()->set_maximum_number_of_iterations(0);
   }
 
   m_energy_a.clear();
@@ -787,8 +787,8 @@ void Optimize::RunOptimize() {
   m_total_energy.clear();
   m_str_energy = "opt";
 
-  m_sampler->GetOptimizer()->SetNumberOfIterations(0);
-  m_sampler->GetOptimizer()->SetTolerance(0.0);
+  m_sampler->GetOptimizer()->set_number_of_iterations(0);
+  m_sampler->GetOptimizer()->set_tolerance(0.0);
   m_sampler->Execute();
 
   this->WritePointFiles();
@@ -805,70 +805,12 @@ void Optimize::RunOptimize() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::OptimizerStop() { m_sampler->GetOptimizer()->StopOptimization(); }
+void Optimize::OptimizerStop() { m_sampler->GetOptimizer()->stop_optimization(); }
 
 //---------------------------------------------------------------------------
 void Optimize::AbortOptimization() {
   this->m_aborted = true;
-  m_sampler->GetOptimizer()->AbortProcessing();
-}
-
-//---------------------------------------------------------------------------
-void Optimize::IterateCallback(itk::Object*, const itk::EventObject&) {
-  if (this->iteration_callback_) {
-    this->iteration_callback_();
-  }
-
-  this->m_iteration_count++;
-
-  for (int d = 0; d < m_domains_per_shape; d++) {
-    current_particle_iterations_ += m_sampler->GetParticleSystem()->GetNumberOfParticles(d);
-  }
-
-  if (this->GetShowVisualizer()) {
-    this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
-  }
-
-  this->ComputeEnergyAfterIteration();
-
-  if (m_optimizing && m_procrustes_interval != 0) {
-    m_procrustes_counter++;
-
-    if (m_procrustes_counter >= (int)m_procrustes_interval) {
-      m_procrustes_counter = 0;
-      m_procrustes->RunRegistration();
-
-      if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
-        // transform cutting planes
-        m_sampler->TransformCuttingPlanes(m_distribution_domain_id);
-      }
-    }
-  }
-
-  // Checkpointing after procrustes
-  if (m_checkpointing_interval != 0) {
-    m_checkpoint_counter++;
-    if (m_checkpoint_counter == (int)m_checkpointing_interval) {
-      m_checkpoint_counter = 0;
-
-      this->WritePointFiles();
-      this->WriteTransformFile();
-      this->WriteTransformFiles();
-      this->WritePointFilesWithFeatures();
-      this->WriteModes();
-      this->WriteParameters();
-      this->WriteEnergyFiles();
-
-      if (m_keep_checkpoints) {
-        this->WritePointFiles(this->GetCheckpointDir());
-        this->WritePointFilesWithFeatures(this->GetCheckpointDir());
-        this->WriteTransformFile(this->GetCheckpointDir() + "/transform");
-        this->WriteTransformFiles(this->GetCheckpointDir());
-        this->WriteParameters(this->GetCheckpointDir());
-      }
-    }
-  }
-  UpdateProgress();
+  m_sampler->GetOptimizer()->abort_processing();
 }
 
 //---------------------------------------------------------------------------
@@ -885,7 +827,7 @@ void Optimize::ComputeEnergyAfterIteration() {
 
   double sampEnergy = 0.0;
   for (int i = 0; i < numShapes; i++) {
-    m_sampler->GetLinkingFunction()->SetDomainNumber(i);
+    m_sampler->GetLinkingFunction()->set_domain_number(i);
     for (int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
       if (m_sampler->GetParticleSystem()->GetDomainFlag(i)) {
         sampEnergy += 0.0;
@@ -1884,9 +1826,62 @@ int Optimize::GetUseShapeStatisticsAfter() { return this->m_use_shape_statistics
 
 //---------------------------------------------------------------------------
 void Optimize::SetIterationCallback() {
-  itk::MemberCommand<Optimize>::Pointer m_iterate_command = itk::MemberCommand<Optimize>::New();
-  m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
-  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
+  m_sampler->GetOptimizer()->set_iteration_callback([this]() {
+    if (this->iteration_callback_) {
+      this->iteration_callback_();
+    }
+
+    this->m_iteration_count++;
+
+    for (int d = 0; d < m_domains_per_shape; d++) {
+      current_particle_iterations_ += m_sampler->GetParticleSystem()->GetNumberOfParticles(d);
+    }
+
+    if (this->GetShowVisualizer()) {
+      this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
+    }
+
+    this->ComputeEnergyAfterIteration();
+
+    if (m_optimizing && m_procrustes_interval != 0) {
+      m_procrustes_counter++;
+
+      if (m_procrustes_counter >= (int)m_procrustes_interval) {
+        m_procrustes_counter = 0;
+        m_procrustes->RunRegistration();
+
+        if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
+          // transform cutting planes
+          m_sampler->TransformCuttingPlanes(m_distribution_domain_id);
+        }
+      }
+    }
+
+    // Checkpointing after procrustes
+    if (m_checkpointing_interval != 0) {
+      m_checkpoint_counter++;
+      if (m_checkpoint_counter == (int)m_checkpointing_interval) {
+        m_checkpoint_counter = 0;
+
+        this->WritePointFiles();
+        this->WriteTransformFile();
+        this->WriteTransformFiles();
+        this->WritePointFilesWithFeatures();
+        this->WriteModes();
+        this->WriteParameters();
+        this->WriteEnergyFiles();
+
+        if (m_keep_checkpoints) {
+          this->WritePointFiles(this->GetCheckpointDir());
+          this->WritePointFilesWithFeatures(this->GetCheckpointDir());
+          this->WriteTransformFile(this->GetCheckpointDir() + "/transform");
+          this->WriteTransformFiles(this->GetCheckpointDir());
+          this->WriteParameters(this->GetCheckpointDir());
+        }
+      }
+    }
+    UpdateProgress();
+  });
 }
 
 //---------------------------------------------------------------------------
@@ -2088,8 +2083,8 @@ void Optimize::UpdateProgress() {
       message = "Initializing";
     }
 
-    int stage_num_iterations = m_sampler->GetOptimizer()->GetNumberOfIterations();
-    int stage_total_iterations = m_sampler->GetOptimizer()->GetMaximumNumberOfIterations();
+    int stage_num_iterations = m_sampler->GetOptimizer()->get_number_of_iterations();
+    int stage_total_iterations = m_sampler->GetOptimizer()->get_maximum_number_of_iterations();
     int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
 
     message = fmt::format("{} : Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,

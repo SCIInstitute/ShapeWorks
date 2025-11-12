@@ -16,29 +16,29 @@ namespace shapeworks {
 class SamplingFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
-  /** Standard class typedefs. */
-  typedef SamplingFunction Self;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  itkNewMacro(Self);
+
+  /// Factory method for creating instances
+  static std::shared_ptr<SamplingFunction> New() {
+    return std::make_shared<SamplingFunction>();
+  }
 
   using VectorType = vnl_vector_fixed<double, 3>;
   using PointType = ParticleSystem::PointType;
   using GradientVectorType = vnl_vector_fixed<float, 3>;
   using SigmaCacheType = GenericContainerArray<double>;
 
-  VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const override {
+  VectorType evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const override {
     double e;
-    return Evaluate(a, b, c, d, e);
+    return evaluate(a, b, c, d, e);
   }
 
-  VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const override;
+  VectorType evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const override;
 
-  void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystem*) override;
+  void before_evaluate(unsigned int, unsigned int, const ParticleSystem*) override;
 
-  double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const override {
+  double energy(unsigned int a, unsigned int b, const ParticleSystem* c) const override {
     double d, e;
-    Evaluate(a, b, c, d, e);
+    evaluate(a, b, c, d, e);
     return e;
   }
 
@@ -78,15 +78,16 @@ class SamplingFunction : public VectorFunction {
   void SetNeighborhoodToSigmaRatio(double s) { m_NeighborhoodToSigmaRatio = s; }
   double GetNeighborhoodToSigmaRatio() const { return m_NeighborhoodToSigmaRatio; }
 
-  void ResetBuffers() override { m_SpatialSigmaCache->ZeroAllValues(); }
+  void reset_buffers() override { m_SpatialSigmaCache->ZeroAllValues(); }
 
-  VectorFunction::Pointer Clone() override;
+  std::shared_ptr<VectorFunction> clone() override;
+
+  SamplingFunction() {}
+  ~SamplingFunction() override = default;
 
  private:
-  SamplingFunction() {}
-  virtual ~SamplingFunction() {}
-  void operator=(const SamplingFunction&);
-  SamplingFunction(const SamplingFunction&);
+  SamplingFunction(const SamplingFunction&) = delete;
+  SamplingFunction& operator=(const SamplingFunction&) = delete;
 
   struct CrossDomainNeighborhood {
     ParticlePointIndexPair pi_pair;

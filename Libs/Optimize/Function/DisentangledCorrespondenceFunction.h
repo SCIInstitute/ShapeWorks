@@ -14,43 +14,37 @@ namespace shapeworks {
 class DisentangledCorrespondenceFunction : public VectorFunction {
  public:
   constexpr static unsigned int VDimension = 3;
-  /** Standard class typedefs. */
-  typedef DisentangledCorrespondenceFunction Self;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef VectorFunction Superclass;
-  itkTypeMacro(DisentangledCorrespondenceFunction, VectorFunction);
+  constexpr static unsigned int Dimension = VDimension;
 
   typedef LegacyShapeMatrix ShapeMatrixType;
 
   typedef typename ShapeMatrixType::DataType DataType;
 
   /** Vector & Point types. */
-  typedef typename Superclass::VectorType VectorType;
-  typedef typename ParticleSystem::PointType PointType;
+  typedef VectorFunction::VectorType VectorType;
+  typedef ParticleSystem::PointType PointType;
   typedef vnl_vector<DataType> vnl_vector_type;
   typedef vnl_matrix<DataType> vnl_matrix_type;
   typedef std::shared_ptr<std::vector<vnl_matrix_type>> shared_vnl_matrix_array_type;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  /// Factory method for creating instances
+  static std::shared_ptr<DisentangledCorrespondenceFunction> New() {
+    return std::make_shared<DisentangledCorrespondenceFunction>();
+  }
 
   /** The first argument is a pointer to the particle system.  The second
       argument is the index of the domain within that particle system.  The
       third argument is the index of the particle location within the given
       domain. */
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
-  virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
+  virtual VectorType evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
+  virtual VectorType evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
     double e;
-    return this->Evaluate(a, b, c, d, e);
+    return this->evaluate(a, b, c, d, e);
   }
 
-  virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
+  virtual double energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
     double e, d;
-    this->Evaluate(a, b, c, d, e);
+    this->evaluate(a, b, c, d, e);
     return e;
   }
 
@@ -65,8 +59,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
   const ShapeMatrixType* GetShapeMatrix() const { return m_ShapeMatrix.GetPointer(); }
 
   /** Called before each iteration of a solver. */
-  virtual void BeforeIteration() {
-    m_ShapeMatrix->BeforeIteration();
+  virtual void before_iteration() {
+    m_ShapeMatrix->before_iteration();
 
     if (m_Counter == 0) {
       this->ComputeCovarianceMatrices();
@@ -74,8 +68,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
   }
 
   /** Called after each iteration of the solver. */
-  virtual void AfterIteration() {
-    m_ShapeMatrix->AfterIteration();
+  virtual void after_iteration() override {
+    m_ShapeMatrix->after_iteration();
     // Update the annealing parameter.
     if (m_HoldMinimumVariance != true && !m_UseMeanEnergy) {
       m_Counter++;
@@ -99,7 +93,7 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
 
   void PrintShapeMatrix() { m_ShapeMatrix->PrintMatrix(); }
 
-  void UseMeanEnergy() { m_UseMeanEnergy = true; }
+  void UseMeanenergy() { m_UseMeanEnergy = true; }
   void UseEntropy() { m_UseMeanEnergy = false; }
 
   /** */
@@ -109,8 +103,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
   void SetRecomputeCovarianceInterval(int i) { m_RecomputeCovarianceInterval = i; }
   int GetRecomputeCovarianceInterval() const { return m_RecomputeCovarianceInterval; }
 
-  virtual VectorFunction::Pointer Clone() {
-    DisentangledCorrespondenceFunction::Pointer copy = DisentangledCorrespondenceFunction::New();
+  std::shared_ptr<VectorFunction> clone() override {
+    auto copy = DisentangledCorrespondenceFunction::New();
 
     copy->m_Shape_PointsUpdate = this->m_Shape_PointsUpdate;
     copy->m_Time_PointsUpdate = this->m_Time_PointsUpdate;
@@ -124,8 +118,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
     copy->m_Counter = m_Counter;
 
-    copy->m_DomainNumber = this->m_DomainNumber;
-    copy->m_ParticleSystem = this->m_ParticleSystem;
+    copy->domain_number_ = this->domain_number_;
+    copy->particle_system_ = this->particle_system_;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
 
 
@@ -135,10 +129,9 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
     copy->m_points_mean_time_cohort = this->m_points_mean_time_cohort;
     copy->m_points_mean_shape_cohort = this->m_points_mean_shape_cohort;
 
-    return (VectorFunction::Pointer)copy;
+    return copy;
   }
 
- protected:
   DisentangledCorrespondenceFunction() {
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
@@ -155,9 +148,11 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
     m_Time_PointsUpdate = std::make_shared<std::vector<vnl_matrix_type>>();
     m_Shape_PointsUpdate = std::make_shared<std::vector<vnl_matrix_type>>();
   }
-  virtual ~DisentangledCorrespondenceFunction() {}
-  void operator=(const DisentangledCorrespondenceFunction&);
-  DisentangledCorrespondenceFunction(const DisentangledCorrespondenceFunction&);
+  ~DisentangledCorrespondenceFunction() override = default;
+
+ protected:
+  DisentangledCorrespondenceFunction(const DisentangledCorrespondenceFunction&) = delete;
+  DisentangledCorrespondenceFunction& operator=(const DisentangledCorrespondenceFunction&) = delete;
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
   // Computes Covariance Matrices across time and shape domain and then generate gradient updates for them.

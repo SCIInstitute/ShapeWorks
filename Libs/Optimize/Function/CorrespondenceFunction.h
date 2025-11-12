@@ -14,13 +14,7 @@ namespace shapeworks {
 class CorrespondenceFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
-  /** Standard class typedefs. */
-  typedef CorrespondenceFunction Self;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef VectorFunction Superclass;
-  itkTypeMacro(CorrespondenceFunction, VectorFunction)
-
+  constexpr static unsigned int Dimension = VDimension;
 
   typedef shapeworks::ShapeMatrix ShapeDataType;
   typedef shapeworks::ShapeGradientMatrix ShapeGradientType;
@@ -28,16 +22,15 @@ class CorrespondenceFunction : public VectorFunction {
   typedef ShapeDataType::DataType DataType;
 
   /** Vector & Point types. */
-  typedef typename Superclass::VectorType VectorType;
-  typedef typename ParticleSystem::PointType PointType;
+  typedef VectorFunction::VectorType VectorType;
+  typedef ParticleSystem::PointType PointType;
   typedef vnl_vector<DataType> vnl_vector_type;
   typedef vnl_matrix<DataType> vnl_matrix_type;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  /// Factory method for creating instances
+  static std::shared_ptr<CorrespondenceFunction> New() {
+    return std::make_shared<CorrespondenceFunction>();
+  }
 
   //! Access the shape matrix
   void SetShapeData(ShapeDataType* s) { m_ShapeData = s; }
@@ -54,24 +47,24 @@ class CorrespondenceFunction : public VectorFunction {
        third argument is the index of the particle location within the given
        domain. */
 
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
+  virtual VectorType evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
 
-  virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
+  virtual VectorType evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
     double e;
-    return this->Evaluate(a, b, c, d, e);
+    return this->evaluate(a, b, c, d, e);
   }
 
-  virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
+  virtual double energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
     double e, d;
-    this->Evaluate(a, b, c, d, e);
+    this->evaluate(a, b, c, d, e);
     return e;
   }
 
   /** Called before each iteration of a solver. */
-  virtual void BeforeIteration() { this->ComputeUpdates(this->m_ParticleSystem); }
+  virtual void before_iteration() { this->ComputeUpdates(this->particle_system_); }
 
   /** Called after each iteration of the solver. */
-  virtual void AfterIteration() {
+  virtual void after_iteration() {
     // Update the annealing parameter.
     if (m_HoldMinimumVariance != true && !m_UseMeanEnergy) {
       m_Counter++;
@@ -104,7 +97,7 @@ class CorrespondenceFunction : public VectorFunction {
 
   void SetAttributesPerDomain(const std::vector<int>& i) { m_AttributesPerDomain = i; }
 
-  void UseMeanEnergy() { m_UseMeanEnergy = true; }
+  void UseMeanenergy() { m_UseMeanEnergy = true; }
   void UseEntropy() { m_UseMeanEnergy = false; }
 
   void SetXYZ(int i, bool val) {
@@ -129,12 +122,12 @@ class CorrespondenceFunction : public VectorFunction {
     return flag;
   }
 
-  virtual VectorFunction::Pointer Clone() {
+  std::shared_ptr<VectorFunction> clone() override {
     auto copy = CorrespondenceFunction::New();
 
     // from itkParticleVectorFunction
-    copy->m_DomainNumber = this->m_DomainNumber;
-    copy->m_ParticleSystem = this->m_ParticleSystem;
+    copy->domain_number_ = this->domain_number_;
+    copy->particle_system_ = this->particle_system_;
 
     // local
     copy->m_AttributeScales = this->m_AttributeScales;
@@ -157,10 +150,9 @@ class CorrespondenceFunction : public VectorFunction {
     copy->m_ShapeData = this->m_ShapeData;
     copy->m_ShapeGradient = this->m_ShapeGradient;
 
-    return (VectorFunction::Pointer)copy;
+    return copy;
   }
 
- protected:
   CorrespondenceFunction() {
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
@@ -178,9 +170,11 @@ class CorrespondenceFunction : public VectorFunction {
     m_InverseCovMatrix = std::make_shared<Eigen::MatrixXd>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
-  virtual ~CorrespondenceFunction() {}
-  void operator=(const CorrespondenceFunction&);
-  CorrespondenceFunction(const CorrespondenceFunction&);
+  ~CorrespondenceFunction() override = default;
+
+ protected:
+  CorrespondenceFunction(const CorrespondenceFunction&) = delete;
+  CorrespondenceFunction& operator=(const CorrespondenceFunction&) = delete;
 
   typename ShapeDataType::Pointer m_ShapeData;
   typename ShapeGradientType::Pointer m_ShapeGradient;

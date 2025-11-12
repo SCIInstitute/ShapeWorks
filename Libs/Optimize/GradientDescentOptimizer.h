@@ -1,151 +1,155 @@
 #pragma once
 
-#include <algorithm>
-#include <limits>
+#include <functional>
 #include <vector>
 
-#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
-#include "Libs/Optimize/Function/VectorFunction.h"
-#include "Libs/Optimize/Function/EarlyStop/EarlyStopping.h"
 #include "EarlyStoppingConfig.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
+#include "Libs/Optimize/Function/EarlyStop/EarlyStopping.h"
+#include "Libs/Optimize/Function/VectorFunction.h"
 #include "ParticleSystem.h"
-#include "itkObject.h"
-#include "itkObjectFactory.h"
-#include "itkWeakPointer.h"
-#include "vnl/vnl_vector_fixed.h"
 
 namespace shapeworks {
 
 /**
- * \class ParticleGradientDescentPositionOptimizer
+ * @class GradientDescentOptimizer
+ * @brief Optimizes particle system positions using gradient descent
  *
  * This class optimizes a list of particle system positions with respect to a
- * specified energy function using a simple gradient descent strategy.  A
+ * specified energy function using a simple gradient descent strategy. A
  * function which computes the gradient of the function with respect to
- * particle position must be specified.  The optimization performs Jacobi
+ * particle position must be specified. The optimization performs Jacobi
  * updates (each particle position is changed as soon as its new position is
  * computed).
- *
  */
-class GradientDescentOptimizer : public itk::Object {
+class GradientDescentOptimizer {
  public:
-  using TGradientNumericType = float;
-  constexpr static unsigned int VDimension = 3;
-  /** Standard class typedefs */
-  typedef GradientDescentOptimizer Self;
-  typedef itk::Object Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef itk::WeakPointer<const Self> ConstWeakPointer;
+  static constexpr unsigned int Dimension = 3;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  /// Numerical vector type
+  using VectorType = VectorFunction::VectorType;
 
-  /** Type of the domain. */
-  typedef shapeworks::ImageDomainWithGradients<TGradientNumericType> DomainType;
+  /// Point type
+  using PointType = ParticleSystem::PointType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientDescentOptimizer, Object);
+  /// Start the optimization
+  void start_optimization() { start_adaptive_gauss_seidel_optimization(); }
+  void start_adaptive_gauss_seidel_optimization();
+  void set_early_stopping_config(const EarlyStoppingConfig& config);
+  void initialize_early_stopping_score_function(const ParticleSystem* p);
 
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  void augmented_lagrangian_constraints(VectorType& gradient, const PointType& pt, const size_t& dom,
+                                        const double& maximum_update_allowed, size_t index);
 
-  /** Particle System type is based on the dimensionality. */
-  typedef ParticleSystem ParticleSystemType;
+  /// Stop the optimization
+  /// @brief Sets a flag that aborts the start_optimization method after the current iteration
+  void stop_optimization() { stop_optimization_ = true; }
 
-  /** Type of the gradient function. */
-  typedef VectorFunction GradientFunctionType;
-
-  /** Numerical vector type. */
-  typedef typename GradientFunctionType::VectorType VectorType;
-
-  /** Point Type */
-  typedef typename ParticleSystemType::PointType PointType;
-
-  /** Start the optimization. */
-  void StartOptimization() { this->StartAdaptiveGaussSeidelOptimization(); }
-  void StartAdaptiveGaussSeidelOptimization();
-  void SetEarlyStoppingConfig(const EarlyStoppingConfig& config);
-  void InitializeEarlyStoppingScoreFunction(const ParticleSystemType* p);
-
-  void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
-                                      const double& maximumUpdateAllowed, size_t index);
-
-  /** Stop the optimization.  This method sets a flag that aborts the
-      StartOptimization method after the current iteration. */
-  inline void StopOptimization() { this->m_StopOptimization = true; }
-
-  inline void AbortProcessing() {
-    this->m_StopOptimization = true;
-    this->m_AbortProcessing = true;
+  void abort_processing() {
+    stop_optimization_ = true;
+    abort_processing_ = true;
   }
 
-  /** Get/Set the number of iterations performed by the solver. */
-  itkGetMacro(NumberOfIterations, unsigned int);
-  itkSetMacro(NumberOfIterations, unsigned int);
+  /// Get the number of iterations performed by the solver
+  unsigned int get_number_of_iterations() const { return number_of_iterations_; }
 
-  void SetVerbosity(unsigned int val) { m_verbosity = val; }
+  /// Set the number of iterations performed by the solver
+  void set_number_of_iterations(unsigned int val) { number_of_iterations_ = val; }
 
-  unsigned int GetVerbosity() { return m_verbosity; }
+  /// Set the verbosity level
+  void set_verbosity(unsigned int val) { verbosity_ = val; }
 
-  /** Get/Set a time step parameter for the update.  Each update is simply
-      scaled by this value. */
-  itkGetMacro(TimeStep, double);
-  itkSetMacro(TimeStep, double);
+  /// Get the verbosity level
+  unsigned int get_verbosity() const { return verbosity_; }
 
-  /** Get/Set the maximum iterations to allow this solver to use. */
-  itkGetMacro(MaximumNumberOfIterations, unsigned int);
-  itkSetMacro(MaximumNumberOfIterations, unsigned int);
+  /// Get the time step parameter for the update
+  /// @brief Each update is scaled by this value
+  double get_time_step() const { return time_step_; }
 
-  /** Get/Set the precision of the solution. */
-  itkGetMacro(Tolerance, double);
-  itkSetMacro(Tolerance, double);
+  /// Set the time step parameter for the update
+  void set_time_step(double val) { time_step_ = val; }
 
-  /** Get/Set the ParticleSystem modified by this optimizer. */
-  itkGetObjectMacro(ParticleSystem, ParticleSystemType);
-  itkSetObjectMacro(ParticleSystem, ParticleSystemType);
+  /// Get the maximum number of iterations allowed
+  unsigned int get_maximum_number_of_iterations() const { return max_iterations_; }
 
-  /** Get/Set the gradient function used by this optimizer. */
-  itkGetObjectMacro(GradientFunction, GradientFunctionType);
-  itkSetObjectMacro(GradientFunction, GradientFunctionType);
+  /// Set the maximum number of iterations allowed
+  void set_maximum_number_of_iterations(unsigned int val) { max_iterations_ = val; }
+
+  /// Get the precision/tolerance of the solution
+  double get_tolerance() const { return tolerance_; }
+
+  /// Set the precision/tolerance of the solution
+  void set_tolerance(double val) { tolerance_ = val; }
+
+  /// Get the ParticleSystem modified by this optimizer
+  ParticleSystem* get_particle_system() { return particle_system_.GetPointer(); }
+
+  /// Get the ParticleSystem modified by this optimizer (const version)
+  const ParticleSystem* get_particle_system() const { return particle_system_.GetPointer(); }
+
+  /// Set the ParticleSystem modified by this optimizer
+  void set_particle_system(ParticleSystem* val) { particle_system_ = val; }
+
+  /// Get the gradient function used by this optimizer
+  std::shared_ptr<VectorFunction> get_gradient_function() { return gradient_function_; }
+
+  /// Get the gradient function used by this optimizer (const version)
+  std::shared_ptr<const VectorFunction> get_gradient_function() const { return gradient_function_; }
+
+  /// Set the gradient function used by this optimizer
+  void set_gradient_function(std::shared_ptr<VectorFunction> val) { gradient_function_ = val; }
 
   /// Determines if this is an initialization (true) or an optimization (false)
-  void SetInitializationMode(bool b) { m_initialization_mode = b; }
+  void set_initialization_mode(bool b) { initialization_mode_ = b; }
 
   /// Sets the number of iterations when we check for convergence
-  void SetCheckIterations(size_t si) { m_check_iterations = si; }
+  void set_check_iterations(size_t si) { check_iterations_ = si; }
 
   /// Sets the scaling factor at the beginning of the initialization
-  void SetInitializationStartScalingFactor(double si) { m_initialization_start_scaling_factor = si; }
+  void set_initialization_start_scaling_factor(double si) { init_start_scaling_factor_ = si; }
 
- protected:
+  /// Set a callback to be called after each iteration
+  void set_iteration_callback(std::function<void()> callback) { iteration_callback_ = callback; }
+
+  /// Get the current iteration callback
+  std::function<void()> get_iteration_callback() const { return iteration_callback_; }
+
+  /// Constructor
   GradientDescentOptimizer();
-  GradientDescentOptimizer(const GradientDescentOptimizer&);
-  const GradientDescentOptimizer& operator=(const GradientDescentOptimizer&);
-  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
-  virtual ~GradientDescentOptimizer(){};
+
+  /// Destructor
+  ~GradientDescentOptimizer() = default;
 
  private:
-  typename ParticleSystemType::Pointer m_ParticleSystem;
-  typename GradientFunctionType::Pointer m_GradientFunction;
-  bool m_StopOptimization;
-  bool m_AbortProcessing = false;
-  unsigned int m_NumberOfIterations;
-  unsigned int m_MaximumNumberOfIterations;
-  double m_Tolerance;
-  double m_TimeStep;
-  std::vector<std::vector<double> > m_TimeSteps;
-  unsigned int m_verbosity;
-  EarlyStopping m_EarlyStopping;
-  bool m_EarlyStoppingEnabled = false;
-  bool m_EarlyStoppingScoreFunctionReady = false;
+  /// Disable copy constructor
+  GradientDescentOptimizer(const GradientDescentOptimizer&) = delete;
+
+  /// Disable assignment operator
+  GradientDescentOptimizer& operator=(const GradientDescentOptimizer&) = delete;
+
+  void reset_time_step_vectors();
+
+  ParticleSystem::Pointer particle_system_;
+  std::shared_ptr<VectorFunction> gradient_function_;
+  bool stop_optimization_ = false;
+  bool abort_processing_ = false;
+  unsigned int number_of_iterations_ = 0;
+  unsigned int max_iterations_ = 0;
+  double tolerance_ = 0.0;
+  double time_step_ = 1.0;
+  std::vector<std::vector<double>> time_steps_;
+  unsigned int verbosity_ = 0;
+  EarlyStopping early_stopping_;
+  bool early_stopping_enabled_ = false;
+  bool early_stopping_score_ready_ = false;
 
   // Adaptive Initialization variables
-  bool m_initialization_mode = false;
-  size_t m_check_iterations = 50;
-  double m_initialization_start_scaling_factor;
+  bool initialization_mode_ = false;
+  size_t check_iterations_ = 50;
+  double init_start_scaling_factor_ = 0.0;
 
-  void ResetTimeStepVectors();
+  // Iteration callback
+  std::function<void()> iteration_callback_;
 };
 
 }  // namespace shapeworks

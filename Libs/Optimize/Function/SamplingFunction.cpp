@@ -78,9 +78,9 @@ double SamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom, const
 }
 
 //---------------------------------------------------------------------------
-VectorFunction::Pointer SamplingFunction::Clone() {
-  SamplingFunction::Pointer copy = SamplingFunction::New();
-  copy->m_ParticleSystem = m_ParticleSystem;
+std::shared_ptr<VectorFunction> SamplingFunction::clone() {
+  auto copy = SamplingFunction::New();
+  copy->particle_system_ = particle_system_;
   copy->m_Counter = m_Counter;
   copy->m_avgKappa = m_avgKappa;
   copy->m_IsSharedBoundaryEnabled = m_IsSharedBoundaryEnabled;
@@ -95,14 +95,14 @@ VectorFunction::Pointer SamplingFunction::Clone() {
 
   copy->m_SpatialSigmaCache = m_SpatialSigmaCache;
 
-  copy->m_DomainNumber = m_DomainNumber;
-  copy->m_ParticleSystem = m_ParticleSystem;
+  copy->domain_number_ = domain_number_;
+  copy->particle_system_ = particle_system_;
 
-  return (VectorFunction::Pointer)copy;
+  return copy;
 }
 
 //---------------------------------------------------------------------------
-void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
+void SamplingFunction::before_evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
   m_MaxMoveFactor = 0.1;
 
   // Compute the neighborhood size and the optimal sigma.
@@ -179,7 +179,7 @@ void SamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const Pa
 }
 
 //---------------------------------------------------------------------------
-SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system,
+SamplingFunction::VectorType SamplingFunction::evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system,
                                                         double& maxmove, double& energy) const {
   const double epsilon = 1.0e-6;
 

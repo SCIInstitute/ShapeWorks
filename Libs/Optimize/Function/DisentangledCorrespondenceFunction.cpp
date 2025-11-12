@@ -220,7 +220,7 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
 
 }
 
-DisentangledCorrespondenceFunction::VectorType DisentangledCorrespondenceFunction ::Evaluate(unsigned int idx, unsigned int d,
+DisentangledCorrespondenceFunction::VectorType DisentangledCorrespondenceFunction ::evaluate(unsigned int idx, unsigned int d,
                                                                                        const ParticleSystem* system,
                                                                                        double& maxdt,
                                                                                        double& energy) const {

@@ -109,7 +109,7 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
   if (m_UseMeanEnergy) m_MinimumEigenValue = m_CurrentEnergy / 2.0;
 }
 
-LegacyCorrespondenceFunction::VectorType LegacyCorrespondenceFunction ::Evaluate(unsigned int idx, unsigned int d,
+LegacyCorrespondenceFunction::VectorType LegacyCorrespondenceFunction ::evaluate(unsigned int idx, unsigned int d,
                                                                                  const ParticleSystem* system,
                                                                                  double& maxdt, double& energy) const {
   // NOTE: This code requires that indices be contiguous, i.e. it won't work if

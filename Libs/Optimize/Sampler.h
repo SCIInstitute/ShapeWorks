@@ -69,11 +69,11 @@ class Sampler {
   ParticleSystem* GetParticleSystem() { return m_ParticleSystem; }
   const ParticleSystem* GetParticleSystem() const { return m_ParticleSystem.GetPointer(); }
 
-  SamplingFunction* GetCurvatureGradientFunction() { return m_SamplingFunction; }
+  std::shared_ptr<SamplingFunction> GetCurvatureGradientFunction() { return m_SamplingFunction; }
 
   //! Return a pointer to the optimizer object
-  OptimizerType* GetOptimizer() { return m_Optimizer; }
-  const OptimizerType* GetOptimizer() const { return m_Optimizer.GetPointer(); }
+  std::shared_ptr<OptimizerType> GetOptimizer() { return m_Optimizer; }
+  std::shared_ptr<const OptimizerType> GetOptimizer() const { return m_Optimizer; }
 
   /**Optionally provide a filename for an initial point set.*/
   void SetPointsFile(unsigned int i, const std::string& s) {
@@ -126,19 +126,19 @@ class Sampler {
   /** Optionally add spheres that may be used as constraints to the domain. */
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-  void SetAdaptivityMode() { m_LinkingFunction->SetFunctionA(GetCurvatureGradientFunction()); }
+  void SetAdaptivityMode() { m_LinkingFunction->set_function_a(GetCurvatureGradientFunction()); }
 
-  void SetCorrespondenceOn() { m_LinkingFunction->SetBOn(); }
+  void SetCorrespondenceOn() { m_LinkingFunction->set_b_on(); }
 
-  void SetCorrespondenceOff() { m_LinkingFunction->SetBOff(); }
+  void SetCorrespondenceOff() { m_LinkingFunction->set_b_off(); }
 
-  void SetSamplingOn() { m_LinkingFunction->SetAOn(); }
+  void SetSamplingOn() { m_LinkingFunction->set_a_on(); }
 
-  void SetSamplingOff() { m_LinkingFunction->SetAOff(); }
+  void SetSamplingOff() { m_LinkingFunction->set_a_off(); }
 
-  bool GetCorrespondenceOn() const { return m_LinkingFunction->GetBOn(); }
+  bool GetCorrespondenceOn() const { return m_LinkingFunction->get_b_on(); }
 
-  bool GetSamplingOn() const { return m_LinkingFunction->GetAOn(); }
+  bool GetSamplingOn() const { return m_LinkingFunction->get_a_on(); }
 
   /** This method sets the optimization function for correspondences between surfaces (domains). */
   void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode);
@@ -173,44 +173,44 @@ class Sampler {
   ShapeMatrix* GetGeneralShapeMatrix() { return m_GeneralShapeMatrix.GetPointer(); }
   ShapeGradientMatrix* GetGeneralShapeGradientMatrix() { return m_GeneralShapeGradMatrix.GetPointer(); }
 
-  DualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.GetPointer(); }
+  DualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.get(); }
 
-  LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
+  LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.get(); }
 
   DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() {
-    return m_DisentangledEnsembleEntropyFunction.GetPointer();
+    return m_DisentangledEnsembleEntropyFunction.get();
   }
 
   LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() {
-    return m_EnsembleRegressionEntropyFunction.GetPointer();
+    return m_EnsembleRegressionEntropyFunction.get();
   }
 
   LegacyCorrespondenceFunction* GetEnsembleMixedEffectsEntropyFunction() {
-    return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
+    return m_EnsembleMixedEffectsEntropyFunction.get();
   }
 
-  CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() { return m_CorrespondenceFunction.GetPointer(); }
+  CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() { return m_CorrespondenceFunction.get(); }
 
-  const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
+  const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.get(); }
 
   const LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() const {
-    return m_EnsembleEntropyFunction.GetPointer();
+    return m_EnsembleEntropyFunction.get();
   }
 
   const DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() const {
-    return m_DisentangledEnsembleEntropyFunction.GetPointer();
+    return m_DisentangledEnsembleEntropyFunction.get();
   }
 
   const LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() const {
-    return m_EnsembleRegressionEntropyFunction.GetPointer();
+    return m_EnsembleRegressionEntropyFunction.get();
   }
 
   const LegacyCorrespondenceFunction* GetEnsembleMixedEffectsEntropyFunction() const {
-    return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
+    return m_EnsembleMixedEffectsEntropyFunction.get();
   }
 
   const CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() const {
-    return m_CorrespondenceFunction.GetPointer();
+    return m_CorrespondenceFunction.get();
   }
 
   void SetTimeptsPerIndividual(int n) { m_MixedEffectsShapeMatrix->SetTimeptsPerIndividual(n); }
@@ -231,7 +231,7 @@ class Sampler {
 
   void SetVerbosity(unsigned int val) {
     m_verbosity = val;
-    m_Optimizer->SetVerbosity(val);
+    m_Optimizer->set_verbosity(val);
   }
 
   unsigned int GetVerbosity() { return m_verbosity; }
@@ -283,9 +283,9 @@ class Sampler {
   bool m_Initialized{false};
   bool m_Initializing{false};
 
-  OptimizerType::Pointer m_Optimizer;
+  std::shared_ptr<OptimizerType> m_Optimizer;
 
-  SamplingFunction::Pointer m_SamplingFunction;
+  std::shared_ptr<SamplingFunction> m_SamplingFunction;
 
   GenericContainerArray<double>::Pointer m_Sigma1Cache;
 
@@ -297,13 +297,13 @@ class Sampler {
 
   shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
-  DualVectorFunction::Pointer m_LinkingFunction;
+  std::shared_ptr<DualVectorFunction> m_LinkingFunction;
 
-  LegacyCorrespondenceFunction::Pointer m_EnsembleEntropyFunction;
-  LegacyCorrespondenceFunction::Pointer m_EnsembleRegressionEntropyFunction;
-  LegacyCorrespondenceFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
-  DisentangledCorrespondenceFunction::Pointer m_DisentangledEnsembleEntropyFunction;
-  CorrespondenceFunction::Pointer m_CorrespondenceFunction;
+  std::shared_ptr<LegacyCorrespondenceFunction> m_EnsembleEntropyFunction;
+  std::shared_ptr<LegacyCorrespondenceFunction> m_EnsembleRegressionEntropyFunction;
+  std::shared_ptr<LegacyCorrespondenceFunction> m_EnsembleMixedEffectsEntropyFunction;
+  std::shared_ptr<DisentangledCorrespondenceFunction> m_DisentangledEnsembleEntropyFunction;
+  std::shared_ptr<CorrespondenceFunction> m_CorrespondenceFunction;
 
   LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
 

@@ -38,8 +38,8 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
   /** Run-time type information (and related methods). */
   itkTypeMacro(ShapeMatrix, Observer);
 
-  virtual void BeforeIteration() {}
-  virtual void AfterIteration() {}
+  virtual void before_iteration() {}
+  virtual void after_iteration() {}
 
   /** Set/Get the number of domains per shape.  This can only be safely done
     before shapes are initialized with points! */
