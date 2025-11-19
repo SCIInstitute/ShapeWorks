@@ -85,7 +85,10 @@ class ContourDomain : public ParticleDomain {
     return out;
   }
 
-  double GetSurfaceArea() const override { throw std::runtime_error("Contours do not have area"); }
+  double GetSurfaceArea() const override {
+    // TODO: Implement something analogous for scaling purposes
+    return 1.0;
+  }
 
   void DeleteImages() override {
     // TODO what?
@@ -100,7 +103,6 @@ class ContourDomain : public ParticleDomain {
                                   const VectorDoubleType& global_direction, double epsilon) const override;
 
  private:
-
   double ComputeLineCoordinate(const double pt[3], int line) const;
 
   // Return the number of lines that consist of i-th point
@@ -136,7 +138,6 @@ class ContourDomain : public ParticleDomain {
   void ComputeAvgEdgeLength();
 
   int GetLineForPoint(const double pt[3], int idx, double& closest_distance, double closest_pt[3]) const;
-
 };
 
 }  // namespace shapeworks

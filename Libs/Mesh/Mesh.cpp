@@ -33,6 +33,7 @@
 #include <vtkIncrementalPointLocator.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLoopSubdivisionFilter.h>
+#include <vtkMassProperties.h>
 #include <vtkNew.h>
 #include <vtkOBJReader.h>
 #include <vtkOBJWriter.h>
@@ -1196,6 +1197,13 @@ Point3 Mesh::centerOfMass() const {
   double center[3];
   com->GetCenter(center);
   return center;
+}
+
+double Mesh::getSurfaceArea() const {
+  auto mass_props = vtkSmartPointer<vtkMassProperties>::New();
+  mass_props->SetInputData(this->poly_data_);
+  mass_props->Update();
+  return mass_props->GetSurfaceArea();
 }
 
 Point3 Mesh::getPoint(int id) const {

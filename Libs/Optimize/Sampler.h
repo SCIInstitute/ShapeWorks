@@ -239,6 +239,10 @@ class Sampler {
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }
 
+  void SetSamplingScale(bool enabled) { m_SamplingScale = enabled; }
+  void SetSamplingAutoScale(bool auto_scale) { m_SamplingAutoScale = auto_scale; }
+  void SetSamplingScaleValue(double scale_value) { m_SamplingScaleValue = scale_value; }
+
   void SetEarlyStoppingConfig(EarlyStoppingConfig config) { early_stopping_config_ = config; }
 
   void ReadTransforms();
@@ -325,6 +329,10 @@ class Sampler {
   double m_Spacing{0};
   bool m_IsSharedBoundaryEnabled;
   double m_SharedBoundaryWeight{0.5};
+
+  bool m_SamplingScale{true};
+  bool m_SamplingAutoScale{true};
+  double m_SamplingScaleValue{1.0};
 
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;

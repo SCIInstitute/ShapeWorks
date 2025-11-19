@@ -63,6 +63,9 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "It has no effect on the optimization");
   ui_->shared_boundary->setToolTip("Use shared boundary optimization");
   ui_->shared_boundary_weight->setToolTip("Weight of shared boundary optimization");
+  ui_->sampling_scale->setToolTip("Enable sampling gradient scaling");
+  ui_->sampling_auto_scale->setToolTip("Automatically scale sampling gradient based on surface area");
+  ui_->sampling_scale_value->setToolTip("Manual scale value for sampling gradient (when auto-scale is disabled)");
   ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
 
   // hidden for 6.5 release
@@ -87,6 +90,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->narrow_band->setValidator(double_validator);
   ui_->geodesics_to_landmarks_weight->setValidator(double_validator);
   ui_->shared_boundary_weight->setValidator(double_validator);
+  ui_->sampling_scale_value->setValidator(double_validator);
 
   line_edits_.push_back(ui_->number_of_particles);
   line_edits_.push_back(ui_->initial_relative_weighting);
@@ -304,6 +308,9 @@ void OptimizeTool::load_params() {
   ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
   ui_->shared_boundary->setChecked(params.get_shared_boundary());
   ui_->shared_boundary_weight->setText(QString::number(params.get_shared_boundary_weight()));
+  ui_->sampling_scale->setChecked(params.get_sampling_scale());
+  ui_->sampling_auto_scale->setChecked(params.get_sampling_auto_scale());
+  ui_->sampling_scale_value->setText(QString::number(params.get_sampling_scale_value()));
 
   update_ui_elements();
 }
@@ -357,6 +364,9 @@ void OptimizeTool::store_params() {
   params.set_narrow_band(ui_->narrow_band->text().toDouble());
   params.set_shared_boundary(ui_->shared_boundary->isChecked());
   params.set_shared_boundary_weight(ui_->shared_boundary_weight->text().toDouble());
+  params.set_sampling_scale(ui_->sampling_scale->isChecked());
+  params.set_sampling_auto_scale(ui_->sampling_auto_scale->isChecked());
+  params.set_sampling_scale_value(ui_->sampling_scale_value->text().toDouble());
 
   params.save_to_project();
 }

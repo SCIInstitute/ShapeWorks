@@ -86,6 +86,7 @@ class MeshDomain : public ParticleDomain {
   std::shared_ptr<Surface> geodesics_mesh_;
   std::shared_ptr<Mesh> sw_mesh_;
   PointType zero_crossing_point_;
+  double surface_area_ = 0.0;
 };
 
 }  // namespace shapeworks

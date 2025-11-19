@@ -435,6 +435,10 @@ void Optimize::InitializeSampler() {
 
   m_sampler->SetCorrespondenceOn();
 
+  m_sampler->SetSamplingScale(m_sampling_scale);
+  m_sampler->SetSamplingAutoScale(m_sampling_auto_scale);
+  m_sampler->SetSamplingScaleValue(m_sampling_scale_value);
+
   m_sampler->SetAdaptivityMode();
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(
@@ -1708,7 +1712,11 @@ void Optimize::AddImage(ImageType::Pointer image, std::string name) {
   m_sampler->AddImage(image, this->GetNarrowBand(), name);
   this->m_num_shapes++;
   if (image) {
-    this->m_spacing = image->GetSpacing()[0] * 5;
+    double new_spacing = image->GetSpacing()[0] * 5;
+    if (m_spacing == 0 || new_spacing < this->m_spacing) {
+      // pick the smallest spacing
+      m_spacing = new_spacing;
+    }
   }
 }
 
@@ -2018,6 +2026,24 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled) { m_sampler->SetSharedBoun
 
 //---------------------------------------------------------------------------
 void Optimize::SetSharedBoundaryWeight(double weight) { m_sampler->SetSharedBoundaryWeight(weight); }
+
+//---------------------------------------------------------------------------
+void Optimize::SetSamplingScale(bool enabled) { m_sampling_scale = enabled; }
+
+//---------------------------------------------------------------------------
+bool Optimize::GetSamplingScale() { return m_sampling_scale; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetSamplingAutoScale(bool auto_scale) { m_sampling_auto_scale = auto_scale; }
+
+//---------------------------------------------------------------------------
+bool Optimize::GetSamplingAutoScale() { return m_sampling_auto_scale; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetSamplingScaleValue(double scale_value) { m_sampling_scale_value = scale_value; }
+
+//---------------------------------------------------------------------------
+double Optimize::GetSamplingScaleValue() { return m_sampling_scale_value; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetEarlyStoppingConfig(EarlyStoppingConfig config) { m_sampler->SetEarlyStoppingConfig(config); }

@@ -161,6 +161,9 @@ void Sampler::InitializeOptimizationFunctions() {
     m_SamplingFunction->SetSharedBoundaryEnabled(true);
     m_SamplingFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
   }
+  m_SamplingFunction->SetSamplingScale(m_SamplingScale);
+  m_SamplingFunction->SetSamplingAutoScale(m_SamplingAutoScale);
+  m_SamplingFunction->SetSamplingScaleValue(m_SamplingScaleValue);
 
   m_LinearRegressionShapeMatrix->Initialize();
   m_MixedEffectsShapeMatrix->Initialize();
