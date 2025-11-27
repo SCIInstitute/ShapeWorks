@@ -417,12 +417,31 @@ vtkSmartPointer<vtkPolyData> MeshWarper::remove_zero_area_triangles(vtkSmartPoin
   // Create a new cell array to store triangles
   auto new_triangles = vtkSmartPointer<vtkCellArray>::New();
 
-  // Get the triangle cells from the input mesh
-  vtkCellArray* triangles = mesh->GetPolys();
-
   // Iterate through all cells
   auto cell_point_ids = vtkSmartPointer<vtkIdList>::New();
 
+  // First pass: find max area to establish scale
+  double max_area = 0.0;
+  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
+    mesh->GetCellPoints(cellId, cell_point_ids);
+    if (cell_point_ids->GetNumberOfIds() == 3) {
+      double p0[3], p1[3], p2[3];
+      points->GetPoint(cell_point_ids->GetId(0), p0);
+      points->GetPoint(cell_point_ids->GetId(1), p1);
+      points->GetPoint(cell_point_ids->GetId(2), p2);
+      double area = vtkTriangle::TriangleArea(p0, p1, p2);
+      if (area > max_area) {
+        max_area = area;
+      }
+    }
+  }
+
+  // Use relative epsilon based on max area, with absolute floor
+  const double RELATIVE_EPSILON = 1e-6;
+  const double ABSOLUTE_FLOOR = 1e-15;
+  const double epsilon = std::max(max_area * RELATIVE_EPSILON, ABSOLUTE_FLOOR);
+
+  // Second pass: filter triangles
   for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
     mesh->GetCellPoints(cellId, cell_point_ids);
 
@@ -437,9 +456,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::remove_zero_area_triangles(vtkSmartPoin
       // Calculate the area of the triangle using VTK's built-in function
       double area = vtkTriangle::TriangleArea(p0, p1, p2);
 
-      // If the area is not zero (use a small epsilon for floating point comparison)
-      const double EPSILON = 1e-10;
-      if (area > EPSILON) {
+      if (area > epsilon) {
         // Add this triangle to the new cell array
         new_triangles->InsertNextCell(cell_point_ids);
       }
