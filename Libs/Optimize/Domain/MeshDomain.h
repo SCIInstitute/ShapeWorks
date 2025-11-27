@@ -45,8 +45,7 @@ class MeshDomain : public ParticleDomain {
   PointType GetValidLocationNear(PointType p) const override;
 
   double GetSurfaceArea() const override {
-    // TODO return actual surface area
-    return 0;
+    return surface_area_;
   }
 
   double GetMaxDiameter() const override;
