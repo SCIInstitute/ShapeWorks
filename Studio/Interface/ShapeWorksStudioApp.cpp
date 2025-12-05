@@ -1335,14 +1335,16 @@ void ShapeWorksStudioApp::handle_groom_start() {
 void ShapeWorksStudioApp::handle_groom_complete() {
   update_view_combo();
 
+  // Clear cache BEFORE setting display mode, because set_display_mode triggers
+  // update_view_mode() which calls update_display() and would use stale cached meshes
+  session_->handle_clear_cache();
+
   if (!session_->groomed_present()) {
     // grooming may have failed, if so, we don't want to switch to groomed that don't exist
     session_->set_display_mode(DisplayMode::Original);
   } else {
     session_->set_display_mode(DisplayMode::Groomed);
   }
-
-  session_->handle_clear_cache();
 
   update_display(true);
   visualizer_->reset_camera();

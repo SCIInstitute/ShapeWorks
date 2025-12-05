@@ -298,6 +298,12 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
   iterations = std::max<int>(iterations, 2);
   smoother->SetNumberOfIterations(iterations);
   smoother->SetPassBand(passband);
+
+  smoother->BoundarySmoothingOff();
+  smoother->FeatureEdgeSmoothingOff();
+  smoother->NonManifoldSmoothingOn();
+  smoother->NormalizeCoordinatesOn();
+
   smoother->Update();
   this->poly_data_ = smoother->GetOutput();
 
@@ -722,6 +728,10 @@ Mesh& Mesh::clipClosedSurface(const Plane plane) {
 }
 
 Mesh& Mesh::computeNormals() {
+  // Remove existing normals first
+  poly_data_->GetPointData()->SetNormals(nullptr);
+  poly_data_->GetCellData()->SetNormals(nullptr);
+
   auto normal = vtkSmartPointer<vtkPolyDataNormals>::New();
 
   normal->SetInputData(this->poly_data_);
