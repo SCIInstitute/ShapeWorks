@@ -135,7 +135,6 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
 
 //---------------------------------------------------------------------------
 MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_value) {
-  // std::cerr << "build_mesh from " << filename << "\n";
   MeshHandle mesh(new StudioMesh);
 
   if (!QFileInfo(QString::fromStdString(filename)).exists()) {
