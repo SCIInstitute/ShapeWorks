@@ -298,6 +298,12 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
   iterations = std::max<int>(iterations, 2);
   smoother->SetNumberOfIterations(iterations);
   smoother->SetPassBand(passband);
+
+  smoother->BoundarySmoothingOff();
+  smoother->FeatureEdgeSmoothingOff();
+  smoother->NonManifoldSmoothingOn();
+  smoother->NormalizeCoordinatesOn();
+
   smoother->Update();
   this->poly_data_ = smoother->GetOutput();
 
