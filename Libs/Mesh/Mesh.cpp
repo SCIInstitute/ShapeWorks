@@ -722,6 +722,10 @@ Mesh& Mesh::clipClosedSurface(const Plane plane) {
 }
 
 Mesh& Mesh::computeNormals() {
+  // Remove existing normals first
+  poly_data_->GetPointData()->SetNormals(nullptr);
+  poly_data_->GetCellData()->SetNormals(nullptr);
+
   auto normal = vtkSmartPointer<vtkPolyDataNormals>::New();
 
   normal->SetInputData(this->poly_data_);
