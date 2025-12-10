@@ -20,19 +20,19 @@
 ## Past Contributors
 
 - [Ross Whitaker](http://www.cs.utah.edu/~whitaker/)
-- [Joshua Cates](http://www.sci.utah.edu/~cates/) (now @3Dio)
-- [Manasi Datar](https://manasidatar.github.io/index.html) (now @Siemens)
+- [Joshua Cates](http://www.sci.utah.edu/~cates/) (now @ 3Dio)
+- [Manasi Datar](https://manasidatar.github.io/index.html) (now @ Siemens)
 - Brig Bagley
-- [Praful Agrawal](https://www.linkedin.com/in/praful-agrawal-78a72b33) (now @Amazon Inc.)
-- Oleks Korshak
+- [Praful Agrawal](https://www.linkedin.com/in/praful-agrawal-78a72b33) (now @ Amazon Inc.)
+- Oleks Korshak (now @ Microsoft)
 - [Anupama Goparaju](https://www.linkedin.com/in/anupamagoparaju) (now @ Galileo Financial Technologies)
 - Atefeh Ghanaatikashani (now @ Tesla Inc.)
-- Karthik Karanth
+- Karthik Karanth (now @ Adobe)
 - Cameron Christensen
-- Archanasri Subramanian (now @Amazon)
-- Riddhish Bhalodia
-- Jadie Adams
-- Hong Xu
+- Archanasri Subramanian (now @ Amazon)
+- Riddhish Bhalodia (now @ Meta)
+- Jadie Adams (now @ Kitware)
+- Hong Xu (now @ Astera Institute)
 - Krithika Iyer (now postdoc @ Sheikh Zayed Institute for Pediatric Surgical Innovation)
 
 
