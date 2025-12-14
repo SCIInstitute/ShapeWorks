@@ -11,7 +11,7 @@ call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
 REM install shapeworks deps
-call conda create --yes --name %CONDAENV% python=3.9.13 pip=22.1.2 openssl==1.1.1w || goto :error
+call conda create --yes --name %CONDAENV% python=3.12 pip=24.3.1 openssl==0.3.30 || goto :error
 call conda activate %CONDAENV%
 
 REM reactivate shapeworks environment
@@ -21,10 +21,10 @@ call conda activate %CONDAENV%
 call python -m pip install -r python_requirements.txt || goto :error
 
 REM install ptorch using light-the-torch
-call ltt install torch==1.11.0 || goto :error
+call ltt install torch==2.2.2 || goto :error
 
 REM different versions of open3d for different OSes, so we install it manually here
-call pip install open3d==0.17.0 || goto :error
+call pip install open3d==0.19.0 || goto :error
 
 call pip install Python/DatasetUtilsPackage.tar.gz || goto :error
 call pip install Python/DocumentationUtilsPackage.tar.gz || goto :error

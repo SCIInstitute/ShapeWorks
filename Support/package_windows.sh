@@ -36,7 +36,10 @@ ROOT=`pwd`
 
 BUILD="/c/build"
 CONDA_LOC="/c/Miniconda/envs/shapeworks"
-cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb12.dll ${CONDA_LOC}/Library/bin/zstd.dll ${CONDA_LOC}/Library/bin/libpng16.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll ${CONDA_LOC}/Library/bin/spdlog.dll ${CONDA_LOC}/Library/bin/*ffi*.dll ${CONDA_LOC}/Library/bin/libbz2.dll $BUILD/bin/Release
+
+ls -la ${CONDA_LOC}/Library/bin
+
+cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb12.dll ${CONDA_LOC}/Library/bin/zstd.dll ${CONDA_LOC}/Library/bin/libpng16.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll ${CONDA_LOC}/Library/bin/spdlog.dll ${CONDA_LOC}/Library/bin/*ffi*.dll ${CONDA_LOC}/Library/bin/libbz2.dll ${CONDA_LOC}/Library/bin/libssl-3-x64.dll ${CONDA_LOC}/Library/bin/libcrypto-3-x64.dll ${CONDA_LOC}/Library/bin/pcre2-16.dll $BUILD/bin/Release
 
 # install visual studio redistributables
 WIN_DIR="/c/Windows/system32"
