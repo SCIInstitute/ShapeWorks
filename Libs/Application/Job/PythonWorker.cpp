@@ -16,6 +16,10 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 #include <QThread>
 #include <iostream>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -207,6 +211,21 @@ bool PythonWorker::init() {
 
     qputenv("PATH", path.toUtf8());
     SW_LOG("Setting PATH for Python to: " + path.toStdString());
+
+    // Python 3.8+ requires explicit DLL directory registration
+    // PATH environment variable is no longer used for DLL search
+    SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_USER_DIRS);
+
+    // Add the Library\bin directory where conda keeps DLLs like libexpat.dll
+    QString library_bin = python_home + "/Library/bin";
+    AddDllDirectory(library_bin.toStdWString().c_str());
+
+    // Also add the DLLs directory
+    QString dlls_dir = python_home + "/DLLs";
+    AddDllDirectory(dlls_dir.toStdWString().c_str());
+
+    // And the base python home
+    AddDllDirectory(python_home.toStdWString().c_str());
   }
 #endif  // ifdef _WIN32
 
