@@ -7,6 +7,7 @@
 #include <vnl/algo/vnl_symmetric_eigensystem.h>
 
 #include "ExternalLibs/tinyxml/tinyxml.h"
+#include "Profiling.h"
 #include "ShapeEvaluation.h"
 
 namespace shapeworks {
@@ -577,49 +578,48 @@ int ParticleShapeStatistics::do_pca(std::shared_ptr<Project> project) {
 }
 
 //---------------------------------------------------------------------------
+
 int ParticleShapeStatistics::compute_modes() {
+  TIME_SCOPE("ParticleShapeStatistics::compute_modes");
   SW_DEBUG("computing PCA modes");
-  Eigen::MatrixXd A = points_minus_mean_.transpose() * points_minus_mean_ * (1.0 / ((double)(num_samples_ - 1)));
 
-  auto vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
-  vnl_symmetric_eigensystem<double> symEigen(vnlA);
+  double scale = std::sqrt(num_samples_ - 1);
+  Eigen::BDCSVD<Eigen::MatrixXd> svd(points_minus_mean_ / scale, Eigen::ComputeThinU);
 
-  Eigen::MatrixXd eigenSymEigenV =
-      Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
-  Eigen::VectorXd eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
+  Eigen::VectorXd eigenvalues_eigen = svd.singularValues().array().square();
 
-  eigenvectors_ = points_minus_mean_ * eigenSymEigenV;
-  eigenvalues_.resize(num_samples_);
+  // U * S gives us the eigenvectors in particle space (like points_minus_mean_ * V did before)
+  // But we want them normalized, so just use U (which is already orthonormal)
+  eigenvectors_ = svd.matrixU() * scale;  // Scale back to match original magnitudes
+
+  int num_modes = eigenvalues_eigen.size();
 
   // normalize the eigenvectors
-  for (unsigned int i = 0; i < num_samples_; i++) {
-    double total = 0.0f;
-    for (unsigned int j = 0; j < num_dimensions_; j++) {
-      total += eigenvectors_(j, i) * eigenvectors_(j, i);
-    }
-    total = sqrt(total);
-
-    for (unsigned int j = 0; j < num_dimensions_; j++) {
-      eigenvectors_(j, i) = eigenvectors_(j, i) / (total + 1.0e-15);
-    }
-
-    eigenvalues_[i] = eigenSymEigenD(i);
+  for (int i = 0; i < eigenvectors_.cols(); i++) {
+    eigenvectors_.col(i).normalize();
   }
 
-  float sum = 0.0;
-  for (unsigned int n = 0; n < num_samples_; n++) {
-    sum += eigenvalues_[(num_samples_ - 1) - n];
+  // SVD returns values in descending order, but we need ascending order for backward compatibility
+  // Reverse both eigenvalues and eigenvector columns
+  eigenvalues_.resize(num_modes);
+  for (int i = 0; i < num_modes; i++) {
+    eigenvalues_[i] = eigenvalues_eigen[num_modes - 1 - i];
+  }
+  eigenvectors_ = eigenvectors_.rowwise().reverse().eval();
+
+  // eigenvalues are now in ascending order (smallest to largest)
+  double sum = 0.0;
+  for (int n = 0; n < num_modes; n++) {
+    sum += eigenvalues_[n];
   }
 
-  float sum2 = 0.0;
-  bool found = false;
-  for (unsigned int n = 0; n < num_samples_; n++) {
-    sum2 += eigenvalues_[(num_samples_ - 1) - n];
+  // percent_variance_by_mode_ accumulates from largest eigenvalue (at end) to smallest
+  // to match the old behavior
+  percent_variance_by_mode_.clear();
+  double sum2 = 0.0;
+  for (int n = num_modes - 1; n >= 0; n--) {
+    sum2 += eigenvalues_[n];
     percent_variance_by_mode_.push_back(sum2 / sum);
-
-    if ((sum2 / sum) >= 0.95 && found == false) {
-      found = true;
-    }
   }
 
   return 0;

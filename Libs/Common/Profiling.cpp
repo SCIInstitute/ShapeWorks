@@ -157,6 +157,8 @@ void Profiler::finalize() {
     write_trace_file();
   }
 }
+
+//---------------------------------------------------------------------------
 void Profiler::write_profile_report() {
   // Calculate total time
   double total_time_ms = elapsed_timer_.elapsed();
