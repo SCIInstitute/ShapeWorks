@@ -302,9 +302,13 @@ int ParticleShapeStatistics::compute_shape_dev_modes_for_mca() {
   // Compute eigenvectors_ = X * V = U * S (matches old behavior before normalization)
   eigenvectors_shape_dev_ = svd.matrixU() * svd.singularValues().asDiagonal();
 
-  // normalize the eigenvectors
+  // normalize the eigenvectors and enforce sign convention
+  // (make first element positive to match VNL eigensystem convention)
   for (int i = 0; i < eigenvectors_shape_dev_.cols(); i++) {
     eigenvectors_shape_dev_.col(i).normalize();
+    if (eigenvectors_shape_dev_(0, i) < 0) {
+      eigenvectors_shape_dev_.col(i) *= -1;
+    }
   }
 
   // SVD returns values in descending order, but we need ascending order for backward compatibility
@@ -330,9 +334,13 @@ int ParticleShapeStatistics::compute_relative_pose_modes_for_mca() {
   // Compute eigenvectors_ = X * V = U * S (matches old behavior before normalization)
   eigenvectors_rel_pose_ = svd.matrixU() * svd.singularValues().asDiagonal();
 
-  // normalize the eigenvectors
+  // normalize the eigenvectors and enforce sign convention
+  // (make first element positive to match VNL eigensystem convention)
   for (int i = 0; i < eigenvectors_rel_pose_.cols(); i++) {
     eigenvectors_rel_pose_.col(i).normalize();
+    if (eigenvectors_rel_pose_(0, i) < 0) {
+      eigenvectors_rel_pose_.col(i) *= -1;
+    }
   }
 
   // SVD returns values in descending order, but we need ascending order for backward compatibility
@@ -592,9 +600,13 @@ int ParticleShapeStatistics::compute_modes() {
   // Compute eigenvectors_ = X * V = U * S (matches old behavior before normalization)
   eigenvectors_ = svd.matrixU() * svd.singularValues().asDiagonal();
 
-  // normalize the eigenvectors
+  // normalize the eigenvectors and enforce sign convention
+  // (make first element positive to match VNL eigensystem convention)
   for (int i = 0; i < eigenvectors_.cols(); i++) {
     eigenvectors_.col(i).normalize();
+    if (eigenvectors_(0, i) < 0) {
+      eigenvectors_.col(i) *= -1;
+    }
   }
 
   // SVD returns values in descending order, but we need ascending order for backward compatibility
