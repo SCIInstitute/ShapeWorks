@@ -10,6 +10,8 @@
 #include <QSurfaceFormat>
 #include <iostream>
 
+#include "Profiling.h"
+
 // itk
 #include <itkMacro.h>
 
@@ -77,8 +79,8 @@ static void new_log() {
 int main(int argc, char** argv) {
   // tbb::task_scheduler_init init(1);
 
+  TIME_SCOPE("ShapeWorksStudio");
   try {
-
 #ifdef Q_OS_MACOS
     // Prevent cursor crashes on Apple Silicon
     qputenv("QT_MAC_DISABLE_NATIVE_CURSORS", "1");
@@ -148,7 +150,9 @@ int main(int argc, char** argv) {
       app.file_open_callback_(app.stored_filename_);
     }
 
-    return app.exec();
+    auto rc = app.exec();
+    TIME_FINALIZE();
+    return rc;
   } catch (itk::ExceptionObject& excep) {
     std::cerr << excep << std::endl;
   } catch (std::exception& e) {

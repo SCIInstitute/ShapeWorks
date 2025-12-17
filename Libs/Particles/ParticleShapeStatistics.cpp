@@ -4,9 +4,9 @@
 #include <Logging.h>
 #include <Particles/ParticleFile.h>
 #include <Project/Project.h>
-#include <vnl/algo/vnl_symmetric_eigensystem.h>
 
 #include "ExternalLibs/tinyxml/tinyxml.h"
+#include "Profiling.h"
 #include "ShapeEvaluation.h"
 
 namespace shapeworks {
@@ -291,62 +291,65 @@ void ParticleShapeStatistics::compute_multi_level_analysis_statistics(std::vecto
 
 //---------------------------------------------------------------------------
 int ParticleShapeStatistics::compute_shape_dev_modes_for_mca() {
-  unsigned int m = points_minus_mean_shape_dev_.rows();
-  Eigen::MatrixXd A =
-      points_minus_mean_shape_dev_.transpose() * points_minus_mean_shape_dev_ * (1.0 / ((double)(num_samples_ - 1)));
+  // Use SVD to compute PCA. For X = U * S * V^T:
+  // - The covariance matrix X^T * X / (n-1) has eigenvalues S^2 / (n-1) and eigenvectors V
+  // - The old code computed eigenvectors_ = X * V = U * S
+  Eigen::BDCSVD<Eigen::MatrixXd> svd(points_minus_mean_shape_dev_, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-  vnl_matrix<double> vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
-  vnl_symmetric_eigensystem<double> symEigen(vnlA);
-  Eigen::MatrixXd shape_dev_eigenSymEigenV =
-      Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
-  Eigen::VectorXd shape_dev_eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
+  Eigen::VectorXd eigenvalues_eigen = svd.singularValues().array().square() / (num_samples_ - 1);
+  int num_modes = eigenvalues_eigen.size();
 
-  eigenvectors_shape_dev_ = points_minus_mean_shape_dev_ * shape_dev_eigenSymEigenV;
-  eigenvalues_shape_dev_.resize(num_samples_);
+  // Compute eigenvectors_ = X * V = U * S (matches old behavior before normalization)
+  eigenvectors_shape_dev_ = svd.matrixU() * svd.singularValues().asDiagonal();
 
-  for (unsigned int i = 0; i < num_samples_; i++) {
-    double total = 0.0f;
-    for (unsigned int j = 0; j < m; j++) {
-      total += eigenvectors_shape_dev_(j, i) * eigenvectors_shape_dev_(j, i);
+  // normalize the eigenvectors and enforce sign convention
+  // (make first element positive to match VNL eigensystem convention)
+  for (int i = 0; i < eigenvectors_shape_dev_.cols(); i++) {
+    eigenvectors_shape_dev_.col(i).normalize();
+    if (eigenvectors_shape_dev_(0, i) < 0) {
+      eigenvectors_shape_dev_.col(i) *= -1;
     }
-    total = sqrt(total);
-
-    for (unsigned int j = 0; j < m; j++) {
-      eigenvectors_shape_dev_(j, i) = eigenvectors_shape_dev_(j, i) / (total + 1.0e-15);
-    }
-    eigenvalues_shape_dev_[i] = shape_dev_eigenSymEigenD(i);
   }
+
+  // SVD returns values in descending order, but we need ascending order for backward compatibility
+  eigenvalues_shape_dev_.resize(num_modes);
+  for (int i = 0; i < num_modes; i++) {
+    eigenvalues_shape_dev_[i] = eigenvalues_eigen[num_modes - 1 - i];
+  }
+  eigenvectors_shape_dev_ = eigenvectors_shape_dev_.rowwise().reverse().eval();
+
   return 0;
 }
 
 //---------------------------------------------------------------------------
 int ParticleShapeStatistics::compute_relative_pose_modes_for_mca() {
-  unsigned int m = points_minus_mean_rel_pose_.rows();
-  Eigen::MatrixXd A =
-      points_minus_mean_rel_pose_.transpose() * points_minus_mean_rel_pose_ * (1.0 / ((double)(num_samples_ - 1)));
-  auto vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
-  vnl_symmetric_eigensystem<double> symEigen(vnlA);
-  Eigen::MatrixXd rel_pose_eigenSymEigenV =
-      Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
+  // Use SVD to compute PCA. For X = U * S * V^T:
+  // - The covariance matrix X^T * X / (n-1) has eigenvalues S^2 / (n-1) and eigenvectors V
+  // - The old code computed eigenvectors_ = X * V = U * S
+  Eigen::BDCSVD<Eigen::MatrixXd> svd(points_minus_mean_rel_pose_, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-  Eigen::VectorXd rel_pose_eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
+  Eigen::VectorXd eigenvalues_eigen = svd.singularValues().array().square() / (num_samples_ - 1);
+  int num_modes = eigenvalues_eigen.size();
 
-  eigenvectors_rel_pose_ = points_minus_mean_rel_pose_ * rel_pose_eigenSymEigenV;
-  eigenvalues_rel_pose_.resize(num_samples_);
+  // Compute eigenvectors_ = X * V = U * S (matches old behavior before normalization)
+  eigenvectors_rel_pose_ = svd.matrixU() * svd.singularValues().asDiagonal();
 
-  for (unsigned int i = 0; i < num_samples_; i++) {
-    double total = 0.0f;
-    for (unsigned int j = 0; j < m; j++) {
-      total += eigenvectors_rel_pose_(j, i) * eigenvectors_rel_pose_(j, i);
+  // normalize the eigenvectors and enforce sign convention
+  // (make first element positive to match VNL eigensystem convention)
+  for (int i = 0; i < eigenvectors_rel_pose_.cols(); i++) {
+    eigenvectors_rel_pose_.col(i).normalize();
+    if (eigenvectors_rel_pose_(0, i) < 0) {
+      eigenvectors_rel_pose_.col(i) *= -1;
     }
-    total = sqrt(total);
-
-    for (unsigned int j = 0; j < m; j++) {
-      eigenvectors_rel_pose_(j, i) = eigenvectors_rel_pose_(j, i) / (total + 1.0e-15);
-    }
-
-    eigenvalues_rel_pose_[i] = rel_pose_eigenSymEigenD(i);
   }
+
+  // SVD returns values in descending order, but we need ascending order for backward compatibility
+  eigenvalues_rel_pose_.resize(num_modes);
+  for (int i = 0; i < num_modes; i++) {
+    eigenvalues_rel_pose_[i] = eigenvalues_eigen[num_modes - 1 - i];
+  }
+  eigenvectors_rel_pose_ = eigenvectors_rel_pose_.rowwise().reverse().eval();
+
   return 0;
 }
 
@@ -577,49 +580,56 @@ int ParticleShapeStatistics::do_pca(std::shared_ptr<Project> project) {
 }
 
 //---------------------------------------------------------------------------
+
 int ParticleShapeStatistics::compute_modes() {
+  TIME_SCOPE("ParticleShapeStatistics::compute_modes");
   SW_DEBUG("computing PCA modes");
-  Eigen::MatrixXd A = points_minus_mean_.transpose() * points_minus_mean_ * (1.0 / ((double)(num_samples_ - 1)));
 
-  auto vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
-  vnl_symmetric_eigensystem<double> symEigen(vnlA);
+  // Use SVD to compute PCA. For X = U * S * V^T:
+  // - The covariance matrix X^T * X / (n-1) has eigenvalues S^2 / (n-1) and eigenvectors V
+  // - The old code computed eigenvectors_ = X * V = U * S
+  Eigen::BDCSVD<Eigen::MatrixXd> svd(points_minus_mean_, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-  Eigen::MatrixXd eigenSymEigenV =
-      Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
-  Eigen::VectorXd eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
+  // Eigenvalues of X^T * X / (n-1) = singular_values^2 / (n-1)
+  Eigen::VectorXd eigenvalues_eigen = svd.singularValues().array().square() / (num_samples_ - 1);
 
-  eigenvectors_ = points_minus_mean_ * eigenSymEigenV;
-  eigenvalues_.resize(num_samples_);
+  // Eigenvectors in particle space: X * V = U * S
+  // SVD returns singular values in descending order, so we need to reverse for ascending order
+  int num_modes = eigenvalues_eigen.size();
 
-  // normalize the eigenvectors
-  for (unsigned int i = 0; i < num_samples_; i++) {
-    double total = 0.0f;
-    for (unsigned int j = 0; j < num_dimensions_; j++) {
-      total += eigenvectors_(j, i) * eigenvectors_(j, i);
+  // Compute eigenvectors_ = X * V = U * S (matches old behavior before normalization)
+  eigenvectors_ = svd.matrixU() * svd.singularValues().asDiagonal();
+
+  // normalize the eigenvectors and enforce sign convention
+  // (make first element positive to match VNL eigensystem convention)
+  for (int i = 0; i < eigenvectors_.cols(); i++) {
+    eigenvectors_.col(i).normalize();
+    if (eigenvectors_(0, i) < 0) {
+      eigenvectors_.col(i) *= -1;
     }
-    total = sqrt(total);
-
-    for (unsigned int j = 0; j < num_dimensions_; j++) {
-      eigenvectors_(j, i) = eigenvectors_(j, i) / (total + 1.0e-15);
-    }
-
-    eigenvalues_[i] = eigenSymEigenD(i);
   }
 
-  float sum = 0.0;
-  for (unsigned int n = 0; n < num_samples_; n++) {
-    sum += eigenvalues_[(num_samples_ - 1) - n];
+  // SVD returns values in descending order, but we need ascending order for backward compatibility
+  // Reverse both eigenvalues and eigenvector columns
+  eigenvalues_.resize(num_modes);
+  for (int i = 0; i < num_modes; i++) {
+    eigenvalues_[i] = eigenvalues_eigen[num_modes - 1 - i];
+  }
+  eigenvectors_ = eigenvectors_.rowwise().reverse().eval();
+
+  // eigenvalues are now in ascending order (smallest to largest)
+  double sum = 0.0;
+  for (int n = 0; n < num_modes; n++) {
+    sum += eigenvalues_[n];
   }
 
-  float sum2 = 0.0;
-  bool found = false;
-  for (unsigned int n = 0; n < num_samples_; n++) {
-    sum2 += eigenvalues_[(num_samples_ - 1) - n];
+  // percent_variance_by_mode_ accumulates from largest eigenvalue (at end) to smallest
+  // to match the old behavior
+  percent_variance_by_mode_.clear();
+  double sum2 = 0.0;
+  for (int n = num_modes - 1; n >= 0; n--) {
+    sum2 += eigenvalues_[n];
     percent_variance_by_mode_.push_back(sum2 / sum);
-
-    if ((sum2 / sum) >= 0.95 && found == false) {
-      found = true;
-    }
   }
 
   return 0;
