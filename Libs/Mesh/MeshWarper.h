@@ -66,9 +66,6 @@ class MeshWarper {
   //! Return the reference particles
   const Eigen::MatrixXd& get_reference_particles() const { return this->reference_particles_; }
 
-  //! Prep incoming mesh
-  static vtkSmartPointer<vtkPolyData> prep_mesh(vtkSmartPointer<vtkPolyData> mesh);
-
  protected:
   //! For overriding to handle progress updates
   virtual void update_progress(float p) {}
@@ -92,15 +89,6 @@ class MeshWarper {
 
   //! Construct the map from landmarks to vertex ids
   bool find_landmarks_vertices_on_ref_mesh();
-
-  //! Clean mesh (remove deleted)
-  static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
-
-  //! Remove zero area triangles from a mesh
-  static vtkSmartPointer<vtkPolyData> remove_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh);
-
-  //! Recreate mesh, dropping deleted cells
-  static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   //! Generate the warp matrix
   bool generate_warp_matrix(Eigen::MatrixXd target_vertices, Eigen::MatrixXi target_faces,
