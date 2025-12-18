@@ -731,27 +731,14 @@ Mesh& Mesh::clipClosedSurface(const Plane plane) {
 }
 
 Mesh& Mesh::computeNormals() {
-
-  std::string issues = checkIntegrity();
-  if (!issues.empty()) {
-    std::cerr << "Mesh integrity check failed:\n" << issues << std::endl;
-    // Either return early or try to fix
+  // Validate mesh first
+  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0 || poly_data_->GetNumberOfCells() == 0) {
     return *this;
   }
 
   // Remove existing normals first
   poly_data_->GetPointData()->SetNormals(nullptr);
   poly_data_->GetCellData()->SetNormals(nullptr);
-
-  // Validate mesh first
-  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0) {
-    std::cerr << "Warning: Empty mesh in computeNormals()" << std::endl;
-    return *this;
-  }
-  if (poly_data_->GetNumberOfCells() == 0) {
-    std::cerr << "Warning: Mesh has no cells in computeNormals()" << std::endl;
-    return *this;
-  }
 
   auto normal = vtkSmartPointer<vtkPolyDataNormals>::New();
 
