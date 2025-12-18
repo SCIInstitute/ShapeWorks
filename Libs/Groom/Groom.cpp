@@ -187,7 +187,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
   if (params.get_convert_to_mesh()) {
     Mesh mesh = image.toMesh(0.0);
-    run_mesh_pipeline(mesh, params);
+    run_mesh_pipeline(mesh, params, original);
     groomed_name = get_output_filename(original, DomainType::Mesh);
     // save the groomed mesh
     MeshUtils::threadSafeWriteMesh(groomed_name, mesh);
@@ -323,7 +323,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   auto transform = vtkSmartPointer<vtkTransform>::New();
 
   if (!params.get_skip_grooming()) {
-    run_mesh_pipeline(mesh, params);
+    run_mesh_pipeline(mesh, params, original);
 
     // reflection
     if (params.get_reflect()) {
@@ -367,28 +367,23 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 }
 
 //---------------------------------------------------------------------------
-bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
+bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::string& filename) {
+  check_and_fix_mesh(mesh, "initial", filename);
+
   // Extract largest component (should be first)
   if (params.get_mesh_largest_component()) {
     mesh.extractLargestComponent();
+    check_and_fix_mesh(mesh, "largest_component", filename);
     increment_progress();
   }
 
   if (params.get_fill_mesh_holes_tool()) {
     mesh.fillHoles();
+    check_and_fix_mesh(mesh, "fill_holes", filename);
     increment_progress();
   }
 
   if (params.get_remesh()) {
-    auto poly_data = mesh.getVTKMesh();
-    if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
-      SW_DEBUG("Number of cells: {}", poly_data->GetNumberOfCells());
-      SW_DEBUG("Number of points in first cell: {}", poly_data->GetCell(0)->GetNumberOfPoints());
-      // write out to /tmp
-      std::string tmpname = "/tmp/bad_mesh.vtk";
-      MeshUtils::threadSafeWriteMesh(tmpname, mesh);
-      throw std::runtime_error("malformed mesh, mesh should be triangular");
-    }
     int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
     int num_vertices = params.get_remesh_num_vertices();
     if (params.get_remesh_percent_mode()) {
@@ -397,6 +392,7 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
     num_vertices = std::max<int>(num_vertices, 25);
     double gradation = clamp<double>(params.get_remesh_gradation(), 0.0, 2.0);
     mesh.remesh(num_vertices, gradation);
+    check_and_fix_mesh(mesh, "remesh", filename);
     increment_progress();
   }
 
@@ -406,6 +402,7 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
     } else if (params.get_mesh_smoothing_method() == GroomParameters::GROOM_SMOOTH_VTK_WINDOWED_SINC_C) {
       mesh.smoothSinc(params.get_mesh_vtk_windowed_sinc_iterations(), params.get_mesh_vtk_windowed_sinc_passband());
     }
+    check_and_fix_mesh(mesh, "smooth", filename);
     increment_progress();
   }
   return true;
@@ -1062,6 +1059,45 @@ void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int d
       subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
     }
   }
+}
+
+//---------------------------------------------------------------------------
+Mesh Groom::check_and_fix_mesh(Mesh& mesh, const std::string& step, const std::string& filename) {
+  auto issues = mesh.checkIntegrity();
+  if (!issues.empty()) {
+    SW_WARN("Mesh issues detected at step '{}', file '{}', issues: {}", step, filename, issues);
+    // try cleaning the mesh
+    SW_LOG("Cleaning mesh...");
+    mesh.clean();
+    issues = mesh.checkIntegrity();
+    if (!issues.empty()) {
+      SW_ERROR("Mesh issues remain after cleaning at step '{}', file '{}', issues: {}", step, filename, issues);
+      throw std::runtime_error(fmt::format("Error in mesh, step: {}, file: {}, issues: {}", step, filename, issues));
+    }
+  }
+  auto poly_data = mesh.getVTKMesh();
+
+  if (poly_data->GetNumberOfCells() == 0) {
+    throw std::runtime_error(fmt::format("Error in mesh, step: {}, file: {}, mesh has zero cells", step, filename));
+  }
+  if (poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+    // try cleaning the mesh
+    Mesh m(poly_data);
+    m.clean();
+    poly_data = m.getVTKMesh();
+
+    if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+      // still failed
+      SW_DEBUG("Number of cells: {}", poly_data->GetNumberOfCells());
+      SW_DEBUG("Number of points in first cell: {}", poly_data->GetCell(0)->GetNumberOfPoints());
+      // write out to /tmp
+      // std::string tmpname = "/tmp/bad_mesh.vtk";
+      // MeshUtils::threadSafeWriteMesh(tmpname, mesh);
+      throw std::runtime_error(
+          fmt::format("Error in mesh, step: {}, file: {}, mesh has invalid cells", step, filename));
+    }
+  }
+  return Mesh(poly_data);
 }
 
 //---------------------------------------------------------------------------

@@ -76,5 +76,7 @@ class MeshUtils {
                                           double pt3[3],
                                           double pt1[3],
                                           double pt2[3]);
+
+
 };
 } // namespace shapeworks
