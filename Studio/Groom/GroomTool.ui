@@ -2156,6 +2156,8 @@ QWidget#domain_panel {
   <tabstop>mesh_smooth_method</tabstop>
   <tabstop>laplacian_iterations</tabstop>
   <tabstop>laplacian_relaxation</tabstop>
+  <tabstop>sinc_iterations</tabstop>
+  <tabstop>sinc_passband</tabstop>
   <tabstop>remesh_checkbox</tabstop>
   <tabstop>remesh_percent_checkbox</tabstop>
   <tabstop>remesh_percent_slider</tabstop>
@@ -2169,8 +2171,6 @@ QWidget#domain_panel {
   <tabstop>reflect_axis</tabstop>
   <tabstop>alignment_image_checkbox</tabstop>
   <tabstop>alignment_box</tabstop>
-  <tabstop>sinc_passband</tabstop>
-  <tabstop>sinc_iterations</tabstop>
  </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>
