@@ -418,6 +418,9 @@ Mesh& Mesh::fillHoles(double hole_size) {
   filter->Update();
   this->poly_data_ = filter->GetOutput();
 
+  // vtkFillHolesFilter can create zero-area triangles, remove them
+  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+
   // Make the triangle window order consistent and recompute normals
   computeNormals();
 
