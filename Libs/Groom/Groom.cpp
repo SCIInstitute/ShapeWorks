@@ -368,14 +368,8 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
 //---------------------------------------------------------------------------
 bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::string& filename) {
-  check_and_fix_mesh(mesh, "initial", filename);
-
-  // Extract largest component (should be first)
-  if (params.get_mesh_largest_component()) {
-    mesh.extractLargestComponent();
-    check_and_fix_mesh(mesh, "largest_component", filename);
-    increment_progress();
-  }
+  // Repair mesh: triangulate, extract largest component, clean, fix non-manifold, remove zero-area triangles
+  mesh = Mesh(MeshUtils::repair_mesh(mesh.getVTKMesh()));
 
   if (params.get_fill_mesh_holes_tool()) {
     mesh.fillHoles();
@@ -508,7 +502,6 @@ int Groom::get_total_ops() {
                     (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
-      num_tools += params.get_mesh_largest_component() ? 1 : 0;
       num_tools += params.get_fill_mesh_holes_tool() ? 1 : 0;
       num_tools += params.get_mesh_smooth() ? 1 : 0;
       num_tools += params.get_remesh() ? 1 : 0;
@@ -1065,13 +1058,13 @@ void Groom::assign_transforms(std::vector<std::vector<double>> transforms, int d
 Mesh Groom::check_and_fix_mesh(Mesh& mesh, const std::string& step, const std::string& filename) {
   auto issues = mesh.checkIntegrity();
   if (!issues.empty()) {
-    SW_WARN("Mesh issues detected at step '{}', file '{}', issues: {}", step, filename, issues);
+    SW_WARN("Mesh issues detected after step '{}', file '{}', issues: {}", step, filename, issues);
     // try cleaning the mesh
     SW_LOG("Cleaning mesh...");
     mesh.clean();
     issues = mesh.checkIntegrity();
     if (!issues.empty()) {
-      SW_ERROR("Mesh issues remain after cleaning at step '{}', file '{}', issues: {}", step, filename, issues);
+      SW_ERROR("Mesh issues remain after cleaning after step '{}', file '{}', issues: {}", step, filename, issues);
       throw std::runtime_error(fmt::format("Error in mesh, step: {}, file: {}, issues: {}", step, filename, issues));
     }
   }

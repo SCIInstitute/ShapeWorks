@@ -1398,50 +1398,6 @@ QWidget#domain_panel {
              <number>0</number>
             </property>
             <item>
-             <widget class="QWidget" name="mesh_largest_component_widget" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>30</height>
-               </size>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_22">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>6</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>6</number>
-               </property>
-               <property name="spacing">
-                <number>0</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QCheckBox" name="mesh_largest_component">
-                 <property name="text">
-                  <string>Extract Largest Component</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="Line" name="line_11">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QWidget" name="fill_holes_mesh_widget" native="true">
               <property name="minimumSize">
                <size>

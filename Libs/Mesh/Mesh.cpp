@@ -418,13 +418,8 @@ Mesh& Mesh::fillHoles(double hole_size) {
   filter->Update();
   this->poly_data_ = filter->GetOutput();
 
-  auto origNormal = poly_data_->GetPointData()->GetNormals();
-
-  // Make the triangle window order consistent
+  // Make the triangle window order consistent and recompute normals
   computeNormals();
-
-  // Restore the original normals
-  poly_data_->GetPointData()->SetNormals(origNormal);
 
   this->invalidateLocators();
   return *this;
@@ -1766,8 +1761,7 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positio
   setField(name, scalars, Mesh::FieldType::Point);
 }
 
-std::string Mesh::checkIntegrity() const
-{
+std::string Mesh::checkIntegrity() const {
   std::ostringstream issues;
 
   if (!poly_data_) {
