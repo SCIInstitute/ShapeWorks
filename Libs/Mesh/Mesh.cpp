@@ -702,6 +702,42 @@ std::vector<Field> Mesh::distance(const Mesh& target, const DistanceMethod metho
       }
     } break;
 
+    case SymmetricPointToCell: {
+      /*
+      referenceMesh (point) -> targetMesh (cell) (and get closestPoint)
+      referenceMesh (cell)  -> targetMesh (closestPoint)
+      */
+      auto targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+      targetCellLocator->SetDataSet(target.poly_data_);
+      targetCellLocator->BuildLocator();
+
+      auto refCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+      refCellLocator->SetDataSet(poly_data_);
+      refCellLocator->BuildLocator();
+
+      double dist2_target, dist2_ref;
+      auto cell_target = vtkSmartPointer<vtkGenericCell>::New();
+      auto cell_ref = vtkSmartPointer<vtkGenericCell>::New();
+      vtkIdType cellId_target, cellId_ref;
+      int subId_target, subId_ref;
+      Point3 closestPoint_target, closestPoint_ref;
+
+
+      for (int i = 0; i < numPoints(); i++) {
+        poly_data_->GetPoint(i, currentPoint.GetDataPointer()); // ref point
+        // ref mesh point -> target mesh cell
+        targetCellLocator->FindClosestPoint(currentPoint.GetDataPointer(), closestPoint_target.GetDataPointer(), cell_target, cellId_target,
+                                            subId_target, dist2_target);
+        // target mesh closest point -> ref mesh cell                                    
+        refCellLocator->FindClosestPoint(closestPoint_target.GetDataPointer(), closestPoint_ref.GetDataPointer(), cell_ref, cellId_ref,
+                                            subId_ref, dist2_ref);
+        
+        ids->SetValue(i, cellId_target);
+        auto mean_sym_dist = (std::sqrt(dist2_target) + std::sqrt(dist2_ref))/2;
+        distance->SetValue(i, mean_sym_dist);
+      }
+    } break;
+
     default:
       throw std::invalid_argument("invalid distance method");
   }
