@@ -13,6 +13,8 @@ from DeepSSMUtils import model
 from DeepSSMUtils import losses
 from DeepSSMUtils import train_viz
 from DeepSSMUtils import loaders
+from DeepSSMUtils import net_utils
+from DeepSSMUtils import constants as C
 import DeepSSMUtils
 from shapeworks.utils import *
 
@@ -68,6 +70,7 @@ def set_scheduler(opt, sched_params):
 
 
 def train(project, config_file):
+    net_utils.set_seed(42)
     sw.utils.initialize_project_mesh_warper(project)
 
     with open(config_file) as json_file:
@@ -101,8 +104,8 @@ def supervised_train(config_file):
     fine_tune = parameters['fine_tune']['enabled']
     loss_func = method_to_call = getattr(losses, parameters["loss"]["function"])
     # load the loaders
-    train_loader_path = loader_dir + "train"
-    validation_loader_path = loader_dir + "validation"
+    train_loader_path = loader_dir + C.TRAIN_LOADER
+    validation_loader_path = loader_dir + C.VALIDATION_LOADER
     print("Loading data loaders...")
     train_loader = torch.load(train_loader_path, weights_only=False)
     val_loader = torch.load(validation_loader_path, weights_only=False)
@@ -119,8 +122,8 @@ def supervised_train(config_file):
     net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
     # these lines are for the fine tuning layer initialization
-    whiten_mean = np.load(loader_dir + '/mean_PCA.npy')
-    whiten_std = np.load(loader_dir + '/std_PCA.npy')
+    whiten_mean = np.load(loader_dir + '/' + C.MEAN_PCA_FILE)
+    whiten_std = np.load(loader_dir + '/' + C.STD_PCA_FILE)
     orig_mean = np.loadtxt(aug_dir + '/PCA_Particle_Info/mean.particles')
     orig_pc = np.zeros([num_pca, num_corr * 3])
     for i in range(num_pca):
@@ -146,7 +149,7 @@ def supervised_train(config_file):
     # train
     print("Beginning training on device = " + device + '\n')
     # Initialize logger
-    logger = open(model_dir + "train_log.csv", "w+", buffering=1)
+    logger = open(model_dir + C.TRAIN_LOG_FILE, "w+", buffering=1)
     log_print(logger, ["Training_Stage", "Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
     # Initialize training plot
     train_plot = plt.figure()
@@ -158,7 +161,7 @@ def supervised_train(config_file):
     axe.set_xlim(0, num_epochs + 1)
     axe.set_ylabel('Particle MSE')
     axe.legend()
-    train_plot.savefig(model_dir + "training_plot.png", dpi=300)
+    train_plot.savefig(model_dir + C.TRAINING_PLOT_FILE, dpi=300)
     # initialize
     epochs = []
     plot_train_losses = []
@@ -241,17 +244,17 @@ def supervised_train(config_file):
             sp_val.set_data(epochs, plot_val_losses)
             axe.set_ylim(0, max(max(plot_train_losses), max(plot_val_losses)) + 3)
             train_plot.canvas.draw()
-            train_plot.savefig(model_dir + "training_plot.png")
+            train_plot.savefig(model_dir + C.TRAINING_PLOT_FILE)
             # save
             if val_rel_err < best_val_rel_error:
                 best_val_rel_error = val_rel_err
                 best_epoch = e
-                torch.save(net.state_dict(), os.path.join(model_dir, 'best_model.torch'))
+                torch.save(net.state_dict(), os.path.join(model_dir, C.BEST_MODEL_FILE))
             t0 = time.time()
         if decay_lr:
             scheduler.step()
 
-    torch.save(net.state_dict(), os.path.join(model_dir, 'final_model.torch'))
+    torch.save(net.state_dict(), os.path.join(model_dir, C.FINAL_MODEL_FILE))
     parameters['best_model_epochs'] = best_epoch
     with open(config_file, "w") as json_file:
         json.dump(parameters, json_file, indent=2)
@@ -290,7 +293,7 @@ def supervised_train(config_file):
         axe.set_xlim(0, ft_epochs + 1)
         axe.set_ylabel('Particle MSE')
         axe.legend()
-        train_plot.savefig(model_dir + "training_plot_ft.png", dpi=300)
+        train_plot.savefig(model_dir + C.TRAINING_PLOT_FT_FILE, dpi=300)
         epochs = []
         plot_train_losses = []
         plot_val_losses = []
@@ -355,7 +358,7 @@ def supervised_train(config_file):
                     if val_rel_loss < best_ft_val_rel_error:
                         best_ft_val_rel_error = val_rel_loss
                         best_ft_epoch = e
-                        torch.save(net.state_dict(), os.path.join(model_dir, 'best_model_ft.torch'))
+                        torch.save(net.state_dict(), os.path.join(model_dir, C.BEST_MODEL_FT_FILE))
                     pred_particles.extend(pred_mdl.detach().cpu().numpy())
                     true_particles.extend(mdl.detach().cpu().numpy())
                 train_viz.write_examples(np.array(pred_particles), np.array(true_particles), val_names,
@@ -376,12 +379,12 @@ def supervised_train(config_file):
                 sp_val.set_data(epochs, plot_val_losses)
                 axe.set_ylim(0, max(max(plot_train_losses), max(plot_val_losses)) + 3)
                 train_plot.canvas.draw()
-                train_plot.savefig(model_dir + "training_plot_ft.png")
+                train_plot.savefig(model_dir + C.TRAINING_PLOT_FT_FILE)
 
                 t0 = time.time()
 
         logger.close()
-        torch.save(net.state_dict(), os.path.join(model_dir, 'final_model_ft.torch'))
+        torch.save(net.state_dict(), os.path.join(model_dir, C.FINAL_MODEL_FT_FILE))
 
         parameters['best_ft_model_epochs'] = best_ft_epoch
         with open(config_file, "w") as json_file:
@@ -411,8 +414,8 @@ def supervised_train_tl(config_file):
     a_lat = parameters["tl_net"]["a_lat"]
     c_lat = parameters["tl_net"]["c_lat"]
     # load the loaders
-    train_loader_path = loader_dir + "train"
-    validation_loader_path = loader_dir + "validation"
+    train_loader_path = loader_dir + C.TRAIN_LOADER
+    validation_loader_path = loader_dir + C.VALIDATION_LOADER
     print("Loading data loaders...")
     train_loader = torch.load(train_loader_path)
     val_loader = torch.load(validation_loader_path)
@@ -447,7 +450,7 @@ def supervised_train_tl(config_file):
     axe.set_xlim(0, ae_epochs + 1)
     axe.set_ylabel('Particle MSE')
     axe.legend()
-    train_plot.savefig(model_dir + "training_plot_ae.png", dpi=300)
+    train_plot.savefig(model_dir + C.TRAINING_PLOT_AE_FILE, dpi=300)
     # initialize
     epochs = []
     plot_train_losses = []
@@ -540,10 +543,10 @@ def supervised_train_tl(config_file):
             sp_val.set_data(epochs, plot_val_losses)
             axe.set_ylim(0, max(max(plot_train_losses), max(plot_val_losses)) + 3)
             train_plot.canvas.draw()
-            train_plot.savefig(model_dir + "training_plot_ae.png")
+            train_plot.savefig(model_dir + C.TRAINING_PLOT_AE_FILE)
             t0 = time.time()
     # save
-    torch.save(net.state_dict(), os.path.join(model_dir, 'final_model_ae.torch'))
+    torch.save(net.state_dict(), os.path.join(model_dir, C.FINAL_MODEL_AE_FILE))
     # fix the autoencoder and train the TL-net
     for param in net.CorrespondenceDecoder.parameters():
         param.requires_grad = False
@@ -563,7 +566,7 @@ def supervised_train_tl(config_file):
     axe.set_xlim(0, tf_epochs + 1)
     axe.set_ylabel('Particle MSE')
     axe.legend()
-    train_plot.savefig(model_dir + "training_plot_tf.png", dpi=300)
+    train_plot.savefig(model_dir + C.TRAINING_PLOT_TF_FILE, dpi=300)
     # initialize
     t0 = time.time()
     epochs = []
@@ -650,10 +653,10 @@ def supervised_train_tl(config_file):
             sp_val.set_data(epochs, plot_val_losses)
             axe.set_ylim(0, max(max(plot_train_losses), max(plot_val_losses)) + 3)
             train_plot.canvas.draw()
-            train_plot.savefig(model_dir + "training_plot_tf.png")
+            train_plot.savefig(model_dir + C.TRAINING_PLOT_TF_FILE)
             t0 = time.time()
     # save
-    torch.save(net.state_dict(), os.path.join(model_dir, 'final_model_tf.torch'))
+    torch.save(net.state_dict(), os.path.join(model_dir, C.FINAL_MODEL_TF_FILE))
     # jointly train the model
     joint_epochs = parameters['tl_net']['joint_epochs']
     alpha = parameters['tl_net']['alpha']
@@ -673,7 +676,7 @@ def supervised_train_tl(config_file):
     axe.set_xlim(0, joint_epochs + 1)
     axe.set_ylabel('Particle MSE')
     axe.legend()
-    train_plot.savefig(model_dir + "training_plot_joint.png", dpi=300)
+    train_plot.savefig(model_dir + C.TRAINING_PLOT_JOINT_FILE, dpi=300)
     # initialize
     epochs = []
     plot_train_losses = []
@@ -771,19 +774,19 @@ def supervised_train_tl(config_file):
             sp_val.set_data(epochs, plot_val_losses)
             axe.set_ylim(0, max(max(plot_train_losses), max(plot_val_losses)) + 3)
             train_plot.canvas.draw()
-            train_plot.savefig(model_dir + "training_plot_joint.png")
+            train_plot.savefig(model_dir + C.TRAINING_PLOT_JOINT_FILE)
             # save
             val_rel_err = val_rel_ae_err + alpha * val_rel_tf_err
             if val_rel_err < best_val_rel_error:
                 best_val_rel_error = val_rel_err
                 best_epoch = e
-                torch.save(net.state_dict(), os.path.join(model_dir, 'best_model.torch'))
+                torch.save(net.state_dict(), os.path.join(model_dir, C.BEST_MODEL_FILE))
             t0 = time.time()
         if decay_lr:
             scheduler.step()
 
     logger.close()
-    torch.save(net.state_dict(), os.path.join(model_dir, 'final_model.torch'))
+    torch.save(net.state_dict(), os.path.join(model_dir, C.FINAL_MODEL_FILE))
     parameters['best_model_epochs'] = best_epoch
     with open(config_file, "w") as json_file:
         json.dump(parameters, json_file, indent=2)

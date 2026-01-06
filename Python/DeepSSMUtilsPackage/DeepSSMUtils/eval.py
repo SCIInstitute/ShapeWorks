@@ -6,6 +6,7 @@ from numpy import matlib
 import torch
 from torch.utils.data import DataLoader
 from DeepSSMUtils import model, loaders
+from DeepSSMUtils import constants as C
 from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
@@ -24,9 +25,9 @@ def test(config_file, loader="test"):
     pred_dir = model_dir + loader + '_predictions/'
     loaders.make_dir(pred_dir)
     if parameters["use_best_model"]:
-        model_path = model_dir + 'best_model.torch'
+        model_path = model_dir + C.BEST_MODEL_FILE
     else:
-        model_path = model_dir + 'final_model.torch'
+        model_path = model_dir + C.FINAL_MODEL_FILE
     if parameters["fine_tune"]["enabled"]:
         model_path_ft = model_path.replace(".torch", "_ft.torch")
     else:
@@ -67,9 +68,9 @@ def test(config_file, loader="test"):
     index = 0
     pred_scores = []
 
-    pred_path = pred_dir + 'world_predictions/'
+    pred_path = pred_dir + C.WORLD_PREDICTIONS_DIR + '/'
     loaders.make_dir(pred_path)
-    pred_path_pca = pred_dir + 'pca_predictions/'
+    pred_path_pca = pred_dir + C.PCA_PREDICTIONS_DIR + '/'
     loaders.make_dir(pred_path_pca)
 
     predicted_particle_files = []
