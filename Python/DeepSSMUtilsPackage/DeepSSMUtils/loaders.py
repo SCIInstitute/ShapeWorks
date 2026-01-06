@@ -9,6 +9,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 import shapeworks as sw
 from shapeworks.utils import sw_message
+from DeepSSMUtils import constants as C
 random.seed(1)
 
 ######################## Data loading functions ####################################
@@ -44,7 +45,7 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
-	train_path = loader_dir + 'train'
+	train_path = loader_dir + C.TRAIN_LOADER
 	torch.save(trainloader, train_path)
 
 	validationloader = DataLoader(
@@ -54,7 +55,7 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
-	val_path = loader_dir + 'validation'
+	val_path = loader_dir + C.VALIDATION_LOADER
 	torch.save(validationloader, val_path)
 	sw_message("Training and validation loaders complete.\n")
 	return train_path, val_path
@@ -77,7 +78,7 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
 			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
-	train_path = loader_dir + 'train'
+	train_path = loader_dir + C.TRAIN_LOADER
 	torch.save(trainloader, train_path)
 	sw_message("Training loader complete.")
 	return train_path
@@ -102,10 +103,10 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 		mdl = get_particles(val_particles[index])
 		models.append(mdl)
 	# Write test names to file so they are saved somewhere
-	name_file = open(loader_dir + 'validation_names.txt', 'w+')
+	name_file = open(loader_dir + C.VALIDATION_NAMES_FILE, 'w+')
 	name_file.write(str(names))
 	name_file.close()
-	sw_message("Validation names saved to: " + loader_dir + "validation_names.txt")
+	sw_message("Validation names saved to: " + loader_dir + C.VALIDATION_NAMES_FILE)
 	images = get_images(loader_dir, image_paths, down_factor, down_dir)
 	val_data = DeepSSMdataset(images, scores, models, names)
 	# Make loader
@@ -116,7 +117,7 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
-	val_path = loader_dir + 'validation'
+	val_path = loader_dir + C.VALIDATION_LOADER
 	torch.save(val_loader, val_path)
 	sw_message("Validation loader complete.")
 	return val_path
@@ -143,10 +144,10 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None, num
 	images = get_images(loader_dir, image_paths, down_factor, down_dir)
 	test_data = DeepSSMdataset(images, scores, models, test_names)
 	# Write test names to file so they are saved somewhere
-	name_file = open(loader_dir + 'test_names.txt', 'w+')
+	name_file = open(loader_dir + C.TEST_NAMES_FILE, 'w+')
 	name_file.write(str(test_names))
 	name_file.close()
-	sw_message("Test names saved to: " + loader_dir + "test_names.txt")
+	sw_message("Test names saved to: " + loader_dir + C.TEST_NAMES_FILE)
 	# Make loader
 	testloader = DataLoader(
 			test_data,
@@ -155,7 +156,7 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None, num
 			num_workers=num_workers,
 			pin_memory=torch.cuda.is_available()
 		)
-	test_path = loader_dir + 'test'
+	test_path = loader_dir + C.TEST_LOADER
 	torch.save(testloader, test_path)
 	sw_message("Test loader complete.")
 	return test_path, test_names
@@ -268,8 +269,8 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
 
 	all_images = np.array(all_images)
 	# get mean and std
-	mean_path = loader_dir + 'mean_img.npy'
-	std_path = loader_dir + 'std_img.npy'
+	mean_path = loader_dir + C.MEAN_IMG_FILE
+	std_path = loader_dir + C.STD_IMG_FILE
 	mean_image = np.mean(all_images)
 	std_image = np.std(all_images)
 	np.save(mean_path, mean_image)
@@ -305,8 +306,8 @@ def whiten_PCA_scores(scores, loader_dir):
 	scores = np.array(scores)
 	mean_score = np.mean(scores, 0)
 	std_score = np.std(scores, 0)
-	np.save(loader_dir + 'mean_PCA.npy', mean_score)
-	np.save(loader_dir + 'std_PCA.npy', std_score)
+	np.save(loader_dir + C.MEAN_PCA_FILE, mean_score)
+	np.save(loader_dir + C.STD_PCA_FILE, std_score)
 	norm_scores = []
 	for score in scores:
 		norm_scores.append((score-mean_score)/std_score)
