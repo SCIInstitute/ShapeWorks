@@ -538,7 +538,8 @@ def process_test_predictions(project, config_file):
                                               template_particles, template_mesh, pred_dir)
 
     print("Distances: ", distances)
-    print("Mean distance: ", np.mean(distances))
+    mean_distance = np.mean(distances)
+    print("Mean distance: ", mean_distance)
 
     # write to csv file in deepssm_dir
     csv_file = f"{deepssm_dir}/test_distances.csv"
@@ -561,3 +562,5 @@ def process_test_predictions(project, config_file):
         mesh = sw.Mesh(local_mesh_file)
         mesh.applyTransform(transform)
         mesh.write(world_mesh_file)
+
+    return mean_distance

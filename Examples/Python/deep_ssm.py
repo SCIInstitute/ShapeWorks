@@ -529,10 +529,10 @@ def Run_Pipeline(args):
                                                      planes=test_planes)
         print("Test mean mesh surface-to-surface distance: " + str(mean_dist))
 
-        DeepSSMUtils.process_test_predictions(project, config_file)
-        
+        final_mean_dist = DeepSSMUtils.process_test_predictions(project, config_file)
+
         # If tiny test or verify, check results and exit
-        check_results(args, mean_dist)
+        check_results(args, final_mean_dist, output_directory)
 
         open(status_dir + "step_12.txt", 'w').close()
 
@@ -540,12 +540,35 @@ def Run_Pipeline(args):
 
 
 # Verification
-def check_results(args, mean_dist):
+def check_results(args, mean_dist, output_directory):
     if args.tiny_test:
         print("\nVerifying use case results.")
-        if not math.isclose(mean_dist, 10, rel_tol=1):
-            print("Test failed.")
-            exit(-1)
+
+        exact_check_file = output_directory + "exact_check_value.txt"
+
+        # Exact check for refactoring verification (platform-specific)
+        if args.exact_check == "save":
+            with open(exact_check_file, "w") as f:
+                f.write(str(mean_dist))
+            print(f"Saved exact check value to: {exact_check_file}")
+            print(f"Value: {mean_dist}")
+        elif args.exact_check == "verify":
+            if not os.path.exists(exact_check_file):
+                print(f"Error: No saved value found at {exact_check_file}")
+                print("Run with --exact_check save first to create baseline.")
+                exit(-1)
+            with open(exact_check_file, "r") as f:
+                expected_mean_dist = float(f.read().strip())
+            if mean_dist != expected_mean_dist:
+                print(f"Exact check failed: expected {expected_mean_dist}, got {mean_dist}")
+                exit(-1)
+            print(f"Exact check passed: {mean_dist}")
+        else:
+            # Relaxed check for CI/cross-platform
+            if not math.isclose(mean_dist, 10, rel_tol=1):
+                print("Test failed.")
+                exit(-1)
+
         print("Done with test, verification succeeded.")
         exit(0)
     else:
