@@ -69,6 +69,8 @@ if __name__ == '__main__':
     parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
     parser.add_argument("--verify", help="Run as a full test", action="store_true")
     parser.add_argument("--clean", help="Run from scratch, ignoring intermediate stages", action="store_true")
+    parser.add_argument("--exact_check", help="Save or verify exact values for refactoring verification (platform-specific)",
+                        choices=["save", "verify"])
     args = parser.parse_args()
 
     type = ""
