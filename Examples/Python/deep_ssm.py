@@ -552,7 +552,8 @@ def check_results(args, mean_dist, output_directory):
     if args.tiny_test:
         print("\nVerifying use case results.")
 
-        exact_check_file = output_directory + "exact_check_value.txt"
+        suffix = "_tl_net" if args.tl_net else ""
+        exact_check_file = output_directory + f"exact_check_value{suffix}.txt"
 
         # Exact check for refactoring verification (platform-specific)
         if args.exact_check == "save":
