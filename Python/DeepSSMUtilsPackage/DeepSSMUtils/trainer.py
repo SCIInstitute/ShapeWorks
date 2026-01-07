@@ -418,8 +418,8 @@ def supervised_train_tl(config_file):
     train_loader_path = loader_dir + C.TRAIN_LOADER
     validation_loader_path = loader_dir + C.VALIDATION_LOADER
     print("Loading data loaders...")
-    train_loader = torch.load(train_loader_path)
-    val_loader = torch.load(validation_loader_path)
+    train_loader = torch.load(train_loader_path, weights_only=False)
+    val_loader = torch.load(validation_loader_path, weights_only=False)
     print("Done.")
     print("Defining model...")
     net = model.DeepSSMNet_TLNet(config_file)

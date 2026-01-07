@@ -87,18 +87,18 @@ def test(config_file, loader="test"):
             [pred_tf, pred_mdl_tl] = model_tl(mdl, img)
             pred_scores.append(pred_tf.cpu().data.numpy())
             # save the AE latent space as shape descriptors
-            filename = pred_path + test_names[index] + '.npy'
-            np.save(filename, pred_tf.squeeze().detach().cpu().numpy())
+            latent_filename = pred_path + test_names[index] + '.npy'
+            np.save(latent_filename, pred_tf.squeeze().detach().cpu().numpy())
             np.savetxt(particle_filename, pred_mdl_tl.squeeze().detach().cpu().numpy())
         else:
             [pred, pred_mdl_pca] = model_pca(img)
             [pred, pred_mdl_ft] = model_ft(img)
             pred_scores.append(pred.cpu().data.numpy()[0])
-            filename = pred_path_pca + '/predicted_pca_' + test_names[index] + '.particles'
-            np.savetxt(filename, pred_mdl_pca.squeeze().detach().cpu().numpy())
+            pca_filename = pred_path_pca + '/predicted_pca_' + test_names[index] + '.particles'
+            np.savetxt(pca_filename, pred_mdl_pca.squeeze().detach().cpu().numpy())
             np.savetxt(particle_filename, pred_mdl_ft.squeeze().detach().cpu().numpy())
             print("Predicted particle file: ", particle_filename)
-        predicted_particle_files.append(filename)
+        predicted_particle_files.append(particle_filename)
         index += 1
     sw_message("Test completed.")
     return predicted_particle_files
