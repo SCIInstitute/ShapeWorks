@@ -15,6 +15,7 @@ from DeepSSMUtils import train_viz
 from DeepSSMUtils import loaders
 from DeepSSMUtils import net_utils
 from DeepSSMUtils import constants as C
+from DeepSSMUtils import config_validation
 import DeepSSMUtils
 from shapeworks.utils import *
 
@@ -73,8 +74,8 @@ def train(project, config_file):
     net_utils.set_seed(42)
     sw.utils.initialize_project_mesh_warper(project)
 
-    with open(config_file) as json_file:
-        parameters = json.load(json_file)
+    # Validate config file before training
+    parameters = config_validation.validate_config(config_file)
     if parameters["tl_net"]["enabled"]:
         supervised_train_tl(config_file)
     else:

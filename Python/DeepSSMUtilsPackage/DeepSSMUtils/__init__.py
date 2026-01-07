@@ -10,6 +10,7 @@ from DeepSSMUtils import image_utils
 from DeepSSMUtils import run_utils
 from DeepSSMUtils import net_utils
 from DeepSSMUtils import constants
+from DeepSSMUtils import config_validation
 
 from .net_utils import set_seed
 
