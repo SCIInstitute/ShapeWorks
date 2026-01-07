@@ -12,6 +12,11 @@ from shapeworks.utils import sw_message
 from DeepSSMUtils import constants as C
 random.seed(1)
 
+
+class DataLoadingError(Exception):
+    """Raised when data loading fails."""
+    pass
+
 ######################## Data loading functions ####################################
 
 '''
@@ -88,6 +93,14 @@ Makes validation data loader
 '''
 def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None, num_workers=0):
 	sw_message("Creating validation torch loader:")
+	if not val_img_list:
+		raise DataLoadingError("Validation image list is empty")
+	if not val_particles:
+		raise DataLoadingError("Validation particle list is empty")
+	if len(val_img_list) != len(val_particles):
+		raise DataLoadingError(
+			f"Mismatched validation data: {len(val_img_list)} images but {len(val_particles)} particle files"
+		)
 	# Get data
 	image_paths = []
 	scores = []
@@ -127,6 +140,8 @@ Makes test data loader
 '''
 def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None, num_workers=0):
 	sw_message("Creating test torch loader...")
+	if not test_img_list:
+		raise DataLoadingError("Test image list is empty")
 	# get data
 	image_paths = []
 	scores = []
@@ -167,37 +182,47 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None, num
 returns images, scores, models, prefixes from CSV
 '''
 def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
+	if not os.path.exists(data_csv):
+		raise DataLoadingError(f"CSV file not found: {data_csv}")
 	# get all data and targets
 	image_paths = []
 	scores = []
 	models = []
 	prefixes = []
-	with open(data_csv, newline='') as csvfile:
-		datareader = csv.reader(csvfile)
-		index = 0
-		for row in datareader:
-			image_path = row[0]
-			model_path = row[1]
-			pca_scores = row[2:]
-			# add name
-			prefix = get_prefix(image_path)
-			# data error check
-			# if prefix not in get_prefix(model_path):
-			# 	print("Error: Images and particles are mismatched in csv.")
-			# 	print(f"index: {index}")
-			# 	print(f"prefix: {prefix}")
-			# 	print(f"get_prefix(model_path): {get_prefix(model_path)}}")
-			# 	exit()
-			prefixes.append(prefix)
-			# add image path
-			image_paths.append(image_path)
-			# add score (un-normalized)
-			pca_scores = [float(i) for i in pca_scores]
-			scores.append(pca_scores)
-			# add model
-			mdl = get_particles(model_path)
-			models.append(mdl)
-			index += 1
+	try:
+		with open(data_csv, newline='') as csvfile:
+			datareader = csv.reader(csvfile)
+			for row_num, row in enumerate(datareader, 1):
+				if len(row) < 3:
+					raise DataLoadingError(
+						f"Invalid row {row_num} in {data_csv}: expected at least 3 columns "
+						f"(image_path, model_path, pca_scores), got {len(row)}"
+					)
+				image_path = row[0]
+				model_path = row[1]
+				pca_scores = row[2:]
+				# add name
+				prefix = get_prefix(image_path)
+				prefixes.append(prefix)
+				# add image path
+				image_paths.append(image_path)
+				# add score (un-normalized)
+				try:
+					pca_scores = [float(i) for i in pca_scores]
+				except ValueError as e:
+					raise DataLoadingError(
+						f"Invalid PCA scores in {data_csv} at row {row_num}: {e}"
+					)
+				scores.append(pca_scores)
+				# add model
+				mdl = get_particles(model_path)
+				models.append(mdl)
+	except csv.Error as e:
+		raise DataLoadingError(f"Error parsing CSV file {data_csv}: {e}")
+
+	if not image_paths:
+		raise DataLoadingError(f"CSV file is empty: {data_csv}")
+
 	images = get_images(loader_dir, image_paths, down_factor, down_dir)
 	scores = whiten_PCA_scores(scores, loader_dir)
 	return images, scores, models, prefixes 
@@ -241,18 +266,32 @@ def get_prefix(path):
 get list from .particles format
 '''
 def get_particles(model_path):
-	f = open(model_path, "r")
-	data = []
-	for line in f.readlines():
-		points = line.split()
-		points = [float(i) for i in points]
-		data.append(points)
-	return(data)
+	if not os.path.exists(model_path):
+		raise DataLoadingError(f"Particle file not found: {model_path}")
+	try:
+		with open(model_path, "r") as f:
+			data = []
+			for line_num, line in enumerate(f.readlines(), 1):
+				points = line.split()
+				try:
+					points = [float(i) for i in points]
+				except ValueError as e:
+					raise DataLoadingError(
+						f"Invalid particle data in {model_path} at line {line_num}: {e}"
+					)
+				data.append(points)
+		if not data:
+			raise DataLoadingError(f"Particle file is empty: {model_path}")
+		return data
+	except IOError as e:
+		raise DataLoadingError(f"Error reading particle file {model_path}: {e}")
 
 '''
 reads .nrrd files and returns whitened data
 '''
 def get_images(loader_dir, image_list, down_factor, down_dir):
+	if not image_list:
+		raise DataLoadingError("Image list is empty")
 	# get all images
 	all_images = []
 	for image_path in image_list:
@@ -263,8 +302,13 @@ def get_images(loader_dir, image_list, down_factor, down_dir):
 			if not os.path.exists(res_img):
 				apply_down_sample(image_path, res_img, down_factor)
 			image_path = res_img
-        # for_viewing returns 'F' order, i.e., transpose, needed for this array
-		img = sw.Image(image_path).toArray(copy=True, for_viewing=True)
+		if not os.path.exists(image_path):
+			raise DataLoadingError(f"Image file not found: {image_path}")
+		try:
+			# for_viewing returns 'F' order, i.e., transpose, needed for this array
+			img = sw.Image(image_path).toArray(copy=True, for_viewing=True)
+		except Exception as e:
+			raise DataLoadingError(f"Error reading image {image_path}: {e}")
 		all_images.append(img)
 
 	all_images = np.array(all_images)
