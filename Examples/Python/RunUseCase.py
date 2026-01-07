@@ -74,6 +74,12 @@ if __name__ == '__main__':
     parser.add_argument("--tl_net", help="Enable TL-DeepSSM network (deep_ssm use case only)", action="store_true")
     args = parser.parse_args()
 
+    # Validate deep_ssm-specific arguments
+    if args.exact_check and args.use_case != "deep_ssm":
+        parser.error("--exact_check is only supported for the deep_ssm use case")
+    if args.tl_net and args.use_case != "deep_ssm":
+        parser.error("--tl_net is only supported for the deep_ssm use case")
+
     type = ""
     if args.tiny_test:
         type = "tiny_test_"
