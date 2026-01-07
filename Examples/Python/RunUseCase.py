@@ -71,6 +71,7 @@ if __name__ == '__main__':
     parser.add_argument("--clean", help="Run from scratch, ignoring intermediate stages", action="store_true")
     parser.add_argument("--exact_check", help="Save or verify exact values for refactoring verification (platform-specific)",
                         choices=["save", "verify"])
+    parser.add_argument("--tl_net", help="Enable TL-DeepSSM network (deep_ssm use case only)", action="store_true")
     args = parser.parse_args()
 
     type = ""

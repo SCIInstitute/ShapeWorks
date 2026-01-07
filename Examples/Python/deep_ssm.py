@@ -385,7 +385,7 @@ def Run_Pipeline(args):
             },
             "use_best_model": True,
             "tl_net": {
-                "enabled": False,
+                "enabled": args.tl_net,
                 "ae_epochs": 100,
                 "tf_epochs": 100,
                 "joint_epochs": 25,
@@ -398,6 +398,10 @@ def Run_Pipeline(args):
         }
         if args.tiny_test:
             model_parameters["trainer"]["epochs"] = 1
+            if args.tl_net:
+                model_parameters["tl_net"]["ae_epochs"] = 1
+                model_parameters["tl_net"]["tf_epochs"] = 1
+                model_parameters["tl_net"]["joint_epochs"] = 1
         # Save config file
         with open(config_file, "w") as outfile:
             json.dump(model_parameters, outfile, indent=2)
@@ -436,17 +440,17 @@ def Run_Pipeline(args):
             val_world_particles.append(project_path + subjects[index].get_world_particle_filenames()[0])
             val_mesh_files.append(project_path + subjects[index].get_groomed_filenames()[0])
 
-        val_out_dir = output_directory + model_name + '/validation_predictions/'
         predicted_val_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='validation')
         print("Validation world predictions saved.")
-        # Generate local predictions
-        local_val_prediction_dir = val_out_dir + 'local_predictions/'
+        # Generate local predictions - create directory next to world_predictions
+        world_pred_dir = os.path.dirname(predicted_val_world_particles[0])
+        local_val_prediction_dir = world_pred_dir.replace("world_predictions", "local_predictions")
         if not os.path.exists(local_val_prediction_dir):
             os.makedirs(local_val_prediction_dir)
         predicted_val_local_particles = []
         for particle_file, transform in zip(predicted_val_world_particles, val_transforms):
             particles = np.loadtxt(particle_file)
-            local_particle_file = particle_file.replace("world_predictions/", "local_predictions/")
+            local_particle_file = particle_file.replace("world_predictions", "local_predictions")
             local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
             np.savetxt(local_particle_file, local_particles)
             predicted_val_local_particles.append(local_particle_file)
@@ -462,6 +466,8 @@ def Run_Pipeline(args):
         template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
         template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
         # Get distance between clipped true and predicted meshes
+        # Get the validation output directory from the predictions path
+        val_out_dir = os.path.dirname(local_val_prediction_dir.rstrip('/')) + '/'
         mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files,
                                                      template_particles, template_mesh, val_out_dir,
                                                      planes=val_planes)
@@ -500,17 +506,17 @@ def Run_Pipeline(args):
             with open(plane_file) as json_file:
                 test_planes.append(json.load(json_file)['planes'][0]['points'])
 
-        test_out_dir = output_directory + model_name + '/test_predictions/'
         predicted_test_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='test')
         print("Test world predictions saved.")
-        # Generate local predictions
-        local_test_prediction_dir = test_out_dir + 'local_predictions/'
+        # Generate local predictions - create directory next to world_predictions
+        world_pred_dir = os.path.dirname(predicted_test_world_particles[0])
+        local_test_prediction_dir = world_pred_dir.replace("world_predictions", "local_predictions")
         if not os.path.exists(local_test_prediction_dir):
             os.makedirs(local_test_prediction_dir)
         predicted_test_local_particles = []
         for particle_file, transform in zip(predicted_test_world_particles, test_transforms):
             particles = np.loadtxt(particle_file)
-            local_particle_file = particle_file.replace("world_predictions/", "local_predictions/")
+            local_particle_file = particle_file.replace("world_predictions", "local_predictions")
             local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
             np.savetxt(local_particle_file, local_particles)
             predicted_test_local_particles.append(local_particle_file)
@@ -524,6 +530,8 @@ def Run_Pipeline(args):
         template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
         template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
 
+        # Get the test output directory from the predictions path
+        test_out_dir = os.path.dirname(local_test_prediction_dir.rstrip('/')) + '/'
         mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_test_local_particles, test_mesh_files,
                                                      template_particles, template_mesh, test_out_dir,
                                                      planes=test_planes)
