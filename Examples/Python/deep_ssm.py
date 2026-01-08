@@ -385,7 +385,7 @@ def Run_Pipeline(args):
             },
             "use_best_model": True,
             "tl_net": {
-                "enabled": args.tl_net,
+                "enabled": False,
                 "ae_epochs": 100,
                 "tf_epochs": 100,
                 "joint_epochs": 25,
@@ -396,12 +396,9 @@ def Run_Pipeline(args):
                 "c_lat": 6.3
             }
         }
+
         if args.tiny_test:
             model_parameters["trainer"]["epochs"] = 1
-            if args.tl_net:
-                model_parameters["tl_net"]["ae_epochs"] = 1
-                model_parameters["tl_net"]["tf_epochs"] = 1
-                model_parameters["tl_net"]["joint_epochs"] = 1
         # Save config file
         with open(config_file, "w") as outfile:
             json.dump(model_parameters, outfile, indent=2)
@@ -552,8 +549,7 @@ def check_results(args, mean_dist, output_directory):
     if args.tiny_test:
         print("\nVerifying use case results.")
 
-        suffix = "_tl_net" if args.tl_net else ""
-        exact_check_file = output_directory + f"exact_check_value{suffix}.txt"
+        exact_check_file = output_directory + "exact_check_value.txt"
 
         # Exact check for refactoring verification (platform-specific)
         if args.exact_check == "save":

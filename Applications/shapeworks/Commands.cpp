@@ -499,7 +499,7 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
 
   project->save();
 
-  return false;
+  return true;
 }
 
 }  // namespace shapeworks
