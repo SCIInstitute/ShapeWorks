@@ -43,6 +43,8 @@ def main():
                         help="Expected mean distance for relaxed check (default: 150.0)")
     parser.add_argument("--tolerance", type=float, default=1.0,
                         help="Relative tolerance for relaxed check (default: 1.0 = 100%%)")
+    parser.add_argument("--baseline_file", type=str, default="exact_check_value.txt",
+                        help="Filename for exact check baseline (default: exact_check_value.txt)")
     args = parser.parse_args()
 
     try:
@@ -52,7 +54,7 @@ def main():
         print(f"Error: {e}")
         sys.exit(1)
 
-    exact_check_file = os.path.join(args.project_dir, "exact_check_value.txt")
+    exact_check_file = os.path.join(args.project_dir, args.baseline_file)
 
     if args.exact_check == "save":
         with open(exact_check_file, "w") as f:
