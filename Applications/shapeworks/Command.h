@@ -33,7 +33,7 @@ public:
   const std::string desc() const { return parser.description(); }
   
   /// parses the arguments for this command, saving them in the parser and returning the leftovers
-  std::vector<std::string> parse_args(const std::vector<std::string> &arguments);
+  virtual std::vector<std::string> parse_args(const std::vector<std::string> &arguments);
 
   /// calls execute for this command using the parsed args, returning system exit value
   int run(SharedCommandData &sharedData);
@@ -107,6 +107,12 @@ class DeepSSMCommandGroup : public Command
 {
 public:
   const std::string type() override { return "DeepSSM"; }
+
+  // DeepSSM is a terminal command - don't pass remaining args to other commands
+  std::vector<std::string> parse_args(const std::vector<std::string> &arguments) override {
+    Command::parse_args(arguments);
+    return {};  // return empty - DeepSSM consumes all args
+  }
 
 private:
 };
