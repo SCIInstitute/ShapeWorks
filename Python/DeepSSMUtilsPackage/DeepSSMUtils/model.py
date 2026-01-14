@@ -6,6 +6,7 @@ import numpy as np
 from collections import OrderedDict
 from DeepSSMUtils import net_utils
 from DeepSSMUtils import constants as C
+from DeepSSMUtils import loaders
 
 
 class ConvolutionalBackbone(nn.Module):
@@ -106,10 +107,9 @@ class DeepSSMNet(nn.Module):
 			parameters = json.load(json_file)
 		self.num_latent = parameters['num_latent_dim']
 		self.loader_dir = parameters['paths']['loader_dir']
-		loader = torch.load(self.loader_dir + C.VALIDATION_LOADER, weights_only=False)
-		self.num_corr = loader.dataset.mdl_target[0].shape[0]
-		img_dims = loader.dataset.img[0].shape
-		self.img_dims = img_dims[1:]
+		loader_info = loaders.get_loader_info(self.loader_dir + C.VALIDATION_LOADER)
+		self.num_corr = loader_info['num_corr']
+		self.img_dims = loader_info['img_dims']
 		# encoder
 		if parameters['encoder']['deterministic']:
 			self.encoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir )
@@ -178,10 +178,9 @@ class DeepSSMNet_TLNet(nn.Module):
 			parameters = json.load(json_file)
 		self.num_latent = parameters['num_latent_dim']
 		self.loader_dir = parameters['paths']['loader_dir']
-		loader = torch.load(self.loader_dir + C.VALIDATION_LOADER, weights_only=False)
-		self.num_corr = loader.dataset.mdl_target[0].shape[0]
-		img_dims = loader.dataset.img[0].shape
-		self.img_dims = img_dims[1:]
+		loader_info = loaders.get_loader_info(self.loader_dir + C.VALIDATION_LOADER)
+		self.num_corr = loader_info['num_corr']
+		self.img_dims = loader_info['img_dims']
 		self.CorrespondenceEncoder = CorrespondenceEncoder(self.num_latent, self.num_corr)
 		self.CorrespondenceDecoder = CorrespondenceDecoder(self.num_latent, self.num_corr)
 		self.ImageEncoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir)
