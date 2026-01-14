@@ -71,7 +71,11 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
                                                                   Mesh::AlignmentType align, const unsigned iterations,
                                                                   bool meshTransform) {
   if (source.numPoints() == 0 || target.numPoints() == 0) {
-    throw std::invalid_argument("empty mesh passed to MeshUtils::createICPTransform");
+    SW_WARN("Empty mesh in createICPTransform: source has {} points, target has {} points - returning identity",
+            source.numPoints(), target.numPoints());
+    vtkSmartPointer<vtkMatrix4x4> identity = vtkSmartPointer<vtkMatrix4x4>::New();
+    identity->Identity();
+    return identity;
   }
 
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
