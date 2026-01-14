@@ -186,7 +186,17 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   std::string groomed_name = get_output_filename(original, DomainType::Image);
 
   if (params.get_convert_to_mesh()) {
+    // Use isovalue 0.0 for distance transforms (the zero level set is the surface)
     Mesh mesh = image.toMesh(0.0);
+    if (mesh.numPoints() == 0) {
+      throw std::runtime_error("Empty mesh generated from segmentation - segmentation may have no valid data");
+    }
+    // Check for valid cells
+    auto poly_data = mesh.getVTKMesh();
+    if (poly_data->GetNumberOfCells() == 0) {
+      throw std::runtime_error("Mesh has no cells - segmentation may have no valid surface");
+    }
+    SW_DEBUG("Mesh after toMesh: {} points, {} cells", poly_data->GetNumberOfPoints(), poly_data->GetNumberOfCells());
     run_mesh_pipeline(mesh, params, original);
     groomed_name = get_output_filename(original, DomainType::Mesh);
     // save the groomed mesh
@@ -239,6 +249,9 @@ bool Groom::run_image_pipeline(Image& image, GroomParameters params) {
   // crop
   if (params.get_crop()) {
     PhysicalRegion region = image.physicalBoundingBox(0.5);
+    if (!region.valid()) {
+      throw std::runtime_error("Empty segmentation - no voxels found above threshold for cropping");
+    }
     image.crop(region);
     increment_progress();
   }
@@ -1336,7 +1349,7 @@ std::vector<std::vector<double>> Groom::get_icp_transforms(const std::vector<Mes
       matrix->Identity();
 
       Mesh source = meshes[i];
-      if (source.getVTKMesh()->GetNumberOfPoints() != 0) {
+      if (source.getVTKMesh()->GetNumberOfPoints() != 0 && reference.getVTKMesh()->GetNumberOfPoints() != 0) {
         // create copies for thread safety
         auto poly_data1 = vtkSmartPointer<vtkPolyData>::New();
         poly_data1->DeepCopy(source.getVTKMesh());

@@ -32,10 +32,13 @@
 #include <itkThresholdImageFilter.h>
 #include <itkVTKImageExport.h>
 #include <itkVTKImageToImageFilter.h>
+#include <vtkCleanPolyData.h>
 #include <vtkContourFilter.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
+#include <vtkPolyDataConnectivityFilter.h>
+#include <vtkTriangleFilter.h>
 
 #include <boost/filesystem.hpp>
 #include <cmath>
@@ -1019,7 +1022,40 @@ Mesh Image::toMesh(PixelType isoValue) const {
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 
-  return Mesh(targetContour->GetOutput());
+  auto contourOutput = targetContour->GetOutput();
+
+  // Use vtkTriangleFilter FIRST to convert all polygons to proper triangles
+  // This removes degenerate cells that can crash downstream filters
+  auto triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+  triangleFilter->SetInputData(contourOutput);
+  triangleFilter->PassVertsOff();
+  triangleFilter->PassLinesOff();
+  triangleFilter->Update();
+
+  // Clean the mesh to remove degenerate points and merge duplicates
+  auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
+  clean->SetInputData(triangleFilter->GetOutput());
+  clean->ConvertPolysToLinesOff();
+  clean->ConvertLinesToPointsOff();
+  clean->ConvertStripsToPolysOff();
+  clean->PointMergingOn();
+  clean->SetTolerance(0.0);
+  clean->Update();
+
+  // Check if we have any data to process
+  auto cleanOutput = clean->GetOutput();
+  if (cleanOutput->GetNumberOfPoints() == 0 || cleanOutput->GetNumberOfCells() == 0) {
+    // Return empty mesh
+    return Mesh(cleanOutput);
+  }
+
+  // Use connectivity filter to extract only connected surface regions
+  auto connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  connectivity->SetInputData(cleanOutput);
+  connectivity->SetExtractionModeToLargestRegion();
+  connectivity->Update();
+
+  return Mesh(connectivity->GetOutput());
 }
 
 Image::PixelType Image::evaluate(Point p) {
@@ -1170,11 +1206,18 @@ TransformPtr Image::createRigidRegistrationTransform(const Image& target_dt, flo
   Mesh sourceContour = toMesh(isoValue);
   Mesh targetContour = target_dt.toMesh(isoValue);
 
+  // Check for empty meshes before attempting ICP
+  if (sourceContour.numPoints() == 0 || targetContour.numPoints() == 0) {
+    SW_WARN("Cannot create ICP transform: source has {} points, target has {} points",
+            sourceContour.numPoints(), targetContour.numPoints());
+    return AffineTransform::New();
+  }
+
   try {
     auto mat = MeshUtils::createICPTransform(sourceContour, targetContour, Mesh::Rigid, iterations);
     return shapeworks::createTransform(ShapeWorksUtils::convert_matrix(mat), ShapeWorksUtils::get_offset(mat));
-  } catch (std::invalid_argument) {
-    std::cerr << "failed to create ICP transform.\n";
+  } catch (std::invalid_argument& e) {
+    std::cerr << "failed to create ICP transform: " << e.what() << "\n";
     if (sourceContour.numPoints() == 0) {
       std::cerr << "\tspecified isoValue (" << isoValue << ") results in an empty mesh for source\n";
     }
