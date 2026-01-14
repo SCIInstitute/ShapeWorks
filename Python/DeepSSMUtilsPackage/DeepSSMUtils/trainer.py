@@ -108,8 +108,8 @@ def supervised_train(config_file):
     train_loader_path = loader_dir + C.TRAIN_LOADER
     validation_loader_path = loader_dir + C.VALIDATION_LOADER
     print("Loading data loaders...")
-    train_loader = torch.load(train_loader_path, weights_only=False)
-    val_loader = torch.load(validation_loader_path, weights_only=False)
+    train_loader = loaders.load_data_loader(train_loader_path, loader_type='train')
+    val_loader = loaders.load_data_loader(validation_loader_path, loader_type='validation')
     print("Done.")
     # initializations
     num_pca = train_loader.dataset.pca_target[0].shape[0]
@@ -418,8 +418,8 @@ def supervised_train_tl(config_file):
     train_loader_path = loader_dir + C.TRAIN_LOADER
     validation_loader_path = loader_dir + C.VALIDATION_LOADER
     print("Loading data loaders...")
-    train_loader = torch.load(train_loader_path, weights_only=False)
-    val_loader = torch.load(validation_loader_path, weights_only=False)
+    train_loader = loaders.load_data_loader(train_loader_path, loader_type='train')
+    val_loader = loaders.load_data_loader(validation_loader_path, loader_type='validation')
     print("Done.")
     print("Defining model...")
     net = model.DeepSSMNet_TLNet(config_file)
