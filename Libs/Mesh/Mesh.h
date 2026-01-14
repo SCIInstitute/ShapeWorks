@@ -302,6 +302,8 @@ class Mesh {
   //! given name
   void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);
 
+  std::string checkIntegrity() const;
+
  private:
   friend struct SharedCommandData;
   Mesh()
