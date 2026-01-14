@@ -36,7 +36,7 @@ def test(config_file, loader="test"):
 
     # load the loaders
     sw_message("Loading " + loader + " data loader...")
-    test_loader = torch.load(loader_dir + loader, weights_only=False)
+    test_loader = loaders.load_data_loader(loader_dir + loader, loader_type='test')
 
     # initialization
     sw_message("Loading trained model...")
