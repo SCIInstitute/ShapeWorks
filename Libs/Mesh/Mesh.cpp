@@ -606,6 +606,24 @@ Mesh& Mesh::fixNonManifold() {
 }
 
 Mesh& Mesh::extractLargestComponent() {
+  // Check for valid cells before attempting connectivity filter
+  if (poly_data_->GetNumberOfCells() == 0) {
+    SW_WARN("extractLargestComponent: mesh has no cells");
+    return *this;
+  }
+
+  // Verify mesh has at least some valid cells
+  bool hasValidCells = false;
+  for (vtkIdType i = 0; i < poly_data_->GetNumberOfCells() && !hasValidCells; i++) {
+    if (poly_data_->GetCellType(i) != 0) {  // VTK_EMPTY_CELL = 0
+      hasValidCells = true;
+    }
+  }
+  if (!hasValidCells) {
+    SW_WARN("extractLargestComponent: mesh has no valid cells (all cells are type 0)");
+    return *this;
+  }
+
   auto connectivityFilter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
   connectivityFilter->SetExtractionModeToLargestRegion();
   connectivityFilter->SetInputData(poly_data_);
@@ -1603,6 +1621,14 @@ bool Mesh::compare(const Mesh& other, const double eps) const {
 
 MeshTransform Mesh::createRegistrationTransform(const Mesh& target, Mesh::AlignmentType align,
                                                 unsigned iterations) const {
+  // Check for empty meshes before attempting ICP
+  if (numPoints() == 0 || target.numPoints() == 0) {
+    SW_WARN("Cannot create registration transform: source has {} points, target has {} points",
+            numPoints(), target.numPoints());
+    vtkSmartPointer<vtkMatrix4x4> identity = vtkSmartPointer<vtkMatrix4x4>::New();
+    identity->Identity();
+    return createMeshTransform(identity);
+  }
   const vtkSmartPointer<vtkMatrix4x4> mat(
       MeshUtils::createICPTransform(this->poly_data_, target.getVTKMesh(), align, iterations, true));
   return createMeshTransform(mat);
