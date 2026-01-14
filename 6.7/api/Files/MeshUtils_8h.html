@@ -3811,11 +3811,19 @@
 <span class="w">                                          </span><span class="kt">double</span><span class="w"> </span><span class="n">pt3</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
 <span class="w">                                          </span><span class="kt">double</span><span class="w"> </span><span class="n">pt1</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
 <span class="w">                                          </span><span class="kt">double</span><span class="w"> </span><span class="n">pt2</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clean_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">remove_zero_area_triangles</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">recreate_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">repair_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w"> </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2025-12-17 at 23:05:26 +0000</p>
+<p>Updated on 2026-01-14 at 21:44:22 +0000</p>
 
 
 

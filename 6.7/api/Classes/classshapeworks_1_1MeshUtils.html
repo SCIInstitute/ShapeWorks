@@ -3834,6 +3834,42 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-clean_mesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      function clean_mesh
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-remove_zero_area_triangles" class="md-nav__link">
+    <span class="md-ellipsis">
+      function remove_zero_area_triangles
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-recreate_mesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      function recreate_mesh
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-repair_mesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      function repair_mesh
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-visualizevectorfieldforffcs" class="md-nav__link">
     <span class="md-ellipsis">
       function visualizeVectorFieldForFFCs
@@ -3943,6 +3979,22 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-evaluate-triangle-position">evaluate_triangle_position</a></strong>(const double x[3], double closestPoint[3], int &amp; subId, double pcoords[3], double &amp; dist2, double weights[], double pt3[3], double pt1[3], double pt2[3])</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-clean-mesh">clean_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Clean mesh (merge points and remove degenerate cells)</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-remove-zero-area-triangles">remove_zero_area_triangles</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Remove zero area triangles from a mesh.</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-recreate-mesh">recreate_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Recreate mesh, dropping deleted cells.</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-repair-mesh">repair_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Repair mesh: triangulate, extract largest component, clean, fix non-manifold, remove zero-area triangles.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4064,6 +4116,30 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">pt2</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-clean_mesh">function clean_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">clean_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Clean mesh (merge points and remove degenerate cells) </p>
+<h3 id="function-remove_zero_area_triangles">function remove_zero_area_triangles</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">remove_zero_area_triangles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Remove zero area triangles from a mesh. </p>
+<h3 id="function-recreate_mesh">function recreate_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">recreate_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Recreate mesh, dropping deleted cells. </p>
+<h3 id="function-repair_mesh">function repair_mesh</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">repair_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Repair mesh: triangulate, extract largest component, clean, fix non-manifold, remove zero-area triangles. </p>
 <h3 id="function-visualizevectorfieldforffcs">function visualizeVectorFieldForFFCs</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">visualizeVectorFieldForFFCs</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
@@ -4078,7 +4154,7 @@
 </code></pre></div>
 <p>Used as an auxiliary function for vector field visualizations. </p>
 <hr />
-<p>Updated on 2025-12-17 at 23:05:25 +0000</p>
+<p>Updated on 2026-01-14 at 21:44:21 +0000</p>
 
 
 
