@@ -58,7 +58,7 @@ blinker==1.9.0
     # via
     #   -r requirements.in
     #   flask
-bokeh==3.8.0
+bokeh==3.8.2
     # via -r requirements.in
 certifi==2025.8.3
     # via
