@@ -1,5 +1,6 @@
 #include <Logging.h>
 #include <Mesh/Mesh.h>
+#include <Mesh/MeshUtils.h>
 #include <Mesh/MeshWarper.h>
 #include <igl/biharmonic_coordinates.h>
 #include <igl/boundary_loop.h>
@@ -257,7 +258,7 @@ void MeshWarper::add_particle_vertices(Eigen::MatrixXd& vertices) {
     }
 
     // remove deleted triangles and clean up
-    reference_mesh_ = MeshWarper::recreate_mesh(reference_mesh_);
+    reference_mesh_ = MeshUtils::recreate_mesh(reference_mesh_);
   }
 }
 
@@ -370,147 +371,6 @@ void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1,
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshWarper::prep_mesh(vtkSmartPointer<vtkPolyData> mesh) {
-  auto triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
-  triangle_filter->SetInputData(mesh);
-  triangle_filter->PassLinesOff();
-  triangle_filter->Update();
-
-  auto connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-  connectivity->SetInputConnection(triangle_filter->GetOutputPort());
-  connectivity->SetExtractionModeToLargestRegion();
-  connectivity->Update();
-
-  auto cleaned = MeshWarper::clean_mesh(connectivity->GetOutput());
-
-  auto fixed = Mesh(cleaned).fixNonManifold();
-
-  // remove deleted triangles and clean up
-  auto recreated = MeshWarper::recreate_mesh(fixed.getVTKMesh());
-
-  auto final = MeshWarper::remove_zero_area_triangles(recreated);
-
-  return final;
-}
-
-//---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshWarper::clean_mesh(vtkSmartPointer<vtkPolyData> mesh) {
-  vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
-  clean->ConvertPolysToLinesOff();
-  clean->ConvertLinesToPointsOff();
-  clean->ConvertStripsToPolysOff();
-  clean->PointMergingOn();
-  clean->SetInputData(mesh);
-  clean->Update();
-  return clean->GetOutput();
-}
-
-//---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshWarper::remove_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh) {
-  // Create a new polydata to store the filtered triangles
-  auto filtered_mesh = vtkSmartPointer<vtkPolyData>::New();
-
-  // Get the points from the input mesh
-  vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
-  filtered_mesh->SetPoints(points);
-
-  // Create a new cell array to store triangles
-  auto new_triangles = vtkSmartPointer<vtkCellArray>::New();
-
-  // Iterate through all cells
-  auto cell_point_ids = vtkSmartPointer<vtkIdList>::New();
-
-  // First pass: find max area to establish scale
-  double max_area = 0.0;
-  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
-    mesh->GetCellPoints(cellId, cell_point_ids);
-    if (cell_point_ids->GetNumberOfIds() == 3) {
-      double p0[3], p1[3], p2[3];
-      points->GetPoint(cell_point_ids->GetId(0), p0);
-      points->GetPoint(cell_point_ids->GetId(1), p1);
-      points->GetPoint(cell_point_ids->GetId(2), p2);
-      double area = vtkTriangle::TriangleArea(p0, p1, p2);
-      if (area > max_area) {
-        max_area = area;
-      }
-    }
-  }
-
-  // Use relative epsilon based on max area, with absolute floor
-  const double RELATIVE_EPSILON = 1e-6;
-  const double ABSOLUTE_FLOOR = 1e-15;
-  const double epsilon = std::max(max_area * RELATIVE_EPSILON, ABSOLUTE_FLOOR);
-
-  // Second pass: filter triangles
-  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
-    mesh->GetCellPoints(cellId, cell_point_ids);
-
-    // Only process triangles
-    if (cell_point_ids->GetNumberOfIds() == 3) {
-      // Get the coordinates of the three vertices
-      double p0[3], p1[3], p2[3];
-      points->GetPoint(cell_point_ids->GetId(0), p0);
-      points->GetPoint(cell_point_ids->GetId(1), p1);
-      points->GetPoint(cell_point_ids->GetId(2), p2);
-
-      // Calculate the area of the triangle using VTK's built-in function
-      double area = vtkTriangle::TriangleArea(p0, p1, p2);
-
-      if (area > epsilon) {
-        // Add this triangle to the new cell array
-        new_triangles->InsertNextCell(cell_point_ids);
-      }
-    }
-  }
-
-  // Set the triangles in the filtered mesh
-  filtered_mesh->SetPolys(new_triangles);
-
-  // Copy the point data
-  filtered_mesh->GetPointData()->ShallowCopy(mesh->GetPointData());
-
-  // Use vtkCleanPolyData to remove unused points
-  auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
-  cleaner->SetInputData(filtered_mesh);
-  cleaner->PointMergingOff();  // Don't merge points, just remove unused ones
-  cleaner->Update();
-
-  return cleaner->GetOutput();
-}
-
-//---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyData> mesh) {
-  vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
-
-  vtkNew<vtkPoints> points;
-  vtkNew<vtkCellArray> polys;
-
-  // copy points
-  for (vtkIdType i = 0; i < mesh->GetNumberOfPoints(); i++) {
-    points->InsertNextPoint(mesh->GetPoint(i));
-  }
-
-  // copy triangles
-  for (vtkIdType i = 0; i < mesh->GetNumberOfCells(); i++) {
-    vtkCell* cell = mesh->GetCell(i);
-
-    if (cell->GetCellType() != VTK_EMPTY_CELL) {  // VTK_EMPTY_CELL means it was deleted
-      // create an array of vtkIdType
-      vtkIdType* pts = new vtkIdType[cell->GetNumberOfPoints()];
-      for (vtkIdType j = 0; j < cell->GetNumberOfPoints(); j++) {
-        pts[j] = cell->GetPointId(j);
-      }
-      polys->InsertNextCell(cell->GetNumberOfPoints(), pts);
-      delete[] pts;
-    }
-  }
-
-  poly_data->SetPoints(points);
-  poly_data->SetPolys(polys);
-  return poly_data;
-}
-
-//---------------------------------------------------------------------------
 bool MeshWarper::generate_warp() {
   if (is_contour_) {
     update_progress(1.0);
@@ -523,12 +383,12 @@ bool MeshWarper::generate_warp() {
   for (int attempt = 0; attempt < MAX_ATTEMPTS; ++attempt) {
     // Prepare mesh (remesh on retry)
     if (attempt == 0) {
-      reference_mesh_ = MeshWarper::prep_mesh(incoming_reference_mesh_);
+      reference_mesh_ = MeshUtils::repair_mesh(incoming_reference_mesh_);
     } else {
       SW_DEBUG("Initial igl::biharmonic failed, attempting again with remeshed reference mesh");
       Mesh mesh(reference_mesh_);
       mesh.remeshPercent(0.75);
-      reference_mesh_ = MeshWarper::prep_mesh(mesh.getVTKMesh());
+      reference_mesh_ = MeshUtils::repair_mesh(mesh.getVTKMesh());
     }
 
     // Prep points

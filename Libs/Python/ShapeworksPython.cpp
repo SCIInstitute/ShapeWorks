@@ -1119,7 +1119,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def_static(
           "prepareMesh",
-          [](const Mesh& mesh) -> decltype(auto) { return Mesh(MeshWarper::prep_mesh(mesh.getVTKMesh())); },
+          [](const Mesh& mesh) -> decltype(auto) { return Mesh(MeshUtils::repair_mesh(mesh.getVTKMesh())); },
           "Return the prepared mesh used for warping (before vertices were inserted).", "mesh"_a)
 
       .def(
