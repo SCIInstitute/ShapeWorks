@@ -35,6 +35,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   connect(ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->use_geodesics_from_landmarks, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->use_geodesic_distance, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->sampling_scale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
 
   ui_->number_of_particles->setToolTip("Number of correspondence points to generate");
   ui_->initial_relative_weighting->setToolTip("Relative weighting of correspondence term during initialization");
@@ -105,6 +106,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   line_edits_.push_back(ui_->geodesics_to_landmarks_weight);
   line_edits_.push_back(ui_->narrow_band);
   line_edits_.push_back(ui_->shared_boundary_weight);
+  line_edits_.push_back(ui_->sampling_scale_value);
 
   for (QLineEdit* line_edit : line_edits_) {
     connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
@@ -406,6 +408,9 @@ void OptimizeTool::update_ui_elements() {
   ui_->shared_boundary_label->setVisible(shared_boundary_available);
   ui_->shared_boundary_weight->setVisible(shared_boundary_available);
   ui_->shared_boundary_weight_label->setVisible(shared_boundary_available);
+
+  ui_->sampling_auto_scale->setEnabled(ui_->sampling_scale->isChecked());
+  ui_->sampling_scale_value->setEnabled(ui_->sampling_scale->isChecked());
 }
 
 //---------------------------------------------------------------------------
