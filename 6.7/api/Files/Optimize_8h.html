@@ -3919,6 +3919,13 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryWeight</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingScale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetSamplingScale</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingAutoScale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">auto_scale</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetSamplingAutoScale</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingScaleValue</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scale_value</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSamplingScaleValue</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetEarlyStoppingConfig</span><span class="p">(</span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
 
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">GetDomainFlags</span><span class="p">();</span>
@@ -4077,6 +4084,11 @@
 <span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">m_geodesic_cache_size_multiplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// 0 =&gt; MeshWrapper will use a heuristic to determine cache size</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_geodesic_remesh_percent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">100.0</span><span class="p">;</span><span class="w">     </span><span class="c1">// 100% by default (e.g. no remeshing)</span>
 
+<span class="w">  </span><span class="c1">// Sampling scale parameters</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_sampling_scale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">                 </span><span class="c1">// enabled by default</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_sampling_auto_scale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">            </span><span class="c1">// auto scale enabled by default</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_sampling_scale_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w">          </span><span class="c1">// default scale value</span>
+
 <span class="w">  </span><span class="c1">// m_spacing is used to scale the random update vector for particle splitting.</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
@@ -4124,7 +4136,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-01-14 at 21:44:22 +0000</p>
+<p>Updated on 2026-01-21 at 19:21:27 +0000</p>
 
 
 
