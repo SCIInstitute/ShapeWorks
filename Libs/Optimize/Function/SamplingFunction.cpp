@@ -1,6 +1,8 @@
 
 #include "SamplingFunction.h"
 
+#include <set>
+
 #include "Libs/Common/Logging.h"
 #include "Libs/Optimize/Domain/DomainType.h"
 #include "vnl/vnl_vector_fixed.h"
@@ -85,6 +87,9 @@ std::shared_ptr<VectorFunction> SamplingFunction::clone() {
   copy->m_avgKappa = m_avgKappa;
   copy->m_IsSharedBoundaryEnabled = m_IsSharedBoundaryEnabled;
   copy->m_SharedBoundaryWeight = m_SharedBoundaryWeight;
+  copy->m_SamplingScale = m_SamplingScale;
+  copy->m_SamplingAutoScale = m_SamplingAutoScale;
+  copy->m_SamplingScaleValue = m_SamplingScaleValue;
   copy->m_CurrentSigma = m_CurrentSigma;
   copy->m_CurrentNeighborhood = m_CurrentNeighborhood;
 
@@ -244,6 +249,37 @@ SamplingFunction::VectorType SamplingFunction::evaluate(unsigned int idx, unsign
   energy = (A * sigma2inv) / m_avgKappa;
 
   gradE = gradE / m_avgKappa;
+
+  // Apply sampling scale if enabled
+  if (m_SamplingScale) {
+    double scale_factor = 1.0;
+
+    if (m_SamplingAutoScale) {
+      // Get surface area from the domain
+      double surface_area = system->GetDomain(d)->GetSurfaceArea();
+
+      // Reference surface area for scale factor of 1.0
+      // This constant will be tuned based on experiments
+      constexpr double reference_surface_area = 12250.0;
+
+      // Scale factor is proportional to surface area
+      scale_factor = surface_area / reference_surface_area;
+
+      // Log once per domain using static set
+      static std::set<int> logged_domains;
+      if (logged_domains.find(d) == logged_domains.end()) {
+        logged_domains.insert(d);
+        SW_DEBUG("SamplingFunction: Auto scale for domain " + std::to_string(d) + ", surface_area = " +
+                 std::to_string(surface_area) + ", scale_factor = " + std::to_string(scale_factor));
+      }
+    }
+
+    // multiply by scaling value (whether auto is on or off)
+    scale_factor *= m_SamplingScaleValue;
+
+    gradE = gradE * scale_factor;
+  }
+
   return gradE;
 }
 

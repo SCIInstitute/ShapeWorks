@@ -85,7 +85,9 @@ void MeshDomain::SetMesh(std::shared_ptr<Surface> mesh, double geodesic_remesh_p
   surface_ = mesh;
   sw_mesh_ = std::make_shared<Mesh>(surface_->get_polydata());
 
-  if (geodesic_remesh_percent >= 100.0) { // no remeshing
+  surface_area_ = sw_mesh_->getSurfaceArea();
+
+  if (geodesic_remesh_percent >= 100.0) {  // no remeshing
     geodesics_mesh_ = surface_;
   } else {
     auto poly_data = surface_->get_polydata();

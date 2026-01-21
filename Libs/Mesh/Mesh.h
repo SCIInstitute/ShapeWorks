@@ -206,6 +206,9 @@ class Mesh {
   /// center of mass of mesh
   Point3 centerOfMass() const;
 
+  /// surface area of mesh
+  double getSurfaceArea() const;
+
   /// number of points
   int numPoints() const { return poly_data_->GetNumberOfPoints(); }
 

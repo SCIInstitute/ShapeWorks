@@ -378,6 +378,14 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::str
   }
 
   if (params.get_remesh()) {
+    auto poly_data = mesh.getVTKMesh();
+    if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+      SW_DEBUG("Number of cells: {}", poly_data->GetNumberOfCells());
+      if (poly_data->GetNumberOfCells() > 0) {
+        SW_DEBUG("Number of points in first cell: {}", poly_data->GetCell(0)->GetNumberOfPoints());
+      }
+      throw std::runtime_error("malformed mesh, mesh should be triangular");
+    }
     int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
     int num_vertices = params.get_remesh_num_vertices();
     if (params.get_remesh_percent_mode()) {
