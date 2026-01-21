@@ -120,7 +120,6 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     copy->particle_system_ = this->particle_system_;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
 
-    copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
@@ -137,7 +136,6 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     m_Counter = 0;
     m_UseMeanEnergy = true;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
-    m_InverseCovMatrix = std::make_shared<Eigen::MatrixXd>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
   ~LegacyCorrespondenceFunction() override = default;
@@ -158,8 +156,7 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   int m_Counter;
   bool m_UseMeanEnergy;
 
-  std::shared_ptr<vnl_matrix_type> m_points_mean;       // 3Nx3N - used for energy computation
-  std::shared_ptr<Eigen::MatrixXd> m_InverseCovMatrix;  // 3NxM - used for energy computation
+  std::shared_ptr<vnl_matrix_type> m_points_mean;
 };
 
 }  // namespace shapeworks

@@ -27,13 +27,13 @@
 #include <Libs/Particles/ParticleFile.h>
 #include <Project/Project.h>
 
+#include "EarlyStoppingConfig.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
 #include "Logging.h"
 #include "Optimize.h"
-#include "EarlyStoppingConfig.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
 #include "ShapeworksUtils.h"
@@ -781,7 +781,7 @@ void Optimize::RunOptimize() {
 
   if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
     m_sampler->GetOptimizer()->set_maximum_number_of_iterations(m_optimization_iterations -
-                                                            m_optimization_iterations_completed);
+                                                                m_optimization_iterations_completed);
   } else {
     m_sampler->GetOptimizer()->set_maximum_number_of_iterations(0);
   }
@@ -793,6 +793,14 @@ void Optimize::RunOptimize() {
 
   m_sampler->GetOptimizer()->set_number_of_iterations(0);
   m_sampler->GetOptimizer()->set_tolerance(0.0);
+
+  // Precompute fixed domain data for fixed shape space optimization
+  // This significantly speeds up optimization when most domains are fixed
+  if (m_fixed_domains_present) {
+    SW_LOG("Precomputing fixed domain data for fixed shape space optimization...");
+    m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->PrecomputeForFixedDomains(m_sampler->GetParticleSystem());
+  }
+
   m_sampler->Execute();
 
   this->WritePointFiles();

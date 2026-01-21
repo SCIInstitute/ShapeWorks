@@ -6,7 +6,6 @@
 
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "Libs/Optimize/Utils/ParticleGaussianModeWriter.h"
-#include "Libs/Utils/Utils.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 
 namespace shapeworks {
@@ -63,7 +62,6 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
 
   if (this->m_UseMeanEnergy) {
     pinvMat.set_identity();
-    m_InverseCovMatrix->setZero();
   } else {
     gramMat = points_minus_mean.transpose() * points_minus_mean;
 
@@ -79,14 +77,9 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
 
     pinvMat = (UG * invLambda) * UG.transpose();
 
-    vnl_matrix_type projMat = points_minus_mean * UG;
-    const auto lhs = projMat * invLambda;
-    const auto rhs =
-        invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
-    if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
-      m_InverseCovMatrix->resize(num_dims, num_dims);
-    }
-    Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+    // Note: The full dM × dM inverse covariance matrix is NOT needed.
+    // Per thesis equation 2.35, the gradient is simply: Y × (Y^T Y + αI)^{-1}
+    // which is Y × pinvMat. No covariance matrix multiplication required.
   }
   m_PointsUpdate->update(points_minus_mean * pinvMat);
 
@@ -124,30 +117,17 @@ LegacyCorrespondenceFunction::VectorType LegacyCorrespondenceFunction ::evaluate
   for (int i = 0; i < dom; i++) k += system->GetNumberOfParticles(i) * VDimension;
   k += idx * VDimension;
 
+  // Per-particle energy: squared Euclidean distance from mean
+  // This is used for line search step-size adaptation.
+  // Note: We always use Euclidean distance (identity matrix) regardless of m_UseMeanEnergy,
+  // because the full inverse covariance matrix is not computed.
   vnl_matrix_type Xi(3, 1, 0.0);
   Xi(0, 0) = m_ShapeMatrix->operator()(k, d / DomainsPerShape) - m_points_mean->get(k, 0);
   Xi(1, 0) = m_ShapeMatrix->operator()(k + 1, d / DomainsPerShape) - m_points_mean->get(k + 1, 0);
   Xi(2, 0) = m_ShapeMatrix->operator()(k + 2, d / DomainsPerShape) - m_points_mean->get(k + 2, 0);
 
-  vnl_matrix_type tmp1(3, 3, 0.0);
-
-  if (this->m_UseMeanEnergy) {
-    tmp1.set_identity();
-  } else {
-    // extract 3x3 submatrix at k,k
-    Eigen::MatrixXd region = m_InverseCovMatrix->block(k, k, 3, 3);
-    // convert to vnl
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++) {
-        tmp1(i, j) = region(i, j);
-      }
-    }
-  }
-
-  vnl_matrix_type tmp = Xi.transpose() * tmp1;
-
-  tmp *= Xi;
-
+  // energy = ||Xi||^2 = Xi^T * Xi
+  vnl_matrix_type tmp = Xi.transpose() * Xi;
   energy = tmp(0, 0);
 
   for (unsigned int i = 0; i < VDimension; i++) {
