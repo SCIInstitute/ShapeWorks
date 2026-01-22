@@ -133,6 +133,13 @@ class CorrespondenceFunction : public VectorFunction {
    */
   void ClearPrecomputedFixedDomains();
 
+  /**
+   * @brief Request lazy precomputation on first iteration.
+   * The actual precomputation will happen on the first call to ComputeUpdates()
+   * when the shape data is guaranteed to be populated.
+   */
+  void RequestPrecomputeForFixedDomains() { m_NeedsPrecomputation = true; }
+
   bool CheckForNans(vnl_matrix_type mat) {
     bool flag = false;
     for (int i = 0; i < mat.rows(); i++) {
@@ -172,6 +179,19 @@ class CorrespondenceFunction : public VectorFunction {
 
     copy->m_ShapeData = this->m_ShapeData;
     copy->m_ShapeGradient = this->m_ShapeGradient;
+
+    // Copy fixed shape space members
+    copy->m_NeedsPrecomputation = this->m_NeedsPrecomputation;
+    copy->m_HasPrecomputedFixedDomains = this->m_HasPrecomputedFixedDomains;
+    copy->m_PrecomputedNumFixedSamples = this->m_PrecomputedNumFixedSamples;
+    copy->m_PrecomputedNumDims = this->m_PrecomputedNumDims;
+    copy->m_FixedY = this->m_FixedY;
+    copy->m_FixedMean = this->m_FixedMean;
+    copy->m_FixedPinvMat = this->m_FixedPinvMat;
+    copy->m_FixedGradientBasis = this->m_FixedGradientBasis;
+    copy->m_FixedU = this->m_FixedU;
+    copy->m_FixedW = this->m_FixedW;
+    copy->m_FixedDomainIndices = this->m_FixedDomainIndices;
 
     return copy;
   }
@@ -228,6 +248,7 @@ class CorrespondenceFunction : public VectorFunction {
   // we can precompute the shape space (mean, pinvMat, gradient basis) from the fixed domains
   // and reuse it, avoiding expensive recomputation each iteration.
 
+  bool m_NeedsPrecomputation = false;
   bool m_HasPrecomputedFixedDomains = false;
 
   // Number of fixed and total samples when precomputation was done

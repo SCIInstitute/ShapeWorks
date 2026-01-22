@@ -104,6 +104,31 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   void SetRecomputeCovarianceInterval(int i) { m_RecomputeCovarianceInterval = i; }
   int GetRecomputeCovarianceInterval() const { return m_RecomputeCovarianceInterval; }
 
+  /**
+   * @brief Precompute data for fixed shape space optimization.
+   * When most shapes are fixed (e.g., adding 1 new shape to 200 existing),
+   * we can precompute the covariance structure from fixed shapes and only
+   * update for the new shape, avoiding expensive SVD recomputation.
+   */
+  void PrecomputeForFixedDomains(const ParticleSystem* ps);
+
+  /**
+   * @brief Check if precomputed fixed domain data is available.
+   */
+  bool HasPrecomputedFixedDomains() const { return m_HasPrecomputedFixedDomains; }
+
+  /**
+   * @brief Clear precomputed fixed domain data.
+   */
+  void ClearPrecomputedFixedDomains();
+
+  /**
+   * @brief Request lazy precomputation on first iteration.
+   * The actual precomputation will happen on the first call to ComputeCovarianceMatrix()
+   * when the shape matrix is guaranteed to be populated.
+   */
+  void RequestPrecomputeForFixedDomains() { m_NeedsPrecomputation = true; }
+
   std::shared_ptr<VectorFunction> clone() override {
     auto copy = LegacyCorrespondenceFunction::New();
 
@@ -122,6 +147,18 @@ class LegacyCorrespondenceFunction : public VectorFunction {
 
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
+
+    // Copy fixed shape space members
+    copy->m_NeedsPrecomputation = this->m_NeedsPrecomputation;
+    copy->m_HasPrecomputedFixedDomains = this->m_HasPrecomputedFixedDomains;
+    copy->m_PrecomputedNumFixedSamples = this->m_PrecomputedNumFixedSamples;
+    copy->m_PrecomputedNumDims = this->m_PrecomputedNumDims;
+    copy->m_FixedY = this->m_FixedY;
+    copy->m_FixedMean = this->m_FixedMean;
+    copy->m_FixedPinvMat = this->m_FixedPinvMat;
+    copy->m_FixedGradientBasis = this->m_FixedGradientBasis;
+    copy->m_FixedW = this->m_FixedW;
+    copy->m_FixedDomainIndices = this->m_FixedDomainIndices;
 
     return copy;
   }
@@ -157,6 +194,18 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   bool m_UseMeanEnergy;
 
   std::shared_ptr<vnl_matrix_type> m_points_mean;
+
+  // Fixed shape space optimization members
+  bool m_NeedsPrecomputation = false;
+  bool m_HasPrecomputedFixedDomains = false;
+  int m_PrecomputedNumFixedSamples = 0;
+  int m_PrecomputedNumDims = 0;
+  std::shared_ptr<vnl_matrix_type> m_FixedY;           // Centered fixed shape data (dM × N_fixed)
+  std::shared_ptr<vnl_matrix_type> m_FixedMean;        // Mean of fixed shapes (dM × 1)
+  std::shared_ptr<vnl_matrix_type> m_FixedPinvMat;     // Regularized pseudoinverse (N_fixed × N_fixed)
+  std::shared_ptr<vnl_matrix_type> m_FixedGradientBasis;  // Y_fixed × pinvMat (dM × N_fixed)
+  std::shared_ptr<vnl_diag_matrix<double>> m_FixedW;   // Singular values
+  std::vector<int> m_FixedDomainIndices;               // Indices of fixed shapes
 };
 
 }  // namespace shapeworks
