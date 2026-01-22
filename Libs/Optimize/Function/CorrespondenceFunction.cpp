@@ -11,7 +11,6 @@
 namespace shapeworks {
 
 void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
-  TIME_SCOPE("CorrespondenceFunction::ComputeUpdates");
   num_dims = m_ShapeData->rows();
   num_samples = m_ShapeData->cols();
 
@@ -24,6 +23,12 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
   }
 
   m_PointsUpdate->fill(0.0);
+
+  // Lazy precomputation: do it on first call when shape data is populated
+  if (m_NeedsPrecomputation && !m_HasPrecomputedFixedDomains && num_samples > 0) {
+    m_NeedsPrecomputation = false;
+    PrecomputeForFixedDomains(c);
+  }
 
   // =========================================================================
   // FIXED SHAPE SPACE PATH: Use precomputed data if available
@@ -46,11 +51,19 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
       }
     }
 
-    // For each non-fixed shape, compute gradient using precomputed basis
-    // gradient_j = Y_fixed * pinvMat_fixed * (Y_fixed^T * y_j) + self term
-    //
-    // Approximation: We use the fixed shape space structure to compute
-    // gradients for new shapes. This is the "fixed shape space" approach.
+    // Create Eigen maps for precomputed matrices (VNL uses row-major storage)
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_fixed_map(
+        m_FixedY->data_block(), num_dims, m_PrecomputedNumFixedSamples);
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> GradientBasis_map(
+        m_FixedGradientBasis->data_block(), num_dims, m_PrecomputedNumFixedSamples);
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> pinvMat_map(
+        m_FixedPinvMat->data_block(), m_PrecomputedNumFixedSamples, m_PrecomputedNumFixedSamples);
+
+    // Regularization denominator
+    const double N = m_PrecomputedNumFixedSamples - 1;
+    const double N_sq = N * N;
+
+    // For each non-fixed shape, compute gradient using Schur complement
     for (int j = 0; j < num_samples; j++) {
       // Check if this shape is fixed (skip gradient computation for fixed shapes)
       bool is_fixed = false;
@@ -62,48 +75,31 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
       }
 
       if (!is_fixed) {
-        // Extract y_j (the centered data for shape j)
-        vnl_vector<double> y_j(num_dims);
+        // Extract y_j from points_minus_mean column (VNL is row-major, so column is strided)
+        Eigen::VectorXd y_j(num_dims);
         for (int i = 0; i < num_dims; i++) {
           y_j[i] = points_minus_mean(i, j);
         }
 
-        // Compute projection: proj = Y_fixed^T * y_j  (N_fixed × 1)
-        vnl_vector<double> proj(m_PrecomputedNumFixedSamples, 0.0);
-        for (int k = 0; k < m_PrecomputedNumFixedSamples; k++) {
-          for (int i = 0; i < num_dims; i++) {
-            proj[k] += (*m_FixedY)(i, k) * y_j[i];
-          }
-        }
+        // proj = Y_fixed^T * y_j  (N_fixed × 1)
+        Eigen::VectorXd proj = Y_fixed_map.transpose() * y_j;
 
-        // Compute gradient: grad = GradientBasis * (pinvMat * proj)
-        // But GradientBasis = Y_fixed * pinvMat, so:
-        // grad = Y_fixed * pinvMat * proj
-        // We can compute this as: GradientBasis * (pinvMat^{-1} * pinvMat * proj)
-        // Actually simpler: grad = sum_k (GradientBasis[:,k] * coeffs[k])
-        // where coeffs = pinvMat * proj (but we precomputed GradientBasis = Y * pinvMat)
-        // So: grad = GradientBasis * proj_normalized where proj is already weighted
+        // grad = GradientBasis * proj  (num_dims × 1)
+        Eigen::VectorXd grad = GradientBasis_map * proj;
 
-        // Actually, the gradient for shape j is:
-        // ∂G/∂y_j = contribution from the cross-covariance with fixed shapes
-        // In the fixed shape space approximation:
-        // grad_j ≈ Y_fixed * pinvMat_fixed * (Y_fixed^T * y_j) / ||y_j||
-        //        = GradientBasis * (Y_fixed^T * y_j)
+        // pinv_proj = pinvMat_fixed * proj  (N_fixed × 1)
+        Eigen::VectorXd pinv_proj = pinvMat_map * proj;
 
-        // But we need to normalize properly. Let's use:
-        // Q[:,j] = M_fixed * coeffs where coeffs = Y_fixed^T * y_j normalized
+        // Schur complement scalars
+        double y_j_norm_sq = y_j.squaredNorm();
+        double proj_pinv_proj = proj.dot(pinv_proj);
 
-        vnl_vector<double> grad(num_dims, 0.0);
+        // s = ||y_j||^2/N + α - proj^T * pinvMat * proj / N^2
+        double s = y_j_norm_sq / N + m_MinimumVariance - proj_pinv_proj / N_sq;
+
+        // Q[:, j] = (y_j - grad / N) / s
         for (int i = 0; i < num_dims; i++) {
-          for (int k = 0; k < m_PrecomputedNumFixedSamples; k++) {
-            grad[i] += (*m_FixedGradientBasis)(i, k) * proj[k];
-          }
-        }
-
-        // Normalize by number of fixed samples (similar to original algorithm)
-        double scale = 1.0 / (m_PrecomputedNumFixedSamples - 1);
-        for (int i = 0; i < num_dims; i++) {
-          Q(i, j) = grad[i] * scale;
+          Q(i, j) = (y_j[i] - grad[i] / N) / s;
         }
       }
     }
@@ -166,6 +162,9 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
   // =========================================================================
   // ORIGINAL PATH: Full computation (no precomputed data or using mean energy)
   // =========================================================================
+  // Use different profiling scopes to distinguish mean energy (init) vs entropy (optimize)
+  TIME_SCOPE(m_UseMeanEnergy ? "ComputeUpdates::MeanEnergy" : "ComputeUpdates::Entropy");
+
   vnl_matrix_type points_minus_mean(num_dims, num_samples, 0.0);
 
   m_points_mean->clear();
@@ -366,6 +365,9 @@ void CorrespondenceFunction::PrecomputeForFixedDomains(const ParticleSystem* ps)
   int total_shapes = m_ShapeData->cols();
   int num_fixed = 0;
   int num_unfixed = 0;
+
+  SW_LOG("PrecomputeForFixedDomains: ShapeData rows={}, cols={}, DomainsPerShape={}, PS domains={}",
+         m_ShapeData->rows(), total_shapes, m_DomainsPerShape, ps->GetNumberOfDomains());
 
   // Identify which shapes are fixed
   // A shape is considered fixed if ALL its domains are fixed

@@ -794,11 +794,19 @@ void Optimize::RunOptimize() {
   m_sampler->GetOptimizer()->set_number_of_iterations(0);
   m_sampler->GetOptimizer()->set_tolerance(0.0);
 
-  // Precompute fixed domain data for fixed shape space optimization
-  // This significantly speeds up optimization when most domains are fixed
+  // Request lazy precomputation for fixed shape space optimization
+  // The actual precomputation will happen on first iteration when shape matrices are populated
   if (m_fixed_domains_present) {
-    SW_LOG("Precomputing fixed domain data for fixed shape space optimization...");
-    m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->PrecomputeForFixedDomains(m_sampler->GetParticleSystem());
+    SW_LOG("Requesting fixed shape space precomputation (will execute on first iteration)...");
+    if (m_mesh_based_attributes ||
+        (m_attributes_per_domain.size() > 0 &&
+         *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)) {
+      // Using MeshBasedGeneralEntropy (CorrespondenceFunction)
+      m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->RequestPrecomputeForFixedDomains();
+    } else {
+      // Using EnsembleEntropy (LegacyCorrespondenceFunction)
+      m_sampler->GetEnsembleEntropyFunction()->RequestPrecomputeForFixedDomains();
+    }
   }
 
   m_sampler->Execute();
