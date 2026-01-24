@@ -27,13 +27,13 @@
 #include <Libs/Particles/ParticleFile.h>
 #include <Project/Project.h>
 
+#include "EarlyStoppingConfig.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
 #include "Logging.h"
 #include "Optimize.h"
-#include "EarlyStoppingConfig.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
 #include "ShapeworksUtils.h"
@@ -781,7 +781,7 @@ void Optimize::RunOptimize() {
 
   if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
     m_sampler->GetOptimizer()->set_maximum_number_of_iterations(m_optimization_iterations -
-                                                            m_optimization_iterations_completed);
+                                                                m_optimization_iterations_completed);
   } else {
     m_sampler->GetOptimizer()->set_maximum_number_of_iterations(0);
   }
@@ -793,6 +793,22 @@ void Optimize::RunOptimize() {
 
   m_sampler->GetOptimizer()->set_number_of_iterations(0);
   m_sampler->GetOptimizer()->set_tolerance(0.0);
+
+  // Request lazy precomputation for fixed shape space optimization
+  // The actual precomputation will happen on first iteration when shape matrices are populated
+  if (m_fixed_domains_present) {
+    SW_LOG("Requesting fixed shape space precomputation (will execute on first iteration)...");
+    if (m_mesh_based_attributes ||
+        (m_attributes_per_domain.size() > 0 &&
+         *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)) {
+      // Using MeshBasedGeneralEntropy (CorrespondenceFunction)
+      m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->RequestPrecomputeForFixedDomains();
+    } else {
+      // Using EnsembleEntropy (LegacyCorrespondenceFunction)
+      m_sampler->GetEnsembleEntropyFunction()->RequestPrecomputeForFixedDomains();
+    }
+  }
+
   m_sampler->Execute();
 
   this->WritePointFiles();
