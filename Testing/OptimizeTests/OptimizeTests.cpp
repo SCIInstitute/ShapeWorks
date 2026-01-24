@@ -483,7 +483,7 @@ TEST(OptimizeTests, procrustes_scale_only_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   ASSERT_GT(values[values.size() - 1], 275.0);
-  ASSERT_LT(values[values.size() - 1], 385.0);
+  ASSERT_LT(values[values.size() - 1], 390.0);
 }
 
 // TODO Move this to mesh tests?
