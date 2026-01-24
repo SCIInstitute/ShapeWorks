@@ -3761,6 +3761,8 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;numeric&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_diag_matrix.h&gt;</span>
+
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/ShapeGradientMatrix.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/ShapeMatrix.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;VectorFunction.h&quot;</span>
@@ -3853,6 +3855,14 @@
 <span class="w">    </span><span class="n">m_UseNormals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrecomputeForFixedDomains</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasPrecomputedFixedDomains</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_HasPrecomputedFixedDomains</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ClearPrecomputedFixedDomains</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RequestPrecomputeForFixedDomains</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_NeedsPrecomputation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">CheckForNans</span><span class="p">(</span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -3889,10 +3899,22 @@
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_points_mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_points_mean</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_UseNormals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_UseNormals</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_UseXYZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_UseXYZ</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_InverseCovMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_InverseCovMatrix</span><span class="p">;</span>
 
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_ShapeData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ShapeData</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_ShapeGradient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ShapeGradient</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Copy fixed shape space members</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_NeedsPrecomputation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_NeedsPrecomputation</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_HasPrecomputedFixedDomains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_HasPrecomputedFixedDomains</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_PrecomputedNumFixedSamples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_PrecomputedNumFixedSamples</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_PrecomputedNumDims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_PrecomputedNumDims</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedY</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedMean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedMean</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedPinvMat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedPinvMat</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedGradientBasis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedGradientBasis</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedU</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedU</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedW</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedDomainIndices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedDomainIndices</span><span class="p">;</span>
 
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">copy</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
@@ -3911,7 +3933,6 @@
 <span class="w">    </span><span class="n">num_dims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="n">num_samples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="n">m_PointsUpdate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_InverseCovMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
 <span class="w">    </span><span class="n">m_points_mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="w">  </span><span class="o">~</span><span class="n">CorrespondenceFunction</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
@@ -3941,13 +3962,47 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_UseXYZ</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_UseNormals</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_points_mean</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_InverseCovMatrix</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_dims</span><span class="p">,</span><span class="w"> </span><span class="n">num_samples</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// ============================================================================</span>
+<span class="w">  </span><span class="c1">// Fixed Shape Space / Fixed Domain Precomputation</span>
+<span class="w">  </span><span class="c1">// ============================================================================</span>
+<span class="w">  </span><span class="c1">// When most domains are fixed and only a few are being optimized,</span>
+<span class="w">  </span><span class="c1">// we can precompute the shape space (mean, pinvMat, gradient basis) from the fixed domains</span>
+<span class="w">  </span><span class="c1">// and reuse it, avoiding expensive recomputation each iteration.</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_NeedsPrecomputation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_HasPrecomputedFixedDomains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Number of fixed and total samples when precomputation was done</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_PrecomputedNumFixedSamples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_PrecomputedNumDims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Precomputed from fixed domains:</span>
+<span class="w">  </span><span class="c1">// μ_fixed: mean of fixed shapes (dM × 1)</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedMean</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Y_fixed: centered fixed shape data (dM × N_fixed)</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedY</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// pinvMat_fixed: (Y_fixed^T Y_fixed + αI)^{-1}, size (N_fixed × N_fixed)</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedPinvMat</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Precomputed gradient basis: Y_fixed × pinvMat_fixed (dM × N_fixed)</span>
+<span class="w">  </span><span class="c1">// This allows computing gradients for new shapes as linear combinations</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedGradientBasis</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// SVD components from fixed shapes (for potential reuse)</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedU</span><span class="p">;</span><span class="w">       </span><span class="c1">// U matrix from SVD (N_fixed × N_fixed)</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_diag_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_FixedW</span><span class="p">;</span><span class="w">  </span><span class="c1">// Singular values</span>
+
+<span class="w">  </span><span class="c1">// Which domains are fixed (indices into the particle system)</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedDomainIndices</span><span class="p">;</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-01-21 at 19:21:27 +0000</p>
+<p>Updated on 2026-01-24 at 19:30:42 +0000</p>
 
 
 

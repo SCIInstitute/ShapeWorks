@@ -4065,6 +4065,42 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-precomputeforfixeddomains" class="md-nav__link">
+    <span class="md-ellipsis">
+      function PrecomputeForFixedDomains
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-hasprecomputedfixeddomains" class="md-nav__link">
+    <span class="md-ellipsis">
+      function HasPrecomputedFixedDomains
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-clearprecomputedfixeddomains" class="md-nav__link">
+    <span class="md-ellipsis">
+      function ClearPrecomputedFixedDomains
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-requestprecomputeforfixeddomains" class="md-nav__link">
+    <span class="md-ellipsis">
+      function RequestPrecomputeForFixedDomains
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-checkfornans" class="md-nav__link">
     <span class="md-ellipsis">
       function CheckForNans
@@ -4344,15 +4380,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-m_inversecovmatrix" class="md-nav__link">
-    <span class="md-ellipsis">
-      variable m_InverseCovMatrix
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#variable-num_dims" class="md-nav__link">
     <span class="md-ellipsis">
       variable num_dims
@@ -4365,6 +4392,105 @@
   <a href="#variable-num_samples" class="md-nav__link">
     <span class="md-ellipsis">
       variable num_samples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_needsprecomputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_NeedsPrecomputation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_hasprecomputedfixeddomains" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_HasPrecomputedFixedDomains
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_precomputednumfixedsamples" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_PrecomputedNumFixedSamples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_precomputednumdims" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_PrecomputedNumDims
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_fixedmean" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_FixedMean
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_fixedy" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_FixedY
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_fixedpinvmat" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_FixedPinvMat
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_fixedgradientbasis" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_FixedGradientBasis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_fixedu" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_FixedU
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_fixedw" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_FixedW
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_fixeddomainindices" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_FixedDomainIndices
     </span>
   </a>
   
@@ -4555,6 +4681,22 @@
 <td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#function-setnormals">SetNormals</a></strong>(int i, bool val)</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#function-precomputeforfixeddomains">PrecomputeForFixedDomains</a></strong>(const <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> * ps)<br>Precompute data for fixed domains to accelerate optimization.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#function-hasprecomputedfixeddomains">HasPrecomputedFixedDomains</a></strong>() const<br>Check if precomputed fixed domain data is available.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#function-clearprecomputedfixeddomains">ClearPrecomputedFixedDomains</a></strong>()<br>Clear precomputed fixed domain data (e.g., if fixed domains change).</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#function-requestprecomputeforfixeddomains">RequestPrecomputeForFixedDomains</a></strong>()<br>Request lazy precomputation on first iteration. The actual precomputation will happen on the first call to ComputeUpdates() when the shape data is guaranteed to be populated.</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#function-checkfornans">CheckForNans</a></strong>(vnl_matrix_type mat)</td>
 </tr>
@@ -4692,16 +4834,56 @@
 <td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-points-mean">m_points_mean</a></strong></td>
 </tr>
 <tr>
-<td>std::shared_ptr&lt; Eigen::MatrixXd &gt;</td>
-<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-inversecovmatrix">m_InverseCovMatrix</a></strong></td>
-</tr>
-<tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-num-dims">num_dims</a></strong></td>
 </tr>
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-num-samples">num_samples</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-needsprecomputation">m_NeedsPrecomputation</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-hasprecomputedfixeddomains">m_HasPrecomputedFixedDomains</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-precomputednumfixedsamples">m_PrecomputedNumFixedSamples</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-precomputednumdims">m_PrecomputedNumDims</a></strong></td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; vnl_matrix_type &gt;</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-fixedmean">m_FixedMean</a></strong></td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; vnl_matrix_type &gt;</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-fixedy">m_FixedY</a></strong></td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; vnl_matrix_type &gt;</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-fixedpinvmat">m_FixedPinvMat</a></strong></td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; vnl_matrix_type &gt;</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-fixedgradientbasis">m_FixedGradientBasis</a></strong></td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; vnl_matrix_type &gt;</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-fixedu">m_FixedU</a></strong></td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; vnl_diag_matrix&lt; double &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-fixedw">m_FixedW</a></strong></td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceFunction.html#variable-m-fixeddomainindices">m_FixedDomainIndices</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -4950,6 +5132,29 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">val</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-precomputeforfixeddomains">function PrecomputeForFixedDomains</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrecomputeForFixedDomains</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ps</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Precompute data for fixed domains to accelerate optimization. </p>
+<p><strong>Parameters</strong>: </p>
+<ul>
+<li><strong>ps</strong> The particle system containing both fixed and non-fixed domains </li>
+</ul>
+<p>When optimizing with fixed domains (e.g., adding 1 new shape to 99 existing), this method precomputes the covariance structure from the fixed shapes. Subsequent calls to ComputeUpdates() will use this precomputed data, avoiding expensive recomputation of the SVD and related matrices.</p>
+<h3 id="function-hasprecomputedfixeddomains">function HasPrecomputedFixedDomains</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">HasPrecomputedFixedDomains</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Check if precomputed fixed domain data is available. </p>
+<h3 id="function-clearprecomputedfixeddomains">function ClearPrecomputedFixedDomains</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ClearPrecomputedFixedDomains</span><span class="p">()</span>
+</code></pre></div>
+<p>Clear precomputed fixed domain data (e.g., if fixed domains change). </p>
+<h3 id="function-requestprecomputeforfixeddomains">function RequestPrecomputeForFixedDomains</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">RequestPrecomputeForFixedDomains</span><span class="p">()</span>
+</code></pre></div>
+<p>Request lazy precomputation on first iteration. The actual precomputation will happen on the first call to ComputeUpdates() when the shape data is guaranteed to be populated. </p>
 <h3 id="function-checkfornans">function CheckForNans</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CheckForNans</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="n">mat</span>
@@ -5040,17 +5245,47 @@
 <h3 id="variable-m_points_mean">variable m_points_mean</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_points_mean</span><span class="p">;</span>
 </code></pre></div>
-<h3 id="variable-m_inversecovmatrix">variable m_InverseCovMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_InverseCovMatrix</span><span class="p">;</span>
-</code></pre></div>
 <h3 id="variable-num_dims">variable num_dims</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">num_dims</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-num_samples">variable num_samples</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">num_samples</span><span class="p">;</span>
 </code></pre></div>
+<h3 id="variable-m_needsprecomputation">variable m_NeedsPrecomputation</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_NeedsPrecomputation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_hasprecomputedfixeddomains">variable m_HasPrecomputedFixedDomains</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_HasPrecomputedFixedDomains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_precomputednumfixedsamples">variable m_PrecomputedNumFixedSamples</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_PrecomputedNumFixedSamples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_precomputednumdims">variable m_PrecomputedNumDims</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_PrecomputedNumDims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_fixedmean">variable m_FixedMean</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedMean</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_fixedy">variable m_FixedY</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedY</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_fixedpinvmat">variable m_FixedPinvMat</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedPinvMat</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_fixedgradientbasis">variable m_FixedGradientBasis</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedGradientBasis</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_fixedu">variable m_FixedU</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedU</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_fixedw">variable m_FixedW</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vnl_diag_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedW</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="variable-m_fixeddomainindices">variable m_FixedDomainIndices</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedDomainIndices</span><span class="p">;</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-01-21 at 19:21:26 +0000</p>
+<p>Updated on 2026-01-24 at 19:30:40 +0000</p>
 
 
 
