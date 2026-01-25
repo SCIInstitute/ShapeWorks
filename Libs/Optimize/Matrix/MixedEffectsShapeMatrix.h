@@ -199,8 +199,10 @@ class MixedEffectsShapeMatrix : public LegacyShapeMatrix {
     }
   }
 
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Walloc-size-larger-than="
+#endif
   void EstimateParameters() {
     //    std::cout << "Estimating params" << std::endl;
     //    std::cout << "Explanatory: " << m_Expl << std::endl;
@@ -329,7 +331,9 @@ class MixedEffectsShapeMatrix : public LegacyShapeMatrix {
     // printf ("random: slopes %g %g, intercepts %g %g", m_SlopeRand(0,0), m_SlopeRand(1,0), m_InterceptRand(0,0),
     // m_InterceptRand(1,0));
   }
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
+#endif
 
   //
   void Initialize() {
