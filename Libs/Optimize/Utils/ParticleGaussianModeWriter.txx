@@ -57,7 +57,7 @@ void ParticleGaussianModeWriter<VDimension>::Update() const {
   for (unsigned int d = 0; d < (unsigned int)DomainsPerShape; d++) {
     char fp[255];
     std::string fn = m_FileName;
-    ::sprintf(fp, "domain%d", d);
+    std::snprintf(fp, sizeof(fp), "domain%d", d);
     fn += fp;
 
     int rowsperdomain = num_dims / DomainsPerShape;
@@ -95,7 +95,7 @@ void ParticleGaussianModeWriter<VDimension>::Update() const {
         }
 
         char fp[255];
-        ::sprintf(fp, ".%d.%d.mode", s, modenum);
+        std::snprintf(fp, sizeof(fp), ".%d.%d.mode", s, modenum);
         std::string tmpstr = fn + fp;
 
         particles::write_particles_from_vector(tmpstr, modelist);

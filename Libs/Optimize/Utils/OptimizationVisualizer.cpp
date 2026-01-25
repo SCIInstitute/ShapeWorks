@@ -125,8 +125,8 @@ void OptimizationVisualizer::IterationCallback(ParticleSystem* particleSystem) {
     windowToImageFilter->Update();
 
     vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
-    char buffer[100];
-    int n = sprintf(buffer, "%s/screenshot_%08d.png", this->screenshotDirectory.c_str(), iteration);
+    char buffer[256];
+    std::snprintf(buffer, sizeof(buffer), "%s/screenshot_%08d.png", this->screenshotDirectory.c_str(), iteration);
     writer->SetFileName(buffer);
     writer->SetInputConnection(windowToImageFilter->GetOutputPort());
     writer->Write();
