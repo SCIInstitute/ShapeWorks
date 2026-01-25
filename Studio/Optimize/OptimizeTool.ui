@@ -1148,7 +1148,7 @@ QWidget#optimize_panel {
                    </widget>
                   </item>
                   <item row="0" column="0">
-                   <spacer name="horizontalSpacer_13">
+                   <spacer name="horizontalSpacer_13a">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -1161,7 +1161,7 @@ QWidget#optimize_panel {
                    </spacer>
                   </item>
                   <item row="0" column="2">
-                   <spacer name="horizontalSpacer_14">
+                   <spacer name="horizontalSpacer_14a">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>

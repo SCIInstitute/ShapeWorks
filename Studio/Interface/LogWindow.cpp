@@ -41,7 +41,7 @@ void LogWindow::add_message(MessageType message_type, QString message) {
   }
 
   QListWidgetItem* item = new QListWidgetItem(message, this->ui_->history_list_);
-  item->setTextColor(color);
+  item->setForeground(color);
   this->ui_->history_list_->addItem(item);
   this->ui_->history_list_->setCurrentItem(item);
 }

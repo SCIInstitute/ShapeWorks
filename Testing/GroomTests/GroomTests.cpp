@@ -11,7 +11,10 @@ using namespace shapeworks;
 TEST(GroomTests, basic_test)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/optimize/sphere");
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
   chdir(test_location.c_str());
+#pragma GCC diagnostic pop
 
   // make sure we clean out at least one necessary file to make sure we re-run
   std::remove("../shared/sphere/sphere10_DT.nrrd");

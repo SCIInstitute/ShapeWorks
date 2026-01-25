@@ -199,6 +199,8 @@ class MixedEffectsShapeMatrix : public LegacyShapeMatrix {
     }
   }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Walloc-size-larger-than="
   void EstimateParameters() {
     //    std::cout << "Estimating params" << std::endl;
     //    std::cout << "Explanatory: " << m_Expl << std::endl;
@@ -209,6 +211,14 @@ class MixedEffectsShapeMatrix : public LegacyShapeMatrix {
     int num_shapes = static_cast<double>(X.cols());
     this->m_NumIndividuals = num_shapes / this->GetTimeptsPerIndividual();
     int nr = X.rows();  // number of points*3
+
+    // Guard against invalid m_NumIndividuals
+    if (m_NumIndividuals <= 0) {
+      return;
+    }
+
+    // Use local variable to help compiler understand value is positive
+    const size_t num_individuals = static_cast<size_t>(m_NumIndividuals);
 
     // set the sizes of random slope and intercept matrix
     m_SlopeRand.set_size(m_NumIndividuals, nr);      // num_groups X num_points*3
@@ -228,8 +238,8 @@ class MixedEffectsShapeMatrix : public LegacyShapeMatrix {
     identity_2.set_size(2, 2);
     identity_2.set_identity();
     vnl_matrix<double>*Ws = NULL, *Vs = NULL;
-    Ws = new vnl_matrix<double>[m_NumIndividuals];
-    Vs = new vnl_matrix<double>[m_NumIndividuals];
+    Ws = new vnl_matrix<double>[num_individuals];
+    Vs = new vnl_matrix<double>[num_individuals];
     for (int i = 0; i < m_NumIndividuals; i++) {
       Vs[i].set_size(m_TimeptsPerIndividual, m_TimeptsPerIndividual);
       Ws[i].set_size(m_TimeptsPerIndividual, m_TimeptsPerIndividual);
@@ -319,6 +329,7 @@ class MixedEffectsShapeMatrix : public LegacyShapeMatrix {
     // printf ("random: slopes %g %g, intercepts %g %g", m_SlopeRand(0,0), m_SlopeRand(1,0), m_InterceptRand(0,0),
     // m_InterceptRand(1,0));
   }
+#pragma GCC diagnostic pop
 
   //
   void Initialize() {
