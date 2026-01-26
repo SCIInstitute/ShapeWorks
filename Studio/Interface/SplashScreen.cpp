@@ -127,7 +127,7 @@ void SplashScreen::resizeEvent(QResizeEvent* event) {
   QDialog::resizeEvent(event);
 
   QFontMetrics fm(this->ui_->title_->font());
-  int width = fm.width(this->ui_->title_->text());
+  int width = fm.horizontalAdvance(this->ui_->title_->text());
   this->ui_->title_->setMinimumWidth(width);
   this->resize(width * 2, width * 1.2);
 }

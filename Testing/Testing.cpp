@@ -6,7 +6,10 @@
 void setupenv(const std::string& testDirectory) {
   // change to the shapeworksTests directory
   auto shapeworksTestsDir(testDirectory);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
   chdir(shapeworksTestsDir.c_str());
+#pragma GCC diagnostic pop
 
   // set location of shapeworks DATA used by shell scripts
   std::string data(TEST_DATA_DIR);

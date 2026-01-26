@@ -176,7 +176,7 @@ SET(STUDIO_UTILS_SRCS
   )
 
 SET(STUDIO_UTILS_MOC_HDRS
-  Utils/ImageLabel.h
+  # Utils/ImageLabel.h - doesn't have Q_OBJECT, no moc needed
   )
 
 SET(STUDIO_INTERFACE_SRCS
@@ -195,7 +195,7 @@ SET(STUDIO_INTERFACE_SRCS
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/CompareWidget.h
-  Interface/CustomSlider.h
+  # Interface/CustomSlider.h - doesn't have Q_OBJECT, no moc needed
   Interface/ExportImageDialog.h
   Interface/KeyboardShortcuts.h
   Interface/LogWindow.h

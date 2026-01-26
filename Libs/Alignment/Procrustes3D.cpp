@@ -301,7 +301,7 @@ void Procrustes3D::AlignTwoShapes(SimilarityTransform3D& transform, ShapeType& s
   }
 
   // Rotation from SVD
-  vnl_svd<RealType> svd(shapeMat.transpose());
+  vnl_svd<RealType> svd(shapeMat.transpose().as_ref());
   newTransform.rotation = svd.V() * svd.U().transpose();
   transform.rotation = newTransform.rotation * transform.rotation;
 
@@ -459,7 +459,7 @@ void Procrustes3D::AlignSourceToTarget(SimilarityTransform3D& transform, ShapeTy
   }
 
   // Rotation from SVD
-  vnl_svd<RealType> svd(shapeMat.transpose());
+  vnl_svd<RealType> svd(shapeMat.transpose().as_ref());
   newTransform.rotation = svd.V() * svd.U().transpose();
   transform.rotation = newTransform.rotation;
 

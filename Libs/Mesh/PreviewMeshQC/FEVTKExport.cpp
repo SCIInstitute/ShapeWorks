@@ -105,7 +105,7 @@ bool FEVTKExport::ExportToStream(FEMesh &mesh, std::ostream &out)
     for (j = 0; j < m.Nodes();) {
       for (int k = 0; k < 9 && j + k < m.Nodes(); k++) {
         char buffer[1024];
-        sprintf(buffer, "%15.10lg ", nodeShellThickness[j + k]);
+        std::snprintf(buffer, sizeof(buffer), "%15.10lg ", nodeShellThickness[j + k]);
         out << buffer << "\n";
       }
       out << "\n";
@@ -124,7 +124,7 @@ bool FEVTKExport::ExportToStream(FEMesh &mesh, std::ostream &out)
       for (int k = 0; k < 9 && j + k < m.Nodes(); k++) {
         FENode& n = m.Node(j + k);
         char buffer[1024];
-        sprintf(buffer, "%15.10lg ", n.m_ndata);
+        std::snprintf(buffer, sizeof(buffer), "%15.10lg ", n.m_ndata);
         out << buffer << "\n";
       }
       out << "\n";
