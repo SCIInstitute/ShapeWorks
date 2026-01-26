@@ -3942,6 +3942,10 @@
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 
+<span class="cp">#if defined(__GNUC__) &amp;&amp; !defined(__clang__)</span>
+<span class="cp">#pragma GCC diagnostic push</span>
+<span class="cp">#pragma GCC diagnostic ignored &quot;-Walloc-size-larger-than=&quot;</span>
+<span class="cp">#endif</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">EstimateParameters</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">//    std::cout &lt;&lt; &quot;Estimating params&quot; &lt;&lt; std::endl;</span>
 <span class="w">    </span><span class="c1">//    std::cout &lt;&lt; &quot;Explanatory: &quot; &lt;&lt; m_Expl &lt;&lt; std::endl;</span>
@@ -3952,6 +3956,14 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_shapes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">X</span><span class="p">.</span><span class="n">cols</span><span class="p">());</span>
 <span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_NumIndividuals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_shapes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetTimeptsPerIndividual</span><span class="p">();</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">nr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span><span class="w">  </span><span class="c1">// number of points*3</span>
+
+<span class="w">    </span><span class="c1">// Guard against invalid m_NumIndividuals</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_NumIndividuals</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Use local variable to help compiler understand value is positive</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">num_individuals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_NumIndividuals</span><span class="p">);</span>
 
 <span class="w">    </span><span class="c1">// set the sizes of random slope and intercept matrix</span>
 <span class="w">    </span><span class="n">m_SlopeRand</span><span class="p">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">m_NumIndividuals</span><span class="p">,</span><span class="w"> </span><span class="n">nr</span><span class="p">);</span><span class="w">      </span><span class="c1">// num_groups X num_points*3</span>
@@ -3971,8 +3983,8 @@
 <span class="w">    </span><span class="n">identity_2</span><span class="p">.</span><span class="n">set_size</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
 <span class="w">    </span><span class="n">identity_2</span><span class="p">.</span><span class="n">set_identity</span><span class="p">();</span>
 <span class="w">    </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;*</span><span class="n">Ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">Vs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
-<span class="w">    </span><span class="n">Ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">[</span><span class="n">m_NumIndividuals</span><span class="p">];</span>
-<span class="w">    </span><span class="n">Vs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">[</span><span class="n">m_NumIndividuals</span><span class="p">];</span>
+<span class="w">    </span><span class="n">Ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">[</span><span class="n">num_individuals</span><span class="p">];</span>
+<span class="w">    </span><span class="n">Vs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">[</span><span class="n">num_individuals</span><span class="p">];</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_NumIndividuals</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="n">Vs</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">set_size</span><span class="p">(</span><span class="n">m_TimeptsPerIndividual</span><span class="p">,</span><span class="w"> </span><span class="n">m_TimeptsPerIndividual</span><span class="p">);</span>
 <span class="w">      </span><span class="n">Ws</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">set_size</span><span class="p">(</span><span class="n">m_TimeptsPerIndividual</span><span class="p">,</span><span class="w"> </span><span class="n">m_TimeptsPerIndividual</span><span class="p">);</span>
@@ -4062,6 +4074,9 @@
 <span class="w">    </span><span class="c1">// printf (&quot;random: slopes %g %g, intercepts %g %g&quot;, m_SlopeRand(0,0), m_SlopeRand(1,0), m_InterceptRand(0,0),</span>
 <span class="w">    </span><span class="c1">// m_InterceptRand(1,0));</span>
 <span class="w">  </span><span class="p">}</span>
+<span class="cp">#if defined(__GNUC__) &amp;&amp; !defined(__clang__)</span>
+<span class="cp">#pragma GCC diagnostic pop</span>
+<span class="cp">#endif</span>
 
 <span class="w">  </span><span class="c1">//</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -4126,7 +4141,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-01-24 at 19:30:42 +0000</p>
+<p>Updated on 2026-01-26 at 19:12:03 +0000</p>
 
 
 

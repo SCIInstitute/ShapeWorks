@@ -3788,6 +3788,8 @@
 <span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="p">;</span>
 <span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeWorksStudioApp</span><span class="p">;</span>
 
+<span class="cp">#pragma GCC diagnostic push</span>
+<span class="cp">#pragma GCC diagnostic ignored &quot;-Wattributes&quot;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MonaiLabelJob</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
 
@@ -3871,10 +3873,11 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">error_occurred_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="p">};</span>
+<span class="cp">#pragma GCC diagnostic pop</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace monailabel</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-01-24 at 19:30:42 +0000</p>
+<p>Updated on 2026-01-26 at 19:12:03 +0000</p>
 
 
 
