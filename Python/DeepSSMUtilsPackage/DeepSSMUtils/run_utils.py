@@ -385,7 +385,6 @@ def groom_val_test_images(project, indices):
 
     val_test_transforms = []
     val_test_image_files = []
-    failed_indices = []
 
     for count, i in enumerate(val_test_indices):
         if sw_check_abort():
@@ -396,83 +395,76 @@ def groom_val_test_images(project, indices):
         sw_progress(count / (len(val_test_indices) + 1),
                     f"Grooming val/test image {image_name} ({count + 1}/{len(val_test_indices)})")
 
-        try:
-            image = sw.Image(image_name)
+        image = sw.Image(image_name)
 
-            image_file = val_test_images_dir + f"{i}.nrrd"
+        image_file = val_test_images_dir + f"{i}.nrrd"
 
-            # check if this subject needs reflection
-            needs_reflection, axis = does_subject_need_reflection(project, subjects[i])
+        # check if this subject needs reflection
+        needs_reflection, axis = does_subject_need_reflection(project, subjects[i])
 
-            # 1. Apply reflection
-            reflection = np.eye(4)
-            if needs_reflection:
-                reflection[axis, axis] = -1
-                # account for offset
-                reflection[-1][0] = 2 * image.center()[0]
+        # 1. Apply reflection
+        reflection = np.eye(4)
+        if needs_reflection:
+            reflection[axis, axis] = -1
+            # account for offset
+            reflection[-1][0] = 2 * image.center()[0]
 
-            image.applyTransform(reflection)
-            transform = sw.utils.getVTKtransform(reflection)
+        image.applyTransform(reflection)
+        transform = sw.utils.getVTKtransform(reflection)
 
-            # 2. Translate to have ref center to make rigid registration easier
-            translation = ref_center - image.center()
-            image.setOrigin(image.origin() + translation).write(image_file)
-            transform[:3, -1] += translation
+        # 2. Translate to have ref center to make rigid registration easier
+        translation = ref_center - image.center()
+        image.setOrigin(image.origin() + translation).write(image_file)
+        transform[:3, -1] += translation
 
-            # 3. Translate with respect to slightly cropped ref
-            image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
-            itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file,
-                                                                                      image_file,
-                                                                                      transform_type='translation')
-            # 4. Apply transform
-            image.applyTransform(itk_translation_transform,
-                                 large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
-                                 large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
-                                 sw.InterpolationType.Linear, meshTransform=False)
-            vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
-            transform = np.matmul(vtk_translation_transform, transform)
+        # 3. Translate with respect to slightly cropped ref
+        image = sw.Image(image_file).fitRegion(large_bb).write(image_file)
+        itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file,
+                                                                                  image_file,
+                                                                                  transform_type='translation')
+        # 4. Apply transform
+        image.applyTransform(itk_translation_transform,
+                             large_cropped_ref_image.origin(), large_cropped_ref_image.dims(),
+                             large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+        transform = np.matmul(vtk_translation_transform, transform)
 
-            # 5. Crop with medium bounding box and find rigid transform
-            image.fitRegion(medium_bb).write(image_file)
-            itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
-                                                                                image_file, transform_type='rigid')
+        # 5. Crop with medium bounding box and find rigid transform
+        image.fitRegion(medium_bb).write(image_file)
+        itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
+                                                                            image_file, transform_type='rigid')
 
-            # 6. Apply transform
-            image.applyTransform(itk_rigid_transform,
-                                 medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
-                                 medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
-                                 sw.InterpolationType.Linear, meshTransform=False)
-            vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
-            transform = np.matmul(vtk_rigid_transform, transform)
+        # 6. Apply transform
+        image.applyTransform(itk_rigid_transform,
+                             medium_cropped_ref_image.origin(), medium_cropped_ref_image.dims(),
+                             medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
+        transform = np.matmul(vtk_rigid_transform, transform)
 
-            # 7. Get similarity transform from image registration and apply
-            image.fitRegion(bounding_box).write(image_file)
-            itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
-                                                                                     image_file,
-                                                                                     transform_type='similarity')
-            image.applyTransform(itk_similarity_transform,
-                                 cropped_ref_image.origin(), cropped_ref_image.dims(),
-                                 cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
-                                 sw.InterpolationType.Linear, meshTransform=False)
-            image.write(image_file)
-            vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
-            transform = np.matmul(vtk_similarity_transform, transform)
+        # 7. Get similarity transform from image registration and apply
+        image.fitRegion(bounding_box).write(image_file)
+        itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
+                                                                                 image_file,
+                                                                                 transform_type='similarity')
+        image.applyTransform(itk_similarity_transform,
+                             cropped_ref_image.origin(), cropped_ref_image.dims(),
+                             cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        image.write(image_file)
+        vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
+        transform = np.matmul(vtk_similarity_transform, transform)
 
-            # 8. Save transform
-            val_test_transforms.append(transform)
-            extra_values = subjects[i].get_extra_values()
-            extra_values["registration_transform"] = transform_to_string(transform)
+        # 8. Save transform
+        val_test_transforms.append(transform)
+        extra_values = subjects[i].get_extra_values()
+        extra_values["registration_transform"] = transform_to_string(transform)
 
-            subjects[i].set_extra_values(extra_values)
+        subjects[i].set_extra_values(extra_values)
 
-            # Explicitly delete image and run garbage collection periodically
-            del image
-        except Exception as e:
-            sw_message(f"Warning: Failed to process val/test image for subject {i}: {e}")
-            failed_indices.append(i)
-            # Clean up partial file if it exists
-            if os.path.exists(val_test_images_dir + f"{i}.nrrd"):
-                os.remove(val_test_images_dir + f"{i}.nrrd")
+        # Explicitly delete image and run garbage collection periodically
+        del image
 
         if count % 20 == 0:
             gc.collect()
@@ -480,9 +472,6 @@ def groom_val_test_images(project, indices):
     # Final cleanup
     gc.collect()
     project.set_subjects(subjects)
-
-    if failed_indices:
-        sw_message(f"Warning: {len(failed_indices)} val/test images failed to process: {failed_indices}")
 
 
 def prepare_data_loaders(project, batch_size, split="all", num_workers=0):
@@ -496,17 +485,13 @@ def prepare_data_loaders(project, batch_size, split="all", num_workers=0):
         val_image_files = []
         val_world_particles = []
         val_indices = get_split_indices(project, "val")
-        skipped_val = []
         for i in val_indices:
             image_file = deepssm_dir + f"/val_and_test_images/{i}.nrrd"
-            if os.path.exists(image_file):
-                val_image_files.append(image_file)
-                particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
-                val_world_particles.append(particle_file)
-            else:
-                skipped_val.append(i)
-        if skipped_val:
-            sw_message(f"Warning: Skipping {len(skipped_val)} missing validation images: {skipped_val}")
+            if not os.path.exists(image_file):
+                raise FileNotFoundError(f"Missing validation image for subject {i}: {image_file}")
+            val_image_files.append(image_file)
+            particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
+            val_world_particles.append(particle_file)
         DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles, num_workers=num_workers)
 
     if split == "all" or split == "train":
@@ -517,15 +502,11 @@ def prepare_data_loaders(project, batch_size, split="all", num_workers=0):
     if split == "all" or split == "test":
         test_image_files = []
         test_indices = get_split_indices(project, "test")
-        skipped_test = []
         for i in test_indices:
             image_file = deepssm_dir + f"/val_and_test_images/{i}.nrrd"
-            if os.path.exists(image_file):
-                test_image_files.append(image_file)
-            else:
-                skipped_test.append(i)
-        if skipped_test:
-            sw_message(f"Warning: Skipping {len(skipped_test)} missing test images: {skipped_test}")
+            if not os.path.exists(image_file):
+                raise FileNotFoundError(f"Missing test image for subject {i}: {image_file}")
+            test_image_files.append(image_file)
         DeepSSMUtils.getTestLoader(loader_dir, test_image_files, num_workers=num_workers)
 
 
@@ -564,25 +545,20 @@ def process_test_predictions(project, config_file):
     template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
     template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
 
-    all_test_indices = get_split_indices(project, "test")
+    test_indices = get_split_indices(project, "test")
 
     predicted_test_local_particles = []
     predicted_test_world_particles = []
     test_transforms = []
     test_mesh_files = []
-    test_indices = []  # Only indices with valid predictions
-    skipped_indices = []
 
-    for index in all_test_indices:
+    for index in test_indices:
         world_particle_file = f"{world_predictions_dir}/{index}.particles"
 
-        # Skip subjects that don't have predictions (e.g., failed during image grooming)
         if not os.path.exists(world_particle_file):
-            skipped_indices.append(index)
-            continue
+            raise FileNotFoundError(f"Missing prediction for test subject {index}: {world_particle_file}")
 
         print(f"world_particle_file: {world_particle_file}")
-        test_indices.append(index)
         predicted_test_world_particles.append(world_particle_file)
 
         transform = get_test_alignment_transform(project, index)
@@ -598,9 +574,6 @@ def process_test_predictions(project, config_file):
         local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
         np.savetxt(local_particle_file, local_particles)
         predicted_test_local_particles.append(local_particle_file)
-
-    if skipped_indices:
-        sw_message(f"Warning: Skipping {len(skipped_indices)} test subjects without predictions: {skipped_indices}")
 
     distances = eval_utils.get_mesh_distances(predicted_test_local_particles, test_mesh_files,
                                               template_particles, template_mesh, pred_dir)
