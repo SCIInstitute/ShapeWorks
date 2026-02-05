@@ -560,7 +560,7 @@ bool Groom::run_alignment() {
   bool any_alignment = false;
 
   int reference_index = -1;
-  int subset_size = -1;
+  int subset_size = base_params.get_alignment_subset_size();
 
   // per-domain alignment
   for (size_t domain = 0; domain < num_domains; domain++) {
