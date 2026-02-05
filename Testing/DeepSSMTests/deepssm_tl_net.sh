@@ -14,4 +14,4 @@ rm -rf deepssm groomed *_particles
 shapeworks deepssm --name tl_net.swproj --all
 
 # Verify results
-python "${SCRIPT_DIR}/verify_deepssm_results.py" "${DATA}/deepssm/projects"
+python3 "${SCRIPT_DIR}/verify_deepssm_results.py" "${DATA}/deepssm/projects"

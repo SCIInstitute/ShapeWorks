@@ -99,7 +99,7 @@ run_project() {
         verify_args="--expected 10 --tolerance 1.0"
     fi
 
-    python "${SCRIPT_DIR}/verify_deepssm_results.py" . $verify_args
+    python3 "${SCRIPT_DIR}/verify_deepssm_results.py" . $verify_args
 
     echo ""
 }

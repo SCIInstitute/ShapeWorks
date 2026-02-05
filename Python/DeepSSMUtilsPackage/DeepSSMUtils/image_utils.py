@@ -2,15 +2,15 @@ import itk
 import SimpleITK
 import numpy as np
 
-def get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid'):
-    # Prepare parameter map 
+def get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid', max_iterations=1024):
+    # Prepare parameter map
     parameter_object = itk.ParameterObject.New()
     parameter_map = parameter_object.GetDefaultParameterMap('rigid')
     if transform_type == 'similarity':
         parameter_map['Transform'] = ['SimilarityTransform']
     elif transform_type == 'translation':
         parameter_map['Transform'] = ['TranslationTransform']
-    parameter_map['MaximumNumberOfIterations'] = ['1024']
+    parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
     parameter_object.AddParameterMap(parameter_map)
 
     # Load images
