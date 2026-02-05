@@ -33,7 +33,7 @@ for config in $CONFIGS; do
     shapeworks deepssm --name ${config}.swproj --all
 
     # Run exact check with config-specific file
-    python "${SCRIPT_DIR}/verify_deepssm_results.py" . \
+    python3 "${SCRIPT_DIR}/verify_deepssm_results.py" . \
         --exact_check "$MODE" \
         --baseline_file "exact_check_${config}.txt"
 
