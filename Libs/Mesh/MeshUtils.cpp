@@ -182,6 +182,10 @@ PhysicalRegion MeshUtils::boundingBox(const std::vector<Mesh>& meshes, bool cent
 }
 
 int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_size) {
+  // auto (-1) defaults to a subset of 30 to avoid O(n^2) pairwise ICP on large datasets
+  if (random_subset_size < 0) {
+    random_subset_size = 30;
+  }
   bool use_random_subset = random_subset_size > 0 && random_subset_size < meshes.size();
   int num_meshes = use_random_subset ? random_subset_size : meshes.size();
 
