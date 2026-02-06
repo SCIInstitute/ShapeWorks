@@ -11,3 +11,4 @@ target_link_libraries(DeepSSMTests
   )
 
 add_test(NAME DeepSSMTests COMMAND DeepSSMTests)
+set_tests_properties(DeepSSMTests PROPERTIES TIMEOUT 1800)

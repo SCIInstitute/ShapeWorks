@@ -207,10 +207,9 @@ bool PythonWorker::init() {
         path = QString::fromStdString(line);
       }
       file.close();
+      qputenv("PATH", path.toUtf8());
+      SW_LOG("Setting PATH for Python to: " + path.toStdString());
     }
-
-    qputenv("PATH", path.toUtf8());
-    SW_LOG("Setting PATH for Python to: " + path.toStdString());
 
     // Python 3.8+ requires explicit DLL directory registration
     // PATH environment variable is no longer used for DLL search

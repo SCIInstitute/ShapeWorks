@@ -64,8 +64,8 @@ def Run_Pipeline(args):
         This data is comprised of femur meshes and corresponding hip CT scans.
         """
 
-        if platform.system() == "Darwin":
-            # On MacOS, CPU PyTorch is hanging with parallel
+        if platform.system() != "Linux":
+            # CPU PyTorch hangs with OpenMP parallelism on macOS and Windows
             os.environ['OMP_NUM_THREADS'] = "1"
         # If running a tiny_test, then download subset of the data
         if args.tiny_test:

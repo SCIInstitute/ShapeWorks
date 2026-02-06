@@ -12,7 +12,7 @@
 #include <ShapeworksUtils.h>
 #include <Utils/StringUtils.h>
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <boost/filesystem.hpp>
 
 namespace shapeworks {
@@ -371,18 +371,23 @@ void DeepSSMCommand::buildParser() {
       .set_default(0)
       .help("Number of data loader workers (default: 0)");
 
+  parser.add_option("--aug_processes")
+      .action("store")
+      .type("int")
+      .set_default(0)
+      .help("Number of augmentation processes (default: 0 = use all cores)");
+
   Command::buildParser();
 }
 
 bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
-  // Create a non-gui QApplication instance
-  int argc = 3;
-  char* argv[3];
+  // QCoreApplication provides the event loop needed for PythonWorker's QThread,
+  // without requiring Qt platform plugins (which may not be available on headless CI).
+  int argc = 1;
+  char* argv[1];
   argv[0] = const_cast<char*>("shapeworks");
-  argv[1] = const_cast<char*>("-platform");
-  argv[2] = const_cast<char*>("offscreen");
 
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
   // Handle project file: either from --name or first positional argument
   std::string project_file;
@@ -413,12 +418,14 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
   bool do_test = options.is_set("test") || options.is_set("all");
 
   int num_workers = static_cast<int>(options.get("num_workers"));
+  int aug_processes = static_cast<int>(options.get("aug_processes"));
 
   std::cout << "Prep step:    " << (do_prep ? "on" : "off") << "\n";
   std::cout << "Augment step: " << (do_augment ? "on" : "off") << "\n";
   std::cout << "Train step:   " << (do_train ? "on" : "off") << "\n";
   std::cout << "Test step:    " << (do_test ? "on" : "off") << "\n";
   std::cout << "Num dataloader workers:  " << num_workers << "\n";
+  std::cout << "Augmentation processes:  " << (aug_processes == 0 ? QThread::idealThreadCount() : aug_processes) << "\n";
 
   if (!do_prep && !do_augment && !do_train && !do_test) {
     do_prep = true;
@@ -472,6 +479,7 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
   if (do_augment) {
     std::cout << "Running DeepSSM data augmentation...\n";
     auto job = QSharedPointer<DeepSSMJob>::create(project, DeepSSMJob::JobType::DeepSSM_AugmentationType);
+    job->set_aug_processes(aug_processes);
     python_worker.run_job(job);
     if (!wait_for_job(job)) {
       return false;
