@@ -6,6 +6,7 @@ from numpy import matlib
 import torch
 from torch.utils.data import DataLoader
 from DeepSSMUtils import model, loaders
+from DeepSSMUtils import constants as C
 from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
@@ -24,9 +25,9 @@ def test(config_file, loader="test"):
     pred_dir = model_dir + loader + '_predictions/'
     loaders.make_dir(pred_dir)
     if parameters["use_best_model"]:
-        model_path = model_dir + 'best_model.torch'
+        model_path = model_dir + C.BEST_MODEL_FILE
     else:
-        model_path = model_dir + 'final_model.torch'
+        model_path = model_dir + C.FINAL_MODEL_FILE
     if parameters["fine_tune"]["enabled"]:
         model_path_ft = model_path.replace(".torch", "_ft.torch")
     else:
@@ -35,7 +36,7 @@ def test(config_file, loader="test"):
 
     # load the loaders
     sw_message("Loading " + loader + " data loader...")
-    test_loader = torch.load(loader_dir + loader, weights_only=False)
+    test_loader = loaders.load_data_loader(loader_dir + loader, loader_type='test')
 
     # initialization
     sw_message("Loading trained model...")
@@ -67,9 +68,9 @@ def test(config_file, loader="test"):
     index = 0
     pred_scores = []
 
-    pred_path = pred_dir + 'world_predictions/'
+    pred_path = pred_dir + C.WORLD_PREDICTIONS_DIR + '/'
     loaders.make_dir(pred_path)
-    pred_path_pca = pred_dir + 'pca_predictions/'
+    pred_path_pca = pred_dir + C.PCA_PREDICTIONS_DIR + '/'
     loaders.make_dir(pred_path_pca)
 
     predicted_particle_files = []
@@ -86,18 +87,18 @@ def test(config_file, loader="test"):
             [pred_tf, pred_mdl_tl] = model_tl(mdl, img)
             pred_scores.append(pred_tf.cpu().data.numpy())
             # save the AE latent space as shape descriptors
-            filename = pred_path + test_names[index] + '.npy'
-            np.save(filename, pred_tf.squeeze().detach().cpu().numpy())
+            latent_filename = pred_path + test_names[index] + '.npy'
+            np.save(latent_filename, pred_tf.squeeze().detach().cpu().numpy())
             np.savetxt(particle_filename, pred_mdl_tl.squeeze().detach().cpu().numpy())
         else:
             [pred, pred_mdl_pca] = model_pca(img)
             [pred, pred_mdl_ft] = model_ft(img)
             pred_scores.append(pred.cpu().data.numpy()[0])
-            filename = pred_path_pca + '/predicted_pca_' + test_names[index] + '.particles'
-            np.savetxt(filename, pred_mdl_pca.squeeze().detach().cpu().numpy())
+            pca_filename = pred_path_pca + '/predicted_pca_' + test_names[index] + '.particles'
+            np.savetxt(pca_filename, pred_mdl_pca.squeeze().detach().cpu().numpy())
             np.savetxt(particle_filename, pred_mdl_ft.squeeze().detach().cpu().numpy())
             print("Predicted particle file: ", particle_filename)
-        predicted_particle_files.append(filename)
+        predicted_particle_files.append(particle_filename)
         index += 1
     sw_message("Test completed.")
     return predicted_particle_files

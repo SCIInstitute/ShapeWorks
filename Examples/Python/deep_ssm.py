@@ -64,8 +64,8 @@ def Run_Pipeline(args):
         This data is comprised of femur meshes and corresponding hip CT scans.
         """
 
-        if platform.system() == "Darwin":
-            # On MacOS, CPU PyTorch is hanging with parallel
+        if platform.system() != "Linux":
+            # CPU PyTorch hangs with OpenMP parallelism on macOS and Windows
             os.environ['OMP_NUM_THREADS'] = "1"
         # If running a tiny_test, then download subset of the data
         if args.tiny_test:
@@ -396,6 +396,7 @@ def Run_Pipeline(args):
                 "c_lat": 6.3
             }
         }
+
         if args.tiny_test:
             model_parameters["trainer"]["epochs"] = 1
         # Save config file
@@ -436,17 +437,17 @@ def Run_Pipeline(args):
             val_world_particles.append(project_path + subjects[index].get_world_particle_filenames()[0])
             val_mesh_files.append(project_path + subjects[index].get_groomed_filenames()[0])
 
-        val_out_dir = output_directory + model_name + '/validation_predictions/'
         predicted_val_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='validation')
         print("Validation world predictions saved.")
-        # Generate local predictions
-        local_val_prediction_dir = val_out_dir + 'local_predictions/'
+        # Generate local predictions - create directory next to world_predictions
+        world_pred_dir = os.path.dirname(predicted_val_world_particles[0])
+        local_val_prediction_dir = world_pred_dir.replace("world_predictions", "local_predictions")
         if not os.path.exists(local_val_prediction_dir):
             os.makedirs(local_val_prediction_dir)
         predicted_val_local_particles = []
         for particle_file, transform in zip(predicted_val_world_particles, val_transforms):
             particles = np.loadtxt(particle_file)
-            local_particle_file = particle_file.replace("world_predictions/", "local_predictions/")
+            local_particle_file = particle_file.replace("world_predictions", "local_predictions")
             local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
             np.savetxt(local_particle_file, local_particles)
             predicted_val_local_particles.append(local_particle_file)
@@ -462,6 +463,8 @@ def Run_Pipeline(args):
         template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
         template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
         # Get distance between clipped true and predicted meshes
+        # Get the validation output directory from the predictions path
+        val_out_dir = os.path.dirname(local_val_prediction_dir.rstrip('/')) + '/'
         mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files,
                                                      template_particles, template_mesh, val_out_dir,
                                                      planes=val_planes)
@@ -500,17 +503,17 @@ def Run_Pipeline(args):
             with open(plane_file) as json_file:
                 test_planes.append(json.load(json_file)['planes'][0]['points'])
 
-        test_out_dir = output_directory + model_name + '/test_predictions/'
         predicted_test_world_particles = DeepSSMUtils.testDeepSSM(config_file, loader='test')
         print("Test world predictions saved.")
-        # Generate local predictions
-        local_test_prediction_dir = test_out_dir + 'local_predictions/'
+        # Generate local predictions - create directory next to world_predictions
+        world_pred_dir = os.path.dirname(predicted_test_world_particles[0])
+        local_test_prediction_dir = world_pred_dir.replace("world_predictions", "local_predictions")
         if not os.path.exists(local_test_prediction_dir):
             os.makedirs(local_test_prediction_dir)
         predicted_test_local_particles = []
         for particle_file, transform in zip(predicted_test_world_particles, test_transforms):
             particles = np.loadtxt(particle_file)
-            local_particle_file = particle_file.replace("world_predictions/", "local_predictions/")
+            local_particle_file = particle_file.replace("world_predictions", "local_predictions")
             local_particles = sw.utils.transformParticles(particles, transform, inverse=True)
             np.savetxt(local_particle_file, local_particles)
             predicted_test_local_particles.append(local_particle_file)
@@ -524,15 +527,17 @@ def Run_Pipeline(args):
         template_mesh = project_path + subjects[reference_index].get_groomed_filenames()[0]
         template_particles = project_path + subjects[reference_index].get_local_particle_filenames()[0]
 
+        # Get the test output directory from the predictions path
+        test_out_dir = os.path.dirname(local_test_prediction_dir.rstrip('/')) + '/'
         mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_test_local_particles, test_mesh_files,
                                                      template_particles, template_mesh, test_out_dir,
                                                      planes=test_planes)
         print("Test mean mesh surface-to-surface distance: " + str(mean_dist))
 
-        DeepSSMUtils.process_test_predictions(project, config_file)
-        
+        final_mean_dist = DeepSSMUtils.process_test_predictions(project, config_file)
+
         # If tiny test or verify, check results and exit
-        check_results(args, mean_dist)
+        check_results(args, final_mean_dist, output_directory)
 
         open(status_dir + "step_12.txt", 'w').close()
 
@@ -540,12 +545,35 @@ def Run_Pipeline(args):
 
 
 # Verification
-def check_results(args, mean_dist):
+def check_results(args, mean_dist, output_directory):
     if args.tiny_test:
         print("\nVerifying use case results.")
-        if not math.isclose(mean_dist, 10, rel_tol=1):
-            print("Test failed.")
-            exit(-1)
+
+        exact_check_file = output_directory + "exact_check_value.txt"
+
+        # Exact check for refactoring verification (platform-specific)
+        if args.exact_check == "save":
+            with open(exact_check_file, "w") as f:
+                f.write(str(mean_dist))
+            print(f"Saved exact check value to: {exact_check_file}")
+            print(f"Value: {mean_dist}")
+        elif args.exact_check == "verify":
+            if not os.path.exists(exact_check_file):
+                print(f"Error: No saved value found at {exact_check_file}")
+                print("Run with --exact_check save first to create baseline.")
+                exit(-1)
+            with open(exact_check_file, "r") as f:
+                expected_mean_dist = float(f.read().strip())
+            if mean_dist != expected_mean_dist:
+                print(f"Exact check failed: expected {expected_mean_dist}, got {mean_dist}")
+                exit(-1)
+            print(f"Exact check passed: {mean_dist}")
+        else:
+            # Relaxed check for CI/cross-platform
+            if not math.isclose(mean_dist, 10, rel_tol=1):
+                print("Test failed.")
+                exit(-1)
+
         print("Done with test, verification succeeded.")
         exit(0)
     else:

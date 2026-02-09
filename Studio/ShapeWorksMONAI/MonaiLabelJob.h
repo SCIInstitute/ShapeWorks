@@ -28,6 +28,8 @@ using shapeworks::ProjectHandle;
 using shapeworks::Session;
 using shapeworks::ShapeWorksStudioApp;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 class MonaiLabelJob : public Job {
   Q_OBJECT;
 
@@ -111,4 +113,5 @@ class MonaiLabelJob : public Job {
 
   bool error_occurred_ = false;
 };
+#pragma GCC diagnostic pop
 }  // namespace monailabel

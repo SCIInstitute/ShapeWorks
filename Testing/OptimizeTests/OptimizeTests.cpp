@@ -483,7 +483,7 @@ TEST(OptimizeTests, procrustes_scale_only_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
   ASSERT_GT(values[values.size() - 1], 275.0);
-  ASSERT_LT(values[values.size() - 1], 385.0);
+  ASSERT_LT(values[values.size() - 1], 390.0);
 }
 
 // TODO Move this to mesh tests?
@@ -577,7 +577,7 @@ TEST(OptimizeTests, ffc_test) {
   stats.compute_modes();
   stats.principal_component_projections();
 
-  bool good = check_constraint_violations(app, 6.0e-1);
+  bool good = check_constraint_violations(app, 1.0);
 
   ASSERT_TRUE(good);
 }

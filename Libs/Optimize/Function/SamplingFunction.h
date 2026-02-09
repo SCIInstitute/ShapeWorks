@@ -53,6 +53,15 @@ class SamplingFunction : public VectorFunction {
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   bool GetSharedBoundaryEnabled() const { return m_IsSharedBoundaryEnabled; }
 
+  void SetSamplingScale(bool enabled) { m_SamplingScale = enabled; }
+  bool GetSamplingScale() const { return m_SamplingScale; }
+
+  void SetSamplingAutoScale(bool auto_scale) { m_SamplingAutoScale = auto_scale; }
+  bool GetSamplingAutoScale() const { return m_SamplingAutoScale; }
+
+  void SetSamplingScaleValue(double scale_value) { m_SamplingScaleValue = scale_value; }
+  double GetSamplingScaleValue() const { return m_SamplingScaleValue; }
+
   /**Access the cache of sigma values for each particle position.  This cache
      is populated by registering this object as an observer of the correct
      particle system (see SetParticleSystem).*/
@@ -105,6 +114,9 @@ class SamplingFunction : public VectorFunction {
   double m_avgKappa{0};
   bool m_IsSharedBoundaryEnabled{false};
   double m_SharedBoundaryWeight{1.0};
+  bool m_SamplingScale{true};
+  bool m_SamplingAutoScale{true};
+  double m_SamplingScaleValue{1.0};
   double m_CurrentSigma{0.0};
   float m_MaxMoveFactor{0};
   double m_MinimumNeighborhoodRadius{0};

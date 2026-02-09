@@ -240,6 +240,14 @@ class Optimize {
   void SetSharedBoundaryEnabled(bool enabled);
   void SetSharedBoundaryWeight(double weight);
 
+  //! Sampling scale settings
+  void SetSamplingScale(bool enabled);
+  bool GetSamplingScale();
+  void SetSamplingAutoScale(bool auto_scale);
+  bool GetSamplingAutoScale();
+  void SetSamplingScaleValue(double scale_value);
+  double GetSamplingScaleValue();
+
   //! Early Stopping params
   void SetEarlyStoppingConfig(EarlyStoppingConfig config);
 
@@ -415,6 +423,11 @@ class Optimize {
   bool m_geodesics_enabled = false;             // geodesics disabled by default
   size_t m_geodesic_cache_size_multiplier = 0;  // 0 => MeshWrapper will use a heuristic to determine cache size
   double m_geodesic_remesh_percent = 100.0;     // 100% by default (e.g. no remeshing)
+
+  // Sampling scale parameters
+  bool m_sampling_scale = true;                 // enabled by default
+  bool m_sampling_auto_scale = true;            // auto scale enabled by default
+  double m_sampling_scale_value = 1.0;          // default scale value
 
   // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;

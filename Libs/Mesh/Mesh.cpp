@@ -33,6 +33,7 @@
 #include <vtkIncrementalPointLocator.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLoopSubdivisionFilter.h>
+#include <vtkMassProperties.h>
 #include <vtkNew.h>
 #include <vtkOBJReader.h>
 #include <vtkOBJWriter.h>
@@ -341,6 +342,9 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   // Restore std::cout
   //  std::cout.clear();
 
+  clean();
+  checkIntegrity();
+
   this->poly_data_ = remesh->GetOutput();
 
   // must regenerate normals after smoothing
@@ -415,13 +419,11 @@ Mesh& Mesh::fillHoles(double hole_size) {
   filter->Update();
   this->poly_data_ = filter->GetOutput();
 
-  auto origNormal = poly_data_->GetPointData()->GetNormals();
+  // vtkFillHolesFilter can create zero-area triangles, remove them
+  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
 
-  // Make the triangle window order consistent
+  // Make the triangle window order consistent and recompute normals
   computeNormals();
-
-  // Restore the original normals
-  poly_data_->GetPointData()->SetNormals(origNormal);
 
   this->invalidateLocators();
   return *this;
@@ -604,6 +606,24 @@ Mesh& Mesh::fixNonManifold() {
 }
 
 Mesh& Mesh::extractLargestComponent() {
+  // Check for valid cells before attempting connectivity filter
+  if (poly_data_->GetNumberOfCells() == 0) {
+    SW_WARN("extractLargestComponent: mesh has no cells");
+    return *this;
+  }
+
+  // Verify mesh has at least some valid cells
+  bool hasValidCells = false;
+  for (vtkIdType i = 0; i < poly_data_->GetNumberOfCells() && !hasValidCells; i++) {
+    if (poly_data_->GetCellType(i) != 0) {  // VTK_EMPTY_CELL = 0
+      hasValidCells = true;
+    }
+  }
+  if (!hasValidCells) {
+    SW_WARN("extractLargestComponent: mesh has no valid cells (all cells are type 0)");
+    return *this;
+  }
+
   auto connectivityFilter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
   connectivityFilter->SetExtractionModeToLargestRegion();
   connectivityFilter->SetInputData(poly_data_);
@@ -728,6 +748,11 @@ Mesh& Mesh::clipClosedSurface(const Plane plane) {
 }
 
 Mesh& Mesh::computeNormals() {
+  // Validate mesh first
+  if (!poly_data_ || poly_data_->GetNumberOfPoints() == 0 || poly_data_->GetNumberOfCells() == 0) {
+    return *this;
+  }
+
   // Remove existing normals first
   poly_data_->GetPointData()->SetNormals(nullptr);
   poly_data_->GetCellData()->SetNormals(nullptr);
@@ -1192,6 +1217,13 @@ Point3 Mesh::centerOfMass() const {
   return center;
 }
 
+double Mesh::getSurfaceArea() const {
+  auto mass_props = vtkSmartPointer<vtkMassProperties>::New();
+  mass_props->SetInputData(this->poly_data_);
+  mass_props->Update();
+  return mass_props->GetSurfaceArea();
+}
+
 Point3 Mesh::getPoint(int id) const {
   if (this->numPoints() < id) {
     throw std::invalid_argument("mesh has fewer indices than requested");
@@ -1589,6 +1621,14 @@ bool Mesh::compare(const Mesh& other, const double eps) const {
 
 MeshTransform Mesh::createRegistrationTransform(const Mesh& target, Mesh::AlignmentType align,
                                                 unsigned iterations) const {
+  // Check for empty meshes before attempting ICP
+  if (numPoints() == 0 || target.numPoints() == 0) {
+    SW_WARN("Cannot create registration transform: source has {} points, target has {} points",
+            numPoints(), target.numPoints());
+    vtkSmartPointer<vtkMatrix4x4> identity = vtkSmartPointer<vtkMatrix4x4>::New();
+    identity->Identity();
+    return createMeshTransform(identity);
+  }
   const vtkSmartPointer<vtkMatrix4x4> mat(
       MeshUtils::createICPTransform(this->poly_data_, target.getVTKMesh(), align, iterations, true));
   return createMeshTransform(mat);
@@ -1756,6 +1796,133 @@ void Mesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positio
   }
 
   setField(name, scalars, Mesh::FieldType::Point);
+}
+
+std::string Mesh::checkIntegrity() const {
+  std::ostringstream issues;
+
+  if (!poly_data_) {
+    return "poly_data_ is null";
+  }
+
+  const vtkIdType numPoints = poly_data_->GetNumberOfPoints();
+  const vtkIdType numCells = poly_data_->GetNumberOfCells();
+
+  if (numPoints == 0) {
+    issues << "Mesh has no points\n";
+  }
+  if (numCells == 0) {
+    issues << "Mesh has no cells\n";
+  }
+  if (numPoints == 0 || numCells == 0) {
+    return issues.str();
+  }
+
+  // Check for NaN/Inf coordinates
+  vtkPoints* points = poly_data_->GetPoints();
+  vtkIdType nanCount = 0;
+  vtkIdType infCount = 0;
+  for (vtkIdType i = 0; i < numPoints; i++) {
+    double p[3];
+    points->GetPoint(i, p);
+    for (int j = 0; j < 3; j++) {
+      if (std::isnan(p[j])) nanCount++;
+      if (std::isinf(p[j])) infCount++;
+    }
+  }
+  if (nanCount > 0) {
+    issues << "Found " << nanCount << " NaN coordinates\n";
+  }
+  if (infCount > 0) {
+    issues << "Found " << infCount << " Inf coordinates\n";
+  }
+
+  // Check cell validity
+  vtkCellArray* polys = poly_data_->GetPolys();
+  vtkCellArray* strips = poly_data_->GetStrips();
+  vtkCellArray* lines = poly_data_->GetLines();
+  vtkCellArray* verts = poly_data_->GetVerts();
+
+  vtkIdType degenerateCells = 0;
+  vtkIdType invalidIndexCells = 0;
+  vtkIdType duplicatePointCells = 0;
+  vtkIdType zerAreaCells = 0;
+
+  for (vtkIdType cellId = 0; cellId < numCells; cellId++) {
+    vtkCell* cell = poly_data_->GetCell(cellId);
+    if (!cell) {
+      issues << "Null cell at index " << cellId << "\n";
+      continue;
+    }
+
+    vtkIdType npts = cell->GetNumberOfPoints();
+
+    // Check for degenerate cells (less than 3 points for a polygon)
+    if (cell->GetCellDimension() == 2 && npts < 3) {
+      degenerateCells++;
+      continue;
+    }
+
+    // Check for invalid point indices and duplicate points within cell
+    std::set<vtkIdType> pointsInCell;
+    bool hasInvalidIndex = false;
+    bool hasDuplicate = false;
+
+    for (vtkIdType i = 0; i < npts; i++) {
+      vtkIdType ptId = cell->GetPointId(i);
+      if (ptId < 0 || ptId >= numPoints) {
+        hasInvalidIndex = true;
+      }
+      if (pointsInCell.count(ptId) > 0) {
+        hasDuplicate = true;
+      }
+      pointsInCell.insert(ptId);
+    }
+
+    if (hasInvalidIndex) invalidIndexCells++;
+    if (hasDuplicate) duplicatePointCells++;
+
+    // Check for zero-area triangles
+    if (npts == 3 && !hasInvalidIndex) {
+      double p0[3], p1[3], p2[3];
+      points->GetPoint(cell->GetPointId(0), p0);
+      points->GetPoint(cell->GetPointId(1), p1);
+      points->GetPoint(cell->GetPointId(2), p2);
+      double area = vtkTriangle::TriangleArea(p0, p1, p2);
+      if (area < 1e-20) {
+        zerAreaCells++;
+      }
+    }
+  }
+
+  if (degenerateCells > 0) {
+    issues << "Found " << degenerateCells << " degenerate cells (< 3 points)\n";
+  }
+  if (invalidIndexCells > 0) {
+    issues << "Found " << invalidIndexCells << " cells with invalid point indices\n";
+  }
+  if (duplicatePointCells > 0) {
+    issues << "Found " << duplicatePointCells << " cells with duplicate point references\n";
+  }
+  if (zerAreaCells > 0) {
+    issues << "Found " << zerAreaCells << " zero-area triangles\n";
+  }
+
+  // Check for non-manifold edges (optional, can be slow)
+  auto featureEdges = vtkSmartPointer<vtkFeatureEdges>::New();
+  featureEdges->SetInputData(poly_data_);
+  featureEdges->BoundaryEdgesOff();
+  featureEdges->FeatureEdgesOff();
+  featureEdges->ManifoldEdgesOff();
+  featureEdges->NonManifoldEdgesOn();
+  featureEdges->Update();
+
+  vtkIdType nonManifoldEdges = featureEdges->GetOutput()->GetNumberOfCells();
+  if (nonManifoldEdges > 0) {
+    issues << "Found " << nonManifoldEdges << " non-manifold edges\n";
+  }
+
+  return issues.str();
 }
 
 double Mesh::getFFCValue(Eigen::Vector3d query) const {

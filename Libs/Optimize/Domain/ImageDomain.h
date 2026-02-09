@@ -111,8 +111,7 @@ class ImageDomain : public ParticleRegionDomain {
     this->UpdateSurfaceArea(I);
   }
 
-  inline double GetSurfaceArea() const override {
-    throw std::runtime_error("Surface area is not computed currently.");
+  double GetSurfaceArea() const override {
     return m_SurfaceArea;
   }
 
@@ -137,7 +136,8 @@ class ImageDomain : public ParticleRegionDomain {
     } else {
       std::ostringstream message;
       message << "Domain " << m_DomainID << ": " << m_DomainName << " : Distance transform queried for a Point, " << p
-              << ", outside the given image domain. Consider increasing the padding in grooming or the narrow band optimization parameter";
+              << ", outside the given image domain. Consider increasing the padding in grooming or the narrow band "
+                 "optimization parameter";
       throw std::runtime_error(message.str());
     }
   }
@@ -179,7 +179,7 @@ class ImageDomain : public ParticleRegionDomain {
   openvdb::FloatGrid::Ptr GetVDBImage() const { return m_VDBImage; }
 
   ImageDomain() {}
-  virtual ~ImageDomain(){};
+  virtual ~ImageDomain() {};
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const {
     ParticleRegionDomain::PrintSelf(os, indent);
@@ -241,20 +241,8 @@ class ImageDomain : public ParticleRegionDomain {
   }
 
   void UpdateSurfaceArea(ImageType* I) {
-    // TODO: This code has been copied from Optimize.cpp. It does not work
-    /*
-    typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
-    itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
-    itk2vtkConnector->SetInput(I);
-    vtkSmartPointer < vtkContourFilter > ls = vtkSmartPointer < vtkContourFilter > ::New();
-    ls->SetInputData(itk2vtkConnector->GetOutput());
-    ls->SetValue(0, 0.0);
-    ls->Update();
-    vtkSmartPointer < vtkMassProperties > mp = vtkSmartPointer < vtkMassProperties > ::New();
-    mp->SetInputData(ls->GetOutput());
-    mp->Update();
-    m_SurfaceArea = mp->GetSurfaceArea();
-    */
+    Image image(I);
+    m_SurfaceArea = image.toMesh(0).getSurfaceArea();
   }
 };
 

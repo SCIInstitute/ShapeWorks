@@ -55,6 +55,9 @@ class DeepSSMJob : public Job {
   void set_num_dataloader_workers(int num_workers);
   int get_num_dataloader_workers();
 
+  void set_aug_processes(int processes);
+  int get_aug_processes();
+
   void set_prep_step(DeepSSMJob::PrepStep step) {
     std::lock_guard<std::mutex> lock(mutex_);
     prep_step_ = step;
@@ -72,6 +75,7 @@ class DeepSSMJob : public Job {
   DeepSSMJob::PrepStep prep_step_{DeepSSMJob::NOT_STARTED};
 
   int num_dataloader_workers_{0};
+  int aug_processes_{0};
 
   // mutex
   std::mutex mutex_;

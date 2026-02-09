@@ -76,5 +76,17 @@ class MeshUtils {
                                           double pt3[3],
                                           double pt1[3],
                                           double pt2[3]);
+
+    /// Clean mesh (merge points and remove degenerate cells)
+    static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
+
+    /// Remove zero area triangles from a mesh
+    static vtkSmartPointer<vtkPolyData> remove_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh);
+
+    /// Recreate mesh, dropping deleted cells
+    static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
+
+    /// Repair mesh: triangulate, extract largest component, clean, fix non-manifold, remove zero-area triangles
+    static vtkSmartPointer<vtkPolyData> repair_mesh(vtkSmartPointer<vtkPolyData> mesh);
 };
 } // namespace shapeworks

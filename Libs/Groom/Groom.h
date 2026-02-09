@@ -55,7 +55,7 @@ class Groom {
   //! Run the mesh based pipeline on a single subject
   bool mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
-  bool run_mesh_pipeline(Mesh& mesh, GroomParameters params);
+  bool run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::string& filename);
 
   //! Run the contour based pipeline on a single subject
   bool contour_pipeline(std::shared_ptr<Subject> subject, size_t domain);
@@ -72,6 +72,8 @@ class Groom {
   void clear_unused_shared_boundaries();
 
   void assign_transforms(std::vector<std::vector<double>> transforms, int domain, bool global = false);
+
+  Mesh check_and_fix_mesh(Mesh& mesh, const std::string& step, const std::string& filename);
 
   static std::vector<std::vector<double>> get_icp_transforms(const std::vector<Mesh> meshes, Mesh reference);
   static std::vector<std::vector<double>> get_landmark_transforms(

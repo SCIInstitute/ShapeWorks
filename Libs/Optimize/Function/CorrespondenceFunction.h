@@ -4,6 +4,8 @@
 #include <numeric>
 #include <vector>
 
+#include <vnl/vnl_diag_matrix.h>
+
 #include "Libs/Optimize/Matrix/ShapeGradientMatrix.h"
 #include "Libs/Optimize/Matrix/ShapeMatrix.h"
 #include "VectorFunction.h"
@@ -109,6 +111,35 @@ class CorrespondenceFunction : public VectorFunction {
     m_UseNormals[i] = val;
   }
 
+  /**
+   * @brief Precompute data for fixed domains to accelerate optimization.
+   *
+   * When optimizing with fixed domains (e.g., adding 1 new shape to 99 existing),
+   * this method precomputes the covariance structure from the fixed shapes.
+   * Subsequent calls to ComputeUpdates() will use this precomputed data,
+   * avoiding expensive recomputation of the SVD and related matrices.
+   *
+   * @param ps The particle system containing both fixed and non-fixed domains
+   */
+  void PrecomputeForFixedDomains(const ParticleSystem* ps);
+
+  /**
+   * @brief Check if precomputed fixed domain data is available.
+   */
+  bool HasPrecomputedFixedDomains() const { return m_HasPrecomputedFixedDomains; }
+
+  /**
+   * @brief Clear precomputed fixed domain data (e.g., if fixed domains change).
+   */
+  void ClearPrecomputedFixedDomains();
+
+  /**
+   * @brief Request lazy precomputation on first iteration.
+   * The actual precomputation will happen on the first call to ComputeUpdates()
+   * when the shape data is guaranteed to be populated.
+   */
+  void RequestPrecomputeForFixedDomains() { m_NeedsPrecomputation = true; }
+
   bool CheckForNans(vnl_matrix_type mat) {
     bool flag = false;
     for (int i = 0; i < mat.rows(); i++) {
@@ -145,10 +176,22 @@ class CorrespondenceFunction : public VectorFunction {
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseNormals = this->m_UseNormals;
     copy->m_UseXYZ = this->m_UseXYZ;
-    copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
 
     copy->m_ShapeData = this->m_ShapeData;
     copy->m_ShapeGradient = this->m_ShapeGradient;
+
+    // Copy fixed shape space members
+    copy->m_NeedsPrecomputation = this->m_NeedsPrecomputation;
+    copy->m_HasPrecomputedFixedDomains = this->m_HasPrecomputedFixedDomains;
+    copy->m_PrecomputedNumFixedSamples = this->m_PrecomputedNumFixedSamples;
+    copy->m_PrecomputedNumDims = this->m_PrecomputedNumDims;
+    copy->m_FixedY = this->m_FixedY;
+    copy->m_FixedMean = this->m_FixedMean;
+    copy->m_FixedPinvMat = this->m_FixedPinvMat;
+    copy->m_FixedGradientBasis = this->m_FixedGradientBasis;
+    copy->m_FixedU = this->m_FixedU;
+    copy->m_FixedW = this->m_FixedW;
+    copy->m_FixedDomainIndices = this->m_FixedDomainIndices;
 
     return copy;
   }
@@ -167,7 +210,6 @@ class CorrespondenceFunction : public VectorFunction {
     num_dims = 0;
     num_samples = 0;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
-    m_InverseCovMatrix = std::make_shared<Eigen::MatrixXd>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
   ~CorrespondenceFunction() override = default;
@@ -197,7 +239,41 @@ class CorrespondenceFunction : public VectorFunction {
   std::vector<bool> m_UseXYZ;
   std::vector<bool> m_UseNormals;
   std::shared_ptr<vnl_matrix_type> m_points_mean;
-  std::shared_ptr<Eigen::MatrixXd> m_InverseCovMatrix;
   int num_dims, num_samples;
+
+  // ============================================================================
+  // Fixed Shape Space / Fixed Domain Precomputation
+  // ============================================================================
+  // When most domains are fixed and only a few are being optimized,
+  // we can precompute the shape space (mean, pinvMat, gradient basis) from the fixed domains
+  // and reuse it, avoiding expensive recomputation each iteration.
+
+  bool m_NeedsPrecomputation = false;
+  bool m_HasPrecomputedFixedDomains = false;
+
+  // Number of fixed and total samples when precomputation was done
+  int m_PrecomputedNumFixedSamples = 0;
+  int m_PrecomputedNumDims = 0;
+
+  // Precomputed from fixed domains:
+  // μ_fixed: mean of fixed shapes (dM × 1)
+  std::shared_ptr<vnl_matrix_type> m_FixedMean;
+
+  // Y_fixed: centered fixed shape data (dM × N_fixed)
+  std::shared_ptr<vnl_matrix_type> m_FixedY;
+
+  // pinvMat_fixed: (Y_fixed^T Y_fixed + αI)^{-1}, size (N_fixed × N_fixed)
+  std::shared_ptr<vnl_matrix_type> m_FixedPinvMat;
+
+  // Precomputed gradient basis: Y_fixed × pinvMat_fixed (dM × N_fixed)
+  // This allows computing gradients for new shapes as linear combinations
+  std::shared_ptr<vnl_matrix_type> m_FixedGradientBasis;
+
+  // SVD components from fixed shapes (for potential reuse)
+  std::shared_ptr<vnl_matrix_type> m_FixedU;       // U matrix from SVD (N_fixed × N_fixed)
+  std::shared_ptr<vnl_diag_matrix<double>> m_FixedW;  // Singular values
+
+  // Which domains are fixed (indices into the particle system)
+  std::vector<int> m_FixedDomainIndices;
 };
 }  // namespace shapeworks

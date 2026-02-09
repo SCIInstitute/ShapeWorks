@@ -1,6 +1,7 @@
 import random
 import math
 import os
+import gc
 import numpy as np
 import json
 
@@ -155,21 +156,33 @@ def get_training_indices(project):
 
 
 def get_training_bounding_box(project):
-    """ Get the bounding box of the training subjects. """
+    """ Get the bounding box of the training subjects.
+
+    Uses world particle positions to compute the bounding box. This ensures
+    consistency with the actual aligned particle positions used during training,
+    which may include additional transforms applied during optimization that
+    aren't captured by get_groomed_transforms() alone.
+    """
     subjects = project.get_subjects()
     training_indices = get_training_indices(project)
-    training_bounding_box = None
-    train_mesh_list = []
+
+    # Compute bounding box from world particles
+    min_pt = np.array([np.inf, np.inf, np.inf])
+    max_pt = np.array([-np.inf, -np.inf, -np.inf])
+
     for i in training_indices:
         subject = subjects[i]
-        mesh = subject.get_groomed_clipped_mesh()
-        # apply transform
-        alignment = convert_transform_to_numpy(subject.get_groomed_transforms()[0])
-        mesh.applyTransform(alignment)
-        train_mesh_list.append(mesh)
+        world_particle_files = subject.get_world_particle_filenames()
+        if world_particle_files:
+            particles = np.loadtxt(world_particle_files[0])
+            min_pt = np.minimum(min_pt, particles.min(axis=0))
+            max_pt = np.maximum(max_pt, particles.max(axis=0))
 
-    bounding_box = sw.MeshUtils.boundingBox(train_mesh_list).pad(10)
-    return bounding_box
+    # Create bounding box from particle extents
+    # PhysicalRegion takes two sequences: min point and max point
+    bounding_box = sw.PhysicalRegion(min_pt.tolist(), max_pt.tolist())
+
+    return bounding_box.pad(10)
 
 
 def convert_transform_to_numpy(transform):
@@ -229,14 +242,15 @@ def groom_training_images(project):
         f.write(bounding_box_string)
 
     sw_message("Grooming training images")
-    for i in get_training_indices(project):
+    training_indices = get_training_indices(project)
+    for count, i in enumerate(training_indices):
 
         if sw_check_abort():
             sw_message("Aborted")
             return
 
         image_name = sw.utils.get_image_filename(subjects[i])
-        sw_progress(i / (len(subjects) + 1), f"Grooming Training Image: {image_name}")
+        sw_progress(count / (len(training_indices) + 1), f"Grooming Training Image: {image_name}")
         image = sw.Image(image_name)
         subject = subjects[i]
         # get alignment transform
@@ -256,6 +270,15 @@ def groom_training_images(project):
 
         # write image using the index of the subject
         image.write(deepssm_dir + f"/train_images/{i}.nrrd")
+
+        # Explicitly delete the image and run garbage collection periodically
+        # to prevent memory accumulation
+        del image
+        if count % 50 == 0:
+            gc.collect()
+
+    # Final cleanup after processing all training images
+    gc.collect()
 
 
 def run_data_augmentation(project, num_samples, num_dim, percent_variability, sampler, mixture_num=0, processes=1):
@@ -363,16 +386,15 @@ def groom_val_test_images(project, indices):
     val_test_transforms = []
     val_test_image_files = []
 
-    count = 1
-    for i in val_test_indices:
+    for count, i in enumerate(val_test_indices):
         if sw_check_abort():
             sw_message("Aborted")
             return
 
         image_name = sw.utils.get_image_filename(subjects[i])
         sw_progress(count / (len(val_test_indices) + 1),
-                    f"Grooming val/test image {image_name} ({count}/{len(val_test_indices)})")
-        count = count + 1
+                    f"Grooming val/test image {image_name} ({count + 1}/{len(val_test_indices)})")
+
         image = sw.Image(image_name)
 
         image_file = val_test_images_dir + f"{i}.nrrd"
@@ -440,6 +462,15 @@ def groom_val_test_images(project, indices):
         extra_values["registration_transform"] = transform_to_string(transform)
 
         subjects[i].set_extra_values(extra_values)
+
+        # Explicitly delete image and run garbage collection periodically
+        del image
+
+        if count % 20 == 0:
+            gc.collect()
+
+    # Final cleanup
+    gc.collect()
     project.set_subjects(subjects)
 
 
@@ -450,26 +481,34 @@ def prepare_data_loaders(project, batch_size, split="all", num_workers=0):
     if not os.path.exists(loader_dir):
         os.makedirs(loader_dir)
 
-    if split == "all" or split == "val":
-        val_image_files = []
-        val_world_particles = []
-        val_indices = get_split_indices(project, "val")
-        for i in val_indices:
-            val_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
-            particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
-            val_world_particles.append(particle_file)
-        DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles, num_workers=num_workers)
-
+    # Train must run first: it computes and saves mean_img.npy/std_img.npy
+    # which are required by validation and test loaders.
     if split == "all" or split == "train":
         aug_dir = deepssm_dir + "augmentation/"
         aug_data_csv = aug_dir + "TotalData.csv"
         DeepSSMUtils.getTrainLoader(loader_dir, aug_data_csv, batch_size, num_workers=num_workers)
 
+    if split == "all" or split == "val":
+        val_image_files = []
+        val_world_particles = []
+        val_indices = get_split_indices(project, "val")
+        for i in val_indices:
+            image_file = deepssm_dir + f"/val_and_test_images/{i}.nrrd"
+            if not os.path.exists(image_file):
+                raise FileNotFoundError(f"Missing validation image for subject {i}: {image_file}")
+            val_image_files.append(image_file)
+            particle_file = project.get_subjects()[i].get_world_particle_filenames()[0]
+            val_world_particles.append(particle_file)
+        DeepSSMUtils.getValidationLoader(loader_dir, val_image_files, val_world_particles, num_workers=num_workers)
+
     if split == "all" or split == "test":
         test_image_files = []
         test_indices = get_split_indices(project, "test")
         for i in test_indices:
-            test_image_files.append(deepssm_dir + f"/val_and_test_images/{i}.nrrd")
+            image_file = deepssm_dir + f"/val_and_test_images/{i}.nrrd"
+            if not os.path.exists(image_file):
+                raise FileNotFoundError(f"Missing test image for subject {i}: {image_file}")
+            test_image_files.append(image_file)
         DeepSSMUtils.getTestLoader(loader_dir, test_image_files, num_workers=num_workers)
 
 
@@ -517,6 +556,10 @@ def process_test_predictions(project, config_file):
 
     for index in test_indices:
         world_particle_file = f"{world_predictions_dir}/{index}.particles"
+
+        if not os.path.exists(world_particle_file):
+            raise FileNotFoundError(f"Missing prediction for test subject {index}: {world_particle_file}")
+
         print(f"world_particle_file: {world_particle_file}")
         predicted_test_world_particles.append(world_particle_file)
 
@@ -538,7 +581,8 @@ def process_test_predictions(project, config_file):
                                               template_particles, template_mesh, pred_dir)
 
     print("Distances: ", distances)
-    print("Mean distance: ", np.mean(distances))
+    mean_distance = np.mean(distances)
+    print("Mean distance: ", mean_distance)
 
     # write to csv file in deepssm_dir
     csv_file = f"{deepssm_dir}/test_distances.csv"
@@ -561,3 +605,5 @@ def process_test_predictions(project, config_file):
         mesh = sw.Mesh(local_mesh_file)
         mesh.applyTransform(transform)
         mesh.write(world_mesh_file)
+
+    return mean_distance

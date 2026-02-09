@@ -206,6 +206,9 @@ class Mesh {
   /// center of mass of mesh
   Point3 centerOfMass() const;
 
+  /// surface area of mesh
+  double getSurfaceArea() const;
+
   /// number of points
   int numPoints() const { return poly_data_->GetNumberOfPoints(); }
 
@@ -301,6 +304,8 @@ class Mesh {
   //! Interpolates scalar values at points (e.g. correspondence points) to the mesh, assign/create a field with the
   //! given name
   void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);
+
+  std::string checkIntegrity() const;
 
  private:
   friend struct SharedCommandData;

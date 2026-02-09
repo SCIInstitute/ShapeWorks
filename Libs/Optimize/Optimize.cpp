@@ -27,13 +27,13 @@
 #include <Libs/Particles/ParticleFile.h>
 #include <Project/Project.h>
 
+#include "EarlyStoppingConfig.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
 #include "Logging.h"
 #include "Optimize.h"
-#include "EarlyStoppingConfig.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
 #include "ShapeworksUtils.h"
@@ -435,6 +435,10 @@ void Optimize::InitializeSampler() {
 
   m_sampler->SetCorrespondenceOn();
 
+  m_sampler->SetSamplingScale(m_sampling_scale);
+  m_sampler->SetSamplingAutoScale(m_sampling_auto_scale);
+  m_sampler->SetSamplingScaleValue(m_sampling_scale_value);
+
   m_sampler->SetAdaptivityMode();
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(
@@ -777,7 +781,7 @@ void Optimize::RunOptimize() {
 
   if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
     m_sampler->GetOptimizer()->set_maximum_number_of_iterations(m_optimization_iterations -
-                                                            m_optimization_iterations_completed);
+                                                                m_optimization_iterations_completed);
   } else {
     m_sampler->GetOptimizer()->set_maximum_number_of_iterations(0);
   }
@@ -789,6 +793,22 @@ void Optimize::RunOptimize() {
 
   m_sampler->GetOptimizer()->set_number_of_iterations(0);
   m_sampler->GetOptimizer()->set_tolerance(0.0);
+
+  // Request lazy precomputation for fixed shape space optimization
+  // The actual precomputation will happen on first iteration when shape matrices are populated
+  if (m_fixed_domains_present) {
+    SW_LOG("Requesting fixed shape space precomputation (will execute on first iteration)...");
+    if (m_mesh_based_attributes ||
+        (m_attributes_per_domain.size() > 0 &&
+         *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)) {
+      // Using MeshBasedGeneralEntropy (CorrespondenceFunction)
+      m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->RequestPrecomputeForFixedDomains();
+    } else {
+      // Using EnsembleEntropy (LegacyCorrespondenceFunction)
+      m_sampler->GetEnsembleEntropyFunction()->RequestPrecomputeForFixedDomains();
+    }
+  }
+
   m_sampler->Execute();
 
   this->WritePointFiles();
@@ -1708,7 +1728,11 @@ void Optimize::AddImage(ImageType::Pointer image, std::string name) {
   m_sampler->AddImage(image, this->GetNarrowBand(), name);
   this->m_num_shapes++;
   if (image) {
-    this->m_spacing = image->GetSpacing()[0] * 5;
+    double new_spacing = image->GetSpacing()[0] * 5;
+    if (m_spacing == 0 || new_spacing < this->m_spacing) {
+      // pick the smallest spacing
+      m_spacing = new_spacing;
+    }
   }
 }
 
@@ -2018,6 +2042,24 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled) { m_sampler->SetSharedBoun
 
 //---------------------------------------------------------------------------
 void Optimize::SetSharedBoundaryWeight(double weight) { m_sampler->SetSharedBoundaryWeight(weight); }
+
+//---------------------------------------------------------------------------
+void Optimize::SetSamplingScale(bool enabled) { m_sampling_scale = enabled; }
+
+//---------------------------------------------------------------------------
+bool Optimize::GetSamplingScale() { return m_sampling_scale; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetSamplingAutoScale(bool auto_scale) { m_sampling_auto_scale = auto_scale; }
+
+//---------------------------------------------------------------------------
+bool Optimize::GetSamplingAutoScale() { return m_sampling_auto_scale; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetSamplingScaleValue(double scale_value) { m_sampling_scale_value = scale_value; }
+
+//---------------------------------------------------------------------------
+double Optimize::GetSamplingScaleValue() { return m_sampling_scale_value; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetEarlyStoppingConfig(EarlyStoppingConfig config) { m_sampler->SetEarlyStoppingConfig(config); }

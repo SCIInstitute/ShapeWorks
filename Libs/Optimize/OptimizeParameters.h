@@ -138,6 +138,15 @@ class OptimizeParameters {
   double get_shared_boundary_weight();
   void set_shared_boundary_weight(double value);
 
+  bool get_sampling_scale();
+  void set_sampling_scale(bool value);
+
+  bool get_sampling_auto_scale();
+  void set_sampling_auto_scale(bool value);
+
+  double get_sampling_scale_value();
+  void set_sampling_scale_value(double value);
+
   EarlyStoppingConfig get_early_stopping_config();
 
   Parameters get_parameters() const;

@@ -633,7 +633,7 @@ TEST(MeshTests, fieldTest2) {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   double a = mesh.getFieldValue("scalars", 0);
   double b = mesh.getFieldValue("scalars", 1000);
-  double c = mesh.getFieldValue("Normals", 4231);
+  double c = mesh.getFieldValue("Normals", 12);
   double d = mesh.getFieldValue("Normals", 5634);
 
   ASSERT_TRUE(a == 1);

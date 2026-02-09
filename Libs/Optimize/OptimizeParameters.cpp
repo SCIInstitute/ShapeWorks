@@ -53,6 +53,9 @@ const std::string particle_format = "particle_format";
 const std::string geodesic_remesh_percent = "geodesic_remesh_percent";
 const std::string shared_boundary = "shared_boundary";
 const std::string shared_boundary_weight = "shared_boundary_weight";
+const std::string sampling_scale = "sampling_scale";
+const std::string sampling_auto_scale = "sampling_auto_scale";
+const std::string sampling_scale_value = "sampling_scale_value";
 const std::string early_stopping_threshold = "early_stopping_threshold";
 const std::string early_stopping_frequency = "early_stopping_frequency";
 const std::string early_stopping_window = "early_stopping_window";
@@ -105,6 +108,9 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::geodesic_remesh_percent,
                                          Keys::shared_boundary,
                                          Keys::shared_boundary_weight,
+                                         Keys::sampling_scale,
+                                         Keys::sampling_auto_scale,
+                                         Keys::sampling_scale_value,
                                          Keys::early_stopping_threshold,
                                          Keys::early_stopping_frequency,
                                          Keys::early_stopping_window,
@@ -451,6 +457,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->set_particle_format(get_particle_format());
   optimize->SetSharedBoundaryEnabled(get_shared_boundary());
   optimize->SetSharedBoundaryWeight(get_shared_boundary_weight());
+  optimize->SetSamplingScale(get_sampling_scale());
+  optimize->SetSamplingAutoScale(get_sampling_auto_scale());
+  optimize->SetSamplingScaleValue(get_sampling_scale_value());
   optimize->SetEarlyStoppingConfig(get_early_stopping_config());
 
   std::vector<bool> use_normals;
@@ -881,6 +890,24 @@ double OptimizeParameters::get_shared_boundary_weight() { return params_.get(Key
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_shared_boundary_weight(double value) { params_.set(Keys::shared_boundary_weight, value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_sampling_scale() { return params_.get(Keys::sampling_scale, false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_sampling_scale(bool value) { params_.set(Keys::sampling_scale, value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_sampling_auto_scale() { return params_.get(Keys::sampling_auto_scale, true); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_sampling_auto_scale(bool value) { params_.set(Keys::sampling_auto_scale, value); }
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_sampling_scale_value() { return params_.get(Keys::sampling_scale_value, 1.0); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_sampling_scale_value(double value) { params_.set(Keys::sampling_scale_value, value); }
 
 //---------------------------------------------------------------------------
 EarlyStoppingConfig OptimizeParameters::get_early_stopping_config() {

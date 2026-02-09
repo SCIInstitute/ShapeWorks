@@ -23,7 +23,6 @@ const std::string ISO_SPACING = "iso_spacing";
 const std::string SPACING = "spacing";
 const std::string CONVERT_MESH = "convert_to_mesh";
 const std::string FILL_MESH_HOLES = "fill_mesh_holes";
-const std::string MESH_LARGEST_COMPONENT = "mesh_largest_component";
 const std::string FILL_HOLES = "fill_holes";
 const std::string ISOLATE = "isolate";
 const std::string PAD = "pad";
@@ -78,7 +77,6 @@ const std::vector<double> spacing{0, 0, 0};
 const bool convert_mesh = false;
 const bool fill_holes = true;
 const bool fill_holes_mesh = false;
-const bool mesh_largest_component = true;
 const bool isolate = true;
 const bool pad = true;
 const int pad_value = 10;
@@ -158,7 +156,6 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
       Keys::SPACING,
       Keys::CONVERT_MESH,
       Keys::FILL_MESH_HOLES,
-      Keys::MESH_LARGEST_COMPONENT,
       Keys::FILL_HOLES,
       Keys::ISOLATE,
       Keys::PAD,
@@ -196,12 +193,20 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
       Keys::SHARED_BOUNDARIES,
   };
 
+  // Deprecated parameters that should be silently removed
+  std::vector<std::string> deprecated_params = {
+      "mesh_largest_component",  // Now handled by repair_mesh at start of pipeline
+  };
+
   std::vector<std::string> to_remove;
 
   // check if params_ has any unknown keys
   for (auto& param : params_.get_map()) {
     if (std::find(all_params.begin(), all_params.end(), param.first) == all_params.end()) {
-      SW_WARN("Unknown Grooming parameter: " + param.first);
+      // Only warn if not a deprecated parameter
+      if (std::find(deprecated_params.begin(), deprecated_params.end(), param.first) == deprecated_params.end()) {
+        SW_WARN("Unknown Grooming parameter: " + param.first);
+      }
       to_remove.push_back(param.first);
     }
   }
@@ -235,14 +240,6 @@ bool GroomParameters::get_fill_mesh_holes_tool() {
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_fill_mesh_holes_tool(bool value) { params_.set(Keys::FILL_MESH_HOLES, value); }
-
-//---------------------------------------------------------------------------
-bool GroomParameters::get_mesh_largest_component() {
-  return params_.get(Keys::MESH_LARGEST_COMPONENT, Defaults::mesh_largest_component);
-}
-
-//---------------------------------------------------------------------------
-void GroomParameters::set_mesh_largest_component(bool value) { params_.set(Keys::MESH_LARGEST_COMPONENT, value); }
 
 //---------------------------------------------------------------------------
 bool GroomParameters::get_auto_pad_tool() { return params_.get(Keys::PAD, Defaults::pad); }
