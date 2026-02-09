@@ -5,6 +5,8 @@ import json
 import numpy as np
 from collections import OrderedDict
 from DeepSSMUtils import net_utils
+from DeepSSMUtils import constants as C
+from DeepSSMUtils import loaders
 
 
 class ConvolutionalBackbone(nn.Module):
@@ -61,9 +63,9 @@ class DeterministicEncoder(nn.Module):
 	def __init__(self, num_latent, img_dims, loader_dir):
 		super(DeterministicEncoder, self).__init__()
 		if torch.cuda.is_available():
-			device = 'cuda:0'
+			device = C.DEVICE_CUDA
 		else:
-			device = 'cpu'
+			device = C.DEVICE_CPU
 		self.device = device
 		self.num_latent = num_latent
 		self.img_dims = img_dims
@@ -97,18 +99,17 @@ class DeepSSMNet(nn.Module):
 	def __init__(self, config_file):
 		super(DeepSSMNet, self).__init__()
 		if torch.cuda.is_available():
-			device = 'cuda:0'
+			device = C.DEVICE_CUDA
 		else:
-			device = 'cpu'
+			device = C.DEVICE_CPU
 		self.device = device
-		with open(config_file) as json_file: 
+		with open(config_file) as json_file:
 			parameters = json.load(json_file)
 		self.num_latent = parameters['num_latent_dim']
 		self.loader_dir = parameters['paths']['loader_dir']
-		loader = torch.load(self.loader_dir + "validation", weights_only=False)
-		self.num_corr = loader.dataset.mdl_target[0].shape[0]
-		img_dims = loader.dataset.img[0].shape
-		self.img_dims = img_dims[1:]
+		loader_info = loaders.get_loader_info(self.loader_dir + C.VALIDATION_LOADER)
+		self.num_corr = loader_info['num_corr']
+		self.img_dims = loader_info['img_dims']
 		# encoder
 		if parameters['encoder']['deterministic']:
 			self.encoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir )
@@ -169,18 +170,17 @@ class DeepSSMNet_TLNet(nn.Module):
 	def __init__(self, conflict_file):
 		super(DeepSSMNet_TLNet, self).__init__()
 		if torch.cuda.is_available():
-			device = 'cuda:0'
+			device = C.DEVICE_CUDA
 		else:
-			device = 'cpu'
+			device = C.DEVICE_CPU
 		self.device = device
-		with open(conflict_file) as json_file: 
+		with open(conflict_file) as json_file:
 			parameters = json.load(json_file)
 		self.num_latent = parameters['num_latent_dim']
 		self.loader_dir = parameters['paths']['loader_dir']
-		loader = torch.load(self.loader_dir + "validation")
-		self.num_corr = loader.dataset.mdl_target[0].shape[0]
-		img_dims = loader.dataset.img[0].shape
-		self.img_dims = img_dims[1:]
+		loader_info = loaders.get_loader_info(self.loader_dir + C.VALIDATION_LOADER)
+		self.num_corr = loader_info['num_corr']
+		self.img_dims = loader_info['img_dims']
 		self.CorrespondenceEncoder = CorrespondenceEncoder(self.num_latent, self.num_corr)
 		self.CorrespondenceDecoder = CorrespondenceDecoder(self.num_latent, self.num_corr)
 		self.ImageEncoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir)

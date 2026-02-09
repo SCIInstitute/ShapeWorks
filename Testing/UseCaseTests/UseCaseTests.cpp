@@ -13,6 +13,10 @@ void run_test(const std::string& name) {
   std::remove(outputname.c_str());
 
   // run python
+  // Remove status files so all steps re-run from scratch.
+  // Don't use --clean as it deletes pre-downloaded test data.
+  boost::filesystem::remove_all("Output/" + name + "/status");
+  boost::filesystem::remove_all("Output/" + name + "/tiny_test_status");
   std::string command = "python RunUseCase.py " + name + " --tiny_test 1>" + outputname + " 2>&1";
   // use the below instead of there is some problem in getting the output
   // std::string command = "python RunUseCase.py " + name + " --tiny_test";
