@@ -3716,6 +3716,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-parse_args" class="md-nav__link">
+    <span class="md-ellipsis">
+      function parse_args
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3755,6 +3764,10 @@
 <td>virtual const std::string</td>
 <td><strong><a href="classshapeworks_1_1DeepSSMCommandGroup.html#function-type">type</a></strong>() override</td>
 </tr>
+<tr>
+<td>virtual std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMCommandGroup.html#function-parse-args">parse_args</a></strong>(const std::vector&lt; std::string &gt; &amp; arguments) override<br>parses the arguments for this command, saving them in the parser and returning the leftovers</td>
+</tr>
 </tbody>
 </table>
 <h2 id="additional-inherited-members">Additional inherited members</h2>
@@ -3778,10 +3791,6 @@
 <tr>
 <td>const std::string</td>
 <td><strong><a href="classshapeworks_1_1Command.html#function-desc">desc</a></strong>() const</td>
-</tr>
-<tr>
-<td>std::vector&lt; std::string &gt;</td>
-<td><strong><a href="classshapeworks_1_1Command.html#function-parse-args">parse_args</a></strong>(const std::vector&lt; std::string &gt; &amp; arguments)<br>parses the arguments for this command, saving them in the parser and returning the leftovers</td>
 </tr>
 <tr>
 <td>int</td>
@@ -3824,8 +3833,15 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Command.html#function-type">shapeworks::Command::type</a></p>
+<h3 id="function-parse_args">function parse_args</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">parse_args</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">arguments</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
+<p>parses the arguments for this command, saving them in the parser and returning the leftovers </p>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Command.html#function-parse-args">shapeworks::Command::parse_args</a></p>
 <hr />
-<p>Updated on 2026-02-05 at 23:27:07 +0000</p>
+<p>Updated on 2026-02-10 at 04:02:15 +0000</p>
 
 
 

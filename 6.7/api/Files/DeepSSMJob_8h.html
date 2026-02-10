@@ -3808,6 +3808,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_num_dataloader_workers</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_workers</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_dataloader_workers</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_processes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">processes</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_aug_processes</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_prep_step</span><span class="p">(</span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">step</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">mutex_</span><span class="p">);</span>
 <span class="w">    </span><span class="n">prep_step_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">step</span><span class="p">;</span>
@@ -3825,6 +3828,7 @@
 <span class="w">  </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step_</span><span class="p">{</span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">NOT_STARTED</span><span class="p">};</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_dataloader_workers_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">aug_processes_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
 
 <span class="w">  </span><span class="c1">// mutex</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="w"> </span><span class="n">mutex_</span><span class="p">;</span>
@@ -3832,7 +3836,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-02-05 at 23:27:08 +0000</p>
+<p>Updated on 2026-02-10 at 04:02:17 +0000</p>
 
 
 
