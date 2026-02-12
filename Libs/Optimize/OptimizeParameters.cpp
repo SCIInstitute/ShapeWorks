@@ -566,6 +566,30 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
       SW_DEBUG("Setting Initial Points");
       optimize->SetInitialPoints(get_initial_points());
     }
+
+    // Store Procrustes transforms for fixed shapes (applied after ParticleSystem initialization)
+    using TransformType = vnl_matrix_fixed<double, 4, 4>;
+    std::map<int, TransformType> procrustes_transforms;
+    int domain_idx = 0;
+    for (auto s : subjects) {
+      auto pt = s->get_procrustes_transforms();
+      for (int d = 0; d < domains_per_shape; d++) {
+        if (s->is_fixed() && d < pt.size() && pt[d].size() == 16) {
+          TransformType transform;
+          int index = 0;
+          for (int c = 0; c < 4; c++) {
+            for (int r = 0; r < 4; r++) {
+              transform[c][r] = pt[d][index++];
+            }
+          }
+          procrustes_transforms[domain_idx] = transform;
+        }
+        domain_idx++;
+      }
+    }
+    if (!procrustes_transforms.empty()) {
+      optimize->SetProcustesTransforms(std::move(procrustes_transforms));
+    }
   }
 
   for (auto s : subjects) {
@@ -765,7 +789,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         }
       }
 
-      optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count++, prefix_transform);
+      optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count, prefix_transform);
+
+      domain_count++;
 
       auto name = StringUtils::getBaseFilenameWithoutExtension(filename);
 

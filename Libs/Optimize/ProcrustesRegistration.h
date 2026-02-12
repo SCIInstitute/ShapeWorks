@@ -47,8 +47,10 @@ class ProcrustesRegistration {
   void RunFixedDomainRegistration(int domainStart, int numShapes, int numPoints,
                                   const std::vector<bool>& is_fixed);
 
-  //! Extract prefix-transformed particle positions for a single domain
-  Procrustes3D::ShapeType ExtractShape(int domain_index, int num_points);
+  //! Extract particle positions for a single domain.
+  //! If fully_transformed is true, applies both prefix and Procrustes transforms (world space).
+  //! If false, applies only the prefix transform (for computing new Procrustes transforms).
+  Procrustes3D::ShapeType ExtractShape(int domain_index, int num_points, bool fully_transformed = false);
 
   int m_DomainsPerShape = 1;
   bool m_Scaling = true;
