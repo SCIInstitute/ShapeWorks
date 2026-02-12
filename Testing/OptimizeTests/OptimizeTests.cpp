@@ -172,6 +172,46 @@ TEST(OptimizeTests, fixed_domain) {
 }
 
 //---------------------------------------------------------------------------
+TEST(OptimizeTests, fixed_domain_procrustes) {
+  prep_temp("/optimize/fixed_domain", "fixed_domain_procrustes");
+
+  // make sure we clean out the output file of interest
+  std::remove("optimize_particles/sphere40_DT_world.particles");
+
+  // Load the same project as fixed_domain but enable Procrustes with scaling
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.swproj"));
+  OptimizeParameters params(project);
+  params.set_use_procrustes(true);
+  params.set_procrustes_interval(3);
+  params.set_use_procrustes_scaling(true);
+  params.set_use_procrustes_rotation_translation(true);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.read_point_files("analyze.xml");
+  stats.compute_modes();
+  stats.principal_component_projections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.get_eigen_values();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // With Procrustes scaling enabled, the size variation between spheres should be
+  // factored out, resulting in a much smaller top eigenvalue compared to the
+  // fixed_domain test (which has Procrustes disabled and gets >5000).
+  // The top eigenvalue should be small since all shapes are spheres differing only in scale.
+  double value = values[values.size() - 1];
+  ASSERT_LT(value, 100.0);
+}
+
+//---------------------------------------------------------------------------
 TEST(OptimizeTests, fixed_mesh_domain_test) {
   prep_temp("/optimize/fixed_mesh_domain", "fixed_mesh_domain");
 
