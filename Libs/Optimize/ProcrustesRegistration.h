@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ParticleSystem.h"
+#include "Procrustes3D.h"
 #include "vnl/vnl_matrix.h"
 
 namespace shapeworks {
@@ -39,10 +40,31 @@ class ProcrustesRegistration {
   void SetRotationTranslation(bool rotationTranslation) { m_RotationTranslation = rotationTranslation; }
 
  private:
+  //! Standard GPA registration on all shapes (no fixed domains)
+  void RunGPARegistration(int domainStart, int numShapes, int numPoints);
+
+  //! Fixed domain registration: aligns non-fixed shapes to cached fixed mean
+  void RunFixedDomainRegistration(int domainStart, int numShapes, int numPoints,
+                                  const std::vector<bool>& is_fixed);
+
+  //! Extract prefix-transformed particle positions for a single domain
+  Procrustes3D::ShapeType ExtractShape(int domain_index, int num_points);
+
   int m_DomainsPerShape = 1;
   bool m_Scaling = true;
   bool m_RotationTranslation = true;
   ParticleSystemType* m_ParticleSystem = nullptr;
+
+  // Cache for fixed domain alignment optimization.
+  // When fixed domains are present, the mean of fixed shapes is computed once
+  // (via GPA on fixed shapes only) and cached. Non-fixed shapes are then
+  // aligned to this cached mean using OPA, avoiding full GPA on all shapes.
+  struct FixedDomainCache {
+    Procrustes3D::ShapeType mean;  // Mean of aligned fixed shapes (centered at origin)
+    int num_points = 0;            // Particle count when cache was built
+    bool valid = false;
+  };
+  std::vector<FixedDomainCache> m_FixedDomainCaches;
 };
 
 }  // namespace shapeworks

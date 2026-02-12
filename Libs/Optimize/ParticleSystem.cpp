@@ -178,9 +178,29 @@ const ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p,
 }
 
 void ParticleSystem::AddPositionList(const std::vector<PointType>& p, unsigned int d) {
-  // Traverse the list and add each point to the domain.
-  for (auto it = p.begin(); it != p.end(); it++) {
-    this->AddPosition(*it, d);
+  // Store all positions and apply constraints without firing per-particle events.
+  // This avoids O(N^2) matrix resizing when observers resize on each add event.
+  for (unsigned int i = 0; i < p.size(); i++) {
+    m_Positions[d]->operator[](m_IndexCounters[d]) = p[i];
+
+    if (m_DomainFlags[d] == false) {
+      const auto idx = m_IndexCounters[d];
+      m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](idx), idx);
+    }
+
+    if (m_IndexCounters[d] >= m_FixedParticleFlags[d % m_DomainsPerShape].size()) {
+      m_FixedParticleFlags[d % m_DomainsPerShape].push_back(false);
+    }
+
+    m_IndexCounters[d]++;
+  }
+
+  // Fire a single add event for the last particle so observers resize once to the final size.
+  if (!p.empty()) {
+    ParticlePositionAddEvent e;
+    e.SetDomainIndex(d);
+    e.SetPositionIndex(m_IndexCounters[d] - 1);
+    this->InvokeEvent(e);
   }
 }
 
