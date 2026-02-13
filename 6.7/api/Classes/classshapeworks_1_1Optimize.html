@@ -4434,6 +4434,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setprocustestransforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      function SetProcustesTransforms
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-setsharedboundaryenabled" class="md-nav__link">
     <span class="md-ellipsis">
       function SetSharedBoundaryEnabled
@@ -5472,6 +5481,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#variable-m_procrustes_transforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      variable m_procrustes_transforms
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variable-m_narrow_band" class="md-nav__link">
     <span class="md-ellipsis">
       variable m_narrow_band
@@ -6194,6 +6212,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocustestransforms">SetProcustesTransforms</a></strong>(std::map&lt; int, vnl_matrix_fixed&lt; double, 4, 4 &gt; &gt; transforms)<br>Set Procrustes transforms to load for specific domains (applied after initialization)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setsharedboundaryenabled">SetSharedBoundaryEnabled</a></strong>(bool enabled)<br>Shared boundary settings.</td>
 </tr>
 <tr>
@@ -6661,6 +6683,10 @@
 <tr>
 <td>std::vector&lt; int &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-domain-flags">m_domain_flags</a></strong></td>
+</tr>
+<tr>
+<td>std::map&lt; int, vnl_matrix_fixed&lt; double, 4, 4 &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-transforms">m_procrustes_transforms</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
@@ -7249,6 +7275,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set Domain Flags (TODO: details) </p>
+<h3 id="function-setprocustestransforms">function SetProcustesTransforms</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProcustesTransforms</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set Procrustes transforms to load for specific domains (applied after initialization) </p>
 <h3 id="function-setsharedboundaryenabled">function SetSharedBoundaryEnabled</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryEnabled</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
@@ -7671,6 +7703,9 @@
 <h3 id="variable-m_domain_flags">variable m_domain_flags</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_domain_flags</span><span class="p">;</span>
 </code></pre></div>
+<h3 id="variable-m_procrustes_transforms">variable m_procrustes_transforms</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_procrustes_transforms</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_narrow_band">variable m_narrow_band</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_narrow_band</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
@@ -7795,7 +7830,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-02-12 at 16:57:20 +0000</p>
+<p>Updated on 2026-02-13 at 03:00:31 +0000</p>
 
 
 
