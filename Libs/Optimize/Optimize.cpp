@@ -277,6 +277,11 @@ int Optimize::SetParameters() {
     this->ReadPrefixTransformFile(m_prefix_transform_file);
   }
 
+  // Apply stored Procrustes transforms (e.g. for fixed shapes loaded from project)
+  for (auto& [domain_index, transform] : m_procrustes_transforms) {
+    m_sampler->GetParticleSystem()->SetTransform(domain_index, transform);
+  }
+
   return true;
 }
 
@@ -1809,6 +1814,11 @@ void Optimize::SetFixedDomains(std::vector<int> flags) {
     this->m_fixed_domains_present = true;
   }
   this->m_domain_flags = flags;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetProcustesTransforms(std::map<int, vnl_matrix_fixed<double, 4, 4>> transforms) {
+  m_procrustes_transforms = std::move(transforms);
 }
 
 //---------------------------------------------------------------------------

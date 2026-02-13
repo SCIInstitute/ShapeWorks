@@ -7,13 +7,15 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-Procrustes3D::ShapeType ProcrustesRegistration::ExtractShape(int domain_index, int num_points) {
+Procrustes3D::ShapeType ProcrustesRegistration::ExtractShape(int domain_index, int num_points, bool fully_transformed) {
   Procrustes3D::ShapeType shape;
   Procrustes3D::PointType point;
   for (int j = 0; j < num_points; j++) {
-    point(0) = m_ParticleSystem->GetPrefixTransformedPosition(j, domain_index)[0];
-    point(1) = m_ParticleSystem->GetPrefixTransformedPosition(j, domain_index)[1];
-    point(2) = m_ParticleSystem->GetPrefixTransformedPosition(j, domain_index)[2];
+    auto pos = fully_transformed ? m_ParticleSystem->GetTransformedPosition(j, domain_index)
+                                 : m_ParticleSystem->GetPrefixTransformedPosition(j, domain_index);
+    point(0) = pos[0];
+    point(1) = pos[1];
+    point(2) = pos[2];
     shape.push_back(point);
   }
   return shape;
@@ -53,36 +55,23 @@ void ProcrustesRegistration::RunFixedDomainRegistration(int domainStart, int num
 
   // Build/rebuild cache if needed (first call or particle count changed after split)
   if (!cache.valid || cache.num_points != numPoints) {
+    // Extract fixed shapes using their full transforms (prefix + existing Procrustes).
+    // Fixed shapes already have correct transforms; we never modify them.
     Procrustes3D::ShapeListType fixed_shapelist;
-    std::vector<int> fixed_domain_indices;
 
     for (int i = 0, k = domainStart; i < numShapes; i++, k += m_DomainsPerShape) {
       if (!is_fixed[i]) continue;
-      fixed_shapelist.push_back(ExtractShape(k, numPoints));
-      fixed_domain_indices.push_back(k);
+      fixed_shapelist.push_back(ExtractShape(k, numPoints, /*fully_transformed=*/true));
     }
 
-    // Run GPA on fixed shapes only
-    Procrustes3D::SimilarityTransformListType fixed_transforms;
+    // Compute mean of the already-aligned fixed shapes (no GPA needed)
     Procrustes3D procrustes(m_Scaling, m_RotationTranslation);
-    procrustes.AlignShapes(fixed_transforms, fixed_shapelist);
-
-    // Set transforms for fixed shapes
-    Procrustes3D::TransformMatrixListType fixed_matrices;
-    procrustes.ConstructTransformMatrices(fixed_transforms, fixed_matrices);
-
-    for (size_t i = 0; i < fixed_domain_indices.size(); i++) {
-      m_ParticleSystem->SetTransform(fixed_domain_indices[i], fixed_matrices[i]);
-    }
-
-    // Compute and cache the mean of the aligned fixed shapes
-    // (fixed_shapelist has been modified in-place by AlignShapes to be in Procrustes space)
     procrustes.ComputeMeanShape(cache.mean, fixed_shapelist);
     cache.num_points = numPoints;
     cache.valid = true;
 
     SW_LOG("Procrustes: cached fixed domain mean for domain type {} ({} fixed shapes, {} points)", domainType,
-           fixed_domain_indices.size(), numPoints);
+           fixed_shapelist.size(), numPoints);
   }
 
   // Align each non-fixed shape to the cached fixed mean using OPA
