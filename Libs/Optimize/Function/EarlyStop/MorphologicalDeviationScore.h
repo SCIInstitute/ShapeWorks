@@ -13,6 +13,7 @@ class MorphologicalDeviationScore {
   Eigen::VectorXd GetMorphoDevScore(const Eigen::MatrixXd& X);  // (n,)
 
  private:
+  /// Flag to ensure control shapes are set and PCA model is in place
   bool is_fitted_ = false;
 
   // Fitted model parameters
