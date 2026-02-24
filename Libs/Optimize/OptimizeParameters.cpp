@@ -472,10 +472,15 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   if (get_use_geodesics_to_landmarks()) {
     // for each landmark, add to field attributes
     auto landmarks = project_->get_landmarks(0);
-    // TODO: per domain???
-    for (int i = 0; i < landmarks.size(); i++) {
-      field_attributes.push_back("geodesic_distance_to_" + std::to_string(i));
-      field_weights.push_back(get_geodesic_to_landmarks_weight());
+    if (landmarks.empty()) {
+      SW_WARN("Geodesic distance from landmarks is enabled, but no landmarks are defined. Disabling.");
+      set_use_geodesics_to_landmarks(false);
+    } else {
+      // TODO: per domain???
+      for (int i = 0; i < landmarks.size(); i++) {
+        field_attributes.push_back("geodesic_distance_to_" + std::to_string(i));
+        field_weights.push_back(get_geodesic_to_landmarks_weight());
+      }
     }
   }
 
@@ -721,6 +726,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
         if (get_use_geodesics_to_landmarks()) {
           auto filenames = s->get_landmarks_filenames();
+          if (filenames.empty()) {
+            throw std::invalid_argument("Geodesic distance from landmarks is enabled, but subject has no landmark files");
+          }
           Eigen::VectorXd points;
           if (!ParticleSystemEvaluation::read_particle_file(filenames[0], points)) {
             SW_ERROR("Unable to read landmark file: {}", filenames[0]);
