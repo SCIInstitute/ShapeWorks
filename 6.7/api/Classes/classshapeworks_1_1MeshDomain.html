@@ -3957,6 +3957,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setmesh_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      function SetMesh
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getswmesh" class="md-nav__link">
     <span class="md-ellipsis">
       function GetSWMesh
@@ -4128,6 +4137,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1MeshDomain.html#function-setmesh">SetMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">Surface</a> &gt; mesh_, double geodesic_remesh_percent)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1MeshDomain.html#function-setmesh">SetMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">Surface</a> &gt; surface, std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">Surface</a> &gt; geodesics_surface, std::shared_ptr&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; sw_mesh, double surface_area)</td>
 </tr>
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt;</td>
@@ -4412,6 +4425,14 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-setmesh_1">function SetMesh</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">surface</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">geodesics_surface</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">sw_mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">surface_area</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getswmesh">function GetSWMesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetSWMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -4423,7 +4444,7 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-02-25 at 00:02:01 +0000</p>
+<p>Updated on 2026-02-27 at 20:21:19 +0000</p>
 
 
 
