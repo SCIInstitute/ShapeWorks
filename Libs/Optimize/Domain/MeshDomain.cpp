@@ -42,7 +42,8 @@ MeshDomain::PointType MeshDomain::GetPositionAfterSplit(const PointType &pt,
                                                          double epsilon) const {
   VectorDoubleType update;
   for (unsigned int k = 0; k < DIMENSION; k++) {
-    update[k] = epsilon * local_direction[k] / 5.0;
+    // Negate here because UpdateParticlePosition negates before calling geodesic_walk
+    update[k] = -epsilon * local_direction[k] / 5.0;
   }
   return UpdateParticlePosition(pt, -1, update);
 }
