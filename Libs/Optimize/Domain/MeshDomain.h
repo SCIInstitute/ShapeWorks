@@ -73,6 +73,8 @@ class MeshDomain : public ParticleDomain {
   }
 
   void SetMesh(std::shared_ptr<Surface> mesh_, double geodesic_remesh_percent);
+  void SetMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+               std::shared_ptr<Mesh> sw_mesh, double surface_area);
 
   std::shared_ptr<Mesh> GetSWMesh() const { return sw_mesh_; }
 
