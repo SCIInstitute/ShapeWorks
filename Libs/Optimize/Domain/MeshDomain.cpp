@@ -36,6 +36,18 @@ MeshDomain::PointType MeshDomain::UpdateParticlePosition(const PointType &point,
 }
 
 //-------------------------------------------------------------------
+MeshDomain::PointType MeshDomain::GetPositionAfterSplit(const PointType &pt,
+                                                         const VectorDoubleType &local_direction,
+                                                         const VectorDoubleType &global_direction,
+                                                         double epsilon) const {
+  VectorDoubleType update;
+  for (unsigned int k = 0; k < DIMENSION; k++) {
+    update[k] = epsilon * local_direction[k] / 5.0;
+  }
+  return UpdateParticlePosition(pt, -1, update);
+}
+
+//-------------------------------------------------------------------
 double MeshDomain::GetMaxDiameter() const {
   // todo should this not be the length of the bounding box diagonal?
   PointType boundingBoxSize = surface_->get_mesh_upper_bound() - surface_->get_mesh_lower_bound();

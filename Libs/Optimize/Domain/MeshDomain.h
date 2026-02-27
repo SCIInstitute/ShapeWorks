@@ -17,6 +17,8 @@ class MeshDomain : public ParticleDomain {
   bool ApplyVectorConstraints(VectorDoubleType &gradE, const PointType &pos) const;
   VectorDoubleType ProjectVectorToSurfaceTangent(VectorDoubleType &gradE, const PointType &pos, int idx) const override;
   PointType UpdateParticlePosition(const PointType &point, int idx, VectorDoubleType &update) const override;
+  PointType GetPositionAfterSplit(const PointType &pt, const VectorDoubleType &local_direction,
+                                  const VectorDoubleType &global_direction, double epsilon) const override;
 
   virtual void InvalidateParticlePosition(int idx) const override;
 
