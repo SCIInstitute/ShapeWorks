@@ -1758,6 +1758,18 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::AddMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+                       std::shared_ptr<Mesh> sw_mesh, double surface_area) {
+  if (!surface) {
+    m_sampler->AddMesh(nullptr);
+  } else {
+    m_sampler->AddMesh(surface, geodesics_surface, sw_mesh, surface_area);
+  }
+  this->m_num_shapes++;
+  this->m_spacing = 0.5;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   m_sampler->AddContour(poly_data);
   m_num_shapes++;

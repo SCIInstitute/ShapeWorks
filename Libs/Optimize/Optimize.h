@@ -214,6 +214,8 @@ class Optimize {
   //! Set the shape input images
   void AddImage(ImageType::Pointer image, std::string name = "");
   void AddMesh(vtkSmartPointer<vtkPolyData> poly_data);
+  void AddMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+               std::shared_ptr<Mesh> sw_mesh, double surface_area);
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
   //! Set the shape filenames (TODO: details)

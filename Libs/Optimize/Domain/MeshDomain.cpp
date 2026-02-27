@@ -98,6 +98,16 @@ void MeshDomain::SetMesh(std::shared_ptr<Surface> mesh, double geodesic_remesh_p
 }
 
 //-------------------------------------------------------------------
+void MeshDomain::SetMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+                          std::shared_ptr<Mesh> sw_mesh, double surface_area) {
+  m_FixedDomain = false;
+  surface_ = surface;
+  geodesics_mesh_ = geodesics_surface;
+  sw_mesh_ = sw_mesh;
+  surface_area_ = surface_area;
+}
+
+//-------------------------------------------------------------------
 void MeshDomain::InvalidateParticlePosition(int idx) const { this->surface_->invalidate_particle(idx); }
 
 //-------------------------------------------------------------------
