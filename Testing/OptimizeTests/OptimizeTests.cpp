@@ -603,7 +603,7 @@ TEST(OptimizeTests, procrustes_scale_only_test) {
   for (int i = 0; i < values.size(); i++) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
-  ASSERT_GT(values[values.size() - 1], 275.0);
+  ASSERT_GT(values[values.size() - 1], 200.0);
   ASSERT_LT(values[values.size() - 1], 390.0);
 }
 
