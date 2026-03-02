@@ -487,7 +487,7 @@ TEST(OptimizeTests, procrustes_disabled_test) {
   prep_temp("/optimize/procrustes", "procrustes_disabled_test");
 
   ProjectHandle project = std::make_shared<Project>();
-  project->load("procrustes.xlsx");
+  project->load("procrustes.swproj");
   OptimizeParameters params(project);
   params.set_use_procrustes(false);
 
@@ -516,7 +516,7 @@ TEST(OptimizeTests, procrustes_no_scale_test) {
   prep_temp("/optimize/procrustes", "procrustes_no_scale_test");
 
   ProjectHandle project = std::make_shared<Project>();
-  project->load("procrustes.xlsx");
+  project->load("procrustes.swproj");
   OptimizeParameters params(project);
   params.set_use_procrustes(true);
   params.set_use_procrustes_rotation_translation(true);
@@ -548,7 +548,7 @@ TEST(OptimizeTests, procrustes_both_enabled_test) {
   prep_temp("/optimize/procrustes", "procrustes_both_enabled_test");
 
   ProjectHandle project = std::make_shared<Project>();
-  project->load("procrustes.xlsx");
+  project->load("procrustes.swproj");
   OptimizeParameters params(project);
   params.set_use_procrustes(true);
   params.set_use_procrustes_rotation_translation(true);
@@ -580,7 +580,7 @@ TEST(OptimizeTests, procrustes_scale_only_test) {
   prep_temp("/optimize/procrustes", "procrustes_scale_only_test");
 
   ProjectHandle project = std::make_shared<Project>();
-  project->load("procrustes.xlsx");
+  project->load("procrustes.swproj");
   OptimizeParameters params(project);
   params.set_use_procrustes(true);
   params.set_use_procrustes_rotation_translation(false);
