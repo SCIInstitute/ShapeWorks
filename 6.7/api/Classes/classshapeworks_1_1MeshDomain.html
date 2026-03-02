@@ -3786,6 +3786,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-getpositionaftersplit" class="md-nav__link">
+    <span class="md-ellipsis">
+      function GetPositionAfterSplit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-invalidateparticleposition" class="md-nav__link">
     <span class="md-ellipsis">
       function InvalidateParticlePosition
@@ -4063,6 +4072,10 @@
 <td><strong><a href="classshapeworks_1_1MeshDomain.html#function-updateparticleposition">UpdateParticlePosition</a></strong>(const <a href="classshapeworks_1_1ParticleDomain.html#using-pointtype">PointType</a> &amp; point, int idx, VectorDoubleType &amp; update) const override</td>
 </tr>
 <tr>
+<td>virtual <a href="classshapeworks_1_1ParticleDomain.html#using-pointtype">PointType</a></td>
+<td><strong><a href="classshapeworks_1_1MeshDomain.html#function-getpositionaftersplit">GetPositionAfterSplit</a></strong>(const <a href="classshapeworks_1_1ParticleDomain.html#using-pointtype">PointType</a> &amp; pt, const VectorDoubleType &amp; local_direction, const VectorDoubleType &amp; global_direction, double epsilon) const override</td>
+</tr>
+<tr>
 <td>virtual void</td>
 <td><strong><a href="classshapeworks_1_1MeshDomain.html#function-invalidateparticleposition">InvalidateParticlePosition</a></strong>(int idx) const override</td>
 </tr>
@@ -4202,10 +4215,6 @@
 <td><strong><a href="classshapeworks_1_1ParticleDomain.html#function-getconstraints">GetConstraints</a></strong>() const</td>
 </tr>
 <tr>
-<td>virtual <a href="classshapeworks_1_1ParticleDomain.html#using-pointtype">PointType</a></td>
-<td><strong><a href="classshapeworks_1_1ParticleDomain.html#function-getpositionaftersplit">GetPositionAfterSplit</a></strong>(const <a href="classshapeworks_1_1ParticleDomain.html#using-pointtype">PointType</a> &amp; pt, const VectorDoubleType &amp; local_direction, const VectorDoubleType &amp; global_direction, double epsilon) const</td>
-</tr>
-<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1ParticleDomain.html#function-setdomainid">SetDomainID</a></strong>(int id)</td>
 </tr>
@@ -4303,6 +4312,15 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-updateparticleposition">shapeworks::ParticleDomain::UpdateParticlePosition</a></p>
 <p>Applies the update to the point and returns the new point position. </p>
+<h3 id="function-getpositionaftersplit">function GetPositionAfterSplit</h3>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetPositionAfterSplit</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">local_direction</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">global_direction</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getpositionaftersplit">shapeworks::ParticleDomain::GetPositionAfterSplit</a></p>
 <h3 id="function-invalidateparticleposition">function InvalidateParticlePosition</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">InvalidateParticlePosition</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
@@ -4444,7 +4462,7 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-02-27 at 20:21:19 +0000</p>
+<p>Updated on 2026-03-02 at 18:15:08 +0000</p>
 
 
 
