@@ -146,7 +146,7 @@ fastjsonschema==2.21.2
     # via
     #   -r requirements.in
     #   nbformat
-flask==3.1.2
+flask==3.1.3
     # via
     #   -r requirements.in
     #   grip
