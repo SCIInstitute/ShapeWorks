@@ -234,434 +234,7 @@ QWidget#optimize_panel {
                <property name="bottomMargin">
                 <number>0</number>
                </property>
-               <item row="19" column="0">
-                <widget class="QLabel" name="label_15">
-                 <property name="text">
-                  <string>Use Initial Landmarks</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="25" column="2">
-                <widget class="QWidget" name="widget_9" native="true">
-                 <layout class="QGridLayout" name="gridLayout_14">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="shared_boundary">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_19">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_20">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="21" column="2">
-                <widget class="QWidget" name="sampling_scale_widget" native="true">
-                 <layout class="QGridLayout" name="gridLayout_sampling_scale">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="sampling_scale">
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_sampling_scale_1">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_sampling_scale_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="22" column="2">
-                <widget class="QWidget" name="sampling_auto_scale_widget" native="true">
-                 <layout class="QGridLayout" name="gridLayout_sampling_auto_scale">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="sampling_auto_scale">
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_sampling_auto_scale_1">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_sampling_auto_scale_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="5" column="2">
-                <widget class="QLineEdit" name="iterations_per_split">
-                 <property name="text">
-                  <string>1000</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="label_19">
-                 <property name="text">
-                  <string>Optimization Iterations</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="0">
-                <widget class="QLabel" name="label_20">
-                 <property name="text">
-                  <string>Normals</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="20" column="2">
-                <widget class="QLineEdit" name="narrow_band">
-                 <property name="text">
-                  <string>000</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="13" column="0">
-                <widget class="QLabel" name="label_22">
-                 <property name="text">
-                  <string>Procrustes</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="26" column="0">
-                <widget class="QLabel" name="shared_boundary_weight_label">
-                 <property name="text">
-                  <string>Shared Boundary Weight</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="3">
-                <spacer name="horizontalSpacer_9">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_9">
-                 <property name="text">
-                  <string>Ending Regularization</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="10" column="2">
-                <widget class="QLineEdit" name="normals_strength">
-                 <property name="text">
-                  <string>10</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="14" column="2">
-                <widget class="QWidget" name="widget_3" native="true">
-                 <layout class="QGridLayout" name="gridLayout_4">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="procrustes_scaling">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_5">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_6">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="4" column="2">
-                <widget class="QLineEdit" name="ending_regularization">
-                 <property name="text">
-                  <string>1.0</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="16" column="2">
-                <widget class="QLineEdit" name="procrustes_interval">
-                 <property name="text">
-                  <string>10</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="16" column="0">
-                <widget class="QLabel" name="label_11">
-                 <property name="text">
-                  <string>Procrustes Interval</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_4">
-                 <property name="text">
-                  <string>Relative Weighting</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="12" column="0">
-                <widget class="QLabel" name="label_26">
-                 <property name="text">
-                  <string>Landmark Distance Weight</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="22" column="0">
-                <widget class="QLabel" name="sampling_auto_scale_label">
-                 <property name="text">
-                  <string>Sampling Auto Scale</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="0">
-                <widget class="QLabel" name="label_25">
-                 <property name="text">
-                  <string>Geodesic Distance from Landmarks</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="10" column="0">
-                <widget class="QLabel" name="label_21">
-                 <property name="text">
-                  <string>Normals Strength</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="2">
-                <widget class="QWidget" name="widget_5" native="true">
-                 <layout class="QGridLayout" name="gridLayout_8">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="use_geodesic_distance">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_11">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_12">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QLineEdit" name="initial_relative_weighting">
-                 <property name="text">
-                  <string>0.05</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="26" column="2">
-                <widget class="QLineEdit" name="shared_boundary_weight">
-                 <property name="text">
-                  <string>0.1</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
+               <!-- Row 0: Number of Particles -->
                <item row="0" column="0">
                 <widget class="QLabel" name="label_3">
                  <property name="text">
@@ -669,514 +242,7 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <spacer name="horizontalSpacer_10">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="13" column="2">
-                <widget class="QWidget" name="widget_2" native="true">
-                 <layout class="QGridLayout" name="gridLayout_3">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="procrustes">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_3">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_4">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="17" column="2">
-                <widget class="QWidget" name="widget_4" native="true">
-                 <layout class="QGridLayout" name="gridLayout_5">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="multiscale">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_7">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_8">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="12" column="2">
-                <widget class="QLineEdit" name="geodesics_to_landmarks_weight">
-                 <property name="text">
-                  <string>1</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="2">
-                <widget class="QLineEdit" name="geodesic_remesh_percent">
-                 <property name="text">
-                  <string>100</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="2">
-                <widget class="QWidget" name="widget_8" native="true">
-                 <layout class="QGridLayout" name="gridLayout_13">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="use_geodesics_from_landmarks">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_17">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_18">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="18" column="0">
-                <widget class="QLabel" name="label_14">
-                 <property name="text">
-                  <string>Multiscale Start</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_10">
-                 <property name="text">
-                  <string>Starting Regularization</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="2">
-                <widget class="QWidget" name="widget" native="true">
-                 <layout class="QGridLayout" name="gridLayout_2">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="use_normals">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QLineEdit" name="relative_weighting">
-                 <property name="text">
-                  <string>1.0</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="15" column="0">
-                <widget class="QLabel" name="label_16">
-                 <property name="text">
-                  <string>Procrustes Rotation/Translation</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="label_8">
-                 <property name="text">
-                  <string>Iterations per Split</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="0">
-                <widget class="QLabel" name="label_23">
-                 <property name="text">
-                  <string>Geodesic Distance</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="18" column="2">
-                <widget class="QLineEdit" name="multiscale_particles">
-                 <property name="text">
-                  <string>32</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="15" column="2">
-                <widget class="QWidget" name="widget_7" native="true">
-                 <layout class="QGridLayout" name="gridLayout_10">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="procrustes_rotation_translation">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_15">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_16">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="30" column="0">
-                <widget class="QLabel" name="disentangled_label">
-                 <property name="text">
-                  <string>Disentangled Spatiotemporal SSM</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="14" column="0">
-                <widget class="QLabel" name="label_12">
-                 <property name="text">
-                  <string>Procrustes Scaling</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QLineEdit" name="starting_regularization">
-                 <property name="text">
-                  <string>10</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_5">
-                 <property name="text">
-                  <string>Initial Relative Weighting</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="2">
-                <widget class="QLineEdit" name="optimization_iterations">
-                 <property name="text">
-                  <string>1000</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="30" column="2">
-                <widget class="QWidget" name="disentangled_widget" native="true">
-                 <layout class="QGridLayout" name="gridLayout_18">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="use_disentangled_ssm">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_13">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_14">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="25" column="0">
-                <widget class="QLabel" name="shared_boundary_label">
-                 <property name="text">
-                  <string>Shared Boundary</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="20" column="0">
-                <widget class="QLabel" name="label_24">
-                 <property name="text">
-                  <string>Narrow Band</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0">
-                <widget class="QLabel" name="label_27">
-                 <property name="text">
-                  <string>Geodesic Remesh Percent</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="19" column="2">
-                <widget class="QWidget" name="widget_6" native="true">
-                 <layout class="QGridLayout" name="gridLayout_9">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item row="0" column="1">
-                   <widget class="QCheckBox" name="use_landmarks">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer_13a">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="0" column="2">
-                   <spacer name="horizontalSpacer_14a">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="0" column="2">
+               <item row="0" column="1" colspan="3">
                 <widget class="QStackedWidget" name="particle_stack">
                  <property name="currentIndex">
                   <number>0</number>
@@ -1228,34 +294,469 @@ QWidget#optimize_panel {
                  </widget>
                 </widget>
                </item>
-               <item row="17" column="0">
-                <widget class="QLabel" name="label_13">
+               <!-- Row 10: Initial Relative Weighting -->
+               <item row="10" column="0">
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>Initial Relative Weighting</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="10" column="1">
+                <spacer name="horizontalSpacer_10">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="10" column="2">
+                <widget class="QLineEdit" name="initial_relative_weighting">
+                 <property name="text">
+                  <string>0.05</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 11: Relative Weighting -->
+               <item row="11" column="0">
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Relative Weighting</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="11" column="2">
+                <widget class="QLineEdit" name="relative_weighting">
+                 <property name="text">
+                  <string>1.0</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 12: Starting Regularization -->
+               <item row="12" column="0">
+                <widget class="QLabel" name="label_10">
+                 <property name="text">
+                  <string>Starting Regularization</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="12" column="2">
+                <widget class="QLineEdit" name="starting_regularization">
+                 <property name="text">
+                  <string>10</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 13: Ending Regularization -->
+               <item row="13" column="0">
+                <widget class="QLabel" name="label_9">
+                 <property name="text">
+                  <string>Ending Regularization</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="13" column="2">
+                <widget class="QLineEdit" name="ending_regularization">
+                 <property name="text">
+                  <string>1.0</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 14: Iterations per Split -->
+               <item row="14" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Iterations per Split</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="14" column="2">
+                <widget class="QLineEdit" name="iterations_per_split">
+                 <property name="text">
+                  <string>1000</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 15: Optimization Iterations -->
+               <item row="15" column="0">
+                <widget class="QLabel" name="label_19">
+                 <property name="text">
+                  <string>Optimization Iterations</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="15" column="2">
+                <widget class="QLineEdit" name="optimization_iterations">
+                 <property name="text">
+                  <string>1000</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 16: Narrow Band -->
+               <item row="16" column="0">
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>Narrow Band</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="16" column="2">
+                <widget class="QLineEdit" name="narrow_band">
+                 <property name="text">
+                  <string>000</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Divider: after numeric params -->
+               <item row="17" column="0" colspan="4">
+                <widget class="Line" name="line_opt_1">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 18: Geodesic Distance (combined checkbox + remesh percent) -->
+               <item row="18" column="0">
+                <widget class="QCheckBox" name="use_geodesic_distance">
+                 <property name="text">
+                  <string>Geodesic Distance</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="18" column="1">
+                <widget class="QLabel" name="geodesic_remesh_label">
+                 <property name="text">
+                  <string>Remesh %:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              <item row="18" column="2">
+                <widget class="QLineEdit" name="geodesic_remesh_percent">
+                 <property name="text">
+                  <string>100</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 19: Normals (combined checkbox + strength) -->
+               <item row="19" column="0">
+                <widget class="QCheckBox" name="use_normals">
+                 <property name="text">
+                  <string>Normals</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="19" column="1">
+                <widget class="QLabel" name="normals_strength_label">
+                 <property name="text">
+                  <string>Strength:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              <item row="19" column="2">
+                <widget class="QLineEdit" name="normals_strength">
+                 <property name="text">
+                  <string>10</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 20: Geodesic from Landmarks (combined checkbox + weight) -->
+               <item row="20" column="0">
+                <widget class="QCheckBox" name="use_geodesics_from_landmarks">
+                 <property name="text">
+                  <string>Geodesic from Landmarks</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="20" column="1">
+                <widget class="QLabel" name="geodesic_landmarks_weight_label">
+                 <property name="text">
+                  <string>Weight:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              <item row="20" column="2">
+                <widget class="QLineEdit" name="geodesics_to_landmarks_weight">
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 21: Multiscale Mode (combined checkbox + start particles) -->
+               <item row="21" column="0">
+                <widget class="QCheckBox" name="multiscale">
                  <property name="text">
                   <string>Multiscale Mode</string>
                  </property>
                 </widget>
                </item>
-               <item row="21" column="0">
-                <widget class="QLabel" name="sampling_scale_label">
+               <item row="21" column="1">
+                <widget class="QLabel" name="multiscale_start_label">
+                 <property name="text">
+                  <string>Start:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              <item row="21" column="2">
+                <widget class="QLineEdit" name="multiscale_particles">
+                 <property name="text">
+                  <string>32</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 22: Shared Boundary (combined checkbox + weight) -->
+               <item row="22" column="0">
+                <widget class="QCheckBox" name="shared_boundary">
+                 <property name="text">
+                  <string>Shared Boundary</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="22" column="1">
+                <widget class="QLabel" name="shared_boundary_weight_label">
+                 <property name="text">
+                  <string>Weight:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              <item row="22" column="2">
+                <widget class="QLineEdit" name="shared_boundary_weight">
+                 <property name="text">
+                  <string>0.1</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 23: Use Initial Landmarks (checkbox only) -->
+               <item row="23" column="0">
+                <widget class="QCheckBox" name="use_landmarks">
+                 <property name="text">
+                  <string>Use Initial Landmarks</string>
+                 </property>
+                </widget>
+               </item>
+               <!-- Divider: after Geodesic/Options group -->
+               <item row="24" column="0" colspan="4">
+                <widget class="Line" name="line_opt_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 25: Procrustes (combined checkbox + interval) -->
+               <item row="25" column="0">
+                <widget class="QCheckBox" name="procrustes">
+                 <property name="text">
+                  <string>Procrustes</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="25" column="1">
+                <widget class="QLabel" name="procrustes_interval_label">
+                 <property name="text">
+                  <string>Interval:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              <item row="25" column="2">
+                <widget class="QLineEdit" name="procrustes_interval">
+                 <property name="text">
+                  <string>10</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 26: Procrustes sub-options (Scaling + Rot/Trans) -->
+               <item row="26" column="0" colspan="3">
+                <widget class="QWidget" name="procrustes_sub_widget" native="true">
+                 <layout class="QHBoxLayout" name="procrustes_sub_layout">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <spacer name="procrustes_sub_spacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="procrustes_scaling">
+                    <property name="text">
+                     <string>Scaling</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="procrustes_rotation_translation">
+                    <property name="text">
+                     <string>Rotation/Translation</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <!-- Divider: after Procrustes group -->
+               <item row="27" column="0" colspan="4">
+                <widget class="Line" name="line_opt_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 28: Sampling Scale (combined checkbox + multiplier) -->
+               <item row="28" column="0">
+                <widget class="QCheckBox" name="sampling_scale">
                  <property name="text">
                   <string>Sampling Scale</string>
                  </property>
-                </widget>
-               </item>
-               <item row="23" column="0">
-                <widget class="QLabel" name="sampling_scale_value_label">
-                 <property name="text">
-                  <string>Sampling Scale Value</string>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
-               <item row="23" column="2">
+               <item row="28" column="1">
+                <widget class="QLabel" name="sampling_scale_label">
+                 <property name="text">
+                  <string>Multiplier:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              <item row="28" column="2">
                 <widget class="QLineEdit" name="sampling_scale_value">
                  <property name="text">
                   <string>1.0</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 29: Auto Scale (sub-checkbox) -->
+               <item row="29" column="0" colspan="3">
+                <widget class="QWidget" name="sampling_auto_scale_sub_widget" native="true">
+                 <layout class="QHBoxLayout" name="sampling_auto_scale_sub_layout">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <spacer name="sampling_auto_scale_spacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="sampling_auto_scale">
+                    <property name="text">
+                     <string>Auto Scale</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <!-- Row 30: Disentangled SSM (checkbox only, hidden) -->
+               <item row="30" column="0">
+                <widget class="QCheckBox" name="use_disentangled_ssm">
+                 <property name="text">
+                  <string>Disentangled SSM</string>
                  </property>
                 </widget>
                </item>
@@ -1352,15 +853,24 @@ QWidget#optimize_panel {
   <tabstop>iterations_per_split</tabstop>
   <tabstop>optimization_iterations</tabstop>
   <tabstop>use_geodesic_distance</tabstop>
+  <tabstop>geodesic_remesh_percent</tabstop>
   <tabstop>use_normals</tabstop>
   <tabstop>normals_strength</tabstop>
+  <tabstop>use_geodesics_from_landmarks</tabstop>
+  <tabstop>geodesics_to_landmarks_weight</tabstop>
   <tabstop>procrustes</tabstop>
-  <tabstop>procrustes_scaling</tabstop>
   <tabstop>procrustes_interval</tabstop>
+  <tabstop>procrustes_scaling</tabstop>
+  <tabstop>procrustes_rotation_translation</tabstop>
   <tabstop>multiscale</tabstop>
   <tabstop>multiscale_particles</tabstop>
   <tabstop>use_landmarks</tabstop>
   <tabstop>narrow_band</tabstop>
+  <tabstop>sampling_scale</tabstop>
+  <tabstop>sampling_scale_value</tabstop>
+  <tabstop>sampling_auto_scale</tabstop>
+  <tabstop>shared_boundary</tabstop>
+  <tabstop>shared_boundary_weight</tabstop>
   <tabstop>use_disentangled_ssm</tabstop>
  </tabstops>
  <resources>
