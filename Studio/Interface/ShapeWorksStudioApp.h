@@ -84,6 +84,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_deepssm_mode_triggered();
   void on_action_monai_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
+  void on_actionDock_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
   void on_actionExport_Eigenvalues_triggered();
   void on_actionExport_Eigenvectors_triggered();

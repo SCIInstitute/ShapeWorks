@@ -277,6 +277,11 @@ int Optimize::SetParameters() {
     this->ReadPrefixTransformFile(m_prefix_transform_file);
   }
 
+  // Apply stored Procrustes transforms (e.g. for fixed shapes loaded from project)
+  for (auto& [domain_index, transform] : m_procrustes_transforms) {
+    m_sampler->GetParticleSystem()->SetTransform(domain_index, transform);
+  }
+
   return true;
 }
 
@@ -1753,6 +1758,18 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::AddMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+                       std::shared_ptr<Mesh> sw_mesh, double surface_area) {
+  if (!surface) {
+    m_sampler->AddMesh(nullptr);
+  } else {
+    m_sampler->AddMesh(surface, geodesics_surface, sw_mesh, surface_area);
+  }
+  this->m_num_shapes++;
+  this->m_spacing = 0.5;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   m_sampler->AddContour(poly_data);
   m_num_shapes++;
@@ -1809,6 +1826,11 @@ void Optimize::SetFixedDomains(std::vector<int> flags) {
     this->m_fixed_domains_present = true;
   }
   this->m_domain_flags = flags;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetProcustesTransforms(std::map<int, vnl_matrix_fixed<double, 4, 4>> transforms) {
+  m_procrustes_transforms = std::move(transforms);
 }
 
 //---------------------------------------------------------------------------

@@ -284,6 +284,18 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::Surface> mesh, double geodesic
   m_DomainList.push_back(domain);
 }
 
+void Sampler::AddMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+                      std::shared_ptr<Mesh> sw_mesh, double surface_area) {
+  auto domain = std::make_shared<MeshDomain>();
+
+  if (surface) {
+    this->m_Spacing = 1;
+    domain->SetMesh(surface, geodesics_surface, sw_mesh, surface_area);
+    this->m_meshes.push_back(surface->get_polydata());
+  }
+  m_DomainList.push_back(domain);
+}
+
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   auto domain = std::make_shared<ContourDomain>();
 

@@ -17,6 +17,8 @@ class MeshDomain : public ParticleDomain {
   bool ApplyVectorConstraints(VectorDoubleType &gradE, const PointType &pos) const;
   VectorDoubleType ProjectVectorToSurfaceTangent(VectorDoubleType &gradE, const PointType &pos, int idx) const override;
   PointType UpdateParticlePosition(const PointType &point, int idx, VectorDoubleType &update) const override;
+  PointType GetPositionAfterSplit(const PointType &pt, const VectorDoubleType &local_direction,
+                                  const VectorDoubleType &global_direction, double epsilon) const override;
 
   virtual void InvalidateParticlePosition(int idx) const override;
 
@@ -73,6 +75,8 @@ class MeshDomain : public ParticleDomain {
   }
 
   void SetMesh(std::shared_ptr<Surface> mesh_, double geodesic_remesh_percent);
+  void SetMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+               std::shared_ptr<Mesh> sw_mesh, double surface_area);
 
   std::shared_ptr<Mesh> GetSWMesh() const { return sw_mesh_; }
 

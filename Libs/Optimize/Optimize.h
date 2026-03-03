@@ -5,6 +5,7 @@
 #endif
 
 // std
+#include <map>
 #include <string>
 #include <vector>
 
@@ -213,6 +214,8 @@ class Optimize {
   //! Set the shape input images
   void AddImage(ImageType::Pointer image, std::string name = "");
   void AddMesh(vtkSmartPointer<vtkPolyData> poly_data);
+  void AddMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+               std::shared_ptr<Mesh> sw_mesh, double surface_area);
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
   //! Set the shape filenames (TODO: details)
@@ -235,6 +238,9 @@ class Optimize {
   void SetParticleFlags(std::vector<int> flags);
   //! Set Domain Flags (TODO: details)
   void SetFixedDomains(std::vector<int> flags);
+
+  //! Set Procrustes transforms to load for specific domains (applied after initialization)
+  void SetProcustesTransforms(std::map<int, vnl_matrix_fixed<double, 4, 4>> transforms);
 
   //! Shared boundary settings
   void SetSharedBoundaryEnabled(bool enabled);
@@ -415,6 +421,7 @@ class Optimize {
   double m_cotan_sigma_factor = 5.0;
   std::vector<int> m_particle_flags;
   std::vector<int> m_domain_flags;
+  std::map<int, vnl_matrix_fixed<double, 4, 4>> m_procrustes_transforms;  // domain index -> transform
   double m_narrow_band = 0.0;
   bool m_narrow_band_set = false;
   bool m_fixed_domains_present = false;

@@ -36,6 +36,19 @@ MeshDomain::PointType MeshDomain::UpdateParticlePosition(const PointType &point,
 }
 
 //-------------------------------------------------------------------
+MeshDomain::PointType MeshDomain::GetPositionAfterSplit(const PointType &pt,
+                                                         const VectorDoubleType &local_direction,
+                                                         const VectorDoubleType &global_direction,
+                                                         double epsilon) const {
+  VectorDoubleType update;
+  for (unsigned int k = 0; k < DIMENSION; k++) {
+    // Negate here because UpdateParticlePosition negates before calling geodesic_walk
+    update[k] = -epsilon * local_direction[k] / 5.0;
+  }
+  return UpdateParticlePosition(pt, -1, update);
+}
+
+//-------------------------------------------------------------------
 double MeshDomain::GetMaxDiameter() const {
   // todo should this not be the length of the bounding box diagonal?
   PointType boundingBoxSize = surface_->get_mesh_upper_bound() - surface_->get_mesh_lower_bound();
@@ -95,6 +108,16 @@ void MeshDomain::SetMesh(std::shared_ptr<Surface> mesh, double geodesic_remesh_p
     mesh_copy.remeshPercent(geodesic_remesh_percent, 1.0);
     geodesics_mesh_ = std::make_shared<Surface>(mesh_copy.getVTKMesh());
   }
+}
+
+//-------------------------------------------------------------------
+void MeshDomain::SetMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+                          std::shared_ptr<Mesh> sw_mesh, double surface_area) {
+  m_FixedDomain = false;
+  surface_ = surface;
+  geodesics_mesh_ = geodesics_surface;
+  sw_mesh_ = sw_mesh;
+  surface_area_ = surface_area;
 }
 
 //-------------------------------------------------------------------

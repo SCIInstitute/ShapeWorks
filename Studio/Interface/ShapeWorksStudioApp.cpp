@@ -300,6 +300,13 @@ void ShapeWorksStudioApp::on_actionShow_Tool_Window_triggered() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_actionDock_Tool_Window_triggered() {
+  ui_->controlsDock->setFloating(false);
+  ui_->controlsDock->setVisible(true);
+  ui_->controlsDock->show();
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_open_project_triggered() {
   auto filter = tr("ShapeWorks Project (*.swproj *.xlsx)");
   QString filename =

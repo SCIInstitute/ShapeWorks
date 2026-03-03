@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Eigen/Dense>
-// #include "cnpy.h"
 
 namespace shapeworks {
 class MorphologicalDeviationScore {
@@ -18,28 +17,14 @@ class MorphologicalDeviationScore {
   bool is_fitted_ = false;
 
   // Fitted model parameters
-  Eigen::RowVectorXd mean_;                        // (1 x d)
-  Eigen::MatrixXd components_;                     // (d x q)
-  Eigen::VectorXd principal_components_variance_;  // (q,)
-  int n_components_ = 0;
+  Eigen::RowVectorXd mean_;            // (1 x d)
   double noise_variance_ = 0.0;
   double retained_variance_ratio_ = 0.95;
-  // Derived matrices
-  Eigen::MatrixXd precision_matrix_;  // (d x d)
-  // Helper functions
+
+  // Full-rank basis and per-dimension precision weights for scoring
+  Eigen::MatrixXd all_components_;     // (d x rank) — all non-zero eigenvectors
+  Eigen::VectorXd precision_weights_;  // (rank,) — 1/lambda_i or 1/noise_variance
+
   bool FitPPCA(const Eigen::MatrixXd& X);
-  Eigen::MatrixXd ComputeCovarianceMatrix();
-  Eigen::MatrixXd ComputePrecisionMatrix();
-//   inline static void save_vector(const Eigen::VectorXd& v,
-//                                  const std::string& fname) {
-//     cnpy::npy_save(fname, v.data(), {(size_t)v.size()}, "w");
-//   };
-//   inline static void save_matrix(const Eigen::MatrixXd m,
-//                                  const std::string& fname) {
-//     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>
-//         X_rm = m;
-//     cnpy::npy_save(fname, X_rm.data(), {(size_t)m.rows(), (size_t)m.cols()},
-//                    "w");
-//   };
 };
 }  // namespace shapeworks

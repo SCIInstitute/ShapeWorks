@@ -772,6 +772,7 @@ QToolBar QToolButton::checked {
     </property>
     <addaction name="action_preferences"/>
     <addaction name="actionShow_Tool_Window"/>
+    <addaction name="actionDock_Tool_Window"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1054,6 +1055,11 @@ QToolBar QToolButton::checked {
   <action name="actionShow_Tool_Window">
    <property name="text">
     <string>Show Tool Window</string>
+   </property>
+  </action>
+  <action name="actionDock_Tool_Window">
+   <property name="text">
+    <string>Dock Tool Window</string>
    </property>
   </action>
   <action name="actionExport_PCA_Mesh">

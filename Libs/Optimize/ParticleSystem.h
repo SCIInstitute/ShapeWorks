@@ -337,6 +337,28 @@ class ParticleSystem : public itk::DataObject {
     }
   }
 
+  /** Determine which shapes are fixed. A shape is fixed if all its domains are flagged.
+      Returns a per-shape vector of booleans and sets has_fixed to true if any shape is fixed. */
+  std::vector<bool> GetFixedShapes(bool &has_fixed) const {
+    unsigned int num_shapes = GetNumberOfDomains() / m_DomainsPerShape;
+    std::vector<bool> is_fixed(num_shapes, false);
+    has_fixed = false;
+    for (unsigned int shape = 0; shape < num_shapes; shape++) {
+      bool shape_is_fixed = true;
+      for (unsigned int d = 0; d < m_DomainsPerShape; d++) {
+        if (!GetDomainFlag(shape * m_DomainsPerShape + d)) {
+          shape_is_fixed = false;
+          break;
+        }
+      }
+      if (shape_is_fixed && m_DomainsPerShape > 0) {
+        is_fixed[shape] = true;
+        has_fixed = true;
+      }
+    }
+    return is_fixed;
+  }
+
   /** The following methods provide functionality for specifying particle
       indices that are fixed landmarks.  SetPosition() calls to these particle
       indices will silently fail. For simplicity, only one list of indices is

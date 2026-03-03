@@ -79,6 +79,7 @@ private:
   void handle_load_progress(int count);
 
   std::vector<QLineEdit*> particle_boxes_;
+  std::vector<QWidget*> domain_grid_widgets_;
 
   Preferences& preferences_;
   Telemetry& telemetry_;
