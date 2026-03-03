@@ -593,11 +593,6 @@ bool Groom::run_alignment() {
         mesh += get_mesh(i, domain, true /* combine */, MeshSource::Groomed);
       }
 
-      // grab the first domain's initial transform (e.g. potentially reflect) and use before ICP
-      auto list = subjects[i]->get_groomed_transforms()[0];
-      auto transform = ProjectUtils::convert_transform(list);
-      mesh.applyTransform(transform);
-
       if (!subjects[i]->is_excluded()) {
         // if fixed subjects are present, only add the fixed subjects
         if (subjects[i]->is_fixed() || !project_->get_fixed_subjects_present()) {
