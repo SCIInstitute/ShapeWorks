@@ -66,12 +66,11 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->shared_boundary_weight->setToolTip("Weight of shared boundary optimization");
   ui_->sampling_scale->setToolTip("Enable sampling gradient scaling");
   ui_->sampling_auto_scale->setToolTip("Automatically scale sampling gradient based on surface area");
-  ui_->sampling_scale_value->setToolTip("Manual scale value for sampling gradient (when auto-scale is disabled)");
+  ui_->sampling_scale_value->setToolTip("Scale multiplier for sampling gradient (applied on top of auto-scale when enabled)");
   ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
 
   // hidden for 6.5 release
-  ui_->disentangled_label->hide();
-  ui_->disentangled_widget->hide();
+  ui_->use_disentangled_ssm->hide();
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
@@ -270,18 +269,13 @@ void OptimizeTool::load_params() {
   setup_domain_boxes();
   auto params = OptimizeParameters(session_->get_project());
 
-  ui_->number_of_particles->setText(QString::number(params.get_number_of_particles()[0]));
-
-  auto domain_names = session_->get_project()->get_domain_names();
-  for (int i = 0; i < domain_names.size(); i++) {
-    if (i < particle_boxes_.size()) {
-      int particles = 128;
-      if (i < params.get_number_of_particles().size()) {
-        particles = params.get_number_of_particles()[i];
-      }
-
-      particle_boxes_[i]->setText(QString::number(particles));
+  auto num_particles = params.get_number_of_particles();
+  for (int i = 0; i < particle_boxes_.size(); i++) {
+    int particles = 128;
+    if (i < num_particles.size()) {
+      particles = num_particles[i];
     }
+    particle_boxes_[i]->setText(QString::number(particles));
   }
 
   ui_->initial_relative_weighting->setText(QString::number(params.get_initial_relative_weighting()));
@@ -322,16 +316,11 @@ void OptimizeTool::store_params() {
   auto params = OptimizeParameters(session_->get_project());
 
   std::vector<int> num_particles;
-  num_particles.push_back(ui_->number_of_particles->text().toInt());
-
-  auto domain_names = session_->get_project()->get_domain_names();
-  if (domain_names.size() > 1) {
-    num_particles.clear();
-    for (int i = 0; i < domain_names.size(); i++) {
-      if (i < particle_boxes_.size()) {
-        num_particles.push_back(particle_boxes_[i]->text().toInt());
-      }
-    }
+  for (int i = 0; i < particle_boxes_.size(); i++) {
+    num_particles.push_back(particle_boxes_[i]->text().toInt());
+  }
+  if (num_particles.empty()) {
+    num_particles.push_back(ui_->number_of_particles->text().toInt());
   }
 
   params.set_number_of_particles(num_particles);
@@ -405,9 +394,8 @@ void OptimizeTool::update_ui_elements() {
 
   bool shared_boundary_available = session_->get_project()->get_domain_names().size() > 1;
   ui_->shared_boundary->setVisible(shared_boundary_available);
-  ui_->shared_boundary_label->setVisible(shared_boundary_available);
-  ui_->shared_boundary_weight->setVisible(shared_boundary_available);
   ui_->shared_boundary_weight_label->setVisible(shared_boundary_available);
+  ui_->shared_boundary_weight->setVisible(shared_boundary_available);
 
   ui_->sampling_auto_scale->setEnabled(ui_->sampling_scale->isChecked());
   ui_->sampling_scale_value->setEnabled(ui_->sampling_scale->isChecked());
@@ -465,35 +453,49 @@ void OptimizeTool::update_run_button() {
 
 //---------------------------------------------------------------------------
 void OptimizeTool::setup_domain_boxes() {
-  qDeleteAll(ui_->domain_widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
+  // Clean up any previously added domain widgets from the parent grid
+  for (auto* w : domain_grid_widgets_) {
+    w->setParent(nullptr);
+    delete w;
+  }
+  domain_grid_widgets_.clear();
   particle_boxes_.clear();
 
   QLineEdit* last_box = ui_->number_of_particles;
 
+  // Hide the stacked widget and add inputs directly to the parent grid
+  // so they share the same columns as the parameter rows below
+  ui_->particle_stack->setVisible(false);
+  QGridLayout* grid = qobject_cast<QGridLayout*>(ui_->group_box->layout());
+  QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
+
   if (session_->get_project()->get_number_of_domains_per_subject() < 2) {
-    ui_->particle_stack->setCurrentIndex(0);
-    ui_->domain_widget->setMaximumSize(1, 1);
+    QLineEdit* box = new QLineEdit(this);
+    last_box = box;
+    box->setAlignment(Qt::AlignHCenter);
+    box->setValidator(above_zero);
+    box->setText(ui_->number_of_particles->text());
+    connect(box, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
+    particle_boxes_.push_back(box);
+    grid->addWidget(box, 0, 2);
+    domain_grid_widgets_.push_back(box);
   } else {
-    ui_->domain_widget->setMaximumSize(9999, 9999);
     auto domain_names = session_->get_project()->get_domain_names();
-    QGridLayout* layout = new QGridLayout;
-    QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
     for (int i = 0; i < domain_names.size(); i++) {
       auto label = new QLabel(QString::fromStdString(domain_names[i]), this);
-      layout->addWidget(label, i, 0);
+      label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+      grid->addWidget(label, i, 1);
+      domain_grid_widgets_.push_back(label);
+
       QLineEdit* box = new QLineEdit(this);
       last_box = box;
       box->setAlignment(Qt::AlignHCenter);
       box->setValidator(above_zero);
       connect(box, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
-
       particle_boxes_.push_back(box);
-      layout->addWidget(box, i, 1);
+      grid->addWidget(box, i, 2);
+      domain_grid_widgets_.push_back(box);
     }
-
-    delete ui_->domain_widget->layout();
-    ui_->domain_widget->setLayout(layout);
-    ui_->particle_stack->setCurrentIndex(1);
   }
 
   QWidget::setTabOrder(last_box, ui_->initial_relative_weighting);
@@ -502,22 +504,25 @@ void OptimizeTool::setup_domain_boxes() {
   QWidget::setTabOrder(ui_->starting_regularization, ui_->ending_regularization);
   QWidget::setTabOrder(ui_->ending_regularization, ui_->iterations_per_split);
   QWidget::setTabOrder(ui_->iterations_per_split, ui_->optimization_iterations);
-  QWidget::setTabOrder(ui_->optimization_iterations, ui_->use_geodesic_distance);
+  QWidget::setTabOrder(ui_->optimization_iterations, ui_->narrow_band);
+  QWidget::setTabOrder(ui_->narrow_band, ui_->use_geodesic_distance);
   QWidget::setTabOrder(ui_->use_geodesic_distance, ui_->geodesic_remesh_percent);
   QWidget::setTabOrder(ui_->geodesic_remesh_percent, ui_->use_normals);
   QWidget::setTabOrder(ui_->use_normals, ui_->normals_strength);
   QWidget::setTabOrder(ui_->normals_strength, ui_->use_geodesics_from_landmarks);
   QWidget::setTabOrder(ui_->use_geodesics_from_landmarks, ui_->geodesics_to_landmarks_weight);
-  QWidget::setTabOrder(ui_->geodesics_to_landmarks_weight, ui_->procrustes);
-  QWidget::setTabOrder(ui_->procrustes, ui_->procrustes_scaling);
-  QWidget::setTabOrder(ui_->procrustes_scaling, ui_->procrustes_rotation_translation);
-  QWidget::setTabOrder(ui_->procrustes_rotation_translation, ui_->procrustes_interval);
-  QWidget::setTabOrder(ui_->procrustes_interval, ui_->multiscale);
+  QWidget::setTabOrder(ui_->geodesics_to_landmarks_weight, ui_->multiscale);
   QWidget::setTabOrder(ui_->multiscale, ui_->multiscale_particles);
-  QWidget::setTabOrder(ui_->multiscale_particles, ui_->use_landmarks);
-  QWidget::setTabOrder(ui_->use_landmarks, ui_->narrow_band);
-  QWidget::setTabOrder(ui_->narrow_band, ui_->run_optimize_button);
+  QWidget::setTabOrder(ui_->multiscale_particles, ui_->shared_boundary);
   QWidget::setTabOrder(ui_->shared_boundary, ui_->shared_boundary_weight);
+  QWidget::setTabOrder(ui_->shared_boundary_weight, ui_->use_landmarks);
+  QWidget::setTabOrder(ui_->use_landmarks, ui_->procrustes);
+  QWidget::setTabOrder(ui_->procrustes, ui_->procrustes_interval);
+  QWidget::setTabOrder(ui_->procrustes_interval, ui_->procrustes_scaling);
+  QWidget::setTabOrder(ui_->procrustes_scaling, ui_->procrustes_rotation_translation);
+  QWidget::setTabOrder(ui_->procrustes_rotation_translation, ui_->sampling_scale);
+  QWidget::setTabOrder(ui_->sampling_scale, ui_->sampling_scale_value);
+  QWidget::setTabOrder(ui_->sampling_scale_value, ui_->sampling_auto_scale);
   QWidget::setTabOrder(ui_->shared_boundary_weight, ui_->use_disentangled_ssm);
   QWidget::setTabOrder(ui_->use_disentangled_ssm, ui_->run_optimize_button);
   QWidget::setTabOrder(ui_->run_optimize_button, ui_->restoreDefaults);
