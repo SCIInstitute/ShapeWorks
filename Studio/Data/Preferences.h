@@ -130,6 +130,9 @@ class Preferences : public QObject {
   bool get_telemetry_asked();
   void set_telemetry_asked(bool asked);
 
+  int get_warp_method();
+  void set_warp_method(int method);
+
   QStringList get_pending_telemetry_events();
   void set_pending_telemetry_events(QStringList events);
 

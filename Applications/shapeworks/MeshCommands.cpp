@@ -1505,7 +1505,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
         Eigen::MatrixXd vertices_updated = output.points();
         std::map<int, int> landmarks_map = warper.get_landmarks_map();
 
-        for (vtkIdType i = 0; i < warper.get_warp_matrix().rows(); i++) {
+        for (vtkIdType i = 0; i < vertices_updated.rows(); i++) {
           if (landmarks_map.count(i)) {
             // This vertex i corresponds to a landmark
             int landmark_index = landmarks_map.lower_bound(i)->second;

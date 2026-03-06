@@ -1096,19 +1096,6 @@ QWidget#particles_panel {
                   </property>
                  </widget>
                 </item>
-                <item row="7" column="0">
-                 <spacer name="verticalSpacer_3">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
                 <item row="0" column="0">
                  <widget class="QRadioButton" name="allSamplesRadio">
                   <property name="toolTip">
@@ -1225,6 +1212,12 @@ QWidget#particles_panel {
                 </property>
                 <item row="1" column="0">
                  <widget class="QGroupBox" name="pca_group_box">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="title">
                    <string>Groups</string>
                   </property>
@@ -1244,7 +1237,11 @@ QWidget#particles_panel {
                     </widget>
                    </item>
                    <item row="1" column="0" colspan="2">
-                    <widget class="QListWidget" name="pca_group_list"/>
+                    <widget class="QListWidget" name="pca_group_list">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QAbstractScrollArea::AdjustToContents</enum>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -1677,19 +1674,6 @@ QWidget#particles_panel {
                    </item>
                   </layout>
                  </widget>
-                </item>
-                <item row="2" column="0">
-                 <spacer name="verticalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </spacer>
                 </item>
                </layout>
               </widget>
@@ -2202,7 +2186,7 @@ Reference Domain</string>
       <item>
        <widget class="QWidget" name="surface_content" native="true">
         <layout class="QGridLayout" name="gridLayout_11">
-         <item row="2" column="2">
+         <item row="2" column="1" colspan="2">
           <widget class="QRadioButton" name="distance_transform_radio_button">
            <property name="toolTip">
             <string>Surface reconstruction based on distance transforms and particles.</string>
@@ -2212,33 +2196,7 @@ Reference Domain</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="3">
-          <spacer name="horizontalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="1">
-          <spacer name="horizontalSpacer_6">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="2">
+         <item row="0" column="1" colspan="2">
           <widget class="QRadioButton" name="legacy_radio_button">
            <property name="toolTip">
             <string>Legacy surface reconstruction method that requires only particles</string>
@@ -2284,6 +2242,9 @@ Reference Domain</string>
                 <height>16777215</height>
                </size>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
               <property name="value">
                <number>3</number>
               </property>
@@ -2316,6 +2277,9 @@ Reference Domain</string>
                 <height>16777215</height>
                </size>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
               <property name="maximum">
                <double>90.000000000000000</double>
               </property>
@@ -2343,6 +2307,9 @@ Reference Domain</string>
                 <width>65</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
               </property>
               <property name="minimum">
                <double>0.010000000000000</double>
@@ -2385,7 +2352,7 @@ Reference Domain</string>
            </layout>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="1" column="1" colspan="2">
           <widget class="QRadioButton" name="mesh_warping_radio_button">
            <property name="toolTip">
             <string>Surface reconstruction method that uses mesh warping from a median mesh and particle positions.</string>
@@ -2417,20 +2384,21 @@ Reference Domain</string>
             <item row="0" column="0">
              <widget class="QLabel" name="template_mesh_label">
               <property name="text">
-               <string>Template Sample:</string>
+               <string>Template:</string>
               </property>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QSpinBox" name="mesh_warp_sample_spinbox"/>
-            </item>
-            <item row="2" column="0" colspan="3">
-             <widget class="QPushButton" name="mesh_warp_run_button">
-              <property name="enabled">
-               <bool>true</bool>
+             <widget class="QSpinBox" name="mesh_warp_sample_spinbox">
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
               </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="template_mesh_label_2">
               <property name="text">
-               <string>Run Mesh Warp</string>
+               <string>Template Name:</string>
               </property>
              </widget>
             </item>
@@ -2441,10 +2409,34 @@ Reference Domain</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="template_mesh_label_2">
+            <item row="2" column="0">
+             <widget class="QLabel" name="warp_method_label">
               <property name="text">
-               <string>Template Name:</string>
+               <string>Warp Method:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" colspan="2">
+             <widget class="QComboBox" name="warp_method_combo">
+              <item>
+               <property name="text">
+                <string>Laplacian</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Biharmonic</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="3" column="0" colspan="3">
+             <widget class="QPushButton" name="mesh_warp_run_button">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Run Mesh Warp</string>
               </property>
              </widget>
             </item>
@@ -2598,6 +2590,9 @@ Reference Domain</string>
              <width>65</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
            <property name="maximum">
             <double>180.000000000000000</double>

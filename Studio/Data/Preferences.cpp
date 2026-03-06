@@ -388,6 +388,12 @@ bool Preferences::get_telemetry_asked() { return settings_.value("General/teleme
 void Preferences::set_telemetry_asked(bool asked) { settings_.setValue("General/telemetry_asked", asked); }
 
 //-----------------------------------------------------------------------------
+int Preferences::get_warp_method() { return settings_.value("Analysis/warp_method", 1).toInt(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_warp_method(int method) { settings_.setValue("Analysis/warp_method", method); }
+
+//-----------------------------------------------------------------------------
 QStringList Preferences::get_pending_telemetry_events() {
   return settings_.value("Telemetry/pending_events").toStringList();
 }

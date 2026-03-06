@@ -23,6 +23,7 @@
 
 #include <QClipboard>
 #include <QMenu>
+#include <QTimer>
 
 #include "ParticleAreaPanel.h"
 #include "ShapeScalarPanel.h"
@@ -36,6 +37,7 @@ const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
 constexpr auto MESH_WARP_TEMPLATE_INDEX = "mesh_warp_template_index";
+constexpr auto MESH_WARP_METHOD = "mesh_warp_method";
 
 //---------------------------------------------------------------------------
 //! Helper to extract x,y,z from x,y,z,scalar
@@ -205,6 +207,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->mesh_warp_median_button, &QPushButton::clicked, this, &AnalysisTool::mesh_warp_median_clicked);
   connect(ui_->mesh_warp_sample_spinbox, qOverload<int>(&QSpinBox::valueChanged), this,
           &AnalysisTool::mesh_warp_sample_changed);
+  connect(ui_->warp_method_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::mesh_warp_method_changed);
   connect(ui_->mesh_warp_run_button, &QPushButton::clicked, this, &AnalysisTool::mesh_warp_run_clicked);
 }
 
@@ -914,6 +918,7 @@ void AnalysisTool::load_settings() {
       QString::number(static_cast<double>(params.get("network_pvalue_threshold", 0.05))));
 
   ui_->mesh_warp_sample_spinbox->setValue(params.get(MESH_WARP_TEMPLATE_INDEX, -1));
+  ui_->warp_method_combo->setCurrentIndex(params.get(MESH_WARP_METHOD, preferences_.get_warp_method()));
   update_group_boxes();
 
   ui_->group_combo->setCurrentText(QString::fromStdString(params.get("current_group", "-None-")));
@@ -1718,6 +1723,8 @@ void AnalysisTool::initialize_mesh_warper() {
       SW_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
       return;
     }
+    WarpMethod warp_method = ui_->warp_method_combo->currentIndex() == 0 ? WarpMethod::Laplacian : WarpMethod::Biharmonic;
+
     auto meshes = mesh_group.meshes();
     for (int i = 0; i < mesh_group.meshes().size(); i++) {
       Eigen::VectorXd particles = median_shape->get_particles().get_local_particles(i);
@@ -1729,7 +1736,9 @@ void AnalysisTool::initialize_mesh_warper() {
       Mesh mesh(poly_data);
       median_shape->get_constraints(i).clipMesh(mesh);
 
-      session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
+      auto warper = session_->get_mesh_manager()->get_mesh_warper(i);
+      warper->set_warp_method(warp_method);
+      warper->set_reference_mesh(mesh.getVTKMesh(), points);
     }
   }
 }
@@ -1870,6 +1879,7 @@ void AnalysisTool::handle_lda_complete() {
   group_lda_job_->plot(ui_->lda_graph, left_group, right_group);
   ui_->lda_graph->setVisible(true);
   ui_->lda_hint_label->setVisible(true);
+  QTimer::singleShot(0, this, &AnalysisTool::resize_tab_to_current);
 }
 
 void AnalysisTool::handle_network_analysis_progress(int progress) {
@@ -1909,15 +1919,17 @@ void AnalysisTool::group_analysis_combo_changed() {
   }
   if (index == 0) {  // none
     ui_->group_analysis_stacked_widget->setVisible(false);
-    ui_->group_analysis_stacked_widget->setEnabled(false);
+    ui_->group_analysis_stacked_widget->setMaximumHeight(0);
   } else {
     ui_->group_analysis_stacked_widget->setCurrentIndex(index - 1);
+    ui_->group_analysis_stacked_widget->setMaximumHeight(QWIDGETSIZE_MAX);
     ui_->group_analysis_stacked_widget->setVisible(true);
-    ui_->group_analysis_stacked_widget->setEnabled(true);
     if (ui_->group_analysis_stacked_widget->currentWidget() == ui_->lda_page) {
       update_lda_graph();
     }
   }
+  // Recalculate tab height since analysis content changed
+  QTimer::singleShot(0, this, &AnalysisTool::resize_tab_to_current);
   Q_EMIT update_view();
 }
 
@@ -2095,6 +2107,13 @@ void AnalysisTool::mesh_warp_sample_changed() {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::mesh_warp_method_changed() {
+  auto params = session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
+  params.set(MESH_WARP_METHOD, ui_->warp_method_combo->currentIndex());
+  session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::mesh_warp_run_clicked() {
   session_->handle_clear_cache();
   initialize_mesh_warper();
@@ -2105,6 +2124,22 @@ void AnalysisTool::mesh_warp_run_clicked() {
 void AnalysisTool::handle_tab_changed() {
   stats_ready_ = false;
   compute_stats();
+
+  resize_tab_to_current();
+}
+
+void AnalysisTool::resize_tab_to_current() {
+  auto* current = ui_->tabWidget->currentWidget();
+  if (!current) return;
+
+  // Force Qt to recalculate layout so minimumSize reflects hidden/shown widgets
+  current->layout()->activate();
+  int h = current->layout()->minimumSize().height();
+  int tab_bar = ui_->tabWidget->tabBar()->sizeHint().height();
+  // Add frame margins
+  int frame = ui_->tabWidget->height() - ui_->tabWidget->currentWidget()->height();
+  if (frame < tab_bar) frame = tab_bar + 6;
+  ui_->tabWidget->setMaximumHeight(frame + h);
 }
 
 //---------------------------------------------------------------------------
@@ -2148,6 +2183,11 @@ void AnalysisTool::set_active(bool active) {
   }
   active_ = active;
   update_interface();
+  if (active) {
+    handle_tab_changed();
+    // Deferred recalculation after layout settles
+    QTimer::singleShot(0, this, &AnalysisTool::handle_tab_changed);
+  }
 }
 
 //---------------------------------------------------------------------------

@@ -46,6 +46,7 @@ nav:
    - 'Groom Module':                         'studio/studio-groom.md'
    - 'Optimize Module':                      'studio/studio-optimize.md'
    - 'Analyze Module':                       'studio/studio-analyze.md'
+   - 'Surface Reconstruction':               'studio/surface-reconstruction.md'
    - 'DeepSSM Module':                       'studio/deepssm-in-studio.md'
    - 'Multiple Domains SSM':                 'studio/multiple-domains.md'
    - 'Shared Boundaries':                    'studio/studio-shared-boundary.md'

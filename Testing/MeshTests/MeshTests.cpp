@@ -1,3 +1,4 @@
+#include <chrono>
 #include <igl/point_mesh_squared_distance.h>
 
 #include "Image.h"
@@ -715,6 +716,7 @@ void mesh_warp_test(std::string ref_mesh, std::string ref_particles, std::string
   movingPoints.transposeInPlace();
 
   MeshWarper warper;
+  warper.set_warp_method(WarpMethod::Biharmonic);
   warper.set_reference_mesh(reference.getVTKMesh(), staticPoints);
   ASSERT_TRUE(warper.get_warp_available());
 
@@ -749,6 +751,149 @@ TEST(MeshTests, warpTest4) {
 //  mesh_warp_test("/mesh_warp/lv_shared2.vtk", "/mesh_warp/lv_shared2.particles", "/mesh_warp/lv_shared2.particles",
 //                 "/mesh_warp/lv_shared2_baseline.vtk");
 //}
+
+// Laplacian warp tests
+TEST(MeshTests, laplacianWarpBasic) {
+  // Test that Laplacian warp succeeds and produces a valid mesh
+  Mesh reference(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+
+  std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
+  std::string movingPath = std::string(TEST_DATA_DIR) + "/ellipsoid_1.particles";
+  std::vector<std::string> paths = {staticPath, movingPath};
+  ParticleSystemEvaluation particlesystem(paths);
+  Eigen::MatrixXd allPts = particlesystem.get_matrix();
+  Eigen::MatrixXd staticPoints = allPts.col(0);
+  Eigen::MatrixXd movingPoints = allPts.col(1);
+
+  int numParticles = staticPoints.rows() / 3;
+  staticPoints.resize(3, numParticles);
+  staticPoints.transposeInPlace();
+  movingPoints.resize(3, numParticles);
+  movingPoints.transposeInPlace();
+
+  MeshWarper warper;
+  warper.set_warp_method(WarpMethod::Laplacian);
+  warper.set_reference_mesh(reference.getVTKMesh(), staticPoints);
+  ASSERT_TRUE(warper.get_warp_available());
+
+  Mesh output = warper.build_mesh(movingPoints);
+  ASSERT_TRUE(output.numPoints() > 0);
+  ASSERT_TRUE(output.numFaces() > 0);
+
+  // Verify no NaN values in output
+  Eigen::MatrixXd points = output.points();
+  for (int i = 0; i < points.rows(); i++) {
+    ASSERT_FALSE(std::isnan(points(i, 0)));
+    ASSERT_FALSE(std::isnan(points(i, 1)));
+    ASSERT_FALSE(std::isnan(points(i, 2)));
+  }
+}
+
+TEST(MeshTests, laplacianWarpSelfWarp) {
+  // Self-warp: warping with same particles should produce mesh close to reference
+  Mesh reference(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+
+  std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
+  std::vector<std::string> paths = {staticPath, staticPath};
+  ParticleSystemEvaluation particlesystem(paths);
+  Eigen::MatrixXd allPts = particlesystem.get_matrix();
+  Eigen::MatrixXd staticPoints = allPts.col(0);
+
+  int numParticles = staticPoints.rows() / 3;
+  staticPoints.resize(3, numParticles);
+  staticPoints.transposeInPlace();
+
+  MeshWarper warper;
+  warper.set_warp_method(WarpMethod::Laplacian);
+  warper.set_reference_mesh(reference.getVTKMesh(), staticPoints);
+  ASSERT_TRUE(warper.get_warp_available());
+
+  // Self-warp: use same particles as reference
+  Mesh output = warper.build_mesh(staticPoints);
+  ASSERT_TRUE(output.numPoints() > 0);
+
+  // Vertex count should match
+  ASSERT_EQ(output.numPoints(), warper.get_num_warp_vertices());
+}
+
+TEST(MeshTests, warpMethodBenchmark) {
+  // Benchmark: run both methods on the same data and print timing comparison
+  std::string ref_mesh = "/mesh_warp/mesh_warp2.vtk";
+  std::string ref_particles = "/mesh_warp/mesh_warp2.particles";
+
+  Mesh reference(std::string(TEST_DATA_DIR) + ref_mesh);
+
+  std::string staticPath = std::string(TEST_DATA_DIR) + ref_particles;
+  std::vector<std::string> paths = {staticPath, staticPath};
+  ParticleSystemEvaluation particlesystem(paths);
+  Eigen::MatrixXd allPts = particlesystem.get_matrix();
+  Eigen::MatrixXd staticPoints = allPts.col(0);
+  int numParticles = staticPoints.rows() / 3;
+  staticPoints.resize(3, numParticles);
+  staticPoints.transposeInPlace();
+
+  const int num_warps = 10;
+
+  // -- Laplacian --
+  {
+    MeshWarper warper;
+    warper.set_warp_method(WarpMethod::Laplacian);
+    warper.set_reference_mesh(reference.getVTKMesh(), staticPoints);
+
+    auto t0 = std::chrono::high_resolution_clock::now();
+    warper.generate_warp();
+    auto t1 = std::chrono::high_resolution_clock::now();
+    double precompute_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+
+    auto t2 = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < num_warps; i++) {
+      warper.build_mesh(staticPoints);
+    }
+    auto t3 = std::chrono::high_resolution_clock::now();
+    double warp_ms = std::chrono::duration<double, std::milli>(t3 - t2).count();
+
+    std::cout << "\n=== Warp Method Benchmark ===" << std::endl;
+    std::cout << "Laplacian:  precompute=" << precompute_ms << "ms"
+              << "  warp=" << warp_ms / num_warps << "ms/shape"
+              << " (" << num_warps << " warps)" << std::endl;
+  }
+
+  // -- Biharmonic --
+  {
+    MeshWarper warper;
+    warper.set_warp_method(WarpMethod::Biharmonic);
+    warper.set_reference_mesh(reference.getVTKMesh(), staticPoints);
+
+    auto t0 = std::chrono::high_resolution_clock::now();
+    warper.generate_warp();
+    auto t1 = std::chrono::high_resolution_clock::now();
+    double precompute_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+
+    auto t2 = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < num_warps; i++) {
+      warper.build_mesh(staticPoints);
+    }
+    auto t3 = std::chrono::high_resolution_clock::now();
+    double warp_ms = std::chrono::duration<double, std::milli>(t3 - t2).count();
+
+    std::cout << "Biharmonic: precompute=" << precompute_ms << "ms"
+              << "  warp=" << warp_ms / num_warps << "ms/shape"
+              << " (" << num_warps << " warps)" << std::endl;
+    std::cout << "==============================\n" << std::endl;
+  }
+}
+
+TEST(MeshTests, laplacianWarpMethodSwitch) {
+  // Verify that warp method can be set and queried
+  MeshWarper warper;
+  ASSERT_EQ(warper.get_warp_method(), WarpMethod::Biharmonic);  // default
+
+  warper.set_warp_method(WarpMethod::Biharmonic);
+  ASSERT_EQ(warper.get_warp_method(), WarpMethod::Biharmonic);
+
+  warper.set_warp_method(WarpMethod::Laplacian);
+  ASSERT_EQ(warper.get_warp_method(), WarpMethod::Laplacian);
+}
 
 TEST(MeshTests, findReferenceMeshTest) {
   std::vector<Mesh> meshes;
