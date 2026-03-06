@@ -1202,6 +1202,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../studio/surface-reconstruction.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Surface Reconstruction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../studio/deepssm-in-studio.html" class="md-nav__link">
         
   
@@ -3833,6 +3856,33 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-set_warp_method" class="md-nav__link">
+    <span class="md-ellipsis">
+      function set_warp_method
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_warp_method" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_warp_method
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_num_warp_vertices" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_num_warp_vertices
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3947,6 +3997,18 @@
 <td>const Eigen::MatrixXd &amp;</td>
 <td><strong><a href="classshapeworks_1_1MeshWarper.html#function-get-reference-particles">get_reference_particles</a></strong>() const<br>Return the reference particles.</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-set-warp-method">set_warp_method</a></strong>(<a href="../Namespaces/namespaceshapeworks.html#enum-warpmethod">WarpMethod</a> method)<br>Set the warp method (Laplacian or Biharmonic)</td>
+</tr>
+<tr>
+<td><a href="../Namespaces/namespaceshapeworks.html#enum-warpmethod">WarpMethod</a></td>
+<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-get-warp-method">get_warp_method</a></strong>() const<br>Get the current warp method.</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1MeshWarper.html#function-get-num-warp-vertices">get_num_warp_vertices</a></strong>() const<br>Return the number of vertices in the warped mesh.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="protected-functions">Protected Functions</h2>
@@ -3967,7 +4029,7 @@
 <h2 id="detailed-description">Detailed Description</h2>
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeshWarper</span><span class="p">;</span>
 </code></pre></div>
-<p>This class implements mesh warping based on correspondence particles. Correspondence points are embedded into the mesh as new vertices (traingles split). Then a biharmonic deformation is used to warp the mesh to new sets of correspondence particles.</p>
+<p>This class implements mesh warping based on correspondence particles. Correspondence points are embedded into the mesh as new vertices (triangles split). Then a deformation (Laplacian or biharmonic) is used to warp the mesh to new sets of correspondence particles.</p>
 <p>It can optionally be used to warp landmarks along with the mesh by embedding them as vertices </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-set_reference_mesh">function set_reference_mesh</h3>
@@ -4029,6 +4091,20 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_reference_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the reference particles. </p>
+<h3 id="function-set_warp_method">function set_warp_method</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_warp_method</span><span class="p">(</span>
+<span class="w">    </span><span class="n">WarpMethod</span><span class="w"> </span><span class="n">method</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set the warp method (Laplacian or Biharmonic) </p>
+<h3 id="function-get_warp_method">function get_warp_method</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">WarpMethod</span><span class="w"> </span><span class="n">get_warp_method</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Get the current warp method. </p>
+<h3 id="function-get_num_warp_vertices">function get_num_warp_vertices</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_warp_vertices</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Return the number of vertices in the warped mesh. </p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-update_progress">function update_progress</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">update_progress</span><span class="p">(</span>
@@ -4038,7 +4114,7 @@
 <p>For overriding to handle progress updates. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QMeshWarper.html#function-update-progress">shapeworks::QMeshWarper::update_progress</a></p>
 <hr />
-<p>Updated on 2026-03-03 at 15:24:50 +0000</p>
+<p>Updated on 2026-03-06 at 19:36:26 +0000</p>
 
 
 

@@ -18,7 +18,7 @@
         <link rel="prev" href="studio-optimize.html">
       
       
-        <link rel="next" href="deepssm-in-studio.html">
+        <link rel="next" href="surface-reconstruction.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -1385,6 +1385,29 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="surface-reconstruction.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Surface Reconstruction
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -4126,13 +4149,7 @@
 </ol>
 <p>See <a href="../new/ssm-eval.html">Shape Model Evaluation</a> for more information about shape evaluation.</p>
 <h2 id="surface-reconstruction-panel">Surface Reconstruction Panel</h2>
-<p>The surface reconstruction panel provides options for the surface reconstruction method.  There are three surface reconstruction methods available depending on the data you supply.</p>
-<p><code>Legacy</code> - If an older XML file with only particle files is supplied, then only this option is available.  This is the fallback option since it requires only the particles.</p>
-<p><code>Mesh Warping Based</code> - Mesh warping based method that utilizes the mean mesh.  You must have either meshes supplied or image based (distance transforms).</p>
-<p><code>Distance Transform Based</code> - Surface reconstruction based on distance transforms.  Project must have distance transforms.</p>
-<p><img alt="ShapeWorks Studio Analysis Surface Reconstruction Panel" src="../img/studio/studio_analyze_surface_reconstruction.png" /></p>
-<p>Below is an example of the difference in using this option.</p>
-<p><img alt="ShapeWorks Studio Surface Reconstruction Result" src="../img/studio/studio_analyze_surface_reconstruction_result.png" /></p>
+<p>See the <a href="surface-reconstruction.html">Surface Reconstruction</a> page for details on reconstruction methods, warp method options, and examples.</p>
 <h2 id="goodbad-particles-panel">Good/Bad Particles Panel</h2>
 <p><img alt="ShapeWorks Studio Good/Bad Particles Panel" src="../img/studio/studio_good_bad.png" /></p>
 <p>The <em>Good/Bad Particles Panel</em> enabled the display of "good/bad particles" in ShapeWorks Studio.  A <em>maximum angle</em> parameter is given (default 45 degrees).  When a particle's surface normal across subjects (averaged) exceeds this angle, the particle will be marked "bad" and shown in red.  Good particles are shown in green.  This can help in identifying problems with correspondence as it is typically expected that surface normals for given particles should be similar across subjects.</p>
