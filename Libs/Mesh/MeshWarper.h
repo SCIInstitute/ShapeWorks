@@ -7,6 +7,7 @@
  * The MeshWarper provides an object to warp meshes for surface reconstruction
  */
 
+#include <igl/min_quad_with_fixed.h>
 #include <vtkPolyData.h>
 
 #include <Eigen/Eigen>
@@ -14,13 +15,16 @@
 
 namespace shapeworks {
 
+//! Warp method selection for MeshWarper
+enum class WarpMethod { Laplacian, Biharmonic };
+
 /**
  * \class MeshWarper
  * \ingroup Group-Mesh
  *
  * This class implements mesh warping based on correspondence particles.
- * Correspondence points are embedded into the mesh as new vertices (traingles split).  Then a biharmonic deformation
- * is used to warp the mesh to new sets of correspondence particles.
+ * Correspondence points are embedded into the mesh as new vertices (triangles split).  Then a deformation
+ * (Laplacian or biharmonic) is used to warp the mesh to new sets of correspondence particles.
  *
  * It can optionally be used to warp landmarks along with the mesh by embedding them as vertices
  *
@@ -66,6 +70,15 @@ class MeshWarper {
   //! Return the reference particles
   const Eigen::MatrixXd& get_reference_particles() const { return this->reference_particles_; }
 
+  //! Set the warp method (Laplacian or Biharmonic)
+  void set_warp_method(WarpMethod method) { warp_method_ = method; }
+
+  //! Get the current warp method
+  WarpMethod get_warp_method() const { return warp_method_; }
+
+  //! Return the number of vertices in the warped mesh
+  int get_num_warp_vertices() const;
+
  protected:
   //! For overriding to handle progress updates
   virtual void update_progress(float p) {}
@@ -103,6 +116,12 @@ class MeshWarper {
   void diagnose_biharmonic_failure(const Eigen::MatrixXd& TV, const Eigen::MatrixXi& TF,
                                    const std::vector<std::vector<int>>& S, int k);
 
+  //! Generate the Laplacian warp data
+  bool generate_laplacian_warp(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F,
+                               const Eigen::MatrixXd& control_points);
+
+  //! Warp mesh using Laplacian deformation
+  vtkSmartPointer<vtkPolyData> warp_mesh_laplacian(const Eigen::MatrixXd& points);
 
   // Members
   Eigen::MatrixXi faces_;
@@ -126,5 +145,17 @@ class MeshWarper {
   Eigen::MatrixXd reference_particles_;
   //! Whether the reference is a contour
   bool is_contour_ = false;
+
+  //! Selected warp method
+  WarpMethod warp_method_ = WarpMethod::Biharmonic;
+
+  //! Laplacian solve data
+  igl::min_quad_with_fixed_data<double> mqwf_data_;
+  Eigen::MatrixXd laplacian_rhs_;           //!< Constant RHS term: -Q * V_ref (n x 3)
+  Eigen::MatrixXd laplacian_vertices_;      //!< Reference surface vertices
+  Eigen::VectorXi laplacian_handles_;       //!< Handle vertex indices
+  Eigen::SparseMatrix<double> handle_map_;  //!< Maps control points to handle Y rows (num_handles x num_controls)
+  Eigen::MatrixXd handle_default_;          //!< Default Y for handles with no control point (num_handles x 3)
+  bool laplacian_ready_ = false;
 };
 }  // namespace shapeworks

@@ -54,6 +54,8 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
   connect(ui_->discrete_color_mode, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
   connect(ui_->reverse_color_map, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
   connect(ui_->auto_update_checkbox, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
+  connect(ui_->warp_method, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &PreferencesWindow::save_to_preferences);
 }
 
 //-----------------------------------------------------------------------------
@@ -117,6 +119,7 @@ void PreferencesWindow::set_values_from_preferences() {
   ui_->auto_update_checkbox->setChecked(preferences_.get_auto_update_check());
   ui_->telemetry_enabled->setChecked(preferences_.get_telemetry_enabled());
   ui_->data_loader_num_workers->setText(QString::number(preferences_.get_dataloader_num_workers()));
+  ui_->warp_method->setCurrentIndex(preferences_.get_warp_method());
   update_labels();
 }
 
@@ -149,6 +152,7 @@ void PreferencesWindow::save_to_preferences() {
   preferences_.set_auto_update_check(ui_->auto_update_checkbox->isChecked());
   preferences_.set_telemetry_enabled(ui_->telemetry_enabled->isChecked());
   preferences_.set_dataloader_num_workers(ui_->data_loader_num_workers->text().toInt());
+  preferences_.set_warp_method(ui_->warp_method->currentIndex());
   update_labels();
   Q_EMIT update_view();
 }

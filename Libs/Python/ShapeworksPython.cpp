@@ -1112,6 +1112,12 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       ;
 
+  // WarpMethod enum
+  py::enum_<WarpMethod>(m, "WarpMethod")
+      .value("Laplacian", WarpMethod::Laplacian)
+      .value("Biharmonic", WarpMethod::Biharmonic)
+      .export_values();
+
   // MeshWarping
   py::class_<MeshWarper>(m, "MeshWarper")
 
@@ -1177,7 +1183,19 @@ PYBIND11_MODULE(shapeworks_py, m) {
           [](MeshWarper& w, const Mesh& warped_mesh) -> decltype(auto) {
             return w.extract_landmarks(warped_mesh.getVTKMesh());
           },
-          "Extract the landmarks from the warped mesh and return the landmarks (matrix [Nx3])", "warped_mesh"_a);
+          "Extract the landmarks from the warped mesh and return the landmarks (matrix [Nx3])", "warped_mesh"_a)
+
+      .def(
+          "setWarpMethod", [](MeshWarper& w, WarpMethod method) { w.set_warp_method(method); },
+          "Set the warp method (WarpMethod.Laplacian or WarpMethod.Biharmonic)", "method"_a)
+
+      .def(
+          "getWarpMethod", [](MeshWarper& w) -> decltype(auto) { return w.get_warp_method(); },
+          "Return the current warp method.")
+
+      .def(
+          "getNumWarpVertices", [](MeshWarper& w) -> decltype(auto) { return w.get_num_warp_vertices(); },
+          "Return the number of vertices in the warped mesh.");
 
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")

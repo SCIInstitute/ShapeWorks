@@ -2,10 +2,13 @@
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshUtils.h>
 #include <Mesh/MeshWarper.h>
+#include <Profiling.h>
 #include <igl/biharmonic_coordinates.h>
 #include <igl/boundary_loop.h>
+#include <igl/cotmatrix.h>
 #include <igl/edges.h>
 #include <igl/facet_components.h>
+#include <igl/min_quad_with_fixed.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <igl/remove_unreferenced.h>
 #include <vtkCellLocator.h>
@@ -19,6 +22,7 @@
 #include <vtkTriangleFilter.h>
 
 #include <set>
+#include <unordered_map>
 
 namespace shapeworks {
 
@@ -27,6 +31,7 @@ static std::mutex mutex;
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& particles) {
+  TIME_SCOPE("MeshWarper::build_mesh");
   if (!warp_available_) {
     return nullptr;
   }
@@ -44,7 +49,8 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 
   auto points = remove_bad_particles(particles);
 
-  vtkSmartPointer<vtkPolyData> poly_data = MeshWarper::warp_mesh(points);
+  vtkSmartPointer<vtkPolyData> poly_data =
+      laplacian_ready_ ? MeshWarper::warp_mesh_laplacian(points) : MeshWarper::warp_mesh(points);
 
   for (int i = 0; i < poly_data->GetNumberOfPoints(); i++) {
     double* p = poly_data->GetPoint(i);
@@ -81,6 +87,7 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
 
   // mark that the warp needs to be generated
   needs_warp_ = true;
+  laplacian_ready_ = false;
 
   warp_available_ = true;
 
@@ -372,6 +379,7 @@ void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1,
 
 //---------------------------------------------------------------------------
 bool MeshWarper::generate_warp() {
+  TIME_SCOPE("MeshWarper::generate_warp");
   if (is_contour_) {
     update_progress(1.0);
     needs_warp_ = false;
@@ -414,6 +422,15 @@ bool MeshWarper::generate_warp() {
     faces_ = reference_mesh.faces();
 
     // Perform warp
+    if (warp_method_ == WarpMethod::Laplacian) {
+      if (generate_laplacian_warp(vertices, faces_, vertices_)) {
+        update_progress(1.0);
+        needs_warp_ = false;
+        return true;
+      }
+      SW_DEBUG("Laplacian warp failed, falling back to biharmonic");
+    }
+
     if (MeshWarper::generate_warp_matrix(vertices, faces_, vertices_, warp_)) {
       // Success!
       update_progress(1.0);
@@ -422,7 +439,7 @@ bool MeshWarper::generate_warp() {
     }
   }
 
-  SW_ERROR("Mesh Warp Error: igl:biharmonic_coordinates failed");
+  SW_ERROR("Mesh Warp Error: warp generation failed");
 
   // All attempts failed
   update_progress(1.0);
@@ -433,6 +450,7 @@ bool MeshWarper::generate_warp() {
 //---------------------------------------------------------------------------
 bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd target_vertices, Eigen::MatrixXi target_faces,
                                       const Eigen::MatrixXd& references_vertices, Eigen::MatrixXd& warp) {
+  TIME_SCOPE("MeshWarper::generate_warp_matrix (biharmonic)");
   Eigen::VectorXi closest_vertex_indices;
 
   Eigen::VectorXi vertex_indices = Eigen::VectorXi::LinSpaced(target_vertices.rows(), 0, target_vertices.rows() - 1);
@@ -480,6 +498,7 @@ bool MeshWarper::find_landmarks_vertices_on_ref_mesh() {
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points) {
+  TIME_SCOPE("MeshWarper::warp_mesh (biharmonic)");
   int num_vertices = warp_.rows();
   int num_faces = faces_.rows();
   Eigen::MatrixXd v_out = warp_ * (points.rowwise() + Eigen::RowVector3d(0, 0, 0));
@@ -499,6 +518,135 @@ vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points
   poly_data->SetPoints(out_points);
   poly_data->SetPolys(polys);
 
+  return poly_data;
+}
+
+//---------------------------------------------------------------------------
+int MeshWarper::get_num_warp_vertices() const {
+  if (laplacian_ready_) {
+    return laplacian_vertices_.rows();
+  }
+  return warp_.rows();
+}
+
+//---------------------------------------------------------------------------
+bool MeshWarper::generate_laplacian_warp(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F,
+                                         const Eigen::MatrixXd& control_points) {
+  TIME_SCOPE("MeshWarper::generate_laplacian_warp");
+  // Map control points to closest mesh vertices
+  Eigen::VectorXi vertex_indices = Eigen::VectorXi::LinSpaced(V.rows(), 0, V.rows() - 1);
+  Eigen::VectorXd squared_distances;
+  Eigen::MatrixXd unused_closest_points;
+  Eigen::VectorXi closest_vertex_indices;
+  igl::point_mesh_squared_distance(control_points, V, vertex_indices, squared_distances, closest_vertex_indices,
+                                   unused_closest_points);
+
+  // Deduplicate handle indices
+  std::set<int> handle_set(closest_vertex_indices.data(),
+                           closest_vertex_indices.data() + closest_vertex_indices.size());
+  laplacian_handles_.resize(handle_set.size());
+  int idx = 0;
+  for (int h : handle_set) {
+    laplacian_handles_(idx++) = h;
+  }
+
+  // Build cotangent Laplacian
+  Eigen::SparseMatrix<double> L;
+  igl::cotmatrix(V, F, L);
+
+  // Q = L^T * L (bilaplacian energy)
+  Eigen::SparseMatrix<double> Q = L.transpose() * L;
+
+  // Precompute factorization with fixed handle constraints
+  Eigen::SparseMatrix<double> Aeq;  // empty equality constraints
+  if (!igl::min_quad_with_fixed_precompute(Q, laplacian_handles_, Aeq, true, mqwf_data_)) {
+    SW_DEBUG("Laplacian precompute failed");
+    return false;
+  }
+
+  // Store constant RHS: B = -Q * V_ref (the linear term for the unconstrained part)
+  laplacian_rhs_ = -Q * V;
+
+  // Store reference vertices
+  laplacian_vertices_ = V;
+
+  // Precompute handle_map_: a sparse matrix (num_handles x num_controls) that maps
+  // control point positions to handle Y rows, averaging when multiple controls map to the same handle.
+  // Also precompute handle_default_: reference positions for handles with no control point.
+  int num_handles = laplacian_handles_.size();
+  int num_controls = closest_vertex_indices.size();
+
+  // Build a map from vertex id to handle index
+  std::unordered_map<int, int> vertex_to_handle;
+  for (int i = 0; i < num_handles; i++) {
+    vertex_to_handle[laplacian_handles_(i)] = i;
+  }
+
+  // Count how many controls map to each handle
+  Eigen::VectorXi handle_counts = Eigen::VectorXi::Zero(num_handles);
+  for (int i = 0; i < num_controls; i++) {
+    auto it = vertex_to_handle.find(closest_vertex_indices(i));
+    if (it != vertex_to_handle.end()) {
+      handle_counts(it->second)++;
+    }
+  }
+
+  // Build sparse matrix with weights = 1/count for averaging
+  std::vector<Eigen::Triplet<double>> triplets;
+  triplets.reserve(num_controls);
+  for (int i = 0; i < num_controls; i++) {
+    auto it = vertex_to_handle.find(closest_vertex_indices(i));
+    if (it != vertex_to_handle.end()) {
+      int h = it->second;
+      triplets.emplace_back(h, i, 1.0 / handle_counts(h));
+    }
+  }
+  handle_map_.resize(num_handles, num_controls);
+  handle_map_.setFromTriplets(triplets.begin(), triplets.end());
+
+  // Default Y: reference positions for handles with no control point
+  handle_default_ = Eigen::MatrixXd::Zero(num_handles, 3);
+  for (int i = 0; i < num_handles; i++) {
+    if (handle_counts(i) == 0) {
+      handle_default_.row(i) = V.row(laplacian_handles_(i));
+    }
+  }
+
+  laplacian_ready_ = true;
+  return true;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh_laplacian(const Eigen::MatrixXd& points) {
+  TIME_SCOPE("MeshWarper::warp_mesh_laplacian");
+  // Build Y from precomputed sparse map: Y = handle_map_ * points + handle_default_
+  Eigen::MatrixXd Y = handle_map_ * points + handle_default_;
+
+  Eigen::MatrixXd Beq;  // empty
+  Eigen::MatrixXd Z;
+  if (!igl::min_quad_with_fixed_solve(mqwf_data_, laplacian_rhs_, Y, Beq, Z)) {
+    SW_ERROR("Laplacian solve failed");
+    return warp_mesh(points);  // fallback to biharmonic
+  }
+
+  // Build VTK polydata from solved vertices
+  int num_vertices = Z.rows();
+  int num_faces = faces_.rows();
+  vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
+  vtkSmartPointer<vtkPoints> out_points = vtkSmartPointer<vtkPoints>::New();
+  out_points->SetNumberOfPoints(num_vertices);
+  for (vtkIdType i = 0; i < num_vertices; i++) {
+    out_points->SetPoint(i, Z(i, 0), Z(i, 1), Z(i, 2));
+  }
+  vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
+  for (vtkIdType i = 0; i < num_faces; i++) {
+    polys->InsertNextCell(3);
+    polys->InsertCellPoint(faces_(i, 0));
+    polys->InsertCellPoint(faces_(i, 1));
+    polys->InsertCellPoint(faces_(i, 2));
+  }
+  poly_data->SetPoints(out_points);
+  poly_data->SetPolys(polys);
   return poly_data;
 }
 

@@ -101,19 +101,7 @@ See [Shape Model Evaluation](../new/ssm-eval.md) for more information about shap
 
 ## Surface Reconstruction Panel
 
-The surface reconstruction panel provides options for the surface reconstruction method.  There are three surface reconstruction methods available depending on the data you supply.
-
-`Legacy` - If an older XML file with only particle files is supplied, then only this option is available.  This is the fallback option since it requires only the particles.
-
-`Mesh Warping Based` - Mesh warping based method that utilizes the mean mesh.  You must have either meshes supplied or image based (distance transforms).
-
-`Distance Transform Based` - Surface reconstruction based on distance transforms.  Project must have distance transforms.
-
-![ShapeWorks Studio Analysis Surface Reconstruction Panel](../img/studio/studio_analyze_surface_reconstruction.png)
-
-Below is an example of the difference in using this option.
-
-![ShapeWorks Studio Surface Reconstruction Result](../img/studio/studio_analyze_surface_reconstruction_result.png)
+See the [Surface Reconstruction](surface-reconstruction.md) page for details on reconstruction methods, warp method options, and examples.
 
 ## Good/Bad Particles Panel ##
 

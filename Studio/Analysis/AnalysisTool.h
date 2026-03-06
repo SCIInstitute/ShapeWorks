@@ -207,6 +207,7 @@ class AnalysisTool : public QWidget {
   // mesh warping options
   void mesh_warp_median_clicked();
   void mesh_warp_sample_changed();
+  void mesh_warp_method_changed();
   void mesh_warp_run_clicked();
 
   void handle_tab_changed();
@@ -221,6 +222,7 @@ class AnalysisTool : public QWidget {
 
  private:
   void compute_reconstructed_domain_transforms();
+  void resize_tab_to_current();
 
   bool active_ = false;
 
