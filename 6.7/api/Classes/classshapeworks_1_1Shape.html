@@ -1271,6 +1271,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../studio/multi-domain-analysis-reference-frames.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Multi-Domain Reference Frames
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../studio/studio-shared-boundary.html" class="md-nav__link">
         
   
@@ -3974,6 +3997,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_groomed_centroids" class="md-nav__link">
+    <span class="md-ellipsis">
+      function set_groomed_centroids
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-set_alignment_type" class="md-nav__link">
     <span class="md-ellipsis">
       function set_alignment_type
@@ -4202,6 +4234,15 @@
   <a href="#function-get_groomed_transform" class="md-nav__link">
     <span class="md-ellipsis">
       function get_groomed_transform
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_groomed_centroids" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_groomed_centroids
     </span>
   </a>
   
@@ -4548,6 +4589,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-groomed-centroids">set_groomed_centroids</a></strong>(const std::vector&lt; Eigen::Vector3d &gt; &amp; centroids)<br>Set per-domain centroid offsets for world-space positioning.</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-set-alignment-type">set_alignment_type</a></strong>(int alignment)<br>Set the alignment type.</td>
 </tr>
 <tr>
@@ -4649,6 +4694,10 @@
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-transform">get_groomed_transform</a></strong>(int domain =0)</td>
+</tr>
+<tr>
+<td>std::vector&lt; Eigen::Vector3d &gt;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-centroids">get_groomed_centroids</a></strong>()<br>Get the centroid of each groomed mesh domain.</td>
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
@@ -4865,6 +4914,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set the particle transform (alignment) </p>
+<h3 id="function-set_groomed_centroids">function set_groomed_centroids</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_centroids</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">centroids</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set per-domain centroid offsets for world-space positioning. </p>
 <h3 id="function-set_alignment_type">function set_alignment_type</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_alignment_type</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment</span>
@@ -4970,6 +5025,10 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-get_groomed_centroids">function get_groomed_centroids</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_centroids</span><span class="p">()</span>
+</code></pre></div>
+<p>Get the centroid of each groomed mesh domain. </p>
 <h3 id="function-get_procrustes_transform">function get_procrustes_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_procrustes_transform</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
@@ -5053,7 +5112,7 @@
 </code></pre></div>
 <p>If a segmentation doesn't exist, create a blank canvas. </p>
 <hr />
-<p>Updated on 2026-03-06 at 19:36:25 +0000</p>
+<p>Updated on 2026-03-10 at 18:30:28 +0000</p>
 
 
 
