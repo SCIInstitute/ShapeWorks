@@ -12,24 +12,28 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/api/Files/FEAreaCoverage_8h.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/studio/multi-domain-analysis-reference-frames.html">
       
       
+        <link rel="prev" href="multiple-domains.html">
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+        <link rel="next" href="studio-shared-boundary.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
     
     
       
-        <title>Libs/Mesh/PreviewMeshQC/FEAreaCoverage.h - ShapeWorks</title>
+        <title>Multi-Domain Reference Frames - ShapeWorks</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -48,11 +52,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../css/custom.css">
+      <link rel="stylesheet" href="../css/custom.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
   
@@ -88,7 +92,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#libsmeshpreviewmeshqcfeareacoverageh" class="md-skip">
+        <a href="#multi-domain-analysis-reference-frames-and-mca" class="md-skip">
           Skip to content
         </a>
       
@@ -108,9 +112,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="ShapeWorks" class="md-header__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+    <a href="../index.html" title="ShapeWorks" class="md-header__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
       
-  <img src="../../assets/shapeworks-logo-small.png" alt="logo">
+  <img src="../assets/shapeworks-logo-small.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -127,7 +131,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Libs/Mesh/PreviewMeshQC/FEAreaCoverage.h
+              Multi-Domain Reference Frames
             
           </span>
         </div>
@@ -243,9 +247,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="ShapeWorks" class="md-nav__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+    <a href="../index.html" title="ShapeWorks" class="md-nav__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
       
-  <img src="../../assets/shapeworks-logo-small.png" alt="logo">
+  <img src="../assets/shapeworks-logo-small.png" alt="logo">
 
     </a>
     ShapeWorks
@@ -272,7 +276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../index.html" class="md-nav__link">
+      <a href="../index.html" class="md-nav__link">
         
   
   
@@ -332,7 +336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/shapes.html" class="md-nav__link">
+      <a href="../getting-started/shapes.html" class="md-nav__link">
         
   
   
@@ -355,7 +359,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/workflow.html" class="md-nav__link">
+      <a href="../getting-started/workflow.html" class="md-nav__link">
         
   
   
@@ -378,7 +382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/sw-stories.html" class="md-nav__link">
+      <a href="../getting-started/sw-stories.html" class="md-nav__link">
         
   
   
@@ -401,7 +405,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/interfaces.html" class="md-nav__link">
+      <a href="../getting-started/interfaces.html" class="md-nav__link">
         
   
   
@@ -424,7 +428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/examples.html" class="md-nav__link">
+      <a href="../getting-started/examples.html" class="md-nav__link">
         
   
   
@@ -447,7 +451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/how-tos.html" class="md-nav__link">
+      <a href="../getting-started/how-tos.html" class="md-nav__link">
         
   
   
@@ -515,7 +519,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../users/install.html" class="md-nav__link">
+      <a href="../users/install.html" class="md-nav__link">
         
   
   
@@ -538,7 +542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../users/citation.html" class="md-nav__link">
+      <a href="../users/citation.html" class="md-nav__link">
         
   
   
@@ -561,7 +565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../users/papers.html" class="md-nav__link">
+      <a href="../users/papers.html" class="md-nav__link">
         
   
   
@@ -629,7 +633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../workflow/groom.html" class="md-nav__link">
+      <a href="../workflow/groom.html" class="md-nav__link">
         
   
   
@@ -690,7 +694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../workflow/optimize.html" class="md-nav__link">
+      <a href="../workflow/optimize.html" class="md-nav__link">
         
   
   
@@ -713,7 +717,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../workflow/parameters.html" class="md-nav__link">
+      <a href="../workflow/parameters.html" class="md-nav__link">
         
   
   
@@ -744,7 +748,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../workflow/analyze.html" class="md-nav__link">
+      <a href="../workflow/analyze.html" class="md-nav__link">
         
   
   
@@ -812,7 +816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/new-studio.html" class="md-nav__link">
+      <a href="../new/new-studio.html" class="md-nav__link">
         
   
   
@@ -835,7 +839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/openvdb.html" class="md-nav__link">
+      <a href="../new/openvdb.html" class="md-nav__link">
         
   
   
@@ -858,7 +862,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/sw-meshes.html" class="md-nav__link">
+      <a href="../new/sw-meshes.html" class="md-nav__link">
         
   
   
@@ -881,7 +885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/shapeworks-command.html" class="md-nav__link">
+      <a href="../new/shapeworks-command.html" class="md-nav__link">
         
   
   
@@ -904,7 +908,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/ssm-eval.html" class="md-nav__link">
+      <a href="../new/ssm-eval.html" class="md-nav__link">
         
   
   
@@ -927,7 +931,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/shapeworks-python.html" class="md-nav__link">
+      <a href="../new/shapeworks-python.html" class="md-nav__link">
         
   
   
@@ -950,7 +954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/ellipsoid-joint-generation.html" class="md-nav__link">
+      <a href="../new/ellipsoid-joint-generation.html" class="md-nav__link">
         
   
   
@@ -973,7 +977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../new/ai-assisted-segmentation.html" class="md-nav__link">
+      <a href="../new/ai-assisted-segmentation.html" class="md-nav__link">
         
   
   
@@ -1000,18 +1004,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -1027,7 +1033,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             ShapeWorks Studio
@@ -1041,7 +1047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/getting-started-with-studio.html" class="md-nav__link">
+      <a href="getting-started-with-studio.html" class="md-nav__link">
         
   
   
@@ -1064,7 +1070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/studio-viewer.html" class="md-nav__link">
+      <a href="studio-viewer.html" class="md-nav__link">
         
   
   
@@ -1087,7 +1093,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/studio-export.html" class="md-nav__link">
+      <a href="studio-export.html" class="md-nav__link">
         
   
   
@@ -1110,7 +1116,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/studio-data.html" class="md-nav__link">
+      <a href="studio-data.html" class="md-nav__link">
         
   
   
@@ -1133,7 +1139,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/studio-groom.html" class="md-nav__link">
+      <a href="studio-groom.html" class="md-nav__link">
         
   
   
@@ -1156,7 +1162,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/studio-optimize.html" class="md-nav__link">
+      <a href="studio-optimize.html" class="md-nav__link">
         
   
   
@@ -1179,7 +1185,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/studio-analyze.html" class="md-nav__link">
+      <a href="studio-analyze.html" class="md-nav__link">
         
   
   
@@ -1202,7 +1208,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/surface-reconstruction.html" class="md-nav__link">
+      <a href="surface-reconstruction.html" class="md-nav__link">
         
   
   
@@ -1225,7 +1231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/deepssm-in-studio.html" class="md-nav__link">
+      <a href="deepssm-in-studio.html" class="md-nav__link">
         
   
   
@@ -1248,7 +1254,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/multiple-domains.html" class="md-nav__link">
+      <a href="multiple-domains.html" class="md-nav__link">
         
   
   
@@ -1268,10 +1274,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../studio/multi-domain-analysis-reference-frames.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Multi-Domain Reference Frames
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="multi-domain-analysis-reference-frames.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1282,6 +1310,128 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alignment-reference-domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alignment Reference Domain
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mode-of-variation-multi-level-component-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mode of Variation (Multi-Level Component Analysis)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mode of Variation (Multi-Level Component Analysis)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-mca-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      How MCA works
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interaction-of-alignment-and-mca" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interaction of Alignment and MCA
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interaction of Alignment and MCA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#specific-domain-alignment-mca" class="md-nav__link">
+    <span class="md-ellipsis">
+      Specific Domain Alignment + MCA
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-alignment-mca-is-redundant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Local Alignment + MCA is redundant
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mca-vs-local-alignment-for-shape-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      MCA vs Local Alignment for shape isolation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interaction-with-group-p-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interaction with Group P-Values
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-aligned-data-no-grooming-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-Aligned Data (No Grooming Alignment)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1294,7 +1444,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/studio-shared-boundary.html" class="md-nav__link">
+      <a href="studio-shared-boundary.html" class="md-nav__link">
         
   
   
@@ -1317,7 +1467,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/segmentation-tool.html" class="md-nav__link">
+      <a href="segmentation-tool.html" class="md-nav__link">
         
   
   
@@ -1340,7 +1490,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/ai-assisted-segmentation.html" class="md-nav__link">
+      <a href="ai-assisted-segmentation.html" class="md-nav__link">
         
   
   
@@ -1408,7 +1558,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/getting-started-with-cloud.html" class="md-nav__link">
+      <a href="../cloud/getting-started-with-cloud.html" class="md-nav__link">
         
   
   
@@ -1431,7 +1581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/cloud-dataset.html" class="md-nav__link">
+      <a href="../cloud/cloud-dataset.html" class="md-nav__link">
         
   
   
@@ -1454,7 +1604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/cloud-project.html" class="md-nav__link">
+      <a href="../cloud/cloud-project.html" class="md-nav__link">
         
   
   
@@ -1477,7 +1627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/cloud-data-module.html" class="md-nav__link">
+      <a href="../cloud/cloud-data-module.html" class="md-nav__link">
         
   
   
@@ -1500,7 +1650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/cloud-groom-module.html" class="md-nav__link">
+      <a href="../cloud/cloud-groom-module.html" class="md-nav__link">
         
   
   
@@ -1523,7 +1673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/cloud-optimize-module.html" class="md-nav__link">
+      <a href="../cloud/cloud-optimize-module.html" class="md-nav__link">
         
   
   
@@ -1546,7 +1696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/cloud-analyze-module.html" class="md-nav__link">
+      <a href="../cloud/cloud-analyze-module.html" class="md-nav__link">
         
   
   
@@ -1569,7 +1719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/cloud-shape-viewer.html" class="md-nav__link">
+      <a href="../cloud/cloud-shape-viewer.html" class="md-nav__link">
         
   
   
@@ -1592,7 +1742,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud/swcc.html" class="md-nav__link">
+      <a href="../cloud/swcc.html" class="md-nav__link">
         
   
   
@@ -1660,7 +1810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tools/ShapeWorksCommands.html" class="md-nav__link">
+      <a href="../tools/ShapeWorksCommands.html" class="md-nav__link">
         
   
   
@@ -1728,7 +1878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/getting-started-with-notebooks.html" class="md-nav__link">
+      <a href="../notebooks/getting-started-with-notebooks.html" class="md-nav__link">
         
   
   
@@ -1751,7 +1901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/getting-started-with-segmentations.html" class="md-nav__link">
+      <a href="../notebooks/getting-started-with-segmentations.html" class="md-nav__link">
         
   
   
@@ -1774,7 +1924,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/getting-started-with-meshes.html" class="md-nav__link">
+      <a href="../notebooks/getting-started-with-meshes.html" class="md-nav__link">
         
   
   
@@ -1797,7 +1947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/getting-started-with-exploring-segmentations.html" class="md-nav__link">
+      <a href="../notebooks/getting-started-with-exploring-segmentations.html" class="md-nav__link">
         
   
   
@@ -1820,7 +1970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/getting-started-with-data-augmentation.html" class="md-nav__link">
+      <a href="../notebooks/getting-started-with-data-augmentation.html" class="md-nav__link">
         
   
   
@@ -1843,7 +1993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/getting-started-with-shape-cohort-generation.html" class="md-nav__link">
+      <a href="../notebooks/getting-started-with-shape-cohort-generation.html" class="md-nav__link">
         
   
   
@@ -1866,7 +2016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/array-passing-without-copying.html" class="md-nav__link">
+      <a href="../notebooks/array-passing-without-copying.html" class="md-nav__link">
         
   
   
@@ -1889,7 +2039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/create-and-apply-image-transforms.html" class="md-nav__link">
+      <a href="../notebooks/create-and-apply-image-transforms.html" class="md-nav__link">
         
   
   
@@ -1912,7 +2062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notebooks/create-and-apply-mesh-transforms.html" class="md-nav__link">
+      <a href="../notebooks/create-and-apply-mesh-transforms.html" class="md-nav__link">
         
   
   
@@ -1980,7 +2130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-learning/pytorch-gpu.html" class="md-nav__link">
+      <a href="../deep-learning/pytorch-gpu.html" class="md-nav__link">
         
   
   
@@ -2003,7 +2153,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-learning/data-augmentation.html" class="md-nav__link">
+      <a href="../deep-learning/data-augmentation.html" class="md-nav__link">
         
   
   
@@ -2026,7 +2176,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-learning/deep-ssm.html" class="md-nav__link">
+      <a href="../deep-learning/deep-ssm.html" class="md-nav__link">
         
   
   
@@ -2094,7 +2244,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/use-cases.html" class="md-nav__link">
+      <a href="../use-cases/use-cases.html" class="md-nav__link">
         
   
   
@@ -2155,7 +2305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/segmentation-based/ellipsoid.html" class="md-nav__link">
+      <a href="../use-cases/segmentation-based/ellipsoid.html" class="md-nav__link">
         
   
   
@@ -2178,7 +2328,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/segmentation-based/left-atrium.html" class="md-nav__link">
+      <a href="../use-cases/segmentation-based/left-atrium.html" class="md-nav__link">
         
   
   
@@ -2201,7 +2351,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
+      <a href="../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
         
   
   
@@ -2270,7 +2420,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/mesh-based/ellipsoid_mesh.html" class="md-nav__link">
+      <a href="../use-cases/mesh-based/ellipsoid_mesh.html" class="md-nav__link">
         
   
   
@@ -2293,7 +2443,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/mesh-based/lumps.html" class="md-nav__link">
+      <a href="../use-cases/mesh-based/lumps.html" class="md-nav__link">
         
   
   
@@ -2316,7 +2466,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/mesh-based/thin-cavity-bean.html" class="md-nav__link">
+      <a href="../use-cases/mesh-based/thin-cavity-bean.html" class="md-nav__link">
         
   
   
@@ -2339,7 +2489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html" class="md-nav__link">
+      <a href="../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html" class="md-nav__link">
         
   
   
@@ -2362,7 +2512,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/mesh-based/hip.html" class="md-nav__link">
+      <a href="../use-cases/mesh-based/hip.html" class="md-nav__link">
         
   
   
@@ -2431,7 +2581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/contour-based/supershapes-contour.html" class="md-nav__link">
+      <a href="../use-cases/contour-based/supershapes-contour.html" class="md-nav__link">
         
   
   
@@ -2500,7 +2650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/constraint-based/ellipsoid-cutting-planes.html" class="md-nav__link">
+      <a href="../use-cases/constraint-based/ellipsoid-cutting-planes.html" class="md-nav__link">
         
   
   
@@ -2523,7 +2673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/constraint-based/femur-cutting-planes.html" class="md-nav__link">
+      <a href="../use-cases/constraint-based/femur-cutting-planes.html" class="md-nav__link">
         
   
   
@@ -2546,7 +2696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/constraint-based/femur-cutting-planes-studio.html" class="md-nav__link">
+      <a href="../use-cases/constraint-based/femur-cutting-planes-studio.html" class="md-nav__link">
         
   
   
@@ -2615,7 +2765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/multistep/fixed-domain-ellipsoid.html" class="md-nav__link">
+      <a href="../use-cases/multistep/fixed-domain-ellipsoid.html" class="md-nav__link">
         
   
   
@@ -2638,7 +2788,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/multistep/incremental_supershapes.html" class="md-nav__link">
+      <a href="../use-cases/multistep/incremental_supershapes.html" class="md-nav__link">
         
   
   
@@ -2707,7 +2857,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/stats-based/ellipsoid-pca.html" class="md-nav__link">
+      <a href="../use-cases/stats-based/ellipsoid-pca.html" class="md-nav__link">
         
   
   
@@ -2730,7 +2880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/stats-based/femur-pvalues.html" class="md-nav__link">
+      <a href="../use-cases/stats-based/femur-pvalues.html" class="md-nav__link">
         
   
   
@@ -2753,7 +2903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/stats-based/ellipsoid-evaluate.html" class="md-nav__link">
+      <a href="../use-cases/stats-based/ellipsoid-evaluate.html" class="md-nav__link">
         
   
   
@@ -2822,7 +2972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
+      <a href="../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
         
   
   
@@ -2891,7 +3041,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/shared-boundary-based/peanut.html" class="md-nav__link">
+      <a href="../use-cases/shared-boundary-based/peanut.html" class="md-nav__link">
         
   
   
@@ -2922,7 +3072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../use-cases/right-ventricle.html" class="md-nav__link">
+      <a href="../use-cases/right-ventricle.html" class="md-nav__link">
         
   
   
@@ -2990,7 +3140,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/onboarding.html" class="md-nav__link">
+      <a href="../dev/onboarding.html" class="md-nav__link">
         
   
   
@@ -3013,7 +3163,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/build.html" class="md-nav__link">
+      <a href="../dev/build.html" class="md-nav__link">
         
   
   
@@ -3036,7 +3186,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/contribute.html" class="md-nav__link">
+      <a href="../dev/contribute.html" class="md-nav__link">
         
   
   
@@ -3059,7 +3209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/commands.html" class="md-nav__link">
+      <a href="../dev/commands.html" class="md-nav__link">
         
   
   
@@ -3082,7 +3232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/python-apis.html" class="md-nav__link">
+      <a href="../dev/python-apis.html" class="md-nav__link">
         
   
   
@@ -3105,7 +3255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/tests.html" class="md-nav__link">
+      <a href="../dev/tests.html" class="md-nav__link">
         
   
   
@@ -3128,7 +3278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/new-use-case.html" class="md-nav__link">
+      <a href="../dev/new-use-case.html" class="md-nav__link">
         
   
   
@@ -3151,7 +3301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/new-notebook.html" class="md-nav__link">
+      <a href="../dev/new-notebook.html" class="md-nav__link">
         
   
   
@@ -3174,7 +3324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/docs.html" class="md-nav__link">
+      <a href="../dev/docs.html" class="md-nav__link">
         
   
   
@@ -3197,7 +3347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/gh-actions.html" class="md-nav__link">
+      <a href="../dev/gh-actions.html" class="md-nav__link">
         
   
   
@@ -3220,7 +3370,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/markdown.html" class="md-nav__link">
+      <a href="../dev/markdown.html" class="md-nav__link">
         
   
   
@@ -3243,7 +3393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/paths.html" class="md-nav__link">
+      <a href="../dev/paths.html" class="md-nav__link">
         
   
   
@@ -3266,7 +3416,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/release-process.html" class="md-nav__link">
+      <a href="../dev/release-process.html" class="md-nav__link">
         
   
   
@@ -3296,7 +3446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../python/python-api.html" class="md-nav__link">
+      <a href="../python/python-api.html" class="md-nav__link">
         
   
   
@@ -3356,7 +3506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dev/shapeworks-library.html" class="md-nav__link">
+      <a href="../dev/shapeworks-library.html" class="md-nav__link">
         
   
   
@@ -3379,7 +3529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Modules/index_groups.html" class="md-nav__link">
+      <a href="../api/Modules/index_groups.html" class="md-nav__link">
         
   
   
@@ -3402,7 +3552,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Namespaces/index_namespaces.html" class="md-nav__link">
+      <a href="../api/Namespaces/index_namespaces.html" class="md-nav__link">
         
   
   
@@ -3425,7 +3575,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Classes/index_classes.html" class="md-nav__link">
+      <a href="../api/Classes/index_classes.html" class="md-nav__link">
         
   
   
@@ -3448,7 +3598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_files.html" class="md-nav__link">
+      <a href="../api/Files/index_files.html" class="md-nav__link">
         
   
   
@@ -3516,7 +3666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java/java.html" class="md-nav__link">
+      <a href="../java/java.html" class="md-nav__link">
         
   
   
@@ -3539,7 +3689,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../java/matlab.html" class="md-nav__link">
+      <a href="../java/matlab.html" class="md-nav__link">
         
   
   
@@ -3607,7 +3757,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../about/team.html" class="md-nav__link">
+      <a href="../about/team.html" class="md-nav__link">
         
   
   
@@ -3630,7 +3780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../about/release-notes.html" class="md-nav__link">
+      <a href="../about/release-notes.html" class="md-nav__link">
         
   
   
@@ -3653,7 +3803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../about/license.html" class="md-nav__link">
+      <a href="../about/license.html" class="md-nav__link">
         
   
   
@@ -3676,7 +3826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../about/contact.html" class="md-nav__link">
+      <a href="../about/contact.html" class="md-nav__link">
         
   
   
@@ -3726,27 +3876,102 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#namespaces" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Namespaces
+      Overview
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#classes" class="md-nav__link">
+  <a href="#alignment-reference-domain" class="md-nav__link">
     <span class="md-ellipsis">
-      Classes
+      Alignment Reference Domain
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#source-code" class="md-nav__link">
+  <a href="#mode-of-variation-multi-level-component-analysis" class="md-nav__link">
     <span class="md-ellipsis">
-      Source code
+      Mode of Variation (Multi-Level Component Analysis)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mode of Variation (Multi-Level Component Analysis)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-mca-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      How MCA works
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interaction-of-alignment-and-mca" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interaction of Alignment and MCA
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interaction of Alignment and MCA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#specific-domain-alignment-mca" class="md-nav__link">
+    <span class="md-ellipsis">
+      Specific Domain Alignment + MCA
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-alignment-mca-is-redundant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Local Alignment + MCA is redundant
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mca-vs-local-alignment-for-shape-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      MCA vs Local Alignment for shape isolation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interaction-with-group-p-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interaction with Group P-Values
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-aligned-data-no-grooming-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-Aligned Data (No Grooming Alignment)
     </span>
   </a>
   
@@ -3771,120 +3996,138 @@
   
 
 
-<h1 id="libsmeshpreviewmeshqcfeareacoverageh">Libs/Mesh/PreviewMeshQC/FEAreaCoverage.h</h1>
-<h2 id="namespaces">Namespaces</h2>
+<h1 id="multi-domain-analysis-reference-frames-and-mca">Multi-Domain Analysis: Reference Frames and MCA</h1>
+<h2 id="overview">Overview</h2>
+<p>When analyzing multi-domain (multi-anatomy) shape models, ShapeWorks provides two independent controls that affect how variation is viewed:</p>
+<ol>
+<li><strong>Alignment Reference Domain</strong> — controls the coordinate frame particles are transformed into</li>
+<li><strong>Mode of Variation</strong> (Multi-Level Component Analysis) — decomposes variation into shape and pose subspaces for PCA visualization</li>
+</ol>
+<p>These are separate mechanisms that operate at different stages of the analysis pipeline.</p>
+<h2 id="alignment-reference-domain">Alignment Reference Domain</h2>
+<p>The alignment dropdown (visible only for multi-domain projects) controls how particles are transformed from local to world coordinates.</p>
 <table>
 <thead>
 <tr>
-<th>Name</th>
+<th>Setting</th>
+<th>Effect</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespacestd.html">std</a></strong></td>
+<td><strong>Global Alignment</strong></td>
+<td>Applies the global grooming alignment transform (centering, ICP, or landmark) and Procrustes (if enabled) across all domains together. This is the default.</td>
+</tr>
+<tr>
+<td><strong>Local Alignment</strong></td>
+<td>Each domain is aligned independently using the world particles from optimization (which include per-domain grooming alignment and Procrustes, if enabled). Removes all inter-domain pose information. Best for isolating per-domain shape variation.</td>
+</tr>
+<tr>
+<td><strong>Specific Domain</strong> (e.g. "femur")</td>
+<td>Applies that domain's grooming alignment transform and Procrustes (if enabled), aligning all domains relative to the chosen reference. Shows how other anatomies move/change relative to that domain.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="classes">Classes</h2>
+<p>Changing the alignment recomputes the particle positions used for all downstream analysis: PCA modes, group comparisons, and group p-values.</p>
+<h2 id="mode-of-variation-multi-level-component-analysis">Mode of Variation (Multi-Level Component Analysis)</h2>
+<p>When multiple domains are present, the PCA tab shows a "Mode of Variation" selector with three options. These use Multi-Level Component Analysis (MCA), which decomposes multi-domain particle data into two orthogonal subspaces before running PCA.</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>Name</th>
+<th>Mode</th>
+<th>What it shows</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>class</td>
-<td><strong><a href="../Classes/classFEAreaCoverage.html">FEAreaCoverage</a></strong></td>
+<td><strong>Shape and Pose</strong></td>
+<td>Standard PCA on all particles. Shape and pose variation are entangled.</td>
+</tr>
+<tr>
+<td><strong>Shape Only</strong></td>
+<td>PCA on shape-deviation data. Per-domain centroids are subtracted per subject, removing translational pose differences. Shows morphological variation only.</td>
+</tr>
+<tr>
+<td><strong>Relative Pose Only</strong></td>
+<td>PCA on per-domain centroid data. Shows how domains move relative to each other, with per-domain shape variation removed.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;FEMesh.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Intersect.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
-
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">FEAreaCoverage</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">Surface</span>
-<span class="w">  </span><span class="p">{</span>
-
-<span class="w">  </span><span class="k">public</span><span class="o">:</span>
-<span class="w">    </span><span class="n">Surface</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">Faces</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">m_face</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Create</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
-
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">m_node</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_mesh</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w">   </span><span class="n">m_face</span><span class="p">;</span><span class="w">                     </span><span class="c1">// face list</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w">   </span><span class="n">m_node</span><span class="p">;</span><span class="w">                     </span><span class="c1">// node list</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vec3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_pos</span><span class="p">;</span><span class="w">                      </span><span class="c1">// node positions</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w">   </span><span class="n">m_lnode</span><span class="p">;</span><span class="w">                    </span><span class="c1">// local node list</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vec3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_norm</span><span class="p">;</span><span class="w">                     </span><span class="c1">// node normals</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vec3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_fnorm</span><span class="p">;</span><span class="w">                    </span><span class="c1">// face normals</span>
-
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_NLT</span><span class="p">;</span><span class="w">                </span><span class="c1">// node-facet look-up table</span>
-<span class="w">  </span><span class="p">};</span>
-
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">FEAreaCoverage</span><span class="p">();</span>
-
-<span class="w">  </span><span class="c1">// assign selections</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSelection1</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_surf1</span><span class="p">.</span><span class="n">m_face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSelection2</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_surf2</span><span class="p">.</span><span class="n">m_face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// apply the map</span>
-<span class="w">  </span><span class="c1">// returns one value per node</span>
-<span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Apply</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh2</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// get/set back intersection flag</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">AllowBackIntersection</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">AllowBackIntersection</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// set/get the angle threshold (w between 0 and 1)</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAngleThreshold</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">w</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetAngleThreshold</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// set/get back-intersection search radius (0 ignores the search radius)</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetBackSearchRadius</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">R</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetBackSearchRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="c1">// build node normal list</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateSurface</span><span class="p">(</span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// see if a ray intersects with a surface</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">intersect</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vec3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vec3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">surf</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">faceIntersect</span><span class="p">(</span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">surf</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nface</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
-
-<span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Surface</span><span class="w"> </span><span class="n">m_surf1</span><span class="p">;</span>
-<span class="w">  </span><span class="n">Surface</span><span class="w"> </span><span class="n">m_surf2</span><span class="p">;</span>
-
-<span class="w">    </span><span class="kt">bool</span><span class="w">          </span><span class="n">m_ballowBackIntersections</span><span class="p">;</span><span class="w">    </span><span class="c1">// include back intersections</span>
-<span class="w">  </span><span class="kt">double</span><span class="w">        </span><span class="n">m_angleThreshold</span><span class="p">;</span><span class="w">                 </span><span class="c1">// angular threshold (between 0 and 1)</span>
-<span class="w">    </span><span class="kt">double</span><span class="w">      </span><span class="n">m_backSearchRadius</span><span class="p">;</span><span class="w">             </span><span class="c1">// search radius for back intersections (set to 0 to ignore)</span>
-<span class="p">};</span>
-</code></pre></div>
-<hr />
-<p>Updated on 2026-03-10 at 20:38:08 +0000</p>
+<h3 id="how-mca-works">How MCA works</h3>
+<p>For each subject:</p>
+<ol>
+<li>Compute the centroid (mean position) of each domain's particles</li>
+<li><strong>Shape Only</strong>: subtract each domain's centroid from its particles, isolating per-domain morphological variation</li>
+<li><strong>Relative Pose Only</strong>: keep only the per-domain centroids (relative to the grand mean), capturing translational relationships between domains</li>
+</ol>
+<p>Standard PCA is then run on each decomposed matrix independently.</p>
+<h2 id="interaction-of-alignment-and-mca">Interaction of Alignment and MCA</h2>
+<p>MCA always operates on the particles produced by the current alignment setting. The combination of alignment and MCA mode determines what variation you see:</p>
+<table>
+<thead>
+<tr>
+<th>Alignment</th>
+<th>Shape and Pose</th>
+<th>Shape Only</th>
+<th>Relative Pose Only</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Global</strong></td>
+<td>Standard PCA, meaningful</td>
+<td>Meaningful -- isolates shape</td>
+<td>Meaningful -- isolates translational pose</td>
+</tr>
+<tr>
+<td><strong>Specific Domain</strong></td>
+<td>Meaningful</td>
+<td>Shape + rotational articulation (see below)</td>
+<td>Translational pose only (see below)</td>
+</tr>
+<tr>
+<td><strong>Local</strong></td>
+<td>Already pose-free</td>
+<td>Redundant -- Procrustes already removes pose</td>
+<td>Not meaningful -- centroids are in unrelated frames</td>
+</tr>
+</tbody>
+</table>
+<h3 id="specific-domain-alignment-mca">Specific Domain Alignment + MCA</h3>
+<p>When aligning to a specific domain (e.g. pelvis), all particles are in that domain's coordinate frame. The reference domain is stable while other domains (e.g. femur) move relative to it through both translation and rotation.</p>
+<p><strong>Shape Only</strong> in this configuration shows real morphological changes <em>plus</em> rotational articulation between domains. MCA only subtracts per-domain centroids (translation), so rotation remains and appears as "shape" variation.</p>
+<p><strong>Relative Pose Only</strong> shows only translational shifts between domains. If a domain rotates but its centroid stays roughly in place, the rotation is invisible to this mode.</p>
+<p>This is the fundamental limitation of MCA's centroid-based decomposition -- rotation is not captured by the pose component and contaminates the shape component.</p>
+<h3 id="local-alignment-mca-is-redundant">Local Alignment + MCA is redundant</h3>
+<p>With Local Alignment, each domain already has its own alignment (rotation + translation + scale). The domains end up in unrelated coordinate frames. MCA on top of this adds no useful information:</p>
+<ul>
+<li><strong>Relative Pose Only</strong>: Computes centroids in unrelated frames -- the "relative pose" is arbitrary</li>
+<li><strong>Shape Only</strong>: Subtracts centroids, which is redundant since Procrustes already aligned translations</li>
+</ul>
+<h3 id="mca-vs-local-alignment-for-shape-isolation">MCA vs Local Alignment for shape isolation</h3>
+<p>Both MCA's "Shape Only" mode and Local Alignment aim to isolate per-domain shape variation, but they differ in thoroughness:</p>
+<ul>
+<li><strong>Local Alignment</strong> applies full per-domain alignment (rotation + translation + scale), providing thorough isolation of per-domain shape from inter-domain pose</li>
+<li><strong>MCA Shape Only</strong> only subtracts per-domain translation (centroid). Rotation and scale differences between domains remain</li>
+</ul>
+<p>Local Alignment is generally the more complete approach for isolating shape variation.</p>
+<h2 id="interaction-with-group-p-values">Interaction with Group P-Values</h2>
+<p><strong>The alignment setting correctly affects group p-values.</strong> Changing alignment triggers full recomputation of statistics and invalidation of cached p-values.</p>
+<p><strong>MCA mode does not affect group p-values.</strong> The p-value computation always uses the combined particle data regardless of which MCA mode is selected. The MCA decomposed matrices are only used for PCA mode visualization. This is correct because:</p>
+<ul>
+<li><strong>Relative Pose Only</strong> modes reduce to one rigid translation per domain -- all particles in a domain share the same displacement vector, so there is no per-particle variation to compute p-values on</li>
+<li><strong>Shape Only</strong> modes only remove per-domain translation, which is a less thorough version of what <strong>Local Alignment</strong> already provides</li>
+</ul>
+<p>To get per-particle p-values that reflect shape-only differences, use <strong>Local Alignment</strong> from the alignment dropdown instead of MCA.</p>
+<h2 id="pre-aligned-data-no-grooming-alignment">Pre-Aligned Data (No Grooming Alignment)</h2>
+<p>When data has been pre-aligned outside of ShapeWorks and grooming alignment is skipped, ShapeWorks automatically detects this and preserves the original spatial relationships between domains during analysis. Without this, Procrustes alignment would center all domains to the origin, causing them to overlap incorrectly.</p>
+<p>This correction applies automatically -- no user action is needed. When grooming alignment (centering, ICP, or landmark) is performed within ShapeWorks, this behavior is disabled as it is not needed.</p>
 
 
 
 
 
 
-
-  
-  
 
 
 
@@ -3933,12 +4176,12 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
       
-        <script src="../../assets/mathjaxhelper.js"></script>
+        <script src="../assets/mathjaxhelper.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
