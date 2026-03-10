@@ -164,6 +164,11 @@ void Particles::set_procrustes_transforms(const std::vector<vtkSmartPointer<vtkT
 }
 
 //---------------------------------------------------------------------------
+void Particles::set_groomed_centroids(const std::vector<Eigen::Vector3d>& centroids) {
+  groomed_centroids_ = centroids;
+}
+
+//---------------------------------------------------------------------------
 Eigen::VectorXd Particles::get_difference_vectors(const Particles& other) const {
   auto combined = get_combined_global_particles();
   auto other_combined = other.get_combined_global_particles();
@@ -178,6 +183,20 @@ void Particles::transform_global_particles() {
   transformed_global_particles_.clear();
   if (!transform_) {
     transformed_global_particles_ = global_particles_;
+
+    // Apply groomed mesh centroid offsets to restore world-space positioning.
+    // This only applies when transform_ is null (local alignment), where global_particles_
+    // are Procrustes-centered at the origin. When grooming alignment was performed,
+    // centroids are near zero (no effect). When grooming was skipped, this restores the
+    // original spatial positions, preventing multi-domain shapes from overlapping at the origin.
+    for (int d = 0; d < transformed_global_particles_.size() && d < groomed_centroids_.size(); d++) {
+      Eigen::VectorXd& eigen = transformed_global_particles_[d];
+      for (size_t i = 0; i < eigen.size(); i += 3) {
+        eigen[i] += groomed_centroids_[d][0];
+        eigen[i + 1] += groomed_centroids_[d][1];
+        eigen[i + 2] += groomed_centroids_[d][2];
+      }
+    }
   } else {
     for (int d = 0; d < local_particles_.size(); d++) {
       Eigen::VectorXd eigen = local_particles_[d];
@@ -235,6 +254,7 @@ void Particles::transform_global_particles() {
       transformed_global_particles_.push_back(eigen);
     }
   }
+
 }
 
 //---------------------------------------------------------------------------

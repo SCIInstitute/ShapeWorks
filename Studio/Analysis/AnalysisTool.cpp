@@ -12,6 +12,7 @@
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
 #include <Libs/Application/Job/PythonWorker.h>
+#include <Groom/GroomParameters.h>
 #include <Logging.h>
 #include <QMeshWarper.h>
 #include <Shape.h>
@@ -1204,6 +1205,38 @@ void AnalysisTool::reset_stats() {
   stats_ = ParticleShapeStatistics();
   evals_ready_ = false;
   stats_ready_ = false;
+
+  // Compute mean groomed centroid per domain to restore world-space positioning.
+  // Only applies when grooming alignment was NOT performed (i.e., pre-aligned data).
+  // When grooming alignment was performed, Procrustes centering to origin is correct
+  // and we don't need to restore original positions.
+  if (session_ && session_->particles_present()) {
+    auto shapes = session_->get_non_excluded_shapes();
+    GroomParameters groom_params(session_->get_project());
+    bool has_grooming_alignment = groom_params.get_alignment_enabled() && !groom_params.get_skip_grooming();
+    if (!has_grooming_alignment) {
+      auto domain_names = session_->get_project()->get_domain_names();
+      unsigned int num_domains = domain_names.size();
+      std::vector<Eigen::Vector3d> centroid_sum(num_domains, Eigen::Vector3d::Zero());
+      int centroid_count = 0;
+      for (auto& shape : shapes) {
+        auto centroids = shape->get_groomed_centroids();
+        for (unsigned int d = 0; d < num_domains && d < centroids.size(); d++) {
+          centroid_sum[d] += centroids[d];
+        }
+        centroid_count++;
+      }
+      if (centroid_count > 0) {
+        std::vector<Eigen::Vector3d> mean_centroids(num_domains);
+        for (unsigned int d = 0; d < num_domains; d++) {
+          mean_centroids[d] = centroid_sum[d] / centroid_count;
+        }
+        for (auto& shape : shapes) {
+          shape->set_groomed_centroids(mean_centroids);
+        }
+      }
+    }
+  }
 
   ui_->pca_scalar_combo->clear();
   if (session_) {
