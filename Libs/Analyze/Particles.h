@@ -49,6 +49,7 @@ class Particles {
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   void set_procrustes_transforms(const std::vector<vtkSmartPointer<vtkTransform>>& transforms);
   void set_alignment_type(int alignment);
+  void set_groomed_centroids(const std::vector<Eigen::Vector3d>& centroids);
 
   Eigen::VectorXd get_difference_vectors(const Particles& other) const;
 
@@ -72,6 +73,7 @@ class Particles {
 
   vtkSmartPointer<vtkTransform> transform_;
   std::vector<vtkSmartPointer<vtkTransform>> procrustes_transforms_;
+  std::vector<Eigen::Vector3d> groomed_centroids_;
   int alignment_type_ = -3;  // not a valid value
 
 };

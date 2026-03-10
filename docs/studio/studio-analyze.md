@@ -73,11 +73,13 @@ The PCA tab of the View panel shows reconstructed shapes (surface meshes) along 
 The PCA tab of the View panel shows options to select modes of variation in different subspaces when a multiple domain shape model is loaded:
 ![ShapeWorks Studio Analysis View Panel PCA Display for Multiple-Domain Shape Model](../img/studio/studio_analyze_view_pca_multiple_domain.png)
 
-`Shape and Relative Pose` - Selecting this option shows reconstructed shapes and it's eigenvalue and lambda, along ordinary PCA modes of variation. PCA is done in the shared space of the multi-object shape structure and thus  the shsape and pose variations are entangled here.
+`Shape and Relative Pose` - Selecting this option shows reconstructed shapes and its eigenvalue and lambda along ordinary PCA modes of variation. PCA is done in the shared space of the multi-object shape structure and thus shape and pose variations are entangled here.
 
-`Shape` - Selecting this option shows reconstructed shapes and it's eigenvalue and lambda, along only morphological modes of variation. Multi-Level Component Analysis is done in the shape subspace (within-object) of the multi-object shape structure. Shape and pose variations are disentangled here and we only see morphological changes of each object in the shape structure.
+`Shape` - Selecting this option shows reconstructed shapes and its eigenvalue and lambda along morphological modes of variation. Multi-Level Component Analysis subtracts each domain's centroid per subject, removing translational pose differences. Note that rotational pose differences remain in the shape component.
 
-`Relative Pose` - Selecting this option shows reconstructed shapes and it's eigenvalue and lambda, along only relative pose modes of variation. Multi-Level Component Analysis is done in the relative pose subspace (between-objects) of the multi-object shape structure. Shape and pose variations are disentangled here and we only see alignment changes between the objects in the multi-object shape structure.
+`Relative Pose` - Selecting this option shows reconstructed shapes and its eigenvalue and lambda along relative pose modes of variation. Multi-Level Component Analysis keeps only per-domain centroids, showing translational relationships between domains. Note that rotational pose is not captured by this mode.
+
+For a detailed explanation of these modes, their limitations, and how they interact with alignment settings, see [Multi-Domain Reference Frames](multi-domain-analysis-reference-frames.md).
 
 ### Show Difference to Mean
 

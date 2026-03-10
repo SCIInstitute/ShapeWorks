@@ -51,3 +51,5 @@ In the presence of multiple anatomies, there are multiple alignment strategies t
 Below is an example of these four options with a pelvis and femur model.
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/multiple-domains-mixed-types.mp4" autoplay muted loop controls style="width:100%"></p>
+
+For a detailed explanation of alignment options, Multi-Level Component Analysis (MCA), their interactions, and how they affect group p-values, see [Multi-Domain Reference Frames](multi-domain-analysis-reference-frames.md).

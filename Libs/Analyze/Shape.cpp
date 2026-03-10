@@ -774,6 +774,26 @@ vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
+std::vector<Eigen::Vector3d> Shape::get_groomed_centroids() {
+  std::vector<Eigen::Vector3d> centroids;
+  auto meshes = get_groomed_meshes(true);
+  for (int i = 0; i < meshes.meshes().size(); i++) {
+    auto mesh = meshes.meshes()[i];
+    if (mesh && mesh->get_poly_data() && mesh->get_poly_data()->GetNumberOfPoints() > 0) {
+      auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+      com->SetInputData(mesh->get_poly_data());
+      com->Update();
+      double center[3];
+      com->GetCenter(center);
+      centroids.push_back(Eigen::Vector3d(center[0], center[1], center[2]));
+    } else {
+      centroids.push_back(Eigen::Vector3d::Zero());
+    }
+  }
+  return centroids;
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_procrustes_transform(int domain) {
   auto transforms = subject_->get_procrustes_transforms();
   if (domain < transforms.size()) {
@@ -815,6 +835,11 @@ Particles Shape::get_particles() { return particles_; }
 void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform) {
   particles_.set_procrustes_transforms(get_procrustes_transforms());
   particles_.set_transform(transform);
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_groomed_centroids(const std::vector<Eigen::Vector3d>& centroids) {
+  particles_.set_groomed_centroids(centroids);
 }
 
 //---------------------------------------------------------------------------

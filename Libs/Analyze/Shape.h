@@ -107,6 +107,9 @@ class Shape {
   //! Set the particle transform (alignment)
   void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
 
+  //! Set per-domain centroid offsets for world-space positioning
+  void set_groomed_centroids(const std::vector<Eigen::Vector3d>& centroids);
+
   //! Set the alignment type
   void set_alignment_type(int alignment);
 
@@ -157,6 +160,9 @@ class Shape {
   vtkSmartPointer<vtkTransform> get_reconstruction_transform(int domain);
 
   vtkSmartPointer<vtkTransform> get_groomed_transform(int domain = 0);
+
+  //! Get the centroid of each groomed mesh domain
+  std::vector<Eigen::Vector3d> get_groomed_centroids();
 
   vtkSmartPointer<vtkTransform> get_procrustes_transform(int domain = 0);
   std::vector<vtkSmartPointer<vtkTransform>> get_procrustes_transforms();

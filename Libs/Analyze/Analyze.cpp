@@ -1,5 +1,6 @@
 #include "Analyze.h"
 
+#include <Groom/GroomParameters.h>
 #include <Logging.h>
 #include <MeshWarper.h>
 #include <Particles/ParticleNormalEvaluation.h>
@@ -441,6 +442,33 @@ bool Analyze::update_shapes() {
     shape->set_alignment_type(AlignmentType::Global);
 
     shapes_.push_back(shape);
+  }
+
+  // Compute mean groomed centroid per domain across all shapes.
+  // Only applies when grooming alignment was NOT performed (pre-aligned data).
+  // This restores world-space positioning after Procrustes centers everything to the origin.
+  GroomParameters groom_params(project_);
+  bool has_grooming_alignment = groom_params.get_alignment_enabled() && !groom_params.get_skip_grooming();
+  if (!has_grooming_alignment) {
+    unsigned int num_domains = domain_names.size();
+    std::vector<Eigen::Vector3d> centroid_sum(num_domains, Eigen::Vector3d::Zero());
+    int centroid_count = 0;
+    for (auto& shape : shapes_) {
+      auto centroids = shape->get_groomed_centroids();
+      for (unsigned int d = 0; d < num_domains && d < centroids.size(); d++) {
+        centroid_sum[d] += centroids[d];
+      }
+      centroid_count++;
+    }
+    if (centroid_count > 0) {
+      std::vector<Eigen::Vector3d> mean_centroids(num_domains);
+      for (unsigned int d = 0; d < num_domains; d++) {
+        mean_centroids[d] = centroid_sum[d] / centroid_count;
+      }
+      for (auto& shape : shapes_) {
+        shape->set_groomed_centroids(mean_centroids);
+      }
+    }
   }
 
   SW_DEBUG("Successfully loaded shapes");
