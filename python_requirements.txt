@@ -871,7 +871,7 @@ toml==0.10.2
     # via
     #   -r requirements.in
     #   swcc
-tornado==6.5.2
+tornado==6.5.5
     # via
     #   -r requirements.in
     #   bokeh
