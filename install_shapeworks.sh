@@ -4,6 +4,11 @@
 
 SW_MAJOR_VERSION=6.7
 
+# Set up logging
+INSTALL_LOG="install_shapeworks_$(date +%Y%m%d_%H%M%S).log"
+exec > >(tee -a "$INSTALL_LOG") 2>&1
+echo "Logging to $INSTALL_LOG"
+
 echo ""
 echo "Note: this script only supports bash and zsh shells "
 echo "      It must be called using \"source ./install_shapeworks.sh [--developer] [--user] [optional_env_name]\""
@@ -134,20 +139,44 @@ function install_conda() {
 
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
-  
+
+  echo "=== Environment after first activation ==="
+  echo "CONDA_PREFIX: $CONDA_PREFIX"
+  echo "which python: $(which python)"
+  echo "============================================"
+
   # install conda into the shell
   conda init
+
+  # re-activate after conda init (it can disrupt the environment)
+  eval "$(conda shell.bash hook)"
+  conda activate $CONDAENV
+
+  echo "=== Environment after re-activation ==="
+  echo "CONDA_PREFIX: $CONDA_PREFIX"
+  echo "which python: $(which python)"
+  echo "PATH: $PATH"
+  echo "========================================"
 
   if ! python -m pip install -r python_requirements.txt;          then return 1; fi
 
   # install pytorch using light-the-torch
+  # Use python -m to ensure we use the conda env's light_the_torch, not ~/.local/bin/ltt
+  echo "=== PyTorch installation diagnostics ==="
+  echo "CONDA_PREFIX: $CONDA_PREFIX"
+  echo "which python: $(which python)"
+  echo "python version: $(python --version)"
+  echo "python sys.executable: $(python -c 'import sys; print(sys.executable)')"
+  echo "which pip: $(which pip)"
+  echo "which ltt: $(which ltt)"
+  echo "========================================="
   if [[ $(uname -s) == "Darwin" ]] && [[ $(uname -m) == "x86_64" ]]; then
     # Intel Mac - use older versions with NumPy 1.x
-    if ! ltt install torch==2.2.2 torchaudio==2.2.2 torchvision==0.17.2; then return 1; fi 
+    if ! python -m light_the_torch install torch==2.2.2 torchaudio==2.2.2 torchvision==0.17.2; then return 1; fi
     pip install "numpy<2"
   else
     # Apple Silicon, Linux, Windows - use latest with NumPy 2.x support
-    if ! ltt install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi 
+    if ! python -m light_the_torch install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi
   fi
 
   # for network analysis
@@ -237,10 +266,87 @@ if install_conda; then
   pip list
 
   conda clean -t -y
-  
-  echo "$CONDAENV environment successfully created/updated!"
-  
+
   conda activate $CONDAENV
+
+  # Validate installation
+  echo ""
+  echo "=== Validating installation ==="
+  VALIDATION_FAILED=0
+
+  # Check Python version
+  PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+  if [[ "$PYTHON_VERSION" == "3.12" ]]; then
+    echo "✓ Python version: $PYTHON_VERSION"
+  else
+    echo "✗ Python version: $PYTHON_VERSION (expected 3.12)"
+    VALIDATION_FAILED=1
+  fi
+
+  # Check torch is installed and using correct Python
+  if python -c "import torch; print(f'✓ torch {torch.__version__} (CUDA: {torch.cuda.is_available()})')" 2>/dev/null; then
+    TORCH_PATH=$(python -c "import torch; print(torch.__file__)")
+    if [[ "$TORCH_PATH" == *"$CONDAENV"* ]]; then
+      echo "  installed in conda env: $TORCH_PATH"
+    else
+      echo "✗ torch installed in wrong location: $TORCH_PATH"
+      VALIDATION_FAILED=1
+    fi
+  else
+    echo "✗ torch: failed to import"
+    VALIDATION_FAILED=1
+  fi
+
+  # Check shapeworks package (may not be available in developer mode until built)
+  if python -c "import shapeworks; print(f'✓ shapeworks package imported successfully')" 2>/dev/null; then
+    :
+  else
+    if [[ "$DEVELOPER" == "YES" ]]; then
+      echo "- shapeworks: not yet available (expected in developer mode, will be available after build)"
+    else
+      echo "✗ shapeworks: failed to import"
+      VALIDATION_FAILED=1
+    fi
+  fi
+
+  # Check DeepSSMUtils (may not be available in developer mode until built)
+  if python -c "import DeepSSMUtils; print(f'✓ DeepSSMUtils package imported successfully')" 2>/dev/null; then
+    :
+  else
+    if [[ "$DEVELOPER" == "YES" ]]; then
+      echo "- DeepSSMUtils: not yet available (expected in developer mode, will be available after build)"
+    else
+      echo "✗ DeepSSMUtils: failed to import"
+      VALIDATION_FAILED=1
+    fi
+  fi
+
+  # Check vtk
+  if python -c "import vtk; print(f'✓ vtk {vtk.vtkVersion.GetVTKVersion()}')" 2>/dev/null; then
+    :
+  else
+    echo "✗ vtk: failed to import"
+    VALIDATION_FAILED=1
+  fi
+
+  # Check itk
+  if python -c "import itk; print(f'✓ itk {itk.Version.GetITKVersion()}')" 2>/dev/null; then
+    :
+  else
+    echo "✗ itk: failed to import"
+    VALIDATION_FAILED=1
+  fi
+
+  echo "================================"
+
+  if [[ "$VALIDATION_FAILED" == "1" ]]; then
+    echo ""
+    echo "WARNING: Some validation checks failed. Please review the output above."
+  else
+    echo ""
+    echo "$CONDAENV environment successfully created/updated!"
+  fi
+
 else
   echo "Problem encountered creating/updating $CONDAENV conda environment."
   return 1;
