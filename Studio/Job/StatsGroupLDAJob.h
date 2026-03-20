@@ -21,7 +21,10 @@ class StatsGroupLDAJob : public Job {
 
   void plot(JKQTPlotter* plot, QString group_1_name, QString group_2_name);
 
+  bool succeeded() const { return succeeded_; }
+
  private:
+  bool succeeded_ = false;
   ParticleShapeStatistics stats_;
   Eigen::MatrixXd group1_x_, group2_x_, group1_pdf_, group2_pdf_, group1_map_, group2_map_;
 };

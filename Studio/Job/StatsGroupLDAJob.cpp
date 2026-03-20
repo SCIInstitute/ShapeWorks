@@ -5,6 +5,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
 #include <Job/StatsGroupLDAJob.h>
+#include <Logging.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 
@@ -18,8 +19,9 @@ void StatsGroupLDAJob::set_stats(ParticleShapeStatistics stats) { stats_ = stats
 
 //---------------------------------------------------------------------------
 void StatsGroupLDAJob::run() {
+  succeeded_ = false;
   Q_EMIT progress(0.1);
-    stats_.principal_component_projections();
+  stats_.principal_component_projections();
   auto pca_loadings = stats_.get_pca_loadings();
   Q_EMIT progress(0.2);
 
@@ -49,21 +51,27 @@ void StatsGroupLDAJob::run() {
     }
   }
 
-  py::module sw = py::module::import("shapeworks");
-  py::object lda_loadings = sw.attr("stats").attr("lda_loadings");
-  Q_EMIT progress(0.5);
+  try {
+    py::module sw = py::module::import("shapeworks");
+    py::object lda_loadings = sw.attr("stats").attr("lda_loadings");
+    Q_EMIT progress(0.5);
 
-  using ResultType =
-      std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd>;
-  ResultType result = lda_loadings(group_1_data.transpose(), group_2_data.transpose()).cast<ResultType>();
+    using ResultType =
+        std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd>;
+    ResultType result = lda_loadings(group_1_data.transpose(), group_2_data.transpose()).cast<ResultType>();
 
-  group1_x_ = std::get<0>(result);
-  group2_x_ = std::get<1>(result);
-  group1_pdf_ = std::get<2>(result);
-  group2_pdf_ = std::get<3>(result);
-  group1_map_ = std::get<4>(result);
-  group2_map_ = std::get<5>(result);
+    group1_x_ = std::get<0>(result);
+    group2_x_ = std::get<1>(result);
+    group1_pdf_ = std::get<2>(result);
+    group2_pdf_ = std::get<3>(result);
+    group1_map_ = std::get<4>(result);
+    group2_map_ = std::get<5>(result);
+  } catch (const std::exception& e) {
+    SW_ERROR("LDA computation failed: {}", e.what());
+    return;
+  }
 
+  succeeded_ = true;
   Q_EMIT progress(1.0);
 }
 

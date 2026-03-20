@@ -130,6 +130,8 @@ docopt==0.6.2
     # via
     #   -r requirements.in
     #   grip
+dwd==1.0.5
+    # via -r requirements.in
 entrypoints==0.4
     # via -r requirements.in
 et-xmlfile==2.0.0

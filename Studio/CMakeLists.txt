@@ -107,6 +107,7 @@ SET(STUDIO_JOB_SRCS
   Job/NetworkAnalysisJob.cpp
   Job/ParticleNormalEvaluationJob.cpp
   Job/StatsGroupLDAJob.cpp
+  Job/StatsGroupDWDJob.cpp
   Job/ShapeScalarJob.cpp
   )
 
@@ -116,6 +117,7 @@ SET(STUDIO_JOB_MOC_HDRS
   Job/ParticleAreaJob.h
   Job/ParticleNormalEvaluationJob.h
   Job/StatsGroupLDAJob.h
+  Job/StatsGroupDWDJob.h
   Job/ShapeScalarJob.h
   )
 

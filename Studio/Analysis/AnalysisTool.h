@@ -28,6 +28,7 @@ class ShapeWorksStudioApp;
 class GroupPvalueJob;
 class NetworkAnalysisJob;
 class StatsGroupLDAJob;
+class StatsGroupDWDJob;
 class ParticleAreaPanel;
 class ShapeScalarPanel;
 
@@ -37,7 +38,7 @@ class AnalysisTool : public QWidget {
  public:
   using AlignmentType = Analyze::AlignmentType;
 
-  enum GroupAnalysisType { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3 };
+  enum GroupAnalysisType { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3, DWD = 4 };
 
   enum McaMode { Vanilla, Within, Between };
 
@@ -187,6 +188,9 @@ class AnalysisTool : public QWidget {
   void handle_lda_progress(double progress);
   void handle_lda_complete();
 
+  void handle_dwd_progress(double progress);
+  void handle_dwd_complete();
+
   void handle_network_analysis_progress(int progress);
   void handle_network_analysis_complete();
 
@@ -243,6 +247,7 @@ class AnalysisTool : public QWidget {
   void handle_pca_group_list_item_changed();
 
   void update_lda_graph();
+  void update_dwd_graph();
 
   void update_difference_particles();
 
@@ -294,10 +299,13 @@ class AnalysisTool : public QWidget {
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
   QSharedPointer<StatsGroupLDAJob> group_lda_job_;
+  QSharedPointer<StatsGroupDWDJob> group_dwd_job_;
   QSharedPointer<NetworkAnalysisJob> network_analysis_job_;
 
   bool group_lda_job_running_ = false;
   bool lda_computed_ = false;
+  bool group_dwd_job_running_ = false;
+  bool dwd_computed_ = false;
   bool block_group_change_ = false;
 
   ParticleAreaPanel* particle_area_panel_{nullptr};
