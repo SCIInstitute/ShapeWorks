@@ -3824,14 +3824,17 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">JKQTPlotter</span><span class="o">*</span><span class="w"> </span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">group_1_name</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">group_2_name</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">succeeded</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">succeeded_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">succeeded_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">group1_x_</span><span class="p">,</span><span class="w"> </span><span class="n">group2_x_</span><span class="p">,</span><span class="w"> </span><span class="n">group1_pdf_</span><span class="p">,</span><span class="w"> </span><span class="n">group2_pdf_</span><span class="p">,</span><span class="w"> </span><span class="n">group1_map_</span><span class="p">,</span><span class="w"> </span><span class="n">group2_map_</span><span class="p">;</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-03-13 at 00:14:03 +0000</p>
+<p>Updated on 2026-03-21 at 23:19:03 +0000</p>
 
 
 

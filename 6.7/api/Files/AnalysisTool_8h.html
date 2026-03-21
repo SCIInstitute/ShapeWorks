@@ -3831,6 +3831,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">GroupPvalueJob</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NetworkAnalysisJob</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">StatsGroupLDAJob</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StatsGroupDWDJob</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParticleAreaPanel</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ShapeScalarPanel</span><span class="p">;</span>
 
@@ -3840,7 +3841,7 @@
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">AlignmentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Analyze</span><span class="o">::</span><span class="n">AlignmentType</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">GroupAnalysisType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">None</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">Pvalues</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">NetworkAnalysis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">LDA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">GroupAnalysisType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">None</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">Pvalues</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">NetworkAnalysis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">LDA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">DWD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">};</span>
 
 <span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">McaMode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Vanilla</span><span class="p">,</span><span class="w"> </span><span class="n">Within</span><span class="p">,</span><span class="w"> </span><span class="n">Between</span><span class="w"> </span><span class="p">};</span>
 
@@ -3984,6 +3985,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_complete</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_dwd_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_dwd_complete</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_network_analysis_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_network_analysis_complete</span><span class="p">();</span>
 
@@ -4038,6 +4042,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_group_list_item_changed</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_lda_graph</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_dwd_graph</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_difference_particles</span><span class="p">();</span>
 
@@ -4089,10 +4094,13 @@
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">GroupPvalueJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_pvalue_job_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">StatsGroupLDAJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_lda_job_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">StatsGroupDWDJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_dwd_job_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">NetworkAnalysisJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">network_analysis_job_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">group_lda_job_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">lda_computed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">group_dwd_job_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">dwd_computed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_group_change_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">ParticleAreaPanel</span><span class="o">*</span><span class="w"> </span><span class="n">particle_area_panel_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
@@ -4103,7 +4111,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-03-13 at 00:14:03 +0000</p>
+<p>Updated on 2026-03-21 at 23:19:03 +0000</p>
 
 
 
