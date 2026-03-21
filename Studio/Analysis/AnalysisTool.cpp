@@ -11,6 +11,7 @@
 #include <Job/NetworkAnalysisJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
+#include <Job/StatsGroupDWDJob.h>
 #include <Libs/Application/Job/PythonWorker.h>
 #include <Groom/GroomParameters.h>
 #include <Logging.h>
@@ -167,6 +168,12 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   group_lda_job_ = QSharedPointer<StatsGroupLDAJob>::create();
   connect(group_lda_job_.data(), &StatsGroupLDAJob::progress, this, &AnalysisTool::handle_lda_progress);
   connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
+
+  ui_->dwd_graph->hide();
+  ui_->dwd_hint_label->hide();
+  group_dwd_job_ = QSharedPointer<StatsGroupDWDJob>::create();
+  connect(group_dwd_job_.data(), &StatsGroupDWDJob::progress, this, &AnalysisTool::handle_dwd_progress);
+  connect(group_dwd_job_.data(), &StatsGroupDWDJob::finished, this, &AnalysisTool::handle_dwd_complete);
 
   connect(ui_->show_difference_to_mean, &QPushButton::clicked, this, &AnalysisTool::show_difference_to_mean_clicked);
 
@@ -1621,6 +1628,24 @@ void AnalysisTool::update_lda_graph() {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::update_dwd_graph() {
+  if (groups_active()) {
+    if (!dwd_computed_ && !group_dwd_job_running_) {
+      group_dwd_job_running_ = true;
+      ui_->dwd_label->show();
+      ui_->dwd_progress->setValue(0);
+      ui_->dwd_progress->setMaximum(0);
+      ui_->dwd_progress->update();
+      group_dwd_job_->set_stats(stats_);
+      app_->get_py_worker()->run_job(group_dwd_job_);
+    }
+  } else {
+    ui_->dwd_graph->setVisible(false);
+    ui_->dwd_hint_label->setVisible(false);
+  }
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::update_difference_particles() {
   if (!stats_ready_) {
     return;
@@ -1679,7 +1704,10 @@ void AnalysisTool::group_changed() {
   stats_ready_ = false;
   group_pvalue_job_ = nullptr;
   lda_computed_ = false;
+  dwd_computed_ = false;
   compute_stats();
+  // Re-trigger LDA/DWD if currently visible
+  group_analysis_combo_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -1909,9 +1937,61 @@ void AnalysisTool::handle_lda_complete() {
   QString left_group = ui_->group_left->currentText();
   QString right_group = ui_->group_right->currentText();
 
+  if (!group_lda_job_->succeeded()) {
+    ui_->lda_graph->setVisible(false);
+    if (left_group == right_group) {
+      ui_->lda_hint_label->setText("LDA requires two distinct groups.");
+    } else {
+      ui_->lda_hint_label->setText("LDA computation failed. Check log for details.");
+    }
+    ui_->lda_hint_label->setVisible(true);
+    QTimer::singleShot(0, this, &AnalysisTool::resize_tab_to_current);
+    return;
+  }
+
   group_lda_job_->plot(ui_->lda_graph, left_group, right_group);
   ui_->lda_graph->setVisible(true);
   ui_->lda_hint_label->setVisible(true);
+  QTimer::singleShot(0, this, &AnalysisTool::resize_tab_to_current);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_dwd_progress(double progress) {
+  if (progress > 0) {
+    ui_->dwd_progress->setMaximum(100);
+  } else {
+    ui_->dwd_progress->setMaximum(0);
+  }
+  ui_->dwd_progress_widget->setVisible(progress < 1);
+  ui_->dwd_progress->setValue(progress * 100);
+  ui_->dwd_progress->update();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_dwd_complete() {
+  ui_->dwd_progress_widget->setVisible(false);
+  ui_->dwd_label->setVisible(false);
+  group_dwd_job_running_ = false;
+  dwd_computed_ = true;
+
+  QString left_group = ui_->group_left->currentText();
+  QString right_group = ui_->group_right->currentText();
+
+  if (!group_dwd_job_->succeeded()) {
+    ui_->dwd_graph->setVisible(false);
+    if (left_group == right_group) {
+      ui_->dwd_hint_label->setText("DWD requires two distinct groups.");
+    } else {
+      ui_->dwd_hint_label->setText("DWD computation failed. Check log for details.");
+    }
+    ui_->dwd_hint_label->setVisible(true);
+    QTimer::singleShot(0, this, &AnalysisTool::resize_tab_to_current);
+    return;
+  }
+
+  group_dwd_job_->plot(ui_->dwd_graph, left_group, right_group);
+  ui_->dwd_graph->setVisible(true);
+  ui_->dwd_hint_label->setVisible(true);
   QTimer::singleShot(0, this, &AnalysisTool::resize_tab_to_current);
 }
 
@@ -1959,6 +2039,9 @@ void AnalysisTool::group_analysis_combo_changed() {
     ui_->group_analysis_stacked_widget->setVisible(true);
     if (ui_->group_analysis_stacked_widget->currentWidget() == ui_->lda_page) {
       update_lda_graph();
+    }
+    if (ui_->group_analysis_stacked_widget->currentWidget() == ui_->dwd_page) {
+      update_dwd_graph();
     }
   }
   // Recalculate tab height since analysis content changed

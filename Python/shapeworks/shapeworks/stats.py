@@ -71,32 +71,48 @@ def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permut
 
 
 def normalize(subj_map, group1_mean_map, group2_mean_map):
-    slope = (2.0 / (group2_mean_map - group1_mean_map))
+    denom = group2_mean_map - group1_mean_map
+    if abs(denom) < 1e-12:
+        return 0.0
+    slope = 2.0 / denom
     subj_diff = subj_map - group1_mean_map
     subj_map_normalized = slope * subj_diff - 1
     return subj_map_normalized
 
 
 def lda_loadings(group1_data, group2_data):
-    group1_num = np.shape(group1_data)[1]
-    group2_num = np.shape(group2_data)[1]
-
     combined_data = np.concatenate((group1_data, group2_data), axis=1)
     group1_mean = np.mean(group1_data, axis=1)
     group2_mean = np.mean(group2_data, axis=1)
 
-    overall_mean = np.mean(combined_data, axis=1)
-
     diffVect = group1_mean - group2_mean
+
+    return _project_and_pdf(diffVect, group1_data, group2_data, combined_data)
+
+
+def _project_and_pdf(diffVect, group1_data, group2_data, combined_data):
+    """Shared logic for projecting groups onto a discriminant direction and fitting PDFs.
+
+    Args:
+        diffVect: Discriminant direction vector (features,)
+        group1_data: PCA loadings for group 1 (features x samples)
+        group2_data: PCA loadings for group 2 (features x samples)
+        combined_data: Concatenation of group1_data and group2_data (features x all_samples)
+
+    Returns: 6-tuple (group1_x, group2_x, group1_pdf, group2_pdf, group1_map, group2_map)
+    """
+    group1_num = group1_data.shape[1]
+    group2_num = group2_data.shape[1]
+
+    group1_mean = np.mean(group1_data, axis=1)
+    group2_mean = np.mean(group2_data, axis=1)
+    overall_mean = np.mean(combined_data, axis=1)
 
     group1_mean_diff = group1_mean - overall_mean
     group2_mean_diff = group2_mean - overall_mean
 
     group1_mean_map = np.dot(diffVect, group1_mean_diff)
     group2_mean_map = np.dot(diffVect, group2_mean_diff)
-
-    group1_mean_map_normalized = normalize(group1_mean_map, group1_mean_map, group2_mean_map)
-    group2_mean_map_normalized = normalize(group2_mean_map, group1_mean_map, group2_mean_map)
 
     group1_map = np.zeros((group1_num,))
     group2_map = np.zeros((group2_num,))
@@ -117,12 +133,44 @@ def lda_loadings(group1_data, group2_data):
     group1_map_std = group1_map.std()
     group2_map_std = group2_map.std()
 
+    # Guard against zero std (all samples project to same point)
+    min_std = 1e-6
+    if group1_map_std < min_std:
+        group1_map_std = min_std
+    if group2_map_std < min_std:
+        group2_map_std = min_std
+
     group1_x = np.linspace(group1_map_mean - 6, group1_map_mean + 6, num=300)
     group2_x = np.linspace(group2_map_mean - 6, group2_map_mean + 6, num=300)
 
     group1_pdf = stats.norm.pdf(group1_x, group1_map_mean, group1_map_std)
     group2_pdf = stats.norm.pdf(group2_x, group2_map_mean, group2_map_std)
     return group1_x, group2_x, group1_pdf, group2_pdf, group1_map, group2_map
+
+
+def dwd_loadings(group1_data, group2_data):
+    from dwd.gen_dwd import GenDWD
+    group1_num = np.shape(group1_data)[1]
+    group2_num = np.shape(group2_data)[1]
+
+    if group1_num < 2 or group2_num < 2:
+        raise ValueError(f"DWD requires at least 2 samples per group (got {group1_num} and {group2_num})")
+
+    combined_data = np.concatenate((group1_data, group2_data), axis=1)
+
+    # Fit GenDWD (samples x features)
+    X = combined_data.T
+    y = np.array([1]*group1_num + [-1]*group2_num)
+
+    try:
+        model = GenDWD(lambd=1.0)
+        model.fit(X, y)
+    except Exception as e:
+        raise RuntimeError(f"DWD fitting failed: {e}") from e
+
+    diffVect = model.coef_.flatten()
+
+    return _project_and_pdf(diffVect, group1_data, group2_data, combined_data)
 
 
 def lda(data):
