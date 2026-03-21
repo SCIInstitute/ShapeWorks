@@ -24,7 +24,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-jammy-sw67
+    container: akenmorris/manylinux-build-box-sw67
     
     steps:
 
