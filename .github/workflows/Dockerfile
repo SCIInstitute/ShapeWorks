@@ -10,13 +10,19 @@ FROM quay.io/pypa/manylinux_2_28_x86_64 AS env
 MAINTAINER akenmorris@gmail.com
 
 # Set environment variables
-ENV PATH=/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=/opt/rh/gcc-toolset-12/root/usr/bin:/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Enable PowerTools repo for additional development packages
 RUN dnf install -y dnf-plugins-core && dnf config-manager --set-enabled powertools
 
 # Update and install build tools
-RUN dnf update -y && dnf groupinstall -y "Development Tools"
+# gcc-toolset-12 provides modern GCC 12 while keeping GLIBC 2.28 for binary compatibility.
+# The conda Qt5/ICU packages require GLIBCXX_3.4.28+ which system GCC 8 doesn't provide.
+RUN dnf update -y && dnf groupinstall -y "Development Tools" \
+    && dnf install -y gcc-toolset-12-gcc gcc-toolset-12-gcc-c++ gcc-toolset-12-binutils
+
+# Ensure gcc-toolset-12's libstdc++ is available at link time
+ENV LD_LIBRARY_PATH=/opt/rh/gcc-toolset-12/root/usr/lib64:/opt/rh/gcc-toolset-12/root/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 # Install git and git-lfs
 RUN dnf install -y git curl
