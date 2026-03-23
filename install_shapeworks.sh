@@ -184,7 +184,7 @@ function install_conda() {
   if [[ "$(uname)" == "Linux" ]]; then
       if ! pip install open3d-cpu==0.18.0;       then return 1; fi
   elif [[ "$(uname)" == "Darwin" ]]; then
-      if ! pip install open3d==0.19.0;           then return 1; fi
+      if ! pip install open3d==0.18.0;           then return 1; fi
       
       if [[ "$(uname -m)" == "arm64" ]]; then
         pushd $CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu
@@ -194,7 +194,7 @@ function install_conda() {
         ln -sf "$CONDA_PREFIX/lib/libomp.dylib" "$CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu/../../../libomp.dylib"
       fi
   else
-      if ! pip install open3d==0.19.0;           then return 1; fi
+      if ! pip install open3d==0.18.0;           then return 1; fi
   fi
 
   for package in DataAugmentationUtilsPackage DatasetUtilsPackage MONAILabelPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
