@@ -10,21 +10,16 @@ FROM quay.io/pypa/manylinux_2_28_x86_64 AS env
 LABEL maintainer="akenmorris@gmail.com"
 
 # Set environment variables
-ENV PATH=/opt/rh/gcc-toolset-12/root/usr/bin:/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=/opt/rh/gcc-toolset-13/root/usr/bin:/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Enable PowerTools repo for additional development packages
 RUN dnf install -y dnf-plugins-core && dnf config-manager --set-enabled powertools
 
 # Update and install build tools
-# gcc-toolset-12 provides modern GCC 12 while keeping GLIBC 2.28 for binary compatibility.
-# The conda Qt5/ICU packages require GLIBCXX_3.4.28+ which system GCC 8 doesn't provide.
+# gcc-toolset-13 provides GCC 13 with GLIBCXX_3.4.31, required by conda Qt5/ICU packages.
+# This keeps GLIBC 2.28 for binary compatibility while providing modern C++ library symbols.
 RUN dnf update -y && dnf groupinstall -y "Development Tools" \
-    && dnf install -y gcc-toolset-12-gcc gcc-toolset-12-gcc-c++ gcc-toolset-12-binutils
-
-# LIBRARY_PATH: ensures the linker finds gcc-toolset-12's libstdc++ (with GLIBCXX_3.4.30)
-# before conda's older libstdc++. LD_LIBRARY_PATH alone only affects runtime, not link time.
-ENV LIBRARY_PATH=/opt/rh/gcc-toolset-12/root/usr/lib64:/opt/rh/gcc-toolset-12/root/usr/lib
-ENV LD_LIBRARY_PATH=/opt/rh/gcc-toolset-12/root/usr/lib64:/opt/rh/gcc-toolset-12/root/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    && dnf install -y gcc-toolset-13-gcc gcc-toolset-13-gcc-c++ gcc-toolset-13-binutils gcc-toolset-13-libstdc++-devel
 
 # Install git and git-lfs
 RUN dnf install -y git curl
@@ -44,6 +39,15 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
     && conda install pip \
     && echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc \
     && echo "conda activate base" >> ~/.bashrc
+
+# Install modern libstdc++ with GLIBCXX_3.4.30+ required by conda Qt5/ICU packages
+# gcc-toolset-13 only provides static libstdc++, so we use conda-forge's libstdcxx-ng
+RUN /opt/conda/bin/conda install -y -c conda-forge libstdcxx-ng=13 \
+    && LIBSTDCXX=$(ls /opt/conda/lib/libstdc++.so.6.0.* | head -1) \
+    && cp -f "$LIBSTDCXX" /usr/lib64/ \
+    && rm -f /usr/lib64/libstdc++.so.6 \
+    && ln -s $(basename "$LIBSTDCXX") /usr/lib64/libstdc++.so.6 \
+    && ldconfig
 
 # Get and decompress linuxdeployqt, it's complicated to use fuse with docker due to the kernel module
 RUN curl -L -o $HOME/linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt.AppImage ; cd $HOME ; ./linuxdeployqt.AppImage --appimage-extract
