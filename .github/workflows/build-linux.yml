@@ -64,7 +64,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: /github/home/install
-        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: try import vtk
       shell: bash -l {0}
@@ -81,7 +81,7 @@ jobs:
       uses: actions/cache/save@v3
       with:
         path: /github/home/install
-        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: Check space4
       run: df -h
