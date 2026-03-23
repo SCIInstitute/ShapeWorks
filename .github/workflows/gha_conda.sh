@@ -13,7 +13,7 @@ else
     cd ${GITHUB_WORKSPACE}
 
     # run install
-    source ./install_shapeworks.sh --developer
+    source ./install_shapeworks.sh --developer || exit 1
     conda clean -p -t -y
     pip cache info
     pip cache purge
