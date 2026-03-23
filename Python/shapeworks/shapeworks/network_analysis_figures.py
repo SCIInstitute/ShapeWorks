@@ -10,7 +10,6 @@ import pandas as pd
 import trimesh
 # import itertools
 # import operator
-import open3d as o3d
 import scipy
 # import spm1d
 import vtk
@@ -24,11 +23,23 @@ import seaborn as sns
 import vedo
 import cv2
 
+# open3d is imported lazily when needed (not available on all platforms)
+
 class NetworkAnalysisFigures:
     def __init__(self, network_analysis):
         self.network_analysis = network_analysis
 
     def run(self):
+        # Import open3d here (lazy import - not available on all platforms)
+        try:
+            import open3d as o3d
+        except ImportError:
+            raise ImportError(
+                "open3d is required for network analysis figures but is not installed. "
+                "This feature may not be available on your platform/Python version. "
+                "Try: pip install open3d-cpu (Linux) or pip install open3d (macOS/Windows)"
+            )
+
         # In[4]:
 
         analyze = self.network_analysis.analyze
