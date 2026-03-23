@@ -182,7 +182,7 @@ function install_conda() {
   # for network analysis
   # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt
   if [[ "$(uname)" == "Linux" ]]; then
-      if ! pip install open3d-cpu==0.19.0;       then return 1; fi
+      if ! pip install open3d-cpu==0.18.0;       then return 1; fi
   elif [[ "$(uname)" == "Darwin" ]]; then
       if ! pip install open3d==0.19.0;           then return 1; fi
       
