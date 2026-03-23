@@ -21,7 +21,9 @@ RUN dnf install -y dnf-plugins-core && dnf config-manager --set-enabled powertoo
 RUN dnf update -y && dnf groupinstall -y "Development Tools" \
     && dnf install -y gcc-toolset-12-gcc gcc-toolset-12-gcc-c++ gcc-toolset-12-binutils
 
-# Ensure gcc-toolset-12's libstdc++ is available at link time
+# LIBRARY_PATH: ensures the linker finds gcc-toolset-12's libstdc++ (with GLIBCXX_3.4.30)
+# before conda's older libstdc++. LD_LIBRARY_PATH alone only affects runtime, not link time.
+ENV LIBRARY_PATH=/opt/rh/gcc-toolset-12/root/usr/lib64:/opt/rh/gcc-toolset-12/root/usr/lib${LIBRARY_PATH:+:$LIBRARY_PATH}
 ENV LD_LIBRARY_PATH=/opt/rh/gcc-toolset-12/root/usr/lib64:/opt/rh/gcc-toolset-12/root/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 # Install git and git-lfs
