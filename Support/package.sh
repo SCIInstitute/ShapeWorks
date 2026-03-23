@@ -138,7 +138,8 @@ else
     linuxdeployqt ShapeWorksStudio -verbose=2
     cd ..
     
-    rm lib/libxcb* lib/libX* lib/libfont* lib/libfreetype*
+    # Keep libfreetype as harfbuzz depends on it (FT_Get_Transform requires freetype 2.11+)
+    rm lib/libxcb* lib/libX* lib/libfont*
     rm -rf geometry-central doc
 fi
 
