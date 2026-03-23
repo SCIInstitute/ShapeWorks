@@ -7,7 +7,7 @@
 #    docker push akenmorris/manylinux-build-box-sw67
 
 FROM quay.io/pypa/manylinux_2_28_x86_64 AS env
-MAINTAINER akenmorris@gmail.com
+LABEL maintainer="akenmorris@gmail.com"
 
 # Set environment variables
 ENV PATH=/opt/rh/gcc-toolset-12/root/usr/bin:/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -23,7 +23,7 @@ RUN dnf update -y && dnf groupinstall -y "Development Tools" \
 
 # LIBRARY_PATH: ensures the linker finds gcc-toolset-12's libstdc++ (with GLIBCXX_3.4.30)
 # before conda's older libstdc++. LD_LIBRARY_PATH alone only affects runtime, not link time.
-ENV LIBRARY_PATH=/opt/rh/gcc-toolset-12/root/usr/lib64:/opt/rh/gcc-toolset-12/root/usr/lib${LIBRARY_PATH:+:$LIBRARY_PATH}
+ENV LIBRARY_PATH=/opt/rh/gcc-toolset-12/root/usr/lib64:/opt/rh/gcc-toolset-12/root/usr/lib
 ENV LD_LIBRARY_PATH=/opt/rh/gcc-toolset-12/root/usr/lib64:/opt/rh/gcc-toolset-12/root/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 # Install git and git-lfs
