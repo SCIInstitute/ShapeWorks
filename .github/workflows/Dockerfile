@@ -1,31 +1,33 @@
-# Based on old ubuntu to create more compatible binaries
+# Based on manylinux_2_28 (AlmaLinux 8, GLIBC 2.28) for maximum HPC compatibility
+# Binaries built here will run on RHEL/Rocky/Alma 8+, Ubuntu 20.04+, and most HPC clusters
 
 # To build (e.g. for ShapeWorks 6.7):
-#    docker build --progress=plain -t akenmorris/ubuntu-build-box-jammy-sw67 .
+#    docker build --progress=plain -t akenmorris/manylinux-build-box-sw67 .
 # To publish:
-#    docker push akenmorris/ubuntu-build-box-jammy-sw67
+#    docker push akenmorris/manylinux-build-box-sw67
 
-FROM ubuntu:jammy-20250819 AS env
-MAINTAINER akenmorris@gmail.com
+FROM quay.io/pypa/manylinux_2_28_x86_64 AS env
+LABEL maintainer="akenmorris@gmail.com"
 
 # Set environment variables
-ENV PATH=/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=/opt/rh/gcc-toolset-13/root/usr/bin:/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-ARG DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
+# Enable PowerTools repo for additional development packages
+RUN dnf install -y dnf-plugins-core && dnf config-manager --set-enabled powertools
 
-# Update
-RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get install build-essential software-properties-common -y && add-apt-repository ppa:ubuntu-toolchain-r/test -y && apt-get update -y
+# Update and install build tools
+# gcc-toolset-13 provides GCC 13 with GLIBCXX_3.4.31, required by conda Qt5/ICU packages.
+# This keeps GLIBC 2.28 for binary compatibility while providing modern C++ library symbols.
+RUN dnf update -y && dnf groupinstall -y "Development Tools" \
+    && dnf install -y gcc-toolset-13-gcc gcc-toolset-13-gcc-c++ gcc-toolset-13-binutils gcc-toolset-13-libstdc++-devel
 
 # Install git and git-lfs
-RUN add-apt-repository ppa:git-core/ppa
-RUN apt-get update
-RUN apt-get install git curl -y
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
-RUN apt-get install git-lfs -y
+RUN dnf install -y git curl
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.rpm.sh | bash
+RUN dnf install -y git-lfs
 
 # Install other dependencies
-RUN apt-get install rsync freeglut3-dev libgl1-mesa-dev libegl1-mesa zip libcups2 pigz wget ccache -y
+RUN dnf install -y rsync freeglut-devel mesa-libGL-devel mesa-libEGL-devel zip cups-libs pigz wget ccache
 
 # Install conda
 RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/Miniconda3-latest-Linux-x86_64.sh \
@@ -37,6 +39,15 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
     && conda install pip \
     && echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc \
     && echo "conda activate base" >> ~/.bashrc
+
+# Install modern libstdc++ with GLIBCXX_3.4.30+ required by conda Qt5/ICU packages
+# gcc-toolset-13 only provides static libstdc++, so we use conda-forge's libstdcxx-ng
+RUN /opt/conda/bin/conda install -y -c conda-forge libstdcxx-ng=13 \
+    && LIBSTDCXX=$(ls /opt/conda/lib/libstdc++.so.6.0.* | head -1) \
+    && cp -f "$LIBSTDCXX" /usr/lib64/ \
+    && rm -f /usr/lib64/libstdc++.so.6 \
+    && ln -s $(basename "$LIBSTDCXX") /usr/lib64/libstdc++.so.6 \
+    && ldconfig
 
 # Get and decompress linuxdeployqt, it's complicated to use fuse with docker due to the kernel module
 RUN curl -L -o $HOME/linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt.AppImage ; cd $HOME ; ./linuxdeployqt.AppImage --appimage-extract

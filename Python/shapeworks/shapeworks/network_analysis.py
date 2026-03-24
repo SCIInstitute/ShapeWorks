@@ -4,7 +4,6 @@ import pandas as pd
 
 import trimesh
 import itertools
-import open3d as o3d
 import scipy
 import spm1d
 import vtk
@@ -18,6 +17,8 @@ import os, sys
 
 import shapeworks as sw
 np.random.seed(0)
+
+# open3d is imported lazily when needed (not available on all platforms)
 
 
 class NetworkAnalysis:
@@ -85,6 +86,16 @@ class NetworkAnalysis:
         return mesh_points, mesh_normals, mean_shape, surface
 
     def run(self):
+        # Import open3d here (lazy import - not available on all platforms)
+        try:
+            import open3d as o3d
+        except ImportError:
+            raise ImportError(
+                "open3d is required for network analysis but is not installed. "
+                "This feature may not be available on your platform/Python version. "
+                "Try: pip install open3d-cpu (Linux) or pip install open3d (macOS/Windows)"
+            )
+
         project = self.project
         analyze = self.analyze
         num_pts = analyze.get_num_particles()

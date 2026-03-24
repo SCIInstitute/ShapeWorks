@@ -179,22 +179,34 @@ function install_conda() {
     if ! python -m light_the_torch install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi
   fi
 
-  # for network analysis
+  # for network analysis (optional - not available on all platforms/Python versions)
   # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt
+  OPEN3D_INSTALLED=NO
   if [[ "$(uname)" == "Linux" ]]; then
-      if ! pip install open3d-cpu==0.19.0;       then return 1; fi
+      if pip install open3d-cpu==0.19.0; then
+        OPEN3D_INSTALLED=YES
+      else
+        echo "WARNING: open3d-cpu could not be installed. Network analysis features will not be available."
+      fi
   elif [[ "$(uname)" == "Darwin" ]]; then
-      if ! pip install open3d==0.19.0;           then return 1; fi
-      
-      if [[ "$(uname -m)" == "arm64" ]]; then
-        pushd $CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu
-        install_name_tool -change /opt/homebrew/opt/libomp/lib/libomp.dylib @rpath/libomp.dylib pybind.cpython-312-darwin.so
-        install_name_tool -add_rpath @loader_path/../../../ pybind.cpython-312-darwin.so
-        popd
-        ln -sf "$CONDA_PREFIX/lib/libomp.dylib" "$CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu/../../../libomp.dylib"
+      if pip install open3d==0.19.0; then
+        OPEN3D_INSTALLED=YES
+        if [[ "$(uname -m)" == "arm64" ]]; then
+          pushd $CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu
+          install_name_tool -change /opt/homebrew/opt/libomp/lib/libomp.dylib @rpath/libomp.dylib pybind.cpython-312-darwin.so
+          install_name_tool -add_rpath @loader_path/../../../ pybind.cpython-312-darwin.so
+          popd
+          ln -sf "$CONDA_PREFIX/lib/libomp.dylib" "$CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu/../../../libomp.dylib"
+        fi
+      else
+        echo "WARNING: open3d could not be installed. Network analysis features will not be available."
       fi
   else
-      if ! pip install open3d==0.19.0;           then return 1; fi
+      if pip install open3d==0.19.0; then
+        OPEN3D_INSTALLED=YES
+      else
+        echo "WARNING: open3d could not be installed. Network analysis features will not be available."
+      fi
   fi
 
   for package in DataAugmentationUtilsPackage DatasetUtilsPackage MONAILabelPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do

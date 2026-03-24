@@ -24,7 +24,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-jammy-sw67
+    container: akenmorris/manylinux-build-box-sw67
     
     steps:
 
@@ -66,7 +66,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: /github/home/install
-        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: Check space3.5
       run: df -h
@@ -107,7 +107,7 @@ jobs:
       uses: actions/cache/save@v3
       with:
         path: /github/home/install
-        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: Check space5
       run: df -h
