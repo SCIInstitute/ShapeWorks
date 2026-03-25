@@ -5,6 +5,7 @@ The File -> Export menu is shown below.
 ![ShapeWorks Studio Export Menu](../img/studio/studio_export_menu.png){: width="200" }
 
 * Export Current Mesh - Export the current mesh as a VTK mesh file
+* Export Current Mesh Clipped - Export the current mesh with cutting plane constraints applied. Also available via right-click on a shape.
 * Export Current Particles - Export the currently display particles as an "X Y Z" particles file
 * Export Current Particle Scalars - Export the currently displayed particle scalars as a CSV file
 * Export Current Mesh Scalars - Export the currently displayed mesh scalars as a CSV file
