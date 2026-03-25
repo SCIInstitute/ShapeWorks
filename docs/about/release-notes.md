@@ -14,6 +14,7 @@
     * Early stopping via morphological deviation score for optimization convergence detection
     * DeepSSM CLI: `shapeworks deepssm` command for headless/batch DeepSSM workflows
     * Laplacian mesh warping as alternative to biharmonic, reducing thinning artifacts on sparse regions
+    * Built-in performance profiling and Chrome trace output via `SW_TIME_PROFILE` and `SW_TIME_TRACE` environment variables (see [developer docs](../dev/build.md#performance-profiling))
 
   * **ShapeWorks Front-end**
     * DWD (Distance Weighted Discrimination) group analysis method alongside LDA
