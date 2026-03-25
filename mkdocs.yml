@@ -29,10 +29,10 @@ nav:
       - 'How to Optimize Your Shape Model?': 'workflow/optimize.md'
       - 'Optimization Parameters':           'workflow/parameters.md'
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
-- What is New?:
-   - 'New in ShapeWorks Studio':             'new/new-studio.md'
-   - 'ShapeWorks Takes ~85% Less Memory':    'new/openvdb.md'
-   - 'ShapeWorks Directly on Meshes':        'new/sw-meshes.md'
+- Feature Highlights:
+   - 'Studio Features':                      'new/new-studio.md'
+   - 'Memory Efficiency with OpenVDB':       'new/openvdb.md'
+   - 'Mesh Support':                         'new/sw-meshes.md'
    - 'ShapeWorks Command':                   'new/shapeworks-command.md'
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
