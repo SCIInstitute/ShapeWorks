@@ -1,6 +1,34 @@
 # Release Notes
 
 
+## ShapeWorks 6.7.0
+
+### What is new?
+
+  * **ShapeWorks Back-end**
+    * Fixed domain optimization speedups: shape space precomputation, Procrustes caching, and batch particle loading
+    * PCA projection correspondence for fixed domain optimization (`use_pca_projection` parameter)
+    * Automatic mesh repair in grooming pipeline (replaces manual Extract Largest Component step)
+    * Auto ICP alignment subset size defaults to 30 shapes for faster grooming on large datasets
+    * Support for multiple shared boundaries between domains
+    * Early stopping via morphological deviation score for optimization convergence detection
+    * DeepSSM CLI: `shapeworks deepssm` command for headless/batch DeepSSM workflows
+    * Laplacian mesh warping as alternative to biharmonic, reducing thinning artifacts on sparse regions
+
+  * **ShapeWorks Front-end**
+    * DWD (Distance Weighted Discrimination) group analysis method alongside LDA
+    * Redesigned Optimize panel
+    * Export clipped meshes
+    * Warp method selector (Biharmonic/Laplacian) in Analysis panel
+
+  * **Platform Updates**
+    * Python 3.12
+    * VTK 9.5.0
+    * ITK 5.4.4
+    * PyTorch 2.8.0 (2.2.2 on Intel Mac)
+    * Linux builds use manylinux_2_28 (GLIBC 2.28, compatible with RHEL 8+, Ubuntu 20.04+)
+
+
 ## ShapeWorks 6.6.1 - 2025-05
 
 ### Fixes
