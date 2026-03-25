@@ -16,7 +16,7 @@ permutations - number of times the pvalues are calculated
 '''
 
 
-def compute_pvalues_for_group_difference(data, number_of_particles, permutations=100):
+def compute_pvalues_for_group_difference(data, number_of_particles, permutations=100, seed=42):
     group_id = data["group_ids"].unique()
     group_0_filenames = list(data[data["group_ids"] == group_id[0]]["filename"])
     group_1_filenames = list(data[data["group_ids"] == group_id[1]]["filename"])
@@ -26,21 +26,23 @@ def compute_pvalues_for_group_difference(data, number_of_particles, permutations
     group_1_data = sw.ParticleSystem(group_1_filenames).Particles()
     group_1_data = np.reshape(group_1_data, (number_of_particles, 3, -1))
 
-    return compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permutations)
+    return compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permutations, seed)
 
 
-def compute_pvalues_for_group_difference_studio(group_0_data, group_1_data, permutations=100):
+def compute_pvalues_for_group_difference_studio(group_0_data, group_1_data, permutations=100, seed=42):
     number_of_particles = int(group_0_data.shape[0] / 3)
     group_0 = np.reshape(group_0_data, (number_of_particles, 3, -1))
     group_1 = np.reshape(group_1_data, (number_of_particles, 3, -1))
-    return compute_pvalues_for_group_difference_data(group_0, group_1, permutations)
+    return compute_pvalues_for_group_difference_data(group_0, group_1, permutations, seed)
 
 
-def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permutations=100):
+def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permutations=100, seed=42):
     number_of_particles = group_0_data.shape[0]
     group_0_size = group_0_data.shape[-1]
     group_1_size = group_1_data.shape[-1]
     subset_size = min(group_0_size, group_1_size)
+
+    rng = np.random.RandomState(seed)
 
     pvalues_matrix = np.zeros((number_of_particles, permutations))
     idx = 0
@@ -51,8 +53,8 @@ def compute_pvalues_for_group_difference_data(group_0_data, group_1_data, permut
             sw_message("Aborted")
             return
 
-        group_0_index = np.random.choice(group_0_size, subset_size, replace=False)
-        group_1_index = np.random.choice(group_1_size, subset_size, replace=False)
+        group_0_index = rng.choice(group_0_size, subset_size, replace=False)
+        group_1_index = rng.choice(group_1_size, subset_size, replace=False)
 
         group_0_subset = group_0_data[:, :, group_0_index]
         group_1_subset = group_1_data[:, :, group_1_index]
