@@ -14,17 +14,26 @@ The Group mode allows for group comparison to quantify and visualize population-
 
 ![ShapeWorks Studio Analysis View Panel Group Display](../img/studio/studio_analyze_view_group.png)
 
-There are three different group analysis options available:
+There are four different group analysis options available:
 
-* LDA
-* Group Particle P-Values
-* Network Analysis
+* **LDA** — Linear Discriminant Analysis finds the direction that best separates two groups by maximizing between-group variance relative to within-group variance.
+* **DWD** — Distance Weighted Discrimination is a robust alternative to LDA that performs better in high-dimensional, small-sample settings common in shape modeling.
+* **Group Particle P-Values** — Computes per-particle p-values between groups, highlighting regions of statistically significant shape difference.
+* **Network Analysis** — Uses cluster-based statistical methods to identify spatially connected regions of significant group differences on the shape surface.
 
 ### LDA
 
 Selecting LDA from the analysis method dropdown will generate an LDA chart based on the two groups:
 
 ![ShapeWorks Studio LDA Chart](../img/studio/studio_lda.png){: width="300" }
+
+### DWD
+
+Distance Weighted Discrimination (DWD) is an alternative to LDA for group analysis. While LDA finds the linear direction that best separates two groups by maximizing between-group variance relative to within-group variance, DWD finds a separating hyperplane that maximizes the average inverse distance of each sample to the boundary. This makes DWD more robust than LDA in high-dimensional, small-sample settings — a common scenario in shape modeling where the number of PCA modes can exceed the number of subjects.
+
+Select DWD from the group analysis dropdown to generate a DWD chart. The chart shows probability density functions (PDFs) for each group projected onto the DWD discriminant direction, along with individual shape mappings as scatter points. Each group requires at least 2 samples.
+
+![ShapeWorks Studio DWD Chart](../img/studio/studio_dwd.png){: width="300" }
 
 ### Group Particle P-Values
 
