@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <stdexcept>
 
 namespace shapeworks {
 class MorphologicalDeviationScore {
@@ -11,6 +12,14 @@ class MorphologicalDeviationScore {
   /// Get Mahalanobis-based deviation score for test samples (non-fixed
   /// shapes/domains)
   Eigen::VectorXd GetMorphoDevScore(const Eigen::MatrixXd& X);  // (n,)
+  Eigen::MatrixXd GetPCACoefficients(const Eigen::MatrixXd& X);  // (n, rank)
+  void SetRetainedVarianceRatio(double ratio) {
+    if (ratio <= 0.0 || ratio > 1.0) {
+      throw std::invalid_argument("retained_variance_ratio must be in the interval (0, 1].");
+    }
+    retained_variance_ratio_ = ratio;
+  }
+  double GetRetainedVarianceRatio() const { return retained_variance_ratio_; }
 
  private:
   /// Flag to ensure control shapes are set and PCA model is in place
