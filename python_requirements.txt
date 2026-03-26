@@ -770,7 +770,7 @@ referencing==0.36.2
     #   jsonschema
     #   jsonschema-specifications
     #   jupyter-events
-requests==2.32.5
+requests==2.33.0
     # via
     #   -r requirements.in
     #   django-s3-file-field-client
