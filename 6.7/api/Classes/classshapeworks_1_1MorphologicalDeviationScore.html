@@ -3771,6 +3771,33 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-getpcacoefficients" class="md-nav__link">
+    <span class="md-ellipsis">
+      function GetPCACoefficients
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setretainedvarianceratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      function SetRetainedVarianceRatio
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-getretainedvarianceratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      function GetRetainedVarianceRatio
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3817,6 +3844,18 @@
 <td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1MorphologicalDeviationScore.html#function-getmorphodevscore">GetMorphoDevScore</a></strong>(const Eigen::MatrixXd &amp; X)</td>
 </tr>
+<tr>
+<td>Eigen::MatrixXd</td>
+<td><strong><a href="classshapeworks_1_1MorphologicalDeviationScore.html#function-getpcacoefficients">GetPCACoefficients</a></strong>(const Eigen::MatrixXd &amp; X)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1MorphologicalDeviationScore.html#function-setretainedvarianceratio">SetRetainedVarianceRatio</a></strong>(double ratio)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1MorphologicalDeviationScore.html#function-getretainedvarianceratio">GetRetainedVarianceRatio</a></strong>() const</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
@@ -3834,8 +3873,21 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Get Mahalanobis-based deviation score for test samples (non-fixed shapes/domains) </p>
+<h3 id="function-getpcacoefficients">function GetPCACoefficients</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">GetPCACoefficients</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-setretainedvarianceratio">function SetRetainedVarianceRatio</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRetainedVarianceRatio</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-getretainedvarianceratio">function GetRetainedVarianceRatio</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRetainedVarianceRatio</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-03-25 at 15:40:29 +0000</p>
+<p>Updated on 2026-03-26 at 15:45:01 +0000</p>
 
 
 
