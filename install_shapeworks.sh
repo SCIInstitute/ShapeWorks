@@ -87,7 +87,7 @@ function install_conda() {
   conda config --add channels anaconda
   conda config --add channels conda-forge
 
-  CONDA_PACKAGES=(python=3.12 \
+  CONDA_PACKAGES=(python=3.12.3 \
     openblas=0.3.30 \
     pip=24.3.1
    )		      
