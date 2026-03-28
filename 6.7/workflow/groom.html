@@ -818,6 +818,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#multiple-shared-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple Shared Boundaries
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1000,7 +1009,7 @@
   
   
   <span class="md-ellipsis">
-    What is New?
+    Feature Highlights
     
   </span>
   
@@ -1011,7 +1020,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            What is New?
+            Feature Highlights
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1027,7 +1036,7 @@
   
   
   <span class="md-ellipsis">
-    New in ShapeWorks Studio
+    Studio Features
     
   </span>
   
@@ -1050,7 +1059,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Takes ~85% Less Memory
+    Memory Efficiency with OpenVDB
     
   </span>
   
@@ -1073,7 +1082,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Directly on Meshes
+    Mesh Support
     
   </span>
   
@@ -4069,6 +4078,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#multiple-shared-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple Shared Boundaries
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4377,15 +4395,18 @@ to the reference shape</li>
 <li>Snap all the points on the boundary loop of Lr to the boundary loop of M</li>
 <li>Return three new shapes Lr, M and Rr</li>
 </ol>
-<div class="highlight"><pre><span></span><code> <span class="n">extracted_l</span><span class="p">,</span><span class="n">extracted_r</span><span class="p">,</span><span class="n">extracted_s</span> <span class="o">=</span> 
+<div class="highlight"><pre><span></span><code> <span class="n">extracted_l</span><span class="p">,</span><span class="n">extracted_r</span><span class="p">,</span><span class="n">extracted_s</span> <span class="o">=</span>
  <span class="n">sw</span><span class="o">.</span><span class="n">MeshUtils</span><span class="o">.</span><span class="n">sharedBoundaryExtractor</span><span class="p">(</span><span class="n">mesh_l</span><span class="p">,</span><span class="n">mesh_r</span><span class="p">,</span><span class="n">tol</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="input-shapes-with-shared-surface">Input shapes with shared surface</h4>
 <p><img alt="Shared Boundary Input" src="../img/workflow/peanut_shared_input.png" /></p>
 <h4 id="output-extracted-surfaces">Output extracted surfaces</h4>
 <p><img alt="Shared Boundary Output" src="../img/workflow/peanut_shared_output.png" /></p>
+<h4 id="multiple-shared-boundaries">Multiple Shared Boundaries</h4>
+<p>Projects with more than two domains can define multiple shared boundaries. Each shared boundary is specified as a pair of domains with a distance tolerance. For each pair, the extraction produces a shared surface domain (<code>shared_surface_&lt;domain1&gt;_&lt;domain2&gt;</code>) and a shared boundary contour domain (<code>shared_boundary_&lt;domain1&gt;_&lt;domain2&gt;</code>).</p>
+<p>Multiple shared boundaries can be configured in the Studio Groom module or in the project file directly.</p>
 <h3 id="extract-contour">Extract Contour</h3>
-<p>The boundary loop of the shared surface M obtained using the <code>sharedBoundaryExtractor</code> is computed. 
+<p>The boundary loop of the shared surface M obtained using the <code>sharedBoundaryExtractor</code> is computed.
 <div class="highlight"><pre><span></span><code><span class="n">output_contour</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">MeshUtils</span><span class="o">.</span><span class="n">boundaryLoopExtractor</span><span class="p">(</span><span class="n">extracted_shared_meshes</span><span class="p">)</span>
 </code></pre></div>
 <img alt="Shared Surface Contour" src="../img/workflow/peanut_shared_contour.png" /></p>

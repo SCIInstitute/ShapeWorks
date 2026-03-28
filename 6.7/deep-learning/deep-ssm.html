@@ -794,7 +794,7 @@
   
   
   <span class="md-ellipsis">
-    What is New?
+    Feature Highlights
     
   </span>
   
@@ -805,7 +805,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            What is New?
+            Feature Highlights
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -821,7 +821,7 @@
   
   
   <span class="md-ellipsis">
-    New in ShapeWorks Studio
+    Studio Features
     
   </span>
   
@@ -844,7 +844,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Takes ~85% Less Memory
+    Memory Efficiency with OpenVDB
     
   </span>
   
@@ -867,7 +867,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Directly on Meshes
+    Mesh Support
     
   </span>
   
@@ -2149,6 +2149,66 @@
   <a href="#5-evaluation" class="md-nav__link">
     <span class="md-ellipsis">
       5. Evaluation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deepssm-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      DeepSSM CLI
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DeepSSM CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Syntax
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pipeline Steps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-deepssm-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring DeepSSM Parameters
     </span>
   </a>
   
@@ -4014,6 +4074,66 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#deepssm-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      DeepSSM CLI
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DeepSSM CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Syntax
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pipeline Steps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-deepssm-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring DeepSSM Parameters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#using-the-deepssm-python-package" class="md-nav__link">
     <span class="md-ellipsis">
       Using the DeepSSM Python Package
@@ -4161,6 +4281,79 @@
 <p>To evaluate the accuracy of DeepSSM output, we compare a mesh created from the ground truth segmentation to a mesh created from the predicted PDM. To obtain the original mesh, we use the ShapeWorks <code>MeshFromDistanceTransforms</code> command to the isosurface mesh from the distance transform created from the true segmentation. To obtain the predicted mesh, we use the ShapeWorks <code>ReconstructSurface</code> command with the mean and predicted particles to reconstruct a surface.</p>
 <p>We then compare the original mesh to the predicted mesh via surface-to-surface distance. To find the distance from the original to the predicted, we consider each vertex in the original and find the shortest distance to the predicted mesh's surface. This process is not symmetric as it depends on the vertices of one mesh, so the distance from the predicted to the original will be slightly different. We compute the Hausdorff distance that takes the max of these vertex-wise distances to return a single value as a measure of accuracy. We also consider the vertex-wise distances as a scalar field on the mesh vertices and visualize them as a heat map on the surface. This provides us with a way of seeing where the predicted PDM was more or less accurate.</p>
 <p><img alt="Mesh Distance" src="../img/deep-learning/mesh-distance.png" /></p>
+<h2 id="deepssm-cli">DeepSSM CLI</h2>
+<p>The <code>shapeworks deepssm</code> command runs the full DeepSSM pipeline from the command line, without requiring Studio. This enables headless execution on HPC clusters and servers, batch processing of multiple projects, and integration with shell scripts and automated workflows.</p>
+<h3 id="command-syntax">Command Syntax</h3>
+<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>&lt;project_file&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</code></pre></div>
+<p>The project file (<code>.xlsx</code> or <code>.swproj</code>) must contain both image and shape columns (e.g., <code>shape_la</code>, <code>image_mri</code>), along with DeepSSM parameters such as data split percentages, augmentation settings, and training configuration. These are the same parameters configurable in the <a href="../studio/deepssm-in-studio.html">DeepSSM Studio module</a>.</p>
+<h3 id="options">Options</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--name &lt;file&gt;</code></td>
+<td>Path to project file (alternative to positional argument)</td>
+</tr>
+<tr>
+<td><code>--all</code></td>
+<td>Run all four steps: prep, augment, train, test</td>
+</tr>
+<tr>
+<td><code>--prep &lt;step&gt;</code></td>
+<td>Run preparation. Steps: <code>all</code>, <code>groom_training</code>, <code>optimize_training</code>, <code>optimize_validation</code>, <code>groom_images</code></td>
+</tr>
+<tr>
+<td><code>--augment</code></td>
+<td>Run data augmentation</td>
+</tr>
+<tr>
+<td><code>--train</code></td>
+<td>Run model training</td>
+</tr>
+<tr>
+<td><code>--test</code></td>
+<td>Run testing/inference</td>
+</tr>
+<tr>
+<td><code>--num_workers &lt;n&gt;</code></td>
+<td>Number of PyTorch data loader workers (default: 0)</td>
+</tr>
+<tr>
+<td><code>--aug_processes &lt;n&gt;</code></td>
+<td>Number of augmentation processes (default: 0 = use all cores)</td>
+</tr>
+</tbody>
+</table>
+<p>If none of <code>--prep</code>, <code>--augment</code>, <code>--train</code>, <code>--test</code>, or <code>--all</code> are specified, all four steps are run by default.</p>
+<h3 id="examples">Examples</h3>
+<p>Run the full pipeline:</p>
+<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>my_project.swproj<span class="w"> </span>--all
+</code></pre></div>
+<p>Run only preparation and augmentation:</p>
+<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>my_project.swproj<span class="w"> </span>--prep<span class="w"> </span>all<span class="w"> </span>--augment
+</code></pre></div>
+<p>Run just training and testing with 4 data loader workers:</p>
+<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>my_project.swproj<span class="w"> </span>--train<span class="w"> </span>--test<span class="w"> </span>--num_workers<span class="w"> </span><span class="m">4</span>
+</code></pre></div>
+<p>Run a single prep sub-step:</p>
+<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>my_project.swproj<span class="w"> </span>--prep<span class="w"> </span>groom_training
+</code></pre></div>
+<h3 id="pipeline-steps">Pipeline Steps</h3>
+<p>The four steps correspond to the same stages available in <a href="../studio/deepssm-in-studio.html">DeepSSM in Studio</a>:</p>
+<ol>
+<li><strong>Prep</strong> — Grooms and optimizes training shapes, generates validation particles using fixed domains, and prepares images. The <code>--prep</code> flag accepts a sub-step to run only part of the preparation.</li>
+<li><strong>Augment</strong> — Generates synthetic training data via PCA-based data augmentation. Use <code>--aug_processes</code> to control parallelism.</li>
+<li><strong>Train</strong> — Trains the DeepSSM network (Base-DeepSSM or TL-DeepSSM depending on project settings). Use <code>--num_workers</code> to set PyTorch data loader parallelism.</li>
+<li><strong>Test</strong> — Runs inference on the test set and evaluates predicted shapes against ground truth.</li>
+</ol>
+<h3 id="configuring-deepssm-parameters">Configuring DeepSSM Parameters</h3>
+<p>All DeepSSM parameters (data split, augmentation count, network architecture, TL-DeepSSM settings, fine-tuning, etc.) are stored in the project file. These can be configured in Studio before running via the CLI, or set programmatically using the ShapeWorks Python API. See the <a href="#config-file-parameter-descriptions">training configuration parameters</a> section below for details on available settings.</p>
 <h2 id="using-the-deepssm-python-package">Using the DeepSSM Python Package</h2>
 <p>The ShapeWorks DeepSSM package, <code>DeepSSMUtils</code>, is installed with the rest of the ShapeWorks Anaconda environment using <code>install_shapeworks</code>.</p>
 <div class="admonition danger">

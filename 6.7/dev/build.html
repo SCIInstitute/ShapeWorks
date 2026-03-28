@@ -794,7 +794,7 @@
   
   
   <span class="md-ellipsis">
-    What is New?
+    Feature Highlights
     
   </span>
   
@@ -805,7 +805,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            What is New?
+            Feature Highlights
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -821,7 +821,7 @@
   
   
   <span class="md-ellipsis">
-    New in ShapeWorks Studio
+    Studio Features
     
   </span>
   
@@ -844,7 +844,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Takes ~85% Less Memory
+    Memory Efficiency with OpenVDB
     
   </span>
   
@@ -867,7 +867,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Directly on Meshes
+    Mesh Support
     
   </span>
   
@@ -3308,6 +3308,48 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#performance-profiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Profiling
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Profiling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environment Variables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-instrumentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding Instrumentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4253,6 +4295,48 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#performance-profiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Profiling
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Profiling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environment Variables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-instrumentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding Instrumentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4444,6 +4528,53 @@ Optional:
 <p class="admonition-title">RelWithDebInfo only</p>
 <p>Currently it's only possible to build <strong>RelWithDebInfo</strong> on Windows.</p>
 </div>
+<h2 id="performance-profiling">Performance Profiling</h2>
+<p>ShapeWorks includes a built-in profiling and tracing framework for diagnosing performance issues. It is controlled via environment variables and has zero overhead when disabled.</p>
+<h3 id="environment-variables">Environment Variables</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SW_TIME_PROFILE=on</code></td>
+<td>Enable flat profiling. Writes a summary report to <code>profile.txt</code> at shutdown with exclusive/inclusive times, call counts, and per-call averages, grouped by thread.</td>
+</tr>
+<tr>
+<td><code>SW_TIME_TRACE=on</code></td>
+<td>Enable Chrome trace format output. Writes <code>trace.json</code> which can be loaded in <code>chrome://tracing</code> or <a href="https://ui.perfetto.dev/">Perfetto</a> for a timeline visualization.</td>
+</tr>
+</tbody>
+</table>
+<p>Both can be enabled simultaneously.</p>
+<h3 id="example">Example</h3>
+<div class="highlight"><pre><span></span><code><span class="nv">SW_TIME_PROFILE</span><span class="o">=</span>on<span class="w"> </span><span class="nv">SW_TIME_TRACE</span><span class="o">=</span>on<span class="w"> </span>shapeworks<span class="w"> </span>optimize<span class="w"> </span>--name<span class="w"> </span>project.swproj
+</code></pre></div>
+<p>After the run completes, <code>profile.txt</code> will contain a flat profile like:</p>
+<div class="highlight"><pre><span></span><code>   %Time   Exclusive    Inclusive   #Calls  #Child   Exclusive    Inclusive Name
+                 total ms    total ms                     ms/call    ms/call
+------------------------------------------------------------------------------------------------------
+    95.2        8523        12041      128       0          67          94 Optimize::RunOptimize
+    ...
+</code></pre></div>
+<p>And <code>trace.json</code> can be loaded in a trace viewer for a timeline of all timed scopes.</p>
+<h3 id="adding-instrumentation">Adding Instrumentation</h3>
+<p>Use the macros from <code>Profiling.h</code> to instrument code:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Profiling.h&gt;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">MyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">TIME_SCOPE</span><span class="p">(</span><span class="s">&quot;MyFunction&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// automatically times the enclosing scope</span>
+<span class="w">    </span><span class="c1">// ... work ...</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Or for manual start/stop:</p>
+<div class="highlight"><pre><span></span><code><span class="n">TIME_START</span><span class="p">(</span><span class="s">&quot;loading meshes&quot;</span><span class="p">);</span>
+<span class="c1">// ... work ...</span>
+<span class="n">TIME_STOP</span><span class="p">(</span><span class="s">&quot;loading meshes&quot;</span><span class="p">);</span>
+</code></pre></div>
 
 
 

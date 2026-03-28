@@ -794,7 +794,7 @@
   
   
   <span class="md-ellipsis">
-    What is New?
+    Feature Highlights
     
   </span>
   
@@ -805,7 +805,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            What is New?
+            Feature Highlights
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -821,7 +821,7 @@
   
   
   <span class="md-ellipsis">
-    New in ShapeWorks Studio
+    Studio Features
     
   </span>
   
@@ -844,7 +844,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Takes ~85% Less Memory
+    Memory Efficiency with OpenVDB
     
   </span>
   
@@ -867,7 +867,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Directly on Meshes
+    Mesh Support
     
   </span>
   
@@ -3803,6 +3803,7 @@
 </tbody>
 </table>
 <p>Mesh Grooming Parameters</p>
+<p>Before the mesh grooming pipeline runs, each mesh is automatically repaired. This includes triangulation, extraction of the largest connected component, removal of duplicate points and degenerate cells, non-manifold geometry fixes, and removal of zero-area triangles.</p>
 <table>
 <thead>
 <tr>
@@ -3861,6 +3862,10 @@
 <tr>
 <td>Alignment</td>
 <td>Option to align with centering (center of mass), iterative closest point (translation and rotation), or landmarks (best fit, when specified)</td>
+</tr>
+<tr>
+<td>Alignment Subset Size</td>
+<td>Number of shapes to use when selecting the reference shape for ICP alignment. Default is auto (-1), which uses a subset of 30 to avoid expensive pairwise comparisons on large datasets. Set to 0 to use all shapes.</td>
 </tr>
 </tbody>
 </table>

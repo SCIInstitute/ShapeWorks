@@ -796,7 +796,7 @@
   
   
   <span class="md-ellipsis">
-    What is New?
+    Feature Highlights
     
   </span>
   
@@ -807,7 +807,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            What is New?
+            Feature Highlights
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -823,7 +823,7 @@
   
   
   <span class="md-ellipsis">
-    New in ShapeWorks Studio
+    Studio Features
     
   </span>
   
@@ -846,7 +846,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Takes ~85% Less Memory
+    Memory Efficiency with OpenVDB
     
   </span>
   
@@ -869,7 +869,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Directly on Meshes
+    Mesh Support
     
   </span>
   
@@ -3859,40 +3859,20 @@
 
 
 <h1 id="shapeworks-command">ShapeWorks Command</h1>
-<p>ShapeWorks was a conglomeration of independent executables for grooming and optimization with a GUI (ShapeWorks Studio) for analysis and visualization. This design is highly inflexible, task specific, and poorly documented, and Studio duplicated a significant portion of their functionality.</p>
-<p>We have made significant efforts in organizing the codebase based on functionalities, implementing them as libraries rather than executables to provide a common backbone to command-line and GUI-based tools, and syncing ShapeWorks Studio to use the same underlying libraries.</p>
-<p>To retain command line usage, we have created a single <a href="../tools/ShapeWorksCommands.html"><code>shapeworks</code></a> command with subcommands exposing this functionality along with greater flexibility and interactive <code>--help</code> for each subcommand. </p>
-<p>This consolidation makes the framework more powerful and flexible. It also enables ShapeWorks functionality to be used as libraries linked to new applications. </p>
-<p>All the executables used for the segmentation-driven grooming have been consolidated, documented, tested against the original command line tools, and functionally debugged</p>
-<p>Comprehensive unit testing is implemented and executed as part of automatic validation run with each addition to the code. This also serves as independent examples of its use </p>
+<p>ShapeWorks provides a single <a href="../tools/ShapeWorksCommands.html"><code>shapeworks</code></a> command with subcommands for grooming, optimization, and other operations. Each subcommand has interactive <code>--help</code> documentation.</p>
+<p>The codebase is organized as shared libraries rather than independent executables, providing a common backbone for both command-line and GUI-based tools. This also enables ShapeWorks functionality to be linked into new applications.</p>
 <h2 id="example-resamplevolumestobeisotropic">Example: ResampleVolumesToBeIsotropic</h2>
 <div class="admonition note">
 <p class="admonition-title">Old command-line: <code>ResampleVolumesToBeIsotropic</code></p>
-<div class="highlight"><pre><span></span><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt; 
+<div class="highlight"><pre><span></span><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt;
                                --isoSpacing &lt;voxel-spacing&gt;
                               [--isBinaryImage] [--isCenterImageOn]
 </code></pre></div>
 </div>
-<p><strong>Disadvantages of the old command-line tool:</strong>        </p>
-<ul>
-<li>Cannot be used by other classes or other APIs or other functions</li>
-<li>Not adaptable (need to edit script files to customize it)</li>
-<li>Each command needs to be given input and output paths</li>
-<li>Creates IO bottlenecks</li>
-<li>Fixed parameters cannot be changed (e.g., num iterations for binarization)</li>
-<li>All logic is buried behind a single command line tool</li>
-</ul>
 <h3 id="resampling-images">Resampling images</h3>
-<div class="admonition note">
-<p class="admonition-title">Old command-line: <code>ResampleVolumesToBeIsotropic</code> (for images)</p>
-<div class="highlight"><pre><span></span><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt; 
-                               --isoSpacing &lt;voxel-spacing&gt;
-                               --isCenterImageOn
-</code></pre></div>
-</div>
 <div class="admonition important">
-<p class="admonition-title">New command-line: <code>isoresample</code> (for images)</p>
-<div class="highlight"><pre><span></span><code>shapeworks readimage --name &lt;input-file&gt; recenter 
+<p class="admonition-title">Command-line: <code>isoresample</code> (for images)</p>
+<div class="highlight"><pre><span></span><code>shapeworks readimage --name &lt;input-file&gt; recenter
            isoresample --isospacing &lt;voxel-spacing&gt;
            writeimage --name &lt;output-file&gt;
 </code></pre></div>
@@ -3912,32 +3892,18 @@
 </div>
 <p><img alt="Isoresampling for images" src="../img/new/isoresample_img.png" /></p>
 <h3 id="resampling-segmentations">Resampling segmentations</h3>
-<div class="admonition note">
-<p class="admonition-title">Old command-line: <code>ResampleVolumesToBeIsotropic</code> (for segmentations)</p>
-<div class="highlight"><pre><span></span><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt; 
-                               --isoSpacing &lt;voxel-spacing&gt;
-                              --isBinaryImage --isCenterImageOn
-</code></pre></div>
-</div>
-<p>The old executable’s functionalities are broken down further to make it more modular:</p>
+<p>The resampling functionalities are broken down into modular subcommands:</p>
 <ul>
-<li>Antialias using <code>shapeworks antialias</code> </li>
+<li>Antialias using <code>shapeworks antialias</code></li>
 <li>Recenter using <code>shapeworks recenter</code></li>
 <li>Binarize using <code>shapeworks binarize</code></li>
 </ul>
-<p><strong>Advantages for the new shapeworks API:</strong></p>
-<ul>
-<li>Promotes user’s understanding of the underlying functionality (more transparency and equivalent simplicity)</li>
-<li>Allows the user to choose the set of commands to be run</li>
-<li>User can know what parameters are considered to perform each command</li>
-<li>User can modify parameter values each step of the way</li>
-<li>User can save/visualize intermediate outputs for troubleshooting </li>
-</ul>
+<p>This allows the user to choose the set of commands to run, modify parameters at each step, and save intermediate outputs for troubleshooting.</p>
 <div class="admonition important">
-<p class="admonition-title">New command-line: <code>isoresample</code> (for segmentations)</p>
-<div class="highlight"><pre><span></span><code>shapeworks readimage --name &lt;input-file&gt; 
-           recenter antialias --iterations &lt;num-iter&gt; 
-           isoresample --isospacing &lt;voxel-spacing&gt; binarize 
+<p class="admonition-title">Command-line: <code>isoresample</code> (for segmentations)</p>
+<div class="highlight"><pre><span></span><code>shapeworks readimage --name &lt;input-file&gt;
+           recenter antialias --iterations &lt;num-iter&gt;
+           isoresample --isospacing &lt;voxel-spacing&gt; binarize
            writeimage --name &lt;output-file&gt;
 </code></pre></div>
 </div>
@@ -3952,7 +3918,7 @@
 </code></pre></div>
 </div>
 <div class="admonition important">
-<p class="admonition-title">C++ (with chaining): <code>isoresample</code> (for images)</p>
+<p class="admonition-title">C++ (with chaining): <code>isoresample</code> (for segmentations)</p>
 <div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">).</span><span class="n">recenter</span><span class="p">().</span><span class="n">antialias</span><span class="p">(</span><span class="o">&lt;</span><span class="n">num</span><span class="o">-</span><span class="n">iter</span><span class="o">&gt;</span><span class="p">).</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">).</span><span class="n">binarize</span><span class="p">().</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
 </code></pre></div>
 </div>

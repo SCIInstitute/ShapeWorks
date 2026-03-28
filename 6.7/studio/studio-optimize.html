@@ -794,7 +794,7 @@
   
   
   <span class="md-ellipsis">
-    What is New?
+    Feature Highlights
     
   </span>
   
@@ -805,7 +805,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            What is New?
+            Feature Highlights
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -821,7 +821,7 @@
   
   
   <span class="md-ellipsis">
-    New in ShapeWorks Studio
+    Studio Features
     
   </span>
   
@@ -844,7 +844,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Takes ~85% Less Memory
+    Memory Efficiency with OpenVDB
     
   </span>
   
@@ -867,7 +867,7 @@
   
   
   <span class="md-ellipsis">
-    ShapeWorks Directly on Meshes
+    Mesh Support
     
   </span>
   
@@ -3793,8 +3793,16 @@
 <td>Number of iterations for each optimization step.</td>
 </tr>
 <tr>
+<td>Narrow Band</td>
+<td>Number of voxels surrounding zero level for distance transform based optimizations. Normally a value of 4 is sufficient</td>
+</tr>
+<tr>
 <td>Geodesic Distance</td>
-<td>Enable the use of geodesic distance for particle to particle interactions.  This is much slower, but can help with some complex structures/</td>
+<td>Enable the use of geodesic distance for particle to particle interactions. This is much slower, but can help with some complex structures</td>
+</tr>
+<tr>
+<td>Geodesic Remesh Percent</td>
+<td>Percentage of vertices to use when remeshing for geodesic computation (default: 100). Lower values speed up geodesic calculations</td>
 </tr>
 <tr>
 <td>Normals</td>
@@ -3802,23 +3810,15 @@
 </tr>
 <tr>
 <td>Normals Strength</td>
-<td>Amount to scale surface normals feature to give it enough weight relative to XYZ.</td>
+<td>Amount to scale surface normals feature to give it enough weight relative to XYZ</td>
 </tr>
 <tr>
-<td>Procrustes</td>
-<td>Enable use of procrustes registration as part of optimization</td>
+<td>Geodesic from Landmarks</td>
+<td>Compute geodesic distance fields from landmarks and use as a correspondence attribute</td>
 </tr>
 <tr>
-<td>Procrustes Scaling</td>
-<td>Enable scaling as part of procrustes to remove overall scale from the model</td>
-</tr>
-<tr>
-<td>Procrustes Rotation/Translation</td>
-<td>Enable procrustes rotation/translation to remove translation/rotation from the model</td>
-</tr>
-<tr>
-<td>Procrustes Interval</td>
-<td>Interval of iterations to run procrustes</td>
+<td>Geodesic Landmarks Weight</td>
+<td>Weight for the geodesic-from-landmarks correspondence term (default: 1.0)</td>
 </tr>
 <tr>
 <td>Multiscale Mode</td>
@@ -3826,15 +3826,43 @@
 </tr>
 <tr>
 <td>Multiscale Start</td>
-<td>Number of particles to begin multscale mode</td>
+<td>Number of particles to begin multiscale mode</td>
+</tr>
+<tr>
+<td>Shared Boundary</td>
+<td>Enable shared boundary correspondence for multi-domain models with shared surfaces</td>
+</tr>
+<tr>
+<td>Shared Boundary Weight</td>
+<td>Weight for the shared boundary correspondence term (default: 0.5)</td>
 </tr>
 <tr>
 <td>Use Initial Landmarks</td>
 <td>Enable the use of landmarks as starting particles</td>
 </tr>
 <tr>
-<td>Narrow Band</td>
-<td>Number of voxels surrounding zero level for distance transform based optimizations.  Normally a value of 4 is sufficient</td>
+<td>Procrustes</td>
+<td>Enable use of Procrustes registration as part of optimization</td>
+</tr>
+<tr>
+<td>Procrustes Interval</td>
+<td>Interval of iterations to run Procrustes</td>
+</tr>
+<tr>
+<td>Procrustes Scaling</td>
+<td>Enable scaling as part of Procrustes to remove overall scale from the model</td>
+</tr>
+<tr>
+<td>Procrustes Rotation/Translation</td>
+<td>Enable Procrustes rotation/translation to remove translation/rotation from the model</td>
+</tr>
+<tr>
+<td>Sampling Scale</td>
+<td>Enable per-domain particle density scaling for multi-domain models. When Auto Scale is checked, the multiplier is computed automatically based on domain surface areas</td>
+</tr>
+<tr>
+<td>Sampling Scale Multiplier</td>
+<td>Multiplier for particle sampling density scaling (used when Auto Scale is unchecked)</td>
 </tr>
 </tbody>
 </table>
