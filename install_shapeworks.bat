@@ -11,7 +11,7 @@ call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
 REM install shapeworks deps
-call conda create --yes --name %CONDAENV% python=3.12 pip=24.3.1 openssl==0.3.30 || goto :error
+call conda create --yes --name %CONDAENV% python=3.12.3 pip=24.3.1 openblas=0.3.30 || goto :error
 call conda activate %CONDAENV%
 
 REM reactivate shapeworks environment

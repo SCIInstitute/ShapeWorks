@@ -2,7 +2,7 @@
 
 
 !!! important "ShapeWorks with Python support"
-    ShapeWorks Python library is currently under active development and is part of our major releases as of **ShapeWorks 6**. 
+    The ShapeWorks Python library is included with all ShapeWorks releases.
 
 
 There is no one-size-fits-all when it comes to grooming your data for shape modeling. Instead, there are general guidelines that one could consider when deciding on his/her own workflow. 

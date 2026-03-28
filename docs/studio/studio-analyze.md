@@ -14,29 +14,38 @@ The Group mode allows for group comparison to quantify and visualize population-
 
 ![ShapeWorks Studio Analysis View Panel Group Display](../img/studio/studio_analyze_view_group.png)
 
-There are three different group analysis options available:
+There are four different group analysis options available:
 
-* LDA
-* Group Particle P-Values
-* Network Analysis
+* **LDA** — Linear Discriminant Analysis finds the direction that best separates two groups by maximizing between-group variance relative to within-group variance.
+* **DWD** — Distance Weighted Discrimination is a robust alternative to LDA that performs better in high-dimensional, small-sample settings common in shape modeling.
+* **Group Particle P-Values** — Computes per-particle p-values between groups, highlighting regions of statistically significant shape difference.
+* **Network Analysis** — Uses cluster-based statistical methods to identify spatially connected regions of significant group differences on the shape surface.
+
+Both LDA and DWD produce a chart showing probability density functions (PDFs) for each group projected onto the discriminant direction, along with individual shape mappings as scatter points. This visualization helps assess how well the shape model distinguishes between populations.
 
 ### LDA
 
-Selecting LDA from the analysis method dropdown will generate an LDA chart based on the two groups:
+Linear Discriminant Analysis (LDA) finds the linear direction in PCA space that best separates two groups by maximizing between-group variance relative to within-group variance.
 
 ![ShapeWorks Studio LDA Chart](../img/studio/studio_lda.png){: width="300" }
 
+### DWD
+
+Distance Weighted Discrimination (DWD) finds a separating hyperplane that maximizes the average inverse distance of each sample to the boundary. This makes DWD more robust than LDA in high-dimensional, small-sample settings — a common scenario in shape modeling where the number of PCA modes can exceed the number of subjects. Each group requires at least 2 samples.
+
+![ShapeWorks Studio DWD Chart](../img/studio/studio_dwd.png){: width="300" }
+
 ### Group Particle P-Values
 
-Performs per particle p-value computation for each group.  
+Computes a p-value for each correspondence particle to identify where two groups differ significantly in shape. For each particle, a Hotelling T-squared test compares the 3D positions across subjects in both groups. The test is repeated over multiple random subsamples (permutations) and the resulting p-values are corrected for multiple comparisons using false discovery rate (FDR) correction. Particles with low p-values indicate regions where the two groups have statistically significant shape differences. The p-values are displayed as a colormap on the shape surface.
 
 ![ShapeWorks Studio Group Particle P-Value](../img/studio/studio_analyze_group_pvalue.png){: width="300" }
 
 ### Network Analysis
 
-![ShapeWorks Studio Network Analysis](../img/studio/studio_network_analysis.png){: width="300" }
-
 The Network Analysis tool provides a method to statistically analyze data captured in feature maps. Two implementations have been included: Network Analysis and SPM1D. Statistical parametric mapping (SPM, https://www.fil.ion.ucl.ac.uk/spm/) was introduced for the analysis of brain imaging data and has since been used in statistical analysis of surface-based group differences. The SPM1D option uses this technique without consideration of the connectivity and spatial relationship of the input data. The Network Analysis method uses the relative size of the network of connected correspondence particles to identify significant differences amongst groups, as originally described by Forman and colleagues (Forman SD, et al. Magnetic Resonance in Medicine33:636-647, 1995). Our publication on the specifics of this method and example applications is in review and will be referenced here when available.
+
+![ShapeWorks Studio Network Analysis](../img/studio/studio_network_analysis.png){: width="300" }
 
 | Option            | Description                                                                                                                                                      |
 |-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
