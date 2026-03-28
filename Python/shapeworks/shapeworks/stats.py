@@ -92,7 +92,7 @@ def lda_loadings(group1_data, group2_data):
     return _project_and_pdf(diffVect, group1_data, group2_data, combined_data)
 
 
-def _project_and_pdf(diffVect, group1_data, group2_data, combined_data):
+def _project_and_pdf(diffVect, group1_data, group2_data, combined_data, normalize_projections=True):
     """Shared logic for projecting groups onto a discriminant direction and fitting PDFs.
 
     Args:
@@ -100,6 +100,10 @@ def _project_and_pdf(diffVect, group1_data, group2_data, combined_data):
         group1_data: PCA loadings for group 1 (features x samples)
         group2_data: PCA loadings for group 2 (features x samples)
         combined_data: Concatenation of group1_data and group2_data (features x all_samples)
+        normalize_projections: If True, normalize so group means map to -1 and +1.
+            This works well when diffVect is aligned with the mean difference (e.g. LDA).
+            Set to False for directions that may not be aligned with the mean difference
+            (e.g. DWD), which would cause the normalization to produce extreme values.
 
     Returns: 6-tuple (group1_x, group2_x, group1_pdf, group2_pdf, group1_map, group2_map)
     """
@@ -122,12 +126,14 @@ def _project_and_pdf(diffVect, group1_data, group2_data, combined_data):
     for ii in range(group1_num):
         subjDiff = group1_data[:, ii] - overall_mean
         group1_map[ii] = np.dot(diffVect, subjDiff)
-        group1_map[ii] = normalize(group1_map[ii], group1_mean_map, group2_mean_map)
+        if normalize_projections:
+            group1_map[ii] = normalize(group1_map[ii], group1_mean_map, group2_mean_map)
 
     for ii in range(group2_num):
         subjDiff = group2_data[:, ii] - overall_mean
         group2_map[ii] = np.dot(diffVect, subjDiff)
-        group2_map[ii] = normalize(group2_map[ii], group1_mean_map, group2_mean_map)
+        if normalize_projections:
+            group2_map[ii] = normalize(group2_map[ii], group1_mean_map, group2_mean_map)
 
     group1_map_mean = group1_map.mean()
     group2_map_mean = group2_map.mean()
@@ -142,8 +148,20 @@ def _project_and_pdf(diffVect, group1_data, group2_data, combined_data):
     if group2_map_std < min_std:
         group2_map_std = min_std
 
-    group1_x = np.linspace(group1_map_mean - 6, group1_map_mean + 6, num=300)
-    group2_x = np.linspace(group2_map_mean - 6, group2_map_mean + 6, num=300)
+    if normalize_projections:
+        group1_x = np.linspace(group1_map_mean - 6, group1_map_mean + 6, num=300)
+        group2_x = np.linspace(group2_map_mean - 6, group2_map_mean + 6, num=300)
+    else:
+        # Common x-range covering both groups and all shape mappings so PDF
+        # tails extend smoothly across the full plot
+        all_maps = np.concatenate([group1_map, group2_map])
+        max_std = max(group1_map_std, group2_map_std)
+        x_min = min(all_maps.min(), group1_map_mean - 6 * group1_map_std,
+                    group2_map_mean - 6 * group2_map_std) - max_std
+        x_max = max(all_maps.max(), group1_map_mean + 6 * group1_map_std,
+                    group2_map_mean + 6 * group2_map_std) + max_std
+        group1_x = np.linspace(x_min, x_max, num=300)
+        group2_x = np.linspace(x_min, x_max, num=300)
 
     group1_pdf = stats.norm.pdf(group1_x, group1_map_mean, group1_map_std)
     group2_pdf = stats.norm.pdf(group2_x, group2_map_mean, group2_map_std)
@@ -172,7 +190,17 @@ def dwd_loadings(group1_data, group2_data):
 
     diffVect = model.coef_.flatten()
 
-    return _project_and_pdf(diffVect, group1_data, group2_data, combined_data)
+    # Normalize to unit length so projections reflect data geometry, not solver scale
+    norm = np.linalg.norm(diffVect)
+    if norm > 1e-12:
+        diffVect = diffVect / norm
+
+    # DWD's direction optimizes for margin, not mean separation, so it may be
+    # nearly orthogonal to the mean difference. The mean-based normalization in
+    # _project_and_pdf divides by the projection of the mean difference onto
+    # diffVect, which can be near-zero, producing extreme values.
+    # Use raw projections with adaptive PDF ranges instead.
+    return _project_and_pdf(diffVect, group1_data, group2_data, combined_data, normalize_projections=False)
 
 
 def lda(data):

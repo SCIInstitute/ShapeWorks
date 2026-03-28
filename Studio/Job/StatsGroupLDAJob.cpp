@@ -111,11 +111,15 @@ void StatsGroupLDAJob::plot(JKQTPlotter* plot, QString group_1_name, QString gro
   draw_line_plot(group1_x_, group1_pdf_, group_1_name, QColor(239, 133, 54));
   draw_line_plot(group2_x_, group2_pdf_, group_2_name, Qt::blue);
 
+  // Place shape mapping dots near the bottom of the plot, scaled to peak PDF height
+  double peak_pdf = std::max(group1_pdf_.maxCoeff(), group2_pdf_.maxCoeff());
+  double scatter_y = peak_pdf * 0.03;
+
   auto draw_scatter_plot = [&](Eigen::MatrixXd map, QString name, QColor color) {
     QVector<double> x, y;
     for (int i = 0; i < map.size(); i++) {
       x << map(i);
-      y << 0.01;
+      y << scatter_y;
     }
 
     int column_x = ds->addCopiedColumn(x, name + "scatter x");
