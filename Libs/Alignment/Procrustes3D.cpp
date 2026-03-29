@@ -1,5 +1,6 @@
 #include "Procrustes3D.h"
 
+#include <Profiling.h>
 #include <vnl/algo/vnl_svd.h>
 
 #include <iostream>
@@ -44,6 +45,7 @@ void Procrustes3D::RemoveTranslation(SimilarityTransformListType& transforms, Sh
 
 //---------------------------------------------------------------------------
 void Procrustes3D::AlignShapes(SimilarityTransformListType& transforms, ShapeListType& shapes) {
+  TIME_SCOPE("Procrustes3D::AlignShapes");
   const RealType SOS_EPSILON = 1.0e-8;
 
   PointType center;

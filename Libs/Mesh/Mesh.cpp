@@ -63,6 +63,7 @@
 #include "Image.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Logging.h"
+#include "Profiling.h"
 #include "MeshComputeThickness.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
@@ -273,6 +274,7 @@ Mesh& Mesh::coverage(const Mesh& otherMesh, bool allowBackIntersections, double 
 }
 
 Mesh& Mesh::smooth(int iterations, double relaxation) {
+  TIME_SCOPE("Mesh::smooth");
   auto smoother = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
 
   smoother->SetInputData(this->poly_data_);
@@ -293,6 +295,7 @@ Mesh& Mesh::smooth(int iterations, double relaxation) {
 }
 
 Mesh& Mesh::smoothSinc(int iterations, double passband) {
+  TIME_SCOPE("Mesh::smoothSinc");
   auto smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
   smoother->SetInputData(this->poly_data_);
   // minimum of 2.  See docs of vtkWindowedSincPolyDataFilter for explanation
@@ -316,6 +319,7 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
 }
 
 Mesh& Mesh::remesh(int numVertices, double adaptivity) {
+  TIME_SCOPE("Mesh::remesh");
   // ACVD is very noisy to std::cout, even with console output set to zero
   // setting the failbit on std::cout will silence this until it's cleared below
   //  std::cout.setstate(std::ios_base::failbit);
@@ -385,6 +389,7 @@ Mesh& Mesh::reflect(const Axis& axis, const Vector3& origin) {
 }
 
 MeshTransform Mesh::createTransform(const Mesh& target, Mesh::AlignmentType align, unsigned iterations) {
+  TIME_SCOPE("Mesh::createTransform");
   return createRegistrationTransform(target, align, iterations);
 }
 
@@ -413,6 +418,7 @@ Mesh& Mesh::rotate(const double angle, const Axis axis) {
 }
 
 Mesh& Mesh::fillHoles(double hole_size) {
+  TIME_SCOPE("Mesh::fillHoles");
   auto filter = vtkSmartPointer<vtkFillHolesFilter>::New();
   filter->SetInputData(this->poly_data_);
   filter->SetHoleSize(hole_size);
@@ -430,6 +436,7 @@ Mesh& Mesh::fillHoles(double hole_size) {
 }
 
 Mesh& Mesh::clean() {
+  TIME_SCOPE("Mesh::clean");
   auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
   clean->ConvertPolysToLinesOff();
   clean->ConvertLinesToPointsOff();
@@ -669,6 +676,7 @@ bool Mesh::detectTriangular() {
 }
 
 std::vector<Field> Mesh::distance(const Mesh& target, const DistanceMethod method) const {
+  TIME_SCOPE("Mesh::distance");
   if (target.numPoints() == 0 || numPoints() == 0) {
     throw std::invalid_argument("meshes must have points");
   }
@@ -832,6 +840,7 @@ bool Mesh::isPointInside(const Point3 point) const {
 }
 
 double Mesh::geodesicDistance(int source, int target) const {
+  TIME_SCOPE("Mesh::geodesicDistance");
   if (source < 0 || target < 0 || numPoints() < source || numPoints() < target) {
     throw std::invalid_argument("requested point ids outside range of points available in mesh");
   }
@@ -841,6 +850,7 @@ double Mesh::geodesicDistance(int source, int target) const {
 }
 
 Field Mesh::geodesicDistance(const Point3 landmark) const {
+  TIME_SCOPE("Mesh::geodesicDistance");
   auto distance = vtkSmartPointer<vtkDoubleArray>::New();
   distance->SetNumberOfComponents(1);
   distance->SetNumberOfTuples(numPoints());
@@ -856,6 +866,7 @@ Field Mesh::geodesicDistance(const Point3 landmark) const {
 }
 
 Field Mesh::geodesicDistance(const std::vector<Point3> curve) const {
+  TIME_SCOPE("Mesh::geodesicDistance");
   auto minDistance = vtkSmartPointer<vtkDoubleArray>::New();
   minDistance->SetNumberOfComponents(1);
   minDistance->SetNumberOfTuples(numPoints());
@@ -875,6 +886,7 @@ Field Mesh::geodesicDistance(const std::vector<Point3> curve) const {
 }
 
 Field Mesh::curvature(const CurvatureType type) const {
+  TIME_SCOPE("Mesh::curvature");
   Eigen::MatrixXd V = points();
   Eigen::MatrixXi F = faces();
 
