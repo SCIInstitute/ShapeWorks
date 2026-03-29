@@ -1,4 +1,5 @@
 #include <Job/Job.h>
+#include <Profiling.h>
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -17,6 +18,12 @@ QString Job::get_completion_message() {
 QString Job::get_abort_message() {
   QString duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1);
   return name() + " aborted.  Duration: " + duration + " seconds";
+}
+
+//---------------------------------------------------------------------------
+void Job::execute() {
+  TIME_SCOPE(name());
+  run();
 }
 
 //---------------------------------------------------------------------------

@@ -42,7 +42,7 @@ void Worker::stop() {
 void Worker::process() {
   try {
     job_->start_timer();
-    job_->run();
+    job_->execute();
     job_->set_complete(true);
   } catch (std::exception& e) {
     SW_ERROR("{}", e.what());
