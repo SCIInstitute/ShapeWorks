@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QResource>
 #include <QStandardPaths>
+#include <QStyleFactory>
 #include <QSurfaceFormat>
 #include <iostream>
 
@@ -18,6 +19,7 @@
 // vtk
 #include <Applications/Configuration.h>
 #include <Interface/ShapeWorksStudioApp.h>
+#include <Utils/PlatformUtils.h>
 #include <Logging.h>
 #include <QVTKOpenGLNativeWidget.h>
 
@@ -107,6 +109,9 @@ int main(int argc, char** argv) {
     SW_LOG("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
 
     OverrideQApplication app(argc, argv);
+    if (PlatformUtils::is_windows()) {
+      app.setStyle(QStyleFactory::create("Fusion"));
+    }
     QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
 
     auto studio_app = QSharedPointer<ShapeWorksStudioApp>::create();
