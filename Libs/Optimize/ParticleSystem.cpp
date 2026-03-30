@@ -167,12 +167,13 @@ const ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p,
     }
   }
 
-  // Notify any observers.
-  ParticlePositionSetEvent e;
-  e.SetDomainIndex(d);
-  e.SetPositionIndex(k);
-
-  this->InvokeEvent(e);
+  // Notify any observers (skipped when events are disabled for thread safety).
+  if (m_EventsEnabled) {
+    ParticlePositionSetEvent e;
+    e.SetDomainIndex(d);
+    e.SetPositionIndex(k);
+    this->InvokeEvent(e);
+  }
 
   return m_Positions[d]->operator[](k);
 }

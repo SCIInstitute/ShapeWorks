@@ -7,6 +7,7 @@
 #include <tbb/parallel_for.h>
 #include <time.h>
 
+#include <atomic>
 #include <algorithm>
 #include <chrono>
 #include <ctime>
@@ -130,10 +131,19 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
     counter++;
 
     TIME_START("parallel_sampling");
+    // Suppress observer events during parallel section to avoid data races.
+    // Observers (ShapeMatrix, ShapeGradientMatrix, etc.) will be batch-updated
+    // via SynchronizePositions() after the parallel section completes.
+    particle_system_->SetEventsEnabled(false);
+
+    // Thread-safe max tracking: use atomic compare-exchange
+    std::atomic<double> atomic_max_change{0.0};
+
     // Iterate over each domain
     const auto domains_per_shape = particle_system_->GetDomainsPerShape();
     tbb::parallel_for(
         tbb::blocked_range<size_t>{0, num_domains / domains_per_shape}, [&](const tbb::blocked_range<size_t>& r) {
+          double local_max_change = 0.0;  // per-task max to minimize atomic contention
           for (size_t shape = r.begin(); shape < r.end(); ++shape) {
             for (int shape_dom_idx = 0; shape_dom_idx < domains_per_shape; shape_dom_idx++) {
               auto dom = shape * domains_per_shape + shape_dom_idx;
@@ -206,8 +216,8 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
                   if (new_energy < energy) {
                     // good move, increase timestep for next time
                     time_steps_[dom][k] *= factor;
-                    if (grad_mag > max_change) {
-                      max_change = grad_mag;
+                    if (grad_mag > local_max_change) {
+                      local_max_change = grad_mag;
                     }
                     break;
                   } else {  // bad move, reset point position and back off on timestep
@@ -219,8 +229,8 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
                       time_steps_[dom][k] /= factor;
                     } else {
                       // keep the move with timestep 1.0 anyway
-                      if (grad_mag > max_change) {
-                        max_change = grad_mag;
+                      if (grad_mag > local_max_change) {
+                        local_max_change = grad_mag;
                       }
                       break;
                     }
@@ -229,9 +239,21 @@ void GradientDescentOptimizer::start_adaptive_gauss_seidel_optimization() {
               }    // for each particle
             }
           }  // for each domain
+          // Update global max atomically
+          double prev = atomic_max_change.load(std::memory_order_relaxed);
+          while (local_max_change > prev &&
+                 !atomic_max_change.compare_exchange_weak(prev, local_max_change, std::memory_order_relaxed)) {
+          }
         });
 
+    max_change = atomic_max_change.load();
+
     TIME_STOP("parallel_sampling");
+
+    // Re-enable events and batch-update all observers with final positions.
+    particle_system_->SetEventsEnabled(true);
+    particle_system_->SynchronizePositions();
+
     number_of_iterations_++;
     gradient_function_->after_iteration();
 

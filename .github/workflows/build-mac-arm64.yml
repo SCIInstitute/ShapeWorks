@@ -93,7 +93,17 @@ jobs:
       
     - name: make test
       shell: bash -l {0}
-      run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
+      run: |
+        conda activate shapeworks && source ./devenv.sh ./build/bin && cd build
+        # Run ctest; if it fails, re-run failed tests under lldb to capture stack traces
+        if ! ctest -VV; then
+          echo "=== Tests failed, re-running failures under lldb for stack traces ==="
+          for exe in $(ctest --rerun-failed -N 2>&1 | grep "^  Test" | awk '{print $NF}'); do
+            echo "=== Running bin/$exe under lldb ==="
+            lldb -b -o run -k "thread backtrace all" -k "quit 1" -- bin/$exe 2>&1 || true
+          done
+          exit 1
+        fi
 
     - uses: actions/upload-artifact@v4
       with:

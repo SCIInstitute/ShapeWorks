@@ -379,6 +379,12 @@ class ParticleSystem : public itk::DataObject {
   }
   unsigned int GetDomainsPerShape() const { return m_DomainsPerShape; }
 
+  /** Suppress/resume observer event notifications.  When disabled, SetPosition()
+      still updates particle positions but does not fire InvokeEvent.  Call
+      SynchronizePositions() after re-enabling to update all observers. */
+  void SetEventsEnabled(bool enabled) { m_EventsEnabled = enabled; }
+  bool GetEventsEnabled() const { return m_EventsEnabled; }
+
   /** Set the number of domains.  This method modifies the size of the
     m_Domains, m_Positions, and m_Transform lists. */
   void SetNumberOfDomains(unsigned int);
@@ -450,6 +456,9 @@ class ParticleSystem : public itk::DataObject {
   std::vector<std::vector<bool>> m_FixedParticleFlags;
 
   std::vector<std::string> m_FieldAttributes;
+
+  /** When false, SetPosition skips InvokeEvent for thread safety. */
+  bool m_EventsEnabled{true};
 
   std::mt19937 m_rand{42};
 };
