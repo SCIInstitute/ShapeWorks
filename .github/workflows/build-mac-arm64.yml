@@ -95,6 +95,18 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
 
+    - name: Print crash reports
+      if: failure()
+      run: |
+        echo "=== Crash Reports ==="
+        for f in ~/Library/Logs/DiagnosticReports/*.crash ~/Library/Logs/DiagnosticReports/*.ips; do
+          if [ -f "$f" ]; then
+            echo "--- $f ---"
+            cat "$f"
+            echo ""
+          fi
+        done
+
     - uses: actions/upload-artifact@v4
       with:
         name: artifact-${{github.sha}}-mac-arm64

@@ -10,6 +10,10 @@ REM update anaconda
 call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
+REM Accept Anaconda TOS for required channels
+call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
 REM install shapeworks deps
 call conda create --yes --name %CONDAENV% python=3.12.3 pip=24.3.1 openblas=0.3.30 || goto :error
 call conda activate %CONDAENV%
