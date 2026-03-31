@@ -4419,70 +4419,70 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ImageDomainWithGradN</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+template &lt;class T &gt;
+class shapeworks::ImageDomainWithGradN;</code></p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef ImageDomainWithGradients&lt;T&gt; shapeworks::ImageDomainWithGradN&lt; T &gt;::Superclass;</code></p>
 <p>Standard class typedefs </p>
 <h3 id="using-pointer">using Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ImageDomainWithGradN</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::ImageDomainWithGradN&lt; T &gt;::Pointer =  std::shared_ptr&lt;ImageDomainWithGradN&gt;;</code></p>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef Superclass::PointType shapeworks::ImageDomainWithGradN&lt; T &gt;::PointType;</code></p>
 <p>Point type of the domain (not necessarily of the image). </p>
 <h3 id="typedef-imagetype">typedef ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef Superclass::ImageType shapeworks::ImageDomainWithGradN&lt; T &gt;::ImageType;</code></p>
 <h3 id="typedef-gradntype">typedef GradNType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradNType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef Superclass::GradNType shapeworks::ImageDomainWithGradN&lt; T &gt;::GradNType;</code></p>
 <h3 id="typedef-vnlmatrixtype">typedef VnlMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef Superclass::GradNType shapeworks::ImageDomainWithGradN&lt; T &gt;::VnlMatrixType;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-setimage">function SetImage</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetImage</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetImage(
+    ImageType * I,
+    double narrow_band
+)</code></p>
 <p>Set/Get the itk::Image specifying the particle domain. The set method modifies the parent class LowerBound and UpperBound. </p>
 <h3 id="function-samplegradnatpoint">function SampleGradNAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="n">SampleGradNAtPoint</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual GradNType SampleGradNAtPoint(
+    const PointType &amp; p,
+    int idx
+) const override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-samplegradnatpoint">shapeworks::ParticleDomain::SampleGradNAtPoint</a></p>
 <p>Sample the GradN at a point. This method performs no bounds checking. To check bounds, use IsInsideBuffer. SampleGradN returns a vnl matrix of size VDimension x VDimension. </p>
 <h3 id="function-deletepartialderivativeimages">function DeletePartialDerivativeImages</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeletePartialDerivativeImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void DeletePartialDerivativeImages() override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-deletepartialderivativeimages">shapeworks::ParticleDomain::DeletePartialDerivativeImages</a></p>
 <h3 id="function-deleteimages">function DeleteImages</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void DeleteImages() override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ImageDomainWithGradients.html#function-deleteimages">shapeworks::ImageDomainWithGradients::DeleteImages</a></p>
 <p>Used when a domain is fixed. </p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-imagedomainwithgradn">function ImageDomainWithGradN</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageDomainWithGradN</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline ImageDomainWithGradN()</code></p>
 <h3 id="function-imagedomainwithgradn_1">function ~ImageDomainWithGradN</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ImageDomainWithGradN</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual ~ImageDomainWithGradN()</code></p>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline void PrintSelf(
+    std::ostream &amp; os,
+    itk::Indent indent
+) const</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

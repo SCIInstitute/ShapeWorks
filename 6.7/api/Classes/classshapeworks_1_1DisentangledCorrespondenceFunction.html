@@ -4730,226 +4730,226 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">DisentangledCorrespondenceFunction</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+class shapeworks::DisentangledCorrespondenceFunction;</code></p>
 <p>This class implements the Correspondence Term where the entropy computation is disentangled across time and shape domain, and builds a Sapatiotemporal SSM. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-shapematrixtype">typedef ShapeMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">LegacyShapeMatrix</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">::</span><span class="n">ShapeMatrixType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef LegacyShapeMatrix shapeworks::DisentangledCorrespondenceFunction::ShapeMatrixType;</code></p>
 <h3 id="typedef-datatype">typedef DataType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="o">::</span><span class="n">DataType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">::</span><span class="n">DataType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef ShapeMatrixType::DataType shapeworks::DisentangledCorrespondenceFunction::DataType;</code></p>
 <h3 id="typedef-vectortype">typedef VectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef VectorFunction::VectorType shapeworks::DisentangledCorrespondenceFunction::VectorType;</code></p>
 <p>Vector &amp; Point types. </p>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef ParticleSystem::PointType shapeworks::DisentangledCorrespondenceFunction::PointType;</code></p>
 <h3 id="typedef-vnl_vector_type">typedef vnl_vector_type</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">::</span><span class="n">vnl_vector_type</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef vnl_vector&lt;DataType&gt; shapeworks::DisentangledCorrespondenceFunction::vnl_vector_type;</code></p>
 <h3 id="typedef-vnl_matrix_type">typedef vnl_matrix_type</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">::</span><span class="n">vnl_matrix_type</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef vnl_matrix&lt;DataType&gt; shapeworks::DisentangledCorrespondenceFunction::vnl_matrix_type;</code></p>
 <h3 id="typedef-shared_vnl_matrix_array_type">typedef shared_vnl_matrix_array_type</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">::</span><span class="n">shared_vnl_matrix_array_type</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef std::shared_ptr&lt;std::vector&lt;vnl_matrix_type&gt; &gt; shapeworks::DisentangledCorrespondenceFunction::shared_vnl_matrix_array_type;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-new">function New</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+static inline std::shared_ptr&lt; DisentangledCorrespondenceFunction &gt; New()</code></p>
 <p>Factory method for creating instances. </p>
 <h3 id="function-evaluate">function evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+virtual VectorType evaluate(
+    unsigned int ,
+    unsigned int ,
+    const ParticleSystem * ,
+    double &amp; ,
+    double &amp; 
+) const</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-evaluate">shapeworks::VectorFunction::evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-evaluate_1">function evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxtimestep</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual VectorType evaluate(
+    unsigned int ,
+    unsigned int ,
+    const ParticleSystem * ,
+    double &amp; maxtimestep
+) const</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-evaluate">shapeworks::VectorFunction::evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-energy">function energy</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">energy</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual double energy(
+    unsigned int a,
+    unsigned int b,
+    const ParticleSystem * c
+) const</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-energy">shapeworks::VectorFunction::energy</a></p>
 <h3 id="function-writemodes">function WriteModes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteModes</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+void WriteModes(
+    const std::string &amp; ,
+    int 
+) const</code></p>
 <p>Write the first n modes to +- 3 std dev and the mean of the model described by the covariance matrix. The string argument is a prefix to the file names. </p>
 <h3 id="function-setshapematrix">function SetShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetShapeMatrix</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetShapeMatrix(
+    ShapeMatrixType * s
+)</code></p>
 <p>Access the shape matrix. </p>
 <h3 id="function-getshapematrix">function GetShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeMatrix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline ShapeMatrixType * GetShapeMatrix()</code></p>
 <h3 id="function-getshapematrix_1">function GetShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeMatrix</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const ShapeMatrixType * GetShapeMatrix() const</code></p>
 <h3 id="function-before_iteration">function before_iteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">before_iteration</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void before_iteration()</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-before-iteration">shapeworks::VectorFunction::before_iteration</a></p>
 <p>Called before each iteration of a solver. </p>
 <h3 id="function-after_iteration">function after_iteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">after_iteration</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void after_iteration() override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-after-iteration">shapeworks::VectorFunction::after_iteration</a></p>
 <p>Called after each iteration of the solver. </p>
 <h3 id="function-setminimumvariance">function SetMinimumVariance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMinimumVariance</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">d</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetMinimumVariance(
+    double d
+)</code></p>
 <h3 id="function-getminimumvariance">function GetMinimumVariance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMinimumVariance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline double GetMinimumVariance() const</code></p>
 <h3 id="function-setminimumvariancedecay">function SetMinimumVarianceDecay</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMinimumVarianceDecay</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">initial_value</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">final_value</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">time_period</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetMinimumVarianceDecay(
+    double initial_value,
+    double final_value,
+    double time_period
+)</code></p>
 <h3 id="function-getminimumvariancedecayconstant">function GetMinimumVarianceDecayConstant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetMinimumVarianceDecayConstant</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline bool GetMinimumVarianceDecayConstant() const</code></p>
 <h3 id="function-printshapematrix">function PrintShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintShapeMatrix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void PrintShapeMatrix()</code></p>
 <h3 id="function-usemeanenergy">function UseMeanenergy</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UseMeanenergy</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void UseMeanenergy()</code></p>
 <h3 id="function-useentropy">function UseEntropy</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UseEntropy</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void UseEntropy()</code></p>
 <h3 id="function-getholdminimumvariance">function GetHoldMinimumVariance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetHoldMinimumVariance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline bool GetHoldMinimumVariance() const</code></p>
 <h3 id="function-setholdminimumvariance">function SetHoldMinimumVariance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetHoldMinimumVariance</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetHoldMinimumVariance(
+    bool b
+)</code></p>
 <h3 id="function-setrecomputecovarianceinterval">function SetRecomputeCovarianceInterval</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRecomputeCovarianceInterval</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetRecomputeCovarianceInterval(
+    int i
+)</code></p>
 <h3 id="function-getrecomputecovarianceinterval">function GetRecomputeCovarianceInterval</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetRecomputeCovarianceInterval</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline int GetRecomputeCovarianceInterval() const</code></p>
 <h3 id="function-clone">function clone</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">clone</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual std::shared_ptr&lt; VectorFunction &gt; clone() override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-clone">shapeworks::VectorFunction::clone</a></p>
 <h3 id="function-disentangledcorrespondencefunction">function DisentangledCorrespondenceFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline DisentangledCorrespondenceFunction()</code></p>
 <h3 id="function-disentangledcorrespondencefunction_1">function ~DisentangledCorrespondenceFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">DisentangledCorrespondenceFunction</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
-</code></pre></div>
+<p><code>cpp
+~DisentangledCorrespondenceFunction() override =default</code></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-disentangledcorrespondencefunction_2">function DisentangledCorrespondenceFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">DisentangledCorrespondenceFunction</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">delete</span>
-</code></pre></div>
+<p><code>cpp
+DisentangledCorrespondenceFunction(
+    const DisentangledCorrespondenceFunction &amp; 
+) =delete</code></p>
 <h3 id="function-operator">function operator=</h3>
-<div class="highlight"><pre><span></span><code><span class="n">DisentangledCorrespondenceFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">delete</span>
-</code></pre></div>
+<p><code>cpp
+DisentangledCorrespondenceFunction &amp; operator=(
+    const DisentangledCorrespondenceFunction &amp; 
+) =delete</code></p>
 <h3 id="function-computecovariancematrices">function ComputeCovarianceMatrices</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeCovarianceMatrices</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+virtual void ComputeCovarianceMatrices()</code></p>
 <h3 id="function-initialize">function Initialize</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void Initialize()</code></p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-vdimension">variable VDimension</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+static constexpr static unsigned int VDimension = 3;</code></p>
 <h3 id="variable-dimension">variable Dimension</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VDimension</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+static constexpr static unsigned int Dimension = VDimension;</code></p>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_shapematrix">variable m_ShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeMatrixType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+ShapeMatrixType::Pointer m_ShapeMatrix;</code></p>
 <h3 id="variable-m_minimumvariance">variable m_MinimumVariance</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_MinimumVariance</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+double m_MinimumVariance;</code></p>
 <h3 id="variable-m_minimumeigenvalue">variable m_MinimumEigenValue</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_MinimumEigenValue</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+double m_MinimumEigenValue;</code></p>
 <h3 id="variable-m_minimumeigenvalue_time_cohort">variable m_MinimumEigenValue_time_cohort</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_MinimumEigenValue_time_cohort</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; double &gt; m_MinimumEigenValue_time_cohort;</code></p>
 <h3 id="variable-m_minimumeigenvalue_shape_cohort">variable m_MinimumEigenValue_shape_cohort</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_MinimumEigenValue_shape_cohort</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; double &gt; m_MinimumEigenValue_shape_cohort;</code></p>
 <h3 id="variable-m_currentenergy">variable m_CurrentEnergy</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_CurrentEnergy</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+double m_CurrentEnergy;</code></p>
 <h3 id="variable-m_holdminimumvariance">variable m_HoldMinimumVariance</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_HoldMinimumVariance</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+bool m_HoldMinimumVariance;</code></p>
 <h3 id="variable-m_minimumvariancedecayconstant">variable m_MinimumVarianceDecayConstant</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_MinimumVarianceDecayConstant</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+double m_MinimumVarianceDecayConstant;</code></p>
 <h3 id="variable-m_recomputecovarianceinterval">variable m_RecomputeCovarianceInterval</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_RecomputeCovarianceInterval</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+int m_RecomputeCovarianceInterval;</code></p>
 <h3 id="variable-m_counter">variable m_Counter</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+int m_Counter;</code></p>
 <h3 id="variable-m_usemeanenergy">variable m_UseMeanEnergy</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_UseMeanEnergy</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+bool m_UseMeanEnergy;</code></p>
 <h3 id="variable-m_inversecovmatrices_time_cohort">variable m_InverseCovMatrices_time_cohort</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_InverseCovMatrices_time_cohort</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+std::shared_ptr&lt; std::vector&lt; Eigen::MatrixXd &gt; &gt; m_InverseCovMatrices_time_cohort;</code></p>
 <h3 id="variable-m_inversecovmatrices_shape_cohort">variable m_InverseCovMatrices_shape_cohort</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_InverseCovMatrices_shape_cohort</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+std::shared_ptr&lt; std::vector&lt; Eigen::MatrixXd &gt; &gt; m_InverseCovMatrices_shape_cohort;</code></p>
 <h3 id="variable-m_points_mean_time_cohort">variable m_points_mean_time_cohort</h3>
-<div class="highlight"><pre><span></span><code><span class="n">shared_vnl_matrix_array_type</span><span class="w"> </span><span class="n">m_points_mean_time_cohort</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+shared_vnl_matrix_array_type m_points_mean_time_cohort;</code></p>
 <h3 id="variable-m_points_mean_shape_cohort">variable m_points_mean_shape_cohort</h3>
-<div class="highlight"><pre><span></span><code><span class="n">shared_vnl_matrix_array_type</span><span class="w"> </span><span class="n">m_points_mean_shape_cohort</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+shared_vnl_matrix_array_type m_points_mean_shape_cohort;</code></p>
 <h3 id="variable-m_time_pointsupdate">variable m_Time_PointsUpdate</h3>
-<div class="highlight"><pre><span></span><code><span class="n">shared_vnl_matrix_array_type</span><span class="w"> </span><span class="n">m_Time_PointsUpdate</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+shared_vnl_matrix_array_type m_Time_PointsUpdate;</code></p>
 <h3 id="variable-m_shape_pointsupdate">variable m_Shape_PointsUpdate</h3>
-<div class="highlight"><pre><span></span><code><span class="n">shared_vnl_matrix_array_type</span><span class="w"> </span><span class="n">m_Shape_PointsUpdate</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+shared_vnl_matrix_array_type m_Shape_PointsUpdate;</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

@@ -3962,57 +3962,57 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-fefillhole">function FEFillHole</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEFillHole</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline FEFillHole()</code></p>
 <h3 id="function-apply">function Apply</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Apply</span><span class="p">(</span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pm</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+FEMesh * Apply(
+    FEMesh * pm
+)</code></p>
 <h3 id="function-afm">function AFM</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">AFM</span><span class="p">(</span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
-<span class="w">    </span><span class="n">EdgeRing</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ring</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FACE</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">tri_list</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">node_list</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool AFM(
+    FEMesh &amp; mesh,
+    EdgeRing &amp; ring,
+    vector&lt; FACE &gt; &amp; tri_list,
+    vector&lt; vec3d &gt; &amp; node_list
+)</code></p>
 <h3 id="function-newnode">function newNode</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">newNode</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">current_node</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">next_node</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">prev_node</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">node_normal</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">scale</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">concave</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vec3d newNode(
+    vec3d current_node,
+    vec3d next_node,
+    vec3d prev_node,
+    vec3d node_normal,
+    double scale,
+    bool concave
+)</code></p>
 <h3 id="function-dividering">function DivideRing</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">DivideRing</span><span class="p">(</span>
-<span class="w">    </span><span class="n">EdgeRing</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ring</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FACE</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">tri_list</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool DivideRing(
+    EdgeRing &amp; ring,
+    vector&lt; FACE &gt; &amp; tri_list
+)</code></p>
 <h3 id="function-dividering1">function DivideRing1</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">DivideRing1</span><span class="p">(</span>
-<span class="w">    </span><span class="n">EdgeRing</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ring</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FACE</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">tri_list</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool DivideRing1(
+    EdgeRing &amp; ring,
+    vector&lt; FACE &gt; &amp; tri_list
+)</code></p>
 <h3 id="function-fillallholes">function FillAllHoles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FillAllHoles</span><span class="p">(</span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pm</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void FillAllHoles(
+    FEMesh * pm
+)</code></p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-optimize">variable optimize</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">optimize</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+bool optimize;</code></p>
 <h3 id="variable-insertnodes">variable insertNodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">insertNodes</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+bool insertNodes;</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

@@ -3801,106 +3801,79 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Optimize/Domain/DomainType.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ProjectUtils.h&quot;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Subject</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMap</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringList</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">Subject</span><span class="p">();</span>
-<span class="w">  </span><span class="o">~</span><span class="n">Subject</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_original_filenames</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_original_filenames</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_groomed_filenames</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_groomed_filenames</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_local_particle_filenames</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_local_particle_filenames</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_world_particle_filenames</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_world_particle_filenames</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_landmarks_filenames</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_landmarks_filenames</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_constraints_filenames</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_constraints_filenames</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_number_of_domains</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_domains</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_number_of_domains</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_feature_filenames</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_filenames</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StringMap</span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_filenames</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_groomed_transforms</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_groomed_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_groomed_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_procrustes_transforms</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_procrustes_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_group_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_group_value</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group_name</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_group_values</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StringMap</span><span class="o">&amp;</span><span class="w"> </span><span class="n">group_values</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_extra_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_extra_values</span><span class="p">(</span><span class="n">StringMap</span><span class="w"> </span><span class="n">extra_values</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_table_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_table_values</span><span class="p">(</span><span class="n">StringMap</span><span class="w"> </span><span class="n">table_values</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_display_name</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_display_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_name</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_fixed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_fixed</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">fixed</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_excluded</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_excluded</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">excluded</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_notes</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_notes</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">notes</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_domains_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_name_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">fixed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">excluded_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">original_filenames_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">groomed_filenames_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">local_particle_filenames_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">world_particle_filenames_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">landmarks_filenames_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringList</span><span class="w"> </span><span class="n">constraints_filenames_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">groomed_transforms_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">procrustes_transforms_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="n">feature_filenames_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="n">group_values_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="n">extra_values_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="n">table_values_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">notes_</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Libs/Optimize/Domain/DomainType.h></h1>
+<h1 id="include_1">include <map></h1>
+<h1 id="include_2">include <string></h1>
+<h1 id="include_3">include <vector></h1>
+<h1 id="include-projectutilsh">include "ProjectUtils.h"</h1>
+<p>namespace shapeworks {</p>
+<p>class Subject {
+ public:
+  using StringMap = project::types::StringMap;
+  using StringList = project::types::StringList;</p>
+<p>Subject();
+  ~Subject();</p>
+<p>void set_original_filenames(StringList filenames);
+  StringList get_original_filenames();</p>
+<p>void set_groomed_filenames(StringList filenames);
+  StringList get_groomed_filenames();</p>
+<p>void set_local_particle_filenames(StringList filenames);
+  StringList get_local_particle_filenames();</p>
+<p>void set_world_particle_filenames(StringList filenames);
+  StringList get_world_particle_filenames();</p>
+<p>void set_landmarks_filenames(StringList filenames);
+  StringList get_landmarks_filenames();</p>
+<p>void set_constraints_filenames(StringList filenames);
+  StringList get_constraints_filenames();</p>
+<p>void set_number_of_domains(int number_of_domains);
+  int get_number_of_domains();</p>
+<p>StringMap get_feature_filenames() const;
+  void set_feature_filenames(const StringMap&amp; feature_filenames);</p>
+<p>std::vector<std::vector\<double>> get_groomed_transforms() const;
+  void set_groomed_transforms(std::vector<std::vector\<double>> transforms);
+  void set_groomed_transform(int i, std::vector<double> transform);</p>
+<p>std::vector<std::vector\<double>> get_procrustes_transforms() const;
+  void set_procrustes_transforms(std::vector<std::vector\<double>> transforms);</p>
+<p>StringMap get_group_values() const;
+  std::string get_group_value(std::string group_name);</p>
+<p>void set_group_values(const StringMap&amp; group_values);</p>
+<p>StringMap get_extra_values() const;
+  void set_extra_values(StringMap extra_values);</p>
+<p>StringMap get_table_values() const;
+  void set_table_values(StringMap table_values);</p>
+<p>std::string get_display_name();
+  void set_display_name(std::string display_name);</p>
+<p>bool is_fixed();
+  void set_fixed(bool fixed);</p>
+<p>bool is_excluded();
+  void set_excluded(bool excluded);</p>
+<p>std::string get_notes();
+  void set_notes(std::string notes);</p>
+<p>private:
+  int number_of_domains_ = 0;</p>
+<p>std::string display_name_;
+  bool fixed_ = false;
+  bool excluded_ = false;
+  StringList original_filenames_;
+  StringList groomed_filenames_;
+  StringList local_particle_filenames_;
+  StringList world_particle_filenames_;
+  StringList landmarks_filenames_;
+  StringList constraints_filenames_;
+  std::vector<std::vector\<double>> groomed_transforms_;
+  std::vector<std::vector\<double>> procrustes_transforms_;</p>
+<p>StringMap feature_filenames_;
+  StringMap group_values_;
+  StringMap extra_values_;
+  StringMap table_values_;
+  std::string notes_;
+};
+}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

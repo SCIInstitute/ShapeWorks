@@ -3801,67 +3801,52 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/LegacyShapeMatrix.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ParticleGaussianModeWriter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">DataObject</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstPointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
-<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">ParticleGaussianModeWriter</span><span class="p">,</span><span class="w"> </span><span class="n">DataObject</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">LegacyShapeMatrix</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">DataType</span><span class="w"> </span><span class="n">DataType</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_vector_type</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">Dimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Update</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetNumberOfModes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNumberOfModes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetShapeMatrix</span><span class="p">(</span><span class="n">ShapeMatrixType</span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="n">ShapeMatrixType</span><span class="o">*</span><span class="w"> </span><span class="nf">GetShapeMatrix</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="o">*</span><span class="w"> </span><span class="nf">GetShapeMatrix</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFileName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_FileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFileName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_FileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">GetFileName</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FileName</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="n">ParticleGaussianModeWriter</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleGaussianModeWriter</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="o">&amp;</span><span class="p">);</span>
-<span class="w">  </span><span class="n">ParticleGaussianModeWriter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="o">&amp;</span><span class="p">);</span>
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_FileName</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleGaussianModeWriter.txx&quot;</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <string></h1>
+<h1 id="include_1">include <vector></h1>
+<h1 id="include-libsoptimizematrixlegacyshapematrixh">include "Libs/Optimize/Matrix/LegacyShapeMatrix.h"</h1>
+<h1 id="include-itkdataobjecth">include "itkDataObject.h"</h1>
+<p>namespace shapeworks {</p>
+<p>template <unsigned int VDimension>
+class ParticleGaussianModeWriter : public itk::DataObject {
+ public:
+  typedef ParticleGaussianModeWriter Self;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef DataObject Superclass;
+  itkTypeMacro(ParticleGaussianModeWriter, DataObject);</p>
+<p>typedef ParticleSystem ParticleSystemType;
+  typedef LegacyShapeMatrix ShapeMatrixType;
+  typedef typename ShapeMatrixType::DataType DataType;</p>
+<p>typedef typename ParticleSystemType::PointType PointType;
+  typedef vnl_vector<DataType> vnl_vector_type;
+  typedef vnl_matrix<DataType> vnl_matrix_type;</p>
+<p>itkNewMacro(Self);</p>
+<p>itkStaticConstMacro(Dimension, unsigned int, VDimension);</p>
+<p>void Update() const;</p>
+<p>int GetNumberOfModes() const { return m_NumberOfModes; }
+  void SetNumberOfModes(int b) { m_NumberOfModes = b; }</p>
+<p>void SetShapeMatrix(ShapeMatrixType<em> s) { m_ShapeMatrix = s; }
+  ShapeMatrixType</em> GetShapeMatrix() { return m_ShapeMatrix.GetPointer(); }
+  const ShapeMatrixType* GetShapeMatrix() const { return m_ShapeMatrix.GetPointer(); }</p>
+<p>void SetFileName(const std::string&amp; s) { m_FileName = s; }
+  void SetFileName(const char* s) { m_FileName = s; }
+  const std::string&amp; GetFileName() const { return m_FileName; }</p>
+<p>protected:
+  ParticleGaussianModeWriter() : m_NumberOfModes(3) {}
+  virtual ~ParticleGaussianModeWriter() {}
+  void operator=(const ParticleGaussianModeWriter&amp;);
+  ParticleGaussianModeWriter(const ParticleGaussianModeWriter&amp;);
+  typename ShapeMatrixType::Pointer m_ShapeMatrix;</p>
+<p>int m_NumberOfModes;
+  std::string m_FileName;
+};</p>
+<p>}  // namespace shapeworks</p>
+<h1 id="include-particlegaussianmodewritertxx">include "ParticleGaussianModeWriter.txx"</h1>
+<p>```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

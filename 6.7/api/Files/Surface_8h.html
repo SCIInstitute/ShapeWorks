@@ -3801,189 +3801,184 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <geometrycentral/surface/heat_method_distance.h></h1>
+<h1 id="include_1">include <geometrycentral/surface/meshio.h></h1>
+<h1 id="include_2">include <geometrycentral/surface/surface_mesh.h></h1>
+<h1 id="include_3">include <vtkPolyData.h></h1>
+<h1 id="include_4">include <vtkSmartPointer.h></h1>
+<h1 id="include_5">include <unordered_set></h1>
+<h1 id="include-libsoptimizedomainparticledomainh">include "Libs/Optimize/Domain/ParticleDomain.h"</h1>
+<h1 id="include-meshgeoentryh">include "MeshGeoEntry.h"</h1>
+<p>class vtkCellLocator;</p>
+<p>namespace shapeworks {
+class Surface {
+  public:
+    using PointType = ParticleDomain::PointType;
+    using GradNType = ParticleDomain::GradNType;</p>
+<pre><code>using NormalType = vnl_vector_fixed&lt;float, 3&gt;;
+using VectorType = vnl_vector_fixed&lt;double, 3&gt;;
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/heat_method_distance.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/meshio.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/surface_mesh.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+explicit Surface(vtkSmartPointer&lt;vtkPolyData&gt; mesh,
+                 bool geodesics_enabled = false,
+                 size_t geodesics_cache_multiplier_size = 0); // 0 =&gt; MeshWrapper will choose a heuristic
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unordered_set&gt;</span>
+~Surface() = default;
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/ParticleDomain.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshGeoEntry.h&quot;</span>
+double compute_distance(const PointType&amp; pointa,
+                        int idxa,
+                        const PointType&amp; pointb,
+                        int idxb,
+                        VectorType* out_grad = nullptr) const;
 
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkCellLocator</span><span class="p">;</span>
+bool is_within_distance(const PointType&amp; pointa,
+                        int idxa,
+                        const PointType&amp; pointb,
+                        int idxb,
+                        double test_dist,
+                        double&amp; dist) const;
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Surface</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">public</span><span class="o">:</span>
-<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
-<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">GradNType</span><span class="p">;</span>
+PointType geodesic_walk(PointType p, int idx, VectorType vector) const;
 
-<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">NormalType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+VectorType project_vector_to_surface_tangent(const PointType&amp; pointa, int idx, VectorType&amp; vector) const;
 
-<span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="n">Surface</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
-<span class="w">                     </span><span class="kt">bool</span><span class="w"> </span><span class="n">geodesics_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span>
-<span class="w">                     </span><span class="kt">size_t</span><span class="w"> </span><span class="n">geodesics_cache_multiplier_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// 0 =&gt; MeshWrapper will choose a heuristic</span>
+NormalType sample_normal_at_point(PointType p, int idx = -1) const;
+GradNType sample_gradient_normal_at_point(PointType p, int idx) const;
 
-<span class="w">    </span><span class="o">~</span><span class="n">Surface</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+PointType snap_to_mesh(PointType pointa, int idx) const;
 
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">compute_distance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
-<span class="w">                            </span><span class="kt">int</span><span class="w"> </span><span class="n">idxa</span><span class="p">,</span>
-<span class="w">                            </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
-<span class="w">                            </span><span class="kt">int</span><span class="w"> </span><span class="n">idxb</span><span class="p">,</span>
-<span class="w">                            </span><span class="n">VectorType</span><span class="o">*</span><span class="w"> </span><span class="n">out_grad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+PointType get_point_on_mesh() const;
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_within_distance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
-<span class="w">                            </span><span class="kt">int</span><span class="w"> </span><span class="n">idxa</span><span class="p">,</span>
-<span class="w">                            </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
-<span class="w">                            </span><span class="kt">int</span><span class="w"> </span><span class="n">idxb</span><span class="p">,</span>
-<span class="w">                            </span><span class="kt">double</span><span class="w"> </span><span class="n">test_dist</span><span class="p">,</span>
-<span class="w">                            </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dist</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+inline const PointType&amp; get_mesh_lower_bound() const { return mesh_lower_bound_; }
 
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="nf">geodesic_walk</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+inline const PointType&amp; get_mesh_upper_bound() const { return mesh_upper_bound_; }
 
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">project_vector_to_surface_tangent</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">VectorType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+virtual void invalidate_particle(int idx);
 
-<span class="w">    </span><span class="n">NormalType</span><span class="w"> </span><span class="nf">sample_normal_at_point</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">    </span><span class="n">GradNType</span><span class="w"> </span><span class="nf">sample_gradient_normal_at_point</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+inline vtkSmartPointer&lt;vtkPolyData&gt; get_polydata() const { return original_mesh_; }
 
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="nf">snap_to_mesh</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+bool is_geodesics_enabled() const { return this-&gt;is_geodesics_enabled_; }
+</code></pre>
+<p>private:
+    int get_num_faces();
+    void compute_mesh_bounds();
+    void compute_grad_normals(const Eigen::MatrixXd&amp; V, const Eigen::MatrixXi&amp; F) const;</p>
+<pre><code>int get_triangle_for_point(const double pt[3], int idx, double closest_point[3]) const;
 
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="nf">get_point_on_mesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+Eigen::Vector3d project_vector_to_face(const Eigen::Vector3d&amp; normal, const Eigen::Vector3d&amp; vector) const;
 
-<span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_mesh_lower_bound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_lower_bound_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+const Eigen::Vector3d get_face_normal(int face_index) const;
 
-<span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_mesh_upper_bound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_upper_bound_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+bool is_in_triangle(const double pt[3], int face_index) const;
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">invalidate_particle</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span>
+Eigen::Vector3d compute_barycentric_coordinates(const Eigen::Vector3d&amp; pt, int face) const;
 
-<span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_polydata</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">original_mesh_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+int compute_barycentric_coordinates(const Eigen::Vector3d&amp; pt,
+                                    int face,
+                                    double&amp; dist2,
+                                    Eigen::Vector3d&amp; bary) const;
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_geodesics_enabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">is_geodesics_enabled_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+int compute_face_and_weights(const PointType&amp; p, int idx, Eigen::Vector3d&amp; weights) const;
 
-<span class="w">  </span><span class="k">private</span><span class="o">:</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">get_num_faces</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_mesh_bounds</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_grad_normals</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+Eigen::Vector3d geodesic_walk_on_face(Eigen::Vector3d point_a,
+                                      Eigen::Vector3d projected_vector,
+                                      int face_index,
+                                      int&amp; ending_face) const;
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_triangle_for_point</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">pt</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">closest_point</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+Eigen::Vector3d get_barycentric_intersection(Eigen::Vector3d start,
+                                             Eigen::Vector3d end,
+                                             int currentFace,
+                                             int edge) const;
 
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">project_vector_to_face</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">normal</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+int get_across_edge(int face, int edge) const;
 
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">get_face_normal</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">face_index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+int get_face_point_id(int face, int point_id) const;
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_in_triangle</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">pt</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face_index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+int slide_along_edge(Eigen::Vector3d&amp; point, Eigen::Vector3d&amp; remainingVector_, int face_, int edge_) const;
 
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">compute_barycentric_coordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+Eigen::Vector3d get_vertex_coords(int vertex_id) const;
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">compute_barycentric_coordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
-<span class="w">                                        </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">,</span>
-<span class="w">                                        </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dist2</span><span class="p">,</span>
-<span class="w">                                        </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">bary</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+Eigen::Vector3d rotate_vector_to_face(const Eigen::Vector3d&amp; prev_normal,
+                                      const Eigen::Vector3d&amp; next_normal,
+                                      const Eigen::Vector3d&amp; vector) const;
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">compute_face_and_weights</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">weights</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+vtkSmartPointer&lt;vtkPolyData&gt; poly_data_;
+vtkSmartPointer&lt;vtkPolyData&gt; original_mesh_;
 
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">geodesic_walk_on_face</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">point_a</span><span class="p">,</span>
-<span class="w">                                          </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">projected_vector</span><span class="p">,</span>
-<span class="w">                                          </span><span class="kt">int</span><span class="w"> </span><span class="n">face_index</span><span class="p">,</span>
-<span class="w">                                          </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ending_face</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+NormalType calculate_normal_at_point(Surface::PointType p, int idx) const;
 
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">get_barycentric_intersection</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">start</span><span class="p">,</span>
-<span class="w">                                                 </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">end</span><span class="p">,</span>
-<span class="w">                                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">currentFace</span><span class="p">,</span>
-<span class="w">                                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">edge</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+// Caches of triangle, normal and position
+// Has to be mutable because all of the accessor APIs are const
+mutable std::vector&lt;int&gt; particle_triangles_;
+mutable std::vector&lt;NormalType&gt; particle_normals_;
+mutable std::vector&lt;PointType&gt; particle_positions_;
+mutable std::vector&lt;double&gt; particle_neighboorhood_;
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_across_edge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">edge</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+mutable std::vector&lt;GradNType&gt; grad_normals_;
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_face_point_id</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">point_id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+// bounds of the mesh plus some buffer
+PointType mesh_lower_bound_;
+PointType mesh_upper_bound_;
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">slide_along_edge</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">remainingVector_</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face_</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">edge_</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+// cell locator to find closest point on mesh
+vtkSmartPointer&lt;vtkCellLocator&gt; cell_locator_;
 
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">get_vertex_coords</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">vertex_id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+// Geodesic distances
 
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">rotate_vector_to_face</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prev_normal</span><span class="p">,</span>
-<span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">next_normal</span><span class="p">,</span>
-<span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+bool is_geodesics_enabled_{false};
 
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">original_mesh_</span><span class="p">;</span>
+// Geometry Central data structures
+std::unique_ptr&lt;geometrycentral::surface::SurfaceMesh&gt; gc_mesh_;
+std::unique_ptr&lt;geometrycentral::surface::VertexPositionGeometry&gt; gc_geometry_;
+std::unique_ptr&lt;geometrycentral::surface::HeatMethodDistanceSolver&gt; gc_heatsolver_;
 
-<span class="w">    </span><span class="n">NormalType</span><span class="w"> </span><span class="nf">calculate_normal_at_point</span><span class="p">(</span><span class="n">Surface</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+size_t geo_max_cache_entries_{0};
+mutable size_t geo_cache_size_{0};
 
-<span class="w">    </span><span class="c1">// Caches of triangle, normal and position</span>
-<span class="w">    </span><span class="c1">// Has to be mutable because all of the accessor APIs are const</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_triangles_</span><span class="p">;</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NormalType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_normals_</span><span class="p">;</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_positions_</span><span class="p">;</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_neighboorhood_</span><span class="p">;</span>
+// Flattened version of libigl's gradient operator
+std::vector&lt;Eigen::Matrix3d&gt; face_grad_;
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">GradNType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">grad_normals_</span><span class="p">;</span>
+std::vector&lt;std::unordered_set&lt;int&gt; &gt; face_kring_;
 
-<span class="w">    </span><span class="c1">// bounds of the mesh plus some buffer</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">mesh_lower_bound_</span><span class="p">;</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">mesh_upper_bound_</span><span class="p">;</span>
+// Cache for geodesic distances from a triangle
+mutable std::vector&lt;MeshGeoEntry&gt; geo_dist_cache_;
 
-<span class="w">    </span><span class="c1">// cell locator to find closest point on mesh</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cell_locator_</span><span class="p">;</span>
+// Returns true if face f_a is in the K-ring of face f_b
+bool are_faces_in_k_ring(int f_a, int f_b) const;
+const size_t kring_{1};
 
-<span class="w">    </span><span class="c1">// Geodesic distances</span>
+// Convert the mesh to libigl data structures
+void get_igl_mesh(Eigen::MatrixXd&amp; V, Eigen::MatrixXi&amp; F) const;
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_geodesics_enabled_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+// Precompute heat data structures for faster geodesic lookups
+void precompute_geodesics(const Eigen::MatrixXd&amp; V, const Eigen::MatrixXi&amp; F);
 
-<span class="w">    </span><span class="c1">// Geometry Central data structures</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">geometrycentral</span><span class="o">::</span><span class="n">surface</span><span class="o">::</span><span class="n">SurfaceMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gc_mesh_</span><span class="p">;</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">geometrycentral</span><span class="o">::</span><span class="n">surface</span><span class="o">::</span><span class="n">VertexPositionGeometry</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gc_geometry_</span><span class="p">;</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">geometrycentral</span><span class="o">::</span><span class="n">surface</span><span class="o">::</span><span class="n">HeatMethodDistanceSolver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gc_heatsolver_</span><span class="p">;</span>
+void compute_k_ring(int f, int k, std::unordered_set&lt;int&gt;&amp; ring) const;
 
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">geo_max_cache_entries_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">geo_cache_size_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+const MeshGeoEntry&amp; geodesics_from_triangle(int f,
+                                            double max_dist = std::numeric_limits&lt;double&gt;::max(),
+                                            int req_target_f = -1) const;
+const Eigen::Matrix3d geodesics_from_triangle_to_triangle(int f_a, int f_b) const;
+void clear_geodesic_cache() const;
 
-<span class="w">    </span><span class="c1">// Flattened version of libigl&#39;s gradient operator</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">face_grad_</span><span class="p">;</span>
+// Store some info about the last query. This accelerates the computation
+// because the optimizer generally asks for the distances _from_ the same
+// point as the previous query.
+mutable bool geo_lq_cached_{false};
+mutable PointType geo_lq_pt_a_{-1};
+mutable int geo_lq_face_{-1};
+mutable Eigen::Vector3d geo_lq_bary_;
+void fetch_and_cache_first_point(const PointType pt_a, int idx_a, int&amp; face_a, Eigen::Vector3d&amp; bary_a) const;
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unordered_set</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">face_kring_</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// Cache for geodesic distances from a triangle</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MeshGeoEntry</span><span class="o">&gt;</span><span class="w"> </span><span class="n">geo_dist_cache_</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// Returns true if face f_a is in the K-ring of face f_b</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">are_faces_in_k_ring</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">f_a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">f_b</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">kring_</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
-
-<span class="w">    </span><span class="c1">// Convert the mesh to libigl data structures</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">get_igl_mesh</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// Precompute heat data structures for faster geodesic lookups</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">precompute_geodesics</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">);</span>
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_k_ring</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unordered_set</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">ring</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshGeoEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">geodesics_from_triangle</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">f</span><span class="p">,</span>
-<span class="w">                                                </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">(),</span>
-<span class="w">                                                </span><span class="kt">int</span><span class="w"> </span><span class="n">req_target_f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix3d</span><span class="w"> </span><span class="nf">geodesics_from_triangle_to_triangle</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">f_a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">f_b</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_geodesic_cache</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// Store some info about the last query. This accelerates the computation</span>
-<span class="w">    </span><span class="c1">// because the optimizer generally asks for the distances _from_ the same</span>
-<span class="w">    </span><span class="c1">// point as the previous query.</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">geo_lq_cached_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">geo_lq_pt_a_</span><span class="p">{</span><span class="mi">-1</span><span class="p">};</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">geo_lq_face_</span><span class="p">{</span><span class="mi">-1</span><span class="p">};</span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">geo_lq_bary_</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">fetch_and_cache_first_point</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">pt_a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_a</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">bary_a</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">vertices_</span><span class="p">;</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="n">faces_</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w"> </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+Eigen::MatrixXd vertices_;
+Eigen::MatrixXi faces_;
+</code></pre>
+<p>};
+} // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

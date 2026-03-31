@@ -3804,126 +3804,107 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Job/Job.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ShapeWorksMONAI/MonaiLabelTool.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/embed.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/pybind11.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/stl.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">py</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pybind11</span><span class="p">;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Job</span><span class="p">;</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">monailabel</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Job</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectHandle</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeWorksStudioApp</span><span class="p">;</span>
-
-<span class="cp">#pragma GCC diagnostic push</span>
-<span class="cp">#pragma GCC diagnostic ignored &quot;-Wattributes&quot;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MonaiLabelJob</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_RESULT_EXTENSION</span><span class="p">;</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_RESULT_DTYPE</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">MonaiLabelJob</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">server_url</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">client_id</span><span class="p">,</span>
-<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">strategy</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">model_type</span><span class="p">);</span>
-<span class="w">  </span><span class="o">~</span><span class="n">MonaiLabelJob</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setServer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">server_url</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setModelType</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">model_type</span><span class="p">);</span>
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">getServer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">server_url_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">setClientId</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">client_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">getClientId</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">client_id_</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initializeClient</span><span class="p">();</span>
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getClient</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">monai_client_</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="nf">getInfo</span><span class="p">();</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">getModelName</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">modelType</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getModelNames</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">model_type</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">getSessionId</span><span class="p">();</span>
-<span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="nf">getParamsFromConfig</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">section</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// MONAI Client callers</span>
-<span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="nf">nextSample</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">strategy</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
-<span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">tuple</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_in</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">params</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">label_in</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">file</span><span class="p">,</span>
-<span class="w">                  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">session_id</span><span class="p">);</span>
-<span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="nf">saveLabel</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_in</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">label_in</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
-<span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="nf">uploadImage</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_in</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateShapes</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">runSegmentationModel</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">python_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setCurrentSampleNumber</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">onUploadSampleClicked</span><span class="p">();</span><span class="w">     </span><span class="c1">// Triggered when  upload Sample button is clicked</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">onRunSegmentationClicked</span><span class="p">();</span><span class="w">  </span><span class="c1">// Triggered when Run Segmentation is clicked</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">onSubmitLabelClicked</span><span class="p">();</span><span class="w">      </span><span class="c1">// Triggered when Submit Label is clicked</span>
-
-<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">triggerUpdateView</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">triggerClientInitialized</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">success</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">triggerUploadSampleCompleted</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">triggerSegmentationCompleted</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">triggerSubmitLabelCompleted</span><span class="p">();</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">tmp_dir_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">server_url_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">client_id_</span><span class="p">;</span>
-<span class="w">  </span><span class="c1">// TODO: implement remote server session</span>
-<span class="w">  </span><span class="c1">//   std::string username_;</span>
-<span class="w">  </span><span class="c1">//   std::string password_;</span>
-<span class="w">  </span><span class="c1">//   std::string auth_token_;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">strategy_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">model_type_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">model_name_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&gt;</span>
-<span class="w">      </span><span class="n">models_available_</span><span class="p">;</span><span class="w">  </span><span class="c1">// TODO: add functionality to interchange between models from UI</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">monai_client_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// QT states</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">waitingForUpload</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">waitingForSegmentation</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">waitingForLabelSubmission</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Current subjects</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">sample_number_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">currentSampleId_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">currentSegmentationPath_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">currentSegmentationPaths_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">organNames_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">error_occurred_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="cp">#pragma GCC diagnostic pop</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace monailabel</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Data/Session.h></h1>
+<h1 id="include_1">include <Job/Job.h></h1>
+<h1 id="include_2">include <Project/Project.h></h1>
+<h1 id="include_3">include <Shape.h></h1>
+<h1 id="include_4">include <ShapeWorksMONAI/MonaiLabelTool.h></h1>
+<h1 id="include_5">include <pybind11/embed.h></h1>
+<h1 id="include_6">include <pybind11/pybind11.h></h1>
+<h1 id="include_7">include <pybind11/stl.h></h1>
+<h1 id="include_8">include <QObject></h1>
+<h1 id="include_9">include <QSharedPointer></h1>
+<h1 id="include_10">include <string></h1>
+<p>namespace py = pybind11;</p>
+<p>namespace shapeworks {
+class ShapeWorksStudioApp;
+class Session;
+class Job;
+}  // namespace shapeworks</p>
+<p>namespace monailabel {</p>
+<p>using shapeworks::Job;
+using shapeworks::ProjectHandle;
+using shapeworks::Session;
+using shapeworks::ShapeWorksStudioApp;</p>
+<h1 id="pragma-gcc-diagnostic-push">pragma GCC diagnostic push</h1>
+<h1 id="pragma-gcc-diagnostic-ignored-wattributes">pragma GCC diagnostic ignored "-Wattributes"</h1>
+<p>class MonaiLabelJob : public Job {
+  Q_OBJECT;</p>
+<p>public:
+  const static std::string MONAI_RESULT_EXTENSION;
+  const static std::string MONAI_RESULT_DTYPE;</p>
+<p>MonaiLabelJob(QSharedPointer<Session> session, const std::string&amp; server_url, const std::string&amp; client_id,
+                const std::string&amp; strategy, const std::string&amp; model_type);
+  ~MonaiLabelJob();
+  void setServer(const std::string&amp; server_url);
+  void setModelType(const std::string&amp; model_type);
+  inline const std::string&amp; getServer() { return server_url_; }
+  void setClientId(const std::string&amp; client_id = "");
+  inline const std::string&amp; getClientId() { return client_id_; };
+  void initializeClient();
+  inline std::shared_ptr<py::object> getClient() const { return monai_client_; };</p>
+<p>py::dict getInfo();
+  std::string getModelName(std::string modelType);
+  std::vector<std::string> getModelNames(const std::string&amp; model_type);
+  std::string getSessionId();
+  py::dict getParamsFromConfig(std::string section, std::string name);</p>
+<p>// MONAI Client callers
+  py::dict nextSample(std::string strategy, py::dict params);
+  py::tuple infer(std::string model, std::string image_in, py::dict params, std::string label_in, std::string file,
+                  std::string session_id);
+  py::dict saveLabel(std::string image_in, std::string label_in, py::dict params);
+  py::dict uploadImage(std::string image_in, std::string image_id);</p>
+<p>void updateShapes();</p>
+<p>void runSegmentationModel();
+  void run() override;
+  QString name() override;
+  void python_message(std::string str);
+  void setCurrentSampleNumber(int n);</p>
+<p>public Q_SLOTS:
+  void onUploadSampleClicked();     // Triggered when  upload Sample button is clicked
+  void onRunSegmentationClicked();  // Triggered when Run Segmentation is clicked
+  void onSubmitLabelClicked();      // Triggered when Submit Label is clicked</p>
+<p>Q_SIGNALS:
+  void triggerUpdateView();
+  void triggerClientInitialized(bool success);
+  void triggerUploadSampleCompleted();
+  void triggerSegmentationCompleted();
+  void triggerSubmitLabelCompleted();</p>
+<p>private:
+  std::string tmp_dir_;
+  std::string server_url_;
+  std::string client_id_;
+  // TODO: implement remote server session
+  //   std::string username_;
+  //   std::string password_;
+  //   std::string auth_token_;
+  std::string strategy_;
+  std::string model_type_ = "";
+  std::string model_name_ = "";
+  std::unordered_map<std::string, std::vector\<std::string>>
+      models_available_;  // TODO: add functionality to interchange between models from UI
+  std::shared_ptr<py::object> monai_client_;</p>
+<p>// QT states
+  bool waitingForUpload;
+  bool waitingForSegmentation;
+  bool waitingForLabelSubmission;</p>
+<p>// Current subjects
+  int sample_number_;
+  std::string currentSampleId_;
+  std::string currentSegmentationPath_;
+  std::vector<std::string> currentSegmentationPaths_;
+  std::vector<std::string> organNames_;</p>
+<p>QSharedPointer<Session> session_;
+  ProjectHandle project_;</p>
+<p>bool error_occurred_ = false;
+};</p>
+<h1 id="pragma-gcc-diagnostic-pop">pragma GCC diagnostic pop</h1>
+<p>}  // namespace monailabel
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

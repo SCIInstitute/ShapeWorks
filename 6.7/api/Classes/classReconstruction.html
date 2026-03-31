@@ -4411,205 +4411,205 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TTransformType</span><span class="w"> </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="p">,</span>
-<span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TInterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="p">,</span>
-<span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="w">  </span><span class="o">=</span><span class="kt">double</span><span class="p">,</span>
-<span class="k">typename</span><span class="w"> </span><span class="nc">PixelType</span><span class="w">  </span><span class="o">=</span><span class="kt">float</span><span class="p">,</span>
-<span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="w">  </span><span class="o">=</span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Reconstruction</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+template &lt;template&lt; typename TCoordRep, unsigned &gt; class TTransformType =itk::CompactlySupportedRBFSparseKernelTransform,
+template&lt; typename ImageType, typename TCoordRep &gt; class TInterpolatorType =itk::LinearInterpolateImageFunction,
+typename TCoordRep  =double,
+typename PixelType  =float,
+typename ImageType  =itk::Image&lt;PixelType, 3&gt;&gt;
+class Reconstruction;</code></p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-gradientfiltertype">typedef GradientFilterType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">GradientImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientFilterType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::GradientImageFilter&lt;ImageType, PixelType&gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::GradientFilterType;</code></p>
 <h3 id="typedef-gradientmagnitudefiltertype">typedef GradientMagnitudeFilterType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">GradientMagnitudeImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientMagnitudeFilterType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::GradientMagnitudeImageFilter&lt;ImageType, ImageType &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::GradientMagnitudeFilterType;</code></p>
 <h3 id="typedef-gradientimagetype">typedef GradientImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CovariantVector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientImageType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::Image&lt; itk::CovariantVector&lt; PixelType, 3 &gt;, 3 &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::GradientImageType;</code></p>
 <h3 id="typedef-gradientimageiteratortype">typedef GradientImageIteratorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="w"> </span><span class="n">GradientImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientImageIteratorType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::ImageRegionIterator&lt; GradientImageType &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::GradientImageIteratorType;</code></p>
 <h3 id="typedef-imageiteratortype">typedef ImageIteratorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageIteratorType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::ImageRegionIterator&lt; ImageType &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::ImageIteratorType;</code></p>
 <h3 id="typedef-writertype">typedef WriterType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageFileWriter</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">WriterType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::ImageFileWriter&lt; ImageType &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::WriterType;</code></p>
 <h3 id="typedef-itk2vtkconnectortype">typedef ITK2VTKConnectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageToVTKImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ITK2VTKConnectorType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::ImageToVTKImageFilter&lt;ImageType&gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::ITK2VTKConnectorType;</code></p>
 <h3 id="typedef-addimagefiltertype">typedef AddImageFilterType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">AddImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">AddImageFilterType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::AddImageFilter&lt;ImageType, ImageType &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::AddImageFilterType;</code></p>
 <h3 id="typedef-resamplefiltertype">typedef ResampleFilterType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ResampleImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ResampleFilterType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::ResampleImageFilter&lt;ImageType, ImageType &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::ResampleFilterType;</code></p>
 <h3 id="typedef-interpolatortype">typedef InterpolatorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InterpolatorType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef TInterpolatorType&lt; ImageType, TCoordRep &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::InterpolatorType;</code></p>
 <h3 id="typedef-multiplybyconstantimagefiltertype">typedef MultiplyByConstantImageFilterType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">MultiplyImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">MultiplyByConstantImageFilterType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::MultiplyImageFilter&lt;ImageType, ImageType, ImageType&gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::MultiplyByConstantImageFilterType;</code></p>
 <h3 id="typedef-duplicatortype">typedef DuplicatorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageDuplicator</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DuplicatorType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::ImageDuplicator&lt; ImageType &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::DuplicatorType;</code></p>
 <h3 id="typedef-transformtype">typedef TransformType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">TTransformType</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">TransformType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef TTransformType&lt; TCoordRep, 3 &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::TransformType;</code></p>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::Point&lt; TCoordRep, 3 &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::PointType;</code></p>
 <h3 id="typedef-pointarraytype">typedef PointArrayType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointArrayType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef std::vector&lt; PointType &gt; Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::PointArrayType;</code></p>
 <h3 id="typedef-pointsettype">typedef PointSetType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">TransformType</span><span class="o">::</span><span class="n">PointSetType</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef TransformType::PointSetType Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::PointSetType;</code></p>
 <h3 id="typedef-pointidtype">typedef PointIdType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointIdentifier</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TTransformType</span><span class="p">,</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointIdType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef PointSetType::PointIdentifier Reconstruction&lt; TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType &gt;::PointIdType;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-reconstruction">function Reconstruction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Reconstruction</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">out_prefix</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent</span><span class="w"> </span><span class="o">=</span><span class="mf">0.3f</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">angleThresh</span><span class="w"> </span><span class="o">=</span><span class="mf">45.0f</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">numClusters</span><span class="w"> </span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">fixWinding</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingBeforeDecimation</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingAfterDecimation</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">smoothingLambda</span><span class="w"> </span><span class="o">=</span><span class="mf">0.5f</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">smoothingIterations</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">usePairwiseNormalsDifferencesForGoodBad</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+Reconstruction(
+    std::string out_prefix ="",
+    float decimationPercent =0.3f,
+    double angleThresh =45.0f,
+    size_t numClusters =5,
+    bool fixWinding =true,
+    bool doLaplacianSmoothingBeforeDecimation =true,
+    bool doLaplacianSmoothingAfterDecimation =true,
+    float smoothingLambda =0.5f,
+    int smoothingIterations =1,
+    bool usePairwiseNormalsDifferencesForGoodBad =false
+)</code></p>
 <h3 id="function-reconstruction_1">function ~Reconstruction</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Reconstruction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+~Reconstruction()</code></p>
 <h3 id="function-getdensemean">function getDenseMean</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getDenseMean</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="w"> </span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(),</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="w"> </span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(),</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transform</span><span class="w"> </span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="p">()</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkPolyData &gt; getDenseMean(
+    std::vector&lt; PointArrayType &gt; local_pts =std::vector&lt; PointArrayType &gt;(),
+    std::vector&lt; PointArrayType &gt; global_pts =std::vector&lt; PointArrayType &gt;(),
+    std::vector&lt; std::string &gt; distance_transform =std::vector&lt; std::string &gt;()
+)</code></p>
 <h3 id="function-reset">function reset</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void reset()</code></p>
 <h3 id="function-setdecimation">function setDecimation</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setDecimation</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">dec</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setDecimation(
+    float dec
+)</code></p>
 <h3 id="function-setnumclusters">function setNumClusters</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setNumClusters</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setNumClusters(
+    int num
+)</code></p>
 <h3 id="function-setmaxangle">function setMaxAngle</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setMaxAngle</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">angleDegrees</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setMaxAngle(
+    double angleDegrees
+)</code></p>
 <h3 id="function-setfixwinding">function setFixWinding</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setFixWinding</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">fixWinding</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setFixWinding(
+    bool fixWinding
+)</code></p>
 <h3 id="function-setlaplaciansmoothingbeforedecimation">function setLaplacianSmoothingBeforeDecimation</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setLaplacianSmoothingBeforeDecimation</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingBeforeDecimation</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setLaplacianSmoothingBeforeDecimation(
+    bool doLaplacianSmoothingBeforeDecimation
+)</code></p>
 <h3 id="function-setlaplaciansmoothingafterdecimation">function setLaplacianSmoothingAfterDecimation</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setLaplacianSmoothingAfterDecimation</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingAfterDecimation</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setLaplacianSmoothingAfterDecimation(
+    bool doLaplacianSmoothingAfterDecimation
+)</code></p>
 <h3 id="function-setsmoothinglambda">function setSmoothingLambda</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setSmoothingLambda</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">smoothingLambda</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setSmoothingLambda(
+    float smoothingLambda
+)</code></p>
 <h3 id="function-setsmoothingiterations">function setSmoothingIterations</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setSmoothingIterations</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">smoothingIterations</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setSmoothingIterations(
+    int smoothingIterations
+)</code></p>
 <h3 id="function-setoutputenabled">function setOutputEnabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setOutputEnabled</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setOutputEnabled(
+    bool enabled
+)</code></p>
 <h3 id="function-setmeanbeforewarpenabled">function setMeanBeforeWarpEnabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setMeanBeforeWarpEnabled</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setMeanBeforeWarpEnabled(
+    bool enabled
+)</code></p>
 <p>Set if the mean DT before warp is enabled or not Disabling this allows <a href="classReconstruction.html">Reconstruction</a> to use DTs that are of different sizes and with different origins </p>
 <h3 id="function-getmesh">function getMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">PointArrayType</span><span class="w"> </span><span class="n">local_pts</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkPolyData &gt; getMesh(
+    PointArrayType local_pts
+)</code></p>
 <h3 id="function-readmeaninfo">function readMeanInfo</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">readMeanInfo</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">dense</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sparse</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">goodPoints</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void readMeanInfo(
+    std::string dense,
+    std::string sparse,
+    std::string goodPoints
+)</code></p>
 <h3 id="function-sparsedone">function sparseDone</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">sparseDone</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool sparseDone()</code></p>
 <h3 id="function-densedone">function denseDone</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">denseDone</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool denseDone()</code></p>
 <h3 id="function-writemeaninfo">function writeMeanInfo</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">writeMeanInfo</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">nameBase</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void writeMeanInfo(
+    std::string nameBase
+)</code></p>
 <h3 id="function-sparsemean">function SparseMean</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SparseMean</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline vtkSmartPointer&lt; vtkPoints &gt; SparseMean()</code></p>
 <h3 id="function-densemean">function DenseMean</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">DenseMean</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline vtkSmartPointer&lt; vtkPolyData &gt; DenseMean()</code></p>
 <h3 id="function-goodpoints">function GoodPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GoodPoints</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline std::vector&lt; bool &gt; GoodPoints()</code></p>
 <h3 id="function-outprefix">function OutPrefix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">OutPrefix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline std::string OutPrefix()</code></p>
 <h3 id="function-setoutprefix">function setOutPrefix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setOutPrefix</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">out_prefix</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void setOutPrefix(
+    std::string out_prefix
+)</code></p>
 <h3 id="function-computesparsemean">function computeSparseMean</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">computeSparseMean</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="p">,</span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TCoordRep</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">common_center</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">do_procrustes</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">do_procrustes_scaling</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; PointArrayType &gt; computeSparseMean(
+    std::vector&lt; PointArrayType &gt; local_pts,
+    itk::Point&lt; TCoordRep &gt; &amp; common_center,
+    bool do_procrustes =true,
+    bool do_procrustes_scaling =false
+)</code></p>
 <h3 id="function-setorigin">function setOrigin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setOrigin</span><span class="p">(</span>
-<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">origin</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void setOrigin(
+    typename ImageType::PointType origin
+)</code></p>
 <h3 id="function-enablepairwisenormalsdifferencesforgoodbad">function EnablePairwiseNormalsDifferencesForGoodBad</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">EnablePairwiseNormalsDifferencesForGoodBad</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void EnablePairwiseNormalsDifferencesForGoodBad()</code></p>
 <h3 id="function-disablepairwisenormalsdifferencesforgoodbad">function DisablePairwiseNormalsDifferencesForGoodBad</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DisablePairwiseNormalsDifferencesForGoodBad</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void DisablePairwiseNormalsDifferencesForGoodBad()</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

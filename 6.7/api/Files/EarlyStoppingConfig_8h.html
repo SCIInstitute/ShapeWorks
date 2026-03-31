@@ -3801,41 +3801,29 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">EarlyStoppingStrategy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">RelativeDifference</span><span class="p">,</span>
-<span class="w">  </span><span class="n">ExponentialMovingAverage</span>
-<span class="p">};</span>
-
-<span class="k">struct</span><span class="w"> </span><span class="nc">EarlyStoppingConfig</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">frequency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">window_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">EarlyStoppingStrategy</span><span class="w"> </span><span class="n">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EarlyStoppingStrategy</span><span class="o">::</span><span class="n">RelativeDifference</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">ema_alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.2</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">enable_logging</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">logger_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;early_stopping_log_stats&quot;</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">warmup_iters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <string></h1>
+<p>namespace shapeworks {</p>
+<p>enum class EarlyStoppingStrategy {
+  RelativeDifference,
+  ExponentialMovingAverage
+};</p>
+<p>struct EarlyStoppingConfig {
+  bool enabled = false;</p>
+<p>int frequency = 100;</p>
+<p>int window_size = 5;</p>
+<p>double threshold = 0.0001;</p>
+<p>EarlyStoppingStrategy strategy = EarlyStoppingStrategy::RelativeDifference;</p>
+<p>double ema_alpha = 0.2;</p>
+<p>bool enable_logging = false;</p>
+<p>std::string logger_name = "early_stopping_log_stats";</p>
+<p>int warmup_iters = 1000;
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

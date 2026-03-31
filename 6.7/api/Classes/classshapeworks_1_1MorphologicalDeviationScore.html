@@ -3860,34 +3860,34 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-morphologicaldeviationscore">function MorphologicalDeviationScore</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MorphologicalDeviationScore</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+MorphologicalDeviationScore()</code></p>
 <h3 id="function-setcontrolshapes">function SetControlShapes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">SetControlShapes</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool SetControlShapes(
+    const Eigen::MatrixXd &amp; X
+)</code></p>
 <h3 id="function-getmorphodevscore">function GetMorphoDevScore</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">GetMorphoDevScore</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+Eigen::VectorXd GetMorphoDevScore(
+    const Eigen::MatrixXd &amp; X
+)</code></p>
 <p>Get Mahalanobis-based deviation score for test samples (non-fixed shapes/domains) </p>
 <h3 id="function-getpcacoefficients">function GetPCACoefficients</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">GetPCACoefficients</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+Eigen::MatrixXd GetPCACoefficients(
+    const Eigen::MatrixXd &amp; X
+)</code></p>
 <h3 id="function-setretainedvarianceratio">function SetRetainedVarianceRatio</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRetainedVarianceRatio</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetRetainedVarianceRatio(
+    double ratio
+)</code></p>
 <h3 id="function-getretainedvarianceratio">function GetRetainedVarianceRatio</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRetainedVarianceRatio</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline double GetRetainedVarianceRatio() const</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

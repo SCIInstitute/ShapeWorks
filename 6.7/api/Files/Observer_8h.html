@@ -3805,66 +3805,55 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkCommand.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkWeakPointer.h&quot;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Observer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">DataObject</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">Observer</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstPointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstWeakPointer</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">Observer</span><span class="p">,</span><span class="w"> </span><span class="n">DataObject</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">DefinedCallbacksStruct</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">DefinedCallbacksStruct</span><span class="p">()</span>
-<span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">DomainAddEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
-<span class="w">          </span><span class="n">TransformSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
-<span class="w">          </span><span class="n">PrefixTransformSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
-<span class="w">          </span><span class="n">PositionSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
-<span class="w">          </span><span class="n">PositionAddEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
-<span class="w">          </span><span class="n">PositionRemoveEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">DomainAddEvent</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">TransformSetEvent</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PrefixTransformSetEvent</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionSetEvent</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionAddEvent</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionRemoveEvent</span><span class="p">;</span>
-<span class="w">  </span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">DefinedCallbacksStruct</span><span class="w"> </span><span class="n">m_DefinedCallbacks</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">DomainAddEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">TransformSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrefixTransformSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionAddEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionRemoveEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Observer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Observer</span><span class="p">(){};</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Observer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// purposely not implemented</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w">     </span><span class="c1">// purposely not implemented</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include-itkcommandh">include "itkCommand.h"</h1>
+<h1 id="include-itkdataobjecth">include "itkDataObject.h"</h1>
+<h1 id="include-itkweakpointerh">include "itkWeakPointer.h"</h1>
+<p>namespace shapeworks {</p>
+<p>class Observer : public itk::DataObject {
+ public:
+  typedef Observer Self;
+  typedef DataObject Superclass;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;</p>
+<p>itkNewMacro(Self);</p>
+<p>itkTypeMacro(Observer, DataObject);</p>
+<p>struct DefinedCallbacksStruct {
+    DefinedCallbacksStruct()
+        : DomainAddEvent(false),
+          TransformSetEvent(false),
+          PrefixTransformSetEvent(false),
+          PositionSetEvent(false),
+          PositionAddEvent(false),
+          PositionRemoveEvent(false) {}
+    bool DomainAddEvent;
+    bool TransformSetEvent;
+    bool PrefixTransformSetEvent;
+    bool PositionSetEvent;
+    bool PositionAddEvent;
+    bool PositionRemoveEvent;
+  };</p>
+<p>DefinedCallbacksStruct m_DefinedCallbacks;</p>
+<p>virtual void DomainAddEventCallback(Object<em>, const itk::EventObject&amp;) {}
+  virtual void TransformSetEventCallback(Object</em>, const itk::EventObject&amp;) {}
+  virtual void PrefixTransformSetEventCallback(Object<em>, const itk::EventObject&amp;) {}
+  virtual void PositionSetEventCallback(Object</em>, const itk::EventObject&amp;) {}
+  virtual void PositionAddEventCallback(Object<em>, const itk::EventObject&amp;) {}
+  virtual void PositionRemoveEventCallback(Object</em>, const itk::EventObject&amp;) {}</p>
+<p>protected:
+  Observer() {}
+  virtual ~Observer(){};</p>
+<p>void PrintSelf(std::ostream&amp; os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }</p>
+<p>private:
+  Observer(const Self&amp;);  // purposely not implemented
+  void operator=(const Self&amp;);     // purposely not implemented
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

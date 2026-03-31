@@ -3999,68 +3999,68 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-edgering">function EdgeRing</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">EdgeRing</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline EdgeRing()</code></p>
 <h3 id="function-edgering_1">function EdgeRing</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">EdgeRing</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeRing</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ring</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline EdgeRing(
+    const EdgeRing &amp; ring
+)</code></p>
 <h3 id="function-operator">function operator=</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeRing</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ring</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void operator=(
+    const EdgeRing &amp; ring
+)</code></p>
 <h3 id="function-empty">function empty</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">empty</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline bool empty()</code></p>
 <h3 id="function-add">function add</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">add</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nn</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void add(
+    int n,
+    const vec3d &amp; r,
+    const vec3d &amp; nn
+)</code></p>
 <h3 id="function-clear">function clear</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void clear()</code></p>
 <h3 id="function-size">function size</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline int size()</code></p>
 <h3 id="function-operator_1">function operator[]</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="k">operator</span><span class="p">[](</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline int operator[](
+    int i
+)</code></p>
 <h3 id="function-getleftear">function GetLeftEar</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetLeftEar</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n0</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span>
-<span class="w">    </span><span class="n">EdgeRing</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ear</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void GetLeftEar(
+    int n0,
+    int n1,
+    EdgeRing &amp; ear
+)</code></p>
 <h3 id="function-getrightear">function GetRightEar</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetRightEar</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n0</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span>
-<span class="w">    </span><span class="n">EdgeRing</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ear</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void GetRightEar(
+    int n0,
+    int n1,
+    EdgeRing &amp; ear
+)</code></p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-m_r">variable m_r</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_r</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+vector&lt; vec3d &gt; m_r;</code></p>
 <h3 id="variable-m_node">variable m_node</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_node</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+vector&lt; int &gt; m_node;</code></p>
 <h3 id="variable-m_winding">variable m_winding</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_winding</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+int m_winding;</code></p>
 <h3 id="variable-m_normal">variable m_normal</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_normal</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+vector&lt; vec3d &gt; m_normal;</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

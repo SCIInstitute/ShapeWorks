@@ -3801,254 +3801,211 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <cmath></h1>
+<h1 id="include_1">include <numeric></h1>
+<h1 id="include_2">include <vector></h1>
+<h1 id="include_3">include <vnl/vnl_diag_matrix.h></h1>
+<h1 id="include-libsoptimizematrixshapegradientmatrixh">include "Libs/Optimize/Matrix/ShapeGradientMatrix.h"</h1>
+<h1 id="include-libsoptimizematrixshapematrixh">include "Libs/Optimize/Matrix/ShapeMatrix.h"</h1>
+<h1 id="include-vectorfunctionh">include "VectorFunction.h"</h1>
+<p>namespace shapeworks {</p>
+<p>class CorrespondenceFunction : public VectorFunction {
+ public:
+  constexpr static int VDimension = 3;
+  constexpr static unsigned int Dimension = VDimension;</p>
+<p>typedef shapeworks::ShapeMatrix ShapeDataType;
+  typedef shapeworks::ShapeGradientMatrix ShapeGradientType;</p>
+<p>typedef ShapeDataType::DataType DataType;</p>
+<p>typedef VectorFunction::VectorType VectorType;
+  typedef ParticleSystem::PointType PointType;
+  typedef vnl_vector<DataType> vnl_vector_type;
+  typedef vnl_matrix<DataType> vnl_matrix_type;</p>
+<p>static std::shared_ptr<CorrespondenceFunction> New() {
+    return std::make_shared<CorrespondenceFunction>();
+  }</p>
+<p>void SetShapeData(ShapeDataType<em> s) { m_ShapeData = s; }
+  ShapeDataType</em> GetShapeData() { return m_ShapeData.GetPointer(); }
+  const ShapeDataType* GetShapeData() const { return m_ShapeData.GetPointer(); }</p>
+<p>void SetShapeGradient(ShapeGradientType<em> s) { m_ShapeGradient = s; }
+  ShapeGradientType</em> GetShapeGradient() { return m_ShapeGradient.GetPointer(); }
+  const ShapeGradientType* GetShapeGradient() const { return m_ShapeGradient.GetPointer(); }</p>
+<p>virtual VectorType evaluate(unsigned int, unsigned int, const ParticleSystem*, double&amp;, double&amp;) const;</p>
+<p>virtual VectorType evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double&amp; d) const {
+    double e;
+    return this-&gt;evaluate(a, b, c, d, e);
+  }</p>
+<p>virtual double energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
+    double e, d;
+    this-&gt;evaluate(a, b, c, d, e);
+    return e;
+  }</p>
+<p>virtual void before_iteration() { this-&gt;ComputeUpdates(this-&gt;particle_system_); }</p>
+<p>virtual void after_iteration() {
+    // Update the annealing parameter.
+    if (m_HoldMinimumVariance != true &amp;&amp; !m_UseMeanEnergy) {
+      m_Counter++;
+      if (m_Counter &gt;= m_RecomputeCovarianceInterval) {
+        m_Counter = 0;
+        m_MinimumVariance *= m_MinimumVarianceDecayConstant;
+      }
+    }
+  }
+  void SetMinimumVarianceDecay(double initial_value, double final_value, double time_period) {
+    m_MinimumVarianceDecayConstant = exp(log(final_value / initial_value) / time_period);
+    m_MinimumVariance = initial_value;
+    m_HoldMinimumVariance = false;
+  }</p>
+<p>void SetMinimumVariance(double d) { m_MinimumVariance = d; }
+  double GetMinimumVariance() const { return m_MinimumVariance; }</p>
+<p>bool GetHoldMinimumVariance() const { return m_HoldMinimumVariance; }
+  void SetHoldMinimumVariance(bool b) { m_HoldMinimumVariance = b; }</p>
+<p>void SetRecomputeCovarianceInterval(int i) { m_RecomputeCovarianceInterval = i; }
+  int GetRecomputeCovarianceInterval() const { return m_RecomputeCovarianceInterval; }</p>
+<p>void SetAttributeScales(const std::vector<double>&amp; s) { m_AttributeScales = s; }</p>
+<p>void SetDomainsPerShape(int i) { m_DomainsPerShape = i; }
+  int GetDomainsPerShape() const { return m_DomainsPerShape; }</p>
+<p>void SetAttributesPerDomain(const std::vector<int>&amp; i) { m_AttributesPerDomain = i; }</p>
+<p>void UseMeanenergy() { m_UseMeanEnergy = true; }
+  void UseEntropy() { m_UseMeanEnergy = false; }</p>
+<p>void SetXYZ(int i, bool val) {
+    if (m_UseXYZ.size() != m_DomainsPerShape) m_UseXYZ.resize(m_DomainsPerShape);
+    m_UseXYZ[i] = val;
+  }
+  void SetNormals(int i, bool val) {
+    if (m_UseNormals.size() != m_DomainsPerShape) m_UseNormals.resize(m_DomainsPerShape);
+    m_UseNormals[i] = val;
+  }</p>
+<p>void PrecomputeForFixedDomains(const ParticleSystem* ps);</p>
+<p>bool HasPrecomputedFixedDomains() const { return m_HasPrecomputedFixedDomains; }</p>
+<p>void ClearPrecomputedFixedDomains();</p>
+<p>void RequestPrecomputeForFixedDomains() { m_NeedsPrecomputation = true; }</p>
+<p>bool CheckForNans(vnl_matrix_type mat) {
+    bool flag = false;
+    for (int i = 0; i &lt; mat.rows(); i++) {
+      for (int j = 0; j &lt; mat.cols(); j++) {
+        if (std::isnan(mat(i, j))) {
+          flag = true;
+          break;
+        }
+      }
+    }
+    return flag;
+  }</p>
+<p>std::shared_ptr<VectorFunction> clone() override {
+    auto copy = CorrespondenceFunction::New();</p>
+<pre><code>// from itkParticleVectorFunction
+copy-&gt;domain_number_ = this-&gt;domain_number_;
+copy-&gt;particle_system_ = this-&gt;particle_system_;
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cmath&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;numeric&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+// local
+copy-&gt;m_AttributeScales = this-&gt;m_AttributeScales;
+copy-&gt;m_Counter = this-&gt;m_Counter;
+copy-&gt;m_CurrentEnergy = this-&gt;m_CurrentEnergy;
+copy-&gt;m_HoldMinimumVariance = this-&gt;m_HoldMinimumVariance;
+copy-&gt;m_MinimumEigenValue = this-&gt;m_MinimumEigenValue;
+copy-&gt;m_MinimumVariance = this-&gt;m_MinimumVariance;
+copy-&gt;m_MinimumVarianceDecayConstant = this-&gt;m_MinimumVarianceDecayConstant;
+copy-&gt;m_PointsUpdate = this-&gt;m_PointsUpdate;
+copy-&gt;m_RecomputeCovarianceInterval = this-&gt;m_RecomputeCovarianceInterval;
+copy-&gt;m_AttributesPerDomain = this-&gt;m_AttributesPerDomain;
+copy-&gt;m_DomainsPerShape = this-&gt;m_DomainsPerShape;
+copy-&gt;m_UseMeanEnergy = this-&gt;m_UseMeanEnergy;
+copy-&gt;m_points_mean = this-&gt;m_points_mean;
+copy-&gt;m_UseNormals = this-&gt;m_UseNormals;
+copy-&gt;m_UseXYZ = this-&gt;m_UseXYZ;
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_diag_matrix.h&gt;</span>
+copy-&gt;m_ShapeData = this-&gt;m_ShapeData;
+copy-&gt;m_ShapeGradient = this-&gt;m_ShapeGradient;
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/ShapeGradientMatrix.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/ShapeMatrix.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;VectorFunction.h&quot;</span>
+// Copy fixed shape space members
+copy-&gt;m_NeedsPrecomputation = this-&gt;m_NeedsPrecomputation;
+copy-&gt;m_HasPrecomputedFixedDomains = this-&gt;m_HasPrecomputedFixedDomains;
+copy-&gt;m_PrecomputedNumFixedSamples = this-&gt;m_PrecomputedNumFixedSamples;
+copy-&gt;m_PrecomputedNumDims = this-&gt;m_PrecomputedNumDims;
+copy-&gt;m_FixedY = this-&gt;m_FixedY;
+copy-&gt;m_FixedMean = this-&gt;m_FixedMean;
+copy-&gt;m_FixedPinvMat = this-&gt;m_FixedPinvMat;
+copy-&gt;m_FixedGradientBasis = this-&gt;m_FixedGradientBasis;
+copy-&gt;m_FixedU = this-&gt;m_FixedU;
+copy-&gt;m_FixedW = this-&gt;m_FixedW;
+copy-&gt;m_FixedDomainIndices = this-&gt;m_FixedDomainIndices;
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">CorrespondenceFunction</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
-<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VDimension</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeMatrix</span><span class="w"> </span><span class="n">ShapeDataType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeGradientMatrix</span><span class="w"> </span><span class="n">ShapeGradientType</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ShapeDataType</span><span class="o">::</span><span class="n">DataType</span><span class="w"> </span><span class="n">DataType</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_vector_type</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">CorrespondenceFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">CorrespondenceFunction</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetShapeData</span><span class="p">(</span><span class="n">ShapeDataType</span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_ShapeData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="n">ShapeDataType</span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ShapeData</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ShapeDataType</span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeData</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ShapeData</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetShapeGradient</span><span class="p">(</span><span class="n">ShapeGradientType</span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_ShapeGradient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="n">ShapeGradientType</span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeGradient</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ShapeGradient</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ShapeGradientType</span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeGradient</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ShapeGradient</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluate</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">;</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluate</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">before_iteration</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ComputeUpdates</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">particle_system_</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">after_iteration</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Update the annealing parameter.</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_HoldMinimumVariance</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">m_UseMeanEnergy</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_Counter</span><span class="o">++</span><span class="p">;</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">m_RecomputeCovarianceInterval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">m_Counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">        </span><span class="n">m_MinimumVariance</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">m_MinimumVarianceDecayConstant</span><span class="p">;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMinimumVarianceDecay</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">initial_value</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">final_value</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">time_period</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_MinimumVarianceDecayConstant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="n">final_value</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">initial_value</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">time_period</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_MinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">initial_value</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_HoldMinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMinimumVariance</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_MinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetMinimumVariance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_MinimumVariance</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetHoldMinimumVariance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_HoldMinimumVariance</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetHoldMinimumVariance</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_HoldMinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetRecomputeCovarianceInterval</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_RecomputeCovarianceInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetRecomputeCovarianceInterval</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_RecomputeCovarianceInterval</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAttributeScales</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_AttributeScales</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetDomainsPerShape</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAttributesPerDomain</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_AttributesPerDomain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UseMeanenergy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_UseMeanEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UseEntropy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_UseMeanEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetXYZ</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_UseXYZ</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">)</span><span class="w"> </span><span class="n">m_UseXYZ</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">m_DomainsPerShape</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_UseXYZ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNormals</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_UseNormals</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">)</span><span class="w"> </span><span class="n">m_UseNormals</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">m_DomainsPerShape</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_UseNormals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrecomputeForFixedDomains</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasPrecomputedFixedDomains</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_HasPrecomputedFixedDomains</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ClearPrecomputedFixedDomains</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RequestPrecomputeForFixedDomains</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_NeedsPrecomputation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">CheckForNans</span><span class="p">(</span><span class="n">vnl_matrix_type</span><span class="w"> </span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">isnan</span><span class="p">(</span><span class="n">mat</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">          </span><span class="k">break</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">flag</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">VectorFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clone</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CorrespondenceFunction</span><span class="o">::</span><span class="n">New</span><span class="p">();</span>
-
-<span class="w">    </span><span class="c1">// from itkParticleVectorFunction</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">domain_number_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">domain_number_</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">particle_system_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">particle_system_</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// local</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_AttributeScales</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AttributeScales</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Counter</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_CurrentEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_CurrentEnergy</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_HoldMinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_HoldMinimumVariance</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_MinimumEigenValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_MinimumEigenValue</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_MinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_MinimumVariance</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_MinimumVarianceDecayConstant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_MinimumVarianceDecayConstant</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_PointsUpdate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_PointsUpdate</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_RecomputeCovarianceInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_RecomputeCovarianceInterval</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_AttributesPerDomain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AttributesPerDomain</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_UseMeanEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_UseMeanEnergy</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_points_mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_points_mean</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_UseNormals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_UseNormals</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_UseXYZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_UseXYZ</span><span class="p">;</span>
-
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_ShapeData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ShapeData</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_ShapeGradient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ShapeGradient</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// Copy fixed shape space members</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_NeedsPrecomputation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_NeedsPrecomputation</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_HasPrecomputedFixedDomains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_HasPrecomputedFixedDomains</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_PrecomputedNumFixedSamples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_PrecomputedNumFixedSamples</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_PrecomputedNumDims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_PrecomputedNumDims</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedY</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedMean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedMean</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedPinvMat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedPinvMat</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedGradientBasis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedGradientBasis</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedU</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedU</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedW</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FixedDomainIndices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedDomainIndices</span><span class="p">;</span>
-
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">copy</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">CorrespondenceFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);</span>
-<span class="w">    </span><span class="n">m_HoldMinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_MinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0e-5</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_MinimumEigenValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_MinimumVarianceDecayConstant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w">  </span><span class="c1">// log(2.0) / 50000.0;</span>
-<span class="w">    </span><span class="n">m_RecomputeCovarianceInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_Counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_UseMeanEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_UseNormals</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
-<span class="w">    </span><span class="n">m_UseXYZ</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
-<span class="w">    </span><span class="n">num_dims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">num_samples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_PointsUpdate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_points_mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="o">~</span><span class="n">CorrespondenceFunction</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="n">CorrespondenceFunction</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CorrespondenceFunction</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
-<span class="w">  </span><span class="n">CorrespondenceFunction</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CorrespondenceFunction</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeDataType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeData</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeGradientType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeGradient</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeUpdates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_PointsUpdate</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_MinimumVariance</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_MinimumEigenValue</span><span class="p">;</span>
-<span class="w">  </span><span class="c1">//  double m_MinimumVarianceBase;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_HoldMinimumVariance</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_RecomputeCovarianceInterval</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_MinimumVarianceDecayConstant</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_AttributeScales</span><span class="p">;</span><span class="w">  </span><span class="c1">// size \sum_i n_i</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_AttributesPerDomain</span><span class="p">;</span><span class="w">  </span><span class="c1">// n</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_CurrentEnergy</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_UseMeanEnergy</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_UseXYZ</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_UseNormals</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_points_mean</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_dims</span><span class="p">,</span><span class="w"> </span><span class="n">num_samples</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// ============================================================================</span>
-<span class="w">  </span><span class="c1">// Fixed Shape Space / Fixed Domain Precomputation</span>
-<span class="w">  </span><span class="c1">// ============================================================================</span>
-<span class="w">  </span><span class="c1">// When most domains are fixed and only a few are being optimized,</span>
-<span class="w">  </span><span class="c1">// we can precompute the shape space (mean, pinvMat, gradient basis) from the fixed domains</span>
-<span class="w">  </span><span class="c1">// and reuse it, avoiding expensive recomputation each iteration.</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_NeedsPrecomputation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_HasPrecomputedFixedDomains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Number of fixed and total samples when precomputation was done</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_PrecomputedNumFixedSamples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_PrecomputedNumDims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Precomputed from fixed domains:</span>
-<span class="w">  </span><span class="c1">// μ_fixed: mean of fixed shapes (dM × 1)</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedMean</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Y_fixed: centered fixed shape data (dM × N_fixed)</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedY</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// pinvMat_fixed: (Y_fixed^T Y_fixed + αI)^{-1}, size (N_fixed × N_fixed)</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedPinvMat</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Precomputed gradient basis: Y_fixed × pinvMat_fixed (dM × N_fixed)</span>
-<span class="w">  </span><span class="c1">// This allows computing gradients for new shapes as linear combinations</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedGradientBasis</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// SVD components from fixed shapes (for potential reuse)</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_matrix_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedU</span><span class="p">;</span><span class="w">       </span><span class="c1">// U matrix from SVD (N_fixed × N_fixed)</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">vnl_diag_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_FixedW</span><span class="p">;</span><span class="w">  </span><span class="c1">// Singular values</span>
-
-<span class="w">  </span><span class="c1">// Which domains are fixed (indices into the particle system)</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FixedDomainIndices</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+return copy;
+</code></pre>
+<p>}</p>
+<p>CorrespondenceFunction() {
+    // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
+    m_HoldMinimumVariance = true;
+    m_MinimumVariance = 1.0e-5;
+    m_MinimumEigenValue = 0.0;
+    m_MinimumVarianceDecayConstant = 1.0;  // log(2.0) / 50000.0;
+    m_RecomputeCovarianceInterval = 1;
+    m_Counter = 0;
+    m_UseMeanEnergy = true;
+    m_UseNormals.clear();
+    m_UseXYZ.clear();
+    num_dims = 0;
+    num_samples = 0;
+    m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
+    m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
+  }
+  ~CorrespondenceFunction() override = default;</p>
+<p>protected:
+  CorrespondenceFunction(const CorrespondenceFunction&amp;) = delete;
+  CorrespondenceFunction&amp; operator=(const CorrespondenceFunction&amp;) = delete;</p>
+<p>typename ShapeDataType::Pointer m_ShapeData;
+  typename ShapeGradientType::Pointer m_ShapeGradient;</p>
+<p>virtual void ComputeUpdates(const ParticleSystem* c);
+  std::shared_ptr<vnl_matrix_type> m_PointsUpdate;</p>
+<p>double m_MinimumVariance;
+  double m_MinimumEigenValue;
+  //  double m_MinimumVarianceBase;
+  bool m_HoldMinimumVariance;
+  int m_RecomputeCovarianceInterval;
+  double m_MinimumVarianceDecayConstant;
+  int m_Counter;
+  std::vector<double> m_AttributeScales;  // size \sum_i n_i
+  int m_DomainsPerShape;
+  std::vector<int> m_AttributesPerDomain;  // n
+  double m_CurrentEnergy;
+  bool m_UseMeanEnergy;
+  std::vector<bool> m_UseXYZ;
+  std::vector<bool> m_UseNormals;
+  std::shared_ptr<vnl_matrix_type> m_points_mean;
+  int num_dims, num_samples;</p>
+<p>// ============================================================================
+  // Fixed Shape Space / Fixed Domain Precomputation
+  // ============================================================================
+  // When most domains are fixed and only a few are being optimized,
+  // we can precompute the shape space (mean, pinvMat, gradient basis) from the fixed domains
+  // and reuse it, avoiding expensive recomputation each iteration.</p>
+<p>bool m_NeedsPrecomputation = false;
+  bool m_HasPrecomputedFixedDomains = false;</p>
+<p>// Number of fixed and total samples when precomputation was done
+  int m_PrecomputedNumFixedSamples = 0;
+  int m_PrecomputedNumDims = 0;</p>
+<p>// Precomputed from fixed domains:
+  // μ_fixed: mean of fixed shapes (dM × 1)
+  std::shared_ptr<vnl_matrix_type> m_FixedMean;</p>
+<p>// Y_fixed: centered fixed shape data (dM × N_fixed)
+  std::shared_ptr<vnl_matrix_type> m_FixedY;</p>
+<p>// pinvMat_fixed: (Y_fixed^T Y_fixed + αI)^{-1}, size (N_fixed × N_fixed)
+  std::shared_ptr<vnl_matrix_type> m_FixedPinvMat;</p>
+<p>// Precomputed gradient basis: Y_fixed × pinvMat_fixed (dM × N_fixed)
+  // This allows computing gradients for new shapes as linear combinations
+  std::shared_ptr<vnl_matrix_type> m_FixedGradientBasis;</p>
+<p>// SVD components from fixed shapes (for potential reuse)
+  std::shared_ptr<vnl_matrix_type> m_FixedU;       // U matrix from SVD (N_fixed × N_fixed)
+  std::shared_ptr<vnl_diag_matrix\<double>> m_FixedW;  // Singular values</p>
+<p>// Which domains are fixed (indices into the particle system)
+  std::vector<int> m_FixedDomainIndices;
+};
+}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

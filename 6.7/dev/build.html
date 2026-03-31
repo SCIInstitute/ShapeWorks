@@ -4382,22 +4382,19 @@
 </ul>
 <h2 id="clone-source">Clone source</h2>
 <p>To clone the ShapeWorks source:<br />
-<div class="highlight"><pre><span></span><code>$ git clone https://github.com/SCIInstitute/ShapeWorks
-</code></pre></div>
+<code>$ git clone https://github.com/SCIInstitute/ShapeWorks</code>
 See <a href="contribute.html">How to Contribute?</a> for more details on git commands.  </p>
 <h2 id="install-dependencies">Install dependencies</h2>
 <h3 id="linux-and-mac">Linux and Mac</h3>
 <h4 id="anaconda">Anaconda</h4>
 <p>We use Anaconda (conda) to install many dependencies required for both building and running ShapeWorks. Conda [sub]environments do not affect a machine's global setup in any way, do not require sudo to install, and are only available at the user level when activated.</p>
 <p>To install conda and the dependencies it provides (currently requires either bash or zsh shell), run:
-<div class="highlight"><pre><span></span><code>$ source install_shapeworks.sh [environment name]`  
-</code></pre></div>
+<code>$ source install_shapeworks.sh [environment name]`</code>
 <strong>Note:</strong> By default this creates an environment named <strong>shapeworks</strong>, but you can specify a different name and it's okay to have multiple environments.  </p>
 <p>ShapeWorks uses <em><a href="https://github.com/git-lfs/git-lfs/">git-lfs</a></em> to store image data for testing.  If git-lfs was not already installed before cloning ShapeWorks, please use the following commands to get this data:<br />
-<div class="highlight"><pre><span></span><code>$ git lfs fetch
+<code>$ git lfs fetch
 $ git lfs install
-$ git lfs checkout
-</code></pre></div></p>
+$ git lfs checkout</code></p>
 <div class="admonition danger">
 <p class="admonition-title">Activate shapeworks environment</p>
 <p>Each time you build or use <a href="../tools/ShapeWorksCommands.html">ShapeWorks from the command line</a>, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
@@ -4408,17 +4405,15 @@ $ git lfs checkout
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><strong>If you get an error</strong> that looks like this:<br />
-<div class="highlight"><pre><span></span><code>which: no qmake in (...) 
+<code>which: no qmake in (...) 
 For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path.
-Download Qt5 from: https://download.qt.io/archive/qt/
-</code></pre></div></p>
+Download Qt5 from: https://download.qt.io/archive/qt/</code></p>
 <p>Make sure you added Qt to your path as explained in the Qt5 installation step.  </p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><strong>OpenSUSE Users: If you get an error</strong> that looks like this:<br />
-<div class="highlight"><pre><span></span><code>Could NOT find OpenGL (missing: OPENGL_opengl_LIBRARY OPENGL_glx_LIBRARY OPENGL_INCLUDE_DIR)
-</code></pre></div></p>
+<code>Could NOT find OpenGL (missing: OPENGL_opengl_LIBRARY OPENGL_glx_LIBRARY OPENGL_INCLUDE_DIR)</code></p>
 <p>Make sure the following are installed: Mesa-devel, freeglut-devel, libX11-devel  </p>
 </div>
 <div class="admonition important">
@@ -4452,31 +4447,27 @@ Make sure you added Qt to your path as explained in the Qt5 installation step.</
 <h2 id="configure-and-build">Configure and Build</h2>
 <h3 id="linux-mac">Linux &amp; Mac</h3>
 <p>Make a build directory and use cmake to configure your build:<br />
-<div class="highlight"><pre><span></span><code>mkdir build
+<code>mkdir build
 cd build
-cmake &lt;options&gt; ..
-</code></pre></div>
+cmake &lt;options&gt; ..</code>
 There is a CMake GUI to see and change any of the options:
 - On OSX/Linux, you can use the GUI by running <code>ccmake</code> instead of <code>cmake</code>.  </p>
 <h4 id="options">Options</h4>
 <p>If you used the <code>build_dependencies.sh</code> script above, the prefix for all dependencies is the same.
 Otherwise, the specific paths to all the dependencies are all required.</p>
 <p>Required (if you used build_dependencies.sh):<br />
-<div class="highlight"><pre><span></span><code>  -DCMAKE_PREFIX_PATH=&lt;dependencies install path&gt;
-</code></pre></div></p>
+<code>-DCMAKE_PREFIX_PATH=&lt;dependencies install path&gt;</code></p>
 <p>Required (otherwise):<br />
-<div class="highlight"><pre><span></span><code>  -DVTK_DIR=&lt;vtk cmake path&gt;           (contains VTKConfig.cmake)
+<code>-DVTK_DIR=&lt;vtk cmake path&gt;           (contains VTKConfig.cmake)
   -DITK_DIR=&lt;itk cmake path&gt;           (contains ITKConfig.cmake)
   -DEigen3_DIR=&lt;eigen3 cmake path&gt;     (contains Eigen3Config.cmake)
   -DOpenVDB_DIR=&lt;openvdb cmake path&gt;   (contains FindOpenVDB.cmake)
-  ... and so on for each dependency ...
-</code></pre></div></p>
+  ... and so on for each dependency ...</code></p>
 <p>Optional:
-<div class="highlight"><pre><span></span><code>  -G&lt;generator&gt;                       default: Unix Makefiles (ex: -GXCode or -G&quot;Visual Studio 16 2019&quot; -Ax64)  
+<code>-G&lt;generator&gt;                       default: Unix Makefiles (ex: -GXCode or -G"Visual Studio 16 2019" -Ax64)  
   -DBuild_Studio=[OFF|ON]             default: OFF
   -DCMAKE_INSTALL_PREFIX=&lt;path&gt;       default: ./install
-  -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release (only required is default generator is used)
-</code></pre></div></p>
+  -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release (only required is default generator is used)</code></p>
 <p>See <strong>Examples</strong> below for common values of the variables.</p>
 <h4 id="building">Building</h4>
 <ul>
@@ -4489,40 +4480,39 @@ Otherwise, the specific paths to all the dependencies are all required.</p>
 </ul>
 <h4 id="before-running-examplespython-scripts-and-examplespythonnotebooks">Before running Examples/Python scripts and Examples/Python/notebooks</h4>
 <p>Developer environment should be set by using the <code>devenv.sh</code> script by running this:</p>
-<div class="highlight"><pre><span></span><code>$ source devenv.sh [build_directory]
-</code></pre></div>
+<p><code>$ source devenv.sh [build_directory]</code></p>
 <h4 id="examples">Examples</h4>
 <p><em>OSX</em> example that builds dependencies separately, then generates an XCode project for ShapeWorks:  </p>
-<div class="highlight"><pre><span></span><code>$ ./build_dependencies.sh
+<p><code>$ ./build_dependencies.sh
 mkdir build
 cd build
-cmake -DCMAKE_PREFIX_PATH=&quot;${PWD}/../dependencies/install&quot; -DBuild_Studio:BOOL=ON -Wno-dev -Wno-deprecated -GXcode ..
-open ShapeWorks.xcodeproj
-</code></pre></div>
+cmake -DCMAKE_PREFIX_PATH="${PWD}/../dependencies/install" -DBuild_Studio:BOOL=ON -Wno-dev -Wno-deprecated -GXcode ..
+open ShapeWorks.xcodeproj</code></p>
 <h3 id="windows_2">Windows</h3>
 <p>Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system (e.g., Visual Studio 16 2019). Like with all the other platforms, after running <code>build_dependencies.sh</code> a suggested cmake command is printed. Create a build directory and use it.  </p>
 <h4 id="examples_1">Examples</h4>
 <p>An example that builds dependencies separately then generates a Visual Studio project for ShapeWorks (note that by default a Visual Studio project will be created):<br />
-<div class="highlight"><pre><span></span><code>&gt; conda activate shapeworks
-&gt; ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
-&gt; mkdir build
-&gt; cd build
-&gt; cmake -G&quot;Visual Studio 16 2019&quot; -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Studio:BOOL=ON ..
-</code></pre></div></p>
+```</p>
+<blockquote>
+<p>conda activate shapeworks
+./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
+mkdir build
+cd build
+cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Studio:BOOL=ON ..
+```</p>
+</blockquote>
 <h4 id="options_1">Options</h4>
 <p>Required:<br />
-<div class="highlight"><pre><span></span><code>  -DCMAKE_PREFIX_PATH=&lt;qt cmake path&gt;  (This is different from qmake path in the Install Qt5 step
+<code>-DCMAKE_PREFIX_PATH=&lt;qt cmake path&gt;  (This is different from qmake path in the Install Qt5 step
   -DVTK_DIR=&lt;vtk cmake path&gt;           (contains VTKConfig.cmake)
   -DITK_DIR=&lt;itk cmake path&gt;           (contains ITKConfig.cmake)
   -DEigen3_DIR=&lt;eigen cmake path&gt;      (contains Eigen3Config.cmake)
   -DOpenVDB_DIR=&lt;openvdb cmake path&gt;   (contains FindOpenVDB.cmake)
-  ... and so on for each dependency ...
-</code></pre></div>
+  ... and so on for each dependency ...</code>
 Optional:
-<div class="highlight"><pre><span></span><code>  -D BUILD_TESTS=[OFF|ON]              default: ON
+<code>-D BUILD_TESTS=[OFF|ON]              default: ON
   -D CMAKE_INSTALL_PREFIX=&lt;path&gt;       default: ./install
-  -D CMAKE_BUILD_TYPE=[Debug|Release]  
-</code></pre></div></p>
+  -D CMAKE_BUILD_TYPE=[Debug|Release]</code></p>
 <p>After cmake the Visual Studio solution can be opened with <code>start ShapeWorks.sln</code> from the build directory.</p>
 <div class="admonition important">
 <p class="admonition-title">RelWithDebInfo only</p>
@@ -4551,30 +4541,32 @@ Optional:
 </table>
 <p>Both can be enabled simultaneously.</p>
 <h3 id="example">Example</h3>
-<div class="highlight"><pre><span></span><code><span class="nv">SW_TIME_PROFILE</span><span class="o">=</span>on<span class="w"> </span><span class="nv">SW_TIME_TRACE</span><span class="o">=</span>on<span class="w"> </span>shapeworks<span class="w"> </span>optimize<span class="w"> </span>--name<span class="w"> </span>project.swproj
-</code></pre></div>
+<p><code>bash
+SW_TIME_PROFILE=on SW_TIME_TRACE=on shapeworks optimize --name project.swproj</code></p>
 <p>After the run completes, <code>profile.txt</code> will contain a flat profile like:</p>
-<div class="highlight"><pre><span></span><code>   %Time   Exclusive    Inclusive   #Calls  #Child   Exclusive    Inclusive Name
-                 total ms    total ms                     ms/call    ms/call
-------------------------------------------------------------------------------------------------------
-    95.2        8523        12041      128       0          67          94 Optimize::RunOptimize
-    ...
-</code></pre></div>
+<p>```
+   %Time   Exclusive    Inclusive   #Calls  #Child   Exclusive    Inclusive Name
+                 total ms    total ms                     ms/call    ms/call</p>
+<hr />
+<pre><code>95.2        8523        12041      128       0          67          94 Optimize::RunOptimize
+...
+</code></pre>
+<p>```</p>
 <p>And <code>trace.json</code> can be loaded in a trace viewer for a timeline of all timed scopes.</p>
 <h3 id="adding-instrumentation">Adding Instrumentation</h3>
 <p>Use the macros from <code>Profiling.h</code> to instrument code:</p>
-<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Profiling.h&gt;</span>
-
-<span class="kt">void</span><span class="w"> </span><span class="nf">MyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">TIME_SCOPE</span><span class="p">(</span><span class="s">&quot;MyFunction&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// automatically times the enclosing scope</span>
-<span class="w">    </span><span class="c1">// ... work ...</span>
-<span class="p">}</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="include">include <Profiling.h></h1>
+<p>void MyFunction() {
+    TIME_SCOPE("MyFunction");  // automatically times the enclosing scope
+    // ... work ...
+}
+```</p>
 <p>Or for manual start/stop:</p>
-<div class="highlight"><pre><span></span><code><span class="n">TIME_START</span><span class="p">(</span><span class="s">&quot;loading meshes&quot;</span><span class="p">);</span>
-<span class="c1">// ... work ...</span>
-<span class="n">TIME_STOP</span><span class="p">(</span><span class="s">&quot;loading meshes&quot;</span><span class="p">);</span>
-</code></pre></div>
+<p><code>cpp
+TIME_START("loading meshes");
+// ... work ...
+TIME_STOP("loading meshes");</code></p>
 
 
 

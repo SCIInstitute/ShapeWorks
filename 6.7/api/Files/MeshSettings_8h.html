@@ -3828,37 +3828,28 @@
 </table>
 <h2 id="types-documentation">Types Documentation</h2>
 <h3 id="typedef-meshsettingshandle">typedef MeshSettingsHandle</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshSettings</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">MeshSettingsHandle</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef QSharedPointer&lt; MeshSettings &gt; MeshSettingsHandle;</code></p>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector.h&gt;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">MeshSettings</span><span class="p">;</span>
-<span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshSettings</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">MeshSettingsHandle</span><span class="p">;</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">MeshSettings</span>
-<span class="p">{</span>
-
-<span class="k">public</span><span class="o">:</span>
-
-<span class="w">  </span><span class="n">MeshSettings</span><span class="p">();</span>
-
-<span class="w">  </span><span class="o">~</span><span class="n">MeshSettings</span><span class="p">();</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <QString></h1>
+<h1 id="include_1">include <QSharedPointer></h1>
+<h1 id="include_2">include <vtkPolyData.h></h1>
+<h1 id="include_3">include <vtkSmartPointer.h></h1>
+<h1 id="include_4">include <vnl/vnl_vector.h></h1>
+<p>class MeshSettings;
+typedef QSharedPointer&lt; MeshSettings &gt; MeshSettingsHandle;</p>
+<p>class MeshSettings
+{</p>
+<p>public:</p>
+<p>MeshSettings();</p>
+<p>~MeshSettings();</p>
+<p>private:
+};
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

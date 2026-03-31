@@ -977,15 +977,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#model-evaluation-in-studio" class="md-nav__link">
-    <span class="md-ellipsis">
-      Model Evaluation in Studio
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3818,15 +3809,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#model-evaluation-in-studio" class="md-nav__link">
-    <span class="md-ellipsis">
-      Model Evaluation in Studio
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3874,18 +3856,18 @@
 <p>A good shape model should balance the trade-off between three requirements, namely specificity, generalization, and compactness. In particular, a shape model needs to generate samples that are plausible (i.e., respect the population statistics). It also needs to generate samples beyond the training data (i.e., generalizable) while describing the population with few parameters (i.e., compact).</p>
 </div>
 <h2 id="shapeworks-commands">ShapeWorks Commands</h2>
-<div class="highlight"><pre><span></span><code>shapeworks readparticlesystem --name *.particles -- compactness    --nmodes 1
+<p><code>shapeworks readparticlesystem --name *.particles -- compactness    --nmodes 1
 shapeworks readparticlesystem --name *.particles -- generalization --nmodes 1
-shapeworks readparticlesystem --name *.particles -- specificity    --nmodes 1
-</code></pre></div>
+shapeworks readparticlesystem --name *.particles -- specificity    --nmodes 1</code></p>
 <h2 id="shapeworks-python-tools">ShapeWorks Python tools</h2>
-<p><div class="highlight"><pre><span></span><code><span class="c1"># Read the particle files from a pre-trained shape model</span>
-<span class="n">particle_data</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ParticleSystem</span><span class="p">(</span><span class="o">&lt;</span><span class="nb">list</span> <span class="n">of</span> <span class="n">local</span> <span class="n">point</span> <span class="n">files</span><span class="o">&gt;</span><span class="p">)</span>
-<span class="c1">#evaluation tools</span>
-<span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeCompactness</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="s2">&quot;scree.txt&quot;</span><span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">compute_generalization</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeSpecificity</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
-</code></pre></div>
+<p>```python</p>
+<h1 id="read-the-particle-files-from-a-pre-trained-shape-model">Read the particle files from a pre-trained shape model</h1>
+<p>particle_data = sw.ParticleSystem(<list of local point files>)</p>
+<h1 id="evaluation-tools">evaluation tools</h1>
+<p>shapeworks.ShapeEvaluation.ComputeCompactness(particleSystem=particle_data, nModes=1, saveTo="scree.txt")
+shapeworks.ShapeEvaluation.compute_generalization(particleSystem=particle_data, nModes=1, saveTo=save_dir)
+shapeworks.ShapeEvaluation.ComputeSpecificity(particleSystem=particle_data, nModes=1, saveTo=save_dir)
+```
 Details about the evaluation functions can be found <a href="http://sciinstitute.github.io/ShapeWorks/latest/api/Classes/classshapeworks_1_1ShapeEvaluation.html#function-shapeevaluation">in the API Reference</a></p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_ShellDemo.mp4" autoplay muted loop controls style="width:100%"></p>
 

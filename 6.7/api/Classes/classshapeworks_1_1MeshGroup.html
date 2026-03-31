@@ -3896,46 +3896,46 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeshGroup</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+class shapeworks::MeshGroup;</code></p>
 <p>Representation of a group of meshes. </p>
 <p>The <a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a> class encapsulates a group of meshes (e.g. from a single subject) A subject will have one mesh for each anatomy/domain </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-meshgroup">function MeshGroup</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+MeshGroup()</code></p>
 <h3 id="function-meshgroup_1">function MeshGroup</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">num_meshes</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+MeshGroup(
+    unsigned long num_meshes
+)</code></p>
 <h3 id="function-meshgroup_2">function ~MeshGroup</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshGroup</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+~MeshGroup()</code></p>
 <h3 id="function-set_number_of_meshes">function set_number_of_meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_number_of_meshes</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_number_of_meshes(
+    int n
+)</code></p>
 <h3 id="function-valid">function valid</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">valid</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool valid()</code></p>
 <h3 id="function-set_mesh">function set_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
-<span class="w">    </span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_mesh(
+    int i,
+    MeshHandle mesh
+)</code></p>
 <h3 id="function-meshes">function meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshList</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+MeshList &amp; meshes()</code></p>
 <p>Return a reference to the list of meshes. </p>
 <h3 id="function-get_combined_poly_data">function get_combined_poly_data</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_combined_poly_data</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkPolyData &gt; get_combined_poly_data()</code></p>
 <p>Return polydata of all meshes, combined. </p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

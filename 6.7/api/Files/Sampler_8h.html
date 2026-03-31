@@ -3809,346 +3809,243 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Logging.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Mesh/Mesh.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;CorrespondenceMode.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;GradientDescentOptimizer.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Container/GenericContainerArray.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Container/MeanCurvatureContainer.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/Surface.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/CorrespondenceFunction.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/SamplingFunction.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/DisentangledCorrespondenceFunction.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/DualVectorFunction.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/LegacyCorrespondenceFunction.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Neighborhood/ParticleNeighborhood.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_matrix_fixed.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;EarlyStoppingConfig.h&quot;</span>
-
-<span class="c1">// Uncomment to visualize FFCs with scalar and vector fields</span>
-<span class="c1">// #define VIZFFC</span>
-
-<span class="cp">#if defined(VIZFFC)</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshUtils.h&quot;</span>
-<span class="cp">#endif</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Sampler</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">float</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">OptimizerType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GradientDescentOptimizer</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">CuttingPlaneType</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
-<span class="w">  </span><span class="p">};</span>
-
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">SphereType</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">center</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">;</span>
-<span class="w">  </span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">Sampler</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Sampler</span><span class="p">(){};</span>
-
-<span class="w">  </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="nf">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="nf">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SamplingFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetCurvatureGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_SamplingFunction</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">OptimizerType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetOptimizer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Optimizer</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">OptimizerType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetOptimizer</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Optimizer</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPointsFile</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_PointsFiles</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_PointsFiles</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="n">m_PointsFiles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPointsFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SetPointsFile</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialPoints</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">initial_points</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">initial_points_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">initial_points</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">AddImage</span><span class="p">(</span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ApplyConstraintsToZeroCrossing</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">UpdateZeroCrossingPoint</span><span class="p">();</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Surface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Surface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">surface</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Surface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">geodesics_surface</span><span class="p">,</span>
-<span class="w">               </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sw_mesh</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">surface_area</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddContour</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFieldAttributes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetDomainsPerShape</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_DomainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_LinearRegressionShapeMatrix</span><span class="o">-&gt;</span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_MixedEffectsShapeMatrix</span><span class="o">-&gt;</span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_LegacyShapeMatrix</span><span class="o">-&gt;</span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_CorrespondenceFunction</span><span class="o">-&gt;</span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_GeneralShapeMatrix</span><span class="o">-&gt;</span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_GeneralShapeGradMatrix</span><span class="o">-&gt;</span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCuttingPlane</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">va</span><span class="p">,</span>
-<span class="w">                       </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vc</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddFreeFormConstraint</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">FreeFormConstraint</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ffc</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">TransformCuttingPlanes</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddSphere</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAdaptivityMode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">set_function_a</span><span class="p">(</span><span class="n">GetCurvatureGradientFunction</span><span class="p">());</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCorrespondenceOn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">set_b_on</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCorrespondenceOff</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">set_b_off</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingOn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">set_a_on</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingOff</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">set_a_off</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetCorrespondenceOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">get_b_on</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetSamplingOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">get_a_on</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCorrespondenceMode</span><span class="p">(</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RegisterGeneralShapeMatrices</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ParticleSystem</span><span class="o">-&gt;</span><span class="n">RegisterObserver</span><span class="p">(</span><span class="n">m_GeneralShapeMatrix</span><span class="p">);</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ParticleSystem</span><span class="o">-&gt;</span><span class="n">RegisterObserver</span><span class="p">(</span><span class="n">m_GeneralShapeGradMatrix</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAttributeScales</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_CorrespondenceFunction</span><span class="o">-&gt;</span><span class="n">SetAttributeScales</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_GeneralShapeMatrix</span><span class="o">-&gt;</span><span class="n">SetAttributeScales</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_GeneralShapeGradMatrix</span><span class="o">-&gt;</span><span class="n">SetAttributeScales</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetXYZ</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_CorrespondenceFunction</span><span class="o">-&gt;</span><span class="n">SetXYZ</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_GeneralShapeMatrix</span><span class="o">-&gt;</span><span class="n">SetXYZ</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_GeneralShapeGradMatrix</span><span class="o">-&gt;</span><span class="n">SetXYZ</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNormals</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_CorrespondenceFunction</span><span class="o">-&gt;</span><span class="n">SetNormals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_GeneralShapeMatrix</span><span class="o">-&gt;</span><span class="n">SetNormals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_GeneralShapeGradMatrix</span><span class="o">-&gt;</span><span class="n">SetNormals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAttributesPerDomain</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">LegacyShapeMatrix</span><span class="o">*</span><span class="w"> </span><span class="nf">GetShapeMatrix</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_LegacyShapeMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">ShapeMatrix</span><span class="o">*</span><span class="w"> </span><span class="nf">GetGeneralShapeMatrix</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_GeneralShapeMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="n">ShapeGradientMatrix</span><span class="o">*</span><span class="w"> </span><span class="nf">GetGeneralShapeGradientMatrix</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_GeneralShapeGradMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">DualVectorFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetLinkingFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetDisentangledEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleRegressionEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleMixedEffectsEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleMixedEffectsEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">CorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetMeshBasedGeneralEntropyGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_CorrespondenceFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetLinkingFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetDisentangledEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleRegressionEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleMixedEffectsEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleMixedEffectsEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">CorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetMeshBasedGeneralEntropyGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_CorrespondenceFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTimeptsPerIndividual</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_MixedEffectsShapeMatrix</span><span class="o">-&gt;</span><span class="n">SetTimeptsPerIndividual</span><span class="p">(</span><span class="n">n</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="nf">GetCorrespondenceMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_CorrespondenceMode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTransformFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_TransformFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTransformFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_TransformFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetPrefixTransformFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_PrefixTransformFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetPrefixTransformFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_PrefixTransformFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetPairwisePotentialType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">pairwise_potential_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pairwise_potential_type</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetPairwisePotentialType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetVerbosity</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_verbosity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_Optimizer</span><span class="o">-&gt;</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetVerbosity</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_IsSharedBoundaryEnabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryWeight</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SharedBoundaryWeight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weight</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingScale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SamplingScale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingAutoScale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">auto_scale</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SamplingAutoScale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">auto_scale</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingScaleValue</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scale_value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SamplingScaleValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scale_value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetEarlyStoppingConfig</span><span class="p">(</span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">config</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">early_stopping_config_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadTransforms</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadPointsFiles</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AllocateDataCaches</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AllocateDomainsAndNeighborhoods</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">InitializeOptimizationFunctions</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize_initial_positions</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Initialize</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initializing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">Execute</span><span class="p">();</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initializing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReInitialize</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Execute</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">CuttingPlaneList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;&gt;&gt;</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">CuttingPlaneList</span><span class="w"> </span><span class="nf">ComputeCuttingPlanes</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">ComputePlaneNormal</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
-<span class="w">                                     </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FreeFormConstraint</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetFFCs</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FFCs</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFFCMode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_meshFFCMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetInitialized</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initialized</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialized</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initialized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetInitializing</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initializing</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitializing</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Initializing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_Initialized</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_Initializing</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">OptimizerType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Optimizer</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SamplingFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_SamplingFunction</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Sigma1Cache</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">m_CorrespondenceMode</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LegacyCorrespondenceFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LegacyCorrespondenceFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_EnsembleRegressionEntropyFunction</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LegacyCorrespondenceFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_EnsembleMixedEffectsEntropyFunction</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">CorrespondenceFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_CorrespondenceFunction</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">LegacyShapeMatrix</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_LegacyShapeMatrix</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">LinearRegressionShapeMatrix</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_LinearRegressionShapeMatrix</span><span class="p">;</span>
-<span class="w">  </span><span class="n">MixedEffectsShapeMatrix</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MixedEffectsShapeMatrix</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeMatrix</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GeneralShapeMatrix</span><span class="p">;</span>
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeGradientMatrix</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GeneralShapeGradMatrix</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">initialize_ffcs</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">dom</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Sampler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Sampler</span><span class="o">&amp;</span><span class="p">);</span><span class="w">         </span><span class="c1">// purposely not implemented</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Sampler</span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// purposely not implemented</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_PointsFiles</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_AttributesPerDomain</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_IsSharedBoundaryEnabled</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SharedBoundaryWeight</span><span class="p">{</span><span class="mf">0.5</span><span class="p">};</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_SamplingScale</span><span class="p">{</span><span class="nb">true</span><span class="p">};</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_SamplingAutoScale</span><span class="p">{</span><span class="nb">true</span><span class="p">};</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SamplingScaleValue</span><span class="p">{</span><span class="mf">1.0</span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_TransformFile</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_PrefixTransformFile</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">CuttingPlaneType</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_CuttingPlanes</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SphereType</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_Spheres</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FreeFormConstraint</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FFCs</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_meshes</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_meshFFCMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fieldAttributes_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">initial_points_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">early_stopping_config_</span><span class="p">;</span><span class="w"> </span><span class="c1">// config for early stopping</span>
-
-<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Logging.h></h1>
+<h1 id="include_1">include <Mesh/Mesh.h></h1>
+<h1 id="include-correspondencemodeh">include "CorrespondenceMode.h"</h1>
+<h1 id="include-gradientdescentoptimizerh">include "GradientDescentOptimizer.h"</h1>
+<h1 id="include-libsoptimizecontainergenericcontainerarrayh">include "Libs/Optimize/Container/GenericContainerArray.h"</h1>
+<h1 id="include-libsoptimizecontainermeancurvaturecontainerh">include "Libs/Optimize/Container/MeanCurvatureContainer.h"</h1>
+<h1 id="include-libsoptimizedomainsurfaceh">include "Libs/Optimize/Domain/Surface.h"</h1>
+<h1 id="include-libsoptimizefunctioncorrespondencefunctionh">include "Libs/Optimize/Function/CorrespondenceFunction.h"</h1>
+<h1 id="include-libsoptimizefunctionsamplingfunctionh">include "Libs/Optimize/Function/SamplingFunction.h"</h1>
+<h1 id="include-libsoptimizefunctiondisentangledcorrespondencefunctionh">include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"</h1>
+<h1 id="include-libsoptimizefunctiondualvectorfunctionh">include "Libs/Optimize/Function/DualVectorFunction.h"</h1>
+<h1 id="include-libsoptimizefunctionlegacycorrespondencefunctionh">include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"</h1>
+<h1 id="include-libsoptimizematrixlinearregressionshapematrixh">include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"</h1>
+<h1 id="include-libsoptimizematrixmixedeffectsshapematrixh">include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"</h1>
+<h1 id="include-libsoptimizeneighborhoodparticleneighborhoodh">include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"</h1>
+<h1 id="include-particlesystemh">include "ParticleSystem.h"</h1>
+<h1 id="include-vnlvnl_matrix_fixedh">include "vnl/vnl_matrix_fixed.h"</h1>
+<h1 id="include-earlystoppingconfigh">include "EarlyStoppingConfig.h"</h1>
+<p>// Uncomment to visualize FFCs with scalar and vector fields
+// #define VIZFFC</p>
+<h1 id="if-definedvizffc">if defined(VIZFFC)</h1>
+<h1 id="include-meshutilsh">include "MeshUtils.h"</h1>
+<h1 id="endif">endif</h1>
+<p>namespace shapeworks {</p>
+<p>class Sampler {
+ public:
+  using PixelType = float;
+  static constexpr unsigned int Dimension = 3;</p>
+<p>using ImageType = itk::Image<PixelType, Dimension>;
+  using PointType = ImageType::PointType;</p>
+<p>using MeanCurvatureCacheType = MeanCurvatureContainer<PixelType, Dimension>;
+  using TransformType = vnl_matrix_fixed<double, Dimension + 1, Dimension + 1>;
+  using OptimizerType = GradientDescentOptimizer;</p>
+<p>struct CuttingPlaneType {
+    vnl_vector_fixed<double, 3> a;
+    vnl_vector_fixed<double, 3> b;
+    vnl_vector_fixed<double, 3> c;
+  };</p>
+<p>struct SphereType {
+    vnl_vector_fixed<double, Dimension> center;
+    double radius;
+  };</p>
+<p>Sampler();</p>
+<p>virtual ~Sampler(){};</p>
+<p>ParticleSystem<em> GetParticleSystem() { return m_ParticleSystem; }
+  const ParticleSystem</em> GetParticleSystem() const { return m_ParticleSystem.GetPointer(); }</p>
+<p>std::shared_ptr<SamplingFunction> GetCurvatureGradientFunction() { return m_SamplingFunction; }</p>
+<p>std::shared_ptr<OptimizerType> GetOptimizer() { return m_Optimizer; }
+  std::shared_ptr<const OptimizerType> GetOptimizer() const { return m_Optimizer; }</p>
+<p>void SetPointsFile(unsigned int i, const std::string&amp; s) {
+    if (m_PointsFiles.size() &lt; i + 1) {
+      m_PointsFiles.resize(i + 1);
+    }
+    m_PointsFiles[i] = s;
+  }</p>
+<p>void SetPointsFile(const std::string&amp; s) { this-&gt;SetPointsFile(0, s); }</p>
+<p>void SetInitialPoints(std::vector<std::vector\<itk::Point\<double>>> initial_points) {
+    initial_points_ = initial_points;
+  }</p>
+<p>void AddImage(ImageType::Pointer image, double narrow_band, std::string name = "");</p>
+<p>void ApplyConstraintsToZeroCrossing() {
+    for (size_t i = 0; i &lt; m_DomainList.size(); i++) {
+      this-&gt;m_DomainList[i]-&gt;UpdateZeroCrossingPoint();
+    }
+  }</p>
+<p>void AddMesh(std::shared_ptr<shapeworks::Surface> mesh, double geodesic_remesh_percent = 100);
+  void AddMesh(std::shared_ptr<Surface> surface, std::shared_ptr<Surface> geodesics_surface,
+               std::shared_ptr<Mesh> sw_mesh, double surface_area);</p>
+<p>void AddContour(vtkSmartPointer<vtkPolyData> poly_data);</p>
+<p>void SetFieldAttributes(const std::vector<std::string>&amp; s);</p>
+<p>void SetDomainsPerShape(int n) {
+    m_DomainsPerShape = n;
+    m_LinearRegressionShapeMatrix-&gt;SetDomainsPerShape(n);
+    m_MixedEffectsShapeMatrix-&gt;SetDomainsPerShape(n);
+    m_LegacyShapeMatrix-&gt;SetDomainsPerShape(n);
+    m_CorrespondenceFunction-&gt;SetDomainsPerShape(n);
+    m_GeneralShapeMatrix-&gt;SetDomainsPerShape(n);
+    m_GeneralShapeGradMatrix-&gt;SetDomainsPerShape(n);
+  }</p>
+<p>void SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dimension>&amp; va,
+                       const vnl_vector_fixed<double, Dimension>&amp; vb, const vnl_vector_fixed<double, Dimension>&amp; vc);
+  void AddFreeFormConstraint(int domain, const FreeFormConstraint&amp; ffc);</p>
+<p>void TransformCuttingPlanes(unsigned int i);</p>
+<p>void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>&amp; c, double r);</p>
+<p>void SetAdaptivityMode() { m_LinkingFunction-&gt;set_function_a(GetCurvatureGradientFunction()); }</p>
+<p>void SetCorrespondenceOn() { m_LinkingFunction-&gt;set_b_on(); }</p>
+<p>void SetCorrespondenceOff() { m_LinkingFunction-&gt;set_b_off(); }</p>
+<p>void SetSamplingOn() { m_LinkingFunction-&gt;set_a_on(); }</p>
+<p>void SetSamplingOff() { m_LinkingFunction-&gt;set_a_off(); }</p>
+<p>bool GetCorrespondenceOn() const { return m_LinkingFunction-&gt;get_b_on(); }</p>
+<p>bool GetSamplingOn() const { return m_LinkingFunction-&gt;get_a_on(); }</p>
+<p>void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode);</p>
+<p>void RegisterGeneralShapeMatrices() {
+    this-&gt;m_ParticleSystem-&gt;RegisterObserver(m_GeneralShapeMatrix);
+    this-&gt;m_ParticleSystem-&gt;RegisterObserver(m_GeneralShapeGradMatrix);
+  }</p>
+<p>void SetAttributeScales(const std::vector<double>&amp; s) {
+    m_CorrespondenceFunction-&gt;SetAttributeScales(s);
+    m_GeneralShapeMatrix-&gt;SetAttributeScales(s);
+    m_GeneralShapeGradMatrix-&gt;SetAttributeScales(s);
+  }</p>
+<p>void SetXYZ(unsigned int i, bool flag) {
+    m_CorrespondenceFunction-&gt;SetXYZ(i, flag);
+    m_GeneralShapeMatrix-&gt;SetXYZ(i, flag);
+    m_GeneralShapeGradMatrix-&gt;SetXYZ(i, flag);
+  }</p>
+<p>void SetNormals(int i, bool flag) {
+    m_CorrespondenceFunction-&gt;SetNormals(i, flag);
+    m_GeneralShapeMatrix-&gt;SetNormals(i, flag);
+    m_GeneralShapeGradMatrix-&gt;SetNormals(i, flag);
+  }</p>
+<p>void SetAttributesPerDomain(const std::vector<int> s);</p>
+<p>LegacyShapeMatrix* GetShapeMatrix() { return m_LegacyShapeMatrix.GetPointer(); }</p>
+<p>ShapeMatrix<em> GetGeneralShapeMatrix() { return m_GeneralShapeMatrix.GetPointer(); }
+  ShapeGradientMatrix</em> GetGeneralShapeGradientMatrix() { return m_GeneralShapeGradMatrix.GetPointer(); }</p>
+<p>DualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.get(); }</p>
+<p>LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.get(); }</p>
+<p>DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() {
+    return m_DisentangledEnsembleEntropyFunction.get();
+  }</p>
+<p>LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() {
+    return m_EnsembleRegressionEntropyFunction.get();
+  }</p>
+<p>LegacyCorrespondenceFunction* GetEnsembleMixedEffectsEntropyFunction() {
+    return m_EnsembleMixedEffectsEntropyFunction.get();
+  }</p>
+<p>CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() { return m_CorrespondenceFunction.get(); }</p>
+<p>const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.get(); }</p>
+<p>const LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() const {
+    return m_EnsembleEntropyFunction.get();
+  }</p>
+<p>const DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() const {
+    return m_DisentangledEnsembleEntropyFunction.get();
+  }</p>
+<p>const LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() const {
+    return m_EnsembleRegressionEntropyFunction.get();
+  }</p>
+<p>const LegacyCorrespondenceFunction* GetEnsembleMixedEffectsEntropyFunction() const {
+    return m_EnsembleMixedEffectsEntropyFunction.get();
+  }</p>
+<p>const CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() const {
+    return m_CorrespondenceFunction.get();
+  }</p>
+<p>void SetTimeptsPerIndividual(int n) { m_MixedEffectsShapeMatrix-&gt;SetTimeptsPerIndividual(n); }</p>
+<p>shapeworks::CorrespondenceMode GetCorrespondenceMode() const { return m_CorrespondenceMode; }</p>
+<p>void SetTransformFile(const std::string&amp; s) { m_TransformFile = s; }</p>
+<p>void SetTransformFile(const char* s) { m_TransformFile = std::string(s); }</p>
+<p>void SetPrefixTransformFile(const std::string&amp; s) { m_PrefixTransformFile = s; }</p>
+<p>void SetPrefixTransformFile(const char* s) { m_PrefixTransformFile = std::string(s); }</p>
+<p>void SetPairwisePotentialType(int pairwise_potential_type) { m_pairwise_potential_type = pairwise_potential_type; }</p>
+<p>int GetPairwisePotentialType() { return m_pairwise_potential_type; }</p>
+<p>void SetVerbosity(unsigned int val) {
+    m_verbosity = val;
+    m_Optimizer-&gt;set_verbosity(val);
+  }</p>
+<p>unsigned int GetVerbosity() { return m_verbosity; }</p>
+<p>void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
+  void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }</p>
+<p>void SetSamplingScale(bool enabled) { m_SamplingScale = enabled; }
+  void SetSamplingAutoScale(bool auto_scale) { m_SamplingAutoScale = auto_scale; }
+  void SetSamplingScaleValue(double scale_value) { m_SamplingScaleValue = scale_value; }</p>
+<p>void SetEarlyStoppingConfig(EarlyStoppingConfig config) { early_stopping_config_ = config; }</p>
+<p>void ReadTransforms();
+  void ReadPointsFiles();
+  void AllocateDataCaches();
+  void AllocateDomainsAndNeighborhoods();
+  void InitializeOptimizationFunctions();</p>
+<p>void initialize_initial_positions();</p>
+<p>void Initialize() {
+    this-&gt;m_Initializing = true;
+    this-&gt;Execute();
+    this-&gt;m_Initializing = false;
+  }</p>
+<p>void ReInitialize();</p>
+<p>void Execute();</p>
+<p>using CuttingPlaneList = std::vector<std::vector\<std::pair\<Eigen::Vector3d, Eigen::Vector3d>>>;</p>
+<p>CuttingPlaneList ComputeCuttingPlanes();</p>
+<p>Eigen::Vector3d ComputePlaneNormal(const vnl_vector<double>&amp; a, const vnl_vector<double>&amp; b,
+                                     const vnl_vector<double>&amp; c);</p>
+<p>std::vector<FreeFormConstraint> GetFFCs() { return m_FFCs; }</p>
+<p>void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }</p>
+<p>private:
+  bool GetInitialized() { return this-&gt;m_Initialized; }</p>
+<p>void SetInitialized(bool value) { this-&gt;m_Initialized = value; }</p>
+<p>bool GetInitializing() { return this-&gt;m_Initializing; }</p>
+<p>void SetInitializing(bool value) { this-&gt;m_Initializing = value; }</p>
+<p>bool m_Initialized{false};
+  bool m_Initializing{false};</p>
+<p>std::shared_ptr<OptimizerType> m_Optimizer;</p>
+<p>std::shared_ptr<SamplingFunction> m_SamplingFunction;</p>
+<p>GenericContainerArray<double>::Pointer m_Sigma1Cache;</p>
+<p>ParticleSystem::Pointer m_ParticleSystem;</p>
+<p>std::vector<ParticleDomain::Pointer> m_DomainList;</p>
+<p>int m_pairwise_potential_type;</p>
+<p>shapeworks::CorrespondenceMode m_CorrespondenceMode;</p>
+<p>std::shared_ptr<DualVectorFunction> m_LinkingFunction;</p>
+<p>std::shared_ptr<LegacyCorrespondenceFunction> m_EnsembleEntropyFunction;
+  std::shared_ptr<LegacyCorrespondenceFunction> m_EnsembleRegressionEntropyFunction;
+  std::shared_ptr<LegacyCorrespondenceFunction> m_EnsembleMixedEffectsEntropyFunction;
+  std::shared_ptr<DisentangledCorrespondenceFunction> m_DisentangledEnsembleEntropyFunction;
+  std::shared_ptr<CorrespondenceFunction> m_CorrespondenceFunction;</p>
+<p>LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;</p>
+<p>LinearRegressionShapeMatrix::Pointer m_LinearRegressionShapeMatrix;
+  MixedEffectsShapeMatrix::Pointer m_MixedEffectsShapeMatrix;</p>
+<p>shapeworks::ShapeMatrix::Pointer m_GeneralShapeMatrix;
+  shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;</p>
+<p>bool initialize_ffcs(size_t dom);</p>
+<p>private:
+  Sampler(const Sampler&amp;);         // purposely not implemented
+  void operator=(const Sampler&amp;);  // purposely not implemented</p>
+<p>std::vector<std::string> m_PointsFiles;
+  std::vector<int> m_AttributesPerDomain;
+  int m_DomainsPerShape;
+  double m_Spacing{0};
+  bool m_IsSharedBoundaryEnabled;
+  double m_SharedBoundaryWeight{0.5};</p>
+<p>bool m_SamplingScale{true};
+  bool m_SamplingAutoScale{true};
+  double m_SamplingScaleValue{1.0};</p>
+<p>std::string m_TransformFile;
+  std::string m_PrefixTransformFile;
+  std::vector<std::vector\<CuttingPlaneType>> m_CuttingPlanes;
+  std::vector<std::vector\<SphereType>> m_Spheres;
+  std::vector<FreeFormConstraint> m_FFCs;
+  std::vector<vtkSmartPointer\<vtkPolyData>> m_meshes;
+  bool m_meshFFCMode = false;</p>
+<p>std::vector<std::string> fieldAttributes_;</p>
+<p>std::vector<std::vector\<itk::Point\<double>>> initial_points_;</p>
+<p>EarlyStoppingConfig early_stopping_config_; // config for early stopping</p>
+<p>unsigned int m_verbosity;
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

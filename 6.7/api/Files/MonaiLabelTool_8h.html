@@ -3804,99 +3804,85 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/ShapeWorksStudioApp.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ShapeWorksMONAI/MonaiLabelJob.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Ui_MonaiLabelTool</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">QLabel</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">QTableWidget</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">QLineEdit</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Preferences</span><span class="p">;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-<span class="k">namespace</span><span class="w"> </span><span class="nn">monailabel</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">MonaiLabelJob</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeWorksStudioApp</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MonaiLabelTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_MODE_SEGMENTATION</span><span class="p">;</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_MODE_DEEPGROW</span><span class="p">;</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_MODE_DEEPEDIT</span><span class="p">;</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_SAMPLE_STRATEGY_RANDOM</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">MonaiLabelTool</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
-<span class="w">  </span><span class="o">~</span><span class="n">MonaiLabelTool</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_app</span><span class="p">(</span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">app</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_active</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">loadParamsFromUi</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">runSegmentationTool</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resizeEvent</span><span class="p">(</span><span class="n">QResizeEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">getCurrentSampleNumber</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">enable_actions</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">activate</span><span class="p">();</span>
-
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">handle_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">onConnectServer</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">onServerAddressChanged</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">onModelTypeChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">triggerUpdateView</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handleSampleNumberChanged</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handleClientInitialized</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">success</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handleUploadSampleCompleted</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handleSegmentationCompleted</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handleSubmitLabelCompleted</span><span class="p">();</span>
-
-<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">sampleChanged</span><span class="p">();</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_connect_button</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">Ui_MonaiLabelTool</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">app_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">tool_is_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">MonaiLabelJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">monai_label_job_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">server_address_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">model_type_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">strategy_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">client_id_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">samples_processed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace monailabel</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Data/Preferences.h></h1>
+<h1 id="include_1">include <Data/Session.h></h1>
+<h1 id="include_2">include <Interface/ShapeWorksStudioApp.h></h1>
+<h1 id="include_3">include <Project.h></h1>
+<h1 id="include_4">include <Shape.h></h1>
+<h1 id="include_5">include <ShapeWorksMONAI/MonaiLabelJob.h></h1>
+<h1 id="include_6">include <QElapsedTimer></h1>
+<h1 id="include_7">include <QObject></h1>
+<h1 id="include_8">include <QSharedPointer></h1>
+<h1 id="include_9">include <QWidget></h1>
+<p>class Ui_MonaiLabelTool;
+class QLabel;
+class QTableWidget;
+class QLineEdit;
+class Preferences;</p>
+<p>namespace shapeworks {
+class ShapeWorksStudioApp;
+class Session;
+}  // namespace shapeworks
+namespace monailabel {</p>
+<p>class MonaiLabelJob;
+using shapeworks::Session;
+using shapeworks::ShapeWorksStudioApp;
+class MonaiLabelTool : public QWidget {
+  Q_OBJECT;</p>
+<p>public:
+  const static std::string MONAI_MODE_SEGMENTATION;
+  const static std::string MONAI_MODE_DEEPGROW;
+  const static std::string MONAI_MODE_DEEPEDIT;
+  const static std::string MONAI_SAMPLE_STRATEGY_RANDOM;</p>
+<p>MonaiLabelTool(Preferences&amp; prefs);
+  ~MonaiLabelTool();</p>
+<p>void set_session(QSharedPointer<Session> session);
+  void set_app(ShapeWorksStudioApp<em> app);
+  bool is_active();
+  void loadParamsFromUi();
+  void shutdown();
+  void runSegmentationTool();
+  void resizeEvent(QResizeEvent</em> event) override;
+  int getCurrentSampleNumber();
+  void enable_actions();
+  void activate();</p>
+<p>public Q_SLOTS:
+  void handle_error(QString msg);
+  void onConnectServer();
+  void onServerAddressChanged();
+  void onModelTypeChanged(int index);
+  void triggerUpdateView();
+  void handle_progress(int val, QString message);
+  void handleSampleNumberChanged();
+  void handleClientInitialized(bool success);
+  void handleUploadSampleCompleted();
+  void handleSegmentationCompleted();
+  void handleSubmitLabelCompleted();</p>
+<p>Q_SIGNALS:
+  void update_view();
+  void progress(int);
+  void sampleChanged();</p>
+<p>private:</p>
+<p>void set_connect_button();</p>
+<p>Preferences&amp; preferences_;
+  Ui_MonaiLabelTool<em> ui_;
+  QSharedPointer<Session> session_;
+  ShapeWorksStudioApp</em> app_;
+  bool tool_is_running_ = false;
+  QSharedPointer<MonaiLabelJob> monai_label_job_;
+  QElapsedTimer timer_;</p>
+<p>std::string server_address_;
+  std::string model_type_;
+  std::string strategy_;
+  std::string client_id_;
+  int samples_processed_ = 0;
+};</p>
+<p>}  // namespace monailabel
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

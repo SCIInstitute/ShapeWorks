@@ -3779,34 +3779,31 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <vector></h1>
+<p>using namespace std;</p>
+<h1 id="include-femeshh">include "FEMesh.h"</h1>
+<p>class FENodeElementList
+{
+public:
+    FENodeElementList(FEMesh* pm);
+    ~FENodeElementList();</p>
+<pre><code>void Build();
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;FEMesh.h&quot;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">FENodeElementList</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">    </span><span class="n">FENodeElementList</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
-<span class="w">    </span><span class="o">~</span><span class="n">FENodeElementList</span><span class="p">();</span>
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Build</span><span class="p">();</span>
-
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Valence</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_val</span><span class="p">[</span><span class="n">n</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="n">FEElement</span><span class="o">*</span><span class="w"> </span><span class="nf">Element</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_pelem</span><span class="p">[</span><span class="n">m_off</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">j</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">protected</span><span class="o">:</span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">m_pm</span><span class="p">;</span>
-
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_val</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_off</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FEElement</span><span class="o">*&gt;</span><span class="w">  </span><span class="n">m_pelem</span><span class="p">;</span>
-<span class="p">};</span>
-</code></pre></div>
+int Valence(int n) { return m_val[n]; }
+FEElement* Element(int n, int j) { return m_pelem[m_off[n] + j]; }
+</code></pre>
+<p>protected:
+    FEMesh* m_pm;</p>
+<pre><code>vector&lt;int&gt; m_val;
+vector&lt;int&gt; m_off;
+vector&lt;FEElement*&gt;  m_pelem;
+</code></pre>
+<p>};
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

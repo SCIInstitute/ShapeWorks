@@ -3792,66 +3792,51 @@
 <p>Surface <a href="../Classes/classReconstruction.html">Reconstruction</a> Layer. </p>
 <p>The <a href="../Classes/classSurfaceReconstructor.html">SurfaceReconstructor</a> wraps the surface reconstruction method </p>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Core&gt;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructorPrivate</span><span class="p">;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructor</span><span class="w"> </span><span class="p">{</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-
-<span class="w">  </span><span class="n">SurfaceReconstructor</span><span class="p">();</span>
-<span class="w">  </span><span class="o">~</span><span class="n">SurfaceReconstructor</span><span class="p">();</span>
-
-<span class="w">  </span><span class="c1">//**********************************************//</span>
-<span class="w">  </span><span class="c1">//************Imported From Studio *************//</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initializeReconstruction</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="p">,</span>
-<span class="w">                                </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="p">,</span>
-<span class="w">                                </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transforms</span><span class="p">,</span>
-<span class="w">                                </span><span class="kt">double</span><span class="w"> </span><span class="n">maxAngle</span><span class="p">,</span>
-<span class="w">                                </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent</span><span class="p">,</span>
-<span class="w">                                </span><span class="kt">int</span><span class="w"> </span><span class="n">numClusters</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">hasDenseMean</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMean</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparseMean</span><span class="p">,</span>
-<span class="w">               </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">denseMean</span><span class="p">,</span>
-<span class="w">               </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">goodPoints</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">writeMeanInfo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">baseName</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">readMeanInfo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">dense</span><span class="p">,</span>
-<span class="w">                    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sparse</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">goodPoints</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resetReconstruct</span><span class="p">();</span>
-<span class="w">  </span><span class="c1">//**********************************************//</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_number_of_clusters</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_clusters</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_normal_angle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_decimation_percent</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">decimation</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_surface_reconstruction_available</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">build_mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">SurfaceReconstructorPrivate</span><span class="o">&gt;</span><span class="w"> </span><span class="n">private_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_reconstruction_available_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_clusters_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">decimation_percent_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.3f</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">normal_angle_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">45.0f</span><span class="p">;</span>
-<span class="p">};</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <vector></h1>
+<h1 id="include_1">include <string></h1>
+<h1 id="include_2">include <itkPoint.h></h1>
+<h1 id="include_3">include <vtkPoints.h></h1>
+<h1 id="include_4">include <vtkPolyData.h></h1>
+<h1 id="include_5">include <Eigen/Core></h1>
+<p>class SurfaceReconstructorPrivate;</p>
+<p>class SurfaceReconstructor {</p>
+<p>public:</p>
+<p>SurfaceReconstructor();
+  ~SurfaceReconstructor();</p>
+<p>//<strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*//
+  //</em></strong><strong><em>*</em></strong><strong>Imported From Studio </strong><strong><em>*</em></strong>****//</p>
+<p>void initializeReconstruction(std::vector<std::vector\<itk::Point\<double>>> local_pts,
+                                std::vector<std::vector\<itk::Point\<double>>> global_pts,
+                                std::vector<std::string> distance_transforms,
+                                double maxAngle,
+                                float decimationPercent,
+                                int numClusters);
+  bool hasDenseMean();
+  void setMean(vtkSmartPointer<vtkPoints> sparseMean,
+               vtkSmartPointer<vtkPolyData> denseMean,
+               std::vector<bool> goodPoints);</p>
+<p>void writeMeanInfo(std::string baseName);
+  void readMeanInfo(std::string dense,
+                    std::string sparse, std::string goodPoints);
+  void resetReconstruct();
+  //<strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong>****//</p>
+<p>void set_number_of_clusters(int num_clusters);
+  void set_normal_angle(double angle);
+  void set_decimation_percent(double decimation);</p>
+<p>bool get_surface_reconstruction_available();</p>
+<p>vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::VectorXd&amp; shape);</p>
+<p>private:</p>
+<p>std::unique_ptr<SurfaceReconstructorPrivate> private_;</p>
+<p>bool surface_reconstruction_available_ = false;</p>
+<p>int num_clusters_ = -1;
+  double decimation_percent_ = 0.3f;
+  double normal_angle_ = 45.0f;
+};
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

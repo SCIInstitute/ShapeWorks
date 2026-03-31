@@ -3801,118 +3801,94 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;DomainType.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Constraints/Constraints.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkPoint.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_matrix_fixed.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_vector_fixed.h&quot;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">ParticleDomain</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleDomain</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pointer</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">VectorFloatType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">ApplyConstraints</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">dbg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// todo update should be const?</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="nf">UpdateParticlePosition</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">update</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">InvalidateParticlePosition</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="nf">ProjectVectorToSurfaceTangent</span><span class="p">(</span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">gradE</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">,</span>
-<span class="w">                                                         </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorFloatType</span><span class="w"> </span><span class="nf">SampleGradientAtPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorFloatType</span><span class="w"> </span><span class="nf">SampleNormalAtPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="nf">SampleGradNAtPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">Distance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_b</span><span class="p">,</span>
-<span class="w">                          </span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="o">*</span><span class="n">out_grad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">out_grad</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DIMENSION</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="p">(</span><span class="o">*</span><span class="n">out_grad</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">EuclideanDistanceTo</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">SquaredDistance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_b</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">SquaredEuclideanDistanceTo</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsWithinDistance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_b</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">test_dist</span><span class="p">,</span>
-<span class="w">                                </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="n">distance</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">Distance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">idx_b</span><span class="p">);</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">distance</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">test_dist</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetCurvature</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSurfaceMeanCurvature</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSurfaceStdDevCurvature</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetLowerBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetUpperBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSurfaceArea</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetValidLocationNear</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetMaxDiameter</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">DeletePartialDerivativeImages</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsDomainFixed</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FixedDomain</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="nf">GetDomainType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Constraints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetConstraints</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">constraints</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// Use `random` to advance a particle and return a new position</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetPositionAfterSplit</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_direction</span><span class="p">,</span>
-<span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="n">VectorDoubleType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">global_direction</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// todo this has been copied from itkParticleSystem::AdvancedAllParticleSplitting.</span>
-<span class="w">    </span><span class="c1">//  Ideally, we should compute a direction that is &quot;consistent&quot; depending on the domain type and use the</span>
-<span class="w">    </span><span class="c1">//  `UpdateParticlePosition` API to advance the particle. See ContourDomain for an example. Leaving this be for</span>
-<span class="w">    </span><span class="c1">//  now because we&#39;d have to retest all MeshDomain and ImageDomain use cases if this behaviour changes.</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">new_pt</span><span class="p">;</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">new_pt</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pt</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">epsilon</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">local_direction</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">5.</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">new_pt</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainID</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainName</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="c1">// is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_FixedDomain</span><span class="p">{</span><span class="nb">true</span><span class="p">};</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainID</span><span class="p">{</span><span class="mi">-1</span><span class="p">};</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_DomainName</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">ParticleDomain</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">constraints</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Constraints</span><span class="o">&gt;</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleDomain</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Constraints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraints</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">ParticleDomain</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// purposely not implemented</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// purposely not implemented</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include-domaintypeh">include "DomainType.h"</h1>
+<h1 id="include-libsoptimizeconstraintsconstraintsh">include "Libs/Optimize/Constraints/Constraints.h"</h1>
+<h1 id="include-itkdataobjecth">include "itkDataObject.h"</h1>
+<h1 id="include-itkpointh">include "itkPoint.h"</h1>
+<h1 id="include-vnlvnl_matrix_fixedh">include "vnl/vnl_matrix_fixed.h"</h1>
+<h1 id="include-vnlvnl_vector_fixedh">include "vnl/vnl_vector_fixed.h"</h1>
+<p>namespace shapeworks {</p>
+<p>class ParticleDomain {
+ public:
+  typedef std::shared_ptr<ParticleDomain> Pointer;</p>
+<p>using PointType = itk::Point<double, 3>;
+  using GradNType = vnl_matrix_fixed<float, 3, 3>;
+  using VectorDoubleType = vnl_vector_fixed<double, 3>;
+  using VectorFloatType = vnl_vector_fixed<float, 3>;</p>
+<p>virtual bool ApplyConstraints(PointType &amp;p, int idx, bool dbg = false) const = 0;</p>
+<p>// todo update should be const?
+  virtual PointType UpdateParticlePosition(const PointType &amp;point, int idx, VectorDoubleType &amp;update) const = 0;</p>
+<p>virtual void InvalidateParticlePosition(int idx) const {}</p>
+<p>virtual VectorDoubleType ProjectVectorToSurfaceTangent(VectorDoubleType &amp;gradE, const PointType &amp;pos,
+                                                         int idx) const = 0;
+  virtual VectorFloatType SampleGradientAtPoint(const PointType &amp;point, int idx) const = 0;
+  virtual VectorFloatType SampleNormalAtPoint(const PointType &amp;point, int idx) const = 0;
+  virtual GradNType SampleGradNAtPoint(const PointType &amp;p, int idx) const = 0;</p>
+<p>virtual double Distance(const PointType &amp;a, int idx_a, const PointType &amp;b, int idx_b,
+                          VectorDoubleType <em>out_grad = nullptr) const {
+    if (out_grad != nullptr) {
+      for (int i = 0; i &lt; DIMENSION; i++) {
+        (</em>out_grad)[i] = a[i] - b[i];
+      }
+    }
+    return a.EuclideanDistanceTo(b);
+  }
+  virtual double SquaredDistance(const PointType &amp;a, int idx_a, const PointType &amp;b, int idx_b) const {
+    return a.SquaredEuclideanDistanceTo(b);
+  }
+  virtual bool IsWithinDistance(const PointType &amp;a, int idx_a, const PointType &amp;b, int idx_b, double test_dist,
+                                double &amp;distance) const {
+    distance = this-&gt;Distance(a, idx_a, b, idx_b);
+    return distance &lt; test_dist;
+  }</p>
+<p>virtual double GetCurvature(const PointType &amp;p, int idx) const = 0;
+  virtual double GetSurfaceMeanCurvature() const = 0;
+  virtual double GetSurfaceStdDevCurvature() const = 0;</p>
+<p>virtual const PointType &amp;GetLowerBound() const = 0;
+  virtual const PointType &amp;GetUpperBound() const = 0;</p>
+<p>virtual PointType GetZeroCrossingPoint() const = 0;
+  virtual double GetSurfaceArea() const = 0;</p>
+<p>virtual PointType GetValidLocationNear(PointType p) const = 0;
+  virtual double GetMaxDiameter() const = 0;</p>
+<p>virtual void DeleteImages() = 0;
+  virtual void DeletePartialDerivativeImages() = 0;
+  virtual void UpdateZeroCrossingPoint() = 0;</p>
+<p>bool IsDomainFixed() const { return m_FixedDomain; }
+  virtual shapeworks::DomainType GetDomainType() const = 0;</p>
+<p>std::shared_ptr<shapeworks::Constraints> GetConstraints() const { return constraints; }</p>
+<p>// Use <code>random</code> to advance a particle and return a new position
+  virtual PointType GetPositionAfterSplit(const PointType &amp;pt, const VectorDoubleType &amp;local_direction,
+                                          const VectorDoubleType &amp;global_direction, double epsilon) const {
+    // todo this has been copied from itkParticleSystem::AdvancedAllParticleSplitting.
+    //  Ideally, we should compute a direction that is "consistent" depending on the domain type and use the
+    //  <code>UpdateParticlePosition</code> API to advance the particle. See ContourDomain for an example. Leaving this be for
+    //  now because we'd have to retest all MeshDomain and ImageDomain use cases if this behaviour changes.
+    PointType new_pt;
+    for (unsigned int k = 0; k &lt; 3; k++) {
+      new_pt[k] = pt[k] + epsilon * local_direction[k] / 5.;
+    }
+    return new_pt;
+  }</p>
+<p>void SetDomainID(int id) { this-&gt;m_DomainID = id; }</p>
+<p>void SetDomainName(std::string name) { this-&gt;m_DomainName = name; }</p>
+<p>protected:
+  // is this a fixed domain or not?  We start as fixed and if an image or mesh is set, we set this to false
+  bool m_FixedDomain{true};</p>
+<p>int m_DomainID{-1};
+  std::string m_DomainName;</p>
+<p>ParticleDomain() { this-&gt;constraints = std::make_shared<shapeworks::Constraints>(); }
+  virtual ~ParticleDomain() {}</p>
+<p>std::shared_ptr<shapeworks::Constraints> constraints;</p>
+<p>private:
+  ParticleDomain(const ParticleDomain &amp;);  // purposely not implemented
+  void operator=(const ParticleDomain &amp;);  // purposely not implemented
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

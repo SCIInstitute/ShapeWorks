@@ -4947,52 +4947,52 @@
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-progress">signal progress</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void progress(
+    int ,
+    QString 
+)</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-qoptimize">function QOptimize</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QOptimize</span><span class="p">(</span>
-<span class="w">    </span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+QOptimize(
+    QObject * parent =nullptr
+)</code></p>
 <h3 id="function-qoptimize_1">function ~QOptimize</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">QOptimize</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+virtual ~QOptimize()</code></p>
 <h3 id="function-getlocalpoints">function GetLocalPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetLocalPoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; GetLocalPoints() override</code></p>
 <p>Return the local points. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getlocalpoints">shapeworks::Optimize::GetLocalPoints</a></p>
 <h3 id="function-getglobalpoints">function GetGlobalPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetGlobalPoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; GetGlobalPoints() override</code></p>
 <p>Return the global points. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getglobalpoints">shapeworks::Optimize::GetGlobalPoints</a></p>
 <h3 id="function-getparticles">function GetParticles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Particles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetParticles</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; Particles &gt; GetParticles()</code></p>
 <h3 id="function-getprocrustestransforms">function GetProcrustesTransforms</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetProcrustesTransforms</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual std::vector&lt; std::vector&lt; std::vector&lt; double &gt; &gt; &gt; GetProcrustesTransforms() override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getprocrustestransforms">shapeworks::Optimize::GetProcrustesTransforms</a></p>
 <h3 id="function-updateexportablepoints">function UpdateExportablePoints</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateExportablePoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual void UpdateExportablePoints() override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-updateexportablepoints">shapeworks::Optimize::UpdateExportablePoints</a></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-setiterationcallback">function SetIterationCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual void SetIterationCallback() override</code></p>
 <p>Set the iteration callback. Derived classes should override to set their own callback. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-setiterationcallback">shapeworks::Optimize::SetIterationCallback</a></p>
 <h3 id="function-iteratecallbackinternal">function IterateCallbackInternal</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">IterateCallbackInternal</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void IterateCallbackInternal()</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

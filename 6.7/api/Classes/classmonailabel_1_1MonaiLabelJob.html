@@ -4422,158 +4422,158 @@
 </table>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-onuploadsampleclicked">slot onUploadSampleClicked</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">onUploadSampleClicked</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void onUploadSampleClicked()</code></p>
 <h3 id="slot-onrunsegmentationclicked">slot onRunSegmentationClicked</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">onRunSegmentationClicked</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void onRunSegmentationClicked()</code></p>
 <h3 id="slot-onsubmitlabelclicked">slot onSubmitLabelClicked</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">onSubmitLabelClicked</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void onSubmitLabelClicked()</code></p>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-triggerupdateview">signal triggerUpdateView</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">triggerUpdateView</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void triggerUpdateView()</code></p>
 <h3 id="signal-triggerclientinitialized">signal triggerClientInitialized</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">triggerClientInitialized</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">success</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void triggerClientInitialized(
+    bool success
+)</code></p>
 <h3 id="signal-triggeruploadsamplecompleted">signal triggerUploadSampleCompleted</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">triggerUploadSampleCompleted</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void triggerUploadSampleCompleted()</code></p>
 <h3 id="signal-triggersegmentationcompleted">signal triggerSegmentationCompleted</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">triggerSegmentationCompleted</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void triggerSegmentationCompleted()</code></p>
 <h3 id="signal-triggersubmitlabelcompleted">signal triggerSubmitLabelCompleted</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">triggerSubmitLabelCompleted</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void triggerSubmitLabelCompleted()</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-monailabeljob">function MonaiLabelJob</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MonaiLabelJob</span><span class="p">(</span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">server_url</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">client_id</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">strategy</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">model_type</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+MonaiLabelJob(
+    QSharedPointer&lt; Session &gt; session,
+    const std::string &amp; server_url,
+    const std::string &amp; client_id,
+    const std::string &amp; strategy,
+    const std::string &amp; model_type
+)</code></p>
 <h3 id="function-monailabeljob_1">function ~MonaiLabelJob</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MonaiLabelJob</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+~MonaiLabelJob()</code></p>
 <h3 id="function-setserver">function setServer</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setServer</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">server_url</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setServer(
+    const std::string &amp; server_url
+)</code></p>
 <h3 id="function-setmodeltype">function setModelType</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setModelType</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">model_type</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setModelType(
+    const std::string &amp; model_type
+)</code></p>
 <h3 id="function-getserver">function getServer</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">getServer</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline const std::string &amp; getServer()</code></p>
 <h3 id="function-setclientid">function setClientId</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setClientId</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">client_id</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setClientId(
+    const std::string &amp; client_id =""
+)</code></p>
 <h3 id="function-getclientid">function getClientId</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">getClientId</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline const std::string &amp; getClientId()</code></p>
 <h3 id="function-initializeclient">function initializeClient</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">initializeClient</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void initializeClient()</code></p>
 <h3 id="function-getclient">function getClient</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getClient</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline std::shared_ptr&lt; py::object &gt; getClient() const</code></p>
 <h3 id="function-getinfo">function getInfo</h3>
-<div class="highlight"><pre><span></span><code><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">getInfo</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+py::dict getInfo()</code></p>
 <h3 id="function-getmodelname">function getModelName</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">getModelName</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">modelType</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::string getModelName(
+    std::string modelType
+)</code></p>
 <h3 id="function-getmodelnames">function getModelNames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getModelNames</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">model_type</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; std::string &gt; getModelNames(
+    const std::string &amp; model_type
+)</code></p>
 <h3 id="function-getsessionid">function getSessionId</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">getSessionId</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string getSessionId()</code></p>
 <h3 id="function-getparamsfromconfig">function getParamsFromConfig</h3>
-<div class="highlight"><pre><span></span><code><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">getParamsFromConfig</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">section</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+py::dict getParamsFromConfig(
+    std::string section,
+    std::string name
+)</code></p>
 <h3 id="function-nextsample">function nextSample</h3>
-<div class="highlight"><pre><span></span><code><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">nextSample</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">strategy</span><span class="p">,</span>
-<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">params</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+py::dict nextSample(
+    std::string strategy,
+    py::dict params
+)</code></p>
 <h3 id="function-infer">function infer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">py</span><span class="o">::</span><span class="n">tuple</span><span class="w"> </span><span class="n">infer</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">model</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_in</span><span class="p">,</span>
-<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">params</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">label_in</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">file</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">session_id</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+py::tuple infer(
+    std::string model,
+    std::string image_in,
+    py::dict params,
+    std::string label_in,
+    std::string file,
+    std::string session_id
+)</code></p>
 <h3 id="function-savelabel">function saveLabel</h3>
-<div class="highlight"><pre><span></span><code><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">saveLabel</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_in</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">label_in</span><span class="p">,</span>
-<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">params</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+py::dict saveLabel(
+    std::string image_in,
+    std::string label_in,
+    py::dict params
+)</code></p>
 <h3 id="function-uploadimage">function uploadImage</h3>
-<div class="highlight"><pre><span></span><code><span class="n">py</span><span class="o">::</span><span class="n">dict</span><span class="w"> </span><span class="n">uploadImage</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_in</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_id</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+py::dict uploadImage(
+    std::string image_in,
+    std::string image_id
+)</code></p>
 <h3 id="function-updateshapes">function updateShapes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updateShapes</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void updateShapes()</code></p>
 <h3 id="function-runsegmentationmodel">function runSegmentationModel</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">runSegmentationModel</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void runSegmentationModel()</code></p>
 <h3 id="function-run">function run</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual void run() override</code></p>
 <p>run the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-run">shapeworks::Job::run</a></p>
 <h3 id="function-name">function name</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual QString name() override</code></p>
 <p>get the name of the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-name">shapeworks::Job::name</a></p>
 <h3 id="function-python_message">function python_message</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">python_message</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void python_message(
+    std::string str
+)</code></p>
 <h3 id="function-setcurrentsamplenumber">function setCurrentSampleNumber</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setCurrentSampleNumber</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void setCurrentSampleNumber(
+    int n
+)</code></p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-monai_result_extension">variable MONAI_RESULT_EXTENSION</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_RESULT_EXTENSION</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+static const std::string MONAI_RESULT_EXTENSION;</code></p>
 <h3 id="variable-monai_result_dtype">variable MONAI_RESULT_DTYPE</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_RESULT_DTYPE</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+static const std::string MONAI_RESULT_DTYPE;</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:09 +0000</p>
 
 
 

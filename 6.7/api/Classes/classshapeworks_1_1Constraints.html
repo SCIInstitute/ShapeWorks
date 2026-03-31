@@ -4113,135 +4113,135 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Constraints</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+class shapeworks::Constraints;</code></p>
 <p>This class contains the set of boundary constraints that are appleid to the shapes in the dataset. They are used to isolate areas of interest on shape surfaces/volumes. These boundary constraints currently take the form of cutting planes, cutting spheres (deprecated), or free-form constraints (FFCs). Do not confuse these with the ApplyConstraints function found in the "domain" code, they refer to the action of snapping to the surface and do not serve to isolate areas of interest.</p>
 <p>Please check out Libs/Optimize/Constraints/Constraints for a constraints roadmap </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-point3">using Point3</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Constraints</span><span class="o">::</span><span class="n">Point3</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::Constraints::Point3 =  itk::Point&lt;double, 3&gt;;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-constraints">function Constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Constraints</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline Constraints()</code></p>
 <p><a href="classshapeworks_1_1Constraints.html">Constraints</a> are inactive when initialized. </p>
 <h3 id="function-constraints_1">function ~Constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">~</span><span class="n">Constraints</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline ~Constraints()</code></p>
 <h3 id="function-addplane">function addPlane</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">addPlane</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void addPlane(
+    const vnl_vector&lt; double &gt; &amp; a,
+    const vnl_vector&lt; double &gt; &amp; b,
+    const vnl_vector&lt; double &gt; &amp; c
+)</code></p>
 <p>Adds a cutting-plane boundary constraint. <a href="classshapeworks_1_1Constraints.html">Constraints</a> are used to isolate areas of interest on shape surfaces. </p>
 <h3 id="function-addfreeformconstraint">function addFreeFormConstraint</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">addFreeFormConstraint</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void addFreeFormConstraint(
+    std::shared_ptr&lt; shapeworks::Mesh &gt; mesh
+)</code></p>
 <p>Adds the free-form boundary constraint, or FFC. <a href="classshapeworks_1_1Constraints.html">Constraints</a> are used to isolate areas of interest on shape surfaces. </p>
 <h3 id="function-transformconstraints">function transformConstraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">transformConstraints</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool transformConstraints(
+    const vnl_matrix_fixed&lt; double, 4, 4 &gt; &amp; transform
+)</code></p>
 <p>Applies transformations to free-form constraints (FFCs) </p>
 <h3 id="function-transformplanes">function transformPlanes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">transformPlanes</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool transformPlanes(
+    const vnl_matrix_fixed&lt; double, 4, 4 &gt; &amp; transform
+)</code></p>
 <p>Applies transformations to cutting-plane constraints. </p>
 <h3 id="function-getplaneconstraints">function getPlaneConstraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PlaneConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">getPlaneConstraints</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline std::vector&lt; PlaneConstraint &gt; &amp; getPlaneConstraints()</code></p>
 <p>Returns the vector that constains all plane constraints, of type <a href="">PlaneConstraint</a>. See class <a href="">PlaneConstraint</a> for more info. </p>
 <h3 id="function-getfreeformconstraint">function getFreeformConstraint</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">getFreeformConstraint</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+FreeFormConstraint &amp; getFreeformConstraint()</code></p>
 <p>Returns the free form constraint, of type <a href="">FreeFormConstraint</a>. See class <a href="">FreeFormConstraint</a> for more info. </p>
 <h3 id="function-isanyviolated">function isAnyViolated</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">isAnyViolated</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool isAnyViolated(
+    const Point3 &amp; pos
+)</code></p>
 <p>Returns true if any constraint is violated by point pos. </p>
 <h3 id="function-printall">function printAll</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">printAll</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void printAll()</code></p>
 <p>Prints all constraints in a neat format. Make sure to disable multithreading if printing within to optimization to avoid jumbled output. </p>
 <h3 id="function-violationreport">function violationReport</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">violationReport</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::string violationReport(
+    const Point3 &amp; pos,
+    size_t index
+)</code></p>
 <p>Prints out a comprehensive violation report with each constraint that is violated and the magnitude of such violation by point pos. Index can be 0 if one does not have the index. </p>
 <h3 id="function-violationreportdata">function violationReportData</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">violationReportData</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; std::vector&lt; double &gt; &gt; violationReportData(
+    const Point3 &amp; pos
+)</code></p>
 <p>Returns the distance to every cosntraint with [0] plane, [1] sphere, and [2] FFC. </p>
 <h3 id="function-constraintslagrangiangradient">function constraintsLagrangianGradient</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraintsLagrangianGradient</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prepos</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vnl_vector_fixed&lt; double, 3 &gt; constraintsLagrangianGradient(
+    const Point3 &amp; pos,
+    const Point3 &amp; prepos,
+    double C,
+    size_t index
+)</code></p>
 <p>Returns the constraint gradient. prepos is the current particle, pos is the particle with an optimization update applied, C can be 1, and index is the index of the particle. </p>
 <h3 id="function-initializelagrangianparameters">function InitializeLagrangianParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InitializeLagrangianParameters</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mus</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void InitializeLagrangianParameters(
+    std::vector&lt; double &gt; mus
+)</code></p>
 <p>Initializes lagrangian parameter mus. </p>
 <h3 id="function-updatemus">function UpdateMus</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateMus</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void UpdateMus(
+    const Point3 &amp; pos,
+    double C,
+    size_t index
+)</code></p>
 <p>Updates mus, the momentum variable of the augmented lagrangian. </p>
 <h3 id="function-getactive">function GetActive</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetActive</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline bool GetActive()</code></p>
 <p>Gets the variable active, which determines whether constraints are being used. </p>
 <h3 id="function-setactive">function SetActive</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetActive</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">ac</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetActive(
+    bool ac
+)</code></p>
 <p>Sets the variable active, which determines whether constraints are being used. </p>
 <h3 id="function-read">function read</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">read</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void read(
+    std::string filename
+)</code></p>
 <p>Reads in a constraint json file named filename. </p>
 <h3 id="function-write">function write</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">write</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void write(
+    std::string filename
+)</code></p>
 <p>Writes out a constraint json file named filename. </p>
 <h3 id="function-hasconstraints">function hasConstraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">hasConstraints</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool hasConstraints()</code></p>
 <h3 id="function-clipmesh">function clipMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clipMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void clipMesh(
+    Mesh &amp; mesh
+)</code></p>
 <p>Clips the mesh that has been passed into it by the constraints stored in this object. </p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:09 +0000</p>
 
 
 

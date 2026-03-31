@@ -3779,158 +3779,113 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSettings&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Preferences</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">OrientationMarkerType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">medical</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">triad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">none</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">};</span>
-
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">OrientationMarkerCorner</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">upper_right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">lower_right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">lower_left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">upper_left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">Preferences</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">MAX_RECENT_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="p">};</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_recent_file</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">path</span><span class="p">);</span>
-<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="nf">get_recent_files</span><span class="p">();</span>
-<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="nf">get_recent_paths</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">QByteArray</span><span class="w"> </span><span class="nf">get_window_geometry</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_window_geometry</span><span class="p">(</span><span class="n">QByteArray</span><span class="w"> </span><span class="n">geometry</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QByteArray</span><span class="w"> </span><span class="nf">get_window_state</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_window_state</span><span class="p">(</span><span class="n">QByteArray</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_last_directory</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_last_directory</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_cache_enabled</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_cache_enabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_parallel_enabled</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_parallel_enabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_memory_cache_percent</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_memory_cache_percent</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_threads</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_num_threads</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_threads</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_dataloader_num_workers</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_dataloader_num_workers</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_workers</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">get_glyph_size</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_size</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">get_glyph_quality</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_quality</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_glyph_auto_size</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_auto_size</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_glyph_scale_arrows</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_scale_arrows</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">get_pca_range</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_pca_range</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_pca_steps</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_pca_steps</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_color_scheme</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_color_scheme</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particle_colors</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_particle_colors</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_color_map</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_color_map</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_discrete_color_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_discrete_color_mode</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reverse_color_map</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_reverse_color_map</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_center_checked</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_center_checked</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_geodesic_cache_multiplier</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_geodesic_cache_multiplier</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="nf">get_orientation_marker_type</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation_marker_type</span><span class="p">(</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="nf">get_orientation_marker_corner</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation_marker_corner</span><span class="p">(</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">corner</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_groom_file_template</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_groom_file_template</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">groom_file_template</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_optimize_file_template</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_optimize_file_template</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">optimize_file_template</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QSize</span><span class="w"> </span><span class="nf">get_export_override_size</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_override_size</span><span class="p">(</span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_export_override_size_enabled</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_override_size_enabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_export_show_orientation_marker</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_show_orientation_marker</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_export_show_color_scale</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_show_color_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_export_num_pca_images</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_num_pca_images</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">number</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_export_pca_range</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_pca_range</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">range</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_pca_modes</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">string</span><span class="p">);</span>
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_export_pca_modes</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_auto_update_check</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_auto_update_check</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QDateTime</span><span class="w"> </span><span class="nf">get_update_snooze_until</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_update_snooze_until</span><span class="p">(</span><span class="n">QDateTime</span><span class="w"> </span><span class="n">date</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_device_id</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_telemetry_enabled</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_telemetry_enabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_telemetry_asked</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_telemetry_asked</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">asked</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_warp_method</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_warp_method</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">method</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="nf">get_pending_telemetry_events</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_pending_telemetry_events</span><span class="p">(</span><span class="n">QStringList</span><span class="w"> </span><span class="n">events</span><span class="p">);</span>
-
-<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">color_scheme_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">newIndex</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">glyph_properties_changed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">threading_changed_signal</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">sliders_changed_signal</span><span class="p">();</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_recent_files</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_threads</span><span class="p">();</span>
-<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">recent_files_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">recent_paths_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QSettings</span><span class="w"> </span><span class="n">settings_</span><span class="p">;</span>
-<span class="p">};</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <QSettings></h1>
+<h1 id="include_1">include <QString></h1>
+<p>class Preferences : public QObject {
+  Q_OBJECT;</p>
+<p>public:
+  enum OrientationMarkerType { medical = 0, triad = 1, none = 2 };</p>
+<p>enum OrientationMarkerCorner { upper_right = 0, lower_right = 1, lower_left = 2, upper_left = 3 };</p>
+<p>Preferences();</p>
+<p>enum { MAX_RECENT_FILES = 64 };</p>
+<p>void restore_defaults();</p>
+<p>void add_recent_file(QString file, QString path);
+  QStringList get_recent_files();
+  QStringList get_recent_paths();</p>
+<p>QByteArray get_window_geometry();
+  void set_window_geometry(QByteArray geometry);</p>
+<p>QByteArray get_window_state();
+  void set_window_state(QByteArray state);</p>
+<p>QString get_last_directory();
+  void set_last_directory(QString value);</p>
+<p>bool get_cache_enabled();
+  void set_cache_enabled(bool value);</p>
+<p>bool get_parallel_enabled();
+  void set_parallel_enabled(bool value);</p>
+<p>int get_memory_cache_percent();
+  void set_memory_cache_percent(int value);</p>
+<p>int get_num_threads();
+  void set_num_threads(int num_threads);</p>
+<p>int get_dataloader_num_workers();
+  void set_dataloader_num_workers(int num_workers);</p>
+<p>float get_glyph_size();
+  void set_glyph_size(float value);</p>
+<p>float get_glyph_quality();
+  void set_glyph_quality(float value);</p>
+<p>bool get_glyph_auto_size();
+  void set_glyph_auto_size(bool value);</p>
+<p>bool get_glyph_scale_arrows();
+  void set_glyph_scale_arrows(bool value);</p>
+<p>float get_pca_range();
+  void set_pca_range(float value);</p>
+<p>int get_pca_steps();
+  void set_pca_steps(int value);</p>
+<p>void set_color_scheme(int value);
+  int get_color_scheme();</p>
+<p>void set_particle_colors(int value);
+  int get_particle_colors();</p>
+<p>void set_color_map(int value);
+  int get_color_map();</p>
+<p>void set_discrete_color_mode(bool value);
+  bool get_discrete_color_mode();</p>
+<p>void set_reverse_color_map(bool value);
+  bool get_reverse_color_map();</p>
+<p>bool get_center_checked();
+  void set_center_checked(bool value);</p>
+<p>int get_geodesic_cache_multiplier();
+  void set_geodesic_cache_multiplier(int value);</p>
+<p>OrientationMarkerType get_orientation_marker_type();
+  void set_orientation_marker_type(OrientationMarkerType type);</p>
+<p>OrientationMarkerCorner get_orientation_marker_corner();
+  void set_orientation_marker_corner(OrientationMarkerCorner corner);</p>
+<p>QString get_groom_file_template();
+  void set_groom_file_template(QString groom_file_template);</p>
+<p>QString get_optimize_file_template();
+  void set_optimize_file_template(QString optimize_file_template);</p>
+<p>QSize get_export_override_size();
+  void set_export_override_size(QSize size);
+  bool get_export_override_size_enabled();
+  void set_export_override_size_enabled(bool enabled);
+  bool get_export_show_orientation_marker();
+  void set_export_show_orientation_marker(bool value);
+  bool get_export_show_color_scale();
+  void set_export_show_color_scale(bool value);
+  int get_export_num_pca_images();
+  void set_export_num_pca_images(int number);
+  double get_export_pca_range();
+  void set_export_pca_range(double range);
+  void set_export_pca_modes(QString string);
+  QString get_export_pca_modes();</p>
+<p>bool get_auto_update_check();
+  void set_auto_update_check(bool enabled);</p>
+<p>QDateTime get_update_snooze_until();
+  void set_update_snooze_until(QDateTime date);</p>
+<p>QString get_device_id();</p>
+<p>bool get_telemetry_enabled();
+  void set_telemetry_enabled(bool enabled);</p>
+<p>bool get_telemetry_asked();
+  void set_telemetry_asked(bool asked);</p>
+<p>int get_warp_method();
+  void set_warp_method(int method);</p>
+<p>QStringList get_pending_telemetry_events();
+  void set_pending_telemetry_events(QStringList events);</p>
+<p>Q_SIGNALS:</p>
+<p>void color_scheme_changed(int newIndex);
+  void glyph_properties_changed();
+  void threading_changed_signal();
+  void sliders_changed_signal();</p>
+<p>private:
+  void update_recent_files();
+  void update_threads();
+  QStringList recent_files_;
+  QStringList recent_paths_;</p>
+<p>QSettings settings_;
+};
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

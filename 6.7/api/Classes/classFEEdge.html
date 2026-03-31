@@ -4055,40 +4055,40 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-feedge">function FEEdge</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEEdge</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+FEEdge()</code></p>
 <p>constructor </p>
 <h3 id="function-operator">function operator==</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FEEdge</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool operator==(
+    const FEEdge &amp; e
+)</code></p>
 <p>edge comparison </p>
 <h3 id="function-nodes">function Nodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Nodes</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline int Nodes()</code></p>
 <p>return number of nodes </p>
 <h3 id="function-findnode">function FindNode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">FindNode</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">node</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+int FindNode(
+    int node
+)</code></p>
 <p>find a node </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-n">variable n</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+int n;</code></p>
 <p>edge nodes </p>
 <h3 id="variable-m_elem">variable m_elem</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_elem</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+int m_elem;</code></p>
 <p>the element to which this edge belongs (used only by beams) </p>
 <h3 id="variable-m_nbr">variable m_nbr</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nbr</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+int m_nbr;</code></p>
 <p>the two adjacent edges (if there are more edges incident to a node, the neighbour is set to -1) </p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

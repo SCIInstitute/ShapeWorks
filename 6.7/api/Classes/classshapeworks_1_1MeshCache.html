@@ -3870,40 +3870,40 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeshCache</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+class shapeworks::MeshCache;</code></p>
 <p>Thread safe cache for meshes index by shape. </p>
 <p>The <a href="classshapeworks_1_1MeshCache.html">MeshCache</a> implements a std::map keyed by shape (list of points) with MeshHandle values. It is thread-safe and can be used from any thread. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-meshcache">function MeshCache</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshCache</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+MeshCache()</code></p>
 <h3 id="function-set_cache_enabled">function set_cache_enabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_enabled</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void set_cache_enabled(
+    bool enabled
+)</code></p>
 <h3 id="function-set_memory_percent">function set_memory_percent</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_memory_percent</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">percent</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void set_memory_percent(
+    int percent
+)</code></p>
 <h3 id="function-get_mesh">function get_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">get_mesh</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+MeshHandle get_mesh(
+    const MeshWorkItem &amp; vector
+)</code></p>
 <h3 id="function-insert_mesh">function insert_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">insert_mesh</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="p">,</span>
-<span class="w">    </span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void insert_mesh(
+    const MeshWorkItem &amp; item,
+    MeshHandle mesh
+)</code></p>
 <h3 id="function-clear">function clear</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void clear()</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

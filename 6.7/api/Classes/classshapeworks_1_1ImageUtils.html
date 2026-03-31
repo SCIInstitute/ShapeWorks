@@ -3897,41 +3897,41 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-tpstransform">using TPSTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageUtils</span><span class="o">::</span><span class="n">TPSTransform</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::ImageUtils::TPSTransform =  itk::ThinPlateSplineKernelTransform&lt;double, 3&gt;;</code></p>
 <p>computes a thin plate spline (TSP) transform from the source to the target landmarks (in the given files) using every stride points </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-boundingbox">function boundingBox</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static PhysicalRegion boundingBox(
+    const std::vector&lt; std::string &gt; &amp; filenames,
+    Image::PixelType isoValue =1.0
+)</code></p>
 <p>calculate bounding box for images using the region of data &lt;= the given isoValue </p>
 <h3 id="function-boundingbox_1">function boundingBox</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">images</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static PhysicalRegion boundingBox(
+    const std::vector&lt; std::reference_wrapper&lt; const Image &gt; &gt; &amp; images,
+    Image::PixelType isoValue =1.0
+)</code></p>
 <p>calculate bounding box for shapework images using the region of data &lt;= the given isoValue </p>
 <h3 id="function-createwarptransform">function createWarpTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">TPSTransform</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">createWarpTransform</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">source_landmarks_file</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target_landmarks_file</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stride</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static TPSTransform::Pointer createWarpTransform(
+    const std::string &amp; source_landmarks_file,
+    const std::string &amp; target_landmarks_file,
+    const int stride =1
+)</code></p>
 <h3 id="function-register_itk_factories">function register_itk_factories</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">register_itk_factories</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+static void register_itk_factories()</code></p>
 <h3 id="function-make_axis_aligned">function make_axis_aligned</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">make_axis_aligned</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">input</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static ImageType::Pointer make_axis_aligned(
+    ImageType::Pointer input
+)</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

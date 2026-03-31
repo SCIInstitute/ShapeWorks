@@ -4140,84 +4140,84 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">GenericContainerArray</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+template &lt;class T &gt;
+class shapeworks::GenericContainerArray;</code></p>
 <p>This class appears to be an array of GenericContainers (e.g. std::vector) that implements the <a href="">Observer</a> interface. The array size tracks the number of domains in the system. E.g. one per domain. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-datatype">typedef DataType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DataType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef T shapeworks::GenericContainerArray&lt; T &gt;::DataType;</code></p>
 <p>Standard class typedefs </p>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">GenericContainerArray</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef GenericContainerArray shapeworks::GenericContainerArray&lt; T &gt;::Self;</code></p>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Observer</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef Observer shapeworks::GenericContainerArray&lt; T &gt;::Superclass;</code></p>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::SmartPointer&lt;Self&gt; shapeworks::GenericContainerArray&lt; T &gt;::Pointer;</code></p>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::SmartPointer&lt;const Self&gt; shapeworks::GenericContainerArray&lt; T &gt;::ConstPointer;</code></p>
 <h3 id="typedef-constweakpointer">typedef ConstWeakPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstWeakPointer</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::WeakPointer&lt;const Self&gt; shapeworks::GenericContainerArray&lt; T &gt;::ConstWeakPointer;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Self</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+itkNewMacro(
+    Self 
+)</code></p>
 <p>Method for creation through the object factory. </p>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
-<span class="w">    </span><span class="n">GenericContainerArray</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="n">Observer</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+itkTypeMacro(
+    GenericContainerArray ,
+    Observer 
+)</code></p>
 <p>Run-time type information (and related methods). </p>
 <h3 id="function-domainaddeventcallback">function DomainAddEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DomainAddEventCallback</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void DomainAddEventCallback(
+    Object * ,
+    const itk::EventObject &amp; 
+)</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Observer.html#function-domainaddeventcallback">shapeworks::Observer::DomainAddEventCallback</a></p>
 <p>Callbacks that may be defined by a subclass. If a subclass defines one of these callback methods, the corresponding flag in m_DefinedCallbacks should be set to true so that the <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> will know to register the appropriate event with this method. </p>
 <h3 id="function-positionaddeventcallback">function PositionAddEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionAddEventCallback</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void PositionAddEventCallback(
+    Object * o,
+    const itk::EventObject &amp; e
+)</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Observer.html#function-positionaddeventcallback">shapeworks::Observer::PositionAddEventCallback</a></p>
 <h3 id="function-positionremoveeventcallback">function PositionRemoveEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionRemoveEventCallback</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void PositionRemoveEventCallback(
+    Object * ,
+    const itk::EventObject &amp; 
+)</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Observer.html#function-positionremoveeventcallback">shapeworks::Observer::PositionRemoveEventCallback</a></p>
 <h3 id="function-zeroallvalues">function ZeroAllValues</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ZeroAllValues</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void ZeroAllValues()</code></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-genericcontainerarray">function GenericContainerArray</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">GenericContainerArray</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline GenericContainerArray()</code></p>
 <h3 id="function-genericcontainerarray_1">function ~GenericContainerArray</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">GenericContainerArray</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual ~GenericContainerArray()</code></p>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline void PrintSelf(
+    std::ostream &amp; os,
+    itk::Indent indent
+) const</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:32 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

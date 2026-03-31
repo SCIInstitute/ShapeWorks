@@ -3801,134 +3801,94 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Alignment/Transforms/itkThinPlateSplineKernelTransform2.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Alignment/Transforms/itkCompactlySupportedRBFSparseKernelTransform.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Mesh.h&quot;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPointSet.h&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">using</span><span class="w"> </span><span class="n">ThinPlateSplineTransform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform2</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">RBFSSparseTransform</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ReconstructSurface</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">TransformTypePtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointSetType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">::</span><span class="n">PointSetType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointIdType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointIdentifier</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">ReconstructSurface</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
-<span class="w">  </span><span class="n">ReconstructSurface</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">denseFile</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sparseFile</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">goodPointsFile</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">computeAverageDistanceToNeighbors</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particlesIndices</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">checkMapping</span><span class="p">(</span><span class="n">TransformTypePtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sourcePoints</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">targetPoints</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateWarpedMeshes</span><span class="p">(</span><span class="n">TransformTypePtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">outputMesh</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">Mesh</span><span class="w"> </span><span class="nf">getMesh</span><span class="p">(</span><span class="n">PointArray</span><span class="w"> </span><span class="n">localPoints</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">convertToImageCoordinates</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector</span><span class="o">&amp;</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">origin</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">computeMedianShape</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">shapeList</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">performKMeansClustering</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPoints</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numberOfParticles</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">centroidIndices</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">computeParticlesNormals</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="n">dt</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getDenseMean</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPoints</span><span class="p">,</span>
-<span class="w">                                            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPoints</span><span class="p">,</span>
-<span class="w">                                            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transform</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">computeDenseMean</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPoints</span><span class="p">,</span>
-<span class="w">                        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPoints</span><span class="p">,</span>
-<span class="w">                        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distanceTransform</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">computeSparseMean</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPoints</span><span class="p">,</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">commonCenter</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">writeMeanInfo</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">surface</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPointsFiles</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">samplesAlongPCAModes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPointsFiles</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">meanSurface</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distanceTransformFiles</span><span class="p">,</span>
-<span class="w">                   </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPointsFiles</span><span class="p">,</span>
-<span class="w">                   </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPointsFiles</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// set operations //</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setOutPrefix</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">outPrefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prefix</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setOutPath</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">outPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setDoProcrustes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">doProcrusts</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">doProcrustes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">doProcrustes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setDoProcrustesScaling</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">doProcrustsScaling</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">doProcrustesScaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">doProcrustesScaling</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setPairwiseNormalsDiffForGoodBad</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">pairwiseNormalsDiffForGoodBad</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">pairwiseNormalsDiffForGoodBad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pairwiseNormalsDiffForGoodBad</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMeanBeforeWarp</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">meanBeforeWarp</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">meanBeforeWarp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meanBeforeWarp</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setEnableOutput</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enableOutput</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">enableOutput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enableOutput</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setModeIndex</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">modeIndex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">modeIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">modeIndex</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setNumOfModes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numOfModes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">numOfModes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numOfModes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setNumOfSamplesPerMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numOfSamplesPerMode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">numOfSamplesPerMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numOfSamplesPerMode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setNumOfParticles</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numOfParticles</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">numOfParticles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numOfParticles</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setNumOfClusters</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numOfClusters</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">numOfClusters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numOfClusters</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMaxStdDev</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">maxStdDev</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">maxStdDev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxStdDev</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMaxVarianceCaptured</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">maxVarianceCaptured</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">maxVarianceCaptured</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxVarianceCaptured</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMaxAngleDegrees</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">maxAngleDegrees</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">maxAngleDegrees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxAngleDegrees</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">normalAngle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pi</span><span class="o">/</span><span class="mf">2.0</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPointsFiles</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPointsFiles</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distanceTransformFiles</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">denseMean</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparseMean</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">goodPoints</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">outPrefix</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">outPath</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">denseDone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">doProcrustes</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">doProcrustesScaling</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">pairwiseNormalsDiffForGoodBad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">meanBeforeWarp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">enableOutput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">modeIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfModes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfSamplesPerMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfParticles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">numOfClusters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">maxStdDev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">maxVarianceCaptured</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">maxAngleDegrees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">setSparseMean</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">sparsePath</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">setGoodPoints</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointsPath</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">setLocalPointsFiles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">localPointsFiles</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">setWorldPointsFiles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worldPointsFiles</span><span class="p">);</span>
-
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include-libsalignmenttransformsitkthinplatesplinekerneltransform2h">include "Libs/Alignment/Transforms/itkThinPlateSplineKernelTransform2.h"</h1>
+<h1 id="include-libsalignmenttransformsitkcompactlysupportedrbfsparsekerneltransformh">include "Libs/Alignment/Transforms/itkCompactlySupportedRBFSparseKernelTransform.h"</h1>
+<h1 id="include-meshh">include "Mesh.h"</h1>
+<h1 id="include">include <itkPointSet.h></h1>
+<p>namespace shapeworks {</p>
+<p>using ThinPlateSplineTransform = itk::ThinPlateSplineKernelTransform2<double, 3>;
+using RBFSSparseTransform      = itk::CompactlySupportedRBFSparseKernelTransform<double, 3>;</p>
+<p>template<class TransformType>
+class ReconstructSurface
+{
+public:
+  using TransformTypePtr = typename TransformType::Pointer;
+  using PointSetType = typename TransformType::PointSetType;
+  using PointIdType = typename PointSetType::PointIdentifier;</p>
+<p>ReconstructSurface() = default;
+  ReconstructSurface(const std::string &amp;denseFile, const std::string &amp;sparseFile, const std::string &amp;goodPointsFile);</p>
+<p>double computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points, std::vector<int> particlesIndices);</p>
+<p>void checkMapping(TransformTypePtr transform, vtkSmartPointer<vtkPoints> sourcePoints, vtkSmartPointer<vtkPoints> targetPoints);</p>
+<p>void generateWarpedMeshes(TransformTypePtr transform, vtkSmartPointer<vtkPolyData>&amp; outputMesh);</p>
+<p>Mesh getMesh(PointArray localPoints);</p>
+<p>vtkSmartPointer<vtkPoints> convertToImageCoordinates(vtkSmartPointer<vtkPoints> particles, const Vector&amp; spacing, const Point3&amp; origin);</p>
+<p>int computeMedianShape(std::vector<Eigen::MatrixXd>&amp; shapeList);</p>
+<p>void performKMeansClustering(std::vector<PointArray> worldPoints, int numberOfParticles, std::vector<int>&amp; centroidIndices);</p>
+<p>Eigen::MatrixXd computeParticlesNormals(vtkSmartPointer<vtkPoints> particles, Image dt);</p>
+<p>vtkSmartPointer<vtkPolyData> getDenseMean(std::vector<PointArray> localPoints,
+                                            std::vector<PointArray> worldPoints,
+                                            std::vector<std::string> distance_transform);</p>
+<p>void computeDenseMean(std::vector<PointArray> localPoints,
+                        std::vector<PointArray> worldPoints,
+                        std::vector<std::string> distanceTransform);</p>
+<p>std::vector<PointArray> computeSparseMean(std::vector<PointArray> localPoints, Point3 commonCenter);</p>
+<p>void writeMeanInfo();</p>
+<p>void surface(const std::vector<std::string> localPointsFiles);</p>
+<p>void samplesAlongPCAModes(const std::vector<std::string> worldPointsFiles);</p>
+<p>void meanSurface(const std::vector<std::string> distanceTransformFiles,
+                   const std::vector<std::string> localPointsFiles,
+                   const std::vector<std::string> worldPointsFiles);</p>
+<p>// set operations //</p>
+<p>void setOutPrefix(std::string prefix) { this-&gt;outPrefix = prefix; }</p>
+<p>void setOutPath(std::string path) { this-&gt;outPath = path; }</p>
+<p>void setDoProcrustes(bool doProcrusts) { this-&gt;doProcrustes = doProcrustes; }</p>
+<p>void setDoProcrustesScaling(bool doProcrustsScaling) { this-&gt;doProcrustesScaling = doProcrustesScaling; }</p>
+<p>void setPairwiseNormalsDiffForGoodBad(bool pairwiseNormalsDiffForGoodBad) { this-&gt;pairwiseNormalsDiffForGoodBad = pairwiseNormalsDiffForGoodBad; }</p>
+<p>void setMeanBeforeWarp(bool meanBeforeWarp) { this-&gt;meanBeforeWarp = meanBeforeWarp; }</p>
+<p>void setEnableOutput(bool enableOutput) { this-&gt;enableOutput = enableOutput; }</p>
+<p>void setModeIndex(int modeIndex) { this-&gt;modeIndex = modeIndex; }</p>
+<p>void setNumOfModes(int numOfModes) { this-&gt;numOfModes = numOfModes; }</p>
+<p>void setNumOfSamplesPerMode(int numOfSamplesPerMode) { this-&gt;numOfSamplesPerMode = numOfSamplesPerMode; }</p>
+<p>void setNumOfParticles(int numOfParticles) { this-&gt;numOfParticles = numOfParticles; }</p>
+<p>void setNumOfClusters(int numOfClusters) { this-&gt;numOfClusters = numOfClusters; }</p>
+<p>void setMaxStdDev(float maxStdDev) { this-&gt;maxStdDev = maxStdDev; }</p>
+<p>void setMaxVarianceCaptured(float maxVarianceCaptured) { this-&gt;maxVarianceCaptured = maxVarianceCaptured; }</p>
+<p>void setMaxAngleDegrees(float maxAngleDegrees) { this-&gt;maxAngleDegrees = maxAngleDegrees; }</p>
+<p>private:
+  float normalAngle = Pi/2.0;
+  std::vector<std::string> localPointsFiles;
+  std::vector<std::string> worldPointsFiles;
+  std::vector<std::string> distanceTransformFiles;
+  vtkSmartPointer<vtkPolyData> denseMean;
+  vtkSmartPointer<vtkPoints> sparseMean;
+  std::vector<bool> goodPoints;
+  std::string outPrefix;
+  std::string outPath;
+  bool denseDone = true;
+  bool doProcrustes;
+  bool doProcrustesScaling;
+  bool pairwiseNormalsDiffForGoodBad = false;
+  bool meanBeforeWarp = true;
+  bool enableOutput = true;
+  int modeIndex = -1;
+  int numOfModes = -1;
+  int numOfSamplesPerMode = -1;
+  int numOfParticles = -1;
+  int numOfClusters = -1;
+  float maxStdDev = 0;
+  float maxVarianceCaptured = 0;
+  float maxAngleDegrees = 0;</p>
+<p>vtkSmartPointer<vtkPoints> setSparseMean(const std::string&amp; sparsePath);
+  std::vector<bool> setGoodPoints(const std::string&amp; pointsPath);
+  std::vector<PointArray> setLocalPointsFiles(const std::vector<std::string> localPointsFiles);
+  std::vector<PointArray> setWorldPointsFiles(const std::vector<std::string> worldPointsFiles);</p>
+<p>};</p>
+<p>} // shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

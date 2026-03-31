@@ -3901,27 +3901,27 @@
 <h2 id="optimization-parameters">Optimization Parameters</h2>
 <p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See <a href="../../workflow/parameters.html#project-excel-file">Project excel file</a> for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.</p>
-<div class="highlight"><pre><span></span><code> <span class="p">{</span>
-        <span class="s2">&quot;number_of_particles&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
-        <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
-        <span class="s2">&quot;checkpointing_interval&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-        <span class="s2">&quot;keep_checkpoints&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;iterations_per_split&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
-        <span class="s2">&quot;optimization_iterations&quot;</span><span class="p">:</span> <span class="mi">2500</span><span class="p">,</span>
-        <span class="s2">&quot;starting_regularization&quot;</span><span class="p">:</span> <span class="mi">3000</span><span class="p">,</span>
-        <span class="s2">&quot;ending_regularization&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="s2">&quot;recompute_regularization_interval&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;domains_per_shape&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;relative_weighting&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-        <span class="s2">&quot;initial_relative_weighting&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
-        <span class="s2">&quot;procrustes_interval&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;procrustes_scaling&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;save_init_splits&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;verbosity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;use_geodesic_distance&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="p">}</span>
-</code></pre></div>
+<p><code>python
+ {
+        "number_of_particles": 1024,
+        "use_normals": 1,
+        "normals_strength": 10.0,
+        "checkpointing_interval": 200,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 300,
+        "optimization_iterations": 2500,
+        "starting_regularization": 3000,
+        "ending_regularization": 0.1,
+        "recompute_regularization_interval": 1,
+        "domains_per_shape": 1,
+        "relative_weighting": 15,
+        "initial_relative_weighting": 0.01,
+        "procrustes_interval": 0,
+        "procrustes_scaling": 0,
+        "save_init_splits": 0,
+        "verbosity": 0,
+        "use_geodesic_distance": 1,
+    }</code></p>
 <p>Note <code>geodesics_enabled</code> is set to on.</p>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
 <p>Here we can see the resulting shape model correctly captures the moving cavity as the only mode of variation.</p>

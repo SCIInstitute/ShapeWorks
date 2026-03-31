@@ -3804,284 +3804,220 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/PreferencesWindow.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Telemetry.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/CustomSlider.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/LogWindow.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/StudioLogger.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/UpdateChecker.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Application/ShapeWorksVtkOutputWindow.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QActionGroup&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QCheckBox&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDoubleSpinBox&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QErrorMessage&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QLabel&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMainWindow&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QPointer&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressBar&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSpinBox&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span>
-
-<span class="c1">// Forward Qt class declarations</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Ui_ShapeWorksStudioApp</span><span class="p">;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">monailabel</span><span class="w"> </span><span class="p">{</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MonaiLabelTool</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">DataTool</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">GroomTool</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">OptimizeTool</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisTool</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMTool</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">SplashScreen</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">WheelEventForwarder</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">StatusBarWidget</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">PythonWorker</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">CompareWidget</span><span class="p">;</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QMainWindow</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">Q_OBJECT</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">ShapeWorksStudioApp</span><span class="p">();</span>
-<span class="w">  </span><span class="o">~</span><span class="n">ShapeWorksStudioApp</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">closeEvent</span><span class="p">(</span><span class="n">QCloseEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize_vtk</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">import_files</span><span class="p">(</span><span class="n">QStringList</span><span class="w"> </span><span class="n">file_names</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">open_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_new_project_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_open_project_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_show_project_folder_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">on_action_save_project_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">save_project_as</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_as_swproj_clicked</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_as_xlsx_clicked</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_quit_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_import_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">splash_screen_closed</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_vertical_scroll_bar_valueChanged</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_import_mode_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_groom_mode_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_optimize_mode_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_analysis_mode_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_deepssm_mode_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_monai_mode_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionShow_Tool_Window_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionDock_Tool_Window_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_PCA_Mesh_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_Eigenvalues_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_Eigenvectors_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_PCA_Mode_Points_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_preferences_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">action_export_current_mesh_triggered</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">clip_constraints</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_current_particles_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_mesh_scalars_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_pca_scores_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">action_export_pca_montage_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">action_export_screenshot_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">action_export_particle_scalars_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">action_export_all_subjects_particle_scalars_triggered</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_center_checkbox_stateChanged</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_zoom_slider_valueChanged</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_view_mode_combobox_currentIndexChanged</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">disp_mode</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_auto_view_button_clicked</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_changed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_slider_update</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_mca_changed</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_project_changed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_points_changed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_groom_start</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_groom_complete</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_optimize_start</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_optimize_complete</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_reconstruction_complete</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_reset_stats</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_display_setting_changed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_glyph_changed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_opacity_changed</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_alignment_changed</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_open_recent</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_color_scheme</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_update</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_message</span><span class="p">();</span>
-
-<span class="w">  </span><span class="c1">// callbacks from logger</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_warning</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_debug</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_status</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress_with_message</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">amt</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">amt</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message_callback</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_clear_cache</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_compare_settings_changed</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lightbox_right_click</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_map_selection</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_map_scale</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_combo_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_image_name_changed</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_splash_screen</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">hide_splash_screen</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">about</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">keyboard_shortcuts</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">toggle_log_window</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_py_worker</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">prefs</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Visualizer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_visualizer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">dragEnterEvent</span><span class="p">(</span><span class="n">QDragEnterEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">dragLeaveEvent</span><span class="p">(</span><span class="n">QDragLeaveEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">dropEvent</span><span class="p">(</span><span class="n">QDropEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">new_session</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_tool_mode</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_mode</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_num_viewers</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_combo</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_compare_menu</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_reconstruct_view_show</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">write_particle_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">SETTING_ZOOM_C</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_view_combo_item_enabled</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">item</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_view_combo_item_enabled</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">item</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">disable_all_actions</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">enable_possible_actions</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_from_preferences</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_scrollbar</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_table</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_display</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">force</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_mode_shape</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_feature_uniform_scale</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_uniform_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_recent_files</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_alignment_options</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">write_scalars</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_message</span><span class="p">(</span><span class="n">MessageType</span><span class="w"> </span><span class="n">message_type</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_glyph_submenu</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_iso_submenu</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_compare_submenu</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_window_title</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Ui_ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QActionGroup</span><span class="o">*</span><span class="w"> </span><span class="n">action_group_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Lightbox</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lightbox_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">DataTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data_tool_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">GroomTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">groom_tool_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">OptimizeTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">optimize_tool_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">AnalysisTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">analysis_tool_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">DeepSSMTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deepssm_tool_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">monailabel</span><span class="o">::</span><span class="n">MonaiLabelTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">monai_tool_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Visualizer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PreferencesWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">preferences_window_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">CompareWidget</span><span class="o">*</span><span class="w"> </span><span class="n">compare_widget_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">ShapeWorksVtkOutputWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">studio_vtk_output_window_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// all the preferences</span>
-<span class="w">  </span><span class="n">Preferences</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">WheelEventForwarder</span><span class="o">&gt;</span><span class="w"> </span><span class="n">wheel_event_forwarder_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// programmatic UI elements</span>
-<span class="w">  </span><span class="n">CustomSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_size_slider_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">CustomSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_quality_slider_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QLabel</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_size_label_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QLabel</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_quality_label_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_auto_size_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_arrow_scale_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
-<span class="w">  </span><span class="n">QList</span><span class="o">&lt;</span><span class="n">QAction</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">recent_file_actions_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">LogWindow</span><span class="w"> </span><span class="n">log_window_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QPointer</span><span class="o">&lt;</span><span class="n">StatusBarWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">status_bar_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">SplashScreen</span><span class="o">&gt;</span><span class="w"> </span><span class="n">splash_screen_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QErrorMessage</span><span class="w"> </span><span class="n">error_message_dialog_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">CustomSlider</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">iso_opacity_sliders_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QCheckBox</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">domain_particle_checkboxes_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">current_message_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_display_mode_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_update_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">time_since_last_update_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">qint64</span><span class="w"> </span><span class="n">last_render_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">current_features_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">current_image_list_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">StudioLogger</span><span class="w"> </span><span class="n">logger_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">UpdateChecker</span><span class="w"> </span><span class="n">update_checker_</span><span class="p">{</span><span class="n">preferences_</span><span class="p">};</span>
-<span class="w">  </span><span class="n">Telemetry</span><span class="w"> </span><span class="n">telemetry_</span><span class="p">{</span><span class="n">preferences_</span><span class="p">};</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Data/PreferencesWindow.h></h1>
+<h1 id="include_1">include <Data/Telemetry.h></h1>
+<h1 id="include_2">include <Interface/CustomSlider.h></h1>
+<h1 id="include_3">include <Interface/LogWindow.h></h1>
+<h1 id="include_4">include <Interface/StudioLogger.h></h1>
+<h1 id="include_5">include <Interface/UpdateChecker.h></h1>
+<h1 id="include_6">include <Libs/Application/ShapeWorksVtkOutputWindow.h></h1>
+<h1 id="include_7">include <vtkPolyData.h></h1>
+<h1 id="include_8">include <vtkSmartPointer.h></h1>
+<h1 id="include_9">include <Eigen/Eigen></h1>
+<h1 id="include_10">include <QActionGroup></h1>
+<h1 id="include_11">include <QCheckBox></h1>
+<h1 id="include_12">include <QDoubleSpinBox></h1>
+<h1 id="include_13">include <QElapsedTimer></h1>
+<h1 id="include_14">include <QErrorMessage></h1>
+<h1 id="include_15">include <QLabel></h1>
+<h1 id="include_16">include <QMainWindow></h1>
+<h1 id="include_17">include <QPointer></h1>
+<h1 id="include_18">include <QProgressBar></h1>
+<h1 id="include_19">include <QSpinBox></h1>
+<h1 id="include_20">include <QTimer></h1>
+<p>// Forward Qt class declarations
+class Ui_ShapeWorksStudioApp;</p>
+<p>namespace monailabel {
+class MonaiLabelTool;
+}</p>
+<p>namespace shapeworks {
+class Lightbox;
+class DataTool;
+class GroomTool;
+class OptimizeTool;
+class AnalysisTool;
+class DeepSSMTool;
+class Session;
+class Visualizer;
+class SplashScreen;
+class WheelEventForwarder;
+class StatusBarWidget;
+class PythonWorker;
+class CompareWidget;</p>
+<p>class ShapeWorksStudioApp : public QMainWindow {
+  Q_OBJECT
+ public:
+  ShapeWorksStudioApp();
+  ~ShapeWorksStudioApp();</p>
+<p>void closeEvent(QCloseEvent* event) override;</p>
+<p>void initialize_vtk();
+  void import_files(QStringList file_names);</p>
+<p>public Q_SLOTS:</p>
+<p>void open_project(QString filename);</p>
+<p>void on_action_new_project_triggered();
+  void on_action_open_project_triggered();
+  void on_action_show_project_folder_triggered();
+  bool on_action_save_project_triggered();
+  bool save_project_as(QString type);
+  void save_as_swproj_clicked();
+  void save_as_xlsx_clicked();
+  void on_action_quit_triggered();
+  void on_action_import_triggered();
+  void splash_screen_closed();</p>
+<p>void on_vertical_scroll_bar_valueChanged();</p>
+<p>void on_action_import_mode_triggered();
+  void on_action_groom_mode_triggered();
+  void on_action_optimize_mode_triggered();
+  void on_action_analysis_mode_triggered();
+  void on_action_deepssm_mode_triggered();
+  void on_action_monai_mode_triggered();
+  void on_actionShow_Tool_Window_triggered();
+  void on_actionDock_Tool_Window_triggered();
+  void on_actionExport_PCA_Mesh_triggered();
+  void on_actionExport_Eigenvalues_triggered();
+  void on_actionExport_Eigenvectors_triggered();
+  void on_actionExport_PCA_Mode_Points_triggered();
+  void on_action_preferences_triggered();
+  void action_export_current_mesh_triggered(int index = 0, bool clip_constraints = false);
+  void on_action_export_current_particles_triggered();
+  void on_action_export_mesh_scalars_triggered();
+  void on_action_export_pca_scores_triggered();
+  void action_export_pca_montage_triggered();
+  void action_export_screenshot_triggered();
+  void action_export_particle_scalars_triggered();
+  void action_export_all_subjects_particle_scalars_triggered();</p>
+<p>void on_center_checkbox_stateChanged();
+  void on_zoom_slider_valueChanged();
+  void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
+  void on_auto_view_button_clicked();</p>
+<p>void handle_pca_changed();
+  void handle_slider_update();</p>
+<p>void handle_mca_changed();</p>
+<p>void handle_project_changed();
+  void handle_points_changed();
+  void handle_groom_start();
+  void handle_groom_complete();
+  void handle_optimize_start();
+  void handle_optimize_complete();
+  void handle_reconstruction_complete();
+  void handle_reset_stats();</p>
+<p>void handle_display_setting_changed();
+  void handle_glyph_changed();
+  void handle_opacity_changed();</p>
+<p>void handle_alignment_changed();
+  void handle_open_recent();</p>
+<p>void handle_color_scheme();
+  void handle_pca_update();
+  void clear_message();</p>
+<p>// callbacks from logger
+  void handle_message(std::string str);
+  void handle_error(std::string str);
+  void handle_warning(std::string str);
+  void handle_debug(std::string str);
+  void handle_status(std::string str);
+  void handle_progress_with_message(int amt, std::string str);
+  void handle_progress(int amt);</p>
+<p>void message_callback(std::string str);
+  void handle_new_mesh();
+  void handle_clear_cache();
+  void handle_compare_settings_changed();</p>
+<p>void handle_lightbox_right_click(int index);</p>
+<p>void update_feature_map_selection(int index);
+  void update_feature_map_scale();</p>
+<p>void image_combo_changed(int index);
+  void handle_image_name_changed();</p>
+<p>void show_splash_screen();
+  void hide_splash_screen();
+  void about();
+  void keyboard_shortcuts();</p>
+<p>void toggle_log_window();</p>
+<p>QSharedPointer<PythonWorker> get_py_worker();</p>
+<p>Preferences&amp; prefs() { return preferences_; }
+  QSharedPointer<Session> session() { return session_; }</p>
+<p>QSharedPointer<Visualizer> get_visualizer() { return visualizer_; }</p>
+<p>protected:
+  void dragEnterEvent(QDragEnterEvent<em> event) override;
+  void dragLeaveEvent(QDragLeaveEvent</em> event) override;
+  void dropEvent(QDropEvent* event) override;</p>
+<p>private:
+  void new_session();
+  void update_tool_mode();
+  void update_view_mode();
+  void reset_num_viewers();</p>
+<p>void update_view_combo();
+  void update_compare_menu();</p>
+<p>bool should_reconstruct_view_show();</p>
+<p>static bool write_particle_file(std::string filename, Eigen::VectorXd particles);</p>
+<p>static const std::string SETTING_ZOOM_C;</p>
+<p>void set_view_combo_item_enabled(int item, bool value);
+  bool is_view_combo_item_enabled(int item);</p>
+<p>void disable_all_actions();</p>
+<p>void enable_possible_actions();</p>
+<p>void update_from_preferences();</p>
+<p>void update_scrollbar();</p>
+<p>void update_table();</p>
+<p>void update_display(bool force = false);</p>
+<p>void display_mode_shape();</p>
+<p>bool get_feature_uniform_scale();
+  void set_feature_uniform_scale(bool value);</p>
+<p>void update_recent_files();
+  void update_alignment_options();</p>
+<p>void save_project(QString filename);</p>
+<p>bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);</p>
+<p>void set_message(MessageType message_type, QString message);</p>
+<p>void create_glyph_submenu();
+  void create_iso_submenu();
+  void create_compare_submenu();</p>
+<p>void update_window_title();</p>
+<p>Ui_ShapeWorksStudioApp* ui_;</p>
+<p>QActionGroup* action_group_ = nullptr;</p>
+<p>QSharedPointer<Lightbox> lightbox_;
+  QSharedPointer<DataTool> data_tool_;
+  QSharedPointer<GroomTool> groom_tool_;
+  QSharedPointer<OptimizeTool> optimize_tool_;
+  QSharedPointer<AnalysisTool> analysis_tool_;
+  QSharedPointer<DeepSSMTool> deepssm_tool_;
+  QSharedPointer<monailabel::MonaiLabelTool> monai_tool_;
+  QSharedPointer<Visualizer> visualizer_;
+  QSharedPointer<PreferencesWindow> preferences_window_;
+  CompareWidget* compare_widget_ = nullptr;
+  vtkSmartPointer<ShapeWorksVtkOutputWindow> studio_vtk_output_window_;</p>
+<p>// all the preferences
+  Preferences preferences_;</p>
+<p>QSharedPointer<Session> session_;
+  QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;</p>
+<p>// programmatic UI elements
+  CustomSlider<em> glyph_size_slider_;
+  CustomSlider</em> glyph_quality_slider_;
+  QLabel<em> glyph_size_label_;
+  QLabel</em> glyph_quality_label_;
+  QCheckBox<em> glyph_auto_size_;
+  QCheckBox</em> glyph_arrow_scale_{nullptr};
+  QList<QAction*> recent_file_actions_;
+  LogWindow log_window_;
+  QPointer<StatusBarWidget> status_bar_;
+  QSharedPointer<shapeworks::SplashScreen> splash_screen_;
+  QErrorMessage error_message_dialog_;
+  std::vector<CustomSlider*> iso_opacity_sliders_;
+  std::vector<QCheckBox*> domain_particle_checkboxes_;</p>
+<p>QString current_message_;</p>
+<p>std::string current_display_mode_;</p>
+<p>bool block_update_{false};</p>
+<p>QElapsedTimer time_since_last_update_;
+  qint64 last_render_ = -1;</p>
+<p>QStringList current_features_;
+  QStringList current_image_list_;</p>
+<p>QSharedPointer<PythonWorker> py_worker_;</p>
+<p>StudioLogger logger_;
+  UpdateChecker update_checker_{preferences_};
+  Telemetry telemetry_{preferences_};
+};
+}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

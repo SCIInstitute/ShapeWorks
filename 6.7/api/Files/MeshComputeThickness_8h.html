@@ -3780,24 +3780,19 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Image.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Mesh.h&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="o">::</span><span class="nn">mesh</span><span class="w"> </span><span class="p">{</span>
-
-<span class="kt">void</span><span class="w"> </span><span class="nf">compute_thickness</span><span class="p">(</span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">*</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">median_radius</span><span class="p">,</span>
-<span class="w">                       </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">distance_mesh</span><span class="p">);</span>
-
-<span class="n">Mesh</span><span class="w"> </span><span class="nf">compute_inner_mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">array_name</span><span class="p">);</span>
-
-<span class="kt">void</span><span class="w"> </span><span class="nf">summarize_internal_intensities</span><span class="p">(</span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="n">outer_mesh</span><span class="p">,</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="n">inner_mesh</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="n">image</span><span class="p">);</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks::mesh</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Image.h></h1>
+<h1 id="include_1">include <Mesh.h></h1>
+<p>namespace shapeworks::mesh {</p>
+<p>void compute_thickness(Mesh &amp;mesh, Image &amp;image, Image *dt, double max_dist, double median_radius,
+                       std::string distance_mesh);</p>
+<p>Mesh compute_inner_mesh(const Mesh &amp;mesh, std::string array_name);</p>
+<p>void summarize_internal_intensities(Mesh &amp;outer_mesh, Mesh &amp;inner_mesh, Image &amp;image);</p>
+<p>}  // namespace shapeworks::mesh
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

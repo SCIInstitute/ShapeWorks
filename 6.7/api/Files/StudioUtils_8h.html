@@ -3801,56 +3801,40 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">QWidget</span><span class="p">;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QImage&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QStringList&gt;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageData</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkRenderer</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">QComboBox</span><span class="p">;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioUtils</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ask_multiple_domains_as_single</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">QStringList</span><span class="w"> </span><span class="nf">to_string_list</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vector</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">QImage</span><span class="w"> </span><span class="nf">vtk_image_to_qimage</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">image_data</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reverse_poly_data</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_platform_string</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_viewport_border</span><span class="p">(</span><span class="n">vtkRenderer</span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">color</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">line_width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">6.0</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">write_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">brightness_contrast_to_window_width_level</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">brightness</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">contrast</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">min_intensity</span><span class="p">,</span>
-<span class="w">                                                        </span><span class="kt">double</span><span class="w"> </span><span class="n">max_intensity</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">window_width</span><span class="p">,</span>
-<span class="w">                                                        </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">window_level</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">window_width_level_to_brightness_contrast</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">window_width</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">window_level</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">min_intensity</span><span class="p">,</span>
-<span class="w">                                                        </span><span class="kt">double</span><span class="w"> </span><span class="n">max_intensity</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">brightness</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">contrast</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_domain_combobox</span><span class="p">(</span><span class="n">QComboBox</span><span class="o">*</span><span class="w"> </span><span class="n">combobox</span><span class="p">,</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span>
-<span class="w">                                     </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QString</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">filters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Project/Project.h></h1>
+<p>class QWidget;</p>
+<h1 id="include_1">include <vtkPolyData.h></h1>
+<h1 id="include_2">include <vtkSmartPointer.h></h1>
+<h1 id="include_3">include <QImage></h1>
+<h1 id="include_4">include <QStringList></h1>
+<p>class vtkImageData;
+class vtkRenderer;
+class QComboBox;</p>
+<p>namespace shapeworks {</p>
+<p>class Session;</p>
+<p>class StudioUtils {
+ public:
+  static bool ask_multiple_domains_as_single(QWidget* parent, std::shared_ptr<Project> project);</p>
+<p>static QStringList to_string_list(std::vector<std::string> vector);</p>
+<p>static QImage vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data);</p>
+<p>static vtkSmartPointer<vtkPolyData> reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data);</p>
+<p>static QString get_platform_string();</p>
+<p>static void add_viewport_border(vtkRenderer<em> renderer, double</em> color, double line_width = 6.0);</p>
+<p>static bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);</p>
+<p>static void brightness_contrast_to_window_width_level(double brightness, double contrast, double min_intensity,
+                                                        double max_intensity, double&amp; window_width,
+                                                        double&amp; window_level);</p>
+<p>static void window_width_level_to_brightness_contrast(double window_width, double window_level, double min_intensity,
+                                                        double max_intensity, double&amp; brightness, double&amp; contrast);</p>
+<p>static void update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session,
+                                     const std::vector<QString>&amp; filters = {});
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

@@ -3801,245 +3801,219 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <itkImage.h></h1>
+<h1 id="include_1">include <itkImageRegionConstIteratorWithIndex.h></h1>
+<h1 id="include_2">include <itkImageToVTKImageFilter.h></h1>
+<h1 id="include_3">include <itkZeroCrossingImageFilter.h></h1>
+<h1 id="include_4">include <vtkContourFilter.h></h1>
+<h1 id="include_5">include <vtkMassProperties.h></h1>
+<h1 id="include_6">include <chrono></h1>
+<h1 id="include_7">include <fstream></h1>
+<h1 id="include-particleregiondomainh">include "ParticleRegionDomain.h"</h1>
+<p>// we have to undef foreach here because both Qt and OpenVDB define foreach</p>
+<h1 id="undef-foreach">undef foreach</h1>
+<h1 id="ifndef-q_moc_run">ifndef Q_MOC_RUN</h1>
+<h1 id="include_8">include <openvdb/math/Math.h></h1>
+<h1 id="include_9">include <openvdb/math/Transform.h></h1>
+<h1 id="include_10">include <openvdb/openvdb.h></h1>
+<h1 id="include_11">include <openvdb/tools/GridOperators.h></h1>
+<h1 id="include_12">include <openvdb/tools/Interpolation.h></h1>
+<h1 id="include_13">include <openvdb/tools/SignedFloodFill.h></h1>
+<h1 id="endif">endif</h1>
+<p>namespace shapeworks {
+template <class T>
+class ImageDomain : public ParticleRegionDomain {
+ public:
+  using Pointer = std::shared_ptr<ImageDomain>;</p>
+<p>using ImageType = itk::Image<T, DIMENSION>;</p>
+<p>using PointType = ParticleRegionDomain::PointType;</p>
+<p>void SetImage(ImageType* I, double narrow_band) {
+    this-&gt;m_FixedDomain = false;
+    // this-&gt;Modified();</p>
+<pre><code>openvdb::initialize();  // It is safe to initialize multiple times.
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImage.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImageRegionConstIteratorWithIndex.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImageToVTKImageFilter.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkZeroCrossingImageFilter.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkContourFilter.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkMassProperties.h&gt;</span>
+// Set a large background value, so that we quickly catch particles outside or on the edge the narrow band.
+// (Downside: its more difficult to display the correct location of the point of failure.)
+m_VDBImage = openvdb::FloatGrid::create(1e8);
+m_VDBImage-&gt;setGridClass(openvdb::GRID_LEVEL_SET);
+auto vdbAccessor = m_VDBImage-&gt;getAccessor();
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;chrono&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span>
+// Save properties of the Image needed for the optimizer
+m_Size = I-&gt;GetRequestedRegion().GetSize();
+m_Spacing = I-&gt;GetSpacing();
+m_Origin = I-&gt;GetOrigin();
+m_Index = I-&gt;GetRequestedRegion().GetIndex();
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleRegionDomain.h&quot;</span>
+// Transformation from index space to world space
+openvdb::math::Mat4f mat;
+mat.setIdentity();
+mat.postScale(openvdb::Vec3f(m_Spacing[0], m_Spacing[1], m_Spacing[2]));
+mat.postTranslate(openvdb::Vec3f(m_Origin[0], m_Origin[1], m_Origin[2]));
+const auto xform = openvdb::math::Transform::createLinearTransform(mat);
+m_VDBImage-&gt;setTransform(xform);
 
-<span class="c1">// we have to undef foreach here because both Qt and OpenVDB define foreach</span>
-<span class="cp">#undef foreach</span>
-<span class="cp">#ifndef Q_MOC_RUN</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;openvdb/math/Math.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;openvdb/math/Transform.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;openvdb/openvdb.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;openvdb/tools/GridOperators.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;openvdb/tools/Interpolation.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;openvdb/tools/SignedFloodFill.h&gt;</span>
-<span class="cp">#endif</span>
+itk::ImageRegionIterator&lt;ImageType&gt; it(I, I-&gt;GetRequestedRegion());
+it.GoToBegin();
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ImageDomain</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleRegionDomain</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ImageDomain</span><span class="o">&gt;</span><span class="p">;</span>
+while (!it.IsAtEnd()) {
+  const auto idx = it.GetIndex();
+  const auto pixel = it.Get();
+  if (abs(pixel) &gt; narrow_band) {
+    ++it;
+    continue;
+  }
+  const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+  vdbAccessor.setValue(coord, pixel);
+  ++it;
+}
 
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="p">;</span>
+typename ImageType::PointType l0;
+I-&gt;TransformIndexToPhysicalPoint(m_Index, l0);
+for (unsigned int i = 0; i &lt; DIMENSION; i++) m_Index[i] += m_Size[i] - 1;
 
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleRegionDomain</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
+typename ImageType::PointType u0;
+I-&gt;TransformIndexToPhysicalPoint(m_Index, u0);
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetImage</span><span class="p">(</span><span class="n">ImageType</span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedDomain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">    </span><span class="c1">// this-&gt;Modified();</span>
+// Cast points to higher precision if needed.  Parent class uses doubles
+// because they are compared directly with points in the particle system,
+// which are always double precision.
+PointType l;
+PointType u;
 
-<span class="w">    </span><span class="n">openvdb</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span><span class="w">  </span><span class="c1">// It is safe to initialize multiple times.</span>
+for (unsigned int i = 0; i &lt; DIMENSION; i++) {
+  l[i] = static_cast&lt;double&gt;(l0[i]);
+  u[i] = static_cast&lt;double&gt;(u0[i]);
+}
 
-<span class="w">    </span><span class="c1">// Set a large background value, so that we quickly catch particles outside or on the edge the narrow band.</span>
-<span class="w">    </span><span class="c1">// (Downside: its more difficult to display the correct location of the point of failure.)</span>
-<span class="w">    </span><span class="n">m_VDBImage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="mf">1e8</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">setGridClass</span><span class="p">(</span><span class="n">openvdb</span><span class="o">::</span><span class="n">GRID_LEVEL_SET</span><span class="p">);</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">vdbAccessor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">getAccessor</span><span class="p">();</span>
+this-&gt;SetLowerBound(l);
+this-&gt;SetUpperBound(u);
 
-<span class="w">    </span><span class="c1">// Save properties of the Image needed for the optimizer</span>
-<span class="w">    </span><span class="n">m_Size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">GetRequestedRegion</span><span class="p">().</span><span class="n">GetSize</span><span class="p">();</span>
-<span class="w">    </span><span class="n">m_Spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">GetSpacing</span><span class="p">();</span>
-<span class="w">    </span><span class="n">m_Origin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">GetOrigin</span><span class="p">();</span>
-<span class="w">    </span><span class="n">m_Index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">GetRequestedRegion</span><span class="p">().</span><span class="n">GetIndex</span><span class="p">();</span>
+// Precompute and save values that are used in parts of the optimizer
+this-&gt;SetupImageForCrossingPointUpdate(I);  // this-&gt;UpdateZeroCrossingPoint(I);
+this-&gt;UpdateSurfaceArea(I);
+</code></pre>
+<p>}</p>
+<p>double GetSurfaceArea() const override {
+    return m_SurfaceArea;
+  }</p>
+<p>inline PointType GetOrigin() const { return m_Origin; }</p>
+<p>inline typename ImageType::SizeType GetSize() const { return m_Size; }</p>
+<p>inline typename ImageType::SpacingType GetSpacing() const { return m_Spacing; }</p>
+<p>inline typename ImageType::RegionType::IndexType GetIndex() const { return m_Index; }</p>
+<p>inline PointType GetValidLocationNear(PointType p) const override {
+    // todo why is this function ignoring the argument? Also see Optimize::AddSinglePoint
+    return m_ZeroCrossingPoint;
+  }</p>
+<p>inline T Sample(const PointType&amp; p) const {
+    if (this-&gt;IsInsideBuffer(p)) {
+      const auto coord = this-&gt;ToVDBCoord(p);
+      return openvdb::tools::BoxSampler::sample(m_VDBImage-&gt;tree(), coord);
+    } else {
+      std::ostringstream message;
+      message &lt;&lt; "Domain " &lt;&lt; m_DomainID &lt;&lt; ": " &lt;&lt; m_DomainName &lt;&lt; " : Distance transform queried for a Point, " &lt;&lt; p
+              &lt;&lt; ", outside the given image domain. Consider increasing the padding in grooming or the narrow band "
+                 "optimization parameter";
+      throw std::runtime_error(message.str());
+    }
+  }</p>
+<p>inline double GetMaxDiameter() const override {
+    double bestRadius = 0;
+    double maxdim = 0;
+    for (unsigned int i = 0; i &lt; ImageType::ImageDimension; i++) {
+      if (GetSize()[i] &gt; maxdim) {
+        maxdim = GetSize()[i];
+        bestRadius = maxdim * GetSpacing()[i];
+      }
+    }
+    return bestRadius;
+  }</p>
+<p>void DeleteImages() override { m_VDBImage = 0; }</p>
+<p>// Updates zero crossing points. Raster scans candidate zero crossing points, and finds one that does not violate any
+  // constraints.
+  void UpdateZeroCrossingPoint() override {
+    for (size_t i = 0; i &lt; m_possible_zero_crossings.size(); i++) {
+      this-&gt;m_ZeroCrossingPoint = m_possible_zero_crossings[i];
+      if (!this-&gt;GetConstraints()-&gt;isAnyViolated(this-&gt;m_ZeroCrossingPoint)) {
+        // std::cout &lt;&lt; "Chosen initial point " &lt;&lt; this-&gt;m_ZeroCrossingPoint &lt;&lt; std::endl;
+        break;
+      }
+    }</p>
+<pre><code>if (this-&gt;GetConstraints()-&gt;isAnyViolated(this-&gt;m_ZeroCrossingPoint)) {
+  std::cerr &lt;&lt; "A particle initialization violates at least one constraint. Make sure at least one point satisfies "
+               "all constraints"
+            &lt;&lt; std::endl;
+}
+</code></pre>
+<p>}</p>
+<p>protected:
+  openvdb::FloatGrid::Ptr GetVDBImage() const { return m_VDBImage; }</p>
+<p>ImageDomain() {}
+  virtual ~ImageDomain() {};</p>
+<p>void PrintSelf(std::ostream&amp; os, itk::Indent indent) const {
+    ParticleRegionDomain::PrintSelf(os, indent);
+    os &lt;&lt; indent &lt;&lt; "VDB Active Voxels = " &lt;&lt; m_VDBImage-&gt;activeVoxelCount() &lt;&lt; std::endl;
+  }</p>
+<p>inline openvdb::math::Transform::Ptr transform() const { return this-&gt;m_VDBImage-&gt;transformPtr(); }</p>
+<p>// Converts a coordinate from an ITK Image point in world space to the corresponding
+  // coordinate in OpenVDB Index space. Raises an exception if the narrow band is not
+  // sufficiently large to sample the point.
+  inline openvdb::Vec3R ToVDBCoord(const PointType&amp; p) const {
+    const auto worldCoord = openvdb::Vec3R(p[0], p[1], p[2]);
+    const auto idxCoord = this-&gt;transform()-&gt;worldToIndex(worldCoord);</p>
+<pre><code>// Make sure the coordinate is part of the narrow band
+if (m_VDBImage-&gt;tree().isValueOff(
+        openvdb::Coord::round(idxCoord))) {  // `isValueOff` requires an integer coordinate
+  // If multiple threads crash here at the same time, the error message displayed is just "terminate called
+  // recursively", which isn't helpful. So we std::cerr the error to make sure its printed to the console.
+  std::cerr &lt;&lt; "Sampled point outside the narrow band: " &lt;&lt; p &lt;&lt; std::endl;
 
-<span class="w">    </span><span class="c1">// Transformation from index space to world space</span>
-<span class="w">    </span><span class="n">openvdb</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Mat4f</span><span class="w"> </span><span class="n">mat</span><span class="p">;</span>
-<span class="w">    </span><span class="n">mat</span><span class="p">.</span><span class="n">setIdentity</span><span class="p">();</span>
-<span class="w">    </span><span class="n">mat</span><span class="p">.</span><span class="n">postScale</span><span class="p">(</span><span class="n">openvdb</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">(</span><span class="n">m_Spacing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
-<span class="w">    </span><span class="n">mat</span><span class="p">.</span><span class="n">postTranslate</span><span class="p">(</span><span class="n">openvdb</span><span class="o">::</span><span class="n">Vec3f</span><span class="p">(</span><span class="n">m_Origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">m_Origin</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">m_Origin</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Transform</span><span class="o">::</span><span class="n">createLinearTransform</span><span class="p">(</span><span class="n">mat</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">setTransform</span><span class="p">(</span><span class="n">xform</span><span class="p">);</span>
+  std::ostringstream message;
+  message &lt;&lt; "Attempt to sample at a point outside the narrow band: " &lt;&lt; p
+          &lt;&lt; ". Consider increasing the narrow band";
+  throw std::runtime_error(message.str());
+}
 
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">it</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">GetRequestedRegion</span><span class="p">());</span>
-<span class="w">    </span><span class="n">it</span><span class="p">.</span><span class="n">GoToBegin</span><span class="p">();</span>
-
-<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">it</span><span class="p">.</span><span class="n">IsAtEnd</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">GetIndex</span><span class="p">();</span>
-<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pixel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">Get</span><span class="p">();</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">pixel</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="o">++</span><span class="n">it</span><span class="p">;</span>
-<span class="w">        </span><span class="k">continue</span><span class="p">;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">coord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">Coord</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">idx</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-<span class="w">      </span><span class="n">vdbAccessor</span><span class="p">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span><span class="w"> </span><span class="n">pixel</span><span class="p">);</span>
-<span class="w">      </span><span class="o">++</span><span class="n">it</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">l0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">TransformIndexToPhysicalPoint</span><span class="p">(</span><span class="n">m_Index</span><span class="p">,</span><span class="w"> </span><span class="n">l0</span><span class="p">);</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DIMENSION</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="n">m_Index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">m_Size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-
-<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">u0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">TransformIndexToPhysicalPoint</span><span class="p">(</span><span class="n">m_Index</span><span class="p">,</span><span class="w"> </span><span class="n">u0</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// Cast points to higher precision if needed.  Parent class uses doubles</span>
-<span class="w">    </span><span class="c1">// because they are compared directly with points in the particle system,</span>
-<span class="w">    </span><span class="c1">// which are always double precision.</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">l</span><span class="p">;</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">u</span><span class="p">;</span>
-
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DIMENSION</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">l0</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-<span class="w">      </span><span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">u0</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SetLowerBound</span><span class="p">(</span><span class="n">l</span><span class="p">);</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SetUpperBound</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// Precompute and save values that are used in parts of the optimizer</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SetupImageForCrossingPointUpdate</span><span class="p">(</span><span class="n">I</span><span class="p">);</span><span class="w">  </span><span class="c1">// this-&gt;UpdateZeroCrossingPoint(I);</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">UpdateSurfaceArea</span><span class="p">(</span><span class="n">I</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSurfaceArea</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_SurfaceArea</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetOrigin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Origin</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="nf">GetSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Size</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="nf">GetSpacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">RegionType</span><span class="o">::</span><span class="n">IndexType</span><span class="w"> </span><span class="nf">GetIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Index</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetValidLocationNear</span><span class="p">(</span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// todo why is this function ignoring the argument? Also see Optimize::AddSinglePoint</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_ZeroCrossingPoint</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">Sample</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">IsInsideBuffer</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">coord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ToVDBCoord</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">tools</span><span class="o">::</span><span class="n">BoxSampler</span><span class="o">::</span><span class="n">sample</span><span class="p">(</span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">tree</span><span class="p">(),</span><span class="w"> </span><span class="n">coord</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">message</span><span class="p">;</span>
-<span class="w">      </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Domain &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_DomainID</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_DomainName</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; : Distance transform queried for a Point, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span>
-<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, outside the given image domain. Consider increasing the padding in grooming or the narrow band &quot;</span>
-<span class="w">                 </span><span class="s">&quot;optimization parameter&quot;</span><span class="p">;</span>
-<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">str</span><span class="p">());</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetMaxDiameter</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">bestRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxdim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">ImageDimension</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">GetSize</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">maxdim</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">maxdim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetSize</span><span class="p">()[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">        </span><span class="n">bestRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxdim</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetSpacing</span><span class="p">()[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">bestRadius</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_VDBImage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// Updates zero crossing points. Raster scans candidate zero crossing points, and finds one that does not violate any</span>
-<span class="w">  </span><span class="c1">// constraints.</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_possible_zero_crossings</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ZeroCrossingPoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_possible_zero_crossings</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetConstraints</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">isAnyViolated</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ZeroCrossingPoint</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="c1">// std::cout &lt;&lt; &quot;Chosen initial point &quot; &lt;&lt; this-&gt;m_ZeroCrossingPoint &lt;&lt; std::endl;</span>
-<span class="w">        </span><span class="k">break</span><span class="p">;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetConstraints</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">isAnyViolated</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ZeroCrossingPoint</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;A particle initialization violates at least one constraint. Make sure at least one point satisfies &quot;</span>
-<span class="w">                   </span><span class="s">&quot;all constraints&quot;</span>
-<span class="w">                </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">GetVDBImage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_VDBImage</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">ImageDomain</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ImageDomain</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">ParticleRegionDomain</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span>
-<span class="w">    </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">indent</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;VDB Active Voxels = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">activeVoxelCount</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Transform</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="nf">transform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">transformPtr</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// Converts a coordinate from an ITK Image point in world space to the corresponding</span>
-<span class="w">  </span><span class="c1">// coordinate in OpenVDB Index space. Raises an exception if the narrow band is not</span>
-<span class="w">  </span><span class="c1">// sufficiently large to sample the point.</span>
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">Vec3R</span><span class="w"> </span><span class="nf">ToVDBCoord</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">worldCoord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">Vec3R</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">idxCoord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">transform</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">worldToIndex</span><span class="p">(</span><span class="n">worldCoord</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// Make sure the coordinate is part of the narrow band</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">tree</span><span class="p">().</span><span class="n">isValueOff</span><span class="p">(</span>
-<span class="w">            </span><span class="n">openvdb</span><span class="o">::</span><span class="n">Coord</span><span class="o">::</span><span class="n">round</span><span class="p">(</span><span class="n">idxCoord</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// `isValueOff` requires an integer coordinate</span>
-<span class="w">      </span><span class="c1">// If multiple threads crash here at the same time, the error message displayed is just &quot;terminate called</span>
-<span class="w">      </span><span class="c1">// recursively&quot;, which isn&#39;t helpful. So we std::cerr the error to make sure its printed to the console.</span>
-<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Sampled point outside the narrow band: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-
-<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">message</span><span class="p">;</span>
-<span class="w">      </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Attempt to sample at a point outside the narrow band: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span>
-<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;. Consider increasing the narrow band&quot;</span><span class="p">;</span>
-<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">str</span><span class="p">());</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">idxCoord</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">m_VDBImage</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_Size</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">;</span>
-<span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="n">m_Origin</span><span class="p">;</span>
-<span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="n">m_ZeroCrossingPoint</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">RegionType</span><span class="o">::</span><span class="n">IndexType</span><span class="w"> </span><span class="n">m_Index</span><span class="p">;</span><span class="w">  </span><span class="c1">// Index defining the corner of the region</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SurfaceArea</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_possible_zero_crossings</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Computes possible zero crossing points. Later on, one can find the ones that do not violate constraints.</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetupImageForCrossingPointUpdate</span><span class="p">(</span><span class="n">ImageType</span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ZeroCrossingImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">zc</span><span class="w"> </span><span class="o">=</span>
-<span class="w">        </span><span class="n">itk</span><span class="o">::</span><span class="n">ZeroCrossingImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">    </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">SetInput</span><span class="p">(</span><span class="n">I</span><span class="p">);</span>
-<span class="w">    </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">Update</span><span class="p">();</span>
-<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ImageRegionConstIteratorWithIndex</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">zcIt</span><span class="p">(</span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">(),</span>
-<span class="w">                                                                    </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">GetRequestedRegion</span><span class="p">());</span>
-
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">zcIt</span><span class="p">.</span><span class="n">GoToReverseBegin</span><span class="p">();</span><span class="w"> </span><span class="o">!</span><span class="n">zcIt</span><span class="p">.</span><span class="n">IsAtReverseEnd</span><span class="p">();</span><span class="w"> </span><span class="o">--</span><span class="n">zcIt</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zcIt</span><span class="p">.</span><span class="n">Get</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">PointType</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span>
-<span class="w">        </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">TransformIndexToPhysicalPoint</span><span class="p">(</span><span class="n">zcIt</span><span class="p">.</span><span class="n">GetIndex</span><span class="p">(),</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span>
-<span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ZeroCrossingPoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span>
-<span class="w">        </span><span class="n">m_possible_zero_crossings</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateSurfaceArea</span><span class="p">(</span><span class="n">ImageType</span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="n">image</span><span class="p">(</span><span class="n">I</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_SurfaceArea</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="n">toMesh</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">getSurfaceArea</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// end namespace shapeworks</span>
-</code></pre></div>
+return idxCoord;
+</code></pre>
+<p>}</p>
+<p>private:
+  openvdb::FloatGrid::Ptr m_VDBImage;
+  typename ImageType::SizeType m_Size;
+  typename ImageType::SpacingType m_Spacing;
+  PointType m_Origin;
+  PointType m_ZeroCrossingPoint;
+  typename ImageType::RegionType::IndexType m_Index;  // Index defining the corner of the region
+  double m_SurfaceArea;
+  std::vector<PointType> m_possible_zero_crossings;</p>
+<p>// Computes possible zero crossing points. Later on, one can find the ones that do not violate constraints.
+  void SetupImageForCrossingPointUpdate(ImageType* I) {
+    typename itk::ZeroCrossingImageFilter<ImageType, ImageType>::Pointer zc =
+        itk::ZeroCrossingImageFilter<ImageType, ImageType>::New();
+    zc-&gt;SetInput(I);
+    zc-&gt;Update();
+    typename itk::ImageRegionConstIteratorWithIndex<ImageType> zcIt(zc-&gt;GetOutput(),
+                                                                    zc-&gt;GetOutput()-&gt;GetRequestedRegion());</p>
+<pre><code>for (zcIt.GoToReverseBegin(); !zcIt.IsAtReverseEnd(); --zcIt) {
+  if (zcIt.Get() == 1.0) {
+    PointType pos;
+    I-&gt;TransformIndexToPhysicalPoint(zcIt.GetIndex(), pos);
+    this-&gt;m_ZeroCrossingPoint = pos;
+    m_possible_zero_crossings.push_back(pos);
+  }
+}
+</code></pre>
+<p>}</p>
+<p>void UpdateSurfaceArea(ImageType* I) {
+    Image image(I);
+    m_SurfaceArea = image.toMesh(0).getSurfaceArea();
+  }
+};</p>
+<p>}  // end namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

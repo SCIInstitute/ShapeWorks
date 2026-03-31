@@ -3804,36 +3804,36 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-connectpipelines">function ConnectPipelines</h3>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">ITK_Exporter</span><span class="w"> </span><span class="p">,</span>
-<span class="k">typename</span><span class="w"> </span><span class="nc">VTK_Importer</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="kt">void</span><span class="w"> </span><span class="n">ConnectPipelines</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ITK_Exporter</span><span class="w"> </span><span class="n">exporter</span><span class="p">,</span>
-<span class="w">    </span><span class="n">VTK_Importer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">importer</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+template &lt;typename ITK_Exporter ,
+typename VTK_Importer &gt;
+void ConnectPipelines(
+    ITK_Exporter exporter,
+    VTK_Importer * importer
+)</code></p>
 <p>This function will connect the given itk::VTKImageExport filter to the given vtkImageImport filter. </p>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">ITK_Exporter</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">VTK_Importer</span><span class="o">&gt;</span>
-<span class="kt">void</span><span class="w"> </span><span class="n">ConnectPipelines</span><span class="p">(</span><span class="n">ITK_Exporter</span><span class="w"> </span><span class="n">exporter</span><span class="p">,</span><span class="w"> </span><span class="n">VTK_Importer</span><span class="o">*</span><span class="w"> </span><span class="n">importer</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetUpdateInformationCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetUpdateInformationCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetPipelineModifiedCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetPipelineModifiedCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetWholeExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetWholeExtentCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetSpacingCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetSpacingCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetOriginCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetOriginCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetScalarTypeCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetScalarTypeCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetNumberOfComponentsCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetNumberOfComponentsCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetPropagateUpdateExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetPropagateUpdateExtentCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetUpdateDataCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetUpdateDataCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetDataExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetDataExtentCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetBufferPointerCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetBufferPointerCallback</span><span class="p">());</span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetCallbackUserData</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetCallbackUserData</span><span class="p">());</span>
-<span class="p">}</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<p>template <typename ITK_Exporter, typename VTK_Importer>
+void ConnectPipelines(ITK_Exporter exporter, VTK_Importer* importer)
+{
+  importer-&gt;SetUpdateInformationCallback(exporter-&gt;GetUpdateInformationCallback());
+  importer-&gt;SetPipelineModifiedCallback(exporter-&gt;GetPipelineModifiedCallback());
+  importer-&gt;SetWholeExtentCallback(exporter-&gt;GetWholeExtentCallback());
+  importer-&gt;SetSpacingCallback(exporter-&gt;GetSpacingCallback());
+  importer-&gt;SetOriginCallback(exporter-&gt;GetOriginCallback());
+  importer-&gt;SetScalarTypeCallback(exporter-&gt;GetScalarTypeCallback());
+  importer-&gt;SetNumberOfComponentsCallback(exporter-&gt;GetNumberOfComponentsCallback());
+  importer-&gt;SetPropagateUpdateExtentCallback(exporter-&gt;GetPropagateUpdateExtentCallback());
+  importer-&gt;SetUpdateDataCallback(exporter-&gt;GetUpdateDataCallback());
+  importer-&gt;SetDataExtentCallback(exporter-&gt;GetDataExtentCallback());
+  importer-&gt;SetBufferPointerCallback(exporter-&gt;GetBufferPointerCallback());
+  importer-&gt;SetCallbackUserData(exporter-&gt;GetCallbackUserData());
+}
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

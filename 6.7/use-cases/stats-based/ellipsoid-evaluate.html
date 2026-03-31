@@ -3857,30 +3857,29 @@ This use case reads the correspondence model of the ellipsoid segmentation image
 <p><a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
 <h2 id="analyzing-shape-model-using-python-apis">Analyzing Shape Model Using Python APIs</h2>
 <p>The <code>ShapeEvaluation()</code> module of <code>ShapeWorks</code> python API, calcutates the three evaluation metrics given the correspondence model. The correspondence model can be read using the <code>ParticleSystem()</code> module. </p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Read the particle files from a pre-trained shape model</span>
-<span class="n">particle_data</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ParticleSystem</span><span class="p">(</span><span class="o">&lt;</span><span class="nb">list</span> <span class="n">of</span> <span class="n">local</span> <span class="n">point</span> <span class="n">files</span><span class="o">&gt;</span><span class="p">)</span>
-</code></pre></div>
+<p>```python</p>
+<h1 id="read-the-particle-files-from-a-pre-trained-shape-model">Read the particle files from a pre-trained shape model</h1>
+<p>particle_data = sw.ParticleSystem(<list of local point files>)
+```</p>
 <p>The <code>ShapeEvaluation()</code> module has two types of commands which can query either a particular metric at the specified mode of variation or get the metric values for all the modes of variation. </p>
 <p>To access the metrics at a specified mode of variation:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Get the compactness of a specific mode </span>
-<span class="n">nCompactness</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeCompactness</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span><span class="n">Modes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-
-<span class="c1"># Get the generalization of a specific mode and saves the reconstructions</span>
-<span class="n">nGeneralization</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">compute_generalization</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
-
-<span class="c1"># Calculate specificity of a given mode and saves the reconstructions</span>
-<span class="n">nSpecificity</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeSpecificity</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
-</code></pre></div>
+<p>```python</p>
+<h1 id="get-the-compactness-of-a-specific-mode">Get the compactness of a specific mode</h1>
+<p>nCompactness = sw.ShapeEvaluation.ComputeCompactness(particleSystem=particle_data,Modes=3)</p>
+<h1 id="get-the-generalization-of-a-specific-mode-and-saves-the-reconstructions">Get the generalization of a specific mode and saves the reconstructions</h1>
+<p>nGeneralization = sw.ShapeEvaluation.compute_generalization(particleSystem=particle_data, nModes=3,saveTo=save_dir)</p>
+<h1 id="calculate-specificity-of-a-given-mode-and-saves-the-reconstructions">Calculate specificity of a given mode and saves the reconstructions</h1>
+<p>nSpecificity = sw.ShapeEvaluation.ComputeSpecificity(particleSystem=particle_data, nModes=3,saveTo=save_dir)
+```</p>
 <p>To access the metrics for all the modes of variations:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Get compactness of all the modes</span>
-<span class="n">allCompactness</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeFullCompactness</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">)</span>
-
-<span class="c1">#Get generalization values for all modes</span>
-<span class="n">allGeneralization</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeFullGeneralization</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">)</span>
-
-<span class="c1">#Get specificity values for all modes</span>
-<span class="n">allSpecificity</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeFullSpecificity</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">)</span>
-</code></pre></div>
+<p>```python</p>
+<h1 id="get-compactness-of-all-the-modes">Get compactness of all the modes</h1>
+<p>allCompactness = sw.ShapeEvaluation.ComputeFullCompactness(particleSystem=particle_data)</p>
+<h1 id="get-generalization-values-for-all-modes">Get generalization values for all modes</h1>
+<p>allGeneralization = sw.ShapeEvaluation.ComputeFullGeneralization(particleSystem=particle_data)</p>
+<h1 id="get-specificity-values-for-all-modes">Get specificity values for all modes</h1>
+<p>allSpecificity = sw.ShapeEvaluation.ComputeFullSpecificity(particleSystem=particle_data)
+```</p>
 <p>Details about the evaluation functions can be found <a href="http://sciinstitute.github.io/ShapeWorks/latest/api/Classes/classshapeworks_1_1ShapeEvaluation.html#function-shapeevaluation">in the API Reference</a></p>
 <p>Generalization value of the 3rd mode -  0.09600121582319728</p>
 <p>Generalization Best Reconstruction<img alt="Generalization Best Reconstruction" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generalization_best_recon.png" />

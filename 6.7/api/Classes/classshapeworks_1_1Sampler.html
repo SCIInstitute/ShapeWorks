@@ -4998,360 +4998,360 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-pixeltype">using PixelType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kt">float</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::Sampler::PixelType =  float;</code></p>
 <h3 id="using-imagetype">using ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::Sampler::ImageType =  itk::Image&lt;PixelType, Dimension&gt;;</code></p>
 <h3 id="using-pointtype">using PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::Sampler::PointType =  ImageType::PointType;</code></p>
 <h3 id="using-meancurvaturecachetype">using MeanCurvatureCacheType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::Sampler::MeanCurvatureCacheType =  MeanCurvatureContainer&lt;PixelType, Dimension&gt;;</code></p>
 <h3 id="using-transformtype">using TransformType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::Sampler::TransformType =  vnl_matrix_fixed&lt;double, Dimension + 1, Dimension + 1&gt;;</code></p>
 <h3 id="using-optimizertype">using OptimizerType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">OptimizerType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">GradientDescentOptimizer</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::Sampler::OptimizerType =  GradientDescentOptimizer;</code></p>
 <h3 id="using-cuttingplanelist">using CuttingPlaneList</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">CuttingPlaneList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+using shapeworks::Sampler::CuttingPlaneList =  std::vector&lt;std::vector&lt;std::pair&lt;Eigen::Vector3d, Eigen::Vector3d&gt; &gt;&gt;;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-sampler">function Sampler</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Sampler</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+Sampler()</code></p>
 <p>Constructor. </p>
 <h3 id="function-sampler_1">function ~Sampler</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Sampler</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual ~Sampler()</code></p>
 <p>Destructor. </p>
 <h3 id="function-getparticlesystem">function GetParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline ParticleSystem * GetParticleSystem()</code></p>
 <p>Returns the particle system. </p>
 <h3 id="function-getparticlesystem_1">function GetParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const ParticleSystem * GetParticleSystem() const</code></p>
 <h3 id="function-getcurvaturegradientfunction">function GetCurvatureGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SamplingFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetCurvatureGradientFunction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline std::shared_ptr&lt; SamplingFunction &gt; GetCurvatureGradientFunction()</code></p>
 <h3 id="function-getoptimizer">function GetOptimizer</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">OptimizerType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetOptimizer</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline std::shared_ptr&lt; OptimizerType &gt; GetOptimizer()</code></p>
 <p>Return a pointer to the optimizer object. </p>
 <h3 id="function-getoptimizer_1">function GetOptimizer</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">OptimizerType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetOptimizer</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline std::shared_ptr&lt; const OptimizerType &gt; GetOptimizer() const</code></p>
 <h3 id="function-setpointsfile">function SetPointsFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPointsFile</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetPointsFile(
+    unsigned int i,
+    const std::string &amp; s
+)</code></p>
 <p>Optionally provide a filename for an initial point set. </p>
 <h3 id="function-setpointsfile_1">function SetPointsFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPointsFile</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetPointsFile(
+    const std::string &amp; s
+)</code></p>
 <h3 id="function-setinitialpoints">function SetInitialPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialPoints</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">initial_points</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetInitialPoints(
+    std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; initial_points
+)</code></p>
 <p>Set initial particle positions (e.g. for fixed subjects) </p>
 <h3 id="function-addimage">function AddImage</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddImage</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void AddImage(
+    ImageType::Pointer image,
+    double narrow_band,
+    std::string name =""
+)</code></p>
 <h3 id="function-applyconstraintstozerocrossing">function ApplyConstraintsToZeroCrossing</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ApplyConstraintsToZeroCrossing</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void ApplyConstraintsToZeroCrossing()</code></p>
 <h3 id="function-addmesh">function AddMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">geodesic_remesh_percent</span><span class="w"> </span><span class="o">=</span><span class="mi">100</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void AddMesh(
+    std::shared_ptr&lt; shapeworks::Surface &gt; mesh,
+    double geodesic_remesh_percent =100
+)</code></p>
 <h3 id="function-addmesh_1">function AddMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">surface</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">geodesics_surface</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">sw_mesh</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">surface_area</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void AddMesh(
+    std::shared_ptr&lt; Surface &gt; surface,
+    std::shared_ptr&lt; Surface &gt; geodesics_surface,
+    std::shared_ptr&lt; Mesh &gt; sw_mesh,
+    double surface_area
+)</code></p>
 <h3 id="function-addcontour">function AddContour</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddContour</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void AddContour(
+    vtkSmartPointer&lt; vtkPolyData &gt; poly_data
+)</code></p>
 <h3 id="function-setfieldattributes">function SetFieldAttributes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFieldAttributes</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void SetFieldAttributes(
+    const std::vector&lt; std::string &gt; &amp; s
+)</code></p>
 <h3 id="function-setdomainspershape">function SetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetDomainsPerShape(
+    int n
+)</code></p>
 <h3 id="function-setcuttingplane">function SetCuttingPlane</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCuttingPlane</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">va</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vc</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void SetCuttingPlane(
+    unsigned int i,
+    const vnl_vector_fixed&lt; double, Dimension &gt; &amp; va,
+    const vnl_vector_fixed&lt; double, Dimension &gt; &amp; vb,
+    const vnl_vector_fixed&lt; double, Dimension &gt; &amp; vc
+)</code></p>
 <p>Optionally supply a cutting plane that will be set as a particle optimization constraint in the image domains. </p>
 <h3 id="function-addfreeformconstraint">function AddFreeFormConstraint</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddFreeFormConstraint</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ffc</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void AddFreeFormConstraint(
+    int domain,
+    const FreeFormConstraint &amp; ffc
+)</code></p>
 <h3 id="function-transformcuttingplanes">function TransformCuttingPlanes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">TransformCuttingPlanes</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void TransformCuttingPlanes(
+    unsigned int i
+)</code></p>
 <p>Transform a cutting plane based on procrustes transformation </p>
 <h3 id="function-addsphere">function AddSphere</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddSphere</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void AddSphere(
+    unsigned int i,
+    vnl_vector_fixed&lt; double, Dimension &gt; &amp; c,
+    double r
+)</code></p>
 <p>Optionally add spheres that may be used as constraints to the domain. </p>
 <h3 id="function-setadaptivitymode">function SetAdaptivityMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAdaptivityMode</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetAdaptivityMode()</code></p>
 <h3 id="function-setcorrespondenceon">function SetCorrespondenceOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceOn</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetCorrespondenceOn()</code></p>
 <h3 id="function-setcorrespondenceoff">function SetCorrespondenceOff</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceOff</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetCorrespondenceOff()</code></p>
 <h3 id="function-setsamplingon">function SetSamplingOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingOn</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetSamplingOn()</code></p>
 <h3 id="function-setsamplingoff">function SetSamplingOff</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingOff</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetSamplingOff()</code></p>
 <h3 id="function-getcorrespondenceon">function GetCorrespondenceOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetCorrespondenceOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline bool GetCorrespondenceOn() const</code></p>
 <h3 id="function-getsamplingon">function GetSamplingOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetSamplingOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline bool GetSamplingOn() const</code></p>
 <h3 id="function-setcorrespondencemode">function SetCorrespondenceMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceMode</span><span class="p">(</span>
-<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">mode</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void SetCorrespondenceMode(
+    shapeworks::CorrespondenceMode mode
+)</code></p>
 <p>This method sets the optimization function for correspondences between surfaces (domains). </p>
 <h3 id="function-registergeneralshapematrices">function RegisterGeneralShapeMatrices</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">RegisterGeneralShapeMatrices</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void RegisterGeneralShapeMatrices()</code></p>
 <h3 id="function-setattributescales">function SetAttributeScales</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributeScales</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetAttributeScales(
+    const std::vector&lt; double &gt; &amp; s
+)</code></p>
 <h3 id="function-setxyz">function SetXYZ</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetXYZ</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetXYZ(
+    unsigned int i,
+    bool flag
+)</code></p>
 <h3 id="function-setnormals">function SetNormals</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNormals</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetNormals(
+    int i,
+    bool flag
+)</code></p>
 <h3 id="function-setattributesperdomain">function SetAttributesPerDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributesPerDomain</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void SetAttributesPerDomain(
+    const std::vector&lt; int &gt; s
+)</code></p>
 <h3 id="function-getshapematrix">function GetShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">LegacyShapeMatrix</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeMatrix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline LegacyShapeMatrix * GetShapeMatrix()</code></p>
 <h3 id="function-getgeneralshapematrix">function GetGeneralShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ShapeMatrix</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGeneralShapeMatrix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline ShapeMatrix * GetGeneralShapeMatrix()</code></p>
 <h3 id="function-getgeneralshapegradientmatrix">function GetGeneralShapeGradientMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ShapeGradientMatrix</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGeneralShapeGradientMatrix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline ShapeGradientMatrix * GetGeneralShapeGradientMatrix()</code></p>
 <h3 id="function-getlinkingfunction">function GetLinkingFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetLinkingFunction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline DualVectorFunction * GetLinkingFunction()</code></p>
 <h3 id="function-getensembleentropyfunction">function GetEnsembleEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleEntropyFunction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline LegacyCorrespondenceFunction * GetEnsembleEntropyFunction()</code></p>
 <h3 id="function-getdisentangledensembleentropyfunction">function GetDisentangledEnsembleEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDisentangledEnsembleEntropyFunction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline DisentangledCorrespondenceFunction * GetDisentangledEnsembleEntropyFunction()</code></p>
 <h3 id="function-getensembleregressionentropyfunction">function GetEnsembleRegressionEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline LegacyCorrespondenceFunction * GetEnsembleRegressionEntropyFunction()</code></p>
 <h3 id="function-getensemblemixedeffectsentropyfunction">function GetEnsembleMixedEffectsEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleMixedEffectsEntropyFunction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline LegacyCorrespondenceFunction * GetEnsembleMixedEffectsEntropyFunction()</code></p>
 <h3 id="function-getmeshbasedgeneralentropygradientfunction">function GetMeshBasedGeneralEntropyGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">CorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeshBasedGeneralEntropyGradientFunction</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline CorrespondenceFunction * GetMeshBasedGeneralEntropyGradientFunction()</code></p>
 <h3 id="function-getlinkingfunction_1">function GetLinkingFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetLinkingFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const DualVectorFunction * GetLinkingFunction() const</code></p>
 <h3 id="function-getensembleentropyfunction_1">function GetEnsembleEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const LegacyCorrespondenceFunction * GetEnsembleEntropyFunction() const</code></p>
 <h3 id="function-getdisentangledensembleentropyfunction_1">function GetDisentangledEnsembleEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDisentangledEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const DisentangledCorrespondenceFunction * GetDisentangledEnsembleEntropyFunction() const</code></p>
 <h3 id="function-getensembleregressionentropyfunction_1">function GetEnsembleRegressionEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const LegacyCorrespondenceFunction * GetEnsembleRegressionEntropyFunction() const</code></p>
 <h3 id="function-getensemblemixedeffectsentropyfunction_1">function GetEnsembleMixedEffectsEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleMixedEffectsEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const LegacyCorrespondenceFunction * GetEnsembleMixedEffectsEntropyFunction() const</code></p>
 <h3 id="function-getmeshbasedgeneralentropygradientfunction_1">function GetMeshBasedGeneralEntropyGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">CorrespondenceFunction</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeshBasedGeneralEntropyGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const CorrespondenceFunction * GetMeshBasedGeneralEntropyGradientFunction() const</code></p>
 <h3 id="function-settimeptsperindividual">function SetTimeptsPerIndividual</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTimeptsPerIndividual</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetTimeptsPerIndividual(
+    int n
+)</code></p>
 <h3 id="function-getcorrespondencemode">function GetCorrespondenceMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">GetCorrespondenceMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline shapeworks::CorrespondenceMode GetCorrespondenceMode() const</code></p>
 <h3 id="function-settransformfile">function SetTransformFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransformFile</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetTransformFile(
+    const std::string &amp; s
+)</code></p>
 <h3 id="function-settransformfile_1">function SetTransformFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransformFile</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetTransformFile(
+    const char * s
+)</code></p>
 <h3 id="function-setprefixtransformfile">function SetPrefixTransformFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransformFile</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetPrefixTransformFile(
+    const std::string &amp; s
+)</code></p>
 <h3 id="function-setprefixtransformfile_1">function SetPrefixTransformFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransformFile</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetPrefixTransformFile(
+    const char * s
+)</code></p>
 <h3 id="function-setpairwisepotentialtype">function SetPairwisePotentialType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPairwisePotentialType</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pairwise_potential_type</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetPairwisePotentialType(
+    int pairwise_potential_type
+)</code></p>
 <h3 id="function-getpairwisepotentialtype">function GetPairwisePotentialType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetPairwisePotentialType</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline int GetPairwisePotentialType()</code></p>
 <h3 id="function-setverbosity">function SetVerbosity</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetVerbosity</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetVerbosity(
+    unsigned int val
+)</code></p>
 <h3 id="function-getverbosity">function GetVerbosity</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetVerbosity</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline unsigned int GetVerbosity()</code></p>
 <h3 id="function-setsharedboundaryenabled">function SetSharedBoundaryEnabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryEnabled</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetSharedBoundaryEnabled(
+    bool enabled
+)</code></p>
 <h3 id="function-setsharedboundaryweight">function SetSharedBoundaryWeight</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryWeight</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetSharedBoundaryWeight(
+    double weight
+)</code></p>
 <h3 id="function-setsamplingscale">function SetSamplingScale</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingScale</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetSamplingScale(
+    bool enabled
+)</code></p>
 <h3 id="function-setsamplingautoscale">function SetSamplingAutoScale</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingAutoScale</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">auto_scale</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetSamplingAutoScale(
+    bool auto_scale
+)</code></p>
 <h3 id="function-setsamplingscalevalue">function SetSamplingScaleValue</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingScaleValue</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">scale_value</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetSamplingScaleValue(
+    double scale_value
+)</code></p>
 <h3 id="function-setearlystoppingconfig">function SetEarlyStoppingConfig</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetEarlyStoppingConfig</span><span class="p">(</span>
-<span class="w">    </span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">config</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetEarlyStoppingConfig(
+    EarlyStoppingConfig config
+)</code></p>
 <h3 id="function-readtransforms">function ReadTransforms</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadTransforms</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void ReadTransforms()</code></p>
 <h3 id="function-readpointsfiles">function ReadPointsFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadPointsFiles</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void ReadPointsFiles()</code></p>
 <h3 id="function-allocatedatacaches">function AllocateDataCaches</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AllocateDataCaches</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void AllocateDataCaches()</code></p>
 <h3 id="function-allocatedomainsandneighborhoods">function AllocateDomainsAndNeighborhoods</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AllocateDomainsAndNeighborhoods</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void AllocateDomainsAndNeighborhoods()</code></p>
 <h3 id="function-initializeoptimizationfunctions">function InitializeOptimizationFunctions</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InitializeOptimizationFunctions</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void InitializeOptimizationFunctions()</code></p>
 <h3 id="function-initialize_initial_positions">function initialize_initial_positions</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">initialize_initial_positions</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void initialize_initial_positions()</code></p>
 <h3 id="function-initialize">function Initialize</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void Initialize()</code></p>
 <h3 id="function-reinitialize">function ReInitialize</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReInitialize</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void ReInitialize()</code></p>
 <h3 id="function-execute">function Execute</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Execute</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void Execute()</code></p>
 <h3 id="function-computecuttingplanes">function ComputeCuttingPlanes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">CuttingPlaneList</span><span class="w"> </span><span class="n">ComputeCuttingPlanes</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+CuttingPlaneList ComputeCuttingPlanes()</code></p>
 <h3 id="function-computeplanenormal">function ComputePlaneNormal</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">ComputePlaneNormal</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+Eigen::Vector3d ComputePlaneNormal(
+    const vnl_vector&lt; double &gt; &amp; a,
+    const vnl_vector&lt; double &gt; &amp; b,
+    const vnl_vector&lt; double &gt; &amp; c
+)</code></p>
 <h3 id="function-getffcs">function GetFFCs</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetFFCs</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline std::vector&lt; FreeFormConstraint &gt; GetFFCs()</code></p>
 <h3 id="function-setmeshffcmode">function SetMeshFFCMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFFCMode</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mesh_ffc_mode</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetMeshFFCMode(
+    bool mesh_ffc_mode
+)</code></p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-dimension">variable Dimension</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+static constexpr unsigned int Dimension = 3;</code></p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
 
 
 

@@ -4284,8 +4284,8 @@
 <h2 id="deepssm-cli">DeepSSM CLI</h2>
 <p>The <code>shapeworks deepssm</code> command runs the full DeepSSM pipeline from the command line, without requiring Studio. This enables headless execution on HPC clusters and servers, batch processing of multiple projects, and integration with shell scripts and automated workflows.</p>
 <h3 id="command-syntax">Command Syntax</h3>
-<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>&lt;project_file&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
-</code></pre></div>
+<p><code>bash
+shapeworks deepssm &lt;project_file&gt; [options]</code></p>
 <p>The project file (<code>.xlsx</code> or <code>.swproj</code>) must contain both image and shape columns (e.g., <code>shape_la</code>, <code>image_mri</code>), along with DeepSSM parameters such as data split percentages, augmentation settings, and training configuration. These are the same parameters configurable in the <a href="../studio/deepssm-in-studio.html">DeepSSM Studio module</a>.</p>
 <h3 id="options">Options</h3>
 <table>
@@ -4333,17 +4333,17 @@
 <p>If none of <code>--prep</code>, <code>--augment</code>, <code>--train</code>, <code>--test</code>, or <code>--all</code> are specified, all four steps are run by default.</p>
 <h3 id="examples">Examples</h3>
 <p>Run the full pipeline:</p>
-<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>my_project.swproj<span class="w"> </span>--all
-</code></pre></div>
+<p><code>bash
+shapeworks deepssm my_project.swproj --all</code></p>
 <p>Run only preparation and augmentation:</p>
-<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>my_project.swproj<span class="w"> </span>--prep<span class="w"> </span>all<span class="w"> </span>--augment
-</code></pre></div>
+<p><code>bash
+shapeworks deepssm my_project.swproj --prep all --augment</code></p>
 <p>Run just training and testing with 4 data loader workers:</p>
-<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>my_project.swproj<span class="w"> </span>--train<span class="w"> </span>--test<span class="w"> </span>--num_workers<span class="w"> </span><span class="m">4</span>
-</code></pre></div>
+<p><code>bash
+shapeworks deepssm my_project.swproj --train --test --num_workers 4</code></p>
 <p>Run a single prep sub-step:</p>
-<div class="highlight"><pre><span></span><code>shapeworks<span class="w"> </span>deepssm<span class="w"> </span>my_project.swproj<span class="w"> </span>--prep<span class="w"> </span>groom_training
-</code></pre></div>
+<p><code>bash
+shapeworks deepssm my_project.swproj --prep groom_training</code></p>
 <h3 id="pipeline-steps">Pipeline Steps</h3>
 <p>The four steps correspond to the same stages available in <a href="../studio/deepssm-in-studio.html">DeepSSM in Studio</a>:</p>
 <ol>
@@ -4361,12 +4361,12 @@
 <p>Each time you use ShapeWorks and/or its Python packages, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
 </div>
 <p>To use the <code>DeepSSMUtils</code> package, make sure you have the shapeworks conda environment is activated and add the following import to your Python code:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">DeepSSMUtils</span>
-</code></pre></div>
+<p><code>python 
+import DeepSSMUtils</code></p>
 <h3 id="get-train-and-validation-torch-loaders">Get train and validation torch loaders</h3>
 <p>This function turns the original and augmented data into training and validation torch loaders. The data provided is randomly split so that 80% is used in the training set and 20% is used in the validation set.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTrainValLoaders</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">data_aug_csv</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-</code></pre></div>
+<p><code>python
+DeepSSMUtils.getTrainValLoaders(out_dir, data_aug_csv, batch_size=1, down_factor=1, down_dir=None)</code></p>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory to store the torch loaders.</li>
@@ -4377,8 +4377,8 @@
 </ul>
 <h3 id="get-test-torch-loader">Get test torch loader</h3>
 <p>This function turns the provided data into a test torch loader.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">getTestLoader</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">test_img_list</span><span class="p">,</span> <span class="n">down_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-</code></pre></div>
+<p><code>python
+DeepSSMUtils.getTestLoader(out_dir, test_img_list, down_factor=1, down_dir=None)</code></p>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory to store the torch loader.</li>
@@ -4388,8 +4388,8 @@
 </ul>
 <h3 id="train-deepssm">Train DeepSSM</h3>
 <p>This function defines a DeepSSM model and trains it on the data provided. After training the "final" and "best" model are saved. The final model is saved after all training epochs have run. The best model is saved after the epoch which had the lowest prediction error on the validation set. The best model makes use of early stopping to prevent overfitting.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">trainDeepSSM</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
-</code></pre></div>
+<p><code>python
+DeepSSMUtils.trainDeepSSM(config_file)</code></p>
 <p><strong>Config file:</strong></p>
 <p>Training requires a JSON config file which defines all model architecture and training parameters.</p>
 <h4 id="config-file-parameter-descriptions">Config File Parameter Descriptions</h4>
@@ -4453,8 +4453,8 @@
 </ul>
 <h3 id="test-deepssm">Test DeepSSM</h3>
 <p>This function gets predicted shape models based on the images provided using a trained DeepSSM model.</p>
-<p><div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">testDeepSSM</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
-</code></pre></div>
+<p><code>python
+DeepSSMUtils.testDeepSSM(config_file)</code>
 The testing function takes the <a href="#Config-File-Parameter-Descriptions">same config paremeters file</a> as the training function above.</p>
 <p><strong>Input arguments:</strong></p>
 <ul>
@@ -4466,8 +4466,8 @@ The testing function takes the <a href="#Config-File-Parameter-Descriptions">sam
 </ul>
 <h3 id="analyze-results">Analyze Results</h3>
 <p>This function analyzes the shape models predicted by DeepSSM by comparing them to the true segmentation. </p>
-<div class="highlight"><pre><span></span><code><span class="n">DeepSSMUtils</span><span class="o">.</span><span class="n">analyzeResults</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">DT_dir</span><span class="p">,</span> <span class="n">prediction_dir</span><span class="p">,</span> <span class="n">mean_prefix</span><span class="p">)</span>
-</code></pre></div>
+<p><code>python
+DeepSSMUtils.analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix)</code></p>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>out_dir</code>: Path to the directory where meshes and analysis should be saved.</li>
@@ -4477,8 +4477,7 @@ The testing function takes the <a href="#Config-File-Parameter-Descriptions">sam
 </ul>
 <h3 id="visualizing-error">Visualizing Error</h3>
 <p>The error meshes that are output from the analiyze step can be visualized in Studio. These meshes have a distance scalar field on them which captures the distance between the true and predicted mesh. To view in Studio, run the following from the command line:</p>
-<div class="highlight"><pre><span></span><code>ShapeWorksStudio path/to/error/mesh.vtk
-</code></pre></div>
+<p><code>ShapeWorksStudio path/to/error/mesh.vtk</code></p>
 <p><img alt="DeepSSM Error" src="../img/deep-learning/error_viz.png" /></p>
 
 

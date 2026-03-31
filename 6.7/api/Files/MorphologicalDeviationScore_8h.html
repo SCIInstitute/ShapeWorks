@@ -3801,45 +3801,40 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdexcept&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MorphologicalDeviationScore</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">MorphologicalDeviationScore</span><span class="p">();</span>
-<span class="w">  </span><span class="c1">// Fit PPCA model on control shapes</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SetControlShapes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span><span class="w">  </span><span class="c1">// (n_samples x n_features)</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">GetMorphoDevScore</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span><span class="w">  </span><span class="c1">// (n,)</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">GetPCACoefficients</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span><span class="w">  </span><span class="c1">// (n, rank)</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetRetainedVarianceRatio</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ratio</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">ratio</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">invalid_argument</span><span class="p">(</span><span class="s">&quot;retained_variance_ratio must be in the interval (0, 1].&quot;</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="n">retained_variance_ratio_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ratio</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetRetainedVarianceRatio</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">retained_variance_ratio_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_fitted_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Fitted model parameters</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">RowVectorXd</span><span class="w"> </span><span class="n">mean_</span><span class="p">;</span><span class="w">            </span><span class="c1">// (1 x d)</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">noise_variance_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">retained_variance_ratio_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.95</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Full-rank basis and per-dimension precision weights for scoring</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">all_components_</span><span class="p">;</span><span class="w">     </span><span class="c1">// (d x rank) — all non-zero eigenvectors</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">precision_weights_</span><span class="p">;</span><span class="w">  </span><span class="c1">// (rank,) — 1/lambda_i or 1/noise_variance</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">FitPPCA</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">);</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Eigen/Dense></h1>
+<h1 id="include_1">include <stdexcept></h1>
+<p>namespace shapeworks {
+class MorphologicalDeviationScore {
+ public:
+  MorphologicalDeviationScore();
+  // Fit PPCA model on control shapes
+  bool SetControlShapes(const Eigen::MatrixXd&amp; X);  // (n_samples x n_features)
+  Eigen::VectorXd GetMorphoDevScore(const Eigen::MatrixXd&amp; X);  // (n,)
+  Eigen::MatrixXd GetPCACoefficients(const Eigen::MatrixXd&amp; X);  // (n, rank)
+  void SetRetainedVarianceRatio(double ratio) {
+    if (ratio &lt;= 0.0 || ratio &gt; 1.0) {
+      throw std::invalid_argument("retained_variance_ratio must be in the interval (0, 1].");
+    }
+    retained_variance_ratio_ = ratio;
+  }
+  double GetRetainedVarianceRatio() const { return retained_variance_ratio_; }</p>
+<p>private:
+  bool is_fitted_ = false;</p>
+<p>// Fitted model parameters
+  Eigen::RowVectorXd mean_;            // (1 x d)
+  double noise_variance_ = 0.0;
+  double retained_variance_ratio_ = 0.95;</p>
+<p>// Full-rank basis and per-dimension precision weights for scoring
+  Eigen::MatrixXd all_components_;     // (d x rank) — all non-zero eigenvectors
+  Eigen::VectorXd precision_weights_;  // (rank,) — 1/lambda_i or 1/noise_variance</p>
+<p>bool FitPPCA(const Eigen::MatrixXd&amp; X);
+};
+}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

@@ -3293,15 +3293,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      See Also
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3818,15 +3809,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      See Also
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3859,33 +3841,33 @@
 Here are the basics of using Markdown. The plain text is readable, and there are many editors available, such as <a href="https://dillinger.io">Dillinger</a>.<br />
 One method is to use a plain text editor along with an automatic rendering tool such as <a href="https://github.com/joeyespo/grip/blob/master/README.md">grip</a> to view the formatted results in a browser as the files are edited.</p>
 <p>Use hash symbols to create section headers. Use more hashes for subsequent subsections.
-<div class="highlight"><pre><span></span><code># Main section
-## Subsection
-### Sub-subsection
-#### And
-##### so
-###### on... 
-</code></pre></div></p>
+```</p>
+<h1 id="main-section">Main section</h1>
+<h2 id="subsection">Subsection</h2>
+<h3 id="sub-subsection">Sub-subsection</h3>
+<h4 id="and">And</h4>
+<h5 id="so">so</h5>
+<h6 id="on">on...</h6>
+<p>```</p>
 <p>Links are created by enclosing the text shown for the link in brackets and the link directly adjacent to parenthesis. Links to other '#'-indicated sections of the document are formed using a '#' followed by the lowercase text of the section name separated with dashes. For icons, add some additional brackets and a '!'.<br />
 <a href="http://google.com">external site</a><br />
 <a href="#local-section-name">link text</a><br />
 <a href="http://google.com"><img alt="thumbs up" src="https://66.media.tumblr.com/1f45d6ab69e02479f85ac1c9f1eb4301/tumblr_inline_pkaqpvkvHH1syktzs_540.png" /></a></p>
-<div class="highlight"><pre><span></span><code>[external site](http://google.com)
+<p><code>[external site](http://google.com)
 [link text](#local-section-name)
-[![thumbs up](https://66.media.tumblr.com/1f45d6ab69e02479f85ac1c9f1eb4301/tumblr_inline_pkaqpvkvHH1syktzs_540.png)](http://google.com)
-</code></pre></div>
+[![thumbs up](https://66.media.tumblr.com/1f45d6ab69e02479f85ac1c9f1eb4301/tumblr_inline_pkaqpvkvHH1syktzs_540.png)](http://google.com)</code></p>
 <p>HTML comments can be utilized within a Markdown document if you don't want something shown in the rendered output:
-<div class="highlight"><pre><span></span><code>&lt;!--
+```</p>
+<!--
   commented stuff
---&gt;
-</code></pre></div></p>
+-->
+<p>```</p>
 <p>Finally, code can be shown using triple back-ticks (the backward apostrophe: '`' ), even highlighted for a particular language by following the first set of back-ticks with the language name.  </p>
-<div class="highlight"><pre><span></span><code>```python  
-print(&quot;Hello Markdown!&quot;)
-```  
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello Markdown!&quot;</span><span class="p">)</span>
-</code></pre></div>
+<p><code>```python  
+print("Hello Markdown!")
+```</code>  </p>
+<p><code>python
+print("Hello Markdown!")</code>  </p>
 <p>Use just a single tick to keep monospaced text <code>inline with the rest of the text</code>.</p>
 <p>You can also add tables, quoted text like you'd see in an email, bulleted items, images and more. Here are <a href="https://www.markdownguide.org/cheat-sheet">several</a> <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a> <a href="https://commonmark.org/help/">quick</a> <a href="https://agea.github.io/tutorial.md/">references</a>.</p>
 <!-- shortcut links used in this document -->

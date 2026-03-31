@@ -3864,31 +3864,29 @@
 <h2 id="example-resamplevolumestobeisotropic">Example: ResampleVolumesToBeIsotropic</h2>
 <div class="admonition note">
 <p class="admonition-title">Old command-line: <code>ResampleVolumesToBeIsotropic</code></p>
-<div class="highlight"><pre><span></span><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt;
+<p><code>./ResampleVolumesToBeIsotropic --inFilename &lt;input-file&gt; --outFilename &lt;output-file&gt;
                                --isoSpacing &lt;voxel-spacing&gt;
-                              [--isBinaryImage] [--isCenterImageOn]
-</code></pre></div>
+                              [--isBinaryImage] [--isCenterImageOn]</code></p>
 </div>
 <h3 id="resampling-images">Resampling images</h3>
 <div class="admonition important">
 <p class="admonition-title">Command-line: <code>isoresample</code> (for images)</p>
-<div class="highlight"><pre><span></span><code>shapeworks readimage --name &lt;input-file&gt; recenter
+<p><code>shapeworks readimage --name &lt;input-file&gt; recenter
            isoresample --isospacing &lt;voxel-spacing&gt;
-           writeimage --name &lt;output-file&gt;
-</code></pre></div>
+           writeimage --name &lt;output-file&gt;</code></p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">C++ (without chaining): <code>isoresample</code> (for images)</p>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">recenter</span><span class="p">();</span>
-<span class="n">img</span><span class="p">.</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-</code></pre></div>
+<p><code>c++
+Image img(&lt;input-file&gt;);
+img.recenter();
+img.isoresample(&lt;voxel-spacing&gt;);
+img.write(&lt;output-file&gt;);</code></p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">C++ (with chaining): <code>isoresample</code> (for images)</p>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">).</span><span class="n">recenter</span><span class="p">().</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">).</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-</code></pre></div>
+<p><code>c++
+Image img(&lt;input-file&gt;).recenter().isoresample(&lt;voxel-spacing&gt;).write(&lt;output-file&gt;);</code></p>
 </div>
 <p><img alt="Isoresampling for images" src="../img/new/isoresample_img.png" /></p>
 <h3 id="resampling-segmentations">Resampling segmentations</h3>
@@ -3901,26 +3899,25 @@
 <p>This allows the user to choose the set of commands to run, modify parameters at each step, and save intermediate outputs for troubleshooting.</p>
 <div class="admonition important">
 <p class="admonition-title">Command-line: <code>isoresample</code> (for segmentations)</p>
-<div class="highlight"><pre><span></span><code>shapeworks readimage --name &lt;input-file&gt;
+<p><code>shapeworks readimage --name &lt;input-file&gt;
            recenter antialias --iterations &lt;num-iter&gt;
            isoresample --isospacing &lt;voxel-spacing&gt; binarize
-           writeimage --name &lt;output-file&gt;
-</code></pre></div>
+           writeimage --name &lt;output-file&gt;</code></p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">C++ (without chaining): <code>isoresample</code> (for segmentations)</p>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">recenter</span><span class="p">();</span>
-<span class="n">img</span><span class="p">.</span><span class="n">antialias</span><span class="p">(</span><span class="o">&lt;</span><span class="n">num</span><span class="o">-</span><span class="n">iter</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="n">img</span><span class="p">.</span><span class="n">binarize</span><span class="p">();</span>
-<span class="n">img</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-</code></pre></div>
+<p><code>c++
+Image img(&lt;input-file&gt;);
+img.recenter();
+img.antialias(&lt;num-iter&gt;);
+img.isoresample(&lt;voxel-spacing&gt;);
+img.binarize();
+img.write(&lt;output-file&gt;);</code></p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">C++ (with chaining): <code>isoresample</code> (for segmentations)</p>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">img</span><span class="p">(</span><span class="o">&lt;</span><span class="n">input</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">).</span><span class="n">recenter</span><span class="p">().</span><span class="n">antialias</span><span class="p">(</span><span class="o">&lt;</span><span class="n">num</span><span class="o">-</span><span class="n">iter</span><span class="o">&gt;</span><span class="p">).</span><span class="n">isoresample</span><span class="p">(</span><span class="o">&lt;</span><span class="n">voxel</span><span class="o">-</span><span class="n">spacing</span><span class="o">&gt;</span><span class="p">).</span><span class="n">binarize</span><span class="p">().</span><span class="n">write</span><span class="p">(</span><span class="o">&lt;</span><span class="n">output</span><span class="o">-</span><span class="n">file</span><span class="o">&gt;</span><span class="p">);</span>
-</code></pre></div>
+<p><code>c++
+Image img(&lt;input-file&gt;).recenter().antialias(&lt;num-iter&gt;).isoresample(&lt;voxel-spacing&gt;).binarize().write(&lt;output-file&gt;);</code></p>
 </div>
 <p><img alt="Isoresampling for segmentations" src="../img/new/isoresample_seg.png" /></p>
 

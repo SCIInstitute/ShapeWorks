@@ -3894,131 +3894,97 @@ The ShapeWorks repositories are stored on <a href="https://github.com/SCIInstitu
 </div>
 <h2 id="source-and-branches">Source and Branches</h2>
 <p>To clone the ShapeWorks source, use one of the following commands:<br />
-<div class="highlight"><pre><span></span><code>$ git clone https://github.com/SCIInstitute/ShapeWorks
-</code></pre></div></p>
+<code>$ git clone https://github.com/SCIInstitute/ShapeWorks</code></p>
 <p>To avoid having to type your password every time you refresh your source code, you can copy your public ssh key (found in ~/.ssh/id_rsa.pub) and <a href="https://github.com/settings/keys">add it to your GitHub account</a>. Now you can use this version to clone the code: 
-<div class="highlight"><pre><span></span><code>$ git clone git@github.com:sciinstitute/ShapeWorks
-</code></pre></div>
+<code>$ git clone git@github.com:sciinstitute/ShapeWorks</code>
 If you've already cloned your code, simply change the <code>[remote "origin"]</code> in .git/config to <code>url = git@github.com:SCIInstitute/ShapeWorks</code>. All git commands remain the same.</p>
 <p><em>Now that you've cloned the source you can <a href="build.html">build ShapeWorks</a> from source if you want.</em></p>
 <p>View current state (branch and modifications, both staged and unstaged):<br />
-<div class="highlight"><pre><span></span><code>$ git status
-</code></pre></div></p>
+<code>$ git status</code></p>
 <p>View all branches:<br />
-<div class="highlight"><pre><span></span><code>$ git branch -a
-</code></pre></div></p>
+<code>$ git branch -a</code></p>
 <p>Checkout an exising branch (or a tag or a specific commit):<br />
-<div class="highlight"><pre><span></span><code>$ git checkout &lt;branchname&gt;
-</code></pre></div></p>
+<code>$ git checkout &lt;branchname&gt;</code></p>
 <p>Create a new branch
-<div class="highlight"><pre><span></span><code>$ git checkout -b &lt;branchname&gt;
-</code></pre></div></p>
+<code>$ git checkout -b &lt;branchname&gt;</code></p>
 <p>Fetch changes for a specific branch from GitHub:<br />
-<div class="highlight"><pre><span></span><code>$ git fetch origin &lt;branchname&gt;
-</code></pre></div></p>
+<code>$ git fetch origin &lt;branchname&gt;</code></p>
 <p>Fetch changes for all branches from GitHub:<br />
-<div class="highlight"><pre><span></span><code>$ git fetch --all
-</code></pre></div></p>
+<code>$ git fetch --all</code></p>
 <p>Merge the fetched changes to your current branch:<br />
-<div class="highlight"><pre><span></span><code>$ git merge origin/&lt;branchname&gt;
-</code></pre></div>
+<code>$ git merge origin/&lt;branchname&gt;</code>
 For example, use this command to merge the latest master to your current branch. After that, you can test as necessary, then push your branch and make a pull request when it's ready:
 <code>git merge origin/master</code></p>
 <p>Shortcut to both fetch and merge upstream changes to the current branch:<br />
-<div class="highlight"><pre><span></span><code>$ git pull
-</code></pre></div></p>
+<code>$ git pull</code></p>
 <p>Push a branch to GitHub:<br />
-<div class="highlight"><pre><span></span><code>$ git push origin &lt;branchname&gt;
-</code></pre></div></p>
+<code>$ git push origin &lt;branchname&gt;</code></p>
 <p>Delete a branch (e.g., after a pull request has been completed and merged ):<br />
-<div class="highlight"><pre><span></span><code>$ git branch -d &lt;branchname&gt;
-</code></pre></div></p>
+<code>$ git branch -d &lt;branchname&gt;</code></p>
 <p><em>Force</em> delete a branch whether or not it's been merged:<br />
-<div class="highlight"><pre><span></span><code>$ git branch -D &lt;branchname&gt;
-</code></pre></div></p>
+<code>$ git branch -D &lt;branchname&gt;</code></p>
 <p>Prune old branches that have been removed from GitHub (--dry-run will show you what will be pruned):<br />
-<div class="highlight"><pre><span></span><code>$ git remote prune origin [--dry-run]
-</code></pre></div></p>
+<code>$ git remote prune origin [--dry-run]</code></p>
 <h2 id="commits">Commits</h2>
 <p>Check the current status of your changes scheduled to be committed using:<br />
-<div class="highlight"><pre><span></span><code>$ git status
-</code></pre></div></p>
+<code>$ git status</code></p>
 <p>To commit your current changes to current <em>local</em> branch (first, use <code>git diff</code> to ensure they are correct):<br />
-<div class="highlight"><pre><span></span><code>$ git diff
-$ git commit -m &quot;description of changes&quot;
-</code></pre></div></p>
+<code>$ git diff
+$ git commit -m "description of changes"</code></p>
 <p>This commits only the files specifically scheduled to be committed.<br />
 If you want <em>all</em> changes to be committed, use the <code>-a</code> switch:<br />
-<div class="highlight"><pre><span></span><code>$ git commit -am &quot;description of changes&quot;
-</code></pre></div>
+<code>$ git commit -am "description of changes"</code>
 If you only want to commit scheduled files and a file has been changed after being scheduled, add it again to be updated:<br />
-<div class="highlight"><pre><span></span><code>$ git add &lt;filename&gt;
-</code></pre></div></p>
+<code>$ git add &lt;filename&gt;</code></p>
 <p>To push your local changes for a given branch to GitHub, first use <code>git diff</code> to ensure they are correct, then push to origin:<br />
-<div class="highlight"><pre><span></span><code>$ git diff origin/&lt;branchname&gt; &lt;branchname&gt;
-$ git push origin &lt;branchname&gt;
-</code></pre></div></p>
+<code>$ git diff origin/&lt;branchname&gt; &lt;branchname&gt;
+$ git push origin &lt;branchname&gt;</code></p>
 <div class="admonition danger">
 <p class="admonition-title">Never push directly to <strong>master</strong> </p>
 <p>After pushing, <a href="https://github.com/SCIInstitute/ShapeWorks/pull/new/master">submit a pull request</a> (click the "New pull request" button on the main GitHub page) for your changes to be checked and merged to the master branch.</p>
 </div>
 <h2 id="logs-and-diffs">Logs and diffs</h2>
 <p>View the diff of the most recent commit:<br />
-<div class="highlight"><pre><span></span><code>$ git diff HEAD~1
-</code></pre></div></p>
+<code>$ git diff HEAD~1</code></p>
 <p>View the log of a particular file (including moves/renames):<br />
-<div class="highlight"><pre><span></span><code>$ git log --follow -- &lt;filename&gt;
-</code></pre></div></p>
+<code>$ git log --follow -- &lt;filename&gt;</code></p>
 <p>View the commit history for a file showing the detailed diffs for each commit:<br />
-<div class="highlight"><pre><span></span><code>$ git log -p &lt;filename&gt;
-</code></pre></div></p>
+<code>$ git log -p &lt;filename&gt;</code></p>
 <p>View the commit history of a file/dir when its name is the same as a branch:<br />
-<div class="highlight"><pre><span></span><code>$ git log -- &lt;filename&gt;
-</code></pre></div></p>
+<code>$ git log -- &lt;filename&gt;</code></p>
 <p>View the diff between one commit and its predecessor:<br />
-<div class="highlight"><pre><span></span><code>$ git diff &lt;commit_SHA&gt;~1..&lt;commit_SHA&gt;
-</code></pre></div></p>
+<code>$ git diff &lt;commit_SHA&gt;~1..&lt;commit_SHA&gt;</code></p>
 <p>View only the files that changes for a given range of commits:<br />
-<div class="highlight"><pre><span></span><code>$ git diff --name-only &lt;SHA1&gt; &lt;SHA2&gt;
-</code></pre></div></p>
+<code>$ git diff --name-only &lt;SHA1&gt; &lt;SHA2&gt;</code></p>
 <h2 id="tags">Tags</h2>
 <p>Specific versions and releases can be identified using tags. </p>
 <p>List current tags:
-<div class="highlight"><pre><span></span><code>$ git tag --list
-</code></pre></div></p>
+<code>$ git tag --list</code></p>
 <p>Show details for a specific tag (<code>--quiet</code> hides the diffs):
-<div class="highlight"><pre><span></span><code>$ git show &lt;tagname&gt; --quiet
-</code></pre></div></p>
+<code>$ git show &lt;tagname&gt; --quiet</code></p>
 <p>By default, checking out a tag puts your repo into a 'detached head' state. Use the following command the first time you check out a tag or a specific commit to create a local branch with that name (this happens automatically when checking out branches):<br />
-<div class="highlight"><pre><span></span><code>$ git checkout origin/&lt;tag&gt; -b &lt;tagname&gt;
-</code></pre></div></p>
+<code>$ git checkout origin/&lt;tag&gt; -b &lt;tagname&gt;</code></p>
 <p>Create a new tag using the following:<br />
-<div class="highlight"><pre><span></span><code>$ git tag &lt;tagname&gt;
-</code></pre></div></p>
+<code>$ git tag &lt;tagname&gt;</code></p>
 <p>Tags must be explicitly pushed to GitHub. Push your new tag using:<br />
-<div class="highlight"><pre><span></span><code>$ git push origin &lt;tagname&gt;
-</code></pre></div></p>
+<code>$ git push origin &lt;tagname&gt;</code></p>
 <p>Delete a tag using:<br />
-<div class="highlight"><pre><span></span><code>$ git tag delete &lt;tagname&gt;
-$ git push origin --delete &lt;tagname&gt;
-</code></pre></div>
+<code>$ git tag delete &lt;tagname&gt;
+$ git push origin --delete &lt;tagname&gt;</code>
 The second command is only necessary if the tag has been pushed to Github.  </p>
 <h2 id="advanced">Advanced</h2>
 <p>There are many other things that can be done, such as mashing together commits, temporarily "stashing" and retrieving stashed changes, etc.
 Please add anything here that seems useful.</p>
 <p>Stash your current changes (temporarily set them aside without committing):
-<div class="highlight"><pre><span></span><code>$ git stash -m &quot;what is being stashed&quot;
-</code></pre></div></p>
+<code>$ git stash -m "what is being stashed"</code></p>
 <p>Retrieve the stashed changes:
-<div class="highlight"><pre><span></span><code>$ git stash pop
-</code></pre></div></p>
+<code>$ git stash pop</code></p>
 <p>Modify the description of the most recent commit:  </p>
 <div class="admonition imporant">
 <p class="admonition-title">Imporant</p>
 <p>Only use this if the commit has not yet been pushed to GitHub. </p>
 </div>
-<div class="highlight"><pre><span></span><code>$ git commit --amend
-</code></pre></div>
+<p><code>$ git commit --amend</code></p>
 <p>For further study please find various Git tutorials online, for example:</p>
 <p><a href="https://githowto.com">githowto</a></p>
 

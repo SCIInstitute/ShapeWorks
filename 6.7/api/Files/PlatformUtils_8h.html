@@ -3801,36 +3801,39 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">PlatformUtils</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_windows</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="cp">#ifdef _WIN32</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="cp">#endif</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_linux</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="cp">#ifdef __linux__</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="cp">#endif</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_macos</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="cp">#ifdef __APPLE__</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="cp">#endif</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<p>namespace shapeworks {</p>
+<p>class PlatformUtils {
+ public:
+  static bool is_windows() {</p>
+<h1 id="ifdef-_win32">ifdef _WIN32</h1>
+<pre><code>return true;
+</code></pre>
+<h1 id="endif">endif</h1>
+<pre><code>return false;
+</code></pre>
+<p>}</p>
+<p>static bool is_linux() {</p>
+<h1 id="ifdef-linux">ifdef <strong>linux</strong></h1>
+<pre><code>return true;
+</code></pre>
+<h1 id="endif_1">endif</h1>
+<pre><code>return false;
+</code></pre>
+<p>}</p>
+<p>static bool is_macos() {</p>
+<h1 id="ifdef-apple">ifdef <strong>APPLE</strong></h1>
+<pre><code>return true;
+</code></pre>
+<h1 id="endif_2">endif</h1>
+<pre><code>return false;
+</code></pre>
+<p>}
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 

@@ -3801,256 +3801,227 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include-legacyshapematrixh">include "LegacyShapeMatrix.h"</h1>
+<h1 id="include-particlesystemh">include "ParticleSystem.h"</h1>
+<h1 id="include-vnlvnl_vectorh">include "vnl/vnl_vector.h"</h1>
+<p>namespace shapeworks {
+class LinearRegressionShapeMatrix : public LegacyShapeMatrix {
+ public:
+  typedef double DataType;
+  typedef LinearRegressionShapeMatrix Self;
+  typedef LegacyShapeMatrix Superclass;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;</p>
+<p>itkNewMacro(Self);</p>
+<p>itkTypeMacro(LinearRegressionShapeMatrix, LegacyShapeMatrix);</p>
+<p>void UpdateMeanMatrix() {
+    // for each sample
+    for (unsigned int i = 0; i &lt; m_MeanMatrix.cols(); i++) {
+      // compute the mean
+      m_MeanMatrix.set_column(i, m_Intercept + m_Slope * m_Expl(i));
+    }
+  }</p>
+<p>inline vnl_vector<double> ComputeMean(double k) const { return m_Intercept + m_Slope * k; }</p>
+<p>void ResizeParameters(unsigned int n) {
+    vnl_vector<double> tmpA = m_Intercept;  // copy existing  matrix
+    vnl_vector<double> tmpB = m_Slope;      // copy existing  matrix</p>
+<pre><code>// Create new
+m_Intercept.set_size(n);
+m_Slope.set_size(n);
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;LegacyShapeMatrix.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_vector.h&quot;</span>
+// Copy old data into new vector.
+for (unsigned int r = 0; r &lt; tmpA.size(); r++) {
+  m_Intercept(r) = tmpA(r);
+  m_Slope(r) = tmpB(r);
+}
+</code></pre>
+<p>}</p>
+<p>virtual void ResizeMeanMatrix(int rs, int cs) {
+    vnl_matrix<double> tmp = m_MeanMatrix;  // copy existing  matrix</p>
+<pre><code>// Create new column (shape)
+m_MeanMatrix.set_size(rs, cs);
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">LinearRegressionShapeMatrix</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">LegacyShapeMatrix</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">DataType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">LinearRegressionShapeMatrix</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">LegacyShapeMatrix</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstPointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstWeakPointer</span><span class="p">;</span>
+m_MeanMatrix.fill(0.0);
 
-<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span>
+// Copy old data into new matrix.
+for (unsigned int c = 0; c &lt; tmp.cols(); c++) {
+  for (unsigned int r = 0; r &lt; tmp.rows(); r++) {
+    m_MeanMatrix(r, c) = tmp(r, c);
+  }
+}
+</code></pre>
+<p>}</p>
+<p>void ResizeExplanatory(unsigned int n) {
+    if (n &gt; m_Expl.size()) {
+      vnl_vector<double> tmp = m_Expl;  // copy existing  matrix</p>
+<pre><code>  // Create new
+  m_Expl.set_size(n);
+  m_Expl.fill(0.0);
 
-<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">LinearRegressionShapeMatrix</span><span class="p">,</span><span class="w"> </span><span class="n">LegacyShapeMatrix</span><span class="p">);</span>
+  // Copy old data into new vector.
+  for (unsigned int r = 0; r &lt; tmp.size(); r++) {
+    m_Expl(r) = tmp(r);
+  }
+}
+</code></pre>
+<p>}</p>
+<p>virtual void DomainAddEventCallback(Object*, const itk::EventObject&amp; e) {
+    const ParticleDomainAddEvent&amp; event = dynamic_cast<const ParticleDomainAddEvent&>(e);
+    unsigned int d = event.GetDomainIndex();</p>
+<pre><code>if (d % this-&gt;m_DomainsPerShape == 0) {
+  this-&gt;ResizeMatrix(this-&gt;rows(), this-&gt;cols() + 1);
+  this-&gt;ResizeMeanMatrix(this-&gt;rows(), this-&gt;cols() + 1);
+  this-&gt;ResizeExplanatory(this-&gt;cols());
+}
+</code></pre>
+<p>}</p>
+<p>virtual void PositionAddEventCallback(Object<em> o, const itk::EventObject&amp; e) {
+    const ParticlePositionAddEvent&amp; event = dynamic_cast<const ParticlePositionAddEvent&>(e);
+    const ParticleSystem</em> ps = dynamic_cast<const ParticleSystem*>(o);
+    const int d = event.GetDomainIndex();
+    const unsigned int idx = event.GetPositionIndex();
+    const typename ParticleSystem::PointType pos = ps-&gt;GetTransformedPosition(idx, d);</p>
+<pre><code>const unsigned int PointsPerDomain = ps-&gt;GetNumberOfParticles(d);
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateMeanMatrix</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// for each sample</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_MeanMatrix</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="c1">// compute the mean</span>
-<span class="w">      </span><span class="n">m_MeanMatrix</span><span class="p">.</span><span class="n">set_column</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">m_Intercept</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m_Slope</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
+// Make sure we have enough rows.
+if ((ps-&gt;GetNumberOfParticles(d) * 3 * this-&gt;m_DomainsPerShape) &gt; this-&gt;rows()) {
+  this-&gt;ResizeParameters(PointsPerDomain * 3 * this-&gt;m_DomainsPerShape);
+  this-&gt;ResizeMatrix(PointsPerDomain * 3 * this-&gt;m_DomainsPerShape, this-&gt;cols());
+  this-&gt;ResizeMeanMatrix(PointsPerDomain * 3 * this-&gt;m_DomainsPerShape, this-&gt;cols());
+}
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ComputeMean</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Intercept</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m_Slope</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">k</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+// CANNOT ADD POSITION INFO UNTIL ALL POINTS PER DOMAIN IS KNOWN
+// Add position info to the matrix
+unsigned int k = ((d % this-&gt;m_DomainsPerShape) * PointsPerDomain * 3) + (idx * 3);
+for (unsigned int i = 0; i &lt; 3; i++) {
+  this-&gt;operator()(i + k, d / this-&gt;m_DomainsPerShape) = pos[i];
+}
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">ResizeParameters</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tmpA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Intercept</span><span class="p">;</span><span class="w">  </span><span class="c1">// copy existing  matrix</span>
-<span class="w">    </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tmpB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Slope</span><span class="p">;</span><span class="w">      </span><span class="c1">// copy existing  matrix</span>
+//   std::cout &lt;&lt; "Row " &lt;&lt; k &lt;&lt; " Col " &lt;&lt; d / this-&gt;m_DomainsPerShape &lt;&lt; " = " &lt;&lt; pos &lt;&lt; std::endl;
+</code></pre>
+<p>}</p>
+<p>virtual void PositionSetEventCallback(Object* o, const itk::EventObject&amp; e) {
+    const ParticlePositionSetEvent&amp; event = dynamic_cast<const ParticlePositionSetEvent&>(e);</p>
+<pre><code>const ParticleSystem* ps = dynamic_cast&lt;const ParticleSystem*&gt;(o);
+const int d = event.GetDomainIndex();
+const unsigned int idx = event.GetPositionIndex();
+const typename ParticleSystem::PointType pos = ps-&gt;GetTransformedPosition(idx, d);
+const unsigned int PointsPerDomain = ps-&gt;GetNumberOfParticles(d);
 
-<span class="w">    </span><span class="c1">// Create new</span>
-<span class="w">    </span><span class="n">m_Intercept</span><span class="p">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_Slope</span><span class="p">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+// Modify matrix info
+//    unsigned int k = 3 * idx;
+unsigned int k = ((d % this-&gt;m_DomainsPerShape) * PointsPerDomain * 3) + (idx * 3);
 
-<span class="w">    </span><span class="c1">// Copy old data into new vector.</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tmpA</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">r</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_Intercept</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmpA</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
-<span class="w">      </span><span class="n">m_Slope</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmpB</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
+for (unsigned int i = 0; i &lt; 3; i++) {
+  this-&gt;operator()(i + k, d / this-&gt;m_DomainsPerShape) = pos[i] - m_MeanMatrix(i + k, d / this-&gt;m_DomainsPerShape);
+}
+</code></pre>
+<p>}</p>
+<p>virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&amp;) {
+    // NEED TO IMPLEMENT THIS
+  }</p>
+<p>void SetDomainsPerShape(int i) { this-&gt;m_DomainsPerShape = i; }
+  int GetDomainsPerShape() const { return this-&gt;m_DomainsPerShape; }</p>
+<p>void SetExplanatory(std::vector<double> v) {
+    ResizeExplanatory(v.size());
+    for (unsigned int i = 0; i &lt; v.size(); i++) {
+      m_Expl[i] = v[i];
+    }
+  }
+  void SetExplanatory(unsigned int i, double q) { m_Expl[i] = q; }
+  const double&amp; GetExplanatory(unsigned int i) const { return m_Expl[i]; }
+  double&amp; GetExplanatory(unsigned int i) { return m_Expl[i]; }</p>
+<p>const vnl_vector<double>&amp; GetSlope() const { return m_Slope; }
+  const vnl_vector<double>&amp; GetIntercept() const { return m_Intercept; }</p>
+<p>void SetSlope(const std::vector<double>&amp; v) {
+    ResizeParameters(v.size());
+    for (unsigned int i = 0; i &lt; v.size(); i++) {
+      m_Slope[i] = v[i];
+    }
+  }</p>
+<p>void SetIntercept(const std::vector<double>&amp; v) {
+    ResizeParameters(v.size());
+    for (unsigned int i = 0; i &lt; v.size(); i++) {
+      m_Intercept[i] = v[i];
+    }
+  }</p>
+<p>void EstimateParameters() {
+    //    std::cout &lt;&lt; "Estimating params" &lt;&lt; std::endl;
+    //    std::cout &lt;&lt; "Explanatory: " &lt;&lt; m_Expl &lt;&lt; std::endl;</p>
+<pre><code>vnl_matrix&lt;double&gt; X = *this + m_MeanMatrix;
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResizeMeanMatrix</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">cs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_MeanMatrix</span><span class="p">;</span><span class="w">  </span><span class="c1">// copy existing  matrix</span>
+// Number of samples
+double n = static_cast&lt;double&gt;(X.cols());
 
-<span class="w">    </span><span class="c1">// Create new column (shape)</span>
-<span class="w">    </span><span class="n">m_MeanMatrix</span><span class="p">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="n">cs</span><span class="p">);</span>
+vnl_vector&lt;double&gt; sumtx = m_Expl[0] * X.get_column(0);
+vnl_vector&lt;double&gt; sumx = X.get_column(0);
+double sumt = m_Expl[0];
+double sumt2 = m_Expl[0] * m_Expl[0];
+for (unsigned int k = 1; k &lt; X.cols(); k++)  // k is the sample number
+{
+  sumtx += m_Expl[k] * X.get_column(k);
+  sumx += X.get_column(k);
+  sumt += m_Expl[k];
+  sumt2 += m_Expl[k] * m_Expl[k];
+}
 
-<span class="w">    </span><span class="n">m_MeanMatrix</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
+m_Slope = (n * sumtx - (sumx * sumt)) / (n * sumt2 - (sumt * sumt));
 
-<span class="w">    </span><span class="c1">// Copy old data into new matrix.</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tmp</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span><span class="w"> </span><span class="n">c</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tmp</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span><span class="w"> </span><span class="n">r</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">m_MeanMatrix</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
+vnl_vector&lt;double&gt; sumbt = m_Slope * m_Expl[0];
+for (unsigned int k = 1; k &lt; X.cols(); k++) {
+  sumbt += m_Slope * m_Expl[k];
+}
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">ResizeExplanatory</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">;</span><span class="w">  </span><span class="c1">// copy existing  matrix</span>
-
-<span class="w">      </span><span class="c1">// Create new</span>
-<span class="w">      </span><span class="n">m_Expl</span><span class="p">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="w">      </span><span class="n">m_Expl</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-
-<span class="w">      </span><span class="c1">// Copy old data into new vector.</span>
-<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tmp</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">r</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">m_Expl</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DomainAddEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDomainAddEvent</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDomainAddEvent</span><span class="o">&amp;&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">GetDomainIndex</span><span class="p">();</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ResizeMatrix</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">rows</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cols</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ResizeMeanMatrix</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">rows</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cols</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ResizeExplanatory</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cols</span><span class="p">());</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionAddEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticlePositionAddEvent</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">ParticlePositionAddEvent</span><span class="o">&amp;&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">o</span><span class="p">);</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">GetDomainIndex</span><span class="p">();</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">GetPositionIndex</span><span class="p">();</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="o">-&gt;</span><span class="n">GetTransformedPosition</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
-
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">PointsPerDomain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="o">-&gt;</span><span class="n">GetNumberOfParticles</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// Make sure we have enough rows.</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">ps</span><span class="o">-&gt;</span><span class="n">GetNumberOfParticles</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">rows</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ResizeParameters</span><span class="p">(</span><span class="n">PointsPerDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">);</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ResizeMatrix</span><span class="p">(</span><span class="n">PointsPerDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cols</span><span class="p">());</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ResizeMeanMatrix</span><span class="p">(</span><span class="n">PointsPerDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cols</span><span class="p">());</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="c1">// CANNOT ADD POSITION INFO UNTIL ALL POINTS PER DOMAIN IS KNOWN</span>
-<span class="w">    </span><span class="c1">// Add position info to the matrix</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">d</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">PointsPerDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">idx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="k">operator</span><span class="p">()(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="c1">//   std::cout &lt;&lt; &quot;Row &quot; &lt;&lt; k &lt;&lt; &quot; Col &quot; &lt;&lt; d / this-&gt;m_DomainsPerShape &lt;&lt; &quot; = &quot; &lt;&lt; pos &lt;&lt; std::endl;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticlePositionSetEvent</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">ParticlePositionSetEvent</span><span class="o">&amp;&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
-
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">o</span><span class="p">);</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">GetDomainIndex</span><span class="p">();</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">GetPositionIndex</span><span class="p">();</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="o">-&gt;</span><span class="n">GetTransformedPosition</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">PointsPerDomain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps</span><span class="o">-&gt;</span><span class="n">GetNumberOfParticles</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// Modify matrix info</span>
-<span class="w">    </span><span class="c1">//    unsigned int k = 3 * idx;</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">d</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">PointsPerDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">idx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
-
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="k">operator</span><span class="p">()(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">m_MeanMatrix</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionRemoveEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// NEED TO IMPLEMENT THIS</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainsPerShape</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetExplanatory</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">ResizeExplanatory</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetExplanatory</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">q</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetExplanatory</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetExplanatory</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">GetSlope</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Slope</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">GetIntercept</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Intercept</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSlope</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">ResizeParameters</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_Slope</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIntercept</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">ResizeParameters</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_Intercept</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">EstimateParameters</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">//    std::cout &lt;&lt; &quot;Estimating params&quot; &lt;&lt; std::endl;</span>
-<span class="w">    </span><span class="c1">//    std::cout &lt;&lt; &quot;Explanatory: &quot; &lt;&lt; m_Expl &lt;&lt; std::endl;</span>
-
-<span class="w">    </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m_MeanMatrix</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// Number of samples</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">X</span><span class="p">.</span><span class="n">cols</span><span class="p">());</span>
-
-<span class="w">    </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sumtx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">get_column</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-<span class="w">    </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sumx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">get_column</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sumt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sumt2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span><span class="w"> </span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w">  </span><span class="c1">// k is the sample number</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="n">sumtx</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">get_column</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
-<span class="w">      </span><span class="n">sumx</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">get_column</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
-<span class="w">      </span><span class="n">sumt</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
-<span class="w">      </span><span class="n">sumt2</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="n">m_Slope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sumtx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">sumx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sumt</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sumt2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">sumt</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sumt</span><span class="p">));</span>
-
-<span class="w">    </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sumbt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Slope</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">X</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span><span class="w"> </span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">sumbt</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">m_Slope</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="n">m_Intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">sumx</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">sumbt</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">//</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_Intercept</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_Slope</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="n">m_MeanMatrix</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_UpdateCounter</span><span class="o">++</span><span class="p">;</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_UpdateCounter</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">m_RegressionInterval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_UpdateCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">EstimateParameters</span><span class="p">();</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">UpdateMeanMatrix</span><span class="p">();</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRegressionInterval</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_RegressionInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetRegressionInterval</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_RegressionInterval</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="n">LinearRegressionShapeMatrix</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DefinedCallbacks</span><span class="p">.</span><span class="n">DomainAddEvent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DefinedCallbacks</span><span class="p">.</span><span class="n">PositionAddEvent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DefinedCallbacks</span><span class="p">.</span><span class="n">PositionSetEvent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DefinedCallbacks</span><span class="p">.</span><span class="n">PositionRemoveEvent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_UpdateCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_RegressionInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">LinearRegressionShapeMatrix</span><span class="p">(){};</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">LinearRegressionShapeMatrix</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// purposely not implemented</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w">                                </span><span class="c1">// purposely not implemented</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_UpdateCounter</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_RegressionInterval</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Parameters for the linear model</span>
-<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Intercept</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Slope</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// The explanatory variable value for each sample (matrix column)</span>
-<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Expl</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// A matrix to store the mean estimated for each explanatory variable (each sample)</span>
-<span class="w">  </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_MeanMatrix</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+m_Intercept = (sumx - sumbt) / n;
+</code></pre>
+<p>}</p>
+<p>//
+  void Initialize() {
+    m_Intercept.fill(0.0);
+    m_Slope.fill(0.0);
+    m_MeanMatrix.fill(0.0);
+  }</p>
+<p>virtual void BeforeIteration() {
+    m_UpdateCounter++;
+    if (m_UpdateCounter &gt;= m_RegressionInterval) {
+      m_UpdateCounter = 0;
+      this-&gt;EstimateParameters();
+      this-&gt;UpdateMeanMatrix();
+    }
+  }</p>
+<p>void SetRegressionInterval(int i) { m_RegressionInterval = i; }
+  int GetRegressionInterval() const { return m_RegressionInterval; }</p>
+<p>protected:
+  LinearRegressionShapeMatrix() {
+    this-&gt;m_DefinedCallbacks.DomainAddEvent = true;
+    this-&gt;m_DefinedCallbacks.PositionAddEvent = true;
+    this-&gt;m_DefinedCallbacks.PositionSetEvent = true;
+    this-&gt;m_DefinedCallbacks.PositionRemoveEvent = true;
+    m_UpdateCounter = 0;
+    m_RegressionInterval = 1;
+  }
+  virtual ~LinearRegressionShapeMatrix(){};</p>
+<p>void PrintSelf(std::ostream&amp; os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }</p>
+<p>private:
+  LinearRegressionShapeMatrix(const Self&amp;);  // purposely not implemented
+  void operator=(const Self&amp;);                                // purposely not implemented</p>
+<p>int m_UpdateCounter;
+  int m_RegressionInterval;</p>
+<p>// Parameters for the linear model
+  vnl_vector<double> m_Intercept;
+  vnl_vector<double> m_Slope;</p>
+<p>// The explanatory variable value for each sample (matrix column)
+  vnl_vector<double> m_Expl;</p>
+<p>// A matrix to store the mean estimated for each explanatory variable (each sample)
+  vnl_matrix<double> m_MeanMatrix;
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2026-03-31 at 06:59:33 +0000</p>
+<p>Updated on 2026-03-31 at 16:02:11 +0000</p>
 
 
 
