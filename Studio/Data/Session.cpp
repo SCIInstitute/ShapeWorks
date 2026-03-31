@@ -29,6 +29,7 @@
 #include <JsonProjectReader.h>
 #include <JsonProjectWriter.h>
 #include <Logging.h>
+#include <Profiling.h>
 #include <MeshManager.h>
 #include <Project/Project.h>
 #include <Shape.h>
@@ -107,6 +108,7 @@ void Session::set_parent(QWidget* parent) { parent_ = parent; }
 
 //---------------------------------------------------------------------------
 bool Session::save_project(QString filename) {
+  TIME_SCOPE("Session::save_project");
   QProgressDialog progress("Saving Project...", "Abort", 0, 100, parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.setMinimumDuration(2000);
@@ -201,6 +203,7 @@ bool Session::save_project(QString filename) {
 
 //---------------------------------------------------------------------------
 bool Session::load_project(QString filename) {
+  TIME_SCOPE("Session::load_project");
   modified_ = false;
 
 

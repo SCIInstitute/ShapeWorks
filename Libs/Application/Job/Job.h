@@ -15,6 +15,9 @@ class Job : public QObject {
   //! run the job
   virtual void run() = 0;
 
+  //! execute the job with profiling instrumentation
+  void execute();
+
   //! get the name of the job
   virtual QString name() = 0;
 

@@ -20,6 +20,7 @@
 // shapeworks
 #include <Applications/Configuration.h>
 #include <Logging.h>
+#include <Profiling.h>
 #include <Mesh/Mesh.h>
 #include <SurfaceReconstructor.h>
 #include <Utils/StringUtils.h>
@@ -1526,6 +1527,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename) {
+  TIME_SCOPE("open_project");
   preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   new_session();
   SW_LOG("Loading Project: " + filename.toStdString());
@@ -1932,6 +1934,7 @@ void ShapeWorksStudioApp::update_alignment_options() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_project(QString filename) {
+  TIME_SCOPE("save_project");
   session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C, std::to_string(ui_->zoom_slider->value()));
   session_->parameters().set("notes", data_tool_->get_notes());
   session_->parameters().set("analysis_mode", analysis_tool_->get_analysis_mode());
