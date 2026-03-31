@@ -819,8 +819,24 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXd values) {
   auto group = get_meshes(DisplayMode::Reconstructed);
 
   if (group.valid()) {
-    for (auto mesh : group.meshes()) {
-      mesh->interpolate_scalars_to_mesh(feature, get_local_correspondence_points(), values);
+    auto local_particles = particles_.get_local_particles();
+    int num_domains = local_particles.size();
+
+    if (num_domains > 1) {
+      // Split particles and values per domain so that each mesh only interpolates
+      // from its own domain's particles, preventing cross-domain bleed in the KD-tree
+      // lookup (e.g. pelvis p-values bleeding into femur mesh near the hip joint).
+      int value_offset = 0;
+      for (int d = 0; d < num_domains && d < group.meshes().size(); d++) {
+        int num_domain_particles = local_particles[d].size() / 3;
+        Eigen::VectorXd domain_values = values.segment(value_offset, num_domain_particles);
+        group.meshes()[d]->interpolate_scalars_to_mesh(feature, local_particles[d], domain_values);
+        value_offset += num_domain_particles;
+      }
+    } else {
+      for (auto mesh : group.meshes()) {
+        mesh->interpolate_scalars_to_mesh(feature, get_local_correspondence_points(), values);
+      }
     }
   }
 }

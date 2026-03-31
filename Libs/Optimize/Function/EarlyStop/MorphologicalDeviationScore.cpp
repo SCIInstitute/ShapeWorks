@@ -110,4 +110,32 @@ Eigen::VectorXd MorphologicalDeviationScore::GetMorphoDevScore(const Eigen::Matr
   }
 }
 
+//---------------------------------------------------------------------------
+Eigen::MatrixXd MorphologicalDeviationScore::GetPCACoefficients(const Eigen::MatrixXd& X) {
+  try {
+    if (!is_fitted_) {
+      throw std::runtime_error("PPCA model is not fitted on control shapes.");
+    }
+
+    if (all_components_.cols() == 0) {
+      throw std::runtime_error("PPCA basis is empty.");
+    }
+
+    if (X.cols() != mean_.cols()) {
+      throw std::runtime_error("Input feature dimension does not match fitted PPCA model.");
+    }
+
+    if (X.rows() == 0) {
+      return Eigen::MatrixXd(0, all_components_.cols());
+    }
+
+    Eigen::MatrixXd X_bar = X.rowwise() - mean_;  // (n x d)
+    return X_bar * all_components_;               // (n x rank) scores in PCA basis
+
+  } catch (std::exception& e) {
+    SW_ERROR("Exception in computing PCA coefficients for early stopping {}", e.what());
+    return Eigen::MatrixXd();
+  }
+}
+
 }  // namespace shapeworks

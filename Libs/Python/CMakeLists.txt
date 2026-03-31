@@ -1,4 +1,5 @@
-pybind11_add_module(shapeworks_py
+# NO_EXTRAS disables LTO which can cause GCC internal compiler errors
+pybind11_add_module(shapeworks_py NO_EXTRAS
   ShapeworksPython.cpp
   PythonAnalyze.cpp
   PythonGroom.cpp

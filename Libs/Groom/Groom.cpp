@@ -2,6 +2,7 @@
 #include <GroomParameters.h>
 #include <Image/Image.h>
 #include <Logging.h>
+#include <Profiling.h>
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshUtils.h>
 #include <Optimize/Constraints/Constraints.h>
@@ -32,6 +33,7 @@ Groom::Groom(ProjectHandle project) : project_{project} {}
 
 //---------------------------------------------------------------------------
 bool Groom::run() {
+  TIME_SCOPE("Groom::run");
   ShapeWorksUtils::setup_threads();
 
   used_names_.clear();
@@ -124,6 +126,7 @@ bool Groom::run() {
 
 //---------------------------------------------------------------------------
 bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
+  TIME_SCOPE("Groom::image_pipeline");
   // grab parameters
   auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
 
@@ -321,6 +324,7 @@ bool Groom::run_image_pipeline(Image& image, GroomParameters params) {
 
 //---------------------------------------------------------------------------
 bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
+  TIME_SCOPE("Groom::mesh_pipeline");
   // grab parameters
   auto params = GroomParameters(project_, project_->get_domain_names()[domain]);
 
@@ -557,6 +561,7 @@ bool Groom::get_aborted() { return abort_; }
 
 //---------------------------------------------------------------------------
 bool Groom::run_alignment() {
+  TIME_SCOPE("Groom::run_alignment");
   size_t num_domains = project_->get_number_of_domains_per_subject();
   SW_DEBUG("Running alignment, number of domains = {}", num_domains);
   auto subjects = project_->get_subjects();

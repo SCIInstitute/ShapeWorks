@@ -4,7 +4,7 @@
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
-#include <Job/StatsGroupLDAJob.h>
+#include <Job/StatsGroupDWDJob.h>
 #include <Logging.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
@@ -12,13 +12,13 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-StatsGroupLDAJob::StatsGroupLDAJob() {}
+StatsGroupDWDJob::StatsGroupDWDJob() {}
 
 //---------------------------------------------------------------------------
-void StatsGroupLDAJob::set_stats(ParticleShapeStatistics stats) { stats_ = stats; }
+void StatsGroupDWDJob::set_stats(ParticleShapeStatistics stats) { stats_ = stats; }
 
 //---------------------------------------------------------------------------
-void StatsGroupLDAJob::run() {
+void StatsGroupDWDJob::run() {
   succeeded_ = false;
   Q_EMIT progress(0.1);
   stats_.principal_component_projections();
@@ -53,12 +53,12 @@ void StatsGroupLDAJob::run() {
 
   try {
     py::module sw = py::module::import("shapeworks");
-    py::object lda_loadings = sw.attr("stats").attr("lda_loadings");
+    py::object dwd_loadings = sw.attr("stats").attr("dwd_loadings");
     Q_EMIT progress(0.5);
 
     using ResultType =
         std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd>;
-    ResultType result = lda_loadings(group_1_data.transpose(), group_2_data.transpose()).cast<ResultType>();
+    ResultType result = dwd_loadings(group_1_data.transpose(), group_2_data.transpose()).cast<ResultType>();
 
     group1_x_ = std::get<0>(result);
     group2_x_ = std::get<1>(result);
@@ -67,7 +67,8 @@ void StatsGroupLDAJob::run() {
     group1_map_ = std::get<4>(result);
     group2_map_ = std::get<5>(result);
   } catch (const std::exception& e) {
-    SW_ERROR("LDA computation failed: {}", e.what());
+    SW_ERROR("DWD computation failed: {}", e.what());
+    succeeded_ = false;
     return;
   }
 
@@ -76,15 +77,15 @@ void StatsGroupLDAJob::run() {
 }
 
 //---------------------------------------------------------------------------
-QString StatsGroupLDAJob::name() { return "Group LDA"; }
+QString StatsGroupDWDJob::name() { return "Group DWD"; }
 
 //---------------------------------------------------------------------------
-void StatsGroupLDAJob::plot(JKQTPlotter* plot, QString group_1_name, QString group_2_name) {
+void StatsGroupDWDJob::plot(JKQTPlotter* plot, QString group_1_name, QString group_2_name) {
   JKQTPDatastore* ds = plot->getDatastore();
   ds->clear();
   plot->clearGraphs();
 
-  QString title = "LDA";
+  QString title = "DWD";
 
   auto draw_line_plot = [&](Eigen::MatrixXd x, Eigen::MatrixXd y, QString name, QColor color) {
     QVector<double> xv, yv;
@@ -144,7 +145,7 @@ void StatsGroupLDAJob::plot(JKQTPlotter* plot, QString group_1_name, QString gro
   plot->getPlotter()->setDefaultTextSize(14);
   plot->getPlotter()->setShowKey(true);
 
-  plot->getXAxis()->setAxisLabel("Shape mapping to linear discrimination of variation between population means");
+  plot->getXAxis()->setAxisLabel("Shape mapping to DWD discrimination of variation between population means");
   plot->getXAxis()->setLabelFontSize(8);
   plot->getYAxis()->setAxisLabel("Probability Density");
   plot->getYAxis()->setLabelFontSize(14);

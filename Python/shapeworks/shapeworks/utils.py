@@ -316,11 +316,12 @@ def check_results(args, project_spreadsheet):
         if "world" in file:
             world_point_files.append(particle_dir + file)
     if args.tiny_test or args.verify:
-        # if verification dir doesn't exist, unzip verification.zip
-        if not os.path.exists("Data/Verification"):
+        # if verification dir doesn't exist or zip is newer, unzip verification.zip
+        zip_path = "Data/Verification.zip"
+        ver_path = "Data/Verification"
+        if not os.path.exists(ver_path) or os.path.getmtime(zip_path) > os.path.getmtime(ver_path):
             print("Unzipping verification data")
-            # unzip using python
-            with zipfile.ZipFile("Data/Verification.zip", 'r') as zip_ref:
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall("Data/")
 
         print("Verifying shape model")

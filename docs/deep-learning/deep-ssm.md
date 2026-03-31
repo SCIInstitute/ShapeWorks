@@ -64,6 +64,72 @@ We then compare the original mesh to the predicted mesh via surface-to-surface d
 
 ![Mesh Distance](../img/deep-learning/mesh-distance.png)
 
+## DeepSSM CLI
+
+The `shapeworks deepssm` command runs the full DeepSSM pipeline from the command line, without requiring Studio. This enables headless execution on HPC clusters and servers, batch processing of multiple projects, and integration with shell scripts and automated workflows.
+
+### Command Syntax
+
+```bash
+shapeworks deepssm <project_file> [options]
+```
+
+The project file (`.xlsx` or `.swproj`) must contain both image and shape columns (e.g., `shape_la`, `image_mri`), along with DeepSSM parameters such as data split percentages, augmentation settings, and training configuration. These are the same parameters configurable in the [DeepSSM Studio module](../studio/deepssm-in-studio.md).
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `--name <file>` | Path to project file (alternative to positional argument) |
+| `--all` | Run all four steps: prep, augment, train, test |
+| `--prep <step>` | Run preparation. Steps: `all`, `groom_training`, `optimize_training`, `optimize_validation`, `groom_images` |
+| `--augment` | Run data augmentation |
+| `--train` | Run model training |
+| `--test` | Run testing/inference |
+| `--num_workers <n>` | Number of PyTorch data loader workers (default: 0) |
+| `--aug_processes <n>` | Number of augmentation processes (default: 0 = use all cores) |
+
+If none of `--prep`, `--augment`, `--train`, `--test`, or `--all` are specified, all four steps are run by default.
+
+### Examples
+
+Run the full pipeline:
+
+```bash
+shapeworks deepssm my_project.swproj --all
+```
+
+Run only preparation and augmentation:
+
+```bash
+shapeworks deepssm my_project.swproj --prep all --augment
+```
+
+Run just training and testing with 4 data loader workers:
+
+```bash
+shapeworks deepssm my_project.swproj --train --test --num_workers 4
+```
+
+Run a single prep sub-step:
+
+```bash
+shapeworks deepssm my_project.swproj --prep groom_training
+```
+
+### Pipeline Steps
+
+The four steps correspond to the same stages available in [DeepSSM in Studio](../studio/deepssm-in-studio.md):
+
+1. **Prep** — Grooms and optimizes training shapes, generates validation particles using fixed domains, and prepares images. The `--prep` flag accepts a sub-step to run only part of the preparation.
+2. **Augment** — Generates synthetic training data via PCA-based data augmentation. Use `--aug_processes` to control parallelism.
+3. **Train** — Trains the DeepSSM network (Base-DeepSSM or TL-DeepSSM depending on project settings). Use `--num_workers` to set PyTorch data loader parallelism.
+4. **Test** — Runs inference on the test set and evaluates predicted shapes against ground truth.
+
+### Configuring DeepSSM Parameters
+
+All DeepSSM parameters (data split, augmentation count, network architecture, TL-DeepSSM settings, fine-tuning, etc.) are stored in the project file. These can be configured in Studio before running via the CLI, or set programmatically using the ShapeWorks Python API. See the [training configuration parameters](#config-file-parameter-descriptions) section below for details on available settings.
+
 ## Using the DeepSSM Python Package
 
 The ShapeWorks DeepSSM package, `DeepSSMUtils`, is installed with the rest of the ShapeWorks Anaconda environment using `install_shapeworks`.

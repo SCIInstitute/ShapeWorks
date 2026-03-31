@@ -481,7 +481,7 @@ def lda_plot(group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map,lda_d
     group2_num = len(group2_map)
     plt.plot(group1_x, group1_pdf, label = labels[0] + ' PDF',linewidth=10)
     plt.plot(group2_x, group2_pdf, label = labels[1] + ' PDF',linewidth=10)
-    
+
     plt.scatter(group1_map, 0.01*np.ones((group1_num)), s=330, label = labels[0] + ' Shape Mappings', edgecolors='black',linewidths=5)
     plt.scatter(group2_map, 0.01*np.ones((group2_num)), s=330, label = labels[1] + ' Shape Mappings', edgecolors='black',linewidths=5)
     plt.ylabel("Probability Density")
@@ -491,4 +491,25 @@ def lda_plot(group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map,lda_d
     plt.close(fig)
 
     print("Figure saved in directory -" + lda_dir)
+    print()
+
+def dwd_plot(group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map,dwd_dir,labels):
+
+    plt.figure(dpi=50,figsize=(14,14))
+    fig = plt.gcf()
+    plt.rcParams['font.size'] = '20'
+    group1_num = len(group1_map)
+    group2_num = len(group2_map)
+    plt.plot(group1_x, group1_pdf, label = labels[0] + ' PDF',linewidth=10)
+    plt.plot(group2_x, group2_pdf, label = labels[1] + ' PDF',linewidth=10)
+
+    plt.scatter(group1_map, 0.01*np.ones((group1_num)), s=330, label = labels[0] + ' Shape Mappings', edgecolors='black',linewidths=5)
+    plt.scatter(group2_map, 0.01*np.ones((group2_num)), s=330, label = labels[1] + ' Shape Mappings', edgecolors='black',linewidths=5)
+    plt.ylabel("Probability Density")
+    plt.xlabel('Shape mapping to DWD discrimination of variation between population means')
+    plt.legend(loc='upper right')
+    plt.savefig(dwd_dir+"/DWD.png")
+    plt.close(fig)
+
+    print("Figure saved in directory -" + dwd_dir)
     print()

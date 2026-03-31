@@ -1,6 +1,7 @@
 #include "Image.h"
 
 #include <Logging.h>
+#include <Profiling.h>
 #include <itkAntiAliasBinaryImageFilter.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
@@ -104,6 +105,7 @@ Image& Image::operator=(Image&& img) {
 }
 
 Image::ImageType::Pointer Image::read(const std::string& pathname) {
+  TIME_SCOPE("Image::read");
   ImageUtils::register_itk_factories();
 
   if (pathname.empty()) {
@@ -327,6 +329,7 @@ Image::ImageType::Pointer Image::readDICOMImage(const std::string& pathname) {
 }
 
 Image& Image::write(const std::string& filename, bool compressed) {
+  TIME_SCOPE("Image::write");
   if (!this->itk_image_) {
     throw std::invalid_argument("Image invalid");
   }
@@ -351,6 +354,7 @@ Image& Image::write(const std::string& filename, bool compressed) {
 }
 
 Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers) {
+  TIME_SCOPE("Image::antialias");
   if (layers < 0) {
     throw std::invalid_argument("layers must be >= 0");
   }
@@ -405,6 +409,7 @@ Image& Image::resample(const TransformPtr transform, const Point3 origin, Dims d
 }
 
 Image& Image::resample(const Vector3& spacing, Image::InterpolationType interp) {
+  TIME_SCOPE("Image::resample");
   // compute logical dimensions that keep all image data for this spacing
   Dims inputDims(this->dims());
   Vector3 inputSpacing(this->spacing());
@@ -518,6 +523,7 @@ Image& Image::pad(IndexRegion& region, PixelType value) {
 }
 
 Image& Image::pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value) {
+  TIME_SCOPE("Image::pad");
   using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -632,6 +638,7 @@ Image& Image::binarize(PixelType minVal, PixelType maxVal, PixelType innerVal, P
 }
 
 Image& Image::computeDT(PixelType isoValue) {
+  TIME_SCOPE("Image::computeDT");
   using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -732,6 +739,7 @@ Image& Image::applyIntensityFilter(double minVal, double maxVal) {
 }
 
 Image& Image::gaussianBlur(double sigma) {
+  TIME_SCOPE("Image::gaussianBlur");
   using BlurType = itk::DiscreteGaussianImageFilter<ImageType, ImageType>;
   BlurType::Pointer blur = BlurType::New();
 
@@ -744,6 +752,7 @@ Image& Image::gaussianBlur(double sigma) {
 }
 
 Image& Image::crop(PhysicalRegion region, const int padding) {
+  TIME_SCOPE("Image::crop");
   region.shrink(physicalBoundingBox());  // clip region to fit inside image
   if (!region.valid()) {
     throw std::invalid_argument("Invalid region specified (it may lie outside physical bounds of image).");
@@ -862,6 +871,7 @@ Image& Image::setCoordsys(ImageType::DirectionType coordsys) {
 }
 
 Image& Image::isolate() {
+  TIME_SCOPE("Image::isolate");
   typedef itk::Image<unsigned char, 3> IsolateType;
   typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
   ToIntType::Pointer filter = ToIntType::New();

@@ -6,18 +6,16 @@ class JKQTPlotter;
 
 namespace shapeworks {
 
-class StatsGroupLDAJob : public Job {
+class StatsGroupDWDJob : public Job {
   Q_OBJECT
  public:
-  StatsGroupLDAJob();
+  StatsGroupDWDJob();
 
   void set_stats(ParticleShapeStatistics stats);
 
   void run() override;
 
   QString name() override;
-
-  Eigen::VectorXf get_group_pvalues();
 
   void plot(JKQTPlotter* plot, QString group_1_name, QString group_2_name);
 

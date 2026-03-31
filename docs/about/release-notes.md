@@ -1,6 +1,58 @@
 # Release Notes
 
 
+## ShapeWorks 6.7.0
+
+![](../img/about/release6.7.png)
+
+### What is new?
+
+  * **DeepSSM**
+    * DeepSSM CLI: `shapeworks deepssm` command for headless/batch workflows on HPC clusters
+    * TL-DeepSSM support from CLI via `--tl_net` flag
+    * Streaming data loaders to reduce memory usage during training
+    * Config schema validation before running
+    * Improved error handling in data loaders
+
+  * **ShapeWorks Back-end**
+    * Fixed domain optimization speedups: shape space precomputation, Procrustes caching, and batch particle loading
+    * PCA projection correspondence for fixed domain optimization (`use_pca_projection` parameter)
+    * Geodesic walk for particle splitting on meshes, keeping particles on-surface
+    * Laplacian mesh warping as alternative to biharmonic, reducing thinning artifacts on sparse regions
+    * Replaced VNL eigensystem with Eigen SVD for PCA computation, fixing eigenvector sign ambiguity
+    * Parallel mesh loading with TBB and progress reporting
+    * Automatic mesh repair in grooming pipeline (replaces manual Extract Largest Component step)
+    * Auto ICP alignment subset size defaults to 30 shapes for faster grooming on large datasets
+    * Support for multiple shared boundaries between domains
+    * Sampling gradient scaling based on surface area normalization for multi-domain models
+    * Early stopping via morphological deviation score for optimization convergence detection
+    * Built-in performance profiling and Chrome trace output via `SW_TIME_PROFILE` and `SW_TIME_TRACE` environment variables (see [developer docs](../dev/build.md#performance-profiling))
+
+  * **ShapeWorks Front-end**
+    * DWD (Distance Weighted Discrimination) group analysis method alongside LDA
+    * Redesigned Optimize panel with reorganized parameter groups
+    * Sampling scale UI for multi-domain particle density control
+    * Export clipped meshes
+    * Warp method selector (Biharmonic/Laplacian) in Analysis panel
+
+  * **Platform Updates**
+    * Python 3.12
+    * VTK 9.5.0
+    * ITK 5.4.4
+    * PyTorch 2.8.0 (2.2.2 on Intel Mac)
+    * Linux builds use manylinux_2_28 (GLIBC 2.28, compatible with RHEL 8+, Ubuntu 20.04+)
+
+### Fixes
+  * Fix cross-domain p-value bleed in multi-domain models where neighboring domain particles corrupted KD-tree interpolation near anatomically close regions
+  * Fix multi-domain overlap when pre-aligned data skips grooming alignment (#2514)
+  * Fix reflection being applied twice in global multi-domain ICP alignment
+  * Fix PPCA noise variance dilution and null-space leakage in MorphologicalDeviationScore (#2495)
+  * Fix fillHoles creating zero-area triangles
+  * Fix crash when geodesic distance from landmarks is enabled without landmarks
+  * Fix DeepSSM crash when training split is set to 0% (#2398)
+  * Fix crash when mesh contains no cells during grooming
+
+
 ## ShapeWorks 6.6.1 - 2025-05
 
 ### Fixes

@@ -1744,6 +1744,28 @@ PYBIND11_MODULE(shapeworks_py, m) {
                      True if fitting was successful, False otherwise.
              )pbdoc")
 
+      .def("SetRetainedVarianceRatio",
+           &MorphologicalDeviationScore::SetRetainedVarianceRatio, py::arg("ratio"),
+           R"pbdoc(
+                 Set the retained variance ratio used to choose PPCA components.
+
+                 Parameters
+                 ----------
+                 ratio : float
+                     Target cumulative variance ratio in the interval (0, 1].
+             )pbdoc")
+
+      .def("GetRetainedVarianceRatio",
+           &MorphologicalDeviationScore::GetRetainedVarianceRatio,
+           R"pbdoc(
+                 Get the retained variance ratio used to choose PPCA components.
+
+                 Returns
+                 -------
+                 float
+                     The current retained variance ratio.
+             )pbdoc")
+
       .def("GetMorphoDevScore",
            &MorphologicalDeviationScore::GetMorphoDevScore, py::arg("X"),
            R"pbdoc(
@@ -1758,5 +1780,21 @@ PYBIND11_MODULE(shapeworks_py, m) {
                  -------
                  numpy.ndarray
                      Vector of Mahalanobis distances for each sample.
+             )pbdoc")
+
+      .def("GetPCACoefficients",
+           &MorphologicalDeviationScore::GetPCACoefficients, py::arg("X"),
+           R"pbdoc(
+                 Project samples onto the fitted PCA basis.
+
+                 Parameters
+                 ----------
+                 X : numpy.ndarray
+                     Matrix of samples (n_samples x n_features)
+
+                 Returns
+                 -------
+                 numpy.ndarray
+                     Matrix of PCA coefficients with shape (n_samples, rank).
              )pbdoc");
 }  // PYBIND11_MODULE(shapeworks_py)

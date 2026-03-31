@@ -130,6 +130,8 @@ docopt==0.6.2
     # via
     #   -r requirements.in
     #   grip
+dwd==1.0.5
+    # via -r requirements.in
 entrypoints==0.4
     # via -r requirements.in
 et-xmlfile==2.0.0
@@ -694,7 +696,7 @@ pydantic==2.11.9
     #   swcc
 pydantic-core==2.33.2
     # via pydantic
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   -r requirements.in
     #   grip

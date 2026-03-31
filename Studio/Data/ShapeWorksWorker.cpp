@@ -2,6 +2,7 @@
 #include <Data/ShapeWorksWorker.h>
 #include <Groom/Groom.h>
 #include <Logging.h>
+#include <Profiling.h>
 #include <Optimize/Optimize.h>
 #include <Optimize/OptimizeParameters.h>
 #include <Shape.h>
@@ -31,6 +32,7 @@ void ShapeworksWorker::process() {
   switch (this->type_) {
     case ShapeworksWorker::GroomType:
       try {
+        TIME_SCOPE("studio_groom");
         this->groom_->run();
       } catch (itk::ExceptionObject& ex) {
         SW_ERROR("{}", std::string("ITK Exception: ") + ex.GetDescription());
@@ -56,6 +58,7 @@ void ShapeworksWorker::process() {
       break;
     case ShapeworksWorker::OptimizeType:
       try {
+        TIME_SCOPE("studio_optimize");
         SW_LOG("Loading data...");
         this->optimize_parameters_->set_up_optimize(this->optimize_.data());
         SW_LOG("Optimizing correspondence...");
@@ -90,6 +93,7 @@ void ShapeworksWorker::process() {
       break;
     case ShapeworksWorker::ReconstructType:
       try {
+        TIME_SCOPE("studio_reconstruct");
         SW_LOG("Warping to mean space...");
         for (int i = 0; i < this->session_->get_domains_per_shape(); i++) {
           auto shapes = this->session_->get_shapes();

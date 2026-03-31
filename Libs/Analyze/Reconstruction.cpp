@@ -23,6 +23,7 @@
 #include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 #include "Reconstruction.h"
+#include <Profiling.h>
 
 #include <vtkLoopSubdivisionFilter.h>
 #include <vtkButterflySubdivisionFilter.h>
@@ -67,6 +68,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
         std::vector< PointArrayType > local_pts,
         std::vector< PointArrayType > global_pts,
         std::vector<std::string> distance_transform) {
+    TIME_SCOPE("Reconstruction::getDenseMean");
     if (!this->denseDone_ || !local_pts.empty() ||
             !distance_transform.empty() || !global_pts.empty()) {
         this->denseDone_ = false;
@@ -439,6 +441,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         std::vector< PointArrayType > local_pts,
         std::vector< PointArrayType > global_pts,
         std::vector<std::string> distance_transform) {
+    TIME_SCOPE("Reconstruction::computeDenseMean");
     try {
         //turn the sets of global points to one sparse global mean.
         float init[] = { 0.f,0.f,0.f };
