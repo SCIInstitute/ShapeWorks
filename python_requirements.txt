@@ -646,7 +646,7 @@ pexpect==4.9.0
     #   ipython
 pickleshare==0.7.5
     # via -r requirements.in
-pillow==12.1.1
+pillow==12.2.0
     # via
     #   -r requirements.in
     #   bokeh
