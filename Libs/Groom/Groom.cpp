@@ -385,8 +385,10 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
 //---------------------------------------------------------------------------
 bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::string& filename) {
-  // Repair mesh: triangulate, extract largest component, clean, fix non-manifold, remove zero-area triangles
-  mesh = Mesh(MeshUtils::repair_mesh(mesh.getVTKMesh()));
+  // Repair mesh: triangulate, clean, fix non-manifold, remove zero-area triangles
+  // Skip extract-largest-component for shared boundary domains to avoid removing fragments at the cut surface
+  bool extract_largest = !params.is_shared_boundary_domain();
+  mesh = Mesh(MeshUtils::repair_mesh(mesh.getVTKMesh(), extract_largest));
 
   if (params.get_fill_mesh_holes_tool()) {
     mesh.fillHoles();

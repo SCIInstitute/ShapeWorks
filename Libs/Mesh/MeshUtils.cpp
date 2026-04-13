@@ -389,6 +389,12 @@ static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::Matr
   Eigen::MatrixXi out_F;
   Eigen::MatrixXd rem_V;
   Eigen::MatrixXi rem_F;
+
+  // If either mesh is empty, there can be no shared surface
+  if (is_empty(src_V, src_F) || is_empty(other_V, other_F)) {
+    return std::make_tuple(out_V, out_F, src_V, src_F);
+  }
+
   igl::AABB<Eigen::MatrixXd, 3> tree;
   tree.init(other_V, other_F);
 
@@ -481,6 +487,10 @@ std::array<Mesh, 3> MeshUtils::shared_boundary_extractor(const Mesh& mesh_l, con
   F_l = mesh_l.faces();
   V_r = mesh_r.points();
   F_r = mesh_r.faces();
+
+  if (is_empty(V_l, F_l) || is_empty(V_r, F_r)) {
+    throw std::runtime_error("Input mesh is empty. Cannot extract shared boundary from empty meshes");
+  }
 
   Eigen::MatrixXd shared_V_l, shared_V_r, rem_V_l, rem_V_r;
   Eigen::MatrixXi shared_F_l, shared_F_r, rem_F_l, rem_F_r;
@@ -1073,18 +1083,23 @@ vtkSmartPointer<vtkPolyData> MeshUtils::recreate_mesh(vtkSmartPointer<vtkPolyDat
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData> mesh) {
+vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest) {
   auto triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(mesh);
   triangle_filter->PassLinesOff();
   triangle_filter->Update();
 
-  auto connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-  connectivity->SetInputConnection(triangle_filter->GetOutputPort());
-  connectivity->SetExtractionModeToLargestRegion();
-  connectivity->Update();
+  vtkSmartPointer<vtkPolyData> triangulated = triangle_filter->GetOutput();
 
-  auto cleaned = MeshUtils::clean_mesh(connectivity->GetOutput());
+  if (extract_largest) {
+    auto connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+    connectivity->SetInputData(triangulated);
+    connectivity->SetExtractionModeToLargestRegion();
+    connectivity->Update();
+    triangulated = connectivity->GetOutput();
+  }
+
+  auto cleaned = MeshUtils::clean_mesh(triangulated);
 
   auto fixed = Mesh(cleaned).fixNonManifold();
 

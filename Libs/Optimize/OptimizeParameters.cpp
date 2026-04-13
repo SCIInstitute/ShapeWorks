@@ -328,6 +328,9 @@ std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_poi
     for (auto s : subjects) {
       if (s->is_fixed()) {
         count++;
+        if (d >= s->get_world_particle_filenames().size()) {
+          throw std::runtime_error("Subject " + s->get_display_name() + " does not have enough world particle files");
+        }
         // read the world points that are in the shared coordinate space
         auto filename = s->get_world_particle_filenames()[d];
         auto particles = read_particles_as_vector(filename);

@@ -545,6 +545,19 @@ bool GroomParameters::get_shared_boundaries_enabled() {
 void GroomParameters::set_shared_boundaries_enabled(bool enabled) { params_.set(Keys::SHARED_BOUNDARY, enabled); }
 
 //---------------------------------------------------------------------------
+bool GroomParameters::is_shared_boundary_domain() {
+  if (!get_shared_boundaries_enabled()) {
+    return false;
+  }
+  for (const auto& boundary : get_shared_boundaries()) {
+    if (boundary.first_domain == domain_name_ || boundary.second_domain == domain_name_) {
+      return true;
+    }
+  }
+  return false;
+}
+
+//---------------------------------------------------------------------------
 std::vector<GroomParameters::SharedBoundary> GroomParameters::get_shared_boundaries() {
   std::vector<SharedBoundary> boundaries;
 
