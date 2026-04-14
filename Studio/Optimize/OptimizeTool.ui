@@ -320,6 +320,18 @@ QWidget#optimize_panel {
                  <property name="text">
                   <string>0.05</string>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
@@ -337,6 +349,18 @@ QWidget#optimize_panel {
                 <widget class="QLineEdit" name="relative_weighting">
                  <property name="text">
                   <string>1.0</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -356,6 +380,18 @@ QWidget#optimize_panel {
                  <property name="text">
                   <string>10</string>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
@@ -373,6 +409,18 @@ QWidget#optimize_panel {
                 <widget class="QLineEdit" name="ending_regularization">
                  <property name="text">
                   <string>1.0</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -392,6 +440,18 @@ QWidget#optimize_panel {
                  <property name="text">
                   <string>1000</string>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
@@ -410,6 +470,18 @@ QWidget#optimize_panel {
                  <property name="text">
                   <string>1000</string>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
@@ -427,6 +499,18 @@ QWidget#optimize_panel {
                 <widget class="QLineEdit" name="narrow_band">
                  <property name="text">
                   <string>000</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -464,6 +548,18 @@ QWidget#optimize_panel {
                  <property name="text">
                   <string>100</string>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
@@ -491,6 +587,18 @@ QWidget#optimize_panel {
                 <widget class="QLineEdit" name="normals_strength">
                  <property name="text">
                   <string>10</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -520,6 +628,18 @@ QWidget#optimize_panel {
                  <property name="text">
                   <string>1</string>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
@@ -548,6 +668,18 @@ QWidget#optimize_panel {
                  <property name="text">
                   <string>32</string>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
@@ -575,6 +707,18 @@ QWidget#optimize_panel {
                 <widget class="QLineEdit" name="shared_boundary_weight">
                  <property name="text">
                   <string>0.1</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -619,6 +763,18 @@ QWidget#optimize_panel {
                 <widget class="QLineEdit" name="procrustes_interval">
                  <property name="text">
                   <string>10</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -704,6 +860,18 @@ QWidget#optimize_panel {
                 <widget class="QLineEdit" name="sampling_scale_value">
                  <property name="text">
                   <string>1.0</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
