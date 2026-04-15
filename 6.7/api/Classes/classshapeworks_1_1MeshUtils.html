@@ -4040,7 +4040,7 @@
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
-<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-repair-mesh">repair_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Repair mesh: triangulate, extract largest component, clean, fix non-manifold, remove zero-area triangles.</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-repair-mesh">repair_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh, bool extract_largest =true)<br>Repair mesh: triangulate, optionally extract largest component, clean, fix non-manifold, remove zero-area triangles.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4183,9 +4183,10 @@ static vtkSmartPointer&lt; vtkPolyData &gt; recreate_mesh(
 <h3 id="function-repair_mesh">function repair_mesh</h3>
 <p><code>cpp
 static vtkSmartPointer&lt; vtkPolyData &gt; repair_mesh(
-    vtkSmartPointer&lt; vtkPolyData &gt; mesh
+    vtkSmartPointer&lt; vtkPolyData &gt; mesh,
+    bool extract_largest =true
 )</code></p>
-<p>Repair mesh: triangulate, extract largest component, clean, fix non-manifold, remove zero-area triangles. </p>
+<p>Repair mesh: triangulate, optionally extract largest component, clean, fix non-manifold, remove zero-area triangles. </p>
 <h3 id="function-visualizevectorfieldforffcs">function visualizeVectorFieldForFFCs</h3>
 <p><code>cpp
 void visualizeVectorFieldForFFCs(
@@ -4200,7 +4201,7 @@ vtkSmartPointer&lt; vtkActor &gt; getArrow(
 )</code></p>
 <p>Used as an auxiliary function for vector field visualizations. </p>
 <hr />
-<p>Updated on 2026-03-31 at 16:02:10 +0000</p>
+<p>Updated on 2026-04-15 at 16:43:25 +0000</p>
 
 
 
