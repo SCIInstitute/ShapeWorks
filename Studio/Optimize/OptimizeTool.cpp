@@ -2,8 +2,11 @@
 
 // qt
 #include <QFileDialog>
+#include <QFontMetrics>
 #include <QIntValidator>
+#include <QLabel>
 #include <QMessageBox>
+#include <QResizeEvent>
 #include <QThread>
 #include <QTimer>
 
@@ -21,6 +24,47 @@
 #include <ui_OptimizeTool.h>
 
 using namespace shapeworks;
+
+namespace {
+// QLabel that elides its text with "..." when it's narrower than the text.
+// The full text is kept as a tooltip so the user can see it on hover.
+// sizeHint() reports the full-text width so the layout gives the label its natural
+// space when available; elision only happens when the layout must shrink it.
+class ElidedLabel : public QLabel {
+ public:
+  explicit ElidedLabel(const QString& text, QWidget* parent = nullptr) : QLabel(parent), full_text_(text) {
+    setToolTip(text);
+    updateElidedText();
+  }
+
+  QSize sizeHint() const override {
+    QFontMetrics metrics(font());
+    return QSize(metrics.horizontalAdvance(full_text_) + 4, QLabel::sizeHint().height());
+  }
+
+  QSize minimumSizeHint() const override {
+    // Minimum: enough for ellipsis plus a couple characters so the label can shrink
+    // further if the panel is very narrow, but not to zero width.
+    QFontMetrics metrics(font());
+    return QSize(metrics.horizontalAdvance(QStringLiteral("X...")), QLabel::minimumSizeHint().height());
+  }
+
+ protected:
+  void resizeEvent(QResizeEvent* event) override {
+    QLabel::resizeEvent(event);
+    updateElidedText();
+  }
+
+ private:
+  void updateElidedText() {
+    QFontMetrics metrics(font());
+    QString elided = metrics.elidedText(full_text_, Qt::ElideRight, width());
+    QLabel::setText(elided);
+  }
+
+  QString full_text_;
+};
+}  // namespace
 
 //---------------------------------------------------------------------------
 OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferences_(prefs), telemetry_(telemetry) {
@@ -473,6 +517,8 @@ void OptimizeTool::setup_domain_boxes() {
     QLineEdit* box = new QLineEdit(this);
     last_box = box;
     box->setAlignment(Qt::AlignHCenter);
+    box->setMinimumWidth(50);
+    box->setMaximumWidth(100);
     box->setValidator(above_zero);
     box->setText(ui_->number_of_particles->text());
     connect(box, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
@@ -482,7 +528,7 @@ void OptimizeTool::setup_domain_boxes() {
   } else {
     auto domain_names = session_->get_project()->get_domain_names();
     for (int i = 0; i < domain_names.size(); i++) {
-      auto label = new QLabel(QString::fromStdString(domain_names[i]), this);
+      auto label = new ElidedLabel(QString::fromStdString(domain_names[i]), this);
       label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
       grid->addWidget(label, i, 1);
       domain_grid_widgets_.push_back(label);

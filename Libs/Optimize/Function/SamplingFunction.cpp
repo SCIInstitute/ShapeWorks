@@ -250,7 +250,10 @@ SamplingFunction::VectorType SamplingFunction::evaluate(unsigned int idx, unsign
 
   gradE = gradE / m_avgKappa;
 
-  // Apply sampling scale if enabled
+  // Apply sampling scale if enabled. Contour domains return length² from GetSurfaceArea,
+  // giving a scale factor comparable in magnitude to the equivalent mesh's — without this,
+  // contour particles would move at native gradient magnitudes (~1000× stronger than scaled
+  // mesh particles), causing them to spin rapidly around the loop instead of settling.
   if (m_SamplingScale) {
     double scale_factor = 1.0;
 
