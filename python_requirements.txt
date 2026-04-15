@@ -225,11 +225,9 @@ ipython==9.5.0
     #   ipykernel
     #   ipympl
     #   ipywidgets
-    #   jupyter-latex-envs
 ipython-genutils==0.2.0
     # via
     #   -r requirements.in
-    #   jupyter-contrib-nbextensions
     #   nbclassic
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -341,22 +339,11 @@ jupyter-client==8.6.3
     #   ipykernel
     #   jupyter-server
     #   nbclient
-jupyter-contrib-core==0.4.2
-    # via
-    #   -r requirements.in
-    #   jupyter-contrib-nbextensions
-    #   jupyter-nbextensions-configurator
-jupyter-contrib-nbextensions==0.7.0
-    # via -r requirements.in
 jupyter-core==5.8.1
     # via
     #   -r requirements.in
     #   ipykernel
     #   jupyter-client
-    #   jupyter-contrib-core
-    #   jupyter-contrib-nbextensions
-    #   jupyter-latex-envs
-    #   jupyter-nbextensions-configurator
     #   jupyter-server
     #   jupyterlab
     #   nbclient
@@ -366,23 +353,12 @@ jupyter-events==0.12.0
     # via
     #   -r requirements.in
     #   jupyter-server
-jupyter-highlight-selected-word==0.2.0
-    # via
-    #   -r requirements.in
-    #   jupyter-contrib-nbextensions
-jupyter-latex-envs==1.4.6
-    # via -r requirements.in
 jupyter-lsp==2.3.0
     # via jupyterlab
-jupyter-nbextensions-configurator==0.6.4
-    # via
-    #   -r requirements.in
-    #   jupyter-contrib-nbextensions
 jupyter-server==2.17.0
     # via
     #   -r requirements.in
     #   jupyter-lsp
-    #   jupyter-nbextensions-configurator
     #   jupyterlab
     #   jupyterlab-server
     #   notebook
@@ -418,9 +394,7 @@ lark==1.2.2
 light-the-torch==0.8.0
     # via -r requirements.in
 lxml==6.0.1
-    # via
-    #   -r requirements.in
-    #   jupyter-contrib-nbextensions
+    # via -r requirements.in
 markdown==3.9
     # via
     #   -r requirements.in
@@ -527,8 +501,6 @@ nbclient==0.10.2
 nbconvert==7.17.0
     # via
     #   -r requirements.in
-    #   jupyter-contrib-nbextensions
-    #   jupyter-latex-envs
     #   jupyter-server
     #   mkdocs-jupyter
 nbformat==5.10.4
@@ -547,12 +519,7 @@ nest-asyncio==1.6.0
     #   ipykernel
     #   nbclassic
 notebook==6.4.12
-    # via
-    #   -r requirements.in
-    #   jupyter-contrib-core
-    #   jupyter-contrib-nbextensions
-    #   jupyter-latex-envs
-    #   jupyter-nbextensions-configurator
+    # via -r requirements.in
 notebook-shim==0.2.4
     # via
     #   -r requirements.in
@@ -747,7 +714,6 @@ pyyaml==6.0.2
     #   -r requirements.in
     #   bokeh
     #   jupyter-events
-    #   jupyter-nbextensions-configurator
     #   jupytext
     #   mike
     #   mkdocs
@@ -879,9 +845,6 @@ tornado==6.5.2
     #   bokeh
     #   ipykernel
     #   jupyter-client
-    #   jupyter-contrib-core
-    #   jupyter-contrib-nbextensions
-    #   jupyter-nbextensions-configurator
     #   jupyter-server
     #   jupyterlab
     #   notebook
@@ -898,12 +861,8 @@ traitlets==5.14.3
     #   ipython
     #   ipywidgets
     #   jupyter-client
-    #   jupyter-contrib-core
-    #   jupyter-contrib-nbextensions
     #   jupyter-core
     #   jupyter-events
-    #   jupyter-latex-envs
-    #   jupyter-nbextensions-configurator
     #   jupyter-server
     #   jupyterlab
     #   matplotlib-inline
