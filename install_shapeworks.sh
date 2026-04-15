@@ -246,11 +246,6 @@ function install_conda() {
     fi
   fi
 
-  # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
-  jupyter contrib nbextension install --user
-  jupyter nbextension enable spellchecker/main
-  jupyter nbextension enable toc2/main
-
   if [[ "$DEVELOPER" == "YES" ]] ; then
     # installing nbstripout to strip out notebooks cell outputs before committing 
     nbstripout --install
