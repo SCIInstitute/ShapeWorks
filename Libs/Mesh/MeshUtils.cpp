@@ -1120,6 +1120,12 @@ vtkSmartPointer<vtkPolyData> MeshUtils::recreate_mesh(vtkSmartPointer<vtkPolyDat
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest) {
+  // Line-only / vertex-only polydata (e.g. contours) has no polygons to repair;
+  // the triangulation and cleanup steps below would discard its cells.
+  if (mesh->GetNumberOfPolys() == 0) {
+    return mesh;
+  }
+
   auto triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(mesh);
   triangle_filter->PassLinesOff();
