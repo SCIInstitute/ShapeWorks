@@ -344,13 +344,13 @@ int ContourDomain::NumberOfLinesIncidentOnPoint(int i) const {
 }
 
 void ContourDomain::ComputeAvgEdgeLength() {
-  const double total_length = std::accumulate(lines_.begin(), lines_.end(),
+  total_length_ = std::accumulate(lines_.begin(), lines_.end(),
                                               0.0, [&](double s, const vtkSmartPointer<vtkLine> &line) {
             const auto pt_a = GetPoint(line->GetPointId(0));
             const auto pt_b = GetPoint(line->GetPointId(1));
             return s + (pt_a - pt_b).norm();
           });
-  avg_edge_length_ = total_length / lines_.size();
+  avg_edge_length_ = total_length_ / lines_.size();
 }
 
 }

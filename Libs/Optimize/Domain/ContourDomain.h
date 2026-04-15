@@ -86,8 +86,11 @@ class ContourDomain : public ParticleDomain {
   }
 
   double GetSurfaceArea() const override {
-    // TODO: Implement something analogous for scaling purposes
-    return 1.0;
+    // Return length² as an area-equivalent for a contour so it participates in the
+    // sampling-scale auto-scaling. For a circle of radius r this is (2πr)² = 4π²r²,
+    // which is π times the matching sphere's surface area — comparable magnitude so
+    // the scale factor doesn't crush the contour gradient.
+    return total_length_ * total_length_;
   }
 
   void DeleteImages() override {
@@ -132,6 +135,7 @@ class ContourDomain : public ParticleDomain {
   mutable double geo_lq_dist_ = -1;
 
   double avg_edge_length_{0.0};
+  double total_length_{0.0};
 
   void ComputeBounds();
   void ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data);

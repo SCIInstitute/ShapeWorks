@@ -315,7 +315,7 @@ In this step, we ingest the two original shapes and the output consists of three
 5. Return three new shapes Lr, M and Rr
 
 ```python
- extracted_l,extracted_r,extracted_s = 
+ extracted_l,extracted_r,extracted_s =
  sw.MeshUtils.sharedBoundaryExtractor(mesh_l,mesh_r,tol)
 ```
 #### Input shapes with shared surface
@@ -324,8 +324,14 @@ In this step, we ingest the two original shapes and the output consists of three
 #### Output extracted surfaces
 ![Shared Boundary Output](../img/workflow/peanut_shared_output.png)
 
+#### Multiple Shared Boundaries
+
+Projects with more than two domains can define multiple shared boundaries. Each shared boundary is specified as a pair of domains with a distance tolerance. For each pair, the extraction produces a shared surface domain (`shared_surface_<domain1>_<domain2>`) and a shared boundary contour domain (`shared_boundary_<domain1>_<domain2>`).
+
+Multiple shared boundaries can be configured in the Studio Groom module or in the project file directly.
+
 ### Extract Contour
-The boundary loop of the shared surface M obtained using the `sharedBoundaryExtractor` is computed. 
+The boundary loop of the shared surface M obtained using the `sharedBoundaryExtractor` is computed.
 ```python
 output_contour = sw.MeshUtils.boundaryLoopExtractor(extracted_shared_meshes)
 ```

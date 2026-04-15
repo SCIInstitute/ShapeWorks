@@ -152,10 +152,23 @@ To assess the quality of an optimized shape model, consider the following:
 ## Correspondences on New Samples
 
 
-ShapeWorks supports an optimization mode, namely *fixed domains*, to place (i.e., optimize) correspondences on new shapes using a pre-existing shape model. In the fixed domains mode, particles on selected shapes that construct the pre-existing shape model are fixed, and particles on new shapes are optimized to represent them in the context of this shape model. See [Fixed Domains for Ellipsoid: Correspondences on New Shape](../use-cases/multistep/fixed-domain-ellipsoid.md) for an example. 
+ShapeWorks supports an optimization mode, namely *fixed domains*, to place (i.e., optimize) correspondences on new shapes using a pre-existing shape model. In the fixed domains mode, particles on selected shapes that construct the pre-existing shape model are fixed, and particles on new shapes are optimized to represent them in the context of this shape model. See [Fixed Domains for Ellipsoid: Correspondences on New Shape](../use-cases/multistep/fixed-domain-ellipsoid.md) for an example.
 
-To enable the fixed domains mode, the XML should have the below additional tags. For this mode, you can use `"use_shape_statistics_after": 0` to enable shape statistics in all the steps as the pre-existing shape model already has enough particles optimized to reflect the covariance structure in the shape space.
+To enable fixed domains in a project file, set the following parameters:
 
-* `<point_files>`: A list of *local.particles* files to be fixed, i.e., the pre-existing shape model. The new (to be optimized) samples/domains should be initialized with the mean particles.
-* `<fixed_domains>`: A list of domain ids (starting from 0) of the domains that are fixed (i.e., not optimized).
+* `use_fixed_subjects`: Set to `1` to enable fixed domains mode.
+* `fixed_subjects_column`: The column name in the project spreadsheet that marks which shapes are fixed (e.g., `"fixed"`).
+* `fixed_subjects_choice`: The value in that column that identifies fixed shapes (e.g., `"yes"`).
+
+For this mode, you can use `"use_shape_statistics_after": 0` to enable shape statistics in all the steps as the pre-existing shape model already has enough particles optimized to reflect the covariance structure in the shape space.
+
+### PCA Projection Correspondence
+
+By default, the correspondence term in fixed domain optimization minimizes ensemble entropy, which can pull new shapes toward the population mean. The `use_pca_projection` parameter offers an alternative: particles are projected into the PCA space of the fixed shapes, and only the **out-of-model residual** (the component not explained by any PCA mode) receives a gradient. Variation along PCA modes is left unconstrained, allowing new shapes to retain their natural deviation from the mean.
+
+To enable, add to the optimize parameters:
+
+```json
+"use_pca_projection": true
+```
  

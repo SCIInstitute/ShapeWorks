@@ -3,6 +3,11 @@ set CONDAENV=shapeworks
 IF NOT "%1"=="" SET CONDAENV=%1
 echo "creating new conda environment for ShapeWorks called %CONDAENV%..."
 
+REM Accept Anaconda TOS for required channels (must happen before any conda command that touches default channels)
+call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/msys2
+
 REM remove any existing environment with this name
 call conda env remove -n %CONDAENV%
 
@@ -11,7 +16,7 @@ call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
 REM install shapeworks deps
-call conda create --yes --name %CONDAENV% python=3.12 pip=24.3.1 openssl==0.3.30 || goto :error
+call conda create --yes --name %CONDAENV% python=3.12.3 pip=24.3.1 openblas=0.3.30 || goto :error
 call conda activate %CONDAENV%
 
 REM reactivate shapeworks environment

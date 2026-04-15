@@ -87,7 +87,7 @@ function install_conda() {
   conda config --add channels anaconda
   conda config --add channels conda-forge
 
-  CONDA_PACKAGES=(python=3.12 \
+  CONDA_PACKAGES=(python=3.12.3 \
     openblas=0.3.30 \
     pip=24.3.1
    )		      
@@ -245,11 +245,6 @@ function install_conda() {
       popd
     fi
   fi
-
-  # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
-  jupyter contrib nbextension install --user
-  jupyter nbextension enable spellchecker/main
-  jupyter nbextension enable toc2/main
 
   if [[ "$DEVELOPER" == "YES" ]] ; then
     # installing nbstripout to strip out notebooks cell outputs before committing 

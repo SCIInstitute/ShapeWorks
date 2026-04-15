@@ -1,9 +1,9 @@
-# New in ShapeWorks Studio 6.2
+# Studio Feature Highlights
 
 
 ## DeepSSM in Studio
 
-New in ShapeWorks 6.2, we have added the ability to run DeepSSM tools in ShapeWorks Studio.
+ShapeWorks Studio includes the ability to run DeepSSM tools directly.
 
 ![Studio DeepSSM - Augmentation](../img/studio/studio_deepssm_aug2.png){: width="600" }
 
@@ -11,7 +11,7 @@ See [DeepSSM in Studio](../studio/deepssm-in-studio.md) for more information.
 
 ## Multiple Domain Alignments
 
-New in ShapeWorks 6.2, we have added support for multiple alignment strategies in ShapeWorks Studio.  This allows analysis with and without articulation with a choice of reference domain, or global alignment.
+ShapeWorks Studio supports multiple alignment strategies, allowing analysis with and without articulation with a choice of reference domain, or global alignment.
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_alignments.mp4" autoplay muted loop controls style="width:100%"></p>
 
@@ -19,7 +19,7 @@ See [Multiple Domain Alignments](../studio/multiple-domains.md#multiple-domain-a
 
 ## Shape Evaluation Charts
 
-New in ShapeWorks 6.2, we have added new shape evaluation charts.  Charts for Compactness, Specificity and Generalizaion are provided.
+ShapeWorks Studio provides shape evaluation charts for Compactness, Specificity and Generalization.
 
 See [Studio Metrics Panel](../studio/getting-started-with-studio.md#metrics-panel) for more information.
 
@@ -28,13 +28,13 @@ See [Studio Metrics Panel](../studio/getting-started-with-studio.md#metrics-pane
 ## Usability Features
 ### Group p-value Display
 
-New in ShapeWorks 6.2, Studio has the ability to view group-wise p-values for surface differences.
+Studio can display group-wise p-values for surface differences.
 
 ![Studio DeepSSM - Group p-value](../img/studio/studio_group_pvalue.png){: width="600" }
 
 ### Scalar range controls
 
-New in ShapeWorks 6.2, Studio feature maps, p-value displays, deepssm surface error displays allow for manual control over scalar colormap values.
+Studio feature maps, p-value displays, and DeepSSM surface error displays allow for manual control over scalar colormap values.
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_feature_scale.mp4" autoplay muted loop controls style="width:100%"></p>
 
@@ -82,11 +82,9 @@ Multiple sources of crashes during mesh warping have been fixed and the overall 
 
 ---
 
-# New in ShapeWorks Studio 6.1
-
 ## Multiple Domains
 
-As of ShapeWorks 6.1, we added support in ShapeWorks Studio for modeling multiple domains (e.g. anatomies) in joint correspondance model.
+ShapeWorks Studio supports modeling multiple domains (e.g. anatomies) in a joint correspondence model.
 
 ![ShapeWorks Project with Multiple Domains - Analyze](../img/studio/studio_multiple_domain_analyze.png)
 
@@ -94,7 +92,7 @@ See [Multiple Domains](../studio/multiple-domains.md) for more information.
 
 ## Mesh Grooming
 
-As of ShapeWorks 6.1, we added support in ShapeWorks Studio for mesh grooming, including smoothing, hole filling, and iterative closest point pre-alignment.
+ShapeWorks Studio supports mesh grooming, including smoothing, hole filling, and iterative closest point pre-alignment.
 
 ![ShapeWorks Studio Groom Module for Meshes](../img/studio/studio_groom.png){: width="300" }
 
@@ -102,7 +100,7 @@ See [Groom Module](../studio/getting-started-with-studio.md#groom-module) for mo
 
 ## Mesh Support 
 
-As of ShapeWorks 6.0, we added mesh support to ShapeWorks Studio including loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as "cortical thickness", or "fibrosis” and ShapeWorks Studio uses them in a similar manner as feature maps/volumes.
+ShapeWorks Studio supports loading meshes, optimizing shape models directly on meshes, and visualizing meshes with scalar feature values. Meshes can store values at vertices such as “cortical thickness” or “fibrosis”, which Studio uses in a similar manner as feature maps/volumes.
 
 *Open meshes in Studio*
 ![Screenshot showing open meshes in Studio](../img/new/open-mesh-studio.png)
@@ -119,7 +117,7 @@ We also added a new surface reconstruction method with support for both mesh or 
 
 ## Improved Studio Interface
 
-As of ShapeWorks 6.0, we added support for automatic glyph sizing, draging/dropping of images and meshes. Scalar bar color is now opposite of background color (e.g., when background is white, text should be dark) (user request).
+ShapeWorks Studio supports automatic glyph sizing and drag/drop of images and meshes. Scalar bar color is opposite of the background color for better contrast.
 
 *Samples names color is opposite of the background color for a better contrast*
 ![Studio background](../img/new/studio-background.png)

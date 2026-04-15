@@ -1,4 +1,5 @@
 #include "Command.h"
+#include <Profiling.h>
 #include <sstream>
 
 namespace shapeworks {
@@ -22,6 +23,7 @@ std::vector<std::string> Command::parse_args(const std::vector<std::string> &arg
 ///////////////////////////////////////////////////////////////////////////////
 int Command::run(SharedCommandData &sharedData)
 {
+  TIME_SCOPE(QString::fromStdString(name()));
   const optparse::Values &options = parser.get_parsed_options();
 
   return this->execute(options, sharedData) ? EXIT_SUCCESS : EXIT_FAILURE;

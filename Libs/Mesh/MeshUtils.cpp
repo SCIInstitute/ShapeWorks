@@ -266,6 +266,10 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_si
  */
 
 //---------------------------------------------------------------------------
+// Robust orientation test: compute the loop's signed-area vector by summing edge
+// cross products. The dominant axis of this vector gives the loop's normal; its sign
+// determines orientation. Uses ALL vertices, so it is insensitive to where loop[0]
+// happens to start and does not suffer from atan2 branch-cut flips.
 static bool is_clockwise(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, const std::vector<int>& loop) {
   Eigen::RowVector3d centroid{0.0, 0.0, 0.0};
   for (const auto& i : loop) {
@@ -273,13 +277,20 @@ static bool is_clockwise(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, con
   }
   centroid /= loop.size();
 
-  // todo this is arbitrary and works for the peanut data and initial tests on LA+Septum data
-  // it enforces a consistent ordering in the boundary loop
-  const auto v0 = V.row(loop[0]) - centroid;
-  const auto v1 = V.row(loop[1]) - centroid;
-  const double angle0 = atan2(v0.z(), v0.y());
-  const double angle1 = atan2(v1.z(), v1.y());
-  return angle0 > angle1;
+  Eigen::RowVector3d area_vec{0.0, 0.0, 0.0};
+  for (size_t i = 0; i < loop.size(); i++) {
+    const Eigen::RowVector3d v0 = V.row(loop[i]) - centroid;
+    const Eigen::RowVector3d v1 = V.row(loop[(i + 1) % loop.size()]) - centroid;
+    area_vec += v0.cross(v1);
+  }
+
+  // Use the dominant axis of the area vector as the reference normal. Calling "clockwise"
+  // the case where the area vector points in the negative dominant-axis direction yields
+  // consistent results across samples that share the same boundary plane.
+  int max_axis = 0;
+  if (std::abs(area_vec[1]) > std::abs(area_vec[max_axis])) max_axis = 1;
+  if (std::abs(area_vec[2]) > std::abs(area_vec[max_axis])) max_axis = 2;
+  return area_vec[max_axis] < 0;
 }
 
 //---------------------------------------------------------------------------
@@ -293,7 +304,32 @@ Mesh MeshUtils::extract_boundary_loop(Mesh mesh) {
     throw std::runtime_error("Expected at least one boundary loop in the mesh");
   }
 
-  const auto& loop = loops[0];
+  auto loop = loops[0];  // copy so we can rotate it to a canonical start vertex
+
+  // Rotate the loop so it always starts at a canonical vertex (the one with the
+  // largest Y coordinate; lexicographic tiebreakers on Z then X). igl::boundary_loop
+  // returns loops starting at an arbitrary vertex, which produces per-subject
+  // rotational offsets that destroy inter-subject correspondence on contour domains.
+  {
+    size_t canonical = 0;
+    for (size_t i = 1; i < loop.size(); i++) {
+      const double cur_y = V(loop[i], 1);
+      const double cur_z = V(loop[i], 2);
+      const double cur_x = V(loop[i], 0);
+      const double best_y = V(loop[canonical], 1);
+      const double best_z = V(loop[canonical], 2);
+      const double best_x = V(loop[canonical], 0);
+      if (cur_y > best_y ||
+          (cur_y == best_y && cur_z > best_z) ||
+          (cur_y == best_y && cur_z == best_z && cur_x > best_x)) {
+        canonical = i;
+      }
+    }
+    if (canonical != 0) {
+      std::rotate(loop.begin(), loop.begin() + canonical, loop.end());
+    }
+  }
+
   const auto is_cw = is_clockwise(V, F, loop);
 
   auto pts = vtkSmartPointer<vtkPoints>::New();
@@ -389,6 +425,12 @@ static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::Matr
   Eigen::MatrixXi out_F;
   Eigen::MatrixXd rem_V;
   Eigen::MatrixXi rem_F;
+
+  // If either mesh is empty, there can be no shared surface
+  if (is_empty(src_V, src_F) || is_empty(other_V, other_F)) {
+    return std::make_tuple(out_V, out_F, src_V, src_F);
+  }
+
   igl::AABB<Eigen::MatrixXd, 3> tree;
   tree.init(other_V, other_F);
 
@@ -481,6 +523,10 @@ std::array<Mesh, 3> MeshUtils::shared_boundary_extractor(const Mesh& mesh_l, con
   F_l = mesh_l.faces();
   V_r = mesh_r.points();
   F_r = mesh_r.faces();
+
+  if (is_empty(V_l, F_l) || is_empty(V_r, F_r)) {
+    throw std::runtime_error("Input mesh is empty. Cannot extract shared boundary from empty meshes");
+  }
 
   Eigen::MatrixXd shared_V_l, shared_V_r, rem_V_l, rem_V_r;
   Eigen::MatrixXi shared_F_l, shared_F_r, rem_F_l, rem_F_r;
@@ -1073,18 +1119,23 @@ vtkSmartPointer<vtkPolyData> MeshUtils::recreate_mesh(vtkSmartPointer<vtkPolyDat
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData> mesh) {
+vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest) {
   auto triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(mesh);
   triangle_filter->PassLinesOff();
   triangle_filter->Update();
 
-  auto connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-  connectivity->SetInputConnection(triangle_filter->GetOutputPort());
-  connectivity->SetExtractionModeToLargestRegion();
-  connectivity->Update();
+  vtkSmartPointer<vtkPolyData> triangulated = triangle_filter->GetOutput();
 
-  auto cleaned = MeshUtils::clean_mesh(connectivity->GetOutput());
+  if (extract_largest) {
+    auto connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+    connectivity->SetInputData(triangulated);
+    connectivity->SetExtractionModeToLargestRegion();
+    connectivity->Update();
+    triangulated = connectivity->GetOutput();
+  }
+
+  auto cleaned = MeshUtils::clean_mesh(triangulated);
 
   auto fixed = Mesh(cleaned).fixNonManifold();
 

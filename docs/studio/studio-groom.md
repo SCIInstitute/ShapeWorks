@@ -22,6 +22,8 @@ Image Grooming Parameters
 
 Mesh Grooming Parameters
 
+Before the mesh grooming pipeline runs, each mesh is automatically repaired. This includes triangulation, extraction of the largest connected component, removal of duplicate points and degenerate cells, non-manifold geometry fixes, and removal of zero-area triangles.
+
 | Parameter | Description |
 | --- | ----------- |
 | Fill Holes | Fill small holes in the mesh |
@@ -40,3 +42,4 @@ Alignment Parameters
 | --- | ----------- |
 | Reflect | Option to reflect some shapes over a given axis if a given column matches a given value (e.g. reflect 'side' over 'Y' if 'left') |
 | Alignment | Option to align with centering (center of mass), iterative closest point (translation and rotation), or landmarks (best fit, when specified) |
+| Alignment Subset Size | Number of shapes to use when selecting the reference shape for ICP alignment. Default is auto (-1), which uses a subset of 30 to avoid expensive pairwise comparisons on large datasets. Set to 0 to use all shapes. |

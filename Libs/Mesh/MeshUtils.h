@@ -86,7 +86,7 @@ class MeshUtils {
     /// Recreate mesh, dropping deleted cells
     static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
-    /// Repair mesh: triangulate, extract largest component, clean, fix non-manifold, remove zero-area triangles
-    static vtkSmartPointer<vtkPolyData> repair_mesh(vtkSmartPointer<vtkPolyData> mesh);
+    /// Repair mesh: triangulate, optionally extract largest component, clean, fix non-manifold, remove zero-area triangles
+    static vtkSmartPointer<vtkPolyData> repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest = true);
 };
 } // namespace shapeworks

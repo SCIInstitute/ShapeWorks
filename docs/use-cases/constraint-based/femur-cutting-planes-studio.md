@@ -12,7 +12,7 @@ Follow these instructions to start a new project and define constraints on your 
 
 1. Open ShapeWorks Studio and click "Start New Project" from the Splash Screen. If you just want to explore and not follow, you can just load Shapeworks/Examples/Studio/FemurConstraints/FemurConstraints.xlsx.
 2. Drag-and-drop or import the femurs in Shapeworks/Examples/Studio/FemurConstraints.
-3. Follow [the instructions for using constraints](../../studio/using-constraints.md) to define constraints. Here we define a cutting plane and a free-form constraint to each of four femurs.
+3. Follow [the instructions for using constraints](../../studio/studio-data.md#using-constraints-in-studio) to define constraints. Here we define a cutting plane and a free-form constraint to each of four femurs.
 
 ## Grooming Steps
 

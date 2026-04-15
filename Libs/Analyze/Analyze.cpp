@@ -2,6 +2,7 @@
 
 #include <Groom/GroomParameters.h>
 #include <Logging.h>
+#include <Profiling.h>
 #include <MeshWarper.h>
 #include <Particles/ParticleNormalEvaluation.h>
 #include <StringUtils.h>
@@ -167,6 +168,7 @@ Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new M
 
 //---------------------------------------------------------------------------
 void Analyze::run_offline_analysis(std::string outfile, float range, float steps) {
+  TIME_SCOPE("Analyze::run_offline_analysis");
   SW_LOG("ShapeWorks Offline Analysis");
   if (!project_->get_particles_present()) {
     throw std::runtime_error("Project has not been optimized, please run optimize first");
@@ -478,6 +480,7 @@ bool Analyze::update_shapes() {
 
 //---------------------------------------------------------------------------
 bool Analyze::compute_stats() {
+  TIME_SCOPE("Analyze::compute_stats");
   if (stats_ready_) {
     return true;
   }

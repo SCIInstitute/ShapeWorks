@@ -1,6 +1,7 @@
 #include "ShapeEvaluation.h"
 
 #include <Logging.h>
+#include <Profiling.h>
 #include <tbb/parallel_for.h>
 
 #include <Eigen/Core>
@@ -34,6 +35,7 @@ double ShapeEvaluation::compute_compactness(const ParticleSystemEvaluation& part
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::compute_full_compactness(const ParticleSystemEvaluation& particle_system,
                                                           std::function<void(float)> progress_callback) {
+  TIME_SCOPE("ShapeEvaluation::compute_full_compactness");
   const int n = particle_system.num_samples();
   const int d = particle_system.num_dims();
   const int num_modes = n - 1;  // the number of modes is one less than the number of samples
@@ -64,6 +66,7 @@ Eigen::VectorXd ShapeEvaluation::compute_full_compactness(const ParticleSystemEv
 //---------------------------------------------------------------------------
 double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& particle_system, const int num_modes,
                                                const std::string& save_to, bool surface_distance_mode) {
+  TIME_SCOPE("ShapeEvaluation::compute_generalization");
   const long n = particle_system.num_samples();
   const long d = particle_system.num_dims();
   const Eigen::MatrixXd& p = particle_system.get_matrix();
@@ -155,6 +158,7 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
                                                              std::function<void(float)> progress_callback,
                                                              std::function<bool()> check_abort,
                                                              bool surface_distance_mode) {
+  TIME_SCOPE("ShapeEvaluation::compute_full_generalization");
   const long n = particle_system.num_samples();  // number of samples
   const long d = particle_system.num_dims();     // number of dimensions (e.g. number of particles * 3)
   const Eigen::MatrixXd& p = particle_system.get_matrix();
@@ -224,6 +228,7 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
 //---------------------------------------------------------------------------
 double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& particle_system, const int num_modes,
                                             const std::string& save_to, bool surface_distance_mode) {
+  TIME_SCOPE("ShapeEvaluation::compute_specificity");
   const long n = particle_system.num_samples();
   const long d = particle_system.num_dims();
   int num_values = particle_system.get_num_values_per_particle();
@@ -327,6 +332,7 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
                                                           std::function<void(float)> progress_callback,
                                                           std::function<bool()> check_abort,
                                                           bool surface_distance_mode) {
+  TIME_SCOPE("ShapeEvaluation::compute_full_specificity");
   const long n = particle_system.num_samples();
   const long d = particle_system.num_dims();
   const int num_values = particle_system.get_num_values_per_particle();

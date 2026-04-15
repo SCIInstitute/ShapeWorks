@@ -151,6 +151,9 @@ class GroomParameters {
   bool get_shared_boundaries_enabled();
   void set_shared_boundaries_enabled(bool enabled);
 
+  //! Check if the current domain participates in any shared boundary
+  bool is_shared_boundary_domain();
+
   std::vector<SharedBoundary> get_shared_boundaries();
   void set_shared_boundaries(const std::vector<SharedBoundary>& boundaries);
   void add_shared_boundary(const std::string& first_domain, const std::string& second_domain, double tolerance);

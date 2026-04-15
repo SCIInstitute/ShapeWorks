@@ -212,4 +212,56 @@ After cmake the Visual Studio solution can be opened with `start ShapeWorks.sln`
 
 !!! important "RelWithDebInfo only"
     Currently it's only possible to build **RelWithDebInfo** on Windows.
-    
+
+
+## Performance Profiling
+
+ShapeWorks includes a built-in profiling and tracing framework for diagnosing performance issues. It is controlled via environment variables and has zero overhead when disabled.
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `SW_TIME_PROFILE=on` | Enable flat profiling. Writes a summary report to `profile.txt` at shutdown with exclusive/inclusive times, call counts, and per-call averages, grouped by thread. |
+| `SW_TIME_TRACE=on` | Enable Chrome trace format output. Writes `trace.json` which can be loaded in `chrome://tracing` or [Perfetto](https://ui.perfetto.dev/) for a timeline visualization. |
+
+Both can be enabled simultaneously.
+
+### Example
+
+```bash
+SW_TIME_PROFILE=on SW_TIME_TRACE=on shapeworks optimize --name project.swproj
+```
+
+After the run completes, `profile.txt` will contain a flat profile like:
+
+```
+   %Time   Exclusive    Inclusive   #Calls  #Child   Exclusive    Inclusive Name
+                 total ms    total ms                     ms/call    ms/call
+------------------------------------------------------------------------------------------------------
+    95.2        8523        12041      128       0          67          94 Optimize::RunOptimize
+    ...
+```
+
+And `trace.json` can be loaded in a trace viewer for a timeline of all timed scopes.
+
+### Adding Instrumentation
+
+Use the macros from `Profiling.h` to instrument code:
+
+```cpp
+#include <Profiling.h>
+
+void MyFunction() {
+    TIME_SCOPE("MyFunction");  // automatically times the enclosing scope
+    // ... work ...
+}
+```
+
+Or for manual start/stop:
+
+```cpp
+TIME_START("loading meshes");
+// ... work ...
+TIME_STOP("loading meshes");
+```
