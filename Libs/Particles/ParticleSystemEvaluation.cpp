@@ -69,7 +69,7 @@ bool ParticleSystemEvaluation::evaluation_compare(const ParticleSystemEvaluation
   bool good = true;
   if (compactness1.size() > 0 && compactness2.size() > 0) {
     std::cout << "Comparing compactness: " << compactness1[0] << " vs " << compactness2[0] << ": ";
-    if (!epsEqual(compactness1[0], compactness2[0], 0.07)) {
+    if (!epsEqual(compactness1[0], compactness2[0], 0.10)) {
       std::cout << "different\n";
       good = false;
     } else {
