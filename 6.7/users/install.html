@@ -4191,6 +4191,36 @@
 <a href="#installing-shapeworks-on-linux">Linux</a></p>
 <h2 id="installing-shapeworks-on-windows">Installing ShapeWorks on Windows</h2>
 <p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows">Windows</a> <em>(remember these are in-progress development builds, not official releases).</em></p>
+<div class="admonition warning">
+<p class="admonition-title">Windows 11: Smart App Control affects Python features</p>
+<p>On Windows 11, a security feature called <strong>Smart App Control</strong> will block
+the Python libraries that ShapeWorks installs. <strong>ShapeWorks Studio itself
+will still run</strong>, and you can use its grooming, optimization, and analysis
+features normally. However, the following will not work until Smart App
+Control is turned off:</p>
+<ul>
+<li>Python use cases (<code>python RunUseCase.py ...</code>)</li>
+<li>Jupyter notebook examples</li>
+<li>DeepSSM and other Python-based features inside Studio</li>
+</ul>
+<p>If affected, you will see errors like:</p>
+<p><em>"ImportError: DLL load failed while importing vtkWebCore: An Application Control policy has blocked this file."</em></p>
+<p>This happens because ShapeWorks relies on common scientific Python
+libraries (VTK, PyTorch, etc.) that are not digitally signed by Microsoft.
+Smart App Control blocks unsigned files, even though they are safe.
+Most other scientific Python tools (PyTorch, SciPy, OpenCV, ...) have the
+same issue.</p>
+<p><strong>To turn Smart App Control off:</strong></p>
+<ol>
+<li>Click the <strong>Start</strong> button and type <strong>Smart App Control</strong>.</li>
+<li>Click <strong>Smart App Control settings</strong>.</li>
+<li>Select <strong>Off</strong>.</li>
+</ol>
+<p><strong>Important:</strong> Turning Smart App Control off is a one-way change. The only
+way to turn it back on later is to reset Windows. If you are unsure
+whether your computer has Smart App Control enabled, the
+<code>install_shapeworks.bat</code> script will detect it and warn you.</p>
+</div>
 <ol>
 <li>
 <p>Download and install Miniconda for Windows.<br />
