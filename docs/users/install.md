@@ -27,6 +27,38 @@
 
 Please make sure that you download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest), or up-to-date development builds from the master branch for [Windows](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows) *(remember these are in-progress development builds, not official releases).*
 
+!!! warning "Windows 11: Smart App Control affects Python features"
+    On Windows 11, a security feature called **Smart App Control** will block
+    the Python libraries that ShapeWorks installs. **ShapeWorks Studio itself
+    will still run**, and you can use its grooming, optimization, and analysis
+    features normally. However, the following will not work until Smart App
+    Control is turned off:
+
+    - Python use cases (`python RunUseCase.py ...`)
+    - Jupyter notebook examples
+    - DeepSSM and other Python-based features inside Studio
+
+    If affected, you will see errors like:
+
+    *"ImportError: DLL load failed while importing vtkWebCore: An Application Control policy has blocked this file."*
+
+    This happens because ShapeWorks relies on common scientific Python
+    libraries (VTK, PyTorch, etc.) that are not digitally signed by Microsoft.
+    Smart App Control blocks unsigned files, even though they are safe.
+    Most other scientific Python tools (PyTorch, SciPy, OpenCV, ...) have the
+    same issue.
+
+    **To turn Smart App Control off:**
+
+    1. Click the **Start** button and type **Smart App Control**.
+    2. Click **Smart App Control settings**.
+    3. Select **Off**.
+
+    **Important:** Turning Smart App Control off is a one-way change. The only
+    way to turn it back on later is to reset Windows. If you are unsure
+    whether your computer has Smart App Control enabled, the
+    `install_shapeworks.bat` script will detect it and warn you.
+
 
 1. Download and install Miniconda for Windows.  
 [https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe)

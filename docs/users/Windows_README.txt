@@ -17,6 +17,39 @@ models, and visualizing the results.
 
 Welcome to ShapeWorks!
 
+### Windows 11 users: Smart App Control affects Python features
+
+On Windows 11, a security feature called Smart App Control will block the
+Python libraries that ShapeWorks installs.
+
+ShapeWorks Studio itself will still run, and you can use its grooming,
+optimization, and analysis features normally. However, the following will not
+work until Smart App Control is turned off:
+
+  - Python use cases (python RunUseCase.py ...)
+  - Jupyter notebook examples
+  - DeepSSM and other Python-based features inside Studio
+
+If affected, you will see errors like:
+
+  "ImportError: DLL load failed while importing vtkWebCore:
+   An Application Control policy has blocked this file."
+
+ShapeWorks uses common scientific Python libraries (VTK, PyTorch, etc.) that
+are not digitally signed by Microsoft, so Smart App Control blocks them. Most
+other scientific Python tools have the same issue.
+
+To turn Smart App Control off:
+
+  1. Click the Start button and type "Smart App Control".
+  2. Click "Smart App Control settings".
+  3. Select "Off".
+
+Note: Turning Smart App Control off is a one-way change. The only way to turn
+it back on later is to reset Windows. The install_shapeworks.bat script will
+detect Smart App Control and warn you before installing.
+
+
 ### To complete your installation:
 
 1. Download and install Miniconda for Windows.

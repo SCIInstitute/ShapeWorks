@@ -1,6 +1,45 @@
 REM remove existing shapeworks env if any
 set CONDAENV=shapeworks
 IF NOT "%1"=="" SET CONDAENV=%1
+
+REM === Check for Smart App Control (Windows 11) ===
+REM Smart App Control will block unsigned DLLs (VTK, PyTorch, etc.) that ShapeWorks
+REM installs via pip, causing import failures. Warn the user before proceeding.
+set SAC_STATE=
+for /f "delims=" %%s in ('powershell -NoProfile -Command "(Get-MpComputerStatus).SmartAppControlState" 2^>nul') do set SAC_STATE=%%s
+if /i "%SAC_STATE%"=="On" (
+    echo.
+    echo ============================================================
+    echo  WARNING: Smart App Control is ENABLED on this computer.
+    echo ============================================================
+    echo.
+    echo  ShapeWorks Studio itself will still run, but the Python
+    echo  features ^(use cases, notebooks, DeepSSM^) will fail because
+    echo  Smart App Control blocks the unsigned Python libraries
+    echo  ^(VTK, PyTorch, etc.^) with errors like:
+    echo.
+    echo    "An Application Control policy has blocked this file"
+    echo.
+    echo  To use the Python features, turn Smart App Control OFF:
+    echo.
+    echo    1. Click the Start button and type "Smart App Control"
+    echo    2. Click "Smart App Control settings"
+    echo    3. Select "Off"
+    echo.
+    echo  IMPORTANT: Turning Smart App Control off is permanent.
+    echo  To turn it back on, you must reset Windows.
+    echo.
+    echo  See https://sciinstitute.github.io/ShapeWorks/users/install.html
+    echo  for more information.
+    echo.
+    echo  Press Ctrl+C to cancel, or any key to continue installing
+    echo  ^(install will succeed, but Python features won't work
+    echo  until SAC is off^).
+    echo ============================================================
+    echo.
+    pause
+)
+
 echo "creating new conda environment for ShapeWorks called %CONDAENV%..."
 
 REM Accept Anaconda TOS for required channels (must happen before any conda command that touches default channels)
