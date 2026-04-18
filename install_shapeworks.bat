@@ -48,7 +48,7 @@ call conda tos accept --override-channels --channel https://repo.anaconda.com/pk
 call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/msys2
 
 REM remove any existing environment with this name
-call conda env remove -n %CONDAENV%
+call conda env remove -n %CONDAENV% -y
 
 REM update anaconda
 call conda config --add channels anaconda
