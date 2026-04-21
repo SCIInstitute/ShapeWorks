@@ -498,7 +498,7 @@ nbclient==0.10.2
     # via
     #   -r requirements.in
     #   nbconvert
-nbconvert==7.17.0
+nbconvert==7.17.1
     # via
     #   -r requirements.in
     #   jupyter-server
