@@ -12,6 +12,7 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  MACOSX_DEPLOYMENT_TARGET: "12.0"
   SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
   CACHE_HOST: ${{ secrets.SSH_HOST }}
   GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
@@ -55,7 +56,7 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: /Users/runner/install
-        key: ${{ runner.os }}-arm64-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: Build Dependencies
       if: steps.cache-deps-restore.outputs.cache-hit != 'true'
@@ -67,11 +68,11 @@ jobs:
       uses: actions/cache/save@v3
       with:
         path: /Users/runner/install
-        key: ${{ runner.os }}-arm64-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS="-g -Wno-enum-constexpr-conversion" -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS="-g -Wno-enum-constexpr-conversion" -DCMAKE_OSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
 
     - name: make
       shell: bash -l {0}

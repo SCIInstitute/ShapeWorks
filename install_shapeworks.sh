@@ -173,7 +173,7 @@ function install_conda() {
   if [[ $(uname -s) == "Darwin" ]] && [[ $(uname -m) == "x86_64" ]]; then
     # Intel Mac - use older versions with NumPy 1.x
     if ! python -m light_the_torch install torch==2.2.2 torchaudio==2.2.2 torchvision==0.17.2; then return 1; fi
-    pip install "numpy<2"
+    python -m pip install "numpy<2"
   else
     # Apple Silicon, Linux, Windows - use latest with NumPy 2.x support
     if ! python -m light_the_torch install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi
@@ -183,13 +183,13 @@ function install_conda() {
   # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt
   OPEN3D_INSTALLED=NO
   if [[ "$(uname)" == "Linux" ]]; then
-      if pip install open3d-cpu==0.19.0; then
+      if python -m pip install open3d-cpu==0.19.0; then
         OPEN3D_INSTALLED=YES
       else
         echo "WARNING: open3d-cpu could not be installed. Network analysis features will not be available."
       fi
   elif [[ "$(uname)" == "Darwin" ]]; then
-      if pip install open3d==0.19.0; then
+      if python -m pip install open3d==0.19.0; then
         OPEN3D_INSTALLED=YES
         if [[ "$(uname -m)" == "arm64" ]]; then
           pushd $CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu
@@ -202,7 +202,7 @@ function install_conda() {
         echo "WARNING: open3d could not be installed. Network analysis features will not be available."
       fi
   else
-      if pip install open3d==0.19.0; then
+      if python -m pip install open3d==0.19.0; then
         OPEN3D_INSTALLED=YES
       else
         echo "WARNING: open3d could not be installed. Network analysis features will not be available."
@@ -211,9 +211,9 @@ function install_conda() {
 
   for package in DataAugmentationUtilsPackage DatasetUtilsPackage MONAILabelPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
     if [[ -e Python/${package}.tar.gz ]] ; then
-      if ! pip install Python/${package}.tar.gz;        then return 1; fi
+      if ! python -m pip install Python/${package}.tar.gz;        then return 1; fi
     else
-      if ! pip install Python/${package};               then return 1; fi
+      if ! python -m pip install Python/${package};               then return 1; fi
     fi
   done
 
@@ -270,7 +270,7 @@ if install_conda; then
   conda list
 
   echo "Pip installed packages:"
-  pip list
+  python -m pip list
 
   conda clean -t -y
 
