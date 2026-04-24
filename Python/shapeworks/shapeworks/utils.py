@@ -172,7 +172,7 @@ def compute_line_indices(n, is_closed=True):
 
 
 def get_api_version():
-    return "6.7"
+    return "6.8"
 
 
 def set_sw_logger(log_object):

@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 
-SW_MAJOR_VERSION=6.7
+SW_MAJOR_VERSION=6.8
 
 # Set up logging
 INSTALL_LOG="install_shapeworks_$(date +%Y%m%d_%H%M%S).log"

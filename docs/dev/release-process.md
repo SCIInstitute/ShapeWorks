@@ -19,7 +19,7 @@ SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.
 
 TODO - This should be automated from a single place
 
-- `Studio/Python/PythonWorker.h`
+- `Libs/Application/Job/PythonWorker.h`
 
 ```
   constexpr static const char* python_api_version = "6.5";
