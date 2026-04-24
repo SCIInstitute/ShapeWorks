@@ -4106,7 +4106,7 @@
 </tr>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1MeanCurvatureContainer.html#function-itktypemacro">itkTypeMacro</a></strong>(<a href="classshapeworks_1_1MeanCurvatureContainer.html">MeanCurvatureContainer</a> , <a href="classshapeworks_1_1GenericContainerArray.html">GenericContainerArray</a> )</td>
+<td><strong><a href="classshapeworks_1_1MeanCurvatureContainer.html#function-itktypemacro">itkTypeMacro</a></strong>(<a href="classParticleMeanCurvatureAttribute.html">ParticleMeanCurvatureAttribute</a> , <a href="classshapeworks_1_1GenericContainerArray.html">GenericContainerArray</a> )</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4257,6 +4257,10 @@
 </tr>
 <tr>
 <td>virtual void</td>
+<td><strong><a href="classshapeworks_1_1Observer.html#function-neighborhoodseteventcallback">NeighborhoodSetEventCallback</a></strong>(Object * , const itk::EventObject &amp; )</td>
+</tr>
+<tr>
+<td>virtual void</td>
 <td><strong><a href="classshapeworks_1_1Observer.html#function-positionremoveeventcallback">PositionRemoveEventCallback</a></strong>(Object * , const itk::EventObject &amp; )</td>
 </tr>
 </tbody>
@@ -4296,119 +4300,119 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-template &lt;class TNumericType ,
-unsigned int VDimension&gt;
-class shapeworks::MeanCurvatureContainer;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TNumericType</span><span class="w"> </span><span class="p">,</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-numerictype">typedef NumericType</h3>
-<p><code>cpp
-typedef TNumericType shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::NumericType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">TNumericType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">NumericType</span><span class="p">;</span>
+</code></pre></div>
 <p>Standard class typedefs </p>
 <h3 id="typedef-self">typedef Self</h3>
-<p><code>cpp
-typedef MeanCurvatureContainer shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::Self;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">MeanCurvatureContainer</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<p><code>cpp
-typedef GenericContainerArray&lt;TNumericType&gt; shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::Superclass;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="n">TNumericType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<p><code>cpp
-typedef itk::SmartPointer&lt;Self&gt; shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::Pointer;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<p><code>cpp
-typedef itk::SmartPointer&lt;const Self&gt; shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::ConstPointer;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-constweakpointer">typedef ConstWeakPointer</h3>
-<p><code>cpp
-typedef itk::WeakPointer&lt;const Self&gt; shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::ConstWeakPointer;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstWeakPointer</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-particlesystemtype">typedef ParticleSystemType</h3>
-<p><code>cpp
-typedef ParticleSystem shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::ParticleSystemType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParticleSystemType</span><span class="p">;</span>
+</code></pre></div>
 <p>Numeric types. </p>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<p><code>cpp
-typedef ParticleSystemType::PointType shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::PointType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-vnlvectortype">typedef VnlVectorType</h3>
-<p><code>cpp
-typedef vnl_vector_fixed&lt;TNumericType, VDimension&gt; shapeworks::MeanCurvatureContainer&lt; TNumericType, VDimension &gt;::VnlVectorType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlVectorType</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<p><code>cpp
-itkNewMacro(
-    Self 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Self</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Method for creation through the object factory. </p>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<p><code>cpp
-itkTypeMacro(
-    MeanCurvatureContainer ,
-    GenericContainerArray 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleMeanCurvatureAttribute</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">GenericContainerArray</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Run-time type information (and related methods). </p>
 <h3 id="function-setverbosity">function SetVerbosity</h3>
-<p><code>cpp
-inline void SetVerbosity(
-    unsigned int val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetVerbosity</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getverbosity">function GetVerbosity</h3>
-<p><code>cpp
-inline unsigned int GetVerbosity()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetVerbosity</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-positionaddeventcallback">function PositionAddEventCallback</h3>
-<p><code>cpp
-inline virtual void PositionAddEventCallback(
-    itk::Object * o,
-    const itk::EventObject &amp; e
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionAddEventCallback</span><span class="p">(</span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-positionseteventcallback">function PositionSetEventCallback</h3>
-<p><code>cpp
-inline virtual void PositionSetEventCallback(
-    itk::Object * o,
-    const itk::EventObject &amp; e
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionSetEventCallback</span><span class="p">(</span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-domainaddeventcallback">function DomainAddEventCallback</h3>
-<p><code>cpp
-inline virtual void DomainAddEventCallback(
-    itk::Object * o,
-    const itk::EventObject &amp; e
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DomainAddEventCallback</span><span class="p">(</span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-computemeancurvature">function ComputeMeanCurvature</h3>
-<p><code>cpp
-inline void ComputeMeanCurvature(
-    const ParticleSystemType * system,
-    unsigned int idx,
-    unsigned int dom
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeMeanCurvature</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dom</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-computecurvaturestatistics">function ComputeCurvatureStatistics</h3>
-<p><code>cpp
-virtual void ComputeCurvatureStatistics(
-    const ParticleSystemType * ,
-    unsigned int d
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeCurvatureStatistics</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Compute the mean and std deviation of the curvature on the image surface. </p>
 <h3 id="function-getmeancurvature">function GetMeanCurvature</h3>
-<p><code>cpp
-inline double GetMeanCurvature(
-    int d
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMeanCurvature</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getcurvaturestandarddeviation">function GetCurvatureStandardDeviation</h3>
-<p><code>cpp
-inline double GetCurvatureStandardDeviation(
-    int d
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetCurvatureStandardDeviation</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-meancurvaturecontainer">function MeanCurvatureContainer</h3>
-<p><code>cpp
-inline MeanCurvatureContainer()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">MeanCurvatureContainer</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-meancurvaturecontainer_1">function ~MeanCurvatureContainer</h3>
-<p><code>cpp
-inline virtual ~MeanCurvatureContainer()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">MeanCurvatureContainer</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<p><code>cpp
-inline void PrintSelf(
-    std::ostream &amp; os,
-    itk::Indent indent
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

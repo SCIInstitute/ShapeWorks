@@ -4231,8 +4231,8 @@
 <h3 id="pca-projection-correspondence">PCA Projection Correspondence</h3>
 <p>By default, the correspondence term in fixed domain optimization minimizes ensemble entropy, which can pull new shapes toward the population mean. The <code>use_pca_projection</code> parameter offers an alternative: particles are projected into the PCA space of the fixed shapes, and only the <strong>out-of-model residual</strong> (the component not explained by any PCA mode) receives a gradient. Variation along PCA modes is left unconstrained, allowing new shapes to retain their natural deviation from the mean.</p>
 <p>To enable, add to the optimize parameters:</p>
-<p><code>json
-"use_pca_projection": true</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;use_pca_projection&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+</code></pre></div>
 
 
 

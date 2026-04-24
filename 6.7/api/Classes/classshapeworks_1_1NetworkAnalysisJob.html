@@ -3932,10 +3932,6 @@
 <td><strong><a href="classshapeworks_1_1Job.html#function-~job">~Job</a></strong>()</td>
 </tr>
 <tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-execute">execute</a></strong>()<br>execute the job with profiling instrumentation</td>
-</tr>
-<tr>
 <td>virtual QString</td>
 <td><strong><a href="classshapeworks_1_1Job.html#function-get-completion-message">get_completion_message</a></strong>()<br>get a message to display when the job is complete</td>
 </tr>
@@ -3979,45 +3975,45 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-networkanalysisjob">function NetworkAnalysisJob</h3>
-<p><code>cpp
-NetworkAnalysisJob(
-    std::shared_ptr&lt; Project &gt; project,
-    std::string target_group,
-    std::string target_feature
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">NetworkAnalysisJob</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">target_group</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">target_feature</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-run">function run</h3>
-<p><code>cpp
-virtual void run() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>run the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-run">shapeworks::Job::run</a></p>
 <h3 id="function-name">function name</h3>
-<p><code>cpp
-virtual QString name() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>get the name of the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-name">shapeworks::Job::name</a></p>
 <h3 id="function-set_pvalue_of_interest">function set_pvalue_of_interest</h3>
-<p><code>cpp
-void set_pvalue_of_interest(
-    double pvalue_of_interest
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_pvalue_of_interest</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">pvalue_of_interest</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_pvalue_threshold">function set_pvalue_threshold</h3>
-<p><code>cpp
-void set_pvalue_threshold(
-    double pvalue_threshold
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_pvalue_threshold</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">pvalue_threshold</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_num_iterations">function set_num_iterations</h3>
-<p><code>cpp
-void set_num_iterations(
-    int num_iterations
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_num_iterations</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_iterations</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_tvalues">function get_tvalues</h3>
-<p><code>cpp
-Eigen::VectorXd get_tvalues()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_tvalues</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_spm_values">function get_spm_values</h3>
-<p><code>cpp
-Eigen::VectorXd get_spm_values()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_spm_values</span><span class="p">()</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

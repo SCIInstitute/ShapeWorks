@@ -3770,15 +3770,15 @@
 <p>MONAI Label features are not verified on other Python versions.</p>
 </div>
 <p>To install MONAI Label, run:</p>
-<p><code>sh
-pip install monailabel</code></p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>monailabel
+</code></pre></div>
 <hr />
 <h3 id="2-download-monai-label-applications"><strong>2. Download MONAI Label Applications</strong></h3>
 <p>Once installed, set up the MONAI Label application.</p>
 <h4 id="download-the-monai-bundle-app"><strong>Download the MONAI Bundle App</strong></h4>
 <p>The <a href="https://monai.io/model-zoo.html"><strong>MONAI Bundle</strong></a> App enables easy import of any model present in <strong>MONAI Model Zoo Bundles</strong> into <strong>MONAI Label</strong>, but models must comply with the <a href="https://docs.monai.io/en/latest/mb_specification.html"><strong>MONAI Bundle Specification</strong></a>.</p>
-<p><code>sh
-monailabel apps --download --name monaibundle --output path/to/workspace_dir</code></p>
+<div class="highlight"><pre><span></span><code>monailabel<span class="w"> </span>apps<span class="w"> </span>--download<span class="w"> </span>--name<span class="w"> </span>monaibundle<span class="w"> </span>--output<span class="w"> </span>path/to/workspace_dir
+</code></pre></div>
 <p>This command downloads the <code>monaibundle</code> app into the specified workspace directory.</p>
 <p>Other supported MONAI Label app:
   - 
@@ -3788,8 +3788,8 @@ monailabel apps --download --name monaibundle --output path/to/workspace_dir</co
 <p>Once all the prerequisites are met, follow these steps to use <strong>MONAI Label</strong> feature in <strong>ShapeWorks</strong> for AI-assisted segmentation.</p>
 <h3 id="1-start-the-monai-label-server"><strong>1. Start the MONAI Label Server</strong></h3>
 <p>To launch the <strong>MONAI Label server</strong>, run the following command in your terminal:</p>
-<p><code>sh
-monailabel start_server --app path/to/monaibundle --studies path/to/images --conf models model_name</code></p>
+<div class="highlight"><pre><span></span><code>monailabel<span class="w"> </span>start_server<span class="w"> </span>--app<span class="w"> </span>path/to/monaibundle<span class="w"> </span>--studies<span class="w"> </span>path/to/images<span class="w"> </span>--conf<span class="w"> </span>models<span class="w"> </span>model_name
+</code></pre></div>
 <h4 id="command-arguments"><strong>Command Arguments</strong></h4>
 <ul>
 <li><strong><code>--app</code></strong>: Specifies the path to the <strong>MONAI Label app</strong> in the workspace directory.  </li>

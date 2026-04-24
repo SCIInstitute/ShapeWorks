@@ -3779,35 +3779,39 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include-math3dh">include "math3d.h"</h1>
-<p>class FEMesh;</p>
-<p>//-----------------------------------------------------------------------------
-class FEMeshSmoothingModifier
-{</p>
-<p>public:
-    FEMeshSmoothingModifier();</p>
-<pre><code>FEMesh* Apply(FEMesh* pm);
-</code></pre>
-<p>protected:
-    double area_triangle(vec3d r[3]);
-    double distance(vec3d x,vec3d y );
-    double random();
-    void Laplacian_Smoothing(FEMesh<em> pm,vector<int> hashmap);
-    void Laplacian_Smoothing2(FEMesh</em> pm,vector<int> hashmap);
-    void Taubin_Smoothing(FEMesh<em> pm,vector<int> hashmap);
-    void Crease_Enhancing_Diffusion(FEMesh</em> pm,vector<int> hashmap);
-    void Add_Noise(FEMesh* pm,vector<int> hashmap);</p>
-<p>public:
-    double  m_threshold1;
-    double  m_threshold2;
-    double m_iteration;
-    int m_method;
-};
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;math3d.h&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FEMesh</span><span class="p">;</span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEMeshSmoothingModifier</span>
+<span class="p">{</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEMeshSmoothingModifier</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">Apply</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
+
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">area_triangle</span><span class="p">(</span><span class="n">vec3d</span><span class="w"> </span><span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">distance</span><span class="p">(</span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="n">vec3d</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">random</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Laplacian_Smoothing</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">,</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hashmap</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Laplacian_Smoothing2</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">,</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hashmap</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Taubin_Smoothing</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">,</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hashmap</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Crease_Enhancing_Diffusion</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">,</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hashmap</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Add_Noise</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">,</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hashmap</span><span class="p">);</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_threshold1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_threshold2</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">m_iteration</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_method</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

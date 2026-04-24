@@ -3801,84 +3801,110 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Data/Preferences.h></h1>
-<h1 id="include_1">include <Data/Telemetry.h></h1>
-<h1 id="include_2">include <Groom/Groom.h></h1>
-<h1 id="include_3">include <Groom/GroomParameters.h></h1>
-<h1 id="include_4">include <QElapsedTimer></h1>
-<h1 id="include_5">include <QObject></h1>
-<h1 id="include_6">include <QProgressDialog></h1>
-<h1 id="include_7">include <QSharedPointer></h1>
-<h1 id="include_8">include <QWidget></h1>
-<h1 id="include_9">include <string></h1>
-<p>class Ui_GroomTool;</p>
-<p>Q_DECLARE_METATYPE(std::string)</p>
-<p>namespace shapeworks {</p>
-<p>class Session;</p>
-<p>class GroomTool : public QWidget {
-  Q_OBJECT;</p>
-<p>public:
-  GroomTool(Preferences&amp; prefs, Telemetry&amp; telemetry);
-  ~GroomTool();</p>
-<p>void set_session(QSharedPointer<Session> session);</p>
-<p>void activate();</p>
-<p>void load_params();
-  void store_params();</p>
-<p>void disable_actions();
-  void enable_actions();</p>
-<p>void shutdown_threads();</p>
-<p>Q_SIGNALS:
-  void groom_start();
-  void groom_complete();
-  void progress(int);</p>
-<p>public Q_SLOTS:</p>
-<p>void on_antialias_checkbox_stateChanged(int state);
-  void on_blur_checkbox_stateChanged(int state);
-  void on_autopad_checkbox_stateChanged(int state);
-  void skip_grooming_toggled();
-  void on_restore_defaults_clicked();</p>
-<p>void update_ui();</p>
-<p>void domain_changed();</p>
-<p>void alignment_checkbox_changed(int state);
-  void alignment_option_changed(int index);</p>
-<p>void reflect_checkbox_changed(int state);
-  void reflect_column_changed(int index);
-  void reflect_choice_changed(int index);
-  void reflect_axis_changed(int index);</p>
-<p>void on_run_groom_button_clicked();</p>
-<p>void handle_thread_complete();
-  void handle_progress(int val);
-  void handle_error(QString msg);</p>
-<p>void add_shared_boundary_clicked();
-  void delete_shared_boundary_clicked();</p>
-<p>private:
-  void set_ui_from_params(GroomParameters params);</p>
-<p>void update_page();
-  void update_domain_box();
-  void apply_to_all_domains_changed();
-  void update_shared_boundary_table();</p>
-<p>void update_reflect_columns();
-  void update_reflect_choices();</p>
-<p>void set_session_modified();</p>
-<p>Preferences&amp; preferences_;
-  Telemetry&amp; telemetry_;</p>
-<p>QList<QThread*> threads_;</p>
-<p>Ui_GroomTool* ui_;
-  QSharedPointer<Session> session_;</p>
-<p>QSharedPointer<shapeworks::Groom> groom_;</p>
-<p>QElapsedTimer timer_;</p>
-<p>bool groom_is_running_ = false;</p>
-<p>std::string current_domain_;</p>
-<p>QStringList reflect_columns_;</p>
-<p>bool block_signals_ = false;</p>
-<p>bool block_session_modify_ = false;
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Telemetry.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Groom/Groom.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Groom/GroomParameters.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressDialog&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_GroomTool</span><span class="p">;</span>
+
+<span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GroomTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">GroomTool</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">,</span><span class="w"> </span><span class="n">Telemetry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">telemetry</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">GroomTool</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">activate</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_params</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_params</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">disable_actions</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">enable_actions</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown_threads</span><span class="p">();</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">groom_start</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">groom_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">on_antialias_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_blur_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_autopad_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">skip_grooming_toggled</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_restore_defaults_clicked</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_ui</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">domain_changed</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">alignment_checkbox_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">alignment_option_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_checkbox_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_column_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_choice_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_axis_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_run_groom_button_clicked</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_ui_from_params</span><span class="p">(</span><span class="n">GroomParameters</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_page</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_domain_box</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_to_all_domains_changed</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_reflect_columns</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_reflect_choices</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Telemetry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">telemetry_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QList</span><span class="o">&lt;</span><span class="n">QThread</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">threads_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Ui_GroomTool</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Groom</span><span class="o">&gt;</span><span class="w"> </span><span class="n">groom_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groom_is_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_domain_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">reflect_columns_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:35 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

@@ -3910,6 +3910,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-not_saved" class="md-nav__link">
+    <span class="md-ellipsis">
+      function not_saved
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_saved" class="md-nav__link">
+    <span class="md-ellipsis">
+      function set_saved
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_window_geometry" class="md-nav__link">
     <span class="md-ellipsis">
       function get_window_geometry
@@ -4030,24 +4048,6 @@
   <a href="#function-set_num_threads" class="md-nav__link">
     <span class="md-ellipsis">
       function set_num_threads
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_dataloader_num_workers" class="md-nav__link">
-    <span class="md-ellipsis">
-      function get_dataloader_num_workers
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_dataloader_num_workers" class="md-nav__link">
-    <span class="md-ellipsis">
-      function set_dataloader_num_workers
     </span>
   </a>
   
@@ -4567,24 +4567,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_warp_method" class="md-nav__link">
-    <span class="md-ellipsis">
-      function get_warp_method
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_warp_method" class="md-nav__link">
-    <span class="md-ellipsis">
-      function set_warp_method
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-get_pending_telemetry_events" class="md-nav__link">
     <span class="md-ellipsis">
       function get_pending_telemetry_events
@@ -4710,6 +4692,14 @@
 <td><strong><a href="classPreferences.html#function-get-recent-paths">get_recent_paths</a></strong>()</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classPreferences.html#function-not-saved">not_saved</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classPreferences.html#function-set-saved">set_saved</a></strong>(bool saved =true)</td>
+</tr>
+<tr>
 <td>QByteArray</td>
 <td><strong><a href="classPreferences.html#function-get-window-geometry">get_window_geometry</a></strong>()</td>
 </tr>
@@ -4764,14 +4754,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classPreferences.html#function-set-num-threads">set_num_threads</a></strong>(int num_threads)</td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classPreferences.html#function-get-dataloader-num-workers">get_dataloader_num_workers</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferences.html#function-set-dataloader-num-workers">set_dataloader_num_workers</a></strong>(int num_workers)</td>
 </tr>
 <tr>
 <td>float</td>
@@ -5002,14 +4984,6 @@
 <td><strong><a href="classPreferences.html#function-set-telemetry-asked">set_telemetry_asked</a></strong>(bool asked)</td>
 </tr>
 <tr>
-<td>int</td>
-<td><strong><a href="classPreferences.html#function-get-warp-method">get_warp_method</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferences.html#function-set-warp-method">set_warp_method</a></strong>(int method)</td>
-</tr>
-<tr>
 <td>QStringList</td>
 <td><strong><a href="classPreferences.html#function-get-pending-telemetry-events">get_pending_telemetry_events</a></strong>()</td>
 </tr>
@@ -5020,8 +4994,8 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class Preferences;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Preferences</span><span class="p">;</span>
+</code></pre></div>
 <p>Application preferences. </p>
 <p>The <a href="classPreferences.html">Preferences</a> singleton controls all preferences for the application. Values persist via the QSettings class. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
@@ -5103,347 +5077,339 @@ class Preferences;</code></p>
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-color_scheme_changed">signal color_scheme_changed</h3>
-<p><code>cpp
-void color_scheme_changed(
-    int newIndex
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">color_scheme_changed</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">newIndex</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="signal-glyph_properties_changed">signal glyph_properties_changed</h3>
-<p><code>cpp
-void glyph_properties_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">glyph_properties_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-threading_changed_signal">signal threading_changed_signal</h3>
-<p><code>cpp
-void threading_changed_signal()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">threading_changed_signal</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-sliders_changed_signal">signal sliders_changed_signal</h3>
-<p><code>cpp
-void sliders_changed_signal()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">sliders_changed_signal</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-preferences">function Preferences</h3>
-<p><code>cpp
-Preferences()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Preferences</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-restore_defaults">function restore_defaults</h3>
-<p><code>cpp
-void restore_defaults()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">restore_defaults</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-add_recent_file">function add_recent_file</h3>
-<p><code>cpp
-void add_recent_file(
-    QString file,
-    QString path
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">add_recent_file</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">file</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">path</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_recent_files">function get_recent_files</h3>
-<p><code>cpp
-QStringList get_recent_files()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QStringList</span><span class="w"> </span><span class="n">get_recent_files</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_recent_paths">function get_recent_paths</h3>
-<p><code>cpp
-QStringList get_recent_paths()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QStringList</span><span class="w"> </span><span class="n">get_recent_paths</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-not_saved">function not_saved</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">not_saved</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_saved">function set_saved</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_saved</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">saved</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_window_geometry">function get_window_geometry</h3>
-<p><code>cpp
-QByteArray get_window_geometry()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QByteArray</span><span class="w"> </span><span class="n">get_window_geometry</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_window_geometry">function set_window_geometry</h3>
-<p><code>cpp
-void set_window_geometry(
-    QByteArray geometry
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_window_geometry</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QByteArray</span><span class="w"> </span><span class="n">geometry</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_window_state">function get_window_state</h3>
-<p><code>cpp
-QByteArray get_window_state()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QByteArray</span><span class="w"> </span><span class="n">get_window_state</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_window_state">function set_window_state</h3>
-<p><code>cpp
-void set_window_state(
-    QByteArray state
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_window_state</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QByteArray</span><span class="w"> </span><span class="n">state</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_last_directory">function get_last_directory</h3>
-<p><code>cpp
-QString get_last_directory()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_last_directory</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_last_directory">function set_last_directory</h3>
-<p><code>cpp
-void set_last_directory(
-    QString value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_last_directory</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_cache_enabled">function get_cache_enabled</h3>
-<p><code>cpp
-bool get_cache_enabled()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_cache_enabled</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_cache_enabled">function set_cache_enabled</h3>
-<p><code>cpp
-void set_cache_enabled(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_enabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_parallel_enabled">function get_parallel_enabled</h3>
-<p><code>cpp
-bool get_parallel_enabled()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_parallel_enabled</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_parallel_enabled">function set_parallel_enabled</h3>
-<p><code>cpp
-void set_parallel_enabled(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_parallel_enabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_memory_cache_percent">function get_memory_cache_percent</h3>
-<p><code>cpp
-int get_memory_cache_percent()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_memory_cache_percent</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_memory_cache_percent">function set_memory_cache_percent</h3>
-<p><code>cpp
-void set_memory_cache_percent(
-    int value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_memory_cache_percent</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_num_threads">function get_num_threads</h3>
-<p><code>cpp
-int get_num_threads()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_threads</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_num_threads">function set_num_threads</h3>
-<p><code>cpp
-void set_num_threads(
-    int num_threads
-)</code></p>
-<h3 id="function-get_dataloader_num_workers">function get_dataloader_num_workers</h3>
-<p><code>cpp
-int get_dataloader_num_workers()</code></p>
-<h3 id="function-set_dataloader_num_workers">function set_dataloader_num_workers</h3>
-<p><code>cpp
-void set_dataloader_num_workers(
-    int num_workers
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_num_threads</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_threads</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_glyph_size">function get_glyph_size</h3>
-<p><code>cpp
-float get_glyph_size()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">get_glyph_size</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_glyph_size">function set_glyph_size</h3>
-<p><code>cpp
-void set_glyph_size(
-    float value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_size</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_glyph_quality">function get_glyph_quality</h3>
-<p><code>cpp
-float get_glyph_quality()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">get_glyph_quality</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_glyph_quality">function set_glyph_quality</h3>
-<p><code>cpp
-void set_glyph_quality(
-    float value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_quality</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_glyph_auto_size">function get_glyph_auto_size</h3>
-<p><code>cpp
-bool get_glyph_auto_size()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_glyph_auto_size</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_glyph_auto_size">function set_glyph_auto_size</h3>
-<p><code>cpp
-void set_glyph_auto_size(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_auto_size</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_glyph_scale_arrows">function get_glyph_scale_arrows</h3>
-<p><code>cpp
-bool get_glyph_scale_arrows()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_glyph_scale_arrows</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_glyph_scale_arrows">function set_glyph_scale_arrows</h3>
-<p><code>cpp
-void set_glyph_scale_arrows(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_scale_arrows</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_pca_range">function get_pca_range</h3>
-<p><code>cpp
-float get_pca_range()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">get_pca_range</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_pca_range">function set_pca_range</h3>
-<p><code>cpp
-void set_pca_range(
-    float value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_pca_range</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_pca_steps">function get_pca_steps</h3>
-<p><code>cpp
-int get_pca_steps()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_pca_steps</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_pca_steps">function set_pca_steps</h3>
-<p><code>cpp
-void set_pca_steps(
-    int value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_pca_steps</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_color_scheme">function set_color_scheme</h3>
-<p><code>cpp
-void set_color_scheme(
-    int value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_color_scheme</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_color_scheme">function get_color_scheme</h3>
-<p><code>cpp
-int get_color_scheme()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_color_scheme</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_particle_colors">function set_particle_colors</h3>
-<p><code>cpp
-void set_particle_colors(
-    int value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_colors</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_particle_colors">function get_particle_colors</h3>
-<p><code>cpp
-int get_particle_colors()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_particle_colors</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_color_map">function set_color_map</h3>
-<p><code>cpp
-void set_color_map(
-    int value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_color_map</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_color_map">function get_color_map</h3>
-<p><code>cpp
-int get_color_map()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_color_map</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_discrete_color_mode">function set_discrete_color_mode</h3>
-<p><code>cpp
-void set_discrete_color_mode(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_discrete_color_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_discrete_color_mode">function get_discrete_color_mode</h3>
-<p><code>cpp
-bool get_discrete_color_mode()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_discrete_color_mode</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_reverse_color_map">function set_reverse_color_map</h3>
-<p><code>cpp
-void set_reverse_color_map(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_reverse_color_map</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_reverse_color_map">function get_reverse_color_map</h3>
-<p><code>cpp
-bool get_reverse_color_map()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_reverse_color_map</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_center_checked">function get_center_checked</h3>
-<p><code>cpp
-bool get_center_checked()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_center_checked</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_center_checked">function set_center_checked</h3>
-<p><code>cpp
-void set_center_checked(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_center_checked</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_geodesic_cache_multiplier">function get_geodesic_cache_multiplier</h3>
-<p><code>cpp
-int get_geodesic_cache_multiplier()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_geodesic_cache_multiplier</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_geodesic_cache_multiplier">function set_geodesic_cache_multiplier</h3>
-<p><code>cpp
-void set_geodesic_cache_multiplier(
-    int value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_geodesic_cache_multiplier</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_orientation_marker_type">function get_orientation_marker_type</h3>
-<p><code>cpp
-OrientationMarkerType get_orientation_marker_type()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">get_orientation_marker_type</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_orientation_marker_type">function set_orientation_marker_type</h3>
-<p><code>cpp
-void set_orientation_marker_type(
-    OrientationMarkerType type
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_orientation_marker_type</span><span class="p">(</span>
+<span class="w">    </span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">type</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_orientation_marker_corner">function get_orientation_marker_corner</h3>
-<p><code>cpp
-OrientationMarkerCorner get_orientation_marker_corner()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">get_orientation_marker_corner</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_orientation_marker_corner">function set_orientation_marker_corner</h3>
-<p><code>cpp
-void set_orientation_marker_corner(
-    OrientationMarkerCorner corner
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_orientation_marker_corner</span><span class="p">(</span>
+<span class="w">    </span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">corner</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_groom_file_template">function get_groom_file_template</h3>
-<p><code>cpp
-QString get_groom_file_template()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_groom_file_template</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_groom_file_template">function set_groom_file_template</h3>
-<p><code>cpp
-void set_groom_file_template(
-    QString groom_file_template
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groom_file_template</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">groom_file_template</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_optimize_file_template">function get_optimize_file_template</h3>
-<p><code>cpp
-QString get_optimize_file_template()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_optimize_file_template</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_optimize_file_template">function set_optimize_file_template</h3>
-<p><code>cpp
-void set_optimize_file_template(
-    QString optimize_file_template
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_optimize_file_template</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">optimize_file_template</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_export_override_size">function get_export_override_size</h3>
-<p><code>cpp
-QSize get_export_override_size()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QSize</span><span class="w"> </span><span class="n">get_export_override_size</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_export_override_size">function set_export_override_size</h3>
-<p><code>cpp
-void set_export_override_size(
-    QSize size
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_export_override_size</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_export_override_size_enabled">function get_export_override_size_enabled</h3>
-<p><code>cpp
-bool get_export_override_size_enabled()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_export_override_size_enabled</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_export_override_size_enabled">function set_export_override_size_enabled</h3>
-<p><code>cpp
-void set_export_override_size_enabled(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_export_override_size_enabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_export_show_orientation_marker">function get_export_show_orientation_marker</h3>
-<p><code>cpp
-bool get_export_show_orientation_marker()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_export_show_orientation_marker</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_export_show_orientation_marker">function set_export_show_orientation_marker</h3>
-<p><code>cpp
-void set_export_show_orientation_marker(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_export_show_orientation_marker</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_export_show_color_scale">function get_export_show_color_scale</h3>
-<p><code>cpp
-bool get_export_show_color_scale()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_export_show_color_scale</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_export_show_color_scale">function set_export_show_color_scale</h3>
-<p><code>cpp
-void set_export_show_color_scale(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_export_show_color_scale</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_export_num_pca_images">function get_export_num_pca_images</h3>
-<p><code>cpp
-int get_export_num_pca_images()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_export_num_pca_images</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_export_num_pca_images">function set_export_num_pca_images</h3>
-<p><code>cpp
-void set_export_num_pca_images(
-    int number
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_export_num_pca_images</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">number</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_export_pca_range">function get_export_pca_range</h3>
-<p><code>cpp
-double get_export_pca_range()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_export_pca_range</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_export_pca_range">function set_export_pca_range</h3>
-<p><code>cpp
-void set_export_pca_range(
-    double range
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_export_pca_range</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">range</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_export_pca_modes">function set_export_pca_modes</h3>
-<p><code>cpp
-void set_export_pca_modes(
-    QString string
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_export_pca_modes</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">string</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_export_pca_modes">function get_export_pca_modes</h3>
-<p><code>cpp
-QString get_export_pca_modes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_export_pca_modes</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_auto_update_check">function get_auto_update_check</h3>
-<p><code>cpp
-bool get_auto_update_check()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_auto_update_check</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_auto_update_check">function set_auto_update_check</h3>
-<p><code>cpp
-void set_auto_update_check(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_auto_update_check</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_update_snooze_until">function get_update_snooze_until</h3>
-<p><code>cpp
-QDateTime get_update_snooze_until()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QDateTime</span><span class="w"> </span><span class="n">get_update_snooze_until</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_update_snooze_until">function set_update_snooze_until</h3>
-<p><code>cpp
-void set_update_snooze_until(
-    QDateTime date
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_update_snooze_until</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QDateTime</span><span class="w"> </span><span class="n">date</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_device_id">function get_device_id</h3>
-<p><code>cpp
-QString get_device_id()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_device_id</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_telemetry_enabled">function get_telemetry_enabled</h3>
-<p><code>cpp
-bool get_telemetry_enabled()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_telemetry_enabled</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_telemetry_enabled">function set_telemetry_enabled</h3>
-<p><code>cpp
-void set_telemetry_enabled(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_telemetry_enabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_telemetry_asked">function get_telemetry_asked</h3>
-<p><code>cpp
-bool get_telemetry_asked()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_telemetry_asked</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_telemetry_asked">function set_telemetry_asked</h3>
-<p><code>cpp
-void set_telemetry_asked(
-    bool asked
-)</code></p>
-<h3 id="function-get_warp_method">function get_warp_method</h3>
-<p><code>cpp
-int get_warp_method()</code></p>
-<h3 id="function-set_warp_method">function set_warp_method</h3>
-<p><code>cpp
-void set_warp_method(
-    int method
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_telemetry_asked</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">asked</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_pending_telemetry_events">function get_pending_telemetry_events</h3>
-<p><code>cpp
-QStringList get_pending_telemetry_events()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QStringList</span><span class="w"> </span><span class="n">get_pending_telemetry_events</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_pending_telemetry_events">function set_pending_telemetry_events</h3>
-<p><code>cpp
-void set_pending_telemetry_events(
-    QStringList events
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_pending_telemetry_events</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">events</span>
+<span class="p">)</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

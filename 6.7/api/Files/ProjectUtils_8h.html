@@ -3810,75 +3810,107 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<p>// std</p>
-<h1 id="include">include <map></h1>
-<h1 id="include_1">include <string></h1>
-<h1 id="include_2">include <vector></h1>
-<p>// tsl</p>
-<h1 id="include_3">include <ordered_map.h></h1>
-<p>// vtk</p>
-<h1 id="include_4">include <vtkSmartPointer.h></h1>
-<h1 id="include_5">include <vtkTransform.h></h1>
-<p>// shapeworks</p>
-<h1 id="include_6">include <Libs/Optimize/Domain/DomainType.h></h1>
-<p>namespace shapeworks {</p>
-<p>class Project;
-class Subject;</p>
-<p>namespace project::prefixes {
-static constexpr const char<em> SEGMENTATION_PREFIX = "segmentation_";
-static constexpr const char</em> LANDMARKS_FILE_PREFIX = "landmarks_file_";</p>
-<p>static constexpr const char<em> SHAPE_PREFIX = "shape_";
-static constexpr const char</em> MESH_PREFIX = "mesh_";
-static constexpr const char* CONTOUR_PREFIX = "contour_";</p>
-<p>static constexpr const char<em> GROOMED_PREFIX = "groomed_";
-static constexpr const char</em> GROOMED_CONTOUR_PREFIX = "groomed_contour_";</p>
-<p>static constexpr const char* CONSTRAINTS_PREFIX = "constraints_";</p>
-<p>static constexpr const char<em> GROOMED_TRANSFORMS_PREFIX = "alignment_";
-static constexpr const char</em> PROCRUSTES_TRANSFORMS_PREFIX = "procrustes_";
-static constexpr const char<em> IMAGE_PREFIX = "image_";
-static constexpr const char</em> FEATURE_PREFIX = "feature_";
-static constexpr const char* GROUP_PREFIX = "group_";</p>
-<p>static constexpr const char<em> LOCAL_PARTICLES = "local_particles";
-static constexpr const char</em> WORLD_PARTICLES = "world_particles";</p>
-<p>static constexpr const char<em> LOCAL_PARTICLES_PREFIX = "local_particles_";
-static constexpr const char</em> WORLD_PARTICLES_PREFIX = "world_particles_";</p>
-<p>}  // namespace project::prefixes</p>
-<p>namespace project::types {
-using StringMap = tsl::ordered_map<std::string, std::string>;
-using StringList = std::vector<std::string>;
-using StringMapList = std::vector<StringMap>;
-using StringMultiMap = std::map<std::string, StringMap>;
-}  // namespace project::types</p>
-<p>class ProjectUtils {
- public:
-  using StringList = project::types::StringList;
-  using StringMap = project::types::StringMap;</p>
-<p>static vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);</p>
-<p>static vtkSmartPointer<vtkTransform> convert_transform(std::string string);</p>
-<p>static std::vector<double> convert_transform(vtkSmartPointer<vtkTransform> transform);</p>
-<p>static StringList determine_domain_names(StringList keys);</p>
-<p>static void determine_domain_types(Project* project, StringMap key_map);</p>
-<p>static StringList get_input_prefixes();</p>
-<p>static StringList get_groomed_prefixes();</p>
-<p>static StringList get_original_keys(StringList domain_names, StringMap key_map);</p>
-<p>static StringList get_values(StringList prefixes, StringList domain_names, StringMap key_map);</p>
-<p>static std::vector<std::vector\<double>> get_transforms(std::string prefix, StringList domain_names,
-                                                         StringMap key_map);</p>
-<p>static StringMap get_value_map(std::vector<std::string> prefix, StringMap key_map);</p>
-<p>static StringMap get_extra_columns(StringMap key_map);</p>
-<p>static DomainType determine_domain_type(std::string filename);</p>
-<p>static bool starts_with(std::string str, std::string prefix);</p>
-<p>static std::string transform_to_string(std::vector<double> transform);</p>
-<p>static std::vector<std::string> convert_domain_types(std::vector<DomainType> domain_types);
-  static std::vector<std::string> convert_groomed_domain_types(std::vector<DomainType> domain_types);</p>
-<p>static StringMap convert_subject_to_map(Project<em> project, Subject</em> subject);
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="c1">// std</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="c1">// tsl</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ordered_map.h&gt;</span>
+
+<span class="c1">// vtk</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkTransform.h&gt;</span>
+
+<span class="c1">// shapeworks</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Optimize/Domain/DomainType.h&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Subject</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">project</span><span class="o">::</span><span class="nn">prefixes</span><span class="w"> </span><span class="p">{</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">SEGMENTATION_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;segmentation_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">LANDMARKS_FILE_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;landmarks_file_&quot;</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">SHAPE_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;shape_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">MESH_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;mesh_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">CONTOUR_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;contour_&quot;</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">GROOMED_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;groomed_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">GROOMED_CONTOUR_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;groomed_contour_&quot;</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">CONSTRAINTS_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;constraints_&quot;</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">GROOMED_TRANSFORMS_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;alignment_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">PROCRUSTES_TRANSFORMS_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;procrustes_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">IMAGE_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;image_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">FEATURE_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;feature_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">GROUP_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;group_&quot;</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">LOCAL_PARTICLES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;local_particles&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">WORLD_PARTICLES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;world_particles&quot;</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">LOCAL_PARTICLES_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;local_particles_&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">WORLD_PARTICLES_PREFIX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;world_particles_&quot;</span><span class="p">;</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace project::prefixes</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">project</span><span class="o">::</span><span class="nn">types</span><span class="w"> </span><span class="p">{</span>
+<span class="k">using</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tsl</span><span class="o">::</span><span class="n">ordered_map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="n">StringMapList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">StringMap</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="n">StringMultiMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">StringMap</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace project::types</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ProjectUtils</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringList</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMap</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">string</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_transform</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="nf">determine_domain_names</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">keys</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">determine_domain_types</span><span class="p">(</span><span class="n">Project</span><span class="o">*</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_input_prefixes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_groomed_prefixes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_original_keys</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">domain_names</span><span class="p">,</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="nf">get_values</span><span class="p">(</span><span class="n">StringList</span><span class="w"> </span><span class="n">prefixes</span><span class="p">,</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">domain_names</span><span class="p">,</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="p">,</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">domain_names</span><span class="p">,</span>
+<span class="w">                                                         </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_value_map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prefix</span><span class="p">,</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_extra_columns</span><span class="p">(</span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="nf">determine_domain_type</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">starts_with</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">transform_to_string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_domain_types</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DomainType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_types</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_groomed_domain_types</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DomainType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_types</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">convert_subject_to_map</span><span class="p">(</span><span class="n">Project</span><span class="o">*</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"> </span><span class="n">Subject</span><span class="o">*</span><span class="w"> </span><span class="n">subject</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:35 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

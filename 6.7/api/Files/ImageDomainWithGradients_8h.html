@@ -3801,80 +3801,94 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include-imagedomainh">include "ImageDomain.h"</h1>
-<h1 id="include-itkfixedarrayh">include "itkFixedArray.h"</h1>
-<h1 id="include-itkgradientimagefilterh">include "itkGradientImageFilter.h"</h1>
-<h1 id="include-itkimageh">include "itkImage.h"</h1>
-<h1 id="include-itkimageduplicatorh">include "itkImageDuplicator.h"</h1>
-<p>namespace shapeworks {
-template <class T>
-class ImageDomainWithGradients : public ImageDomain<T> {
- public:
-  using Pointer = std::shared_ptr<ImageDomainWithGradients\<T>>;</p>
-<p>typedef typename ImageDomain<T>::PointType PointType;
-  typedef typename ImageDomain<T>::ImageType ImageType;</p>
-<p>typedef itk::FixedArray<T, DIMENSION> VectorType;
-  typedef vnl_vector_fixed<T, DIMENSION> VnlVectorType;</p>
-<p>void SetImage(ImageType<em> I, double narrow_band) {
-    ImageDomain<T>::SetImage(I, narrow_band);
-    m_VDBGradient = openvdb::tools::gradient(</em>this-&gt;GetVDBImage());
-  }</p>
-<p>inline vnl_vector_fixed<float, DIMENSION> SampleGradientAtPoint(const PointType&amp; p, int idx) const {
-    return this-&gt;SampleGradientVnl(p, idx);
-  }</p>
-<p>inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType&amp; p, int idx) const {
-    vnl_vector_fixed<float, DIMENSION> grad = this-&gt;SampleGradientVnl(p, idx);
-    return grad.normalize();
-  }</p>
-<p>vnl_vector_fixed<double, DIMENSION> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, DIMENSION>&amp; gradE,
-                                                                    const PointType&amp; pos, int idx) const override {
-    double dotprod = 0.0;
-    VnlVectorType normal = this-&gt;SampleNormalAtPoint(pos, idx);
-    for (unsigned int i = 0; i &lt; DIMENSION; i++) {
-      dotprod += normal[i] * gradE[i];
-    }
-    vnl_vector_fixed<double, DIMENSION> result;
-    for (unsigned int i = 0; i &lt; DIMENSION; i++) {
-      result[i] = gradE[i] - normal[i] * dotprod;
-    }
-    return result;
-  }</p>
-<p>void DeleteImages() override {
-    ImageDomain<T>::DeleteImages();
-    m_VDBGradient = 0;
-  }</p>
-<p>protected:
-  ImageDomainWithGradients() {}
-  virtual ~ImageDomainWithGradients() {}</p>
-<p>void PrintSelf(std::ostream&amp; os, itk::Indent indent) const {
-    ImageDomain<T>::PrintSelf(os, indent);
-    os &lt;&lt; indent &lt;&lt; "VDB Active Voxels = " &lt;&lt; m_VDBGradient-&gt;activeVoxelCount() &lt;&lt; std::endl;
-  }</p>
-<p>openvdb::VectorGrid::Ptr GetVDBGradient() { return m_VDBGradient; }</p>
-<p>private:
-  inline VnlVectorType SampleGradientVnl(const PointType&amp; p, int idx) const {
-    return VnlVectorType(this-&gt;SampleGradient(p, idx).GetDataPointer());
-  }
-  inline VectorType SampleGradient(const PointType&amp; p, int idx) const {
-    if (this-&gt;IsInsideBuffer(p)) {
-      const auto coord = this-&gt;ToVDBCoord(p);
-      const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradient-&gt;tree(), coord);
-      const VectorType v(_v.asPointer());  // This copies 3 floats from a VDB vector to a vnl vector
-      return v;
-    } else {
-      std::ostringstream message;
-      message &lt;&lt; "Gradient queried for a Point, " &lt;&lt; p &lt;&lt; ", outside the given image domain.";
-      throw std::runtime_error(message.str());
-    }
-  }</p>
-<p>openvdb::VectorGrid::Ptr m_VDBGradient;
-};</p>
-<p>}  // end namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ImageDomain.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkFixedArray.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkGradientImageFilter.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkImage.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkImageDuplicator.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageDomainWithGradients</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">FixedArray</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VnlVectorType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetImage</span><span class="p">(</span><span class="n">ImageType</span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">SetImage</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">);</span>
+<span class="w">    </span><span class="n">m_VDBGradient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">tools</span><span class="o">::</span><span class="n">gradient</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetVDBImage</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SampleGradientAtPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SampleGradientVnl</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SampleNormalAtPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">grad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SampleGradientVnl</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">grad</span><span class="p">.</span><span class="n">normalize</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ProjectVectorToSurfaceTangent</span><span class="p">(</span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">gradE</span><span class="p">,</span>
+<span class="w">                                                                    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">dotprod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">VnlVectorType</span><span class="w"> </span><span class="n">normal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SampleNormalAtPoint</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DIMENSION</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">dotprod</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">normal</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">gradE</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DIMENSION</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gradE</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">normal</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dotprod</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">DeleteImages</span><span class="p">();</span>
+<span class="w">    </span><span class="n">m_VDBGradient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ImageDomainWithGradients</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ImageDomainWithGradients</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ImageDomain</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span>
+<span class="w">    </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">indent</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;VDB Active Voxels = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_VDBGradient</span><span class="o">-&gt;</span><span class="n">activeVoxelCount</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">openvdb</span><span class="o">::</span><span class="n">VectorGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">GetVDBGradient</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_VDBGradient</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">VnlVectorType</span><span class="w"> </span><span class="n">SampleGradientVnl</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">VnlVectorType</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SampleGradient</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">).</span><span class="n">GetDataPointer</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">SampleGradient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">IsInsideBuffer</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">coord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ToVDBCoord</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">_v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">tools</span><span class="o">::</span><span class="n">BoxSampler</span><span class="o">::</span><span class="n">sample</span><span class="p">(</span><span class="n">m_VDBGradient</span><span class="o">-&gt;</span><span class="n">tree</span><span class="p">(),</span><span class="w"> </span><span class="n">coord</span><span class="p">);</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">v</span><span class="p">(</span><span class="n">_v</span><span class="p">.</span><span class="n">asPointer</span><span class="p">());</span><span class="w">  </span><span class="c1">// This copies 3 floats from a VDB vector to a vnl vector</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">message</span><span class="p">;</span>
+<span class="w">      </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Gradient queried for a Point, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, outside the given image domain.&quot;</span><span class="p">;</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">str</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">openvdb</span><span class="o">::</span><span class="n">VectorGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">m_VDBGradient</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// end namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

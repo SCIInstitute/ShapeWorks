@@ -3801,73 +3801,57 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include-eigencore">include "Eigen/Core"</h1>
-<h1 id="include-eigendense">include "Eigen/Dense"</h1>
-<h1 id="include-meshh">include "Mesh.h"</h1>
-<h1 id="include-shapeworksutilsh">include "ShapeworksUtils.h"</h1>
-<p>class vtkActor;</p>
-<p>namespace shapeworks {
-class MeshUtils {
-  public:
-    static const vtkSmartPointer<vtkMatrix4x4> createICPTransform(const Mesh source,
-                                                                  const Mesh target,
-                                                                  Mesh::AlignmentType align,
-                                                                  const unsigned iterations = 20,
-                                                                  bool meshTransform = false);</p>
-<pre><code>static Mesh create_mesh_from_file(std::string filename, double iso_value = 0.5);
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-static Mesh threadSafeReadMesh(std::string filename);
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Eigen/Core&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Eigen/Dense&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Mesh.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ShapeworksUtils.h&quot;</span>
 
-static void threadSafeWriteMesh(std::string filename, Mesh mesh);
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkActor</span><span class="p">;</span>
 
-static PhysicalRegion boundingBox(const std::vector&lt;std::string&gt;&amp; filenames, bool center = false);
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-static PhysicalRegion boundingBox(const std::vector&lt;std::reference_wrapper&lt;const Mesh&gt; &gt;&amp; meshes,
-                                  bool center = false);
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshUtils</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkMatrix4x4</span><span class="o">&gt;</span><span class="w"> </span><span class="n">createICPTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="n">target</span><span class="p">,</span>
+<span class="w">                                                                </span><span class="n">Mesh</span><span class="o">::</span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">align</span><span class="p">,</span>
+<span class="w">                                                                </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span>
+<span class="w">                                                                </span><span class="kt">bool</span><span class="w"> </span><span class="n">meshTransform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
 
-static PhysicalRegion boundingBox(const std::vector&lt;Mesh&gt;&amp; meshes, bool center = false);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="nf">create_mesh_from_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">iso_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="p">);</span>
 
-static int findReferenceMesh(std::vector&lt;Mesh&gt;&amp; meshes, int random_subset_size = -1);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="nf">threadSafeReadMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 
-static Mesh extract_boundary_loop(Mesh mesh);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">threadSafeWriteMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
 
-static std::array&lt;Mesh, 3&gt; shared_boundary_extractor(const Mesh&amp; mesh_l, const Mesh&amp; mesh_r, double tol);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="nf">boundingBox</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
 
-static void generateNormals(const std::vector&lt;std::reference_wrapper&lt;Mesh&gt; &gt;&amp; meshes, bool forceRegen = false);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="nf">boundingBox</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
 
-static Field computeMeanNormals(const std::vector&lt;std::string&gt;&amp; filenames, bool autoGenerateNormals = true);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="nf">boundingBox</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
 
-static Field computeMeanNormals(const std::vector&lt;std::reference_wrapper&lt;const Mesh&gt; &gt;&amp; meshes);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">findReferenceMesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">random_subset_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
 
-void visualizeVectorFieldForFFCs(std::shared_ptr&lt;Mesh&gt; mesh);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="nf">boundaryLoopExtractor</span><span class="p">(</span><span class="n">Mesh</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
 
-vtkSmartPointer&lt;vtkActor&gt; getArrow(Eigen::Vector3d start, Eigen::Vector3d end);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sharedBoundaryExtractor</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh_l</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh_r</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">tol</span><span class="p">);</span>
 
-static int evaluate_triangle_position(const double x[3],
-                                      double closestPoint[3],
-                                      int&amp; subId,
-                                      double pcoords[3],
-                                      double&amp; dist2,
-                                      double weights[],
-                                      double pt3[3],
-                                      double pt1[3],
-                                      double pt2[3]);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateNormals</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">forceRegen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
 
-static vtkSmartPointer&lt;vtkPolyData&gt; clean_mesh(vtkSmartPointer&lt;vtkPolyData&gt; mesh);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="nf">computeMeanNormals</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">autoGenerateNormals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
 
-static vtkSmartPointer&lt;vtkPolyData&gt; remove_zero_area_triangles(vtkSmartPointer&lt;vtkPolyData&gt; mesh);
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="nf">computeMeanNormals</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">meshes</span><span class="p">);</span>
 
-static vtkSmartPointer&lt;vtkPolyData&gt; recreate_mesh(vtkSmartPointer&lt;vtkPolyData&gt; mesh);
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">visualizeVectorFieldForFFCs</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Mesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
 
-static vtkSmartPointer&lt;vtkPolyData&gt; repair_mesh(vtkSmartPointer&lt;vtkPolyData&gt; mesh, bool extract_largest = true);
-</code></pre>
-<p>};
-} // namespace shapeworks
-```</p>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getArrow</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">end</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

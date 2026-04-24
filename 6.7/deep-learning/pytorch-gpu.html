@@ -3835,21 +3835,14 @@ It selects the most recent stable release of PyTorch which can be found at <a hr
 <p>When the Anaconda enironment is created using <code>install_shapeworks</code>, PyTorch with GPU support is installed if the system's current CUDA driver version is supported. Otherwise it selects the CPU version of PyTorch.</p>
 <h2 id="checking-if-pytorch-installation-has-gpu-support">Checking if PyTorch installation has GPU support</h2>
 <p>To check if your <code>shapeworks</code> environment has PyTorch with GPU support, run the following:
-```
-conda activate shapeworks
-python</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>import torch
-print(torch.cuda.is_available())
-exit()
-<code>``
-If</code>torch.cuda.is_available()<code>is True then PyTorch has GPU support, otherwise the CPU version was installed. 
-If</code>torch<code>cannot be imported than PyTorch was not installed to the</code>shapeworks` environment. </p>
-</blockquote>
-</blockquote>
-</blockquote>
+<div class="highlight"><pre><span></span><code>conda activate shapeworks
+python
+&gt;&gt;&gt; import torch
+&gt;&gt;&gt; print(torch.cuda.is_available())
+&gt;&gt;&gt; exit()
+</code></pre></div>
+If <code>torch.cuda.is_available()</code> is True then PyTorch has GPU support, otherwise the CPU version was installed. 
+If <code>torch</code> cannot be imported than PyTorch was not installed to the <code>shapeworks</code> environment. </p>
 <h2 id="reinstalling-the-correct-pytorch-version">Reinstalling the Correct PyTorch Version</h2>
 <p>If you find that your system requires an older version of PyTorch or <code>install_shapeworks</code> did not correcty find your CUDA version, 
 the following steps explain how to install a different PyTorch version in the <code>shapeworks</code> conda environment.</p>
@@ -3857,12 +3850,14 @@ the following steps explain how to install a different PyTorch version in the <c
 <p>CUDA compatibility can be checked here: <a href="https://docs.nvidia.com/deploy/cuda-compatibility/">CUDA-Compatibility</a></p>
 <ol>
 <li>If the CPU version of PyTorch was installed, that first needs to be uninstalled. To uninstall run:
-<code>conda activate shapeworks
-pip uninstall torch torchvision torchaudio</code></li>
+<div class="highlight"><pre><span></span><code>conda activate shapeworks
+pip uninstall torch torchvision torchaudio
+</code></pre></div></li>
 <li>Check which CUDA version is installed on your system using one of the methods explained here: <a href="https://varhowto.com/check-pytorch-cuda-version/">How to check CUDA version</a></li>
 <li>
 <p>Install the correct PyTorch to <code>shapeworks</code> environment using: 
-<code>pip install torch===1.7.1+cu&lt;VERSION&gt; torchvision===0.8.2+cu&lt;VERSION&gt; torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html</code>
+<div class="highlight"><pre><span></span><code>pip install torch===1.7.1+cu&lt;VERSION&gt; torchvision===0.8.2+cu&lt;VERSION&gt; torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+</code></pre></div>
   Where <code>VERSION</code> is your CUDA version with no dot (such as 92 for 9.2 or 110 for 11.0).</p>
 </li>
 <li>

@@ -22,7 +22,7 @@
     
     
       
-        <title>Libs/Application/DeepSSM/DeepSSMJob.h - ShapeWorks</title>
+        <title>Studio/DeepSSM/DeepSSMJob.h - ShapeWorks</title>
       
     
     
@@ -88,7 +88,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#libsapplicationdeepssmdeepssmjobh" class="md-skip">
+        <a href="#studiodeepssmdeepssmjobh" class="md-skip">
           Skip to content
         </a>
       
@@ -127,7 +127,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Libs/Application/DeepSSM/DeepSSMJob.h
+              Studio/DeepSSM/DeepSSMJob.h
             
           </span>
         </div>
@@ -3771,7 +3771,7 @@
   
 
 
-<h1 id="libsapplicationdeepssmdeepssmjobh">Libs/Application/DeepSSM/DeepSSMJob.h</h1>
+<h1 id="studiodeepssmdeepssmjobh">Studio/DeepSSM/DeepSSMJob.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -3801,66 +3801,55 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <mutex></h1>
-<h1 id="include_1">include <Job/Job.h></h1>
-<h1 id="include_2">include <Project/Project.h></h1>
-<h1 id="include_3">include <QObject></h1>
-<p>namespace shapeworks {</p>
-<p>class DeepSSMJob : public Job {
-  Q_OBJECT;</p>
-<p>public:
-  enum class JobType {
-    DeepSSM_PrepType = 0,
-    DeepSSM_AugmentationType = 1,
-    DeepSSM_TrainingType = 2,
-    DeepSSM_TestingType = 3
-  };</p>
-<p>enum PrepStep {
-    NOT_STARTED = 0,
-    GROOM_TRAINING = 1,
-    OPTIMIZE_TRAINING = 2,
-    OPTIMIZE_VALIDATION = 3,
-    GROOM_IMAGES = 4,
-    DONE = 5
-  };</p>
-<p>enum class SplitType { TRAIN, VAL, TEST };</p>
-<p>DeepSSMJob(std::shared_ptr<Project> project, DeepSSMJob::JobType tool_mode,
-             DeepSSMJob::PrepStep prep_step = DeepSSMJob::NOT_STARTED);
-  ~DeepSSMJob();</p>
-<p>void run() override;</p>
-<p>QString name() override;</p>
-<p>void run_prep();
-  void run_augmentation();
-  void run_training();
-  void run_testing();</p>
-<p>void python_message(std::string str);</p>
-<p>static std::vector<int> get_split(ProjectHandle project, DeepSSMJob::SplitType split_type);</p>
-<p>void set_num_dataloader_workers(int num_workers);
-  int get_num_dataloader_workers();</p>
-<p>void set_aug_processes(int processes);
-  int get_aug_processes();</p>
-<p>void set_prep_step(DeepSSMJob::PrepStep step) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    prep_step_ = step;
-  }</p>
-<p>private:
-  void update_prep_stage(DeepSSMJob::PrepStep step);
-  void process_test_results();</p>
-<p>std::shared_ptr<Project> project_;</p>
-<p>DeepSSMJob::JobType job_type_;</p>
-<p>QString prep_message_;
-  DeepSSMJob::PrepStep prep_step_{DeepSSMJob::NOT_STARTED};</p>
-<p>int num_dataloader_workers_{0};
-  int aug_processes_{0};</p>
-<p>// mutex
-  std::mutex mutex_;
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;DeepSSM/DeepSSMTool.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Job/Job.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMJob</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">DeepSSMJob</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">tool_mode</span><span class="p">,</span>
+<span class="w">             </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">NOT_STARTED</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">DeepSSMJob</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_prep</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_augmentation</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_training</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_testing</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">python_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_prep_stage</span><span class="p">(</span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">step</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">process_test_results</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">tool_mode_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">prep_message_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step_</span><span class="p">{</span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">NOT_STARTED</span><span class="p">};</span>
+
+<span class="w">  </span><span class="c1">// mutex</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="w"> </span><span class="n">mutex_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

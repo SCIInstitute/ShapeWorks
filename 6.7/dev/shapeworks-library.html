@@ -3754,117 +3754,145 @@
 
 <h1 id="using-shapeworks-as-a-library">Using ShapeWorks as a library</h1>
 <p>ShapeWorks can be used as a library, for example as part of an ITK based application.  To do so, when building ShapeWorks, specify CMAKE_INSTALL_PREFIX and use <code>make install</code>:</p>
-<p><code>$ ccmake -DCMAKE_INSTALL_PREFIX=&lt;/path/to/sw/install&gt;
-$ make install</code></p>
+<div class="highlight"><pre><span></span><code>$ ccmake -DCMAKE_INSTALL_PREFIX=&lt;/path/to/sw/install&gt;
+$ make install
+</code></pre></div>
 <p>An example using ShapeWorks as a library in an ITK application is given in <code>Examples/C++</code></p>
 <p>CMakeLists.txt:</p>
-<p>```
-cmake_minimum_required(VERSION 3.10.2)</p>
-<p>project(HelloShapeWorksItk)</p>
-<p>set(CMAKE_CXX_STANDARD 17)</p>
-<h1 id="find-shapeworks">Find ShapeWorks</h1>
-<p>find_package(ShapeWorks REQUIRED)</p>
-<p>SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")</p>
-<h1 id="find-itk">Find ITK</h1>
-<h1 id="find_packageitk-required">find_package(ITK REQUIRED)</h1>
-<h1 id="includeitk_use_file">include(${ITK_USE_FILE})</h1>
-<p>add_executable(HelloShapeWorksItk HelloShapeWorksItk.cpp)</p>
-<p>target_link_libraries(HelloShapeWorksItk
+<div class="highlight"><pre><span></span><code>cmake_minimum_required(VERSION 3.10.2)
+
+project(HelloShapeWorksItk)
+
+set(CMAKE_CXX_STANDARD 17)
+
+# Find ShapeWorks
+find_package(ShapeWorks REQUIRED)
+
+SET(CMAKE_EXE_LINKER_FLAGS &quot;-Wl,--disable-new-dtags&quot;)
+
+# Find ITK
+#find_package(ITK REQUIRED)
+#include(${ITK_USE_FILE})
+
+add_executable(HelloShapeWorksItk HelloShapeWorksItk.cpp)
+
+target_link_libraries(HelloShapeWorksItk
   ${ITK_LIBRARIES}
   shapeworks::Optimize
   shapeworks::Groom
   shapeworks::Analyze
   pybind11::embed
   )
-```</p>
+</code></pre></div>
 <p>HelloShapeWorksItk.cpp:
-```</p>
-<h1 id="include">include <iostream></h1>
-<p>// itk includes</p>
-<h1 id="include-itkimageh">include "itkImage.h"</h1>
-<h1 id="include-itkmeshh">include "itkMesh.h"</h1>
-<h1 id="include-itkregularspheremeshsourceh">include "itkRegularSphereMeshSource.h"</h1>
-<h1 id="include-itkmeshfilewriterh">include "itkMeshFileWriter.h"</h1>
-<h1 id="include-itkmeshiofactoryh">include "itkMeshIOFactory.h"</h1>
-<h1 id="include-itkvtkpolydatameshiofactoryh">include "itkVTKPolyDataMeshIOFactory.h"</h1>
-<p>// shapeworks includes</p>
-<h1 id="include_1">include <Project/Project.h></h1>
-<h1 id="include_2">include <Groom/Groom.h></h1>
-<h1 id="include_3">include <Optimize/OptimizeParameters.h></h1>
-<h1 id="include_4">include <Optimize/Optimize.h></h1>
-<h1 id="include_5">include <Analyze/Analyze.h></h1>
-<p>constexpr unsigned int Dimension = 3;
+<div class="highlight"><pre><span></span><code>#include &lt;iostream&gt;
+
+// itk includes
+#include &quot;itkImage.h&quot;
+#include &quot;itkMesh.h&quot;
+#include &quot;itkRegularSphereMeshSource.h&quot;
+#include &quot;itkMeshFileWriter.h&quot;
+#include &quot;itkMeshIOFactory.h&quot;
+#include &quot;itkVTKPolyDataMeshIOFactory.h&quot;
+
+// shapeworks includes
+#include &lt;Project/Project.h&gt;
+#include &lt;Groom/Groom.h&gt;
+#include &lt;Optimize/OptimizeParameters.h&gt;
+#include &lt;Optimize/Optimize.h&gt;
+#include &lt;Analyze/Analyze.h&gt;
+
+constexpr unsigned int Dimension = 3;
 using TCoordinate = float;
-using TMesh = itk::Mesh<TCoordinate, Dimension>;
-using TSphere = itk::RegularSphereMeshSource<TMesh>;
-using TMeshWriter = itk::MeshFileWriter<TMesh>;</p>
-<p>void create_sphere(double radius, std::string name) {
+using TMesh = itk::Mesh&lt;TCoordinate, Dimension&gt;;
+using TSphere = itk::RegularSphereMeshSource&lt;TMesh&gt;;
+using TMeshWriter = itk::MeshFileWriter&lt;TMesh&gt;;
+
+void create_sphere(double radius, std::string name) {
   // Create the sphere source.
-  auto sphere = TSphere::New();</p>
-<p>TSphere::VectorType scale;
+  auto sphere = TSphere::New();
+
+  TSphere::VectorType scale;
   scale.Fill( radius );
   sphere-&gt;SetScale( scale );
   sphere-&gt;SetResolution( 5 );
-  sphere-&gt;Update();</p>
-<p>// We now assign it to a mesh pointer.
-  TMesh::Pointer mesh = sphere-&gt;GetOutput();</p>
-<p>// It is necessary to disconnect the mesh from the pipeline;
+  sphere-&gt;Update();
+
+  // We now assign it to a mesh pointer.
+  TMesh::Pointer mesh = sphere-&gt;GetOutput();
+
+  // It is necessary to disconnect the mesh from the pipeline;
   // otherwise, the point and cell data will be deallocated
-  // when we call "Update()" on the writer later in the program.
-  mesh-&gt;DisconnectPipeline();</p>
-<p>auto mesh_writer = TMeshWriter::New();
+  // when we call &quot;Update()&quot; on the writer later in the program.
+  mesh-&gt;DisconnectPipeline();
+
+  auto mesh_writer = TMeshWriter::New();
   mesh_writer-&gt;SetFileName(name);
   mesh_writer-&gt;SetInput(mesh);
   mesh_writer-&gt;Update();
-}</p>
-<p>int main() {</p>
-<p>itk::VTKPolyDataMeshIOFactory::RegisterOneFactory();
-  // auto registeredIOs = itk::ObjectFactoryBase::CreateAllInstance( "itkMeshIOBase" );</p>
-<p>typedef itk::Image&lt; unsigned short, 3 &gt; ImageType;
-  ImageType::Pointer image = ImageType::New();</p>
-<p>std::cout &lt;&lt; "Hello ShapeWorks ITK World!" &lt;&lt; std::endl;</p>
-<p>// create a ShapeWorks Project
-  auto project = std::make_shared<shapeworks::Project>();</p>
-<p>std::cout &lt;&lt; "Step 1: Use ITK to generate input data\n";
+}
+
+int main() {
+
+  itk::VTKPolyDataMeshIOFactory::RegisterOneFactory();
+  // auto registeredIOs = itk::ObjectFactoryBase::CreateAllInstance( &quot;itkMeshIOBase&quot; );
+
+  typedef itk::Image&lt; unsigned short, 3 &gt; ImageType;
+  ImageType::Pointer image = ImageType::New();
+
+  std::cout &lt;&lt; &quot;Hello ShapeWorks ITK World!&quot; &lt;&lt; std::endl;
+
+  // create a ShapeWorks Project
+  auto project = std::make_shared&lt;shapeworks::Project&gt;();
+
+  std::cout &lt;&lt; &quot;Step 1: Use ITK to generate input data\n&quot;;
   for (int i=5;i&lt;9;i++) {
-    auto filename = "mesh" + std::to_string(i) + ".vtk";
-    std::cout &lt;&lt; "Creating input file: " &lt;&lt; filename &lt;&lt; "\n";
+    auto filename = &quot;mesh&quot; + std::to_string(i) + &quot;.vtk&quot;;
+    std::cout &lt;&lt; &quot;Creating input file: &quot; &lt;&lt; filename &lt;&lt; &quot;\n&quot;;
     create_sphere(i, filename);
-    auto subject = std::make_shared<shapeworks::Subject>();
+    auto subject = std::make_shared&lt;shapeworks::Subject&gt;();
     subject-&gt;set_original_filenames({filename});
     project-&gt;get_subjects().push_back(subject);
-  }</p>
-<p>// groom the inputs
-  std::cout &lt;&lt; "Step 2: Groom Inputs\n";
+  }
+
+  // groom the inputs
+  std::cout &lt;&lt; &quot;Step 2: Groom Inputs\n&quot;;
   shapeworks::Groom groom{project};
-  groom.run();</p>
-<p>// create a ShapeWorks Optimizer
-  std::cout &lt;&lt; "Step 3: Creating Shape Model\n";
+  groom.run();
+
+  // create a ShapeWorks Optimizer
+  std::cout &lt;&lt; &quot;Step 3: Creating Shape Model\n&quot;;
   shapeworks::Optimize optimize;
   shapeworks::OptimizeParameters params(project);
   params.set_up_optimize(&amp;optimize);
-  optimize.SetProject(project);</p>
-<p>// run the optimizer
+  optimize.SetProject(project);
+
+  // run the optimizer
   bool success = optimize.Run();
-  project-&gt;save("HelloShapeWorksItk.swproj");</p>
-<p>// perform analysis
-  std::cout &lt;&lt; "Step 4: Analyze\n";
+  project-&gt;save(&quot;HelloShapeWorksItk.swproj&quot;);
+
+  // perform analysis
+  std::cout &lt;&lt; &quot;Step 4: Analyze\n&quot;;
   shapeworks::Analyze analyze{project};
-  analyze.run_offline_analysis("analysis.json");</p>
-<p>return 0;
+  analyze.run_offline_analysis(&quot;analysis.json&quot;);
+
+  return 0;
 }
-```</p>
+</code></pre></div></p>
 <p>Configure using <code>-DShapeWorks_DIR</code> and the prefix module path used for building ShapeWorks. For example:</p>
-<p><code>cd /path/to/shapeworks/Examples/C++
+<div class="highlight"><pre><span></span><code>cd /path/to/shapeworks/Examples/C++
 mkdir build
 cd build
-cmake .. -DShapeWorks_DIR=&lt;/path/to/sw/install&gt;/lib/cmake/ShapeWorks -DCMAKE_PREFIX_PATH=&lt;/path/to/shapeworks/dependencies/install&gt;</code></p>
+cmake .. -DShapeWorks_DIR=&lt;/path/to/sw/install&gt;/lib/cmake/ShapeWorks -DCMAKE_PREFIX_PATH=&lt;/path/to/shapeworks/dependencies/install&gt;
+</code></pre></div>
 <p>Build:
-<code>make</code></p>
+<div class="highlight"><pre><span></span><code>make
+</code></pre></div></p>
 <p>Run:
-<code>./HelloShapeWorksItk</code></p>
+<div class="highlight"><pre><span></span><code>./HelloShapeWorksItk
+</code></pre></div></p>
 <p>Output:
-<code>Hello ShapeWorks ITK World!
+<div class="highlight"><pre><span></span><code>Hello ShapeWorks ITK World!
 Step 1: Use ITK to generate input data
 Creating input file: mesh5.vtk
 Creating input file: mesh6.vtk
@@ -3888,7 +3916,8 @@ Step 4: Analyze
 [2022-10-02 23:31:39.793] [info] cumulative_explained_variance [1]: 100.00
 [2022-10-02 23:31:39.902] [info] eigen value [2]: 0.0016418139547566765
 [2022-10-02 23:31:39.902] [info] explained_variance [2]: 0.00
-[2022-10-02 23:31:39.902] [info] cumulative_explained_variance [2]: 100.00</code></p>
+[2022-10-02 23:31:39.902] [info] cumulative_explained_variance [2]: 100.00
+</code></pre></div></p>
 
 
 

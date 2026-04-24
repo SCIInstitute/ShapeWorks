@@ -3801,215 +3801,290 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Eigen/Dense></h1>
-<h1 id="include_1">include <Eigen/Sparse></h1>
-<p>// Qt</p>
-<h1 id="include_2">include <QSharedPointer></h1>
-<h1 id="include_3">include <QWidget></h1>
-<p>// ShapeWorks</p>
-<h1 id="include_4">include <Analyze/Analyze.h></h1>
-<h1 id="include_5">include <ParticleShapeStatistics.h></h1>
-<p>// Studio</p>
-<h1 id="include_6">include <Analysis/ShapeEvaluationJob.h></h1>
-<h1 id="include_7">include <Data/Preferences.h></h1>
-<h1 id="include_8">include <Shape.h></h1>
-<h1 id="include_9">include <Visualization/Visualizer.h></h1>
-<p>class Ui_AnalysisTool;
-class JKQTPlotter;</p>
-<p>namespace shapeworks {</p>
-<p>class Session;
-class Lightbox;
-class ShapeWorksStudioApp;
-class GroupPvalueJob;
-class NetworkAnalysisJob;
-class StatsGroupLDAJob;
-class StatsGroupDWDJob;
-class ParticleAreaPanel;
-class ShapeScalarPanel;</p>
-<p>class AnalysisTool : public QWidget {
-  Q_OBJECT;</p>
-<p>public:
-  using AlignmentType = Analyze::AlignmentType;</p>
-<p>enum GroupAnalysisType { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3, DWD = 4 };</p>
-<p>enum McaMode { Vanilla, Within, Between };</p>
-<p>using PointType = itk::Point<double, 3>;</p>
-<p>AnalysisTool(Preferences&amp; prefs);
-  ~AnalysisTool();</p>
-<p>void set_session(QSharedPointer<Session> session);</p>
-<p>QSharedPointer<Session> get_session();</p>
-<p>void set_app(ShapeWorksStudioApp<em> app);
-  ShapeWorksStudioApp</em> get_app() { return app_; }</p>
-<p>void set_active(bool active);</p>
-<p>bool get_active();</p>
-<p>bool get_group_difference_mode();</p>
-<p>std::vector<Shape::Point> get_group_difference_vectors();</p>
-<p>std::string get_analysis_mode();
-  void set_analysis_mode(std::string mode);</p>
-<p>void set_labels(QString which, QString value);</p>
-<p>int get_pca_mode();</p>
-<p>double get_group_ratio();</p>
-<p>double get_pca_value();</p>
-<p>bool pca_animate();
-  McaMode get_mca_level() const;</p>
-<p>int get_sample_number();</p>
-<p>bool compute_stats();</p>
-<p>void update_slider();</p>
-<p>void reset_stats();
-  void enable_actions(bool newly_enabled = false);</p>
-<p>Particles get_mean_shape_points();
-  ShapeHandle get_mean_shape();</p>
-<p>Particles get_shape_points(int mode, double value);
-  Particles get_multi_level_shape_points(int mode, double value, McaMode level);
-  ShapeHandle get_mode_shape(int mode, double value);
-  ShapeHandle get_mca_mode_shape(int mode, double value, McaMode level);
-  ShapeHandle get_current_shape();</p>
-<p>ParticleShapeStatistics get_stats();
-  void load_settings();
-  void store_settings();</p>
-<p>void shutdown();</p>
-<p>bool export_variance_graph(QString filename);</p>
-<p>void compute_shape_evaluations();</p>
-<p>static const std::string MODE_ALL_SAMPLES_C;
-  static const std::string MODE_MEAN_C;
-  static const std::string MODE_PCA_C;
-  static const std::string MODE_SINGLE_SAMPLE_C;
-  static const std::string MODE_REGRESSION_C;</p>
-<p>GroupAnalysisType get_group_analysis_type();</p>
-<p>bool pca_scalar_only_mode();
-  bool pca_shape_plus_scalar_mode();
-  bool pca_shape_only_mode();</p>
-<p>public Q_SLOTS:</p>
-<p>// analysis mode
-  void on_tabWidget_currentChanged();</p>
-<p>void handle_analysis_options();
-  void handle_median();</p>
-<p>void on_mean_button_clicked();
-  void on_group1_button_clicked();
-  void on_group2_button_clicked();
-  void on_difference_button_clicked();</p>
-<p>// PCA
-  void on_pcaSlider_valueChanged();
-  void on_group_slider_valueChanged();
-  void on_pcaModeSpinBox_valueChanged(int i);</p>
-<p>void handle_pca_animate_state_changed();
-  void handle_pca_timer();</p>
-<p>void handle_group_animate_state_changed();
-  void handle_group_timer();</p>
-<p>void handle_reconstruction_complete();</p>
-<p>void on_reconstructionButton_clicked();</p>
-<p>void set_feature_map(const std::string&amp; feature_map);</p>
-<p>std::string get_display_feature_map();</p>
-<p>void group_changed();</p>
-<p>bool groups_active();
-  bool pca_groups_active();
-  QStringList get_checked_pca_groups();</p>
-<p>void on_view_open_button_toggled();</p>
-<p>void on_surface_open_button_toggled();</p>
-<p>void on_metrics_open_button_toggled();</p>
-<p>void reconstruction_method_changed();</p>
-<p>void initialize_mesh_warper();</p>
-<p>void group_p_values_clicked();
-  void network_analysis_clicked();</p>
-<p>void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
-  void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
-  void handle_eval_particle_normals_progress(float progress);
-  void handle_eval_particle_normals_complete(std::vector<bool> good_bad);</p>
-<p>void handle_group_pvalues_complete();
-  void handle_alignment_changed(int new_alignment);</p>
-<p>void handle_distance_method_changed();</p>
-<p>void run_good_bad_particles();</p>
-<p>void handle_lda_progress(double progress);
-  void handle_lda_complete();</p>
-<p>void handle_dwd_progress(double progress);
-  void handle_dwd_complete();</p>
-<p>void handle_network_analysis_progress(int progress);
-  void handle_network_analysis_complete();</p>
-<p>void show_difference_to_mean_clicked();</p>
-<p>void group_analysis_combo_changed();</p>
-<p>void change_pca_analysis_type();</p>
-<p>Eigen::VectorXd construct_mean_shape();</p>
-<p>void handle_samples_predicted_scalar_options();</p>
-<p>void samples_table_context_menu();
-  void samples_table_copy_to_clipboard();</p>
-<p>// mesh warping options
-  void mesh_warp_median_clicked();
-  void mesh_warp_sample_changed();
-  void mesh_warp_method_changed();
-  void mesh_warp_run_clicked();</p>
-<p>void handle_tab_changed();</p>
-<p>Q_SIGNALS:</p>
-<p>void update_view();
-  void analysis_mode_changed();
-  void pca_update();
-  void progress(int);
-  void reconstruction_complete();</p>
-<p>private:
-  void compute_reconstructed_domain_transforms();
-  void resize_tab_to_current();</p>
-<p>bool active_ = false;</p>
-<p>void pca_labels_changed(QString value, QString eigen, QString lambda);</p>
-<p>void update_interface();</p>
-<p>bool group_pvalues_valid();
-  bool groups_on();</p>
-<p>Particles convert_from_combined(const Eigen::VectorXd&amp; points);</p>
-<p>void update_group_boxes();
-  void update_group_values();
-  void update_domain_alignment_box();
-  void update_pca_group_options();
-  void handle_pca_group_list_item_changed();</p>
-<p>void update_lda_graph();
-  void update_dwd_graph();</p>
-<p>void update_difference_particles();</p>
-<p>Eigen::VectorXd get_mean_shape_particles();</p>
-<p>ShapeHandle create_shape_from_points(Particles points);</p>
-<p>Preferences&amp; preferences_;</p>
-<p>Ui_AnalysisTool<em> ui_;
-  QSharedPointer<Session> session_;
-  ShapeWorksStudioApp</em> app_;</p>
-<p>ParticleShapeStatistics stats_;
-  bool stats_ready_ = false;
-  bool evals_ready_ = false;
-  bool large_particle_disclaimer_waived_ = false;
-  bool skip_evals_ = false;</p>
-<p>Eigen::VectorXd eval_specificity_;
-  Eigen::VectorXd eval_compactness_;
-  Eigen::VectorXd eval_generalization_;</p>
-<p>vnl_vector<double> empty_shape_;
-  Eigen::VectorXd temp_shape_;
-  Eigen::VectorXd temp_shape_mca;
-  std::vector<int> number_of_particles_array_;</p>
-<p>Eigen::VectorXd computed_scalars_;</p>
-<p>bool pca_animate_direction_ = true;
-  QTimer pca_animate_timer_;</p>
-<p>bool group_animate_direction_ = true;
-  QTimer group_animate_timer_;</p>
-<p>ShapeHandle computed_shape_;</p>
-<p>ShapeList group1_list_;
-  ShapeList group2_list_;</p>
-<p>std::string feature_map_;</p>
-<p>std::vector<std::string> current_group_names_;
-  std::vector<std::string> current_group_values_;
-  std::vector<std::string> current_pca_group_values_;</p>
-<p>std::vector<vtkSmartPointer\<vtkTransform>> reconstruction_transforms_;</p>
-<p>QSharedPointer<GroupPvalueJob> group_pvalue_job_;
-  QSharedPointer<StatsGroupLDAJob> group_lda_job_;
-  QSharedPointer<StatsGroupDWDJob> group_dwd_job_;
-  QSharedPointer<NetworkAnalysisJob> network_analysis_job_;</p>
-<p>bool group_lda_job_running_ = false;
-  bool lda_computed_ = false;
-  bool group_dwd_job_running_ = false;
-  bool dwd_computed_ = false;
-  bool block_group_change_ = false;</p>
-<p>ParticleAreaPanel<em> particle_area_panel_{nullptr};
-  ShapeScalarPanel</em> shape_scalar_panel_{nullptr};</p>
-<p>std::vector<QPointer\<Worker>> workers_;
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span>
+
+<span class="c1">// Qt</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
+
+<span class="c1">// ShapeWorks</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Analyze.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ParticleShapeStatistics.h&gt;</span>
+
+<span class="c1">// Studio</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analysis/ShapeEvaluationJob.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Visualizer.h&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_AnalysisTool</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JKQTPlotter</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GroupPvalueJob</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NetworkAnalysisJob</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StatsGroupLDAJob</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleAreaPanel</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeScalarPanel</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">AlignmentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Analyze</span><span class="o">::</span><span class="n">AlignmentType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">GroupAnalysisType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">None</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">Pvalues</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">NetworkAnalysis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">LDA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">McaMode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Vanilla</span><span class="p">,</span><span class="w"> </span><span class="n">Within</span><span class="p">,</span><span class="w"> </span><span class="n">Between</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">AnalysisTool</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">AnalysisTool</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_session</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_app</span><span class="p">(</span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">app</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="nf">get_app</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">app_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_active</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_group_difference_mode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">::</span><span class="n">Point</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_group_difference_vectors</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_analysis_mode</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_analysis_mode</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_labels</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">which</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_pca_mode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_group_ratio</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_pca_value</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">pca_animate</span><span class="p">();</span>
+<span class="w">  </span><span class="n">McaMode</span><span class="w"> </span><span class="nf">get_mca_level</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_sample_number</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">compute_stats</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_slider</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_stats</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">enable_actions</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">newly_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_mean_shape_points</span><span class="p">();</span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mean_shape</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_shape_points</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_multi_level_shape_points</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">McaMode</span><span class="w"> </span><span class="n">level</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mode_shape</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mca_mode_shape</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">McaMode</span><span class="w"> </span><span class="n">level</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_current_shape</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_settings</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_settings</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">export_variance_graph</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_shape_evaluations</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ALL_SAMPLES_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_MEAN_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_PCA_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_SINGLE_SAMPLE_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">GroupAnalysisType</span><span class="w"> </span><span class="nf">get_group_analysis_type</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">pca_scalar_only_mode</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">pca_shape_plus_scalar_mode</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">pca_shape_only_mode</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+
+<span class="w">  </span><span class="c1">// analysis mode</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">on_tabWidget_currentChanged</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_analysis_options</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_median</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_mean_button_clicked</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_group1_button_clicked</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_group2_button_clicked</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_difference_button_clicked</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// PCA</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_pcaSlider_valueChanged</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_group_slider_valueChanged</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_pcaModeSpinBox_valueChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_animate_state_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_timer</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_group_animate_state_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_group_timer</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_reconstruction_complete</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_reconstructionButton_clicked</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_map</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_map</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_display_feature_map</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">group_changed</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groups_active</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_view_open_button_toggled</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_surface_open_button_toggled</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_metrics_open_button_toggled</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_group_active</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shape_index</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reconstruction_method_changed</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize_mesh_warper</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">group_p_values_clicked</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">network_analysis_clicked</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_eval_thread_complete</span><span class="p">(</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_eval_thread_progress</span><span class="p">(</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_eval_particle_normals_progress</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_eval_particle_normals_complete</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">good_bad</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_group_pvalues_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_alignment_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">new_alignment</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_good_bad_particles</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_complete</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_network_analysis_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_network_analysis_complete</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_difference_to_mean_clicked</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">group_analysis_combo_changed</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">change_pca_analysis_type</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">construct_mean_shape</span><span class="p">();</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">pca_update</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reconstruction_complete</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">create_plot</span><span class="p">(</span><span class="n">JKQTPlotter</span><span class="o">*</span><span class="w"> </span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">x_label</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">y_label</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_reconstructed_domain_transforms</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">pca_labels_changed</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">eigen</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">lambda</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_analysis_mode</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_interface</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">group_pvalues_valid</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groups_on</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">convert_from_combined</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_group_boxes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_group_values</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_domain_alignment_box</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_lda_graph</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_difference_particles</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_mean_shape_particles</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">create_shape_from_points</span><span class="p">(</span><span class="n">Particles</span><span class="w"> </span><span class="n">points</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Ui_AnalysisTool</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">app_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">stats_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">evals_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">large_particle_disclaimer_waived_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">skip_evals_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">eval_specificity_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">eval_compactness_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">eval_generalization_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">empty_shape_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">temp_shape_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">temp_shape_mca</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">number_of_particles_array_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">computed_scalars_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">pca_animate_direction_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">pca_animate_timer_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">group_animate_direction_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">group_animate_timer_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">computed_shape_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">group1_list_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">group2_list_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_group_names_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_group_values_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">reconstruction_transforms_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">GroupPvalueJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_pvalue_job_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">StatsGroupLDAJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_lda_job_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">NetworkAnalysisJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">network_analysis_job_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">group_lda_job_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">lda_computed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_group_change_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">current_alignment_</span><span class="p">{</span><span class="n">AlignmentType</span><span class="o">::</span><span class="n">Local</span><span class="p">};</span>
+<span class="w">  </span><span class="n">ParticleAreaPanel</span><span class="o">*</span><span class="w"> </span><span class="n">particle_area_panel_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
+<span class="w">  </span><span class="n">ShapeScalarPanel</span><span class="o">*</span><span class="w"> </span><span class="n">shape_scalar_panel_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:35 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

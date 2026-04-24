@@ -3805,207 +3805,219 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="ifndef-reconstruction_h">ifndef <strong>RECONSTRUCTION_H</strong></h1>
-<h1 id="define-reconstruction_h">define <strong>RECONSTRUCTION_H</strong></h1>
-<h1 id="include">include <Eigen/Dense></h1>
-<h1 id="include_1">include <Eigen/Sparse></h1>
-<h1 id="include-itkthinplatesplinekerneltransform2h">include "itkThinPlateSplineKernelTransform2.h"</h1>
-<h1 id="include-itkcompactlysupportedrbfsparsekerneltransformh">include "itkCompactlySupportedRBFSparseKernelTransform.h"</h1>
-<h1 id="include_2">include <itkImageToVTKImageFilter.h></h1>
-<h1 id="include_3">include <itkVTKImageToImageFilter.h></h1>
-<h1 id="include_4">include <vtkPolyData.h></h1>
-<h1 id="include_5">include <itkAddImageFilter.h></h1>
-<h1 id="include_6">include <itkGradientImageFilter.h></h1>
-<h1 id="include_7">include <itkGradientMagnitudeImageFilter.h></h1>
-<h1 id="include_8">include <itkResampleImageFilter.h></h1>
-<h1 id="include_9">include <itkLinearInterpolateImageFunction.h></h1>
-<h1 id="include_10">include <itkBSplineInterpolateImageFunction.h></h1>
-<h1 id="include_11">include <itkMultiplyImageFilter.h></h1>
-<h1 id="include-itkimageregionconstiteratorh">include "itkImageRegionConstIterator.h"</h1>
-<h1 id="include_12">include <itkImageDuplicator.h></h1>
-<h1 id="include_13">include <vtkSmartPointer.h></h1>
-<h1 id="include_14">include <itkImageFileWriter.h></h1>
-<h1 id="include-procrustes3dh">include "Procrustes3D.h"</h1>
-<h1 id="ifdef-assert">ifdef assert</h1>
-<h1 id="undef-assert">undef assert</h1>
-<h1 id="define-asserta-if-static_casta-throw-stdruntime_errora">define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }</h1>
-<h1 id="endif">endif</h1>
-<p>namespace itk
-{
-template<typename TImageType, typename TCoordRep = double>
-class ITK_TEMPLATE_EXPORT BSplineInterpolateImageFunctionWithDoubleCoefficents
-        : public BSplineInterpolateImageFunction <TImageType, TCoordRep, double>
-{};
-}</p>
-<p>template &lt; template &lt; typename TCoordRep, unsigned &gt; class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
-           template &lt; typename ImageType, typename TCoordRep &gt; class TInterpolatorType = itk::LinearInterpolateImageFunction,
-           typename TCoordRep = double, typename PixelType = float, typename ImageType = itk::Image<PixelType, 3>&gt;
-class Reconstruction {
-public:
-    typedef itk::GradientImageFilter<ImageType, PixelType>               GradientFilterType;
-    typedef itk::GradientMagnitudeImageFilter<ImageType, ImageType > GradientMagnitudeFilterType;
-    typedef itk::Image&lt; itk::CovariantVector&lt; PixelType, 3 &gt;, 3 &gt;        GradientImageType;
-    typedef itk::ImageRegionIterator&lt; GradientImageType &gt;            GradientImageIteratorType;
-    typedef itk::ImageRegionIterator&lt; ImageType &gt;                    ImageIteratorType;</p>
-<pre><code>typedef itk::ImageFileWriter&lt; ImageType &gt;  WriterType;
+<div class="highlight"><pre><span></span><code><span class="cp">#ifndef __RECONSTRUCTION_H__</span>
+<span class="cp">#define __RECONSTRUCTION_H__</span>
 
-typedef itk::ImageToVTKImageFilter&lt;ImageType&gt;                    ITK2VTKConnectorType;
-typedef itk::AddImageFilter &lt;ImageType, ImageType &gt;              AddImageFilterType;
-typedef itk::ResampleImageFilter&lt;ImageType, ImageType &gt;          ResampleFilterType;
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span>
 
-typedef TInterpolatorType &lt; ImageType, TCoordRep &gt;                  InterpolatorType;
-typedef itk::MultiplyImageFilter &lt;ImageType, ImageType, ImageType&gt;  MultiplyByConstantImageFilterType;
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkThinPlateSplineKernelTransform2.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkCompactlySupportedRBFSparseKernelTransform.h&quot;</span>
 
-typedef itk::ImageDuplicator&lt; ImageType &gt;                           DuplicatorType;
-typedef TTransformType &lt; TCoordRep, 3 &gt;                             TransformType;
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImageToVTKImageFilter.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkVTKImageToImageFilter.h&gt;</span>
 
-typedef itk::Point&lt; TCoordRep, 3 &gt;                  PointType;
-typedef std::vector&lt; PointType &gt;                    PointArrayType;
-typedef typename TransformType::PointSetType        PointSetType;
-typedef typename PointSetType::PointIdentifier      PointIdType;
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkAddImageFilter.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkGradientImageFilter.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkGradientMagnitudeImageFilter.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkResampleImageFilter.h&gt;</span>
 
-Reconstruction(std::string out_prefix = "",
-               float decimationPercent = 0.3f,
-               double angleThresh = 45.0f,
-               size_t numClusters = 5,
-               bool fixWinding = true,
-               bool doLaplacianSmoothingBeforeDecimation = true,
-               bool doLaplacianSmoothingAfterDecimation = true,
-               float smoothingLambda = 0.5f,
-               int smoothingIterations = 1,
-               bool usePairwiseNormalsDifferencesForGoodBad = false);
-~Reconstruction();
-vtkSmartPointer&lt;vtkPolyData&gt; getDenseMean(
-        std::vector&lt; PointArrayType &gt; local_pts =
-        std::vector&lt; PointArrayType &gt;(),
-        std::vector&lt; PointArrayType &gt; global_pts =
-        std::vector&lt; PointArrayType &gt;(),
-        std::vector&lt;std::string&gt; distance_transform =
-        std::vector&lt;std::string&gt;() );
-void reset();
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkLinearInterpolateImageFunction.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkBSplineInterpolateImageFunction.h&gt;</span>
 
-void setDecimation(float dec);
-void setNumClusters(int num);
-void setMaxAngle(double angleDegrees);
-void setFixWinding(bool fixWinding);
-void setLaplacianSmoothingBeforeDecimation(bool doLaplacianSmoothingBeforeDecimation);
-void setLaplacianSmoothingAfterDecimation(bool doLaplacianSmoothingAfterDecimation);
-void setSmoothingLambda(float smoothingLambda);
-void setSmoothingIterations(int smoothingIterations);
-void setOutputEnabled(bool enabled);
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMultiplyImageFilter.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkImageRegionConstIterator.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImageDuplicator.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
 
-void setMeanBeforeWarpEnabled(bool enabled);
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImageFileWriter.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Procrustes3D.h&quot;</span>
 
-vtkSmartPointer&lt;vtkPolyData&gt; getMesh(PointArrayType local_pts);
-void readMeanInfo(std::string dense,
-                  std::string sparse, std::string goodPoints);
-bool sparseDone();
-bool denseDone();
-void writeMeanInfo(std::string nameBase);
+<span class="cp">#ifdef assert</span>
+<span class="cp">#undef assert</span>
+<span class="cp">#define assert(a) { if (!static_cast&lt;bool&gt;(a)) { throw std::runtime_error(&quot;a&quot;); } }</span>
+<span class="cp">#endif</span>
 
-vtkSmartPointer&lt;vtkPoints&gt;   SparseMean(){return sparseMean_;}
-vtkSmartPointer&lt;vtkPolyData&gt; DenseMean() {return denseMean_;}
+<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span>
+<span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TImageType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ITK_TEMPLATE_EXPORT</span><span class="w"> </span><span class="n">BSplineInterpolateImageFunctionWithDoubleCoefficents</span>
+<span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">BSplineInterpolateImageFunction</span><span class="w"> </span><span class="o">&lt;</span><span class="n">TImageType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;</span>
+<span class="p">{};</span>
+<span class="p">}</span>
 
-std::vector&lt;bool&gt; GoodPoints(){return goodPoints_;}
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TTransformType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="p">,</span>
+<span class="w">           </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TInterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="p">,</span>
+<span class="w">           </span><span class="k">typename</span><span class="w"> </span><span class="nc">TCoordRep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Reconstruction</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">GradientImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="o">&gt;</span><span class="w">               </span><span class="n">GradientFilterType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">GradientMagnitudeImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GradientMagnitudeFilterType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CovariantVector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w">        </span><span class="n">GradientImageType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="w"> </span><span class="n">GradientImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w">            </span><span class="n">GradientImageIteratorType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w">                    </span><span class="n">ImageIteratorType</span><span class="p">;</span>
 
-std::string OutPrefix(){return out_prefix_;}
-void setOutPrefix(std::string out_prefix){out_prefix_ = out_prefix;}
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageFileWriter</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w">  </span><span class="n">WriterType</span><span class="p">;</span>
 
-std::vector&lt; PointArrayType &gt;  computeSparseMean(std::vector&lt; PointArrayType &gt; local_pts,
-                                                 itk::Point&lt;TCoordRep&gt;&amp; common_center,
-                                                 bool do_procrustes = true,
-                                                 bool do_procrustes_scaling = false);
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageToVTKImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w">                    </span><span class="n">ITK2VTKConnectorType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">AddImageFilter</span><span class="w"> </span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w">              </span><span class="n">AddImageFilterType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ResampleImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w">          </span><span class="n">ResampleFilterType</span><span class="p">;</span>
 
-void setOrigin(typename ImageType::PointType origin)
-{
-    use_origin = true;
-    origin_[0] = origin[0];
-    origin_[1] = origin[1];
-    origin_[2] = origin[2];
-}
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">TInterpolatorType</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">TCoordRep</span><span class="w"> </span><span class="o">&gt;</span><span class="w">                  </span><span class="n">InterpolatorType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">MultiplyImageFilter</span><span class="w"> </span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w">  </span><span class="n">MultiplyByConstantImageFilterType</span><span class="p">;</span>
 
-void EnablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = true;}
-void DisablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = false;}
-</code></pre>
-<p>private:
-    int ComputeMedianShape(std::vector<vnl_matrix\<double>> &amp; shapeList);
-    void computeDenseMean(
-            std::vector&lt; PointArrayType &gt; local_pts,
-            std::vector&lt; PointArrayType &gt; global_pts,
-            std::vector<std::string> distance_transform);
-    vnl_matrix<double> computeParticlesNormals(
-            vtkSmartPointer&lt; vtkPoints &gt; particles,
-            typename ImageType::Pointer distance_transform);
-    void generateWarpedMeshes(typename TransformType::Pointer transform,
-                              vtkSmartPointer<vtkPolyData>&amp; outputMesh);
-    double computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points,
-                                             std::vector<int> particles_indices);
-    void CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
-                      vtkSmartPointer<vtkPoints> targetPts,
-                      typename TransformType::Pointer transform,
-                      vtkSmartPointer<vtkPoints> &amp; mappedCorrespondences,
-                      double &amp; rms, double &amp; rms_wo_mapping, double &amp; maxmDist);
-    vtkSmartPointer<vtkPoints> convertToImageCoordinates(
-            vtkSmartPointer<vtkPoints> particles, int number_of_particles,
-            const itk::Image&lt; float, 3 &gt;::SpacingType&amp; spacing,
-            const itk::Image&lt; float, 3 &gt;::PointType&amp; origin);
-    vtkSmartPointer<vtkPoints> convertToPhysicalCoordinates(
-            vtkSmartPointer<vtkPoints> particles, int number_of_particles,
-            const itk::Image&lt; float, 3 &gt;::SpacingType&amp; spacing,
-            const itk::Image&lt; float, 3 &gt;::PointType&amp; origin);
-    vtkSmartPointer<vtkPolyData> extractIsosurface(
-            vtkSmartPointer<vtkImageData> volData,
-            float levelsetValue        = 0.0f,
-            float targetReduction      = 0.1f,
-            float featureAngle         = 30,
-            int lsSmootherIterations   = 1,
-            int meshSmootherIterations = 1,
-            bool preserveTopology      = true);
-    vtkSmartPointer<vtkPolyData> MeshQC(
-            vtkSmartPointer<vtkPolyData> meshIn);</p>
-<pre><code>typename ImageType::Pointer loadImage(std::string filename);
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageDuplicator</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w">                           </span><span class="n">DuplicatorType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">TTransformType</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w">                             </span><span class="n">TransformType</span><span class="p">;</span>
 
-void performKMeansClustering(
-        std::vector&lt; PointArrayType &gt; global_pts,
-        unsigned int number_of_particles,
-        std::vector&lt;int&gt; &amp; centroidIndices);
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TCoordRep</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w">                  </span><span class="n">PointType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&gt;</span><span class="w">                    </span><span class="n">PointArrayType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">::</span><span class="n">PointSetType</span><span class="w">        </span><span class="n">PointSetType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointIdentifier</span><span class="w">      </span><span class="n">PointIdType</span><span class="p">;</span>
 
-void writePLY(char* filename, vtkSmartPointer&lt;vtkPolyData&gt; meshIn);
-void writeVTK(char* filename, vtkSmartPointer&lt;vtkPolyData&gt; meshIn);
+<span class="w">    </span><span class="n">Reconstruction</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">out_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.3f</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">double</span><span class="w"> </span><span class="n">angleThresh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">45.0f</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">size_t</span><span class="w"> </span><span class="n">numClusters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">bool</span><span class="w"> </span><span class="n">fixWinding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingBeforeDecimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingAfterDecimation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">float</span><span class="w"> </span><span class="n">smoothingLambda</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5f</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">int</span><span class="w"> </span><span class="n">smoothingIterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">bool</span><span class="w"> </span><span class="n">usePairwiseNormalsDifferencesForGoodBad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="w">    </span><span class="o">~</span><span class="n">Reconstruction</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getDenseMean</span><span class="p">(</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transform</span><span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset</span><span class="p">();</span>
 
-//members.
-vtkSmartPointer&lt;vtkPoints&gt; sparseMean_;
-vtkSmartPointer&lt;vtkPolyData&gt; denseMean_;
-std::vector&lt;bool&gt; goodPoints_;
-bool sparseDone_;
-bool denseDone_;
-float decimationPercent_;
-double maxAngleDegrees_;
-size_t numClusters_;
-int medianShapeIndex_;
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setDecimation</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">dec</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setNumClusters</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMaxAngle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angleDegrees</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setFixWinding</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">fixWinding</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setLaplacianSmoothingBeforeDecimation</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingBeforeDecimation</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setLaplacianSmoothingAfterDecimation</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingAfterDecimation</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setSmoothingLambda</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">smoothingLambda</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setSmoothingIterations</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">smoothingIterations</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setOutputEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
 
-bool fixWinding_;
-bool doLaplacianSmoothingBeforeDecimation_;
-bool doLaplacianSmoothingAfterDecimation_;
-float smoothingLambda_;
-int smoothingIterations_;
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMeanBeforeWarpEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
 
-typename ImageType::PointType origin_;
-bool use_origin;
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getMesh</span><span class="p">(</span><span class="n">PointArrayType</span><span class="w"> </span><span class="n">local_pts</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">readMeanInfo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">dense</span><span class="p">,</span>
+<span class="w">                      </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sparse</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">goodPoints</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">sparseDone</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">denseDone</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">writeMeanInfo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">nameBase</span><span class="p">);</span>
 
-std::string out_prefix_; // to save intermediate files in case needed
-bool output_enabled_ = true;
-bool usePairwiseNormalsDifferencesForGoodBad_ = false;
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w">   </span><span class="n">SparseMean</span><span class="p">(){</span><span class="k">return</span><span class="w"> </span><span class="n">sparseMean_</span><span class="p">;}</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DenseMean</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="k">return</span><span class="w"> </span><span class="n">denseMean_</span><span class="p">;}</span>
 
-bool mean_before_warp_enabled_ = true;
-</code></pre>
-<p>};</p>
-<h1 id="include-reconstructioncpp-need-to-include-template-definition-in-order-for-it-to-be-instantiated">include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated</h1>
-<h1 id="endif-reconstruction_h">endif // !<strong>RECONSTRUCTION_H</strong></h1>
-<p>```</p>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GoodPoints</span><span class="p">(){</span><span class="k">return</span><span class="w"> </span><span class="n">goodPoints_</span><span class="p">;}</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">OutPrefix</span><span class="p">(){</span><span class="k">return</span><span class="w"> </span><span class="n">out_prefix_</span><span class="p">;}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">setOutPrefix</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">out_prefix</span><span class="p">){</span><span class="n">out_prefix_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">out_prefix</span><span class="p">;}</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w">  </span><span class="n">computeSparseMean</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="p">,</span>
+<span class="w">                                                     </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="n">TCoordRep</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">common_center</span><span class="p">,</span>
+<span class="w">                                                     </span><span class="kt">bool</span><span class="w"> </span><span class="n">do_procrustes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">                                                     </span><span class="kt">bool</span><span class="w"> </span><span class="n">do_procrustes_scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setOrigin</span><span class="p">(</span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">origin</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">use_origin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">        </span><span class="n">origin_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">        </span><span class="n">origin_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">        </span><span class="n">origin_</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">origin</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">EnablePairwiseNormalsDifferencesForGoodBad</span><span class="p">(){</span><span class="n">usePairwiseNormalsDifferencesForGoodBad_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisablePairwiseNormalsDifferencesForGoodBad</span><span class="p">(){</span><span class="n">usePairwiseNormalsDifferencesForGoodBad_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;}</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ComputeMedianShape</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">shapeList</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">computeDenseMean</span><span class="p">(</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="p">,</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="p">,</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transform</span><span class="p">);</span>
+<span class="w">    </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">computeParticlesNormals</span><span class="p">(</span>
+<span class="w">            </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span>
+<span class="w">            </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">distance_transform</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateWarpedMeshes</span><span class="p">(</span><span class="k">typename</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">outputMesh</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">computeAverageDistanceToNeighbors</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span>
+<span class="w">                                             </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles_indices</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">CheckMapping</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sourcePts</span><span class="p">,</span>
+<span class="w">                      </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">targetPts</span><span class="p">,</span>
+<span class="w">                      </span><span class="k">typename</span><span class="w"> </span><span class="nc">TransformType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span>
+<span class="w">                      </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mappedCorrespondences</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rms</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rms_wo_mapping</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmDist</span><span class="p">);</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">convertToImageCoordinates</span><span class="p">(</span>
+<span class="w">            </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_particles</span><span class="p">,</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SpacingType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">origin</span><span class="p">);</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">convertToPhysicalCoordinates</span><span class="p">(</span>
+<span class="w">            </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_particles</span><span class="p">,</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SpacingType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span>
+<span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">origin</span><span class="p">);</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">extractIsosurface</span><span class="p">(</span>
+<span class="w">            </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">volData</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">levelsetValue</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">targetReduction</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="mf">0.1f</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">featureAngle</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">lsSmootherIterations</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">meshSmootherIterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">bool</span><span class="w"> </span><span class="n">preserveTopology</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">MeshQC</span><span class="p">(</span>
+<span class="w">            </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshIn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="nf">loadImage</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">performKMeansClustering</span><span class="p">(</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointArrayType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_particles</span><span class="p">,</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">centroidIndices</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">writePLY</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshIn</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">writeVTK</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshIn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">//members.</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparseMean_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">denseMean_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">goodPoints_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">sparseDone_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">denseDone_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxAngleDegrees_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">numClusters_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">medianShapeIndex_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">fixWinding_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingBeforeDecimation_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">doLaplacianSmoothingAfterDecimation_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">smoothingLambda_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">smoothingIterations_</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">origin_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_origin</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">out_prefix_</span><span class="p">;</span><span class="w"> </span><span class="c1">// to save intermediate files in case needed</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">output_enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">usePairwiseNormalsDifferencesForGoodBad_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mean_before_warp_enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Reconstruction.cpp&quot;</span><span class="c1">  //need to include template definition in order for it to be instantiated</span>
+
+<span class="cp">#endif </span><span class="c1">// !__RECONSTRUCTION_H__</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

@@ -3897,30 +3897,30 @@
 <h2 id="optimization-parameters">Optimization Parameters</h2>
 <p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See <a href="../../workflow/parameters.html#project-excel-file">Project excel file</a> for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.</p>
-<p><code>python
- {
-        "number_of_particles": 128,
-        "use_normals": 0,
-        "normals_strength": 15.0,
-        "checkpointing_interval": 0,
-        "keep_checkpoints": 0,
-        "iterations_per_split": 10,
-        "optimization_iterations": 10,
-        "starting_regularization": 100,
-        "ending_regularization": 0.1,
-        "recompute_regularization_interval": 2,
-        "relative_weighting": 15,
-        "initial_relative_weighting": 0.05,
-        "procrustes_interval": 0,
-        "procrustes_scaling": 0,
-        "save_init_splits": 0,
-        "verbosity": 0,
-        "use_landmarks": 1,
-        "use_fixed_subjects": 1,
-        "narrow_band": 1e10,
-        "fixed_subjects_column": "fixed",
-        "fixed_subjects_choice": "yes"
-    }</code></p>
+<div class="highlight"><pre><span></span><code> <span class="p">{</span>
+        <span class="s2">&quot;number_of_particles&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">,</span>
+        <span class="s2">&quot;checkpointing_interval&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;keep_checkpoints&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;iterations_per_split&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;optimization_iterations&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;starting_regularization&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;ending_regularization&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;recompute_regularization_interval&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;relative_weighting&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="s2">&quot;initial_relative_weighting&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="s2">&quot;procrustes_interval&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;procrustes_scaling&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;save_init_splits&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;verbosity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;use_landmarks&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;use_fixed_subjects&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;narrow_band&quot;</span><span class="p">:</span> <span class="mf">1e10</span><span class="p">,</span>
+        <span class="s2">&quot;fixed_subjects_column&quot;</span><span class="p">:</span> <span class="s2">&quot;fixed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed_subjects_choice&quot;</span><span class="p">:</span> <span class="s2">&quot;yes&quot;</span>
+    <span class="p">}</span>
+</code></pre></div>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
 <p>Here we can see the optimized particles for the new samples (numbers 15-19). The particles for the original samples (0-14) have remained the same.
 <img alt="Ellipsoid FD Optimization" src="../../img/use-cases/ellipsoid_fd.png" /></p>

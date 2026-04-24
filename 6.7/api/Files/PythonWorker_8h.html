@@ -22,7 +22,7 @@
     
     
       
-        <title>Libs/Application/Job/PythonWorker.h - ShapeWorks</title>
+        <title>Studio/Python/PythonWorker.h - ShapeWorks</title>
       
     
     
@@ -88,7 +88,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#libsapplicationjobpythonworkerh" class="md-skip">
+        <a href="#studiopythonpythonworkerh" class="md-skip">
           Skip to content
         </a>
       
@@ -127,7 +127,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Libs/Application/Job/PythonWorker.h
+              Studio/Python/PythonWorker.h
             
           </span>
         </div>
@@ -3771,7 +3771,7 @@
   
 
 
-<h1 id="libsapplicationjobpythonworkerh">Libs/Application/Job/PythonWorker.h</h1>
+<h1 id="studiopythonpythonworkerh">Studio/Python/PythonWorker.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -3801,51 +3801,71 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<p>// qt</p>
-<h1 id="include">include <QObject></h1>
-<h1 id="include_1">include <QSharedPointer></h1>
-<p>// vtk</p>
-<h1 id="include_2">include <vtkSmartPointer.h></h1>
-<p>// studio</p>
-<h1 id="include_3">include <Job/Job.h></h1>
-<h1 id="include_4">include <Libs/Application/ShapeWorksVtkOutputWindow.h></h1>
-<p>namespace shapeworks {
-class PythonLogger;</p>
-<p>class PythonWorker : public QObject {
-  Q_OBJECT</p>
-<p>public:
-  constexpr static const char* python_api_version = "6.7";</p>
-<p>PythonWorker();
-  ~PythonWorker();</p>
-<p>void set_vtk_output_window(vtkSmartPointer<ShapeWorksVtkOutputWindow> output_window);
-  void set_cli_mode(bool cli_mode);</p>
-<p>void run_job(QSharedPointer<Job> job);
-  void set_current_job(QSharedPointer<Job> job);</p>
-<p>void incoming_python_message(std::string message_string);
-  void incoming_python_progress(double value, std::string message);</p>
-<p>void end_python();</p>
-<p>void abort_job();</p>
-<p>public Q_SLOTS:</p>
-<p>bool init();</p>
-<p>void start_job(QSharedPointer<Job> job);</p>
-<p>void finalize_python();</p>
-<p>Q_SIGNALS:</p>
-<p>void result_ready();
-  void finished();</p>
-<p>private:
-  bool initialized_ = false;
-  bool initialized_success_ = false;</p>
-<p>vtkSmartPointer<ShapeWorksVtkOutputWindow> studio_vtk_output_window_;</p>
-<p>QSharedPointer<PythonLogger> python_logger_;</p>
-<p>QSharedPointer<Job> current_job_;</p>
-<p>QThread* thread_{nullptr};
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="c1">// qt</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+
+<span class="c1">// vtk</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+
+<span class="c1">// studio</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Job/Job.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/StudioVtkOutputWindow.h&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PythonLogger</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PythonWorker</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">python_api_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;6.5&quot;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">PythonWorker</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">PythonWorker</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_vtk_output_window</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioVtkOutputWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">output_window</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_job</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Job</span><span class="o">&gt;</span><span class="w"> </span><span class="n">job</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">incoming_python_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message_string</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">incoming_python_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">end_python</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">abort_job</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">init</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_job</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Job</span><span class="o">&gt;</span><span class="w"> </span><span class="n">job</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">finalize_python</span><span class="p">();</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">result_ready</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">finished</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">initialized_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">initialized_success_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioVtkOutputWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">studio_vtk_output_window_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonLogger</span><span class="o">&gt;</span><span class="w"> </span><span class="n">python_logger_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Job</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_job_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QThread</span><span class="o">*</span><span class="w"> </span><span class="n">thread_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

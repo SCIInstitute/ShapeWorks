@@ -3805,267 +3805,340 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Analyze/Analyze.h></h1>
-<h1 id="include_1">include <Analyze/Particles.h></h1>
-<h1 id="include_2">include <Data/Preferences.h></h1>
-<h1 id="include_3">include <Logging.h></h1>
-<h1 id="include_4">include <MeshManager.h></h1>
-<h1 id="include_5">include <Particles/ParticleSystemEvaluation.h></h1>
-<h1 id="include_6">include <Project/Project.h></h1>
-<h1 id="include_7">include <Shapeworks.h></h1>
-<h1 id="include_8">include <StudioEnums.h></h1>
-<h1 id="include_9">include <Visualization/Viewer.h></h1>
-<h1 id="include_10">include <itkMatrixOffsetTransformBase.h></h1>
-<h1 id="include_11">include <vtkLookupTable.h></h1>
-<h1 id="include_12">include <QSharedPointer></h1>
-<h1 id="include_13">include <QVector></h1>
-<h1 id="include_14">include <string></h1>
-<h1 id="include_15">include <vector></h1>
-<p>namespace shapeworks {</p>
-<p>class PythonWorker;</p>
-<p>class CompareSettings {
- public:
-  bool compare_enabled_ = false;
-  bool surface_distance_mode_ = false;
-  bool original_checked_ = false;
-  bool groomed_checked_ = false;
-  bool reconstructed_checked_ = false;
-  bool mean_shape_checked_ = false;
-  float opacity_ = 1.0;
-  DisplayMode get_display_mode() {
-    if (original_checked_) {
-      return DisplayMode::Original;
-    } else if (groomed_checked_) {
-      return DisplayMode::Groomed;
-    } else {
-      return DisplayMode::Reconstructed;
-    }
-  }
-  bool get_mean_shape_checked() { return mean_shape_checked_; }
-};</p>
-<p>class Shape;</p>
-<p>class Session;
-typedef QSharedPointer<Session> SessionHandle;</p>
-<p>using TransformType = vtkSmartPointer<vtkTransform>;</p>
-<p>class Session : public QObject, public QEnableSharedFromThis<Session> {
-  Q_OBJECT;</p>
-<p>public:
-  using AlignmentType = Analyze::AlignmentType;</p>
-<p>Session(QWidget* parent, Preferences&amp; prefs);</p>
-<p>~Session();</p>
-<p>void set_parent(QWidget* parent);</p>
-<p>bool save_project(QString filename);</p>
-<p>bool load_project(QString filename);</p>
-<p>bool load_light_project(QString filename);</p>
-<p>bool load_xl_project(QString filename);</p>
-<p>void set_project_path(QString relative_path);</p>
-<p>std::shared_ptr<shapeworks::Project> get_project();</p>
-<p>void load_original_files(std::vector<std::string> filenames);</p>
-<p>void load_groomed_files(std::vector<std::string> file_names, double iso, int domains_per_shape);</p>
-<p>bool load_point_files(std::vector<std::string> local, std::vector<std::string> world, int domains_per_shape);</p>
-<p>bool update_particles(std::vector<Particles> particles);</p>
-<p>int get_num_particles();</p>
-<p>ParticleSystemEvaluation get_local_particle_system(int domain);</p>
-<p>void update_procrustes_transforms(std::vector<std::vector\<std::vector\<double>>> transforms);</p>
-<p>bool is_light_project();</p>
-<p>bool get_groomed_present();</p>
-<p>void remove_shapes(QList<int> list);</p>
-<p>ShapeList get_shapes();</p>
-<p>ShapeList get_non_excluded_shapes();</p>
-<p>void calculate_reconstructed_samples();</p>
-<p>QString get_filename();</p>
-<p>QString get_display_name();</p>
-<p>bool original_present();
-  bool groomed_present();
-  bool particles_present();
-  bool groups_available();
-  int get_num_shapes();</p>
-<p>int get_domains_per_shape();</p>
-<p>std::string get_default_feature_map();</p>
-<p>static bool is_supported_file_format(std::string filename);</p>
-<p>std::shared_ptr<MeshManager> get_mesh_manager() { return this-&gt;mesh_manager_; }</p>
-<p>shapeworks::Parameters&amp; parameters();</p>
-<p>std::vector<DomainType> get_groomed_domain_types();</p>
-<p>double update_auto_glyph_size();</p>
-<p>double get_auto_glyph_size();</p>
-<p>static Point3 get_point(const Eigen::VectorXd&amp; points, int i);</p>
-<p>void clear_particles();</p>
-<p>bool get_feature_auto_scale();</p>
-<p>double get_feature_range_max();
-  double get_feature_range_min();
-  void set_feature_range(double min, double max);
-  void set_feature_range_min(double value);
-  void set_feature_range_max(double value);</p>
-<p>void set_feature_uniform_scale(bool value);
-  bool get_feature_uniform_scale();</p>
-<p>void handle_ctrl_click(PickResult result);</p>
-<p>void trigger_landmarks_changed();
-  void trigger_planes_changed();
-  void trigger_ffc_changed();
-  void trigger_annotations_changed();
-  void trigger_save();
-  void trigger_data_changed();
-  void reload_particles();
-  void trigger_fill_all_ffc();</p>
-<p>void set_active_landmark_domain(int id);
-  int get_active_landmark_domain();
-  void set_placing_landmark(int id);
-  int get_placing_landmark();
-  void set_landmarks_active(bool active);
-  bool get_landmarks_active();
-  void set_planes_active(bool active);
-  bool get_planes_active();
-  void set_show_landmark_labels(bool show);
-  bool get_show_landmark_labels();</p>
-<p>void set_show_planes(bool show);
-  bool get_show_planes();
-  bool should_show_planes();</p>
-<p>void set_show_landmarks(bool show);
-  bool get_show_landmarks();</p>
-<p>// image volume
-  bool set_image_name(std::string image_name);
-  std::string get_image_name();</p>
-<p>// image axis
-  void set_image_axis(QString axis);
-  Axis get_image_axis();</p>
-<p>// image view 3d mode
-  void set_image_3d_mode(bool mode);
-  bool get_image_3d_mode();</p>
-<p>// image sync/share window width and level
-  void set_image_share_window_and_level(bool enabled);
-  bool get_image_share_brightness_contrast();</p>
-<p>// image sync slice
-  void set_image_sync_slice(bool enabled);
-  bool get_image_sync_slice();</p>
-<p>// 3D image, thickness feature
-  void set_image_thickness_feature(bool enabled);
-  bool get_image_thickness_feature();</p>
-<p>void set_feature_map(std::string feature_map);
-  std::string get_feature_map();</p>
-<p>bool has_constraints();</p>
-<p>void set_loading(bool loading);
-  bool is_loading();</p>
-<p>void set_tool_state(std::string state);
-  std::string get_tool_state();
-  bool is_analysis_mode();</p>
-<p>void set_ffc_paint_active(bool enabled);
-  bool get_ffc_paint_active();</p>
-<p>void set_seg_paint_active(bool enabled);
-  bool get_seg_paint_active();</p>
-<p>void set_seg_paint_value(int value);
-  int get_seg_paint_value();</p>
-<p>void set_ffc_paint_mode_inclusive(bool inclusive);
-  bool get_ffc_paint_mode_inclusive();</p>
-<p>void set_ffc_paint_size(double size);
-  double get_ffc_paint_size();</p>
-<p>void set_seg_paint_size(double size);
-  double get_seg_paint_size();</p>
-<p>bool get_show_good_bad_particles();
-  void set_show_good_bad_particles(bool enabled);</p>
-<p>bool get_show_difference_vectors();
-  void set_show_difference_vectors(bool enabled);
-  bool should_difference_vectors_show();</p>
-<p>std::vector<bool> get_good_bad_particles();
-  void set_good_bad_particles(const std::vector<bool>&amp; good_bad);</p>
-<p>// for setting difference to mean, etc
-  void set_difference_particles(Particles particles) { difference_particles_ = particles; }
-  Particles get_difference_particles() { return difference_particles_; }</p>
-<p>void set_compare_settings(CompareSettings settings);
-  CompareSettings get_compare_settings();</p>
-<p>void trigger_repaint();</p>
-<p>void trigger_reinsert_shapes();</p>
-<p>void set_display_mode(DisplayMode mode);</p>
-<p>DisplayMode get_display_mode();</p>
-<p>void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) { glyph_lut_ = lut; }
-  vtkSmartPointer<vtkLookupTable> get_glyph_lut() { return glyph_lut_; }</p>
-<p>void set_py_worker(QSharedPointer<PythonWorker> worker) { py_worker_ = worker; }
-  QSharedPointer<PythonWorker> get_py_worker() { return py_worker_; }</p>
-<p>Eigen::MatrixXd get_all_particles();
-  Eigen::MatrixXd get_all_scalars(std::string target_feature);</p>
-<p>void set_current_alignment(AlignmentType alignment) { current_alignment_ = alignment; }
-  AlignmentType get_current_alignment() { return current_alignment_; }</p>
-<p>bool is_modified() { return modified_; }
-  void set_modified(bool modified);</p>
-<p>void recompute_surfaces();</p>
-<p>public Q_SLOTS:
-  void set_feature_auto_scale(bool value);</p>
-<p>void set_landmark_drag_mode(bool mode);
-  bool get_landmark_drag_mode();</p>
-<p>void handle_clear_cache();
-  void handle_new_mesh();
-  void handle_thread_complete();</p>
-<p>Q_SIGNALS:
-  void data_changed();
-  void tool_state_changed();
-  void points_changed();
-  void landmarks_changed();
-  void planes_changed();
-  void ffc_changed();
-  void update_display();
-  void feature_map_changed();
-  void reset_stats();
-  void new_mesh();
-  void feature_range_changed();
-  void update_view_mode();
-  void image_slice_settings_changed();
-  void paint_mode_changed();
-  void repaint();
-  void reinsert_shapes();
-  void annotations_changed();
-  void save();
-  void session_title_changed();
-  void image_name_changed();
-  void fill_all_ffc_requested();</p>
-<p>public:
-  // constants
-  const static std::string DATA_C;
-  const static std::string GROOM_C;
-  const static std::string OPTIMIZE_C;
-  const static std::string ANALYSIS_C;
-  const static std::string DEEPSSM_C;
-  const static std::string MONAI_C;</p>
-<p>private:
-  void renumber_shapes();</p>
-<p>void new_landmark(PickResult result);</p>
-<p>void new_plane_point(PickResult result);</p>
-<p>QWidget* parent_{nullptr};</p>
-<p>Preferences&amp; preferences_;</p>
-<p>QString filename_;</p>
-<p>ShapeList shapes_;</p>
-<p>Particles difference_particles_;</p>
-<p>std::shared_ptr<MeshManager> mesh_manager_;</p>
-<p>bool groups_available_{false};
-  bool is_light_project_{false};</p>
-<p>bool unsaved_particle_files_{false};</p>
-<p>Parameters params_;</p>
-<p>std::shared_ptr<Project> project_{new Project()};</p>
-<p>double auto_glyph_size_ = -1;</p>
-<p>int active_landmark_domain_ = -1;
-  int placing_landmark_ = -1;
-  bool landmark_drag_mode_ = false;
-  bool landmarks_active_ = false;
-  bool planes_active_ = false;
-  bool show_landmark_labels_ = false;
-  bool show_difference_vectors_ = false;</p>
-<p>bool ffc_painting_active_ = false;
-  bool ffc_painting_inclusive_mode_ = false;
-  double ffc_paint_size_ = 50;
-  double seg_paint_size_ = 50;
-  bool seg_painting_active_ = false;
-  int seg_painting_value_ = 1;</p>
-<p>bool is_loading_ = false;
-  CompareSettings compare_settings_;</p>
-<p>vtkSmartPointer<vtkLookupTable> glyph_lut_;</p>
-<p>QSharedPointer<PythonWorker> py_worker_;</p>
-<p>AlignmentType current_alignment_{AlignmentType::Local};</p>
-<p>bool modified_{false};
-};</p>
-<p>}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;MeshManager.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Particles/ParticleSystemEvaluation.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shapeworks.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;StudioEnums.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Viewer.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrixOffsetTransformBase.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkLookupTable.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PythonWorker</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CompareSettings</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">compare_enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">original_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groomed_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">reconstructed_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">mean_shape_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">opacity_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">  </span><span class="n">DisplayMode</span><span class="w"> </span><span class="nf">get_display_mode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">original_checked_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Original</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">groomed_checked_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Groomed</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Reconstructed</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_mean_shape_checked</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mean_shape_checked_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SessionHandle</span><span class="p">;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="p">;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QEnableSharedFromThis</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Session</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
+
+<span class="w">  </span><span class="o">~</span><span class="n">Session</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_parent</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">save_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_light_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_xl_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_project_path</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">relative_path</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_project</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_original_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_groomed_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">file_names</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">iso</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_point_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">local</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">world</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">update_particles</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Particles</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_particles</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="nf">get_local_particle_system</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_procrustes_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_light_project</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_groomed_present</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_shapes</span><span class="p">(</span><span class="n">QList</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_non_excluded_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">calculate_reconstructed_samples</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_filename</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_display_name</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">original_present</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groomed_present</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">particles_present</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groups_available</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_domains_per_shape</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_default_feature_map</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_supported_file_format</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_manager</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mesh_manager_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Parameters</span><span class="o">&amp;</span><span class="w"> </span><span class="n">parameters</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DomainType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_domain_types</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">update_auto_glyph_size</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_auto_glyph_size</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="nf">get_point</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_particles</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_feature_auto_scale</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_feature_range_max</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_feature_range_min</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range_min</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range_max</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_ctrl_click</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_landmarks_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_planes_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_ffc_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_annotations_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_save</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_data_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reload_particles</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active_landmark_domain</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_active_landmark_domain</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_placing_landmark</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_placing_landmark</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_landmarks_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_landmarks_active</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_planes_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_planes_active</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmark_labels</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmark_labels</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_planes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_planes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_show_planes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmarks</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmarks</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// image volume</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">set_image_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_name</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_image_name</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// image axis</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_axis</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Axis</span><span class="w"> </span><span class="nf">get_image_axis</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// image view 3d mode</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_3d_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_3d_mode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// image sync/share window width and level</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_share_window_and_level</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_share_brightness_contrast</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// image sync slice</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_sync_slice</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_sync_slice</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// 3D image, thickness feature</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_thickness_feature</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_thickness_feature</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_feature_map</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_constraints</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_loading</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">loading</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_loading</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tool_state</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_tool_state</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_analysis_mode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_active</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_mode_inclusive</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_mode_inclusive</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_size</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_ffc_paint_size</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_good_bad_particles</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_good_bad_particles</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_difference_vectors</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_difference_vectors</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_difference_vectors_show</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_good_bad_particles</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_good_bad_particles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">good_bad</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// for setting difference to mean, etc</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_difference_particles</span><span class="p">(</span><span class="n">Particles</span><span class="w"> </span><span class="n">particles</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">difference_particles_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">particles</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_difference_particles</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_compare_settings</span><span class="p">(</span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">);</span>
+<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="nf">get_compare_settings</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_repaint</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_reinsert_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_display_mode</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">DisplayMode</span><span class="w"> </span><span class="nf">get_display_mode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_lut</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_py_worker</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">worker</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">py_worker_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">worker</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_py_worker</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_all_particles</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">get_all_scalars</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">target_feature</span><span class="p">);</span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_landmark_drag_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_landmark_drag_mode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_clear_cache</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">data_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">points_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">landmarks_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">planes_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_display</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_stats</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_mesh</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">feature_range_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_mode</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_slice_settings_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_paint_mode_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">repaint</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reinsert_shapes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">annotations_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="c1">// constants</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DATA_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">OPTIMIZE_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ANALYSIS_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">renumber_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_landmark</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_plane_point</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">filename_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groups_available_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_light_project_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">unsaved_particle_files_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="n">Project</span><span class="p">()};</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">auto_glyph_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">active_landmark_domain_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">placing_landmark_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmark_drag_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmarks_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">planes_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_landmark_labels_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_difference_vectors_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_inclusive_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">ffc_paint_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">compare_settings_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:35 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

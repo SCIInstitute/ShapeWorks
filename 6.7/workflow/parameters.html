@@ -817,24 +817,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#set-subjects" class="md-nav__link">
-    <span class="md-ellipsis">
-      Set subjects
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#set-subjects_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Set subjects
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3889,24 +3871,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#set-subjects" class="md-nav__link">
-    <span class="md-ellipsis">
-      Set subjects
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#set-subjects_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Set subjects
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3925,6 +3889,8 @@
   
   
 
+
+  <h1>Optimization Parameters</h1>
 
 <p><code>ShapeWorks</code> supports two formats for handling the data for performing grooming and optimization via the python interface and <code>ShapeWorksStudio</code>:</p>
 <ul>
@@ -3972,24 +3938,24 @@
 <h3 id="parameter-dictionary-in-python">Parameter Dictionary in Python</h3>
 <p>Prior to <code>ShapeWorks 6.3</code>, all the <img alt="use cases" src="../getting-started/examples.html" />In <code>Examples/Python/&lt;use-case-name.py&gt;</code>,we used XML files to run optimization. A python code - <code>Examples/Python/OptimizeUtils.py</code> was used to convert a list of parameter dictionary in python to an XML file. </p>
 <p>Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the <a href="#xml-parameter-file">XML tags</a>, except for <code>"normals_strength"</code> that sets the <code>&lt;attribute_scales&gt;</code> of the surface normal vector.</p>
-<p><code>python
-{
-    "number_of_particles": 1024,
-    "use_normals": 0, 
-    "normals_strength": 0.0, 
-    "checkpointing_interval" : 10000, 
-    "keep_checkpoints" : 0, 
-    "iterations_per_split" : 4000, 
-    "optimization_iterations" : 500, 
-    "starting_regularization" : 10, 
-    "ending_regularization" : 1, 
-    "relative_weighting" : 10,
-    "initial_relative_weighting" : 1,
-    "procrustes_interval" : 1,
-    "procrustes_scaling" : 1,
-    "save_init_splits" : 0,
-    "verbosity" : 2,
-}</code>
+<p><div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;number_of_particles&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
+    <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+    <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> 
+    <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">10000</span><span class="p">,</span> 
+    <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+    <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">4000</span><span class="p">,</span> 
+    <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span> 
+    <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span> 
+    <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+    <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;procrustes_interval&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;procrustes_scaling&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;save_init_splits&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;verbosity&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
 <img alt="Optimization Parameters" src="../img/workflow/params.png" /></p>
 <h2 id="project-excel-file">Project Excel File</h2>
 <p>ShapeWorks Studio and the <code>shapeworks</code> commands <code>groom</code> and <code>optimize</code> use a new project format based on XLSX. The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputting data into shapeworks for grooming, optimizing, and analyzing data.</p>
@@ -4028,31 +3994,32 @@ Many other columns will be filled in automatically by the ShapeWorks tools.</p>
 <p>ShapeWorks also supports a JSON version of the Excel project file for easier interoperability with other tools as well as text editor support.</p>
 <p>The format is very similar to that of the Excel spreadsheet with JSON objects for each sheet and for the data sheet, one object per subject with key/values the same as spreasheet columns.</p>
 <p>For example:</p>
-<p><code>{
-    "data": [
+<div class="highlight"><pre><span></span><code>{
+    &quot;data&quot;: [
         {
-            "name": "",
-            "shape_femur": "195916_R_FM_align.nrrd",
-            "shape_pelvis": "195916_R_PV_align.ply",
-            "groomed_femur": "groomed/195916_R_FM_align_DT.nrrd",
-            "groomed_pelvis": "groomed/195916_R_PV_align_groomed.vtk",
+            &quot;name&quot;: &quot;&quot;,
+            &quot;shape_femur&quot;: &quot;195916_R_FM_align.nrrd&quot;,
+            &quot;shape_pelvis&quot;: &quot;195916_R_PV_align.ply&quot;,
+            &quot;groomed_femur&quot;: &quot;groomed/195916_R_FM_align_DT.nrrd&quot;,
+            &quot;groomed_pelvis&quot;: &quot;groomed/195916_R_PV_align_groomed.vtk&quot;,
         },
         {
-            "name": "",
-            "shape_femur": "187609_R_FM_align.nrrd",
-            "shape_pelvis": "187609_R_PV_align.ply",
-            "groomed_femur": "groomed/187609_R_FM_align_DT.nrrd",
-            "groomed_pelvis": "groomed/187609_R_PV_align_groomed.vtk",
+            &quot;name&quot;: &quot;&quot;,
+            &quot;shape_femur&quot;: &quot;187609_R_FM_align.nrrd&quot;,
+            &quot;shape_pelvis&quot;: &quot;187609_R_PV_align.ply&quot;,
+            &quot;groomed_femur&quot;: &quot;groomed/187609_R_FM_align_DT.nrrd&quot;,
+            &quot;groomed_pelvis&quot;: &quot;groomed/187609_R_PV_align_groomed.vtk&quot;,
         },
     ...
-    "optimize": {
-        "ending_regularization": "1.000000",
-        "geodesic_cache_multiplier": "0",
-        "initial_relative_weighting": "0.050000",
-        "iterations_per_split": "1000",
-        "multiscale": "false",
-        "multiscale_particles": "32",
-    ...</code>     </p>
+    &quot;optimize&quot;: {
+        &quot;ending_regularization&quot;: &quot;1.000000&quot;,
+        &quot;geodesic_cache_multiplier&quot;: &quot;0&quot;,
+        &quot;initial_relative_weighting&quot;: &quot;0.050000&quot;,
+        &quot;iterations_per_split&quot;: &quot;1000&quot;,
+        &quot;multiscale&quot;: &quot;false&quot;,
+        &quot;multiscale_particles&quot;: &quot;32&quot;,
+    ...
+</code></pre></div>
 <h3 id="python-api-for-generation-project-sheet">Python API for Generation Project Sheet</h3>
 <p>The <code>Project</code> class of <code>ShapeWorks</code> lets you create the project excel sheet. It comprises various functions to add the input shape names, groomed file names, optimization parameters, transform matrices, etc. A details description of the C++ class and its functions can be found <a href="http://sciinstitute.github.io/ShapeWorks/6.3/api/Classes/classshapeworks_1_1Project.html#detailed-description">here</a>. The C++ functions also have a python interface, the use of which is demonstrated in the use cases. 
 Setting up the project sheet using the python API entails the following steps:</p>
@@ -4068,104 +4035,101 @@ Setting up the project sheet using the python API entails the following steps:</
 </ol>
 </li>
 </ol>
-<p><code>JSON
-{
-    "planes": [
-            {
-            "points": [[ 10, 10, 0 ],
-                       [-10,-10, 0 ],
-                       [ 10,-10, 0 ]] 
-            },
-            {
-            "points": [[ 10, 0, 10 ],
-                       [-10, 0, 10 ],
-                       [ 10, 0,-10 ]] 
-            }
-              ] 
-}</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;planes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">],</span>
+<span class="w">                       </span><span class="p">[</span><span class="mi">-10</span><span class="p">,</span><span class="mi">-10</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">],</span>
+<span class="w">                       </span><span class="p">[</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="mi">-10</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">]]</span><span class="w"> </span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;points&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="p">],</span>
+<span class="w">                       </span><span class="p">[</span><span class="mi">-10</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="p">],</span>
+<span class="w">                       </span><span class="p">[</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">-10</span><span class="w"> </span><span class="p">]]</span><span class="w"> </span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">              </span><span class="p">]</span><span class="w"> </span>
+<span class="p">}</span>
+</code></pre></div>
 <p>Setting up the subjects
-```python</p>
-<h1 id="set-subjects">Set subjects</h1>
-<pre><code>subjects = []
-number_domains = 1
-transforms = np.eye(4) # 4x4 matrix
-for i in range(number_of_shapes):
-subject = sw.Subject()
-subject.set_number_of_domains(number_domains)
-subject.set_original_filenames(input_shape_name[i])
-subject.set_groomed_filenames(groomed_shape_name[i])
-transform = [ transforms.flatten() ] #flatten into a vector and convert to list
-subject.set_groomed_transforms(transform)
-subject.set_constraints_filenames(plane_name[i]) #name pf the json file of the constraint plane
-subjects.append(subject) # create a list of all subjects
-</code></pre>
-<p>```
+<div class="highlight"><pre><span></span><code><span class="c1"># Set subjects</span>
+    <span class="n">subjects</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">number_domains</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">transforms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c1"># 4x4 matrix</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_shapes</span><span class="p">):</span>
+    <span class="n">subject</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Subject</span><span class="p">()</span>
+    <span class="n">subject</span><span class="o">.</span><span class="n">set_number_of_domains</span><span class="p">(</span><span class="n">number_domains</span><span class="p">)</span>
+    <span class="n">subject</span><span class="o">.</span><span class="n">set_original_filenames</span><span class="p">(</span><span class="n">input_shape_name</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">subject</span><span class="o">.</span><span class="n">set_groomed_filenames</span><span class="p">(</span><span class="n">groomed_shape_name</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="p">[</span> <span class="n">transforms</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="p">]</span> <span class="c1">#flatten into a vector and convert to list</span>
+    <span class="n">subject</span><span class="o">.</span><span class="n">set_groomed_transforms</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+    <span class="n">subject</span><span class="o">.</span><span class="n">set_constraints_filenames</span><span class="p">(</span><span class="n">plane_name</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="c1">#name pf the json file of the constraint plane</span>
+    <span class="n">subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="c1"># create a list of all subjects</span>
+</code></pre></div>
 Specify if the shape is part of fixed domain.
 If the shape is marked with "fixed" = "yes" they refer to the shapes of the pre-existing model
 If the shape is marked with "fixed" = "no", new correspondences will be placed on these new shapes using a pre-existing shape model. </p>
-<p><code>python
-    subject.set_extra_values({"fixed": "yes"})</code></p>
+<div class="highlight"><pre><span></span><code>    <span class="n">subject</span><span class="o">.</span><span class="n">set_extra_values</span><span class="p">({</span><span class="s2">&quot;fixed&quot;</span><span class="p">:</span> <span class="s2">&quot;yes&quot;</span><span class="p">})</span> 
+</code></pre></div>
 <p>If there are multiple domains, the subjects will contain list of string of filenames. 
-```python</p>
-<h1 id="set-subjects_1">Set subjects</h1>
-<pre><code>subjects = []
-domains_per_shape = 2
-for i in range(number_of_shapes):
-    subject = sw.Subject()
-    subject.set_number_of_domains(domains_per_shape)
-    rel_seg_files = []
-    rel_groom_files = []
-    transform = []
-    for d in range(domains_per_shape):
-        shape_files += input_shape_name[i*domains_per_shape+d]
-        groom_files += groomed_shape_name[i*domains_per_shape+d]
-        transform.append(transforms[i*domains_per_shape+d].flatten())
+<div class="highlight"><pre><span></span><code><span class="c1"># Set subjects</span>
+    <span class="n">subjects</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">domains_per_shape</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_shapes</span><span class="p">):</span>
+        <span class="n">subject</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Subject</span><span class="p">()</span>
+        <span class="n">subject</span><span class="o">.</span><span class="n">set_number_of_domains</span><span class="p">(</span><span class="n">domains_per_shape</span><span class="p">)</span>
+        <span class="n">rel_seg_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rel_groom_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">domains_per_shape</span><span class="p">):</span>
+            <span class="n">shape_files</span> <span class="o">+=</span> <span class="n">input_shape_name</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">domains_per_shape</span><span class="o">+</span><span class="n">d</span><span class="p">]</span>
+            <span class="n">groom_files</span> <span class="o">+=</span> <span class="n">groomed_shape_name</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">domains_per_shape</span><span class="o">+</span><span class="n">d</span><span class="p">]</span>
+            <span class="n">transform</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transforms</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">domains_per_shape</span><span class="o">+</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
 
-    subject.set_groomed_transforms(transform)
-    subject.set_groomed_filenames(groom_files)
-    subject.set_original_filenames(shape_files)
-    subjects.append(subject)
-</code></pre>
-<p><code>2. **Parameters:** Each optimization parameter can be set using `Parameter` object. The `parameter` object consists of a list of type `Variant`</code>python
-    parameters = sw.Parameters()</p>
-<pre><code># Create a dictionary for all the parameters required by optimization
-parameter_dictionary = {
-"number_of_particles" : 512,
-"use_normals": 0,
-"normals_strength": 10.0,
-"checkpointing_interval" : 200,
-"keep_checkpoints" : 0,
-"iterations_per_split" : 1000,
-"optimization_iterations" : 500,
-"starting_regularization" : 100,
-"ending_regularization" : 0.1,
-"recompute_regularization_interval" : 2,
-"domains_per_shape" : 1,
-"relative_weighting" : 10,
-"initial_relative_weighting" : 0.1,
-"procrustes" : 1,
-"procrustes_interval" : 1,
-"procrustes_scaling" : 1,
-"save_init_splits" : 1,
-"debug_projection" : 0,
-"verbosity" : 0,
-"use_statistics_in_init" : 0,
-"adaptivity_mode": 0
-}
+        <span class="n">subject</span><span class="o">.</span><span class="n">set_groomed_transforms</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+        <span class="n">subject</span><span class="o">.</span><span class="n">set_groomed_filenames</span><span class="p">(</span><span class="n">groom_files</span><span class="p">)</span>
+        <span class="n">subject</span><span class="o">.</span><span class="n">set_original_filenames</span><span class="p">(</span><span class="n">shape_files</span><span class="p">)</span>
+        <span class="n">subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+</code></pre></div>
+2. <strong>Parameters:</strong> Each optimization parameter can be set using <code>Parameter</code> object. The <code>parameter</code> object consists of a list of type <code>Variant</code>
+<div class="highlight"><pre><span></span><code>    <span class="n">parameters</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Parameters</span><span class="p">()</span>
 
-for key in parameter_dictionary:
-parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-parameters.set("domain_type",sw.Variant('mesh'))
-</code></pre>
-<p><code>``
-3. **Project:** Once, the list of subjects and parameters, are created, they can be set in the project file using the</code>Project` object</p>
-<p><code>python
-    # Set project
-    project = sw.Project()
-    project.set_subjects(subjects)
-    # provide the sheet name - 'optimize' for the optimization parameter
-    project.set_parameters("optimize",parameters)
-    project.save(spreadsheet_file)</code></p>
+    <span class="c1"># Create a dictionary for all the parameters required by optimization</span>
+    <span class="n">parameter_dictionary</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;number_of_particles&quot;</span> <span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+    <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+    <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s2">&quot;recompute_regularization_interval&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;domains_per_shape&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s2">&quot;procrustes&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;procrustes_interval&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;procrustes_scaling&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;save_init_splits&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;debug_projection&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;verbosity&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;use_statistics_in_init&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;adaptivity_mode&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">}</span> 
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">parameter_dictionary</span><span class="p">:</span>
+    <span class="n">parameters</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">sw</span><span class="o">.</span><span class="n">Variant</span><span class="p">([</span><span class="n">parameter_dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]]))</span>
+    <span class="n">parameters</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;domain_type&quot;</span><span class="p">,</span><span class="n">sw</span><span class="o">.</span><span class="n">Variant</span><span class="p">(</span><span class="s1">&#39;mesh&#39;</span><span class="p">))</span>
+</code></pre></div>
+3. <strong>Project:</strong> Once, the list of subjects and parameters, are created, they can be set in the project file using the <code>Project</code> object</p>
+<div class="highlight"><pre><span></span><code>    <span class="c1"># Set project</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Project</span><span class="p">()</span>
+    <span class="n">project</span><span class="o">.</span><span class="n">set_subjects</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span>
+    <span class="c1"># provide the sheet name - &#39;optimize&#39; for the optimization parameter</span>
+    <span class="n">project</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">(</span><span class="s2">&quot;optimize&quot;</span><span class="p">,</span><span class="n">parameters</span><span class="p">)</span>
+    <span class="n">project</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">spreadsheet_file</span><span class="p">)</span>
+</code></pre></div>
 
 
 

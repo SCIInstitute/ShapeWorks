@@ -4521,72 +4521,72 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-template &lt;class T &gt;
-class shapeworks::ImplicitSurfaceDomain;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ImplicitSurfaceDomain</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<p><code>cpp
-typedef ImageDomainWithCurvature&lt;T&gt; shapeworks::ImplicitSurfaceDomain&lt; T &gt;::Superclass;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
+</code></pre></div>
 <p>Standard class typedefs </p>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<p><code>cpp
-typedef std::shared_ptr&lt;ImplicitSurfaceDomain&gt; shapeworks::ImplicitSurfaceDomain&lt; T &gt;::Pointer;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ImplicitSurfaceDomain</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-imagetype">typedef ImageType</h3>
-<p><code>cpp
-typedef Superclass::ImageType shapeworks::ImplicitSurfaceDomain&lt; T &gt;::ImageType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<p><code>cpp
-typedef Superclass::PointType shapeworks::ImplicitSurfaceDomain&lt; T &gt;::PointType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-settolerance">function SetTolerance</h3>
-<p><code>cpp
-inline virtual void SetTolerance(
-    const T _Tolerance
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTolerance</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">_Tolerance</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set/Get the precision of the projection operation. The resulting projection will be within the specified tolerance. </p>
 <h3 id="function-gettolerance">function GetTolerance</h3>
-<p><code>cpp
-inline virtual T GetTolerance()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">GetTolerance</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-getdomaintype">function GetDomainType</h3>
-<p><code>cpp
-inline virtual shapeworks::DomainType GetDomainType() const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">GetDomainType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getdomaintype">shapeworks::ParticleDomain::GetDomainType</a></p>
 <h3 id="function-applyconstraints">function ApplyConstraints</h3>
-<p><code>cpp
-inline virtual bool ApplyConstraints(
-    PointType &amp; p,
-    int idx,
-    bool dbg =false
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ApplyConstraints</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">dbg</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-applyconstraints">shapeworks::ParticleDomain::ApplyConstraints</a></p>
 <p>Apply any constraints to the given point location. This method constrains points to lie within the given domain and on a given implicit surface. If the point is not already on the surface, it is projected back to the surface using a Newton-Raphson iteration. IMPORTANT: This method returns the true/false value of its superclass, and does not indicate changes only due to projection. This is done for speed: we typically will only want to know if a point tried to move outside of the bounding box domain, since movement off the surface will be very common. Consider subclassing this method to add a check for significant differences in the input and output points. </p>
 <h3 id="function-updateparticleposition">function UpdateParticlePosition</h3>
-<p><code>cpp
-inline PointType UpdateParticlePosition(
-    const PointType &amp; point,
-    int idx,
-    vnl_vector_fixed&lt; double, DIMENSION &gt; &amp; update
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">UpdateParticlePosition</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">update</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <h3 id="function-getzerocrossingpoint">function GetZeroCrossingPoint</h3>
-<p><code>cpp
-inline virtual PointType GetZeroCrossingPoint() const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getzerocrossingpoint">shapeworks::ParticleDomain::GetZeroCrossingPoint</a></p>
 <p>Get any valid point on the domain. This is used to place the first particle. </p>
 <h3 id="function-implicitsurfacedomain">function ImplicitSurfaceDomain</h3>
-<p><code>cpp
-inline ImplicitSurfaceDomain()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImplicitSurfaceDomain</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<p><code>cpp
-inline void PrintSelf(
-    std::ostream &amp; os,
-    itk::Indent indent
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-implicitsurfacedomain_1">function ~ImplicitSurfaceDomain</h3>
-<p><code>cpp
-inline virtual ~ImplicitSurfaceDomain()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ImplicitSurfaceDomain</span><span class="p">()</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

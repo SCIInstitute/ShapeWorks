@@ -3801,237 +3801,302 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <map></h1>
-<h1 id="include_1">include <random></h1>
-<h1 id="include_2">include <vector></h1>
-<h1 id="include-libsoptimizecontainergenericcontainerh">include "Libs/Optimize/Container/GenericContainer.h"</h1>
-<h1 id="include-libsoptimizedomainparticledomainh">include "Libs/Optimize/Domain/ParticleDomain.h"</h1>
-<h1 id="include-libsoptimizeneighborhoodparticleneighborhoodh">include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"</h1>
-<h1 id="include-observerh">include "Observer.h"</h1>
-<h1 id="include-particleeventsh">include "ParticleEvents.h"</h1>
-<h1 id="include-itkcommandh">include "itkCommand.h"</h1>
-<h1 id="include-itkdataobjecth">include "itkDataObject.h"</h1>
-<h1 id="include-itkeventobjecth">include "itkEventObject.h"</h1>
-<h1 id="include-itkobjectfactoryh">include "itkObjectFactory.h"</h1>
-<h1 id="include-itkpointh">include "itkPoint.h"</h1>
-<h1 id="include-itkweakpointerh">include "itkWeakPointer.h"</h1>
-<h1 id="include-vnlvnl_inverseh">include "vnl/vnl_inverse.h"</h1>
-<h1 id="include-vnlvnl_matrix_fixedh">include "vnl/vnl_matrix_fixed.h"</h1>
-<h1 id="include-vnlvnl_vector_fixedh">include "vnl/vnl_vector_fixed.h"</h1>
-<p>namespace shapeworks {
-class ParticleSystem : public itk::DataObject {
- public:
-  static constexpr int VDimension = 3;</p>
-<p>typedef ParticleSystem Self;
-  typedef DataObject Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef itk::WeakPointer<const Self> ConstWeakPointer;</p>
-<p>itkNewMacro(Self);</p>
-<p>itkTypeMacro(ParticleSystem, itk::DataObject);</p>
-<p>itkStaticConstMacro(Dimension, unsigned int, VDimension);</p>
-<p>using DomainType = shapeworks::ParticleDomain;</p>
-<p>typedef itk::Point<double, VDimension> PointType;</p>
-<p>typedef GenericContainer<PointType> PointContainerType;</p>
-<p>//  typedef Transform<double, VDimension, VDimension> TransformType;
-  typedef vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> TransformType;
-  typedef vnl_vector_fixed<double, VDimension> VectorType;
-  typedef vnl_matrix<double> VnlMatrixType;</p>
-<p>void RegisterObserver(Observer *attr);</p>
-<p>void SynchronizePositions() {
-    for (unsigned int d = 0; d &lt; this-&gt;GetNumberOfDomains(); d++) {
-      for (unsigned int p = 0; p &lt; this-&gt;GetNumberOfParticles(d); p++) {
-        this-&gt;SetPosition(this-&gt;GetPosition(p, d), p, d);
-      }
-    }
-  }</p>
-<p>unsigned long int GetNumberOfParticles(unsigned int d = 0) const { return m_Positions[d]-&gt;GetSize(); }</p>
-<p>const PointType &amp;AddPosition(const PointType &amp;, unsigned int d = 0);
-  const PointType &amp;SetPosition(const PointType &amp;, unsigned long int k, unsigned int d = 0);</p>
-<p>void RemovePosition(unsigned long int k, unsigned int d = 0);</p>
-<p>PointType &amp;GetPosition(unsigned long int k, unsigned int d = 0) { return m_Positions[d]-&gt;operator<a href="k"></a>; }
-  const PointType &amp;GetPosition(unsigned long int k, unsigned int d = 0) const { return m_Positions[d]-&gt;operator<a href="k"></a>; }
-  PointType GetTransformedPosition(unsigned long int k, unsigned int d = 0) const {
-    return this-&gt;TransformPoint(m_Positions[d]-&gt;operator<a href="k"></a>, m_Transforms[d] * m_PrefixTransforms[d]);
-  }
-  PointType GetPrefixTransformedPosition(unsigned long int k, unsigned int d = 0) const {
-    return this-&gt;TransformPoint(m_Positions[d]-&gt;operator<a href="k"></a>, m_PrefixTransforms[d]);
-  }</p>
-<p>void SplitAllParticles(double epsilon);
-  void SplitParticle(double epsilon, unsigned int idx, unsigned int d = 0);
-  void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
-  // Debug function
-  void PrintParticleSystem();</p>
-<p>std::shared_ptr<ParticleNeighborhood> GetNeighborhood(unsigned int k) const { return m_Neighborhoods[k]; }</p>
-<p>using PointVectorType = std::vector<ParticlePointIndexPair>;</p>
-<p>PointVectorType FindNeighborhoodPoints(const PointType &amp;p, int idx, double r, unsigned int d = 0) const {
-    return m_Neighborhoods[d]-&gt;find_neighborhood_points(p, idx, r);
-  }
-  inline PointVectorType FindNeighborhoodPoints(const PointType &amp;p, int idx, std::vector<double> &amp;w,
-                                                std::vector<double> &amp;distances, double r, unsigned int d = 0) const {
-    return m_Neighborhoods[d]-&gt;find_neighborhood_points(p, idx, w, distances, r);
-  }
-  inline PointVectorType FindNeighborhoodPoints(const PointType &amp;p, int idx, std::vector<double> &amp;w, double r,
-                                                unsigned int d = 0) const {
-    return m_Neighborhoods[d]-&gt;find_neighborhood_points(p, idx, w, r);
-  }
-  inline PointVectorType FindNeighborhoodPoints(unsigned int idx, double r, unsigned int d = 0) const {
-    return m_Neighborhoods[d]-&gt;find_neighborhood_points(GetPosition(idx, d), idx, r);
-  }
-  inline PointVectorType FindNeighborhoodPoints(unsigned int idx, std::vector<double> &amp;w,
-                                                std::vector<double> &amp;distances, double r, unsigned int d = 0) const {
-    return m_Neighborhoods[d]-&gt;find_neighborhood_points(GetPosition(idx, d), idx, w, distances, r);
-  }
-  inline PointVectorType FindNeighborhoodPoints(unsigned int idx, std::vector<double> &amp;w, double r,
-                                                unsigned int d = 0) const {
-    return m_Neighborhoods[d]-&gt;find_neighborhood_points(GetPosition(idx, d), idx, w, r);
-  }</p>
-<p>//  inline int FindNeighborhoodPoints(const PointType &amp;p,  double r, PointVectorType &amp;vec, unsigned int d = 0) const
-  //  {  return m_Neighborhoods[d]-&gt;FindNeighborhoodPoints(p, r, vec); }</p>
-<p>//   PointVectorType FindTransformedNeighborhoodPoints(const PointType &amp;p, double r, unsigned int d = 0) const
-  //   {
-  //     PointVectorType ans = m_Neighborhoods[d]
-  //       -&gt;FindNeighborhoodPoints(this-&gt;TransformPoint(p, InverseTransform[d]), r);
-  //     for (unsigned int i = 0; i &lt; ans.size(); i++)
-  //       {
-  //       ans.Point[i] = this-&gt;TransformPoint(ans.Point[i], m_Transform[d]);
-  //       }
-  //     return ans;
-  //   }</p>
-<p>void AddDomain(DomainType::Pointer input);</p>
-<p>std::vector<DomainType::Pointer>::const_iterator GetDomainsBegin() const { return m_Domains.begin(); }</p>
-<p>std::vector<DomainType::Pointer>::const_iterator GetDomainsEnd() const { return m_Domains.end(); }</p>
-<p>DomainType *GetDomain(unsigned int i) { return m_Domains[i].get(); }</p>
-<p>DomainType *GetDomain() { return m_Domains[0].get(); }</p>
-<p>const DomainType *GetDomain(unsigned int i) const { return m_Domains[i].get(); }</p>
-<p>const DomainType *GetDomain() const { return m_Domains[0].get(); }</p>
-<p>unsigned int GetNumberOfDomains() const { return m_Domains.size(); }</p>
-<p>void SetTransform(unsigned int i, const TransformType &amp;);
-  void SetTransform(const TransformType &amp;p) { this-&gt;SetTransform(0, p); }
-  void SetPrefixTransform(unsigned int i, const TransformType &amp;);
-  void SetPrefixTransform(const TransformType &amp;p) { this-&gt;SetPrefixTransform(0, p); }</p>
-<p>std::vector<TransformType>::const_iterator GetTransformsBegin() const { return m_Transforms.begin(); }</p>
-<p>std::vector<TransformType>::const_iterator GetTransformsEnd() const { return m_Transforms.end(); }</p>
-<p>const TransformType &amp;GetTransform(unsigned int i) const { return m_Transforms[i]; }</p>
-<p>const TransformType &amp;GetTransform() const { return m_Transforms[0]; }</p>
-<p>TransformType GetTransform(unsigned int i) { return m_Transforms[i]; }</p>
-<p>TransformType GetTransform() { return m_Transforms[0]; }</p>
-<p>const TransformType &amp;GetPrefixTransform(unsigned int i) const { return m_PrefixTransforms[i]; }</p>
-<p>const TransformType &amp;GetPrefixTransform() const { return m_PrefixTransforms[0]; }</p>
-<p>TransformType GetPrefixTransform(unsigned int i) { return m_PrefixTransforms[i]; }</p>
-<p>TransformType GetPrefixTransform() { return m_PrefixTransforms[0]; }</p>
-<p>std::vector<TransformType>::const_iterator GetInverseTransformsBegin() const { return m_InverseTransforms.begin(); }</p>
-<p>std::vector<TransformType>::const_iterator GetInverseTransformsEnd() const { return m_InverseTransforms.end(); }</p>
-<p>const TransformType &amp;GetInverseTransform(unsigned int i) const { return m_InverseTransforms[i]; }</p>
-<p>const TransformType &amp;GetInverseTransform() const { return m_InverseTransforms[0]; }</p>
-<p>const TransformType &amp;GetInversePrefixTransform(unsigned int i) const { return m_InversePrefixTransforms[i]; }</p>
-<p>const TransformType &amp;GetInversePrefixTransform() const { return m_InversePrefixTransforms[0]; }</p>
-<p>const std::vector<PointContainerType::Pointer> &amp;GetPositions() const { return m_Positions; }
-  const PointContainerType::Pointer &amp;GetPositions(unsigned int d) const { return m_Positions[d]; }</p>
-<p>void AddPositionList(const std::vector<PointType> &amp;, unsigned int d = 0);</p>
-<p>PointType TransformPoint(const PointType &amp;, const TransformType &amp;) const;</p>
-<p>VectorType TransformVector(const VectorType &amp;, const TransformType &amp;) const;</p>
-<p>VnlMatrixType TransformNormalDerivative(const VnlMatrixType &amp;, const TransformType &amp;) const;</p>
-<p>inline TransformType InvertTransform(const TransformType &amp;T) const {
-    // Note, vnl_inverse is optimized for small matrices 1x1 - 4x4
-    return vnl_inverse(T);
-  }</p>
-<p>void FlagDomain(unsigned int i) {
-    // ensure large enough
-    while (i &gt;= this-&gt;m_DomainFlags.size()) {
-      m_DomainFlags.push_back(false);
-    }</p>
-<pre><code>// set the flag
-m_DomainFlags[i] = true;
-</code></pre>
-<p>}
-  void UnflagDomain(unsigned int i) { m_DomainFlags[i] = false; }
-  bool GetDomainFlag(unsigned int i) const {
-    if (i &gt;= m_DomainFlags.size()) {
-      // not set
-      return false;
-    }
-    return m_DomainFlags[i];
-  }
-  const std::vector<bool> &amp;GetDomainFlags() const { return m_DomainFlags; }
-  void SetDomainFlags() {
-    for (unsigned int i = 0; i &lt; m_DomainFlags.size(); i++) {
-      m_DomainFlags[i] = true;
-    }
-  }
-  void ResetDomainFlags() {
-    for (unsigned int i = 0; i &lt; m_DomainFlags.size(); i++) {
-      m_DomainFlags[i] = false;
-    }
-  }</p>
-<p>std::vector<bool> GetFixedShapes(bool &amp;has_fixed) const {
-    unsigned int num_shapes = GetNumberOfDomains() / m_DomainsPerShape;
-    std::vector<bool> is_fixed(num_shapes, false);
-    has_fixed = false;
-    for (unsigned int shape = 0; shape &lt; num_shapes; shape++) {
-      bool shape_is_fixed = true;
-      for (unsigned int d = 0; d &lt; m_DomainsPerShape; d++) {
-        if (!GetDomainFlag(shape * m_DomainsPerShape + d)) {
-          shape_is_fixed = false;
-          break;
-        }
-      }
-      if (shape_is_fixed &amp;&amp; m_DomainsPerShape &gt; 0) {
-        is_fixed[shape] = true;
-        has_fixed = true;
-      }
-    }
-    return is_fixed;
-  }</p>
-<p>void SetFixedParticleFlag(unsigned int d, unsigned int i) { m_FixedParticleFlags[d][i] = true; }
-  void ResetFixedParticleFlag(unsigned int d, unsigned int i) { m_FixedParticleFlags[d][i] = false; }
-  bool GetFixedParticleFlag(unsigned int d, unsigned int i) const { return m_FixedParticleFlags[d][i]; }
-  void ResetFixedParticleFlags() {
-    for (unsigned d = 0; d &lt; m_FixedParticleFlags.size(); d++) {
-      for (unsigned int i = 0; i &lt; m_FixedParticleFlags[d].size(); i++) m_FixedParticleFlags[d][i] = false;
-    }
-  }</p>
-<p>void SetDomainsPerShape(unsigned int num) {
-    m_DomainsPerShape = num;
-    m_FixedParticleFlags.resize(m_DomainsPerShape);
-  }
-  unsigned int GetDomainsPerShape() const { return m_DomainsPerShape; }</p>
-<p>void SetNumberOfDomains(unsigned int);</p>
-<p>// Returns the maximum distance between nearest neighbors in domain dom
-  double ComputeMaxDistNearestNeighbors(size_t dom);</p>
-<p>void SetFieldAttributes(const std::vector<std::string> &amp;field_attributes) { m_FieldAttributes = field_attributes; }</p>
-<p>const std::vector<std::string> &amp;GetFieldAttributes() const { return m_FieldAttributes; }</p>
-<p>protected:
-  ParticleSystem();
-  void PrintSelf(std::ostream &amp;os, itk::Indent indent) const;
-  virtual ~ParticleSystem(){};</p>
-<p>TransformType &amp;GetInverseTransform(unsigned int i) { return m_InverseTransforms[i]; }</p>
-<p>TransformType &amp;GetInverseTransform() { return m_InverseTransforms[0]; }</p>
-<p>TransformType &amp;GetInversePrefixTransform(unsigned int i) { return m_InversePrefixTransforms[i]; }</p>
-<p>TransformType &amp;GetInversePrefixTransform() { return m_InversePrefixTransforms[0]; }</p>
-<p>private:
-  ParticleSystem(const Self &amp;);  // purposely not implemented
-  void operator=(const Self &amp;);  // purposely not implemented</p>
-<p>std::vector<PointContainerType::Pointer> m_Positions;</p>
-<p>std::vector<DomainType::Pointer> m_Domains;</p>
-<p>unsigned int m_DomainsPerShape;</p>
-<p>std::vector<std::shared_ptr\<ParticleNeighborhood>> m_Neighborhoods;</p>
-<p>std::vector<TransformType> m_Transforms;</p>
-<p>std::vector<TransformType> m_InverseTransforms;</p>
-<p>std::vector<TransformType> m_PrefixTransforms;</p>
-<p>std::vector<TransformType> m_InversePrefixTransforms;</p>
-<p>std::vector<unsigned long int> m_IndexCounters;</p>
-<p>std::vector<bool> m_DomainFlags;</p>
-<p>std::vector<std::vector\<bool>> m_FixedParticleFlags;</p>
-<p>std::vector<std::string> m_FieldAttributes;</p>
-<p>std::mt19937 m_rand{42};
-};</p>
-<p>}  // end namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;random&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Container/GenericContainer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/ParticleDomain.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Neighborhood/ParticleNeighborhood.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Observer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleEvents.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkCommand.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkEventObject.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObjectFactory.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkPoint.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkWeakPointer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_inverse.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_matrix_fixed.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_vector_fixed.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleSystem</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">DataObject</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstPointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstWeakPointer</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">DataObject</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">Dimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleDomain</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">GenericContainer</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PointContainerType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">PointVectorType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">//  typedef Transform&lt;double, VDimension, VDimension&gt; TransformType;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TransformType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VnlMatrixType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RegisterObserver</span><span class="p">(</span><span class="n">Observer</span><span class="w"> </span><span class="o">*</span><span class="n">attr</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SynchronizePositions</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetNumberOfDomains</span><span class="p">();</span><span class="w"> </span><span class="n">d</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetNumberOfParticles</span><span class="p">(</span><span class="n">d</span><span class="p">);</span><span class="w"> </span><span class="n">p</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SetPosition</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetPosition</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">),</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetNumberOfParticles</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Positions</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">GetSize</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">AddPosition</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">SetPosition</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RemovePosition</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetPosition</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Positions</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="k">operator</span><span class="p">[](</span><span class="n">k</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetPosition</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Positions</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="k">operator</span><span class="p">[](</span><span class="n">k</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetTransformedPosition</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">TransformPoint</span><span class="p">(</span><span class="n">m_Positions</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="k">operator</span><span class="p">[](</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">m_Transforms</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_PrefixTransforms</span><span class="p">[</span><span class="n">d</span><span class="p">]);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetPrefixTransformedPosition</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">TransformPoint</span><span class="p">(</span><span class="n">m_Positions</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="k">operator</span><span class="p">[](</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">m_PrefixTransforms</span><span class="p">[</span><span class="n">d</span><span class="p">]);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SplitAllParticles</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SplitParticle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AdvancedAllParticleSplitting</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dom_to_process</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// Debug function</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintParticleSystem</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNeighborhood</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="w"> </span><span class="o">*</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNeighborhood</span><span class="p">(</span><span class="n">NeighborhoodType</span><span class="w"> </span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SetNeighborhood</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">ConstPointer</span><span class="w"> </span><span class="nf">GetNeighborhood</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Neighborhoods</span><span class="p">[</span><span class="n">k</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="nf">FindNeighborhoodPoints</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Neighborhoods</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="nf">FindNeighborhoodPoints</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">w</span><span class="p">,</span>
+<span class="w">                                                </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">distances</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Neighborhoods</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">distances</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="nf">FindNeighborhoodPoints</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">                                                </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Neighborhoods</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="nf">FindNeighborhoodPoints</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Neighborhoods</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetPosition</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">),</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="nf">FindNeighborhoodPoints</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">w</span><span class="p">,</span>
+<span class="w">                                                </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">distances</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Neighborhoods</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetPosition</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">),</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">distances</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="nf">FindNeighborhoodPoints</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">                                                </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_Neighborhoods</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetPosition</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">),</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">//  inline int FindNeighborhoodPoints(const PointType &amp;p,  double r, PointVectorType &amp;vec, unsigned int d = 0) const</span>
+<span class="w">  </span><span class="c1">//  {  return m_Neighborhoods[d]-&gt;FindNeighborhoodPoints(p, r, vec); }</span>
+
+<span class="w">  </span><span class="c1">//   PointVectorType FindTransformedNeighborhoodPoints(const PointType &amp;p, double r, unsigned int d = 0) const</span>
+<span class="w">  </span><span class="c1">//   {</span>
+<span class="w">  </span><span class="c1">//     PointVectorType ans = m_Neighborhoods[d]</span>
+<span class="w">  </span><span class="c1">//       -&gt;FindNeighborhoodPoints(this-&gt;TransformPoint(p, InverseTransform[d]), r);</span>
+<span class="w">  </span><span class="c1">//     for (unsigned int i = 0; i &lt; ans.size(); i++)</span>
+<span class="w">  </span><span class="c1">//       {</span>
+<span class="w">  </span><span class="c1">//       ans.Point[i] = this-&gt;TransformPoint(ans.Point[i], m_Transform[d]);</span>
+<span class="w">  </span><span class="c1">//       }</span>
+<span class="w">  </span><span class="c1">//     return ans;</span>
+<span class="w">  </span><span class="c1">//   }</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddDomain</span><span class="p">(</span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">input</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Domains</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Domains</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="n">get_domain</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Domains</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="n">get_domain</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Domains</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="n">get_domain</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Domains</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="n">get_domain</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Domains</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetNumberOfDomains</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Domains</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SetTransform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetPrefixTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetPrefixTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SetPrefixTransform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TransformType</span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetTransformsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Transforms</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TransformType</span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetTransformsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Transforms</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Transforms</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Transforms</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Transforms</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Transforms</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetPrefixTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_PrefixTransforms</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetPrefixTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_PrefixTransforms</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_PrefixTransforms</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_PrefixTransforms</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TransformType</span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetInverseTransformsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InverseTransforms</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TransformType</span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetInverseTransformsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InverseTransforms</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetInverseTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InverseTransforms</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetInverseTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InverseTransforms</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetInversePrefixTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InversePrefixTransforms</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetInversePrefixTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InversePrefixTransforms</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetPositions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Positions</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetPositions</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_Positions</span><span class="p">[</span><span class="n">d</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">AddPositionList</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="nf">TransformPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">TransformVector</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="nf">TransformNormalDerivative</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="nf">InvertTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Note, vnl_inverse is optimized for small matrices 1x1 - 4x4</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">vnl_inverse</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">FlagDomain</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ensure large enough</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainFlags</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_DomainFlags</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// set the flag</span>
+<span class="w">    </span><span class="n">m_DomainFlags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UnflagDomain</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_DomainFlags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetDomainFlag</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">m_DomainFlags</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// not set</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_DomainFlags</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetDomainFlags</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_DomainFlags</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainFlags</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_DomainFlags</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_DomainFlags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetDomainFlags</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_DomainFlags</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_DomainFlags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFixedParticleFlag</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_FixedParticleFlags</span><span class="p">[</span><span class="n">d</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetFixedParticleFlag</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_FixedParticleFlags</span><span class="p">[</span><span class="n">d</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetFixedParticleFlag</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FixedParticleFlags</span><span class="p">[</span><span class="n">d</span><span class="p">][</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetFixedParticleFlags</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_FixedParticleFlags</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">d</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_FixedParticleFlags</span><span class="p">[</span><span class="n">d</span><span class="p">].</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="n">m_FixedParticleFlags</span><span class="p">[</span><span class="n">d</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">m_DomainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num</span><span class="p">;</span>
+<span class="w">    </span><span class="n">m_FixedParticleFlags</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">m_DomainsPerShape</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNumberOfDomains</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Returns the maximum distance between nearest neighbors in domain dom</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">ComputeMaxDistNearestNeighbors</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">dom</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFieldAttributes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">field_attributes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_FieldAttributes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">field_attributes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">GetFieldAttributes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FieldAttributes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ParticleSystem</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleSystem</span><span class="p">(){};</span>
+
+<span class="w">  </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetInverseTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InverseTransforms</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetInverseTransform</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InverseTransforms</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetInversePrefixTransform</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InversePrefixTransforms</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetInversePrefixTransform</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_InversePrefixTransforms</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ParticleSystem</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// purposely not implemented</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// purposely not implemented</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Positions</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Domains</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">Pointer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Neighborhoods</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TransformType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Transforms</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TransformType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_InverseTransforms</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TransformType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_PrefixTransforms</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TransformType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_InversePrefixTransforms</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_IndexCounters</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainFlags</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_FixedParticleFlags</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_FieldAttributes</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="n">m_rand</span><span class="p">{</span><span class="mi">42</span><span class="p">};</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// end namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:35 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

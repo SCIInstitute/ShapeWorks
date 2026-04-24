@@ -3868,15 +3868,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_circle_mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      function set_circle_mode
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-setenabled" class="md-nav__link">
     <span class="md-ellipsis">
       function SetEnabled
@@ -4140,15 +4131,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#variable-circle_mode_" class="md-nav__link">
-    <span class="md-ellipsis">
-      variable circle_mode_
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -4230,10 +4212,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1PaintWidget.html#function-set-viewer">set_viewer</a></strong>(<a href="classshapeworks_1_1Viewer.html">Viewer</a> * viewer)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1PaintWidget.html#function-set-circle-mode">set_circle_mode</a></strong>(bool circle_mode)</td>
 </tr>
 <tr>
 <td>virtual void</td>
@@ -4361,10 +4339,6 @@
 <td><a href="classshapeworks_1_1Viewer.html">Viewer</a> *</td>
 <td><strong><a href="classshapeworks_1_1PaintWidget.html#variable-viewer-">viewer_</a></strong></td>
 </tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1PaintWidget.html#variable-circle-mode-">circle_mode_</a></strong></td>
-</tr>
 </tbody>
 </table>
 <h2 id="protected-types-documentation">Protected Types Documentation</h2>
@@ -4397,171 +4371,163 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-new">function New</h3>
-<p><code>cpp
-static PaintWidget * New()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">PaintWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">New</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-vtktypemacro">function vtkTypeMacro</h3>
-<p><code>cpp
-vtkTypeMacro(
-    PaintWidget ,
-    vtkAbstractWidget 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PaintWidget</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkAbstractWidget</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<p><code>cpp
-void PrintSelf(
-    ostream &amp; os,
-    vtkIndent indent
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkIndent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-vtksetmacro">function vtkSetMacro</h3>
-<p><code>cpp
-vtkSetMacro(
-    PointPlacer ,
-    vtkPointPlacer * 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSetMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointPlacer</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkPointPlacer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-vtkgetmacro">function vtkGetMacro</h3>
-<p><code>cpp
-vtkGetMacro(
-    PointPlacer ,
-    vtkPointPlacer * 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkGetMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointPlacer</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkPointPlacer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-vtksetmacro_1">function vtkSetMacro</h3>
-<p><code>cpp
-vtkSetMacro(
-    Renderer ,
-    vtkRenderer * 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSetMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Renderer</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-vtkgetmacro_1">function vtkGetMacro</h3>
-<p><code>cpp
-vtkGetMacro(
-    Renderer ,
-    vtkRenderer * 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkGetMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Renderer</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_viewer">function set_viewer</h3>
-<p><code>cpp
-void set_viewer(
-    Viewer * viewer
-)</code></p>
-<h3 id="function-set_circle_mode">function set_circle_mode</h3>
-<p><code>cpp
-void set_circle_mode(
-    bool circle_mode
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_viewer</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Viewer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-setenabled">function SetEnabled</h3>
-<p><code>cpp
-virtual void SetEnabled(
-    int 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetEnabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-setrepresentation">function SetRepresentation</h3>
-<p><code>cpp
-inline void SetRepresentation(
-    vtkContourRepresentation * r
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRepresentation</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkContourRepresentation</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-createdefaultrepresentation">function CreateDefaultRepresentation</h3>
-<p><code>cpp
-void CreateDefaultRepresentation()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">CreateDefaultRepresentation</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-update_position">function update_position</h3>
-<p><code>cpp
-void update_position()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_position</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-initialize">function Initialize</h3>
-<p><code>cpp
-virtual void Initialize(
-    vtkPolyData * poly,
-    int state =1
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">poly</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-initialize_1">function Initialize</h3>
-<p><code>cpp
-inline virtual void Initialize()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_brush_size">function set_brush_size</h3>
-<p><code>cpp
-void set_brush_size(
-    double size
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_brush_size</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_brush_size">function get_brush_size</h3>
-<p><code>cpp
-double get_brush_size()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_brush_size</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_brush_color">function set_brush_color</h3>
-<p><code>cpp
-void set_brush_color(
-    float r,
-    float g,
-    float b
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_brush_color</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">g</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">b</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-paintwidget">function PaintWidget</h3>
-<p><code>cpp
-PaintWidget()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">PaintWidget</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-paintwidget_1">function ~PaintWidget</h3>
-<p><code>cpp
-~PaintWidget()</code></p>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">PaintWidget</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-use_point_placer">function use_point_placer</h3>
-<p><code>cpp
-bool use_point_placer(
-    double displayPos[2],
-    int newState
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">use_point_placer</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">displayPos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">newState</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_cursor">function set_cursor</h3>
-<p><code>cpp
-void set_cursor(
-    int requestedShape
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_cursor</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">requestedShape</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-startpaintaction">function StartPaintAction</h3>
-<p><code>cpp
-static void StartPaintAction(
-    vtkAbstractWidget * w
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">StartPaintAction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkAbstractWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-endpaintaction">function EndPaintAction</h3>
-<p><code>cpp
-static void EndPaintAction(
-    vtkAbstractWidget * w
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">EndPaintAction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkAbstractWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-starteraseaction">function StartEraseAction</h3>
-<p><code>cpp
-static void StartEraseAction(
-    vtkAbstractWidget * w
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">StartEraseAction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkAbstractWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-enderaseaction">function EndEraseAction</h3>
-<p><code>cpp
-static void EndEraseAction(
-    vtkAbstractWidget * w
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">EndEraseAction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkAbstractWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-moveaction">function MoveAction</h3>
-<p><code>cpp
-static void MoveAction(
-    vtkAbstractWidget * w
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">MoveAction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkAbstractWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-leaveaction">function LeaveAction</h3>
-<p><code>cpp
-static void LeaveAction(
-    vtkAbstractWidget * w
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">LeaveAction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkAbstractWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-keypressaction">function KeyPressAction</h3>
-<p><code>cpp
-static void KeyPressAction(
-    vtkAbstractWidget * w
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">KeyPressAction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkAbstractWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-widgetstate">variable WidgetState</h3>
-<p><code>cpp
-int WidgetState;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">WidgetState</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-pointplacer">variable PointPlacer</h3>
-<p><code>cpp
-vtkPointPlacer * PointPlacer;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkPointPlacer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">PointPlacer</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-renderer">variable Renderer</h3>
-<p><code>cpp
-vtkRenderer * Renderer;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Renderer</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-sphere_cursor_">variable sphere_cursor_</h3>
-<p><code>cpp
-StudioSphereRepresentation * sphere_cursor_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">StudioSphereRepresentation</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sphere_cursor_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-mouse_in_window_">variable mouse_in_window_</h3>
-<p><code>cpp
-bool mouse_in_window_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">mouse_in_window_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-viewer_">variable viewer_</h3>
-<p><code>cpp
-Viewer * viewer_;</code></p>
-<h3 id="variable-circle_mode_">variable circle_mode_</h3>
-<p><code>cpp
-bool circle_mode_ = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Viewer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">viewer_</span><span class="p">;</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

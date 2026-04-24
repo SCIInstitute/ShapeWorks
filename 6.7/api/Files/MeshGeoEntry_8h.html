@@ -3801,53 +3801,61 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include-robin_hoodh">include "robin_hood.h"</h1>
-<h1 id="include">include <Eigen/Dense></h1>
-<p>namespace shapeworks {
-struct MeshGeoEntry {
-  // in "Full" mode, the entry contains geodesics to every vertex. Access via <code>data_full</code>
-  // in "Partial" mode, the entry only contains geodesics upto max_dist. Access via <code>data_partial</code>
-  enum Mode {
-    Full,
-    Partial,
-  };</p>
-<p>Mode mode{Mode::Partial};</p>
-<p>double max_dist{0.0};
-  robin_hood::unordered_flat_map<int, Eigen::Vector3d> data_partial;
-  std::array<Eigen::VectorXd, 3> data_full;</p>
-<p>void clear() {
-    mode = Mode::Partial;</p>
-<pre><code>max_dist = 0.0;
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-// calling `data_partial.clear()` doesn't free the backing memory, so we have to swap to an empty
-robin_hood::unordered_flat_map&lt;int, Eigen::Vector3d&gt; new_data_partial;
-std::swap(new_data_partial, data_partial);
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;robin_hood.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
 
-data_full[0].resize(0);
-data_full[1].resize(0);
-data_full[2].resize(0);
-</code></pre>
-<p>}</p>
-<p>bool is_full_mode() const {
-    return mode == Mode::Full;
-  }</p>
-<p>void update_max_dist() {
-    assert(is_full_mode()); // the caller most likely has a more efficient way to compute this if partial mode
-    const auto max0 = data_full[0].maxCoeff();
-    const auto max1 = data_full[1].maxCoeff();
-    const auto max2 = data_full[2].maxCoeff();
-    max_dist = std::max({max0, max1, max2});
-  }</p>
-<p>bool has_entry(int target) {
-    return is_full_mode() || data_partial.find(target) != data_partial.end();
-  }
-};</p>
-<p>};
-```</p>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">MeshGeoEntry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// in &quot;Full&quot; mode, the entry contains geodesics to every vertex. Access via `data_full`</span>
+<span class="w">  </span><span class="c1">// in &quot;Partial&quot; mode, the entry only contains geodesics upto max_dist. Access via `data_partial`</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">Mode</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Full</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Partial</span><span class="p">,</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">Mode</span><span class="w"> </span><span class="n">mode</span><span class="p">{</span><span class="n">Mode</span><span class="o">::</span><span class="n">Partial</span><span class="p">};</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="p">{</span><span class="mf">0.0</span><span class="p">};</span>
+<span class="w">  </span><span class="n">robin_hood</span><span class="o">::</span><span class="n">unordered_flat_map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data_partial</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data_full</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Mode</span><span class="o">::</span><span class="n">Partial</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// calling `data_partial.clear()` doesn&#39;t free the backing memory, so we have to swap to an empty</span>
+<span class="w">    </span><span class="n">robin_hood</span><span class="o">::</span><span class="n">unordered_flat_map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">new_data_partial</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">(</span><span class="n">new_data_partial</span><span class="p">,</span><span class="w"> </span><span class="n">data_partial</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">data_full</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">resize</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">data_full</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">resize</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">data_full</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">resize</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_full_mode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Mode</span><span class="o">::</span><span class="n">Full</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_max_dist</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="n">is_full_mode</span><span class="p">());</span><span class="w"> </span><span class="c1">// the caller most likely has a more efficient way to compute this if partial mode</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">max0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_full</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">maxCoeff</span><span class="p">();</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">max1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_full</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">maxCoeff</span><span class="p">();</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">max2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data_full</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">maxCoeff</span><span class="p">();</span>
+<span class="w">    </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">max</span><span class="p">({</span><span class="n">max0</span><span class="p">,</span><span class="w"> </span><span class="n">max1</span><span class="p">,</span><span class="w"> </span><span class="n">max2</span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_entry</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">is_full_mode</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">data_partial</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">data_partial</span><span class="p">.</span><span class="n">end</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">};</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

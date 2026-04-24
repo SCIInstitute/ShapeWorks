@@ -3783,35 +3783,42 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <string></h1>
-<h1 id="include_1">include <ostream></h1>
-<h1 id="include_2">include <vtkSmartPointer.h></h1>
-<h1 id="include_3">include <vtkPolyData.h></h1>
-<p>class FEMesh;</p>
-<p>//-----------------------------------------------------------------------------
-struct VTKEXPORT
-{
-  bool bshellthick;             // shell thickness
-  bool bscalar_data;            // user scalar data
-};</p>
-<p>class FEVTKExport
-{
-public:
-  FEVTKExport();
-  ~FEVTKExport() = default;</p>
-<p>bool Export(FEMesh&amp; mesh, const char* szfile);
-  std::string ExportToString(FEMesh&amp; mesh);
-  bool ExportToStream(FEMesh&amp; mesh, std::ostream&amp; out);
-  void SetOptions(VTKEXPORT o) { m_ops = o; }</p>
-<p>vtkSmartPointer<vtkPolyData> ExportToVTK(FEMesh &amp;mesh);</p>
-<p>private:
-  VTKEXPORT m_ops;
-};
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ostream&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FEMesh</span><span class="p">;</span>
+
+<span class="c1">//-----------------------------------------------------------------------------</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">VTKEXPORT</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">bshellthick</span><span class="p">;</span><span class="w">             </span><span class="c1">// shell thickness</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">bscalar_data</span><span class="p">;</span><span class="w">            </span><span class="c1">// user scalar data</span>
+<span class="p">};</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FEVTKExport</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">FEVTKExport</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">FEVTKExport</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">Export</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">szfile</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">ExportToString</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">ExportToStream</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">out</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetOptions</span><span class="p">(</span><span class="n">VTKEXPORT</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">o</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ExportToVTK</span><span class="p">(</span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mesh</span><span class="p">);</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">VTKEXPORT</span><span class="w"> </span><span class="n">m_ops</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

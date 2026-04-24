@@ -3726,15 +3726,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      Public Types
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     <span class="md-ellipsis">
       Public Functions
@@ -3758,48 +3749,6 @@
       Detailed Description
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-types-documentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Public Types Documentation
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Types Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#enum-jobtype" class="md-nav__link">
-    <span class="md-ellipsis">
-      enum JobType
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#enum-prepstep" class="md-nav__link">
-    <span class="md-ellipsis">
-      enum PrepStep
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#enum-splittype" class="md-nav__link">
-    <span class="md-ellipsis">
-      enum SplitType
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -3894,60 +3843,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-set_num_dataloader_workers" class="md-nav__link">
-    <span class="md-ellipsis">
-      function set_num_dataloader_workers
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_num_dataloader_workers" class="md-nav__link">
-    <span class="md-ellipsis">
-      function get_num_dataloader_workers
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_aug_processes" class="md-nav__link">
-    <span class="md-ellipsis">
-      function set_aug_processes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_aug_processes" class="md-nav__link">
-    <span class="md-ellipsis">
-      function get_aug_processes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_prep_step" class="md-nav__link">
-    <span class="md-ellipsis">
-      function set_prep_step
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_split" class="md-nav__link">
-    <span class="md-ellipsis">
-      function get_split
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3976,29 +3871,6 @@
 <p>Qt Wrapper for DeepSSM.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;DeepSSMJob.h&gt;</code></p>
 <p>Inherits from <a href="classshapeworks_1_1Job.html">shapeworks::Job</a>, QObject</p>
-<h2 id="public-types">Public Types</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>enum class</td>
-<td DeepSSM_PrepType="DeepSSM_PrepType"><strong><a href="classshapeworks_1_1DeepSSMJob.html#enum-jobtype">JobType</a></strong></td>
-</tr>
-<tr>
-<td>enum</td>
-<td NOT_STARTED="NOT_STARTED"><strong><a href="classshapeworks_1_1DeepSSMJob.html#enum-prepstep">PrepStep</a></strong></td>
-</tr>
-<tr>
-<td>enum class</td>
-<td TEST="TEST" TRAIN_="TRAIN," VAL_="VAL,"><strong><a href="classshapeworks_1_1DeepSSMJob.html#enum-splittype">SplitType</a></strong></td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -4010,7 +3882,7 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-deepssmjob">DeepSSMJob</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt; project, DeepSSMJob::JobType tool_mode, DeepSSMJob::PrepStep prep_step =DeepSSMJob::NOT_STARTED)</td>
+<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-deepssmjob">DeepSSMJob</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session, DeepSSMTool::ToolMode tool_mode, DeepSSMTool::PrepStep prep_step =DeepSSMTool::NOT_STARTED)</td>
 </tr>
 <tr>
 <td></td>
@@ -4043,30 +3915,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-python-message">python_message</a></strong>(std::string str)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-set-num-dataloader-workers">set_num_dataloader_workers</a></strong>(int num_workers)</td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-get-num-dataloader-workers">get_num_dataloader_workers</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-set-aug-processes">set_aug_processes</a></strong>(int processes)</td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-get-aug-processes">get_aug_processes</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-set-prep-step">set_prep_step</a></strong>(DeepSSMJob::PrepStep step)</td>
-</tr>
-<tr>
-<td>std::vector&lt; int &gt;</td>
-<td><strong><a href="classshapeworks_1_1DeepSSMJob.html#function-get-split">get_split</a></strong>(ProjectHandle project, DeepSSMJob::SplitType split_type)</td>
 </tr>
 </tbody>
 </table>
@@ -4106,10 +3954,6 @@
 <tr>
 <td>virtual</td>
 <td><strong><a href="classshapeworks_1_1Job.html#function-~job">~Job</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Job.html#function-execute">execute</a></strong>()<br>execute the job with profiling instrumentation</td>
 </tr>
 <tr>
 <td>virtual QString</td>
@@ -4154,179 +3998,50 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::DeepSSMJob;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">DeepSSMJob</span><span class="p">;</span>
+</code></pre></div>
 <p>Qt Wrapper for DeepSSM. </p>
 <p>The <a href="classshapeworks_1_1DeepSSMJob.html">DeepSSMJob</a> class wraps the functionality for DeepSSM as a Studio <a href="classshapeworks_1_1Job.html">Job</a> object </p>
-<h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="enum-jobtype">enum JobType</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DeepSSM_PrepType</td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td>DeepSSM_AugmentationType</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr>
-<td>DeepSSM_TrainingType</td>
-<td>2</td>
-<td></td>
-</tr>
-<tr>
-<td>DeepSSM_TestingType</td>
-<td>3</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="enum-prepstep">enum PrepStep</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>NOT_STARTED</td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td>GROOM_TRAINING</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr>
-<td>OPTIMIZE_TRAINING</td>
-<td>2</td>
-<td></td>
-</tr>
-<tr>
-<td>OPTIMIZE_VALIDATION</td>
-<td>3</td>
-<td></td>
-</tr>
-<tr>
-<td>GROOM_IMAGES</td>
-<td>4</td>
-<td></td>
-</tr>
-<tr>
-<td>DONE</td>
-<td>5</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="enum-splittype">enum SplitType</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TRAIN</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>VAL</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>TEST</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-deepssmjob">function DeepSSMJob</h3>
-<p><code>cpp
-DeepSSMJob(
-    std::shared_ptr&lt; Project &gt; project,
-    DeepSSMJob::JobType tool_mode,
-    DeepSSMJob::PrepStep prep_step =DeepSSMJob::NOT_STARTED
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">DeepSSMJob</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">tool_mode</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step</span><span class="w"> </span><span class="o">=</span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">NOT_STARTED</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-deepssmjob_1">function ~DeepSSMJob</h3>
-<p><code>cpp
-~DeepSSMJob()</code></p>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">DeepSSMJob</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-run">function run</h3>
-<p><code>cpp
-virtual void run() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>run the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-run">shapeworks::Job::run</a></p>
 <h3 id="function-name">function name</h3>
-<p><code>cpp
-virtual QString name() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>get the name of the job </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-name">shapeworks::Job::name</a></p>
 <h3 id="function-run_prep">function run_prep</h3>
-<p><code>cpp
-void run_prep()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_prep</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-run_augmentation">function run_augmentation</h3>
-<p><code>cpp
-void run_augmentation()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_augmentation</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-run_training">function run_training</h3>
-<p><code>cpp
-void run_training()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_training</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-run_testing">function run_testing</h3>
-<p><code>cpp
-void run_testing()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_testing</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-python_message">function python_message</h3>
-<p><code>cpp
-void python_message(
-    std::string str
-)</code></p>
-<h3 id="function-set_num_dataloader_workers">function set_num_dataloader_workers</h3>
-<p><code>cpp
-void set_num_dataloader_workers(
-    int num_workers
-)</code></p>
-<h3 id="function-get_num_dataloader_workers">function get_num_dataloader_workers</h3>
-<p><code>cpp
-int get_num_dataloader_workers()</code></p>
-<h3 id="function-set_aug_processes">function set_aug_processes</h3>
-<p><code>cpp
-void set_aug_processes(
-    int processes
-)</code></p>
-<h3 id="function-get_aug_processes">function get_aug_processes</h3>
-<p><code>cpp
-int get_aug_processes()</code></p>
-<h3 id="function-set_prep_step">function set_prep_step</h3>
-<p><code>cpp
-inline void set_prep_step(
-    DeepSSMJob::PrepStep step
-)</code></p>
-<h3 id="function-get_split">function get_split</h3>
-<p><code>cpp
-static std::vector&lt; int &gt; get_split(
-    ProjectHandle project,
-    DeepSSMJob::SplitType split_type
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">python_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span>
+<span class="p">)</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:34 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 

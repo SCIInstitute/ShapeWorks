@@ -3801,50 +3801,68 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Eigen/Dense></h1>
-<h1 id="include_1">include <Eigen/Sparse></h1>
-<p>// Qt</p>
-<h1 id="include_2">include <QSharedPointer></h1>
-<h1 id="include_3">include <QWidget></h1>
-<p>// ShapeWorks</p>
-<h1 id="include_4">include <ParticleShapeStatistics.h></h1>
-<p>// Studio</p>
-<h1 id="include_5">include <Data/Preferences.h></h1>
-<h1 id="include_6">include <Job/ShapeScalarJob.h></h1>
-<h1 id="include_7">include <Shape.h></h1>
-<h1 id="include_8">include <Visualization/Visualizer.h></h1>
-<p>class Ui_ShapeScalarPanel;
-class JKQTPlotter;</p>
-<p>namespace shapeworks {</p>
-<p>class Session;
-class Lightbox;
-class ShapeWorksStudioApp;</p>
-<p>class ShapeScalarPanel : public QWidget {
-  Q_OBJECT;</p>
-<p>public:
-  ShapeScalarPanel(QWidget* parent = 0);
-  ~ShapeScalarPanel();</p>
-<p>void set_session(QSharedPointer<Session> session);
-  void reset();</p>
-<p>public Q_SLOTS:</p>
-<p>void run_clicked();</p>
-<p>void handle_job_progress(int progress);
-  void handle_job_complete();</p>
-<p>Q_SIGNALS:</p>
-<p>void update_view();</p>
-<p>private:
-  void update_run_button();</p>
-<p>void update_graphs();</p>
-<p>QSharedPointer<Session> session_;
-  QSharedPointer<ShapeScalarJob> job_;</p>
-<p>Ui_ShapeScalarPanel* ui_;
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span>
+
+<span class="c1">// Qt</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
+
+<span class="c1">// ShapeWorks</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ParticleShapeStatistics.h&gt;</span>
+
+<span class="c1">// Studio</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Job/ShapeScalarJob.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Visualizer.h&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_ShapeScalarPanel</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JKQTPlotter</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeScalarPanel</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ShapeScalarPanel</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">ShapeScalarPanel</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">run_clicked</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_job_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_job_complete</span><span class="p">();</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_run_button</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_graphs</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">ShapeScalarJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">job_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Ui_ShapeScalarPanel</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-04-18 at 16:59:35 +0000</p>
+<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
 
 
 
