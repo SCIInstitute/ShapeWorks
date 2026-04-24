@@ -46,6 +46,12 @@ python -c "import sys; print(sys.prefix)" > "%USERPROFILE%\.shapeworks\python_ho
 echo %PATH% > "%USERPROFILE%\.shapeworks\path_6.5.txt"
 ```
 
+- `devenv.sh`
+
+```
+SW_MAJOR_VERSION=6.5
+```
+
 * Update Release Notes
 
 - Update `docs/about/release_notes.md` with the new release notes
