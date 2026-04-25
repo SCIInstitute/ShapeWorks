@@ -3777,285 +3777,244 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkVector.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkCovariantVector.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrix.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkSize.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkIndex.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkAffineTransform.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkIdentityTransform.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkTransform.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPlane.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkDoubleArray.h&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">Pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atan</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">4.0</span><span class="p">;</span>
-
-<span class="k">using</span><span class="w"> </span><span class="n">Coord</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Index</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Dims</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Size</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Point3</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Vector3</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Matrix44</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Matrix33</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">IPoint3</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">FPoint3</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Covariant</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CovariantVector</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Vector</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">Vector3</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Point</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">Point3</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Matrix</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">Matrix33</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Plane</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPlane</span><span class="o">&gt;</span><span class="p">;</span>
-
-<span class="c1">// While doubles are the most commonly stored items, vtkDataArray can store any</span>
-<span class="c1">// type, yet has a default interface that conveniently stores and retrieves</span>
-<span class="c1">// doubles. When required, one can convert a vtkDataArray to a vtkDoubleArray</span>
-<span class="c1">// explicitly using `dynamic_cast&lt;vtkDoubleArray*&gt;(vtk_data_array)`.</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Array</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">Field</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">Array</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">PointArray</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point3</span><span class="o">&gt;</span><span class="p">;</span>
-
-<span class="n">Vector3</span><span class="w"> </span><span class="nf">makeVector</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&amp;&amp;</span><span class="w"> </span><span class="n">arr</span><span class="p">);</span>
-
-<span class="n">PointArray</span><span class="w"> </span><span class="nf">makePointArray</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="k">using</span><span class="w"> </span><span class="n">GenericTransform</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Transform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">IdentityTransform</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">IdentityTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="n">GenericTransform</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span>
-<span class="n">TransformPtr</span><span class="w"> </span><span class="nf">createTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Matrix33</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mat</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">translate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeVector</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}));</span>
-
-<span class="n">TransformPtr</span><span class="w"> </span><span class="nf">convert_to_image_transform</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtk_transform</span><span class="p">);</span>
-
-<span class="n">Plane</span><span class="w"> </span><span class="nf">makePlane</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
-<span class="n">Plane</span><span class="w"> </span><span class="nf">makePlane</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p0</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p2</span><span class="p">);</span>
-
-<span class="n">Point</span><span class="w"> </span><span class="nf">getOrigin</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="p">);</span>
-<span class="n">Vector3</span><span class="w"> </span><span class="nf">getNormal</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="p">);</span>
-
-<span class="k">using</span><span class="w"> </span><span class="n">AffineTransform</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">AffineTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">AffineTransformPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AffineTransform</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span>
-
-<span class="k">using</span><span class="w"> </span><span class="n">MeshTransform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="n">MeshTransform</span><span class="w"> </span><span class="nf">createMeshTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkMatrix4x4</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mat</span><span class="p">);</span>
-
-<span class="n">Point</span><span class="w"> </span><span class="nf">toPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d</span><span class="p">);</span>
-<span class="n">Point</span><span class="w"> </span><span class="nf">toPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Coord</span><span class="w"> </span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
-<span class="n">Vector</span><span class="w"> </span><span class="nf">toVector</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d</span><span class="p">);</span>
-<span class="n">Vector</span><span class="w"> </span><span class="nf">toVector</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">);</span>
-<span class="n">Vector</span><span class="w"> </span><span class="nf">toVector</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CovariantVector</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">);</span>
-<span class="n">Point</span><span class="w"> </span><span class="nf">toPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">);</span>
-<span class="n">Coord</span><span class="w"> </span><span class="nf">toCoord</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d</span><span class="p">);</span>
-<span class="n">Dims</span><span class="w"> </span><span class="nf">toDims</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Coord</span><span class="w"> </span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
-<span class="n">Dims</span><span class="w"> </span><span class="nf">toDims</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">);</span>
-<span class="n">Coord</span><span class="w"> </span><span class="nf">toCoord</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">);</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="o">&gt;</span>
-<span class="n">P</span><span class="w"> </span><span class="n">negate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">P</span><span class="p">({</span><span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]});</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;&gt;</span>
-<span class="n">Vector3</span><span class="w"> </span><span class="n">negate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">);</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="o">&gt;</span>
-<span class="n">P</span><span class="w"> </span><span class="n">invertValue</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">P</span><span class="p">({</span><span class="mf">1.0</span><span class="o">/</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="mf">1.0</span><span class="o">/</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="mf">1.0</span><span class="o">/</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]});</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;&gt;</span>
-<span class="n">Vector3</span><span class="w"> </span><span class="n">invertValue</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">);</span>
-
-<span class="n">Vector3</span><span class="w"> </span><span class="nf">dotProduct</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
-<span class="n">Vector3</span><span class="w"> </span><span class="nf">crossProduct</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
-<span class="kt">double</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">);</span>
-
-<span class="k">enum</span><span class="w"> </span><span class="nc">Axis</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">invalid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">Y</span><span class="p">,</span><span class="w"> </span><span class="n">Z</span><span class="w"> </span><span class="p">};</span>
-<span class="n">Axis</span><span class="w"> </span><span class="nf">toAxis</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">str</span><span class="p">);</span>
-<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">axisToString</span><span class="p">(</span><span class="n">Axis</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span>
-
-<span class="kt">bool</span><span class="w"> </span><span class="nf">axis_is_valid</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">axis</span><span class="p">);</span>
-<span class="kt">bool</span><span class="w"> </span><span class="nf">axis_is_valid</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="o">&amp;</span><span class="n">axis</span><span class="p">);</span>
-
-<span class="kt">double</span><span class="w"> </span><span class="nf">degToRad</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">deg</span><span class="p">);</span>
-
-<span class="kt">double</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="p">);</span>
-
-<span class="kt">double</span><span class="w"> </span><span class="nf">stddev</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="p">);</span>
-
-<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">range</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="p">);</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Image</span><span class="p">;</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">q</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="n">P</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">q</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="n">P</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">q</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Vector</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="c1">// use operator*(v0, v1); (or call dotProduct)</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">q</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="n">P</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">q</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="p">}</span>
-
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Vector</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="c1">// use operator/(v0, v1); </span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">q</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="n">P</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">q</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">q</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">q</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">q</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">q</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="n">P</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ret</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="n">P</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ret</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="n">P</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-<span class="w">    </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="kt">bool</span><span class="w"> </span><span class="n">epsEqual</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">epsilon</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">epsilon</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Image</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Coord</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Vector</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">IPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                                                 </span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">FPoint3</span><span class="p">,</span><span class="w"> </span><span class="n">P</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="kt">bool</span><span class="w"> </span><span class="n">epsEqual</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">P</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">P</span><span class="o">::</span><span class="n">ValueType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">eps</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">eps</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">bool</span><span class="w"> </span><span class="n">epsEqual</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="p">);</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="n">T</span><span class="w"> </span><span class="n">clamp</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">);</span>
-<span class="w">  </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">max</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">min</span><span class="p">);</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <itkPoint.h></h1>
+<h1 id="include_1">include <itkVector.h></h1>
+<h1 id="include_2">include <itkCovariantVector.h></h1>
+<h1 id="include_3">include <itkMatrix.h></h1>
+<h1 id="include_4">include <itkSize.h></h1>
+<h1 id="include_5">include <itkIndex.h></h1>
+<h1 id="include_6">include <itkAffineTransform.h></h1>
+<h1 id="include_7">include <itkIdentityTransform.h></h1>
+<h1 id="include_8">include <vtkSmartPointer.h></h1>
+<h1 id="include_9">include <vtkTransform.h></h1>
+<h1 id="include_10">include <vtkPlane.h></h1>
+<h1 id="include_11">include <vtkPolyData.h></h1>
+<h1 id="include_12">include <vtkDoubleArray.h></h1>
+<p>namespace shapeworks {</p>
+<p>const auto Pi = std::atan(1.0) * 4.0;</p>
+<p>using Coord         = itk::Index&lt;3&gt;;
+using Dims          = itk::Size&lt;3&gt;;
+using Point3        = itk::Point<double, 3>;
+using Vector3       = itk::Vector<double, 3>;
+using Matrix44      = itk::Matrix<double, 4, 4>;
+using Matrix33      = itk::Matrix<double, 3, 3>;
+using IPoint3       = itk::Point<int, 3>;
+using FPoint3       = itk::Point<float, 3>;
+using Covariant     = itk::CovariantVector<float, 3>;
+using Vector        = Vector3;
+using Point         = Point3;
+using Matrix        = Matrix33;
+using Plane         = vtkSmartPointer<vtkPlane>;</p>
+<p>// While doubles are the most commonly stored items, vtkDataArray can store any
+// type, yet has a default interface that conveniently stores and retrieves
+// doubles. When required, one can convert a vtkDataArray to a vtkDoubleArray
+// explicitly using <code>dynamic_cast&lt;vtkDoubleArray*&gt;(vtk_data_array)</code>.
+using Array         = vtkSmartPointer<vtkDataArray>;
+using Field         = Array;
+using PointArray    = std::vector<Point3>;</p>
+<p>Vector3 makeVector(std::array<double, 3>&amp;&amp; arr);</p>
+<p>PointArray makePointArray(int size, Point3 value);</p>
+<p>using GenericTransform   = itk::Transform<double, 3>;
+using IdentityTransform  = itk::IdentityTransform<double, 3>;
+using TransformPtr       = GenericTransform::Pointer;
+TransformPtr createTransform(const Matrix33 &amp;mat, const Vector3 &amp;translate = makeVector({0,0,0}));</p>
+<p>TransformPtr convert_to_image_transform(vtkSmartPointer<vtkTransform> vtk_transform);</p>
+<p>Plane makePlane(const Point &amp;p, const Vector3 &amp;n);
+Plane makePlane(const Point &amp;p0, const Point &amp;p1, const Point &amp;p2);</p>
+<p>Point getOrigin(const Plane plane);
+Vector3 getNormal(const Plane plane);</p>
+<p>using AffineTransform    = itk::AffineTransform<double, 3>;
+using AffineTransformPtr = AffineTransform::Pointer;</p>
+<p>using MeshTransform = vtkSmartPointer<vtkTransform>;
+MeshTransform createMeshTransform(const vtkSmartPointer<vtkMatrix4x4> &amp;mat);</p>
+<p>Point toPoint(const Dims &amp;d);
+Point toPoint(const Coord &amp;c);
+Vector toVector(const Dims &amp;d);
+Vector toVector(const Point &amp;p);
+Vector toVector(const itk::CovariantVector<double, 3> &amp;v);
+Point toPoint(const Vector &amp;v);
+Coord toCoord(const Dims &amp;d);
+Dims toDims(const Coord &amp;c);
+Dims toDims(const Point &amp;p);
+Coord toCoord(const Point &amp;p);</p>
+<p>template<typename P>
+P negate(const P &amp;p) { return P({-p[0], -p[1], -p[2]}); }</p>
+<p>template&lt;&gt;
+Vector3 negate(const Vector3 &amp;v);</p>
+<p>template<typename P>
+P invertValue(const P &amp;p) { return P({1.0/p[0], 1.0/p[1], 1.0/p[2]}); }</p>
+<p>template&lt;&gt;
+Vector3 invertValue(const Vector3 &amp;v);</p>
+<p>Vector3 dotProduct(const Vector3 &amp;a, const Vector3 &amp;b);
+Vector3 crossProduct(const Vector3 &amp;a, const Vector3 &amp;b);
+double length(const Vector3 &amp;v);</p>
+<p>enum Axis { invalid = -1, X, Y, Z };
+Axis toAxis(const std::string &amp;str);
+std::string axisToString(Axis axis);</p>
+<p>bool axis_is_valid(const Vector3 &amp;axis);
+bool axis_is_valid(const Axis &amp;axis);</p>
+<p>double degToRad(const double deg);</p>
+<p>double mean(const Field field);</p>
+<p>double stddev(const Field field);</p>
+<p>std::vector<double> range(const Field field);</p>
+<p>class Image;</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P operator+(const P &amp;p, const P &amp;q)
+{
+  P ret;
+  for (unsigned i = 0; i &lt; 3; i++)
+    ret[i] = p[i] + q[i];
+  return ret;
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P operator-(const P &amp;p, const P &amp;q)
+{
+  P ret;
+  for (unsigned i = 0; i &lt; 3; i++)
+    ret[i] = p[i] - q[i];
+  return ret;
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Vector, P>::value || // use operator*(v0, v1); (or call dotProduct)
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P operator*(const P &amp;p, const P &amp;q)
+{
+  P ret;
+  for (unsigned i = 0; i &lt; 3; i++)
+    ret[i] = p[i] * q[i];
+  return ret;
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Vector, P>::value || // use operator/(v0, v1); 
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P operator/(const P &amp;p, const P &amp;q)
+{
+  P ret;
+  for (unsigned i = 0; i &lt; 3; i++)
+    ret[i] = p[i] / q[i];
+  return ret;
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P&amp; operator+=(P &amp;p, const P &amp;q)
+{
+  for (unsigned i = 0; i &lt; 3; i++)
+    p[i] += q[i];
+  return p;
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P&amp; operator-=(P &amp;p, const P &amp;q)
+{
+  for (unsigned i = 0; i &lt; 3; i++)
+    p[i] -= q[i];
+  return p;
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P operator*(const P &amp;p, const double x)
+{
+  P ret;
+  for (unsigned i = 0; i &lt; 3; i++)
+    ret[i] = p[i] * x;
+  return std::move(ret);
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P operator/(const P &amp;p, const double x)
+{
+  P ret;
+  for (unsigned i = 0; i &lt; 3; i++)
+    ret[i] = p[i] / x;
+  return std::move(ret);
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P&amp; operator<em>=(P &amp;p, const double x)
+{
+  for (unsigned i = 0; i &lt; 3; i++)
+    p[i] </em>= x;
+  return p;
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+P&amp; operator/=(P &amp;p, const double x)
+{
+  for (unsigned i = 0; i &lt; 3; i++)
+    p[i] /= x;
+  return p;
+}</p>
+<p>template<typename T>
+bool epsEqual(T a, T b, T epsilon)
+{
+  return std::abs(a-b) &lt; epsilon;
+}</p>
+<p>template<typename P, typename = std::enable_if_t\<std::is_same\<Image, P>::value ||
+                                                 std::is_same\<Coord, P>::value ||
+                                                 std::is_same\<Dims, P>::value ||
+                                                 std::is_same\<Vector, P>::value ||
+                                                 std::is_same\<Point, P>::value ||
+                                                 std::is_same\<IPoint3, P>::value ||
+                                                 std::is_same\<FPoint3, P>::value> >
+bool epsEqual(const P &amp;a, const P &amp;b, const typename P::ValueType &amp;eps)
+{
+  return std::abs(a[0]-b[0]) &lt; eps &amp;&amp; std::abs(a[1]-b[1]) &lt; eps &amp;&amp; std::abs(a[2]-b[2]) &lt; eps;
+}</p>
+<p>bool epsEqual(double a, double b, double eps);</p>
+<p>template<typename T>
+T clamp(T value, T min, T max) {
+  value = std::min<T>(value, max);
+  value = std::max<T>(value, min);
+  return value;
+}</p>
+<p>} // shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

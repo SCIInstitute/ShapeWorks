@@ -3801,376 +3801,348 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystemEvaluation.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkLightObject.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObjectFactory.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkWeakPointer.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_vector_fixed.h&quot;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">DualVectorFunction</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ConstPointer</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
-<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">DualVectorFunction</span><span class="p">,</span><span class="w"> </span><span class="n">VectorFunction</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">Dimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">Evaluate</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span>
-<span class="w">                              </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmove</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxA</span><span class="p">,</span><span class="w"> </span><span class="n">maxB</span><span class="p">,</span><span class="w"> </span><span class="n">maxC</span><span class="p">;</span>
-<span class="w">    </span><span class="n">maxA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">maxB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">maxC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">ansA</span><span class="p">;</span>
-<span class="w">    </span><span class="n">ansA</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-<span class="w">    </span><span class="n">ansB</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">ansC</span><span class="p">;</span>
-<span class="w">    </span><span class="n">ansC</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-
-<span class="w">    </span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// evaluate individual functions: A = surface energy, B = correspondence</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">Evaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">,</span><span class="w"> </span><span class="n">maxA</span><span class="p">);</span>
-<span class="w">      </span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">m_AverageGradMagA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_AverageGradMagA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ansA</span><span class="p">.</span><span class="n">magnitude</span><span class="p">();</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">Evaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">,</span><span class="w"> </span><span class="n">maxB</span><span class="p">);</span>
-<span class="w">      </span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">m_AverageGradMagB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_AverageGradMagB</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ansB</span><span class="p">.</span><span class="n">magnitude</span><span class="p">();</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_RelativeGradientScaling</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansB</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">      </span><span class="n">maxB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="c1">// get maxmove and predicted move for current configuration</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">predictedMove</span><span class="p">;</span>
-<span class="w">    </span><span class="n">predictedMove</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w">  </span><span class="c1">// both A and B are active</span>
-<span class="w">      </span><span class="p">{</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">maxB</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">maxA</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxB</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxA</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span>
-
-<span class="w">        </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxA</span><span class="p">;</span><span class="w">  </span><span class="c1">// always driven by the sampling to decrease the senstivity to covariance regularization</span>
-
-<span class="w">        </span><span class="n">predictedMove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ansA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m_RelativeGradientScaling</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">predictedMove</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w">  </span><span class="c1">// B is active, A is not active</span>
-<span class="w">      </span><span class="p">{</span>
-<span class="w">        </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxB</span><span class="p">;</span>
-
-<span class="w">        </span><span class="n">predictedMove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">predictedMove</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w">  </span><span class="c1">// only A is active</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxA</span><span class="p">;</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">ansA</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ansA</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">EnergyA</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ansA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">Energy</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ansA</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">EnergyB</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ansB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">Energy</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="n">ansB</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="p">;</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">Energy</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ansA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ansB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ansC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">finalEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// evaluate individual functions: A = surface energy, B = correspondence</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">Energy</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">Energy</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_RelativeEnergyScaling</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="c1">// compute final energy for current configuration</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w">  </span><span class="c1">// both A and B are active</span>
-<span class="w">      </span><span class="p">{</span>
-<span class="w">        </span><span class="n">finalEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ansA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">finalEnergy</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w">  </span><span class="c1">// B is active, A is not active</span>
-<span class="w">      </span><span class="p">{</span>
-<span class="w">        </span><span class="n">finalEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">finalEnergy</span><span class="p">;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w">  </span><span class="c1">// only A is active</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">ansA</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">Evaluate</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmove</span><span class="p">,</span>
-<span class="w">                              </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">energy</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">energyA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">energyB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">ansA</span><span class="p">;</span>
-<span class="w">    </span><span class="n">ansA</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-<span class="w">    </span><span class="n">ansB</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-
-<span class="w">    </span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// evaluate individual functions: A = surface energy, B = correspondence</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">Evaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">,</span><span class="w"> </span><span class="n">maxA</span><span class="p">,</span><span class="w"> </span><span class="n">energyA</span><span class="p">);</span>
-
-<span class="w">      </span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">m_AverageGradMagA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_AverageGradMagA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ansA</span><span class="p">.</span><span class="n">magnitude</span><span class="p">();</span>
-<span class="w">      </span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">m_AverageEnergyA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_AverageEnergyA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">energyA</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">ansB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">Evaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">,</span><span class="w"> </span><span class="n">maxB</span><span class="p">,</span><span class="w"> </span><span class="n">energyB</span><span class="p">);</span>
-
-<span class="w">      </span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">m_AverageGradMagB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_AverageGradMagB</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ansB</span><span class="p">.</span><span class="n">magnitude</span><span class="p">();</span>
-<span class="w">      </span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">DualVectorFunction</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">m_AverageEnergyB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_AverageEnergyB</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">energyB</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_RelativeEnergyScaling</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">energyB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">      </span><span class="n">ansB</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_RelativeGradientScaling</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">maxB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">      </span><span class="n">ansB</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="c1">// compute final energy, maxmove and predicted move based on current configuration</span>
-<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">predictedMove</span><span class="p">;</span>
-<span class="w">    </span><span class="n">predictedMove</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w">  </span><span class="c1">// both A and B are active</span>
-<span class="w">      </span><span class="p">{</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">maxB</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">maxA</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxB</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxA</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span>
-
-<span class="w">        </span><span class="n">energy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">energyA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">energyB</span><span class="p">;</span>
-
-<span class="w">        </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxA</span><span class="p">;</span><span class="w">  </span><span class="c1">// always driven by the sampling to decrease the senstivity to covariance regularization</span>
-
-<span class="w">        </span><span class="n">predictedMove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ansA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m_RelativeGradientScaling</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">predictedMove</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w">  </span><span class="c1">// only B is active, A is not active</span>
-<span class="w">      </span><span class="p">{</span>
-<span class="w">        </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxB</span><span class="p">;</span>
-<span class="w">        </span><span class="n">energy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">energyB</span><span class="p">;</span>
-<span class="w">        </span><span class="n">predictedMove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
-
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">predictedMove</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w">  </span><span class="c1">// only A is active</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxA</span><span class="p">;</span>
-<span class="w">      </span><span class="n">energy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">energyA</span><span class="p">;</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">ansA</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ansA</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">BeforeEvaluate</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">AfterIteration</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="p">)</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">AfterIteration</span><span class="p">();</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">AfterIteration</span><span class="p">();</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">BeforeIteration</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_AOn</span><span class="p">)</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">BeforeIteration</span><span class="p">();</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_BOn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">BeforeIteration</span><span class="p">();</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="n">m_AverageGradMagA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_AverageGradMagB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_AverageEnergyA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_Counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetParticleSystem</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SetParticleSystem</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_FunctionA</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">SetParticleSystem</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_FunctionB</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">SetParticleSystem</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetDomainNumber</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SetDomainNumber</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_FunctionA</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">SetDomainNumber</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_FunctionB</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">SetDomainNumber</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFunctionA</span><span class="p">(</span><span class="n">VectorFunction</span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_FunctionA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">o</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">SetDomainNumber</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetDomainNumber</span><span class="p">());</span>
-<span class="w">    </span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">SetParticleSystem</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetParticleSystem</span><span class="p">());</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">VectorFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetFunctionA</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">VectorFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetFunctionB</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFunctionB</span><span class="p">(</span><span class="n">VectorFunction</span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_FunctionB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">o</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">SetDomainNumber</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetDomainNumber</span><span class="p">());</span>
-<span class="w">    </span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">SetParticleSystem</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetParticleSystem</span><span class="p">());</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAOn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_AOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAOff</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_AOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAOn</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_AOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetAOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_AOn</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetBOn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_BOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetBOff</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_BOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetBOn</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_BOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetBOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_BOn</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetRelativeEnergyScaling</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetRelativeGradientScaling</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_RelativeGradientScaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetRelativeGradientScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_RelativeGradientScaling</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetAverageGradMagA</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">m_AverageGradMagA</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
-<span class="w">    </span><span class="k">else</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetAverageGradMagB</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">m_AverageGradMagB</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
-<span class="w">    </span><span class="k">else</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetAverageEnergyA</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">m_AverageEnergyA</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
-<span class="w">    </span><span class="k">else</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetAverageEnergyB</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">m_AverageEnergyB</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
-<span class="w">    </span><span class="k">else</span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">VectorFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="nf">Clone</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">DualVectorFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="o">::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AOn</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_BOn</span><span class="p">;</span>
-
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_RelativeGradientScaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_RelativeGradientScaling</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_RelativeEnergyScaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_RelativeEnergyScaling</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_AverageGradMagA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AverageGradMagA</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_AverageGradMagB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AverageGradMagB</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_AverageEnergyA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AverageEnergyA</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_AverageEnergyB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AverageEnergyB</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Counter</span><span class="p">;</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FunctionA</span><span class="p">)</span><span class="w"> </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FunctionA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FunctionA</span><span class="o">-&gt;</span><span class="n">Clone</span><span class="p">();</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FunctionB</span><span class="p">)</span><span class="w"> </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FunctionB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FunctionB</span><span class="o">-&gt;</span><span class="n">Clone</span><span class="p">();</span>
-
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FunctionA</span><span class="p">)</span><span class="w"> </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_AOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_FunctionB</span><span class="p">)</span><span class="w"> </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_BOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_DomainNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_DomainNumber</span><span class="p">;</span>
-<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_ParticleSystem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ParticleSystem</span><span class="p">;</span>
-
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="p">)</span><span class="n">copy</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="n">DualVectorFunction</span><span class="p">()</span>
-<span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="n">m_AOn</span><span class="p">(</span><span class="nb">true</span><span class="p">),</span><span class="w"> </span><span class="n">m_BOn</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"> </span><span class="n">m_RelativeGradientScaling</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">DualVectorFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="o">&amp;</span><span class="p">);</span>
-<span class="w">  </span><span class="n">DualVectorFunction</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="o">&amp;</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_AOn</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_BOn</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_RelativeGradientScaling</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageGradMagA</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageGradMagB</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageEnergyA</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageEnergyB</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="p">;</span>
-<span class="w">  </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include-particlesystemevaluationh">include "ParticleSystemEvaluation.h"</h1>
+<h1 id="include-itklightobjecth">include "itkLightObject.h"</h1>
+<h1 id="include-itkobjectfactoryh">include "itkObjectFactory.h"</h1>
+<h1 id="include-itkweakpointerh">include "itkWeakPointer.h"</h1>
+<h1 id="include-vnlvnl_vector_fixedh">include "vnl/vnl_vector_fixed.h"</h1>
+<p>namespace shapeworks {</p>
+<p>class DualVectorFunction : public VectorFunction {
+ public:
+  constexpr static int VDimension = 3;
+  constexpr static unsigned int Dimension = VDimension;</p>
+<p>using VectorType = VectorFunction::VectorType;</p>
+<p>static std::shared_ptr<DualVectorFunction> New() { return std::make_shared<DualVectorFunction>(); }</p>
+<p>VectorType evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double&amp; maxmove) const override {
+    double maxA = 0;
+    double maxB = 0;
+    VectorType ansA;
+    ansA.fill(0.0);
+    VectorType ansB;
+    ansB.fill(0.0);</p>
+<pre><code>const_cast&lt;DualVectorFunction*&gt;(this)-&gt;counter_ = counter_ + 1.0;
+
+// evaluate individual functions: A = surface energy, B = correspondence
+if (a_on_) {
+  ansA = function_a_-&gt;evaluate(idx, d, system, maxA);
+  const_cast&lt;DualVectorFunction*&gt;(this)-&gt;average_grad_mag_a_ = average_grad_mag_a_ + ansA.magnitude();
+}
+
+if (b_on_) {
+  ansB = function_b_-&gt;evaluate(idx, d, system, maxB);
+  const_cast&lt;DualVectorFunction*&gt;(this)-&gt;average_grad_mag_b_ = average_grad_mag_b_ + ansB.magnitude();
+}
+
+if (relative_gradient_scaling_ == 0.0) {
+  ansB.fill(0.0);
+  maxB = 0.0;
+}
+
+// get maxmove and predicted move for current configuration
+VectorType predictedMove;
+predictedMove.fill(0.0);
+
+// both A and B are active
+if (a_on_ &amp;&amp; b_on_) {
+  maxmove = maxA;  // always driven by the sampling to decrease the sensitivity to covariance regularization
+  predictedMove = ansA + relative_gradient_scaling_ * ansB;
+  return predictedMove;
+}
+
+// B is active, A is not active
+if (b_on_) {
+  maxmove = maxB;
+  predictedMove = ansB;
+  return predictedMove;
+}
+
+// else only A is active (or if both are off, 0 will be return)
+maxmove = maxA;
+return ansA;
+</code></pre>
+<p>}</p>
+<p>double EnergyA(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
+    function_a_-&gt;before_evaluate(idx, d, system);
+    double ansA = 0.0;
+    if (a_on_) {
+      ansA = function_a_-&gt;energy(idx, d, system);
+    }
+    return ansA;
+  }</p>
+<p>virtual double EnergyB(unsigned int idx, unsigned int d, const ParticleSystem<em> system) const {
+    function_b_-&gt;before_evaluate(idx, d, system);
+    double ansB = 0.0;
+    if (b_on_ == true) {
+      ansB = function_b_-&gt;energy(idx, d, system);
+    }
+    ansB </em>= relative_energy_scaling_;
+    return ansB;
+  }</p>
+<p>virtual double energy(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
+    double ansA = 0.0;
+    double ansB = 0.0;
+    double ansC = 0.0;
+    double finalEnergy = 0.0;</p>
+<pre><code>// evaluate individual functions: A = surface energy, B = correspondence
+if (a_on_ == true) {
+  ansA = function_a_-&gt;energy(idx, d, system);
+}
+
+if (b_on_ == true) {
+  ansB = function_b_-&gt;energy(idx, d, system);
+}
+
+if (relative_energy_scaling_ == 0) {
+  ansB = 0.0;
+}
+
+// compute final energy for current configuration
+if (b_on_ == true) {
+  if (a_on_ == true)  // both A and B are active
+  {
+    finalEnergy = ansA + relative_energy_scaling_ * ansB;
+    return (finalEnergy);
+  } else  // B is active, A is not active
+  {
+    finalEnergy = ansB;
+    return finalEnergy;
+  }
+} else  // only A is active
+{
+  return ansA;
+}
+
+return 0.0;
+</code></pre>
+<p>}</p>
+<p>virtual VectorType evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double&amp; maxmove,
+                              double&amp; energy) const {
+    double maxA = 0.0;
+    double maxB = 0.0;
+    double energyA = 0.0;
+    double energyB = 0.0;
+    VectorType ansA;
+    ansA.fill(0.0);
+    VectorType ansB;
+    ansB.fill(0.0);</p>
+<pre><code>const_cast&lt;DualVectorFunction*&gt;(this)-&gt;counter_ = counter_ + 1.0;
+
+// evaluate individual functions: A = surface energy, B = correspondence
+if (a_on_ == true) {
+  ansA = function_a_-&gt;evaluate(idx, d, system, maxA, energyA);
+
+  const_cast&lt;DualVectorFunction*&gt;(this)-&gt;average_grad_mag_a_ = average_grad_mag_a_ + ansA.magnitude();
+  const_cast&lt;DualVectorFunction*&gt;(this)-&gt;average_energy_a_ = average_energy_a_ + energyA;
+}
+
+if (b_on_ == true) {
+  ansB = function_b_-&gt;evaluate(idx, d, system, maxB, energyB);
+
+  const_cast&lt;DualVectorFunction*&gt;(this)-&gt;average_grad_mag_b_ = average_grad_mag_b_ + ansB.magnitude();
+  const_cast&lt;DualVectorFunction*&gt;(this)-&gt;average_energy_b_ = average_energy_b_ + energyB;
+}
+
+if (relative_energy_scaling_ == 0.0) {
+  energyB = 0.0;
+  ansB.fill(0.0);
+}
+
+if (relative_gradient_scaling_ == 0.0) {
+  maxB = 0.0;
+  ansB.fill(0.0);
+}
+
+// compute final energy, maxmove and predicted move based on current configuration
+VectorType predictedMove;
+predictedMove.fill(0.0);
+if (b_on_ == true) {
+  if (a_on_ == true)  // both A and B are active
+  {
+    if (maxB &gt; maxA) {
+      maxmove = maxB;
+    } else {
+      maxmove = maxA;
+    }
+
+    energy = energyA + relative_energy_scaling_ * energyB;
+
+    maxmove = maxA;  // always driven by the sampling to decrease the senstivity to covariance regularization
+
+    predictedMove = ansA + relative_gradient_scaling_ * ansB;
+
+    return (predictedMove);
+  } else  // only B is active, A is not active
+  {
+    maxmove = maxB;
+    energy = energyB;
+    predictedMove = ansB;
+
+    return (predictedMove);
+  }
+} else  // only A is active
+{
+  maxmove = maxA;
+  energy = energyA;
+  return ansA;
+}
+maxmove = 0.0;
+return ansA;
+</code></pre>
+<p>}</p>
+<p>virtual void before_evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
+    if (a_on_ == true) {
+      function_a_-&gt;before_evaluate(idx, d, system);
+    }</p>
+<pre><code>if (b_on_ == true) {
+  function_b_-&gt;before_evaluate(idx, d, system);
+}
+</code></pre>
+<p>}</p>
+<p>void after_iteration() override {
+    if (a_on_) {
+      function_a_-&gt;after_iteration();
+    }
+    if (b_on_) {
+      function_b_-&gt;after_iteration();
+    }
+  }</p>
+<p>void before_iteration() override {
+    if (a_on_) {
+      function_a_-&gt;before_iteration();
+    }
+    if (b_on_) {
+      function_b_-&gt;before_iteration();
+    }
+    average_grad_mag_a_ = 0.0;
+    average_grad_mag_b_ = 0.0;
+    average_energy_a_ = 0.0;
+    counter_ = 0.0;
+  }</p>
+<p>void set_particle_system(ParticleSystem* p) override {
+    VectorFunction::set_particle_system(p);
+    if (function_a_ != nullptr) {
+      function_a_-&gt;set_particle_system(p);
+    }
+    if (function_b_ != nullptr) {
+      function_b_-&gt;set_particle_system(p);
+    }
+  }</p>
+<p>void set_domain_number(unsigned int i) override {
+    VectorFunction::set_domain_number(i);
+    if (function_a_ != nullptr) {
+      function_a_-&gt;set_domain_number(i);
+    }
+    if (function_b_ != nullptr) {
+      function_b_-&gt;set_domain_number(i);
+    }
+  }</p>
+<p>void set_function_a(std::shared_ptr<VectorFunction> o) {
+    function_a_ = o;
+    function_a_-&gt;set_domain_number(this-&gt;get_domain_number());
+    function_a_-&gt;set_particle_system(this-&gt;get_particle_system());
+  }</p>
+<p>std::shared_ptr<VectorFunction> get_function_a() { return function_a_; }</p>
+<p>std::shared_ptr<VectorFunction> get_function_b() { return function_b_; }</p>
+<p>void set_function_b(std::shared_ptr<VectorFunction> o) {
+    function_b_ = o;
+    function_b_-&gt;set_domain_number(this-&gt;get_domain_number());
+    function_b_-&gt;set_particle_system(this-&gt;get_particle_system());
+  }</p>
+<p>void set_a_on() { a_on_ = true; }
+  void set_a_off() { a_on_ = false; }
+  void set_a_on(bool s) { a_on_ = s; }
+  bool get_a_on() const { return a_on_; }
+  void set_b_on() { b_on_ = true; }
+  void set_b_off() { b_on_ = false; }
+  void set_b_on(bool s) { b_on_ = s; }
+  bool get_b_on() const { return b_on_; }</p>
+<p>void set_relative_energy_scaling(double r) override { relative_energy_scaling_ = r; }
+  double get_relative_energy_scaling() const override { return relative_energy_scaling_; }</p>
+<p>void set_relative_gradient_scaling(double r) { relative_gradient_scaling_ = r; }
+  double get_relative_gradient_scaling() const { return relative_gradient_scaling_; }</p>
+<p>double get_average_grad_mag_a() const {
+    if (counter_ != 0.0) {
+      return average_grad_mag_a_ / counter_;
+    } else {
+      return 0.0;
+    }
+  }
+  double get_average_grad_mag_b() const {
+    if (counter_ != 0.0) {
+      return average_grad_mag_b_ / counter_;
+    } else {
+      return 0.0;
+    }
+  }</p>
+<p>double get_average_energy_a() const {
+    if (counter_ != 0.0) {
+      return average_energy_a_ / counter_;
+    } else {
+      return 0.0;
+    }
+  }
+  double get_average_energy_b() const {
+    if (counter_ != 0.0) {
+      return average_energy_b_ / counter_;
+    } else {
+      return 0.0;
+    }
+  }</p>
+<p>std::shared_ptr<VectorFunction> clone() override {
+    auto copy = DualVectorFunction::New();
+    copy-&gt;a_on_ = this-&gt;a_on_;
+    copy-&gt;b_on_ = this-&gt;b_on_;</p>
+<pre><code>copy-&gt;relative_gradient_scaling_ = this-&gt;relative_gradient_scaling_;
+copy-&gt;relative_energy_scaling_ = this-&gt;relative_energy_scaling_;
+copy-&gt;average_grad_mag_a_ = this-&gt;average_grad_mag_a_;
+copy-&gt;average_grad_mag_b_ = this-&gt;average_grad_mag_b_;
+copy-&gt;average_energy_a_ = this-&gt;average_energy_a_;
+copy-&gt;average_energy_b_ = this-&gt;average_energy_b_;
+copy-&gt;counter_ = this-&gt;counter_;
+
+if (this-&gt;function_a_) {
+  copy-&gt;function_a_ = this-&gt;function_a_-&gt;clone();
+}
+if (this-&gt;function_b_) {
+  copy-&gt;function_b_ = this-&gt;function_b_-&gt;clone();
+}
+
+if (!copy-&gt;function_a_) {
+  copy-&gt;a_on_ = false;
+}
+if (!copy-&gt;function_b_) {
+  copy-&gt;b_on_ = false;
+}
+
+copy-&gt;domain_number_ = this-&gt;domain_number_;
+copy-&gt;particle_system_ = this-&gt;particle_system_;
+
+return copy;
+</code></pre>
+<p>}</p>
+<p>DualVectorFunction() : a_on_(true), b_on_(false), relative_gradient_scaling_(1.0), relative_energy_scaling_(1.0) {}</p>
+<p>~DualVectorFunction() override = default;</p>
+<p>protected:
+  DualVectorFunction(const DualVectorFunction&amp;) = delete;
+  DualVectorFunction&amp; operator=(const DualVectorFunction&amp;) = delete;</p>
+<p>bool a_on_;
+  bool b_on_;
+  double relative_gradient_scaling_;
+  double relative_energy_scaling_;
+  double average_grad_mag_a_;
+  double average_grad_mag_b_;
+  double average_energy_a_;
+  double average_energy_b_;
+  double counter_;</p>
+<p>std::shared_ptr<VectorFunction> function_a_;
+  std::shared_ptr<VectorFunction> function_b_;
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

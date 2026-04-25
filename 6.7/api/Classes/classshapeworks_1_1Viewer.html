@@ -4024,6 +4024,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-reset_feature_range" class="md-nav__link">
+    <span class="md-ellipsis">
+      function reset_feature_range
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-update_opacities" class="md-nav__link">
     <span class="md-ellipsis">
       function update_opacities
@@ -4060,9 +4069,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-update_ffc_mode" class="md-nav__link">
+  <a href="#function-update_paint_mode" class="md-nav__link">
     <span class="md-ellipsis">
-      function update_ffc_mode
+      function update_paint_mode
     </span>
   </a>
   
@@ -4132,6 +4141,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_inverse_image_transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_inverse_image_transform
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-slice_view" class="md-nav__link">
     <span class="md-ellipsis">
       function slice_view
@@ -4186,9 +4204,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-handle_ffc_paint" class="md-nav__link">
+  <a href="#function-handle_paint" class="md-nav__link">
     <span class="md-ellipsis">
-      function handle_ffc_paint
+      function handle_paint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-fill_all_ffc" class="md-nav__link">
+    <span class="md-ellipsis">
+      function fill_all_ffc
     </span>
   </a>
   
@@ -4252,6 +4279,24 @@
   <a href="#function-set_scalar_visibility" class="md-nav__link">
     <span class="md-ellipsis">
       function set_scalar_visibility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_surface_lut" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_surface_lut
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-showing_feature_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      function showing_feature_map
     </span>
   </a>
   
@@ -4424,6 +4469,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-reset-feature-range">reset_feature_range</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-update-opacities">update_opacities</a></strong>()</td>
 </tr>
 <tr>
@@ -4440,7 +4489,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-update-ffc-mode">update_ffc_mode</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-update-paint-mode">update_paint_mode</a></strong>()</td>
 </tr>
 <tr>
 <td>std::vector&lt; vtkSmartPointer&lt; vtkActor &gt; &gt;</td>
@@ -4471,6 +4520,10 @@
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-image-transform">get_image_transform</a></strong>()</td>
 </tr>
 <tr>
+<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-inverse-image-transform">get_inverse_image_transform</a></strong>()</td>
+</tr>
+<tr>
 <td><a href="classshapeworks_1_1SliceView.html">SliceView</a> &amp;</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-slice-view">slice_view</a></strong>()</td>
 </tr>
@@ -4496,7 +4549,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-handle-ffc-paint">handle_ffc_paint</a></strong>(double display_pos[2], double world_pos[3])</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-handle-paint">handle_paint</a></strong>(double display_pos[2], double world_pos[3])</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-fill-all-ffc">fill_all_ffc</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4527,243 +4584,266 @@
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-set-scalar-visibility">set_scalar_visibility</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; poly_data, vtkSmartPointer&lt; vtkPolyDataMapper &gt; mapper, std::string scalar)</td>
 </tr>
 <tr>
+<td>vtkSmartPointer&lt; vtkLookupTable &gt;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-get-surface-lut">get_surface_lut</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-showing-feature-map">showing_feature_map</a></strong>()</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-is-reverse">is_reverse</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)</td>
 </tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Viewer</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+class shapeworks::Viewer;</code></p>
 <p>3D <a href="">Viewer</a></p>
 <p>The <a href="classshapeworks_1_1Viewer.html">Viewer</a> class encapsulates all the functionality for visualizing a single subject/shape </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-viewer">function Viewer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Viewer</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+Viewer()</code></p>
 <h3 id="function-viewer_1">function ~Viewer</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Viewer</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
-</code></pre></div>
+<p><code>cpp
+~Viewer() =default</code></p>
 <h3 id="function-set_renderer">function set_renderer</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_renderer</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">renderer</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_renderer(
+    vtkSmartPointer&lt; vtkRenderer &gt; renderer
+)</code></p>
 <h3 id="function-get_renderer">function get_renderer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_renderer</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkRenderer &gt; get_renderer()</code></p>
 <h3 id="function-display_shape">function display_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_shape</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void display_shape(
+    std::shared_ptr&lt; Shape &gt; shape
+)</code></p>
 <h3 id="function-update_annotations">function update_annotations</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_annotations</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_annotations()</code></p>
 <h3 id="function-clear_viewer">function clear_viewer</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_viewer</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void clear_viewer()</code></p>
 <h3 id="function-reset_camera">function reset_camera</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">c</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void reset_camera(
+    std::array&lt; double, 3 &gt; c
+)</code></p>
 <h3 id="function-reset_camera_1">function reset_camera</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void reset_camera()</code></p>
 <h3 id="function-set_color_series">function set_color_series</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_color_series</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ColorMap</span><span class="w"> </span><span class="n">color_series</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_color_series(
+    ColorMap color_series
+)</code></p>
 <h3 id="function-set_glyph_size_and_quality">function set_glyph_size_and_quality</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_size_and_quality</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">quality</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_glyph_size_and_quality(
+    double size,
+    double quality
+)</code></p>
 <h3 id="function-get_glyph_size">function get_glyph_size</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_glyph_size</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+double get_glyph_size()</code></p>
 <h3 id="function-get_glyph_quality">function get_glyph_quality</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_glyph_quality</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+double get_glyph_quality()</code></p>
 <h3 id="function-set_session">function set_session</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_session(
+    QSharedPointer&lt; Session &gt; session
+)</code></p>
 <h3 id="function-get_session">function get_session</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_session</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+QSharedPointer&lt; Session &gt; get_session()</code></p>
 <h3 id="function-set_show_glyphs">function set_show_glyphs</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_glyphs</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_show_glyphs(
+    bool show
+)</code></p>
 <h3 id="function-set_show_surface">function set_show_surface</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_surface</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_show_surface(
+    bool show
+)</code></p>
 <h3 id="function-set_scale_arrows">function set_scale_arrows</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_scale_arrows</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">scale</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_scale_arrows(
+    bool scale
+)</code></p>
 <h3 id="function-update_points">function update_points</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_points</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_points()</code></p>
 <h3 id="function-update_glyph_properties">function update_glyph_properties</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_glyph_properties</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_glyph_properties()</code></p>
 <h3 id="function-handle_pick">function handle_pick</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">handle_pick</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+int handle_pick(
+    int * click_pos
+)</code></p>
 <h3 id="function-handle_ctrl_click">function handle_ctrl_click</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PickResult</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+PickResult handle_ctrl_click(
+    int * click_pos
+)</code></p>
 <h3 id="function-set_selected_point">function set_selected_point</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_selected_point</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_selected_point(
+    int id
+)</code></p>
 <h3 id="function-set_glyph_lut">function set_glyph_lut</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_lut</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_glyph_lut(
+    vtkSmartPointer&lt; vtkLookupTable &gt; lut
+)</code></p>
 <h3 id="function-set_loading_screen">function set_loading_screen</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_loading_screen</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">loading_screen</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_loading_screen(
+    vtkSmartPointer&lt; vtkImageData &gt; loading_screen
+)</code></p>
 <h3 id="function-set_color_scheme">function set_color_scheme</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_color_scheme</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_color_scheme(
+    int i
+)</code></p>
 <h3 id="function-handle_new_mesh">function handle_new_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void handle_new_mesh()</code></p>
 <h3 id="function-is_viewer_ready">function is_viewer_ready</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_viewer_ready</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool is_viewer_ready()</code></p>
 <h3 id="function-set_visualizer">function set_visualizer</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_visualizer</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Visualizer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">visualizer</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_visualizer(
+    Visualizer * visualizer
+)</code></p>
 <h3 id="function-update_feature_range">function update_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">range</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void update_feature_range(
+    double * range
+)</code></p>
+<h3 id="function-reset_feature_range">function reset_feature_range</h3>
+<p><code>cpp
+void reset_feature_range()</code></p>
 <h3 id="function-update_opacities">function update_opacities</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_opacities</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_opacities()</code></p>
 <h3 id="function-get_shape">function get_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shape</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::shared_ptr&lt; Shape &gt; get_shape()</code></p>
 <h3 id="function-update_landmarks">function update_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_landmarks</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_landmarks()</code></p>
 <h3 id="function-update_planes">function update_planes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_planes</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-update_ffc_mode">function update_ffc_mode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_ffc_mode</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_planes()</code></p>
+<h3 id="function-update_paint_mode">function update_paint_mode</h3>
+<p><code>cpp
+void update_paint_mode()</code></p>
 <h3 id="function-get_surface_actors">function get_surface_actors</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkActor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface_actors</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; vtkSmartPointer&lt; vtkActor &gt; &gt; get_surface_actors()</code></p>
 <h3 id="function-get_unclipped_surface_actors">function get_unclipped_surface_actors</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkActor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_unclipped_surface_actors</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; vtkSmartPointer&lt; vtkActor &gt; &gt; get_unclipped_surface_actors()</code></p>
 <h3 id="function-get_meshes">function get_meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+MeshGroup get_meshes()</code></p>
 <h3 id="function-get_transform">function get_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_transform(
+    int alignment_domain,
+    int domain
+)</code></p>
 <h3 id="function-get_landmark_transform">function get_landmark_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmark_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_landmark_transform(
+    int domain
+)</code></p>
 <h3 id="function-get_inverse_landmark_transform">function get_inverse_landmark_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_inverse_landmark_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_inverse_landmark_transform(
+    int domain
+)</code></p>
 <h3 id="function-get_image_transform">function get_image_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_transform</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_image_transform()</code></p>
+<h3 id="function-get_inverse_image_transform">function get_inverse_image_transform</h3>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_inverse_image_transform()</code></p>
 <h3 id="function-slice_view">function slice_view</h3>
-<div class="highlight"><pre><span></span><code><span class="n">SliceView</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">slice_view</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+SliceView &amp; slice_view()</code></p>
 <h3 id="function-update_image_volume">function update_image_volume</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_image_volume</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">force</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void update_image_volume(
+    bool force =false
+)</code></p>
 <h3 id="function-get_glyph_points">function get_glyph_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_points</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkPoints &gt; get_glyph_points()</code></p>
 <h3 id="function-get_alignment_transform">function get_alignment_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_alignment_transform</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_alignment_transform()</code></p>
 <h3 id="function-update_clipping_planes">function update_clipping_planes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_clipping_planes</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_clipping_planes()</code></p>
 <h3 id="function-get_point_placer">function get_point_placer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolygonalSurfacePointPlacer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_point_placer</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-handle_ffc_paint">function handle_ffc_paint</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ffc_paint</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">display_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkPolygonalSurfacePointPlacer &gt; get_point_placer()</code></p>
+<h3 id="function-handle_paint">function handle_paint</h3>
+<p><code>cpp
+void handle_paint(
+    double display_pos[2],
+    double world_pos[3]
+)</code></p>
+<h3 id="function-fill_all_ffc">function fill_all_ffc</h3>
+<p><code>cpp
+void fill_all_ffc()</code></p>
 <h3 id="function-update_actors">function update_actors</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_actors</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_actors()</code></p>
 <h3 id="function-remove_scalar_bar">function remove_scalar_bar</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove_scalar_bar</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void remove_scalar_bar()</code></p>
 <h3 id="function-is_ready">function is_ready</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_ready</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline bool is_ready()</code></p>
 <h3 id="function-get_particle_scalars">function get_particle_scalars</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkFloatArray</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_particle_scalars</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+vtkFloatArray * get_particle_scalars()</code></p>
 <h3 id="function-get_particle_poly_data">function get_particle_poly_data</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_particle_poly_data</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkPolyData &gt; get_particle_poly_data()</code></p>
 <h3 id="function-insert_compare_meshes">function insert_compare_meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">insert_compare_meshes</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void insert_compare_meshes()</code></p>
 <h3 id="function-set_scalar_visibility">function set_scalar_visibility</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_scalar_visibility</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyDataMapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mapper</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">scalar</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_scalar_visibility(
+    vtkSmartPointer&lt; vtkPolyData &gt; poly_data,
+    vtkSmartPointer&lt; vtkPolyDataMapper &gt; mapper,
+    std::string scalar
+)</code></p>
+<h3 id="function-get_surface_lut">function get_surface_lut</h3>
+<p><code>cpp
+inline vtkSmartPointer&lt; vtkLookupTable &gt; get_surface_lut()</code></p>
+<h3 id="function-showing_feature_map">function showing_feature_map</h3>
+<p><code>cpp
+bool showing_feature_map()</code></p>
 <h3 id="function-is_reverse">function is_reverse</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_reverse</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static bool is_reverse(
+    vtkSmartPointer&lt; vtkTransform &gt; transform
+)</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

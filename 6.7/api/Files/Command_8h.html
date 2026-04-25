@@ -3809,15 +3809,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#source-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Source code
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3894,6 +3885,10 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1DeepSSMCommandGroup.html">shapeworks::DeepSSMCommandGroup</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1ShapeworksCommand.html">shapeworks::ShapeworksCommand</a></strong></td>
 </tr>
 </tbody>
@@ -3930,146 +3925,130 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-operator">function operator&lt;&lt;</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Command</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">cmd</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::ostream &amp; operator&lt;&lt;(
+    std::ostream &amp; os,
+    const shapeworks::Command &amp; cmd
+)</code></p>
 <h2 id="macros-documentation">Macros Documentation</h2>
 <h3 id="define-command_declare">define COMMAND_DECLARE</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define COMMAND_DECLARE(</span>
-<span class="w">    </span><span class="n">CommandName</span><span class="p">,</span>
-<span class="w">    </span><span class="n">CommandType</span>
-<span class="p">)</span>
-<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">CommandName</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">CommandType</span><span class="w">                                                   </span>\
-<span class="w">  </span><span class="p">{</span><span class="w">                                                                                        </span>\
-<span class="w">  </span><span class="k">public</span><span class="o">:</span><span class="w">                                                                                  </span>\
-<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">CommandName</span><span class="w"> </span><span class="o">&amp;</span><span class="n">getCommand</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">CommandName</span><span class="w"> </span><span class="n">instance</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">instance</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">     </span>\
-<span class="w">                                                                                           </span>\
-<span class="w">  </span><span class="k">private</span><span class="o">:</span><span class="w">                                                                                 </span>\
-<span class="w">    </span><span class="n">CommandName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">buildParser</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w">                                                       </span>\
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">buildParser</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w">                                                           </span>\
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">optparse</span><span class="o">::</span><span class="n">Values</span><span class="w"> </span><span class="o">&amp;</span><span class="n">options</span><span class="p">,</span><span class="w"> </span><span class="n">SharedCommandData</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sharedData</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"> </span>\
-<span class="w">  </span><span class="p">}</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-command_declare_1">define COMMAND_DECLARE(</h1>
+<pre><code>CommandName,
+CommandType
+</code></pre>
+<p>)
+  class CommandName : public CommandType                                                   \
+  {                                                                                        \
+  public:                                                                                  \
+    static CommandName &amp;getCommand() { static CommandName instance; return instance; }     \
+                                                                                           \
+  private:                                                                                 \
+    CommandName() { buildParser(); }                                                       \
+    void buildParser() override;                                                           \
+    bool execute(const optparse::Values &amp;options, SharedCommandData &amp;sharedData) override; \
+  }
+```</p>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cm">/*</span>
-<span class="cm"> * Command provided by unified shapeworks executable.</span>
-<span class="cm"> */</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;OptionParser.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;SharedCommandData.h&quot;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdexcept&gt;</span>
-
-<span class="cp">#define COMMAND_DECLARE(CommandName, CommandType)                                          \</span>
-<span class="cp">  class CommandName : public CommandType                                                   \</span>
-<span class="cp">  {                                                                                        \</span>
-<span class="cp">  public:                                                                                  \</span>
-<span class="cp">    static CommandName &amp;getCommand() { static CommandName instance; return instance; }     \</span>
-<span class="cp">                                                                                           \</span>
-<span class="cp">  private:                                                                                 \</span>
-<span class="cp">    CommandName() { buildParser(); }                                                       \</span>
-<span class="cp">    void buildParser() override;                                                           \</span>
-<span class="cp">    bool execute(const optparse::Values &amp;options, SharedCommandData &amp;sharedData) override; \</span>
-<span class="cp">  }</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Command</span><span class="w"> </span><span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;General&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">prog</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">usage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">get_usage</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">desc</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">description</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parse_args</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">arguments</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">SharedCommandData</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sharedData</span><span class="p">);</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">execute</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">optparse</span><span class="o">::</span><span class="n">Values</span><span class="w"> </span><span class="o">&amp;</span><span class="n">options</span><span class="p">,</span><span class="w"> </span><span class="n">SharedCommandData</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sharedData</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-
-<span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">buildParser</span><span class="p">();</span><span class="w"> </span><span class="c1">// derived classes should specialize and call this as well</span>
-
-<span class="w">  </span><span class="n">optparse</span><span class="o">::</span><span class="n">OptionParser</span><span class="w"> </span><span class="n">parser</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">ImageCommand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Image&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">MeshCommand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Mesh&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">OptimizeCommandGroup</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Optimize&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">GroomCommandGroup</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Groom&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">AnalyzeCommandGroup</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Analyze&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">ProjectCommandGroup</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Project&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">ParticleSystemCommand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;ParticleSystem&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">ShapeworksCommand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Command</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Shapeworks&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="k">private</span><span class="o">:</span>
-<span class="p">};</span>
-
-<span class="p">};</span><span class="w"> </span><span class="c1">// shapeworks</span>
-
-<span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Command</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cmd</span><span class="p">);</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<p>/<em>
+ * Command provided by unified shapeworks executable.
+ </em>/</p>
+<h1 id="include-optionparserh">include "OptionParser.h"</h1>
+<h1 id="include-sharedcommanddatah">include "SharedCommandData.h"</h1>
+<h1 id="include">include <iostream></h1>
+<h1 id="include_1">include <stdexcept></h1>
+<p>#define COMMAND_DECLARE(CommandName, CommandType)                                          \
+  class CommandName : public CommandType                                                   \
+  {                                                                                        \
+  public:                                                                                  \
+    static CommandName &amp;getCommand() { static CommandName instance; return instance; }     \
+                                                                                           \
+  private:                                                                                 \
+    CommandName() { buildParser(); }                                                       \
+    void buildParser() override;                                                           \
+    bool execute(const optparse::Values &amp;options, SharedCommandData &amp;sharedData) override; \
+  }</p>
+<p>namespace shapeworks {</p>
+<p>class Command {
+public:
+  virtual const std::string type() { return "General"; }</p>
+<p>const std::string name() const { return parser.prog(); }
+  const std::string usage() const { return parser.get_usage(); }
+  const std::string desc() const { return parser.description(); }</p>
+<p>virtual std::vector<std::string> parse_args(const std::vector<std::string> &amp;arguments);</p>
+<p>int run(SharedCommandData &amp;sharedData);</p>
+<p>private:
+  virtual bool execute(const optparse::Values &amp;options, SharedCommandData &amp;sharedData) = 0;</p>
+<p>protected:
+  virtual void buildParser(); // derived classes should specialize and call this as well</p>
+<p>optparse::OptionParser parser;
+};</p>
+<p>class ImageCommand : public Command
+{
+public:
+  const std::string type() override { return "Image"; }</p>
+<p>private:
+};</p>
+<p>class MeshCommand : public Command
+{
+public:
+  const std::string type() override { return "Mesh"; }</p>
+<p>private:
+};</p>
+<p>class OptimizeCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Optimize"; }</p>
+<p>private:
+};</p>
+<p>class GroomCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Groom"; }</p>
+<p>private:
+};</p>
+<p>class AnalyzeCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Analyze"; }</p>
+<p>private:
+};</p>
+<p>class ProjectCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Project"; }</p>
+<p>private:
+};</p>
+<p>class ParticleSystemCommand : public Command
+{
+public:
+  const std::string type() override { return "ParticleSystem"; }</p>
+<p>private:
+};</p>
+<p>class DeepSSMCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "DeepSSM"; }</p>
+<p>// DeepSSM is a terminal command - don't pass remaining args to other commands
+  std::vector<std::string> parse_args(const std::vector<std::string> &amp;arguments) override {
+    Command::parse_args(arguments);
+    return {};  // return empty - DeepSSM consumes all args
+  }</p>
+<p>private:
+};</p>
+<p>class ShapeworksCommand : public Command
+{
+public:
+  const std::string type() override { return "Shapeworks"; }</p>
+<p>private:
+};</p>
+<p>}; // shapeworks</p>
+<p>std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const shapeworks::Command &amp;cmd);
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

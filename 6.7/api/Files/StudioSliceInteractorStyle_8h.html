@@ -3801,49 +3801,39 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkInteractorStyleImage.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPropPicker.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkRenderWindowInteractor.h&gt;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageActor</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageSlice</span><span class="p">;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
-
-<span class="c1">// Handle mouse events</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioSliceInteractorStyle</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">vtkInteractorStyleImage</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StudioSliceInteractorStyle</span><span class="o">*</span><span class="w"> </span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkTypeMacro</span><span class="p">(</span><span class="n">StudioSliceInteractorStyle</span><span class="p">,</span><span class="w"> </span><span class="n">vtkInteractorStyleImage</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_lightbox</span><span class="p">(</span><span class="n">Lightbox</span><span class="o">*</span><span class="w"> </span><span class="n">lightbox</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">StudioSliceInteractorStyle</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">StudioSliceInteractorStyle</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnLeftButtonDown</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnRightButtonDown</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnMouseWheelForward</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnMouseWheelBackward</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnKeyDown</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WindowLevel</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">StartWindowLevel</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Lightbox</span><span class="o">*</span><span class="w"> </span><span class="n">lightbox_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">vtkImageSlice</span><span class="o">*</span><span class="w"> </span><span class="n">current_image_slice_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <vtkInteractorStyleImage.h></h1>
+<h1 id="include_1">include <vtkPropPicker.h></h1>
+<h1 id="include_2">include <vtkRenderWindowInteractor.h></h1>
+<p>class vtkImageActor;
+class vtkImageSlice;</p>
+<p>namespace shapeworks {</p>
+<p>class Lightbox;</p>
+<p>// Handle mouse events
+class StudioSliceInteractorStyle : public vtkInteractorStyleImage {
+ public:
+  static StudioSliceInteractorStyle* New();
+  vtkTypeMacro(StudioSliceInteractorStyle, vtkInteractorStyleImage);</p>
+<p>void set_lightbox(Lightbox* lightbox);</p>
+<p>StudioSliceInteractorStyle();</p>
+<p>virtual ~StudioSliceInteractorStyle();</p>
+<p>void OnLeftButtonDown() override;
+  void OnRightButtonDown() override;
+  void OnMouseWheelForward() override;
+  void OnMouseWheelBackward() override;
+  void OnKeyDown() override;
+  void WindowLevel() override;
+  void StartWindowLevel() override;</p>
+<p>protected:
+ private:
+  Lightbox<em> lightbox_;
+  vtkImageSlice</em> current_image_slice_{nullptr};
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

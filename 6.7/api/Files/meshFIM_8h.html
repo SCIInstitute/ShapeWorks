@@ -3762,44 +3762,8 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#define-one" class="md-nav__link">
-    <span class="md-ellipsis">
-      define ONE
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-curvature" class="md-nav__link">
-    <span class="md-ellipsis">
-      define CURVATURE
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-generate_geo_files" class="md-nav__link">
-    <span class="md-ellipsis">
-      define GENERATE_GEO_FILES
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#source-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Source code
-    </span>
-  </a>
   
 </li>
       
@@ -3867,252 +3831,206 @@
 </table>
 <h2 id="macros-documentation">Macros Documentation</h2>
 <h3 id="define-_eps">define _EPS</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define _EPS 1e-06</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-_eps-1e-06">define _EPS 1e-06</h1>
+<p>```</p>
 <h3 id="define-one">define ONE</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define ONE 1</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-one-1">define ONE 1</h1>
+<p>```</p>
 <h3 id="define-curvature">define CURVATURE</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define CURVATURE 2</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-curvature-2">define CURVATURE 2</h1>
+<p>```</p>
 <h3 id="define-generate_geo_files">define GENERATE_GEO_FILES</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define GENERATE_GEO_FILES 1</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-generate_geo_files-1">define GENERATE_GEO_FILES 1</h1>
+<p>```</p>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#ifndef MESHFIM_H</span>
-<span class="cp">#define MESHFIM_H</span>
+<p>```cpp</p>
+<h1 id="ifndef-meshfim_h">ifndef MESHFIM_H</h1>
+<h1 id="define-meshfim_h">define MESHFIM_H</h1>
+<h1 id="include-trimeshh">include "TriMesh.h"</h1>
+<h1 id="include-trimesh_algoh">include "TriMesh_algo.h"</h1>
+<h1 id="include-kdtreeh">include "KDtree.h"</h1>
+<h1 id="include-colorh">include "Color.h"</h1>
+<p>//#include "itkImageToImageFilter.h"
+//#include "itkLevelSet.h"
+//#include "itkIndex.h"
+//#include "vnl/vnl_math.h"
+//#include "itkDiffusionTensor3D.h"</p>
+<h1 id="include">include <iostream></h1>
+<h1 id="include_1">include <typeinfo></h1>
+<h1 id="include_2">include <functional></h1>
+<h1 id="include_3">include <queue></h1>
+<h1 id="include_4">include <list></h1>
+<h1 id="include_5">include <map></h1>
+<h1 id="include_6">include <time.h></h1>
+<h1 id="include_7">include <iterator></h1>
+<h1 id="include_8">include <vnl/vnl_math.h></h1>
+<h1 id="include_9">include <vnl/vnl_sparse_matrix.h></h1>
+<h1 id="include_10">include <vnl/algo/vnl_svd.h></h1>
+<h1 id="include_11">include <vnl/algo/vnl_sparse_lu.h></h1>
+<h1 id="include_12">include <vcl_legacy_aliases.h></h1>
+<p>//#include <vxl/core/vgl/algo/vgl_homg_operators_2d.h>
+//#include <vgl/vgl_conic.h></p>
+<h1 id="include_13">include <vnl/vnl_matrix.h></h1>
+<h1 id="include_14">include <vnl/vnl_vector.h></h1>
+<h1 id="include_15">include <vnl/algo/vnl_matrix_inverse.h></h1>
+<h1 id="include_16">include <string></h1>
+<h1 id="include_17">include <fstream></h1>
+<h1 id="include_18">include <cstdlib></h1>
+<h1 id="include_19">include <vcl_compiler.h></h1>
+<h1 id="ifndef-_eps">ifndef _EPS</h1>
+<h1 id="define-_eps-1e-06_1">define _EPS 1e-06</h1>
+<h1 id="endif">endif</h1>
+<h1 id="define-one-1_1">define ONE 1</h1>
+<h1 id="define-curvature-2_1">define CURVATURE 2</h1>
+<p>// SHIREEN</p>
+<h1 id="define-generate_geo_files-1-now-disable-till-we-incorporate-the-geodesic-repulsion">define GENERATE_GEO_FILES 1 // now disable till we incorporate the geodesic repulsion</h1>
+<p>// end SHIREEN</p>
+<p>using trimesh::TriMesh;
+using trimesh::vec3;
+using trimesh::point;
+using trimesh::KDtree;
+using trimesh::Color;</p>
+<p>class meshFIM {</p>
+<p>public:
+  typedef int VoxelIndexType;</p>
+<pre><code>typedef int index;
+enum LabelType { MaskPoint, SeedPoint, ActivePoint, FarPoint, StopPoint, AlivePoint,ToBeAlivePoint };
+
+TriMesh *m_meshPtr;
+int NumComputation;
+float imageOrigin[3];
+float imageSpacing[3];
+int imageSize[3];
+int imageIndex[3];
+
+std::vector&lt;Color&gt; colors;
 
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;TriMesh.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;TriMesh_algo.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;KDtree.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Color.h&quot;</span>
+void ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const char *infilename, const char *outfilename);
+void computeFIM(TriMesh *mesh, const char *vertT_filename);
+void GetFeatureValues(point x, std::vector&lt;float&gt; &amp;vals);
+void ReadFaceIndexMap(const char *infilename);
+void ReadFeatureFromFile(const char *infilename);
+void ReadFeatureGradientFromFile(const char *infilename);
+point GetFeatureDerivative(point p, int fIndex);
+
+void need_abs_curvatures();
+void need_edge_lengths();
+void need_speed();
+void need_oneringfaces();
+void need_kdtree();
 
 
-<span class="c1">//#include &quot;itkImageToImageFilter.h&quot;</span>
-<span class="c1">//#include &quot;itkLevelSet.h&quot;</span>
-<span class="c1">//#include &quot;itkIndex.h&quot;</span>
-<span class="c1">//#include &quot;vnl/vnl_math.h&quot;</span>
-<span class="c1">//#include &quot;itkDiffusionTensor3D.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;typeinfo&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;queue&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;list&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;time.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iterator&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_math.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_sparse_matrix.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/algo/vnl_svd.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/algo/vnl_sparse_lu.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vcl_legacy_aliases.h&gt;</span>
+void SetMesh(TriMesh *mesh);
+void SetStopDistance(float d) {
+  m_StopDistance = d;
+}
+void setSpeedType(int st) {
+  speedType = st;
+  if (st != ONE &amp;&amp; st != CURVATURE) {
+    std::cout &lt;&lt; "Impossible SpeedType set" &lt;&lt; std::endl;
+    throw(1);
+  }
+}
 
 
-<span class="c1">//#include &lt;vxl/core/vgl/algo/vgl_homg_operators_2d.h&gt;</span>
-<span class="c1">//#include &lt;vgl/vgl_conic.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_matrix.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/algo/vnl_matrix_inverse.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cstdlib&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vcl_compiler.h&gt;</span>
-
-<span class="cp">#ifndef _EPS</span>
-<span class="cp">#define _EPS 1e-06</span>
-<span class="cp">#endif</span>
-
-<span class="cp">#define ONE 1 </span>
-<span class="cp">#define CURVATURE 2 </span>
-
-
-
-<span class="c1">// SHIREEN</span>
-<span class="cp">#define GENERATE_GEO_FILES 1 </span><span class="c1">// now disable till we incorporate the geodesic repulsion</span>
-<span class="c1">// end SHIREEN</span>
-
-<span class="k">using</span><span class="w"> </span><span class="n">trimesh</span><span class="o">::</span><span class="n">TriMesh</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">trimesh</span><span class="o">::</span><span class="n">vec3</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">trimesh</span><span class="o">::</span><span class="n">point</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">trimesh</span><span class="o">::</span><span class="n">KDtree</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">trimesh</span><span class="o">::</span><span class="n">Color</span><span class="p">;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">meshFIM</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VoxelIndexType</span><span class="p">;</span>
-
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">;</span>
-<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="nc">LabelType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">MaskPoint</span><span class="p">,</span><span class="w"> </span><span class="n">SeedPoint</span><span class="p">,</span><span class="w"> </span><span class="n">ActivePoint</span><span class="p">,</span><span class="w"> </span><span class="n">FarPoint</span><span class="p">,</span><span class="w"> </span><span class="n">StopPoint</span><span class="p">,</span><span class="w"> </span><span class="n">AlivePoint</span><span class="p">,</span><span class="n">ToBeAlivePoint</span><span class="w"> </span><span class="p">};</span>
-
-<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">m_meshPtr</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">NumComputation</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">imageOrigin</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">imageSpacing</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">imageSize</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">imageIndex</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">&gt;</span><span class="w"> </span><span class="n">colors</span><span class="p">;</span>
-
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeDistanceToLandmarksGivenTriangleInfo</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">infilename</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">outfilename</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">computeFIM</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">vertT_filename</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">GetFeatureValues</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">vals</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadFaceIndexMap</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">infilename</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadFeatureFromFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">infilename</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadFeatureGradientFromFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">infilename</span><span class="p">);</span>
-<span class="w">    </span><span class="n">point</span><span class="w"> </span><span class="nf">GetFeatureDerivative</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">fIndex</span><span class="p">);</span>
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">need_abs_curvatures</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">need_edge_lengths</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">need_speed</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">need_oneringfaces</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">need_kdtree</span><span class="p">();</span>
-
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMesh</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">);</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetStopDistance</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_StopDistance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setSpeedType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">st</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">speedType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">;</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">st</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ONE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">st</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">CURVATURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Impossible SpeedType set&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="w">        </span><span class="k">throw</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-
-
-<span class="w">    </span><span class="n">meshFIM</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">m_meshPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
-<span class="w">    </span><span class="p">};</span>
-<span class="w">    </span><span class="o">~</span><span class="n">meshFIM</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span>
-
-<span class="k">protected</span><span class="o">:</span>
-
-
-<span class="k">private</span><span class="o">:</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">index</span><span class="o">&gt;</span><span class="w">                             </span><span class="n">m_ActivePoints</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">index</span><span class="o">&gt;</span><span class="w">                           </span><span class="n">m_SeedPoints</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">LabelType</span><span class="o">&gt;</span><span class="w">                       </span><span class="n">m_Label</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">float</span><span class="w">                                        </span><span class="n">m_StopDistance</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="nf">GetOutputMesh</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_meshPtr</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">MeshReader</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsNonObtuse</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="w"> </span><span class="n">f</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SplitFace</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">acFaces</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="w"> </span><span class="n">cf</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nfAdj</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetOneRing</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">Upwind</span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="n">currentVert</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="n">vet</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">InitializeAttributes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">currentVert</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">seeds</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">CleanupAttributes</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">LocalSolver</span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="w"> </span><span class="n">triangle</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="n">currentVert</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSeedPoint</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">index</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SeedPoints</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_SeedPoints</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SeedPoints</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">getSpeedType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">speedType</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">GetStopDistance</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_StopDistance</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">InitializeLabels</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">InitializeActivePoints</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">PointLength</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">GenerateReducedData</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">loadGeodesicFile</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">geoFilename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">computeCoordXFiles</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">vertT_filename</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">computeCoordYFiles</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">vertT_filename</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">computeCoordZFiles</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">vertT_filename</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">computeCurvFiles</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">vertT_filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeDistanceToCurve</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">curvePoints</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">outfilename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">physicalPointToXYZ</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">VoxelIndexType</span><span class="w"> </span><span class="o">*</span><span class="n">imageX</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">imageOrigin</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">imageSpacing</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
-<span class="w">  </span><span class="n">VoxelIndexType</span><span class="w"> </span><span class="nf">indexToLinearIndex</span><span class="p">(</span><span class="n">VoxelIndexType</span><span class="w"> </span><span class="o">*</span><span class="n">imageX</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">imageSize</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
-<span class="w">  </span><span class="n">VoxelIndexType</span><span class="w"> </span><span class="nf">physicalPointToLinearIndex</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
-<span class="w">  </span><span class="n">VoxelIndexType</span><span class="w"> </span><span class="nf">physicalPointToLinearIndex</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">imageOrigin</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">imageSpacing</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">imageSize</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">pointTriangleDistance</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">P</span><span class="p">,</span><span class="w"> </span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="w"> </span><span class="n">face</span><span class="p">,</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PP</span><span class="p">);</span>
-<span class="w">  </span><span class="n">vec3</span><span class="w"> </span><span class="nf">ComputeBarycentricCoordinates</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="w"> </span><span class="n">f</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">need_maxedgelength</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">FindNearestVertex</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">pt</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetTriangleInfoForPoint</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="w"> </span><span class="o">&amp;</span><span class="n">triangleX</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&amp;</span><span class="n">alphaX</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&amp;</span><span class="n">betaX</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&amp;</span><span class="n">gammaX</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">//Praful - for Riddhish project</span>
-<span class="w">  </span><span class="c1">//float GetVirtualSource(vnl_vector&lt;float&gt; baryCoord, vnl_matrix&lt;float&gt; X, vnl_vector&lt;float&gt; ds, vnl_vector&lt; float &gt; &amp;x0);</span>
-<span class="w">  </span><span class="c1">//float ComputeThreePointApproximatedGeodesic(vnl_vector&lt;float&gt; x, vnl_vector&lt;float&gt; baryCoord, vnl_matrix&lt;float&gt; X, vnl_vector&lt;float&gt; ds, char *method);</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">ComputeCanonicalForm</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">X</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="nf">GetGeodesicDistance</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">v2</span><span class="p">);</span>
-<span class="w">  </span><span class="c1">//float GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, vnl_vector &lt;float&gt; baryCoord_a, vnl_vector &lt;float&gt; baryCoord_b, char *method);</span>
-
-<span class="w">  </span><span class="c1">// SHIREEN - compute distance to landmarks based on geodesic approximation</span>
-<span class="w">  </span><span class="c1">//float GetBronsteinGeodesicDistance(point a, point b, char *method);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeDistanceToLandmark</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="n">landmark</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">apply_log</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">outfilename</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateGeodesicMapWithDistancesFromVertices</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vertexIdlist</span><span class="p">);</span>
-<span class="w">  </span><span class="c1">// end SHIREEN</span>
-
-<span class="w">  </span><span class="c1">// SHIREEN - computing geo distance on the fly for fuzzy geodesics</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetVertexInfoForPoint</span><span class="p">(</span><span class="n">point</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
-<span class="w">  </span><span class="c1">//std::vector&lt;float&gt; ComputeDistanceToCurve(TriMesh *mesh, std::vector&lt; point &gt; curvePoints);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WriteFeaFile</span><span class="p">(</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">outfilename</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WriteFeaFile</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fea</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">outfilename</span><span class="p">);</span>
-<span class="w">  </span><span class="c1">// end SHIREEN</span>
-
-<span class="w">  </span><span class="n">point</span><span class="w"> </span><span class="nf">ComputeFeatureDerivative</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nFeature</span><span class="p">);</span>
-
-
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">speedType</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// maps face index to speedInv</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">speedInvVector</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// maps vertex index to abs_curv</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">abs_curv</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// maps face index to vec3 of edge lengths with edges in this order: {01, 12, 20}</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vec3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">edgeLengthsVector</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// maps vertex index to vertex index to distance?</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">geodesicMap</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// maps vertex index to something to do with the geodesic computation</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">geodesic</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// maps something to something</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">VoxelIndexType</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">faceIndexMap</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Used for ComputeBaryCentricCoordinates when faceIndexMap is unavailable.</span>
-<span class="w">  </span><span class="n">KDtree</span><span class="w"> </span><span class="o">*</span><span class="n">kd</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// Used for GetNearestVertex;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">maxEdgeLength</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TriMesh</span><span class="o">::</span><span class="n">Face</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vertOneringFaces</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">features</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">point</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">featureGradients</span><span class="p">;</span>
-
-<span class="p">};</span>
-
-
-<span class="cp">#endif</span>
-</code></pre></div>
+meshFIM() {
+  m_meshPtr = NULL;
+};
+~meshFIM() {};
+</code></pre>
+<p>protected:</p>
+<p>private:</p>
+<p>std::list<index>                             m_ActivePoints;
+  std::vector<index>                           m_SeedPoints;
+  std::vector<LabelType>                       m_Label;
+  float                                        m_StopDistance;</p>
+<p>TriMesh <em>GetOutputMesh() {
+    return m_meshPtr;
+  }
+  void MeshReader(char </em>filename);</p>
+<p>bool IsNonObtuse(int v, TriMesh::Face f);
+  void SplitFace(std::vector<TriMesh::Face> &amp;acFaces, int v, TriMesh::Face cf, int nfAdj);
+  std::vector<TriMesh::Face> GetOneRing(int v);
+  float Upwind(index currentVert, index vet);
+  void InitializeAttributes(int currentVert, std::vector<int> seeds);
+  void CleanupAttributes();
+  float LocalSolver(index C, TriMesh::Face triangle, index currentVert);</p>
+<p>void SetSeedPoint(std::vector<index> SeedPoints) {
+    m_SeedPoints = SeedPoints;
+  }</p>
+<p>int getSpeedType() {
+    return speedType;
+  }
+  float GetStopDistance() {
+    return m_StopDistance;
+  }</p>
+<p>void InitializeLabels();
+  void InitializeActivePoints();
+  float PointLength(point v);</p>
+<p>void GenerateReducedData();</p>
+<p>void loadGeodesicFile(TriMesh <em>mesh, const char </em>geoFilename);</p>
+<p>void computeCoordXFiles(TriMesh <em>mesh, const char </em>vertT_filename);
+  void computeCoordYFiles(TriMesh <em>mesh, const char </em>vertT_filename);
+  void computeCoordZFiles(TriMesh <em>mesh, const char </em>vertT_filename);
+  void computeCurvFiles(TriMesh <em>mesh, const char </em>vertT_filename);</p>
+<p>void ComputeDistanceToCurve(TriMesh <em>mesh, std::vector&lt; point &gt; curvePoints, const char </em>outfilename);</p>
+<p>void physicalPointToXYZ(point x, VoxelIndexType <em>imageX, float imageOrigin[3], float imageSpacing[3]);
+  VoxelIndexType indexToLinearIndex(VoxelIndexType </em>imageX, int imageSize[3]);
+  VoxelIndexType physicalPointToLinearIndex(point x);
+  VoxelIndexType physicalPointToLinearIndex(point x, float imageOrigin[3], float imageSpacing[3], int imageSize[3]);
+  double pointTriangleDistance(point P, TriMesh::Face face, point &amp;PP);
+  vec3 ComputeBarycentricCoordinates(point p, TriMesh::Face f);
+  void need_maxedgelength();
+  int FindNearestVertex(point pt);
+  int GetTriangleInfoForPoint(point x, TriMesh::Face &amp;triangleX, float &amp;alphaX, float &amp;betaX, float &amp;gammaX);</p>
+<p>//Praful - for Riddhish project
+  //float GetVirtualSource(vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, vnl_vector&lt; float &gt; &amp;x0);
+  //float ComputeThreePointApproximatedGeodesic(vnl_vector<float> x, vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, char <em>method);
+  float ComputeCanonicalForm(point s, vnl_vector<float> &amp;x, vnl_matrix<float> &amp;X);
+  float GetGeodesicDistance(int v1, int v2);
+  //float GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b, char </em>method);</p>
+<p>// SHIREEN - compute distance to landmarks based on geodesic approximation
+  //float GetBronsteinGeodesicDistance(point a, point b, char <em>method);
+  void ComputeDistanceToLandmark(TriMesh </em>mesh, point landmark, bool apply_log, const char *outfilename);
+  void UpdateGeodesicMapWithDistancesFromVertices(std::vector<int> vertexIdlist);
+  // end SHIREEN</p>
+<p>// SHIREEN - computing geo distance on the fly for fuzzy geodesics
+  int GetVertexInfoForPoint(point x);
+  //std::vector<float> ComputeDistanceToCurve(TriMesh <em>mesh, std::vector&lt; point &gt; curvePoints);
+  void WriteFeaFile(TriMesh </em>mesh, char <em>outfilename);
+  void WriteFeaFile(std::vector<float> fea, char </em>outfilename);
+  // end SHIREEN</p>
+<p>point ComputeFeatureDerivative(int v, int nFeature);</p>
+<p>int speedType;</p>
+<p>// maps face index to speedInv
+  std::vector<float> speedInvVector;</p>
+<p>// maps vertex index to abs_curv
+  std::vector<float> abs_curv;</p>
+<p>// maps face index to vec3 of edge lengths with edges in this order: {01, 12, 20}
+  std::vector<vec3> edgeLengthsVector;</p>
+<p>// maps vertex index to vertex index to distance?
+  std::vector&lt; std::map<unsigned int, float> &gt; geodesicMap;</p>
+<p>// maps vertex index to something to do with the geodesic computation
+  std::vector<float> geodesic;</p>
+<p>// maps something to something
+  std::map<VoxelIndexType, std::vector\<int> > faceIndexMap;</p>
+<p>// Used for ComputeBaryCentricCoordinates when faceIndexMap is unavailable.
+  KDtree *kd;</p>
+<p>// Used for GetNearestVertex;
+  double maxEdgeLength;</p>
+<p>std::vector&lt; std::vector<TriMesh::Face> &gt; vertOneringFaces;</p>
+<p>std::vector&lt; std::vector<float> &gt; features;</p>
+<p>std::vector &lt; std::vector<point> &gt; featureGradients;</p>
+<p>};</p>
+<h1 id="endif_1">endif</h1>
+<p>```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

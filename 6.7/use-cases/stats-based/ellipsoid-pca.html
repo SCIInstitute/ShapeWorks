@@ -3856,13 +3856,14 @@
 <p><a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
 <h2 id="analyzing-shape-model-using-python-apis">Analyzing Shape Model Using Python APIs</h2>
 <p>The <code>ParticleShapeStatistics()</code> of <code>ShapeWorks</code> python API analyzes the optimized particle-based shape model by calculating the principal components of the shape model, eigenvalues, eigenvectors, and PCA loadings. This tool also estimates the variance explained by each mode and generates plots for PCA metrics similar to <code>ShapeWorks Studio.</code> </p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Read the particle files from a pre-trained shape model</span>
-<span class="n">particle_data</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ParticleSystem</span><span class="p">(</span><span class="o">&lt;</span><span class="nb">list</span> <span class="n">of</span> <span class="n">local</span> <span class="n">point</span> <span class="n">files</span><span class="o">&gt;</span><span class="p">)</span>
-</code></pre></div>
+<p>```python</p>
+<h1 id="read-the-particle-files-from-a-pre-trained-shape-model">Read the particle files from a pre-trained shape model</h1>
+<p>particle_data = sw.ParticleSystem(<list of local point files>)
+```</p>
 <p>To perform PCA:</p>
-<div class="highlight"><pre><span></span><code><span class="n">shape_statistics</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ParticleShapeStatistics</span><span class="p">()</span>
-<span class="n">shape_statistics</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">particleSystem</span> <span class="o">=</span> <span class="n">particle_data</span><span class="p">,</span><span class="n">domainsPerShape</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</code></pre></div>
+<p><code>python
+shape_statistics = sw.ParticleShapeStatistics()
+shape_statistics.PCA(particleSystem = particle_data,domainsPerShape=1)</code></p>
 <p>Using <code>shape_statistics</code> object, you can now extract the following entities:</p>
 <ul>
 <li>

@@ -3881,8 +3881,7 @@
 <li>To screen record on Windows: Use <code>Windows key + Alt + R</code> to begin recording. The video format can be converted using the command line tool <code>FFmpeg</code>.</li>
 <li>Copy the image or video to <code>/usr/sci/www/shapeworks/doc-resources/</code>. This requires access to the 'shapeworks' group which SCI support can grant. </li>
 <li>Add a markdown cell to the notebook that includes the video source. For example:
-    <div class="highlight"><pre><span></span><code>&lt;p&gt;&lt;video src=&quot;https://sci.utah.edu/~shapeworks/doc-resources/mp4s/example-video.mp4&quot; autoplay muted loop controls style=&quot;width:100%&quot;&gt;&lt;/p&gt;
-</code></pre></div>
+    <code>&lt;p&gt;&lt;video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/example-video.mp4" autoplay muted loop controls style="width:100%"&gt;&lt;/p&gt;</code>
 Once all output is included as an image or video in the notebook, add a copy of the notebook to <code>/ShapeWorks/docs/notebooks/</code>. Then update <code>/ShapeWorks/mkdocs.yml</code> to include the new notebook. </li>
 </ol>
 

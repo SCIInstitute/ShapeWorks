@@ -3801,176 +3801,111 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Lightbox.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="p">;</span>
-
-<span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Visualizer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VisualizerHandle</span><span class="p">;</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Visualizer</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
-<span class="w">  </span><span class="o">~</span><span class="n">Visualizer</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_lightbox</span><span class="p">(</span><span class="n">LightboxHandle</span><span class="w"> </span><span class="n">lightbox</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">SessionHandle</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_center</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">center</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_center</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_alignment_domain</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_alignment_domain</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_glyphs</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_surface</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_samples</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_samples</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_landmarks</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_planes</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_ffc_mode</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_sample</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_shape</span><span class="p">(</span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">shape</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_shapes</span><span class="p">(</span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point_one</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point_two</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean_shape</span><span class="p">(</span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">mean_shape</span><span class="p">);</span>
-<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mean_shape</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_lut</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_annotations</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_current_shape</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">vtkFloatArray</span><span class="o">*</span><span class="w"> </span><span class="nf">get_current_particle_scalars</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_particle_poly_data</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_mesh</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_current_meshes_transformed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_feature_map</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_uniform_feature_range</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_uniform_feature_range</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_map</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_map</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_viewers</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_feature_range</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="nf">get_feature_range</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="nf">get_feature_raw_range</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_feature_range_valid</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_range</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">range</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_range</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span>
-<span class="w">                                              </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_opacities</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">opacities</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_opacities</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_domain_particle_visibilities</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visibilities</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_domain_particle_visibilities</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_current_glyph_size</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_ctrl_click</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">redraw</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="nf">export_to_pixmap</span><span class="p">(</span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">transparent_background</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_orientation_marker</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_color_scale</span><span class="p">,</span>
-<span class="w">                           </span><span class="kt">bool</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ready</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">QSize</span><span class="w"> </span><span class="nf">get_render_size</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">LightboxHandle</span><span class="w"> </span><span class="nf">get_lightbox</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">lightbox_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_viewer_properties</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_feature_range_changed</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_image_slice_settings_changed</span><span class="p">();</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_measurements</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup_single_selected_point_lut</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">center_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">needs_camera_reset_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_glyphs_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_surface_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">LightboxHandle</span><span class="w"> </span><span class="n">lightbox_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">SessionHandle</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">selected_point_one_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">selected_point_two_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">cached_mean_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">mean_shape_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="n">current_shape_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">feature_range_</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">feature_manual_range_</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">feature_range_valid_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">feature_range_uniform_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_particle_visibilities_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">opacities_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">current_glyph_size_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Data/Preferences.h></h1>
+<h1 id="include_1">include <Data/Session.h></h1>
+<h1 id="include_2">include <Visualization/Lightbox.h></h1>
+<h1 id="include_3">include <map></h1>
+<h1 id="include_4">include <string></h1>
+<p>namespace shapeworks {</p>
+<p>class Visualizer;</p>
+<p>typedef QSharedPointer<Visualizer> VisualizerHandle;</p>
+<p>class Visualizer : public QObject {
+  Q_OBJECT;</p>
+<p>public:
+  Visualizer(Preferences&amp; prefs);
+  ~Visualizer();</p>
+<p>void set_lightbox(LightboxHandle lightbox);</p>
+<p>void set_session(SessionHandle session);</p>
+<p>void set_center(bool center);</p>
+<p>bool get_center();</p>
+<p>void set_alignment_domain(int domain);
+  int get_alignment_domain();</p>
+<p>void set_show_glyphs(bool show);</p>
+<p>void set_show_surface(bool show);</p>
+<p>void display_samples();</p>
+<p>void update_samples();</p>
+<p>void update_landmarks();
+  void update_planes();
+  void update_paint_mode();
+  void handle_fill_all_ffc();</p>
+<p>void display_sample(int i);</p>
+<p>void display_shape(ShapeHandle shape);
+  void display_shapes(ShapeList shapes);</p>
+<p>void set_selected_point_one(int id);
+  void set_selected_point_two(int id);</p>
+<p>void set_mean(const Eigen::VectorXd&amp; mean);
+  void set_mean_shape(ShapeHandle mean_shape);
+  ShapeHandle get_mean_shape();</p>
+<p>void reset_camera();</p>
+<p>void update_lut();
+  void update_annotations();</p>
+<p>Particles get_current_shape();</p>
+<p>vtkFloatArray* get_current_particle_scalars();
+  vtkSmartPointer<vtkPolyData> get_current_particle_poly_data();</p>
+<p>void handle_new_mesh();
+  vtkSmartPointer<vtkPolyData> get_current_mesh(int index, bool clip_constraints);
+  std::vector<vtkSmartPointer\<vtkPolyData>> get_current_meshes_transformed(int index, bool clip_constraints = false);</p>
+<p>const std::string&amp; get_feature_map() const;</p>
+<p>void set_uniform_feature_range(bool value);</p>
+<p>bool get_uniform_feature_range(void);</p>
+<p>void set_feature_map(const std::string&amp; feature_map);</p>
+<p>void clear_viewers();</p>
+<p>void reset_feature_range();</p>
+<p>double* get_feature_range();</p>
+<p>double* get_feature_raw_range();</p>
+<p>bool get_feature_range_valid();</p>
+<p>void update_feature_range(double* range);</p>
+<p>void update_feature_range(double min, double max);</p>
+<p>vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, int alignment_domain, int domain);</p>
+<p>vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, DisplayMode display_mode,
+                                              int alignment_domain, int domain);</p>
+<p>void set_opacities(std::vector<float> opacities);</p>
+<p>std::vector<float> get_opacities();</p>
+<p>void set_domain_particle_visibilities(std::vector<bool> visibilities);</p>
+<p>std::vector<bool> get_domain_particle_visibilities();</p>
+<p>double get_current_glyph_size();</p>
+<p>void handle_ctrl_click(PickResult result);</p>
+<p>void redraw();</p>
+<p>QPixmap export_to_pixmap(QSize size, bool transparent_background, bool show_orientation_marker, bool show_color_scale,
+                           bool&amp; ready);</p>
+<p>QSize get_render_size();</p>
+<p>LightboxHandle get_lightbox() { return this-&gt;lightbox_; }</p>
+<p>public Q_SLOTS:</p>
+<p>void update_viewer_properties();</p>
+<p>void handle_feature_range_changed();</p>
+<p>void handle_image_slice_settings_changed();</p>
+<p>private:
+  Preferences&amp; preferences_;</p>
+<p>void compute_measurements();</p>
+<p>void setup_single_selected_point_lut();</p>
+<p>std::string feature_map_;
+  int alignment_domain_;</p>
+<p>bool center_;
+  bool needs_camera_reset_ = true;</p>
+<p>bool show_glyphs_ = true;
+  bool show_surface_ = true;</p>
+<p>LightboxHandle lightbox_;
+  SessionHandle session_;</p>
+<p>vtkSmartPointer<vtkLookupTable> glyph_lut_;
+  int selected_point_one_;
+  int selected_point_two_;</p>
+<p>Eigen::VectorXd cached_mean_;
+  ShapeHandle mean_shape_;
+  Particles current_shape_;</p>
+<p>double feature_range_[2] = {0, 0};
+  double feature_manual_range_[2] = {0, 0};
+  bool feature_range_valid_ = false;
+  bool feature_range_uniform_ = true;</p>
+<p>std::vector<bool> domain_particle_visibilities_;
+  std::vector<float> opacities_;</p>
+<p>double current_glyph_size_{0};
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

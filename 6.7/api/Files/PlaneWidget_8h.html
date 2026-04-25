@@ -3801,84 +3801,57 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Optimize/Constraints/PlaneConstraint.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkHandleWidget</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkSphereSource</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkPlaneSource</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkPolyDataMapper</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkActor</span><span class="p">;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Viewer</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">PlaneCallback</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioHandleWidget</span><span class="p">;</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">PlaneWidget</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">PlaneWidget</span><span class="p">(</span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span><span class="p">);</span>
-<span class="w">  </span><span class="o">~</span><span class="n">PlaneWidget</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_positions</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_glyph_properties</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_planes</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_right_click</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">plane</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">point</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">delete_plane</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">flip_plane</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_plane</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_plane_offset</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">offset</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">finalize_plane_offset</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_id</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_plane_points</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_planes</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioHandleWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create_handle</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">assign_handle_to_domain</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioHandleWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">count_plane_points</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">count_complete_planes</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">PlaneConstraint</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_plane_reference</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">plane</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_offset_scale</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_update_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// control points</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkSphereSource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sphere_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioHandleWidget</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">handles_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="c1">// planes</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPlaneSource</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">plane_sources_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">plane_mappers_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">plane_actors_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">PlaneCallback</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback_</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="include">include <Libs/Optimize/Constraints/PlaneConstraint.h></h1>
+<h1 id="include_1">include <vtkSmartPointer.h></h1>
+<h1 id="include_2">include <vector></h1>
+<p>class vtkHandleWidget;
+class vtkSphereSource;
+class vtkPlaneSource;
+class vtkPolyDataMapper;
+class vtkActor;</p>
+<p>namespace shapeworks {</p>
+<p>class Viewer;
+class PlaneCallback;
+class StudioHandleWidget;</p>
+<p>class PlaneWidget {
+ public:
+  PlaneWidget(Viewer* viewer);
+  ~PlaneWidget();</p>
+<p>void update();</p>
+<p>void store_positions();</p>
+<p>void update_glyph_properties();</p>
+<p>void clear_planes();</p>
+<p>void handle_right_click(int domain, int plane, int point);</p>
+<p>void delete_plane(int domain, int plane_id);</p>
+<p>void flip_plane(int domain, int plane_id);</p>
+<p>void apply_plane(int domain, int plane_id);</p>
+<p>void set_plane_offset(int domain, int plane_id, int offset);</p>
+<p>void finalize_plane_offset(int domain, int plane_id);</p>
+<p>private:
+  void update_plane_points();
+  void update_planes();</p>
+<p>vtkSmartPointer<StudioHandleWidget> create_handle();</p>
+<p>void assign_handle_to_domain(vtkSmartPointer<StudioHandleWidget> handle, int domain_id);</p>
+<p>int count_plane_points();
+  int count_complete_planes();</p>
+<p>PlaneConstraint&amp; get_plane_reference(int domain, int plane);</p>
+<p>double get_offset_scale(int domain_id);</p>
+<p>bool block_update_ = false;</p>
+<p>Viewer* viewer_ = nullptr;</p>
+<p>// control points
+  vtkSmartPointer<vtkSphereSource> sphere_;
+  std::vector<vtkSmartPointer\<StudioHandleWidget>> handles_;</p>
+<p>// planes
+  std::vector<vtkSmartPointer\<vtkPlaneSource>> plane_sources_;
+  std::vector<vtkSmartPointer\<vtkPolyDataMapper>> plane_mappers_;
+  std::vector<vtkSmartPointer\<vtkActor>> plane_actors_;</p>
+<p>vtkSmartPointer<PlaneCallback> callback_;
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

@@ -3834,29 +3834,29 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-read_particles">function read_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">read_particles</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+Eigen::VectorXd read_particles(
+    std::string filename
+)</code></p>
 <h3 id="function-read_particles_as_vector">function read_particles_as_vector</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">read_particles_as_vector</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; itk::Point&lt; double, 3 &gt; &gt; read_particles_as_vector(
+    std::string filename
+)</code></p>
 <h3 id="function-write_particles">function write_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">write_particles</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void write_particles(
+    std::string filename,
+    const Eigen::VectorXd &amp; points
+)</code></p>
 <h3 id="function-write_particles_from_vector">function write_particles_from_vector</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">write_particles_from_vector</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void write_particles_from_vector(
+    std::string filename,
+    std::vector&lt; itk::Point&lt; double, 3 &gt; &gt; points
+)</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

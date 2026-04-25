@@ -3974,58 +3974,58 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleEvent</span><span class="o">::</span><span class="n">Self</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef ParticleEvent shapeworks::ParticleEvent::Self;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-particleevent">function ParticleEvent</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline ParticleEvent()</code></p>
 <h3 id="function-particleevent_1">function ~ParticleEvent</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleEvent</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual ~ParticleEvent()</code></p>
 <h3 id="function-particleevent_2">function ParticleEvent</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline ParticleEvent(
+    const ParticleEvent &amp; v
+)</code></p>
 <p>Copy constructor and operator= </p>
 <h3 id="function-operator">function operator=</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline const ParticleEvent &amp; operator=(
+    const ParticleEvent &amp; v
+)</code></p>
 <h3 id="function-geteventname">function GetEventName</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEventName</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual const char * GetEventName() const</code></p>
 <p>Standard ITK event members. </p>
 <h3 id="function-checkevent">function CheckEvent</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CheckEvent</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="o">::</span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">e</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual bool CheckEvent(
+    const ::itk::EventObject * e
+) const</code></p>
 <h3 id="function-makeobject">function MakeObject</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">::</span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">MakeObject</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline ::itk::EventObject * MakeObject() const</code></p>
 <h3 id="function-setpositionindex">function SetPositionIndex</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPositionIndex</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetPositionIndex(
+    int i
+)</code></p>
 <p>Get/Set the index value. </p>
 <h3 id="function-getpositionindex">function GetPositionIndex</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetPositionIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline int GetPositionIndex() const</code></p>
 <h3 id="function-setdomainindex">function SetDomainIndex</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainIndex</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetDomainIndex(
+    int i
+)</code></p>
 <p>Get/Set the Domain index value. </p>
 <h3 id="function-getdomainindex">function GetDomainIndex</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline int GetDomainIndex() const</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:37 +0000</p>
 
 
 

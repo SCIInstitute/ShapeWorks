@@ -3997,6 +3997,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_groomed_centroids" class="md-nav__link">
+    <span class="md-ellipsis">
+      function set_groomed_centroids
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-set_alignment_type" class="md-nav__link">
     <span class="md-ellipsis">
       function set_alignment_type
@@ -4231,6 +4240,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_groomed_centroids" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_groomed_centroids
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_procrustes_transform" class="md-nav__link">
     <span class="md-ellipsis">
       function get_procrustes_transform
@@ -4270,6 +4288,24 @@
   <a href="#function-get_image_volume" class="md-nav__link">
     <span class="md-ellipsis">
       function get_image_volume
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_segmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_segmentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_segmentation_filename" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_segmentation_filename
     </span>
   </a>
   
@@ -4348,6 +4384,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-has_constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      function has_constraints
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-has_planes" class="md-nav__link">
     <span class="md-ellipsis">
       function has_planes
@@ -4360,6 +4405,24 @@
   <a href="#function-get_groomed_mesh_wrappers" class="md-nav__link">
     <span class="md-ellipsis">
       function get_groomed_mesh_wrappers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-recompute_original_surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      function recompute_original_surface
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-ensure_segmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      function ensure_segmentation
     </span>
   </a>
   
@@ -4526,6 +4589,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-groomed-centroids">set_groomed_centroids</a></strong>(const std::vector&lt; Eigen::Vector3d &gt; &amp; centroids)<br>Set per-domain centroid offsets for world-space positioning.</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-set-alignment-type">set_alignment_type</a></strong>(int alignment)<br>Set the alignment type.</td>
 </tr>
 <tr>
@@ -4629,6 +4696,10 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-transform">get_groomed_transform</a></strong>(int domain =0)</td>
 </tr>
 <tr>
+<td>std::vector&lt; Eigen::Vector3d &gt;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-centroids">get_groomed_centroids</a></strong>()<br>Get the centroid of each groomed mesh domain.</td>
+</tr>
+<tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-procrustes-transform">get_procrustes_transform</a></strong>(int domain =0)</td>
 </tr>
@@ -4647,6 +4718,14 @@
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Image.html">Image</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-image-volume">get_image_volume</a></strong>(std::string image_volume_name)</td>
+</tr>
+<tr>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Image.html">Image</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-segmentation">get_segmentation</a></strong>()</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-segmentation-filename">get_segmentation_filename</a></strong>()</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
@@ -4682,320 +4761,358 @@
 </tr>
 <tr>
 <td>bool</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-has-constraints">has_constraints</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-has-planes">has_planes</a></strong>()</td>
 </tr>
 <tr>
-<td>std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1MeshWrapper.html">MeshWrapper</a> &gt; &gt;</td>
+<td>std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">Surface</a> &gt; &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-mesh-wrappers">get_groomed_mesh_wrappers</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-recompute-original-surface">recompute_original_surface</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-ensure-segmentation">ensure_segmentation</a></strong>()<br>If a segmentation doesn't exist, create a blank canvas.</td>
 </tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-shape">function Shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Shape</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+Shape()</code></p>
 <h3 id="function-shape_1">function ~Shape</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Shape</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+~Shape()</code></p>
 <h3 id="function-get_display_name">function get_display_name</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_display_name()</code></p>
 <h3 id="function-get_meshes">function get_meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">(</span>
-<span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+MeshGroup get_meshes(
+    DisplayMode display_mode,
+    bool wait =false
+)</code></p>
 <h3 id="function-set_annotations">function set_annotations</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_annotations</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">annotations</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">only_overwrite_blank</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_annotations(
+    std::vector&lt; std::string &gt; annotations,
+    bool only_overwrite_blank =true
+)</code></p>
 <h3 id="function-get_annotations">function get_annotations</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_annotations</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; std::string &gt; get_annotations()</code></p>
 <h3 id="function-set_mesh_manager">function set_mesh_manager</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh_manager</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshManager</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_mesh_manager(
+    std::shared_ptr&lt; MeshManager &gt; mesh_manager
+)</code></p>
 <h3 id="function-set_subject">function set_subject</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_subject</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">subject</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_subject(
+    std::shared_ptr&lt; shapeworks::Subject &gt; subject
+)</code></p>
 <h3 id="function-is_subject">function is_subject</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_subject</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool is_subject()</code></p>
 <p>Is this shape a population subject (e.g. mean/pca constructions are not) </p>
 <h3 id="function-get_subject">function get_subject</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_subject</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::shared_ptr&lt; shapeworks::Subject &gt; get_subject()</code></p>
 <p>Return the pointer to the subject object. </p>
 <h3 id="function-is_fixed">function is_fixed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_fixed</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool is_fixed()</code></p>
 <p>Helper to ask if this shape is fixed or not. </p>
 <h3 id="function-is_excluded">function is_excluded</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_excluded</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool is_excluded()</code></p>
 <p>Helper to ask if this shape is excluded. </p>
 <h3 id="function-import_original_file">function import_original_file</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">import_original_file</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void import_original_file(
+    const std::string &amp; filename
+)</code></p>
 <p>Import the original raw mesh or image file. </p>
 <h3 id="function-get_original_meshes">function get_original_meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_original_meshes</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+MeshGroup get_original_meshes(
+    bool wait =false
+)</code></p>
 <p>Retrieve the original meshes. </p>
 <h3 id="function-get_groomed_meshes">function get_groomed_meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_groomed_meshes</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+MeshGroup get_groomed_meshes(
+    bool wait =false
+)</code></p>
 <p>Retrieve the groomed meshes. </p>
 <h3 id="function-get_reconstructed_meshes">function get_reconstructed_meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_reconstructed_meshes</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+MeshGroup get_reconstructed_meshes(
+    bool wait =false
+)</code></p>
 <p>Retrieve the reconstructed meshes. </p>
 <h3 id="function-set_reconstructed_meshes">function set_reconstructed_meshes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_reconstructed_meshes</span><span class="p">(</span>
-<span class="w">    </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">meshes</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_reconstructed_meshes(
+    MeshGroup meshes
+)</code></p>
 <p>Set the reconstructed meshes. </p>
 <h3 id="function-reset_groomed_mesh">function reset_groomed_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_groomed_mesh</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void reset_groomed_mesh()</code></p>
 <p>Reset the groomed mesh so that it will be re-created. </p>
 <h3 id="function-import_global_point_files">function import_global_point_files</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_global_point_files</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool import_global_point_files(
+    std::vector&lt; std::string &gt; filenames
+)</code></p>
 <p>Import global correspondence point files. </p>
 <h3 id="function-import_local_point_files">function import_local_point_files</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_local_point_files</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool import_local_point_files(
+    std::vector&lt; std::string &gt; filenames
+)</code></p>
 <p>Import local correspondence point files. </p>
 <h3 id="function-import_landmarks_files">function import_landmarks_files</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_landmarks_files</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool import_landmarks_files(
+    std::vector&lt; std::string &gt; filenames
+)</code></p>
 <p>Import landmarks files. </p>
 <h3 id="function-store_landmarks">function store_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">store_landmarks</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool store_landmarks()</code></p>
 <p>Store landmarks. </p>
 <h3 id="function-import_constraints">function import_constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_constraints</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+bool import_constraints(
+    std::vector&lt; std::string &gt; filenames
+)</code></p>
 <p>import constraints </p>
 <h3 id="function-store_constraints">function store_constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">store_constraints</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool store_constraints()</code></p>
 <p>Store constraints. </p>
 <h3 id="function-set_particles">function set_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_particles</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Particles</span><span class="w"> </span><span class="n">particles</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_particles(
+    Particles particles
+)</code></p>
 <p>Set particles. </p>
 <h3 id="function-get_particles">function get_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_particles</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+Particles get_particles()</code></p>
 <p>Get particles. </p>
 <h3 id="function-set_particle_transform">function set_particle_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_particle_transform(
+    vtkSmartPointer&lt; vtkTransform &gt; transform
+)</code></p>
 <p>Set the particle transform (alignment) </p>
+<h3 id="function-set_groomed_centroids">function set_groomed_centroids</h3>
+<p><code>cpp
+void set_groomed_centroids(
+    const std::vector&lt; Eigen::Vector3d &gt; &amp; centroids
+)</code></p>
+<p>Set per-domain centroid offsets for world-space positioning. </p>
 <h3 id="function-set_alignment_type">function set_alignment_type</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_alignment_type</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_alignment_type(
+    int alignment
+)</code></p>
 <p>Set the alignment type. </p>
 <h3 id="function-get_global_correspondence_points">function get_global_correspondence_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_global_correspondence_points</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+Eigen::VectorXd get_global_correspondence_points()</code></p>
 <p>Get the global correspondence points. </p>
 <h3 id="function-get_particles_for_display">function get_particles_for_display</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_particles_for_display</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; Eigen::VectorXd &gt; get_particles_for_display()</code></p>
 <p>Get the global correspondence points for display. </p>
 <h3 id="function-get_local_correspondence_points">function get_local_correspondence_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_local_correspondence_points</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+Eigen::VectorXd get_local_correspondence_points()</code></p>
 <p>Get the local correspondence points. </p>
 <h3 id="function-clear_reconstructed_mesh">function clear_reconstructed_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_reconstructed_mesh</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void clear_reconstructed_mesh()</code></p>
 <h3 id="function-get_id">function get_id</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_id</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+int get_id()</code></p>
 <p>Get the id of this shape. </p>
 <h3 id="function-set_id">function set_id</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_id</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_id(
+    int id
+)</code></p>
 <p>Set the id of this shape. </p>
 <h3 id="function-update_annotations">function update_annotations</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_annotations</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+void update_annotations()</code></p>
 <p>Update the name of this shape. </p>
 <h3 id="function-get_original_filenames">function get_original_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; std::string &gt; get_original_filenames()</code></p>
 <h3 id="function-get_original_filenames_with_path">function get_original_filenames_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames_with_path</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; std::string &gt; get_original_filenames_with_path()</code></p>
 <h3 id="function-get_original_filename">function get_original_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_original_filename</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_original_filename()</code></p>
 <h3 id="function-get_original_filename_with_path">function get_original_filename_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_original_filename_with_path</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_original_filename_with_path()</code></p>
 <h3 id="function-get_groomed_filename">function get_groomed_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_groomed_filename</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_groomed_filename()</code></p>
 <h3 id="function-get_groomed_filename_with_path">function get_groomed_filename_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_groomed_filename_with_path</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_groomed_filename_with_path(
+    int domain
+)</code></p>
 <h3 id="function-get_global_point_filename">function get_global_point_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_global_point_filename</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_global_point_filename()</code></p>
 <h3 id="function-get_global_point_filename_with_path">function get_global_point_filename_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_global_point_filename_with_path</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_global_point_filename_with_path()</code></p>
 <h3 id="function-get_local_point_filename">function get_local_point_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_local_point_filename</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_local_point_filename()</code></p>
 <h3 id="function-get_local_point_filename_with_path">function get_local_point_filename_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_local_point_filename_with_path</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_local_point_filename_with_path()</code></p>
 <h3 id="function-set_transform">function set_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_transform(
+    vtkSmartPointer&lt; vtkTransform &gt; transform
+)</code></p>
 <h3 id="function-get_transform">function get_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_transform(
+    int domain =0
+)</code></p>
 <h3 id="function-get_inverse_transform">function get_inverse_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_inverse_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_inverse_transform(
+    int domain =0
+)</code></p>
 <h3 id="function-has_alignment">function has_alignment</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_alignment</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool has_alignment()</code></p>
 <h3 id="function-get_original_transform">function get_original_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_original_transform(
+    int domain =0
+)</code></p>
 <h3 id="function-set_reconstruction_transforms">function set_reconstruction_transforms</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_reconstruction_transforms</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_reconstruction_transforms(
+    std::vector&lt; vtkSmartPointer&lt; vtkTransform &gt; &gt; transforms
+)</code></p>
 <h3 id="function-get_reconstruction_transform">function get_reconstruction_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_reconstruction_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_reconstruction_transform(
+    int domain
+)</code></p>
 <h3 id="function-get_groomed_transform">function get_groomed_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_groomed_transform(
+    int domain =0
+)</code></p>
+<h3 id="function-get_groomed_centroids">function get_groomed_centroids</h3>
+<p><code>cpp
+std::vector&lt; Eigen::Vector3d &gt; get_groomed_centroids()</code></p>
+<p>Get the centroid of each groomed mesh domain. </p>
 <h3 id="function-get_procrustes_transform">function get_procrustes_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_procrustes_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_procrustes_transform(
+    int domain =0
+)</code></p>
 <h3 id="function-get_procrustes_transforms">function get_procrustes_transforms</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_procrustes_transforms</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; vtkSmartPointer&lt; vtkTransform &gt; &gt; get_procrustes_transforms()</code></p>
 <h3 id="function-get_alignment">function get_alignment</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_alignment</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+vtkSmartPointer&lt; vtkTransform &gt; get_alignment(
+    int domain =0
+)</code></p>
 <h3 id="function-load_feature">function load_feature</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_feature</span><span class="p">(</span>
-<span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void load_feature(
+    DisplayMode display_mode,
+    std::string feature
+)</code></p>
 <h3 id="function-get_image_volume">function get_image_volume</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_volume</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_volume_name</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+std::shared_ptr&lt; Image &gt; get_image_volume(
+    std::string image_volume_name
+)</code></p>
+<h3 id="function-get_segmentation">function get_segmentation</h3>
+<p><code>cpp
+std::shared_ptr&lt; Image &gt; get_segmentation()</code></p>
+<h3 id="function-get_segmentation_filename">function get_segmentation_filename</h3>
+<p><code>cpp
+inline std::string get_segmentation_filename()</code></p>
 <h3 id="function-get_point_features">function get_point_features</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_point_features</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+Eigen::VectorXd get_point_features(
+    std::string feature
+)</code></p>
 <h3 id="function-set_point_features">function set_point_features</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_point_features</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">values</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_point_features(
+    std::string feature,
+    Eigen::VectorXd values
+)</code></p>
 <h3 id="function-load_feature_from_scalar_file">function load_feature_from_scalar_file</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_feature_from_scalar_file</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_name</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void load_feature_from_scalar_file(
+    std::string filename,
+    std::string feature_name
+)</code></p>
 <h3 id="function-set_override_feature">function set_override_feature</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_override_feature</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void set_override_feature(
+    std::string feature
+)</code></p>
 <h3 id="function-get_override_feature">function get_override_feature</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_override_feature</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::string get_override_feature()</code></p>
 <h3 id="function-landmarks">function landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarks</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+Eigen::MatrixXd &amp; landmarks()</code></p>
 <h3 id="function-constraints">function constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Constraints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">constraints</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; Constraints &gt; &amp; constraints()</code></p>
 <h3 id="function-get_constraints">function get_constraints</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Constraints</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_constraints</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+Constraints &amp; get_constraints(
+    int domain_id
+)</code></p>
+<h3 id="function-has_constraints">function has_constraints</h3>
+<p><code>cpp
+bool has_constraints()</code></p>
 <h3 id="function-has_planes">function has_planes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_planes</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+bool has_planes()</code></p>
 <h3 id="function-get_groomed_mesh_wrappers">function get_groomed_mesh_wrappers</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; std::shared_ptr&lt; Surface &gt; &gt; get_groomed_mesh_wrappers()</code></p>
+<h3 id="function-recompute_original_surface">function recompute_original_surface</h3>
+<p><code>cpp
+void recompute_original_surface()</code></p>
+<h3 id="function-ensure_segmentation">function ensure_segmentation</h3>
+<p><code>cpp
+void ensure_segmentation()</code></p>
+<p>If a segmentation doesn't exist, create a blank canvas. </p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

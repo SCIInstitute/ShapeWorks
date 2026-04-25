@@ -3801,53 +3801,37 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ProjectUtils.h&quot;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Variant.h&quot;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Parameters</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMap</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">ANALYSIS_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;analysis&quot;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">GROOM_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;groom&quot;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">OPTIMIZE_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;optimize&quot;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">STUDIO_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;studio&quot;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">PROJECT_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;project&quot;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">DEEPSSM_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;deepssm&quot;</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">Parameters</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">Parameters</span><span class="p">(</span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">Variant</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">Variant</span><span class="w"> </span><span class="n">default_value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">key_exists</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">Variant</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_entry</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_map</span><span class="p">(</span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_map</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_parameters</span><span class="p">();</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map_</span><span class="p">;</span>
-
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include-projectutilsh">include "ProjectUtils.h"</h1>
+<h1 id="include-varianth">include "Variant.h"</h1>
+<p>namespace shapeworks {</p>
+<p>class Parameters {
+  using StringMap = project::types::StringMap;</p>
+<p>public:
+  static constexpr const char<em> ANALYSIS_PARAMS = "analysis";
+  static constexpr const char</em> GROOM_PARAMS = "groom";
+  static constexpr const char<em> OPTIMIZE_PARAMS = "optimize";
+  static constexpr const char</em> STUDIO_PARAMS = "studio";
+  static constexpr const char<em> PROJECT_PARAMS = "project";
+  static constexpr const char</em> DEEPSSM_PARAMS = "deepssm";
+  static constexpr const char* MONAI_PARAMS = "monai";</p>
+<p>Parameters();</p>
+<p>explicit Parameters(StringMap map);</p>
+<p>Variant get(std::string key, Variant default_value);</p>
+<p>bool key_exists(std::string key);</p>
+<p>void set(std::string key, Variant value);</p>
+<p>void remove_entry(std::string key);</p>
+<p>void set_map(StringMap map);</p>
+<p>StringMap get_map() const;</p>
+<p>void reset_parameters();</p>
+<p>private:
+  StringMap map_;</p>
+<p>};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

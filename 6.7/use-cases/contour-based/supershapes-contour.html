@@ -3899,28 +3899,28 @@ The input contours are:
 <h2 id="optimization-parameters">Optimization Parameters</h2>
 <p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See <a href="../../workflow/parameters.html#project-excel-file">Project excel file</a> for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-        <span class="s2">&quot;number_of_particles&quot;</span> <span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
-        <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
-        <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;recompute_regularization_interval&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;domains_per_shape&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-        <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="s2">&quot;procrustes&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;procrustes_interval&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="s2">&quot;procrustes_scaling&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;save_init_splits&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;verbosity&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;multiscale&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;multiscale_particles&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-<span class="p">}</span>
-</code></pre></div>
+<p><code>python
+{
+        "number_of_particles" : 64,
+        "use_normals": 0,
+        "normals_strength": 0.0,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 100,
+        "optimization_iterations" : 500,
+        "starting_regularization" : 100,
+        "ending_regularization" : 1,
+        "recompute_regularization_interval" : 1,
+        "domains_per_shape" : 1,
+        "relative_weighting" : 5,
+        "initial_relative_weighting" : 0.1,
+        "procrustes" : 1,
+        "procrustes_interval" : 2,
+        "procrustes_scaling" : 1,
+        "save_init_splits" : 0,
+        "verbosity" : 0,
+        "multiscale": 1,
+        "multiscale_particles": 4,
+}</code></p>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
 <p>Once the python code runs the optimization, the files are saved in the <code>Output</code> folder after which ShapeWorks Studio is launched from the python code to analyze the model. </p>
 <p>During the generation of the input supershapes data,the n2 and n3 variables were kept constant, and only the n1 variable was varied according to values sampled from a chi squared distribution. We obtain a shape model that accurately captures this variation(first mode variance = 98%)

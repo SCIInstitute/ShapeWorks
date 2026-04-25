@@ -3801,55 +3801,41 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkInteractorStyleTrackballCamera.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPropPicker.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkRenderWindowInteractor.h&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
-
-<span class="c1">// Handle mouse events</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioInteractorStyle</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">vtkInteractorStyleTrackballCamera</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StudioInteractorStyle</span><span class="o">*</span><span class="w"> </span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkTypeMacro</span><span class="p">(</span><span class="n">StudioInteractorStyle</span><span class="p">,</span><span class="w"> </span><span class="n">vtkInteractorStyleTrackballCamera</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_lightbox</span><span class="p">(</span><span class="n">Lightbox</span><span class="o">*</span><span class="w"> </span><span class="n">lightbox</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">StudioInteractorStyle</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">StudioInteractorStyle</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnLeftButtonDown</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnRightButtonDown</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnRightButtonUp</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnMouseWheelForward</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnMouseWheelBackward</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnKeyDown</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Dolly</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Rotate</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OnMouseMove</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">Dolly</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">factor</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Lightbox</span><span class="o">*</span><span class="w"> </span><span class="n">lightbox_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">right_click_dragged_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">right_button_down_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <vtkInteractorStyleTrackballCamera.h></h1>
+<h1 id="include_1">include <vtkPropPicker.h></h1>
+<h1 id="include_2">include <vtkRenderWindowInteractor.h></h1>
+<p>namespace shapeworks {</p>
+<p>class Lightbox;</p>
+<p>// Handle mouse events
+class StudioInteractorStyle : public vtkInteractorStyleTrackballCamera {
+ public:
+  static StudioInteractorStyle* New();
+  vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);</p>
+<p>void set_lightbox(Lightbox* lightbox);</p>
+<p>StudioInteractorStyle();</p>
+<p>virtual ~StudioInteractorStyle();</p>
+<p>void OnLeftButtonDown() override;
+  void OnRightButtonDown() override;
+  void OnRightButtonUp() override;</p>
+<p>void OnMouseWheelForward() override;
+  void OnMouseWheelBackward() override;</p>
+<p>void OnKeyDown() override;
+  void Dolly() override;</p>
+<p>void Rotate() override;</p>
+<p>void OnMouseMove() override;</p>
+<p>protected:
+  void Dolly(double factor) override;</p>
+<p>private:
+  Lightbox* lightbox_;
+  bool right_click_dragged_{false};
+  bool right_button_down_{false};
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

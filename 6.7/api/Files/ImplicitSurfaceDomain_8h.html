@@ -3801,114 +3801,147 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include-imagedomainwithcurvatureh">include "ImageDomainWithCurvature.h"</h1>
+<h1 id="include-vnlvnl_crossh">include "vnl/vnl_cross.h"</h1>
+<h1 id="include-vnlvnl_inverseh">include "vnl/vnl_inverse.h"</h1>
+<h1 id="include-vnlvnl_mathh">include "vnl/vnl_math.h"</h1>
+<p>namespace shapeworks {
+template <class T>
+class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
+ public:
+  typedef ImageDomainWithCurvature<T> Superclass;
+  typedef std::shared_ptr<ImplicitSurfaceDomain> Pointer;</p>
+<p>typedef typename Superclass::ImageType ImageType;
+  typedef typename Superclass::PointType PointType;</p>
+<p>virtual void SetTolerance(const T _Tolerance) {
+    if (this-&gt;m_Tolerance != _Tolerance) {
+      this-&gt;m_Tolerance = _Tolerance;
+      // this-&gt;Modified();
+    }
+  }
+  virtual T GetTolerance() { return this-&gt;m_Tolerance; }</p>
+<p>shapeworks::DomainType GetDomainType() const override { return shapeworks::DomainType::Image; }</p>
+<p>virtual bool ApplyConstraints(PointType&amp; p, int idx, bool dbg = false) const override {
+    // First apply and constraints imposed by superclasses.  This will
+    // guarantee the point starts in the correct image domain.
+    bool flag = Superclass::ApplyConstraints(p);</p>
+<pre><code>const T epsilon = m_Tolerance * 0.001;
+T value = this-&gt;Sample(p);
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ImageDomainWithCurvature.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_cross.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_inverse.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_math.h&quot;</span>
+// Early exit if already close enough
+if (fabs(value) &lt;= m_Tolerance) {
+  return flag;
+}
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ImplicitSurfaceDomain</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ImplicitSurfaceDomain</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pointer</span><span class="p">;</span>
+const unsigned int MAX_ITERATIONS = 50;
+unsigned int k = 0;
+T prev_value = value;
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
+while (k &lt; MAX_ITERATIONS) {
+  // Sample gradient
+  vnl_vector_fixed&lt;float, DIMENSION&gt; gradf = this-&gt;SampleGradientAtPoint(p, idx);
+  vnl_vector_fixed&lt;double, DIMENSION&gt; grad;
+  grad[0] = double(gradf[0]);
+  grad[1] = double(gradf[1]);
+  grad[2] = double(gradf[2]);
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTolerance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">_Tolerance</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Tolerance</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">_Tolerance</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_Tolerance</span><span class="p">;</span>
-<span class="w">      </span><span class="c1">// this-&gt;Modified();</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">GetTolerance</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_Tolerance</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+  double gradient_magnitude = grad.magnitude();
 
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="nf">GetDomainType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="o">::</span><span class="n">Image</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+  // If gradient is too small, we're stuck
+  if (gradient_magnitude &lt; epsilon) {
+    break;
+  }
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">ApplyConstraints</span><span class="p">(</span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">dbg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// First apply and constraints imposed by superclasses.  This will</span>
-<span class="w">    </span><span class="c1">// guarantee the point starts in the correct image domain.</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ApplyConstraints</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+  // Normalize gradient to get direction
+  vnl_vector_fixed&lt;double, DIMENSION&gt; direction = grad / gradient_magnitude;
 
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">mult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+  // For smoothed distance fields:
+  // - Neither value nor gradient_magnitude are exactly correct
+  // - But their RATIO is approximately correct (within ~20%)
+  // - Use damping to handle the residual error
 
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">epsilon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Tolerance</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.001</span><span class="p">;</span>
-<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">Sample</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+  const double DAMPING = 0.7;  // Conservative for ~20% overshoot
+  double step_size = (double(value) / gradient_magnitude) * DAMPING;
 
-<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">gradmag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
-<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">fabs</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">m_Tolerance</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mult</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">gradmag</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">epsilon</span><span class="p">)</span>
-<span class="w">    </span><span class="c1">//  while ( fabs(f) &gt; m_Tolerance || gradmag &lt; epsilon)</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="n">PointType</span><span class="w"> </span><span class="n">p_old</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
-<span class="w">      </span><span class="c1">// vnl_vector_fixed&lt;T, DIMENSION&gt; grad = -this-&gt;SampleGradientAtPoint(p);</span>
-<span class="w">      </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gradf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">SampleGradientAtPoint</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span>
-<span class="w">      </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">grad</span><span class="p">;</span>
-<span class="w">      </span><span class="n">grad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">(</span><span class="n">gradf</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-<span class="w">      </span><span class="n">grad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">(</span><span class="n">gradf</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-<span class="w">      </span><span class="n">grad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">(</span><span class="n">gradf</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+  // Safety check: if gradient is very weak, cap step by distance value
+  // This handles pathological cases (critical points, field edges)
+  if (gradient_magnitude &lt; 0.5) {
+    double max_step = fabs(double(value)) * DAMPING;
+    if (fabs(step_size) &gt; max_step) {
+      step_size = (step_size &gt; 0 ? max_step : -max_step);
+    }
+  }
 
-<span class="w">      </span><span class="n">gradmag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grad</span><span class="p">.</span><span class="n">magnitude</span><span class="p">();</span>
-<span class="w">      </span><span class="c1">// vnl_vector_fixed&lt;T, DIMENSION&gt; vec = grad * (f / (gradmag + epsilon));</span>
-<span class="w">      </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grad</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">gradmag</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="kt">double</span><span class="p">(</span><span class="n">epsilon</span><span class="p">)));</span>
+  for (unsigned int i = 0; i &lt; DIMENSION; i++) {
+    p[i] -= step_size * direction[i];
+  }
 
-<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DIMENSION</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">      </span><span class="p">}</span>
+  // Re-evaluate
+  prev_value = value;
+  value = this-&gt;Sample(p);
 
-<span class="w">      </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">Sample</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+  // Check convergence
+  if (fabs(value) &lt;= m_Tolerance) {
+    break;  // Success!
+  }
 
-<span class="w">      </span><span class="c1">// Raise the tolerance if we have done too many iterations.</span>
-<span class="w">      </span><span class="n">k</span><span class="o">++</span><span class="p">;</span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">10000</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">mult</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span>
-<span class="w">        </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span><span class="w">  </span><span class="c1">// end while</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">flag</span><span class="p">;</span>
-<span class="w">  </span><span class="p">};</span>
+  // Check if we're oscillating or making no progress
+  if (k &gt; 5) {
+    double value_change = fabs(value - prev_value);
+    if (value_change &lt; m_Tolerance * 0.1) {
+      // Making very little progress, close enough
+      break;
+    }
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="nf">UpdateParticlePosition</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
-<span class="w">                                          </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">update</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">newpoint</span><span class="p">;</span>
+    // Check for oscillation (sign keeps flipping)
+    if ((value &gt; 0 &amp;&amp; prev_value &lt; 0) || (value &lt; 0 &amp;&amp; prev_value &gt; 0)) {
+      // We're bouncing across the surface
+      // If we're close enough, accept it
+      if (fabs(value) &lt; m_Tolerance * 2.0) {
+        break;
+      }
+    }
+  }
 
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">newpoint</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">update</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="w">    </span><span class="p">}</span>
+  k++;
+}
 
-<span class="w">    </span><span class="n">ApplyConstraints</span><span class="p">(</span><span class="n">newpoint</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span>
+return flag;
+</code></pre>
+<p>}</p>
+<p>inline PointType UpdateParticlePosition(const PointType&amp; point, int idx,
+                                          vnl_vector_fixed<double, DIMENSION>&amp; update) const override {
+    PointType newpoint;</p>
+<pre><code>for (unsigned int i = 0; i &lt; 3; i++) {
+  newpoint[i] = point[i] - update[i];
+}
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">newpoint</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
+ApplyConstraints(newpoint, idx);
 
-
-<span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="nf">GetZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
-<span class="w">    </span><span class="c1">// TODO Hong</span>
-<span class="w">    </span><span class="c1">// Return point that doesn&#39;t violate plane constraints.</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">ImplicitSurfaceDomain</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_Tolerance</span><span class="p">(</span><span class="mf">1.0e-4</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span>
-<span class="w">    </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">indent</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;m_Tolerance = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_Tolerance</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ImplicitSurfaceDomain</span><span class="p">(){};</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">T</span><span class="w"> </span><span class="n">m_Tolerance</span><span class="p">;</span>
-
-
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// end namespace shapeworks</span>
-</code></pre></div>
+return newpoint;
+</code></pre>
+<p>}</p>
+<p>PointType GetZeroCrossingPoint() const override {
+    PointType p;
+    // TODO Hong
+    // Return point that doesn't violate plane constraints.
+    return p;
+  }</p>
+<p>ImplicitSurfaceDomain() : m_Tolerance(1.0e-4) {}
+  void PrintSelf(std::ostream&amp; os, itk::Indent indent) const {
+    Superclass::PrintSelf(os, indent);
+    os &lt;&lt; indent &lt;&lt; "m_Tolerance = " &lt;&lt; m_Tolerance &lt;&lt; std::endl;
+  }
+  virtual ~ImplicitSurfaceDomain(){};</p>
+<p>private:
+  T m_Tolerance;
+};</p>
+<p>}  // end namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

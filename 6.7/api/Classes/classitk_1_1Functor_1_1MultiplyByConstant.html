@@ -3930,47 +3930,47 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TInput</span><span class="w"> </span><span class="p">,</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">TConstant</span><span class="w"> </span><span class="p">,</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">TOutput</span><span class="w"> </span><span class="o">&gt;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">Functor</span><span class="o">::</span><span class="n">MultiplyByConstant</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+template &lt;class TInput ,
+class TConstant ,
+class TOutput &gt;
+class itk::Functor::MultiplyByConstant;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-multiplybyconstant">function MultiplyByConstant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">MultiplyByConstant</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline MultiplyByConstant()</code></p>
 <h3 id="function-multiplybyconstant_1">function ~MultiplyByConstant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">~</span><span class="n">MultiplyByConstant</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline ~MultiplyByConstant()</code></p>
 <h3 id="function-operator">function operator!=</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MultiplyByConstant</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline bool operator!=(
+    const MultiplyByConstant &amp; other
+) const</code></p>
 <h3 id="function-operator_1">function operator==</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MultiplyByConstant</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline bool operator==(
+    const MultiplyByConstant &amp; other
+) const</code></p>
 <h3 id="function-operator_2">function operator()</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TOutput</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TInput</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">A</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline TOutput operator()(
+    const TInput &amp; A
+) const</code></p>
 <h3 id="function-setconstant">function SetConstant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetConstant</span><span class="p">(</span>
-<span class="w">    </span><span class="n">TConstant</span><span class="w"> </span><span class="n">ct</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetConstant(
+    TConstant ct
+)</code></p>
 <h3 id="function-getconstant">function GetConstant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TConstant</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetConstant</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const TConstant &amp; GetConstant() const</code></p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-m_constant">variable m_Constant</h3>
-<div class="highlight"><pre><span></span><code><span class="n">TConstant</span><span class="w"> </span><span class="n">m_Constant</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+TConstant m_Constant;</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:36 +0000</p>
 
 
 

@@ -3801,59 +3801,38 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="c1">// qt</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDialog&gt;</span>
-
-<span class="c1">// studio</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Ui_SplashScreen</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">QListWidgetItem</span><span class="p">;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">SplashScreen</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QDialog</span><span class="w"> </span><span class="p">{</span>
-<span class="n">Q_OBJECT</span>
-
-<span class="k">public</span><span class="o">:</span>
-
-<span class="w">  </span><span class="n">SplashScreen</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">SplashScreen</span><span class="p">();</span>
-
-<span class="k">private</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">new_project</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">open_existing</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">open_recent</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">quit</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">enable_load_recent_button</span><span class="p">(</span><span class="n">QListWidgetItem</span><span class="o">*</span><span class="w"> </span><span class="n">item</span><span class="p">);</span>
-
-<span class="nl">Q_SIGNALS</span><span class="p">:</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">open_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">file_path</span><span class="p">);</span>
-
-<span class="k">private</span><span class="o">:</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">QResizeEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">populate_recent_projects</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Ui_SplashScreen</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w"> </span><span class="c1">// end namespace</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<p>// qt</p>
+<h1 id="include">include <QDialog></h1>
+<p>// studio</p>
+<h1 id="include_1">include <Data/Preferences.h></h1>
+<p>class Ui_SplashScreen;
+class QListWidgetItem;</p>
+<p>namespace shapeworks {</p>
+<p>class SplashScreen : public QDialog {
+Q_OBJECT</p>
+<p>public:</p>
+<p>SplashScreen(QWidget* parent, Preferences&amp; preferences);</p>
+<p>virtual ~SplashScreen();</p>
+<p>private Q_SLOTS:</p>
+<p>void new_project();</p>
+<p>void open_existing();</p>
+<p>void open_recent();</p>
+<p>void quit();</p>
+<p>void enable_load_recent_button(QListWidgetItem* item);</p>
+<p>Q_SIGNALS:</p>
+<p>void open_project(QString file_path);</p>
+<p>private:</p>
+<p>void resizeEvent(QResizeEvent* event) override;</p>
+<p>void populate_recent_projects();</p>
+<p>Ui_SplashScreen* ui_;</p>
+<p>Preferences&amp; preferences_;
+};</p>
+<p>} // end namespace
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

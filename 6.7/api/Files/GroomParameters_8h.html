@@ -3798,161 +3798,142 @@
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1GroomParameters.html">shapeworks::GroomParameters</a></strong></td>
 </tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="../Classes/structshapeworks_1_1GroomParameters_1_1SharedBoundary.html">shapeworks::GroomParameters::SharedBoundary</a></strong></td>
+</tr>
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">GroomParameters</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MeshSmoothingOption</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">laplacian</span><span class="p">,</span><span class="w"> </span><span class="n">sinc</span><span class="w"> </span><span class="p">};</span>
-
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">AlignmentOption</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">none</span><span class="p">,</span><span class="w"> </span><span class="n">center</span><span class="p">,</span><span class="w"> </span><span class="n">icp</span><span class="w"> </span><span class="p">};</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">GroomParameters</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_domain_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_to_project</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_groom_output_prefix</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_groom_output_prefix</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_groom_all_domains_the_same</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_groom_all_domains_the_same</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_alignment_enabled</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_alignment_enabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_alignment_method</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_alignment_method</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">method</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_alignment_reference</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_alignment_reference</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">reference</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_alignment_reference_chosen</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_alignment_reference_chosen</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">reference</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_alignment_subset_size</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_alignment_subset_size</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_isolate_tool</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_isolate_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_fill_holes_tool</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_fill_holes_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_fill_mesh_holes_tool</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_fill_mesh_holes_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_auto_pad_tool</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_auto_pad_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_padding_amount</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_padding_amount</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">padding_amount</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_antialias_tool</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_antialias_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_antialias_iterations</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_antialias_iterations</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_blur_tool</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_blur_tool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_blur_amount</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_blur_amount</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">blur_amount</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_fast_marching</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_fast_marching</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_mesh_smooth</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mesh_smooth</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_mesh_smoothing_method</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mesh_smoothing_method</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">method</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_mesh_vtk_laplacian_iterations</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mesh_vtk_laplacian_iterations</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_mesh_vtk_laplacian_relaxation</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mesh_vtk_laplacian_relaxation</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">relaxation</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_mesh_vtk_windowed_sinc_iterations</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mesh_vtk_windowed_sinc_iterations</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_mesh_vtk_windowed_sinc_passband</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mesh_vtk_windowed_sinc_passband</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">passband</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_use_icp</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_use_center</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_use_landmarks</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_crop</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_crop</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">crop</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_convert_to_mesh</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_convert_to_mesh</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// reflection</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_reflect</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reflect</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">reflect</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_reflect_column</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reflect_column</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">column</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_reflect_choice</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reflect_choice</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">choice</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_reflect_axis</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reflect_axis</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">axies</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// resampling</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_resample</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_resample</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">resample</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_isotropic</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_isotropic</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">isotropic</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_iso_spacing</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_iso_spacing</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">spacing</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_spacing</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_spacing</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">spacing</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_remesh</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">remesh</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_remesh_percent_mode</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_percent_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_remesh_percent</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_percent</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">percent</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_remesh_num_vertices</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_num_vertices</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_vertices</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_remesh_gradation</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_gradation</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">gradation</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_skip_grooming</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_skip_grooming</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">skip</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span>
-
-<span class="w">  </span><span class="c1">// constants</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_SMOOTH_VTK_LAPLACIAN_C</span><span class="p">;</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_SMOOTH_VTK_WINDOWED_SINC_C</span><span class="p">;</span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_ALIGNMENT_CENTER_C</span><span class="p">;</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_ALIGNMENT_ICP_C</span><span class="p">;</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_ALIGNMENT_LANDMARK_C</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name_</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <Project/Project.h></h1>
+<p>namespace shapeworks {</p>
+<p>class GroomParameters {
+ public:
+  struct SharedBoundary {
+    std::string first_domain;
+    std::string second_domain;
+    double tolerance;</p>
+<pre><code>// Helper methods for serialization
+std::string to_string() const;
+static SharedBoundary from_string(const std::string&amp; str);
+</code></pre>
+<p>};</p>
+<p>enum class MeshSmoothingOption { laplacian, sinc };</p>
+<p>enum class AlignmentOption { none, center, icp };</p>
+<p>public:
+  explicit GroomParameters(ProjectHandle project, std::string domain_name = "");
+  void set_domain_name(std::string domain_name);
+  void save_to_project();</p>
+<p>std::string get_groom_output_prefix();
+  void set_groom_output_prefix(std::string prefix);</p>
+<p>bool get_groom_all_domains_the_same();
+  void set_groom_all_domains_the_same(bool value);</p>
+<p>bool get_alignment_enabled();
+  void set_alignment_enabled(bool value);</p>
+<p>std::string get_alignment_method();
+  void set_alignment_method(std::string method);</p>
+<p>int get_alignment_reference();
+  void set_alignment_reference(int reference);</p>
+<p>int get_alignment_reference_chosen();
+  void set_alignment_reference_chosen(int reference);</p>
+<p>int get_alignment_subset_size();
+  void set_alignment_subset_size(int size);</p>
+<p>bool get_isolate_tool();
+  void set_isolate_tool(bool value);</p>
+<p>bool get_fill_holes_tool();
+  void set_fill_holes_tool(bool value);</p>
+<p>bool get_fill_mesh_holes_tool();
+  void set_fill_mesh_holes_tool(bool value);</p>
+<p>bool get_auto_pad_tool();
+  void set_auto_pad_tool(bool value);</p>
+<p>int get_padding_amount();
+  void set_padding_amount(int padding_amount);</p>
+<p>bool get_antialias_tool();
+  void set_antialias_tool(bool value);</p>
+<p>int get_antialias_iterations();
+  void set_antialias_iterations(int iterations);</p>
+<p>bool get_blur_tool();
+  void set_blur_tool(bool value);</p>
+<p>double get_blur_amount();
+  void set_blur_amount(double blur_amount);</p>
+<p>bool get_fast_marching();
+  void set_fast_marching(bool value);</p>
+<p>bool get_mesh_smooth();
+  void set_mesh_smooth(bool value);</p>
+<p>std::string get_mesh_smoothing_method();
+  void set_mesh_smoothing_method(std::string method);</p>
+<p>int get_mesh_vtk_laplacian_iterations();
+  void set_mesh_vtk_laplacian_iterations(int iterations);</p>
+<p>double get_mesh_vtk_laplacian_relaxation();
+  void set_mesh_vtk_laplacian_relaxation(double relaxation);</p>
+<p>int get_mesh_vtk_windowed_sinc_iterations();
+  void set_mesh_vtk_windowed_sinc_iterations(int iterations);</p>
+<p>double get_mesh_vtk_windowed_sinc_passband();
+  void set_mesh_vtk_windowed_sinc_passband(double passband);</p>
+<p>bool get_use_icp();
+  bool get_use_center();
+  bool get_use_landmarks();</p>
+<p>bool get_crop();
+  void set_crop(bool crop);</p>
+<p>bool get_convert_to_mesh();
+  void set_convert_to_mesh(bool value);</p>
+<p>// reflection
+  bool get_reflect();
+  void set_reflect(bool reflect);
+  std::string get_reflect_column();
+  void set_reflect_column(std::string column);
+  std::string get_reflect_choice();
+  void set_reflect_choice(std::string choice);
+  std::string get_reflect_axis();
+  void set_reflect_axis(std::string axies);</p>
+<p>// resampling
+  bool get_resample();
+  void set_resample(bool resample);
+  bool get_isotropic();
+  void set_isotropic(bool isotropic);
+  double get_iso_spacing();
+  void set_iso_spacing(double spacing);
+  std::vector<double> get_spacing();
+  void set_spacing(std::vector<double> spacing);</p>
+<p>bool get_remesh();
+  void set_remesh(bool remesh);</p>
+<p>bool get_remesh_percent_mode();
+  void set_remesh_percent_mode(bool mode);</p>
+<p>double get_remesh_percent();
+  void set_remesh_percent(double percent);</p>
+<p>int get_remesh_num_vertices();
+  void set_remesh_num_vertices(int num_vertices);</p>
+<p>double get_remesh_gradation();
+  void set_remesh_gradation(double gradation);</p>
+<p>bool get_skip_grooming();
+  void set_skip_grooming(bool skip);</p>
+<p>bool get_shared_boundaries_enabled();
+  void set_shared_boundaries_enabled(bool enabled);</p>
+<p>bool is_shared_boundary_domain();</p>
+<p>std::vector<SharedBoundary> get_shared_boundaries();
+  void set_shared_boundaries(const std::vector<SharedBoundary>&amp; boundaries);
+  void add_shared_boundary(const std::string&amp; first_domain, const std::string&amp; second_domain, double tolerance);
+  void remove_shared_boundary(size_t index);
+  void clear_shared_boundaries();</p>
+<p>void restore_defaults();</p>
+<p>Parameters get_parameters() const { return params_; }</p>
+<p>// constants
+  const static std::string GROOM_SMOOTH_VTK_LAPLACIAN_C;
+  const static std::string GROOM_SMOOTH_VTK_WINDOWED_SINC_C;</p>
+<p>const static std::string GROOM_ALIGNMENT_CENTER_C;
+  const static std::string GROOM_ALIGNMENT_ICP_C;
+  const static std::string GROOM_ALIGNMENT_LANDMARK_C;</p>
+<p>private:
+  Parameters params_;
+  ProjectHandle project_;
+  std::string domain_name_;
+};
+}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

@@ -3938,73 +3938,73 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-now">function now</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">time_point</span><span class="w"> </span><span class="n">now</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+static inline time_point now()</code></p>
 <p>get the current time </p>
 <h3 id="function-elapsed">function elapsed</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">elapsed</span><span class="p">(</span>
-<span class="w">    </span><span class="n">time_point</span><span class="w"> </span><span class="n">start</span><span class="p">,</span>
-<span class="w">    </span><span class="n">time_point</span><span class="w"> </span><span class="n">end</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">print_elapsed</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static double elapsed(
+    time_point start,
+    time_point end,
+    bool print_elapsed =true
+)</code></p>
 <p>return elapsed time in seconds, optionally printing to console </p>
 <h3 id="function-get_rng_seed">function get_rng_seed</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">get_rng_seed</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+static inline unsigned get_rng_seed()</code></p>
 <p>returns random seed </p>
 <h3 id="function-set_rng_seed">function set_rng_seed</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_rng_seed</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">seed</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static void set_rng_seed(
+    const unsigned seed
+)</code></p>
 <p>sets random seed </p>
 <h3 id="function-get_random_number">function get_random_number</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">get_random_number</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+static inline unsigned get_random_number()</code></p>
 <p>generates random number </p>
 <h3 id="function-is_directory">function is_directory</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_directory</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static bool is_directory(
+    const std::string &amp; pathname
+)</code></p>
 <p>returns true if pathname is a directory </p>
 <h3 id="function-file_exists">function file_exists</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">file_exists</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static bool file_exists(
+    const std::string &amp; filename
+)</code></p>
 <p>returns true if filename exists </p>
 <h3 id="function-setup_console_logging">function setup_console_logging</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setup_console_logging</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_progress</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">xml_status</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static void setup_console_logging(
+    bool show_progress,
+    bool xml_status
+)</code></p>
 <p>Set up the console logging options. </p>
 <h3 id="function-set_progress_callback">function set_progress_callback</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_progress_callback</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static void set_progress_callback(
+    void * ptr
+)</code></p>
 <p>Set up a progress callback. </p>
 <h3 id="function-setup_threads">function setup_threads</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setup_threads</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+static void setup_threads()</code></p>
 <p>Set up the number of threads from TBB_NUM_THREADS env variable. </p>
 <h3 id="function-convert_matrix">function convert_matrix</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Matrix33</span><span class="w"> </span><span class="n">convert_matrix</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkMatrix4x4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mat</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static Matrix33 convert_matrix(
+    const vtkSmartPointer&lt; vtkMatrix4x4 &gt; &amp; mat
+)</code></p>
 <p>converts a vtkMatrix4x4 to a Matrix33 and corresponding translationVector </p>
 <h3 id="function-get_offset">function get_offset</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="n">get_offset</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkMatrix4x4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mat</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static Vector3 get_offset(
+    const vtkSmartPointer&lt; vtkMatrix4x4 &gt; &amp; mat
+)</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

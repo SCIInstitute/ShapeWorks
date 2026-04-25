@@ -3962,54 +3962,54 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-indexregion">function IndexRegion</h3>
-<div class="highlight"><pre><span></span><code><span class="n">IndexRegion</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
-</code></pre></div>
+<p><code>cpp
+IndexRegion() =default</code></p>
 <h3 id="function-indexregion_1">function IndexRegion</h3>
-<div class="highlight"><pre><span></span><code><span class="n">IndexRegion</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IndexRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
-</code></pre></div>
+<p><code>cpp
+IndexRegion(
+    const IndexRegion &amp; 
+) =default</code></p>
 <h3 id="function-indexregion_2">function IndexRegion</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IndexRegion</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dims</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline IndexRegion(
+    const Dims &amp; dims
+)</code></p>
 <h3 id="function-indexregion_3">function IndexRegion</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IndexRegion</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Coord</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">_min</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Coord</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">_max</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline IndexRegion(
+    const Coord &amp; _min,
+    const Coord &amp; _max
+)</code></p>
 <h3 id="function-operator">function operator==</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IndexRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline bool operator==(
+    const IndexRegion &amp; other
+) const</code></p>
 <h3 id="function-valid">function valid</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">valid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline bool valid() const</code></p>
 <p>verified min/max do not create an inverted or an empty region </p>
 <h3 id="function-origin">function origin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Coord</span><span class="w"> </span><span class="n">origin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline Coord origin() const</code></p>
 <h3 id="function-size">function size</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline Dims size() const</code></p>
 <h3 id="function-pad">function pad</h3>
-<div class="highlight"><pre><span></span><code><span class="n">IndexRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">padding</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+IndexRegion &amp; pad(
+    int padding
+)</code></p>
 <p>uniformly grows or shrinks the region by the specified amount </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-min">variable min</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Coord</span><span class="w"> </span><span class="n">min</span><span class="w"> </span><span class="p">{</span><span class="mi">1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000000000</span><span class="p">};</span>
-</code></pre></div>
+<p><code>cpp
+Coord min {1000000000, 1000000000, 1000000000};</code></p>
 <h3 id="variable-max">variable max</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Coord</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="p">{</span><span class="mi">-1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">-1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">-1000000000</span><span class="p">};</span>
-</code></pre></div>
+<p><code>cpp
+Coord max {-1000000000, -1000000000, -1000000000};</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:37 +0000</p>
 
 
 

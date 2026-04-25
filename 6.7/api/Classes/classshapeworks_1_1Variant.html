@@ -4078,97 +4078,97 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Variant</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+class shapeworks::Variant;</code></p>
 <p><a href="">Variant</a> class to represent multiple types. </p>
 <p>This class was adapted from optparse to contain multiple types as a string This is used for storing parameters in a spreadsheet </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-variant">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant()</code></p>
 <h3 id="function-variant_1">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    const std::string &amp; v
+)</code></p>
 <h3 id="function-variant_2">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    int v
+)</code></p>
 <h3 id="function-variant_3">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    double v
+)</code></p>
 <h3 id="function-variant_4">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    const char * v
+)</code></p>
 <h3 id="function-variant_5">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    bool v
+)</code></p>
 <h3 id="function-variant_6">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    std::vector&lt; double &gt; v
+)</code></p>
 <h3 id="function-variant_7">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    std::vector&lt; int &gt; v
+)</code></p>
 <h3 id="function-variant_8">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    std::vector&lt; bool &gt; v
+)</code></p>
 <h3 id="function-variant_9">function Variant</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Variant</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline Variant(
+    std::vector&lt; std::string &gt; v
+)</code></p>
 <h3 id="function-operator-stdstring">function operator std::string</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator std::string() const</code></p>
 <h3 id="function-operator-bool">function operator bool</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator bool() const</code></p>
 <h3 id="function-operator-int">function operator int</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="kt">int</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator int() const</code></p>
 <h3 id="function-operator-unsigned-int">function operator unsigned int</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator unsigned int() const</code></p>
 <h3 id="function-operator-long">function operator long</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="kt">long</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator long() const</code></p>
 <h3 id="function-operator-unsigned-long">function operator unsigned long</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator unsigned long() const</code></p>
 <h3 id="function-operator-float">function operator float</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="kt">float</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator float() const</code></p>
 <h3 id="function-operator-double">function operator double</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="kt">double</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator double() const</code></p>
 <h3 id="function-operator-stdvector-double">function operator std::vector&lt; double &gt;</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator std::vector&lt; double &gt;() const</code></p>
 <h3 id="function-operator-stdvector-int">function operator std::vector&lt; int &gt;</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator std::vector&lt; int &gt;() const</code></p>
 <h3 id="function-operator-stdvector-bool">function operator std::vector&lt; bool &gt;</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator std::vector&lt; bool &gt;() const</code></p>
 <h3 id="function-operator-stdvector-stdstring">function operator std::vector&lt; std::string &gt;</h3>
-<div class="highlight"><pre><span></span><code><span class="k">operator</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+operator std::vector&lt; std::string &gt;() const</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

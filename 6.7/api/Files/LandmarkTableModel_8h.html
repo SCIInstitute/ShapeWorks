@@ -3801,97 +3801,61 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="c1">// QT Includes</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QAbstractTableModel&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QIcon&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QItemSelection&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QModelIndex&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">;</span>
-
-<span class="k">enum</span><span class="w"> </span><span class="nc">LandmarkColumns</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">COLOR_E</span><span class="p">,</span><span class="w"> </span><span class="n">NAME_E</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION_E</span><span class="p">,</span><span class="w"> </span><span class="n">SET_BUTTON_E</span><span class="p">,</span><span class="w"> </span><span class="n">COMMENT_E</span><span class="p">,</span><span class="w"> </span><span class="n">END_E</span><span class="w"> </span><span class="p">};</span>
-
-<span class="k">enum</span><span class="w"> </span><span class="nc">LandmarkVisibility</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ALL_VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">NONE_VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">SOME_VISIBLE_E</span><span class="w"> </span><span class="p">};</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">LandmarkTableModel</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QAbstractTableModel</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">Q_OBJECT</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">LandmarkTableModel</span><span class="p">(</span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">LandmarkTableModel</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_landmarks</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active_domain</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_table</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_cells</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_rows</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rows</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">toggle_visible</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_placing_landmark</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">row</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">delete_landmarks</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndexList</span><span class="w"> </span><span class="o">&amp;</span><span class="n">list</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">//------------------  QAbstractTableModel implementation ------------------</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">rowCount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">columnCount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QVariant</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">setData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QVariant</span><span class="w"> </span><span class="o">&amp;</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QVariant</span><span class="w"> </span><span class="nf">headerData</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">section</span><span class="p">,</span><span class="w"> </span><span class="n">Qt</span><span class="o">::</span><span class="n">Orientation</span><span class="w"> </span><span class="n">orientation</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">Qt</span><span class="o">::</span><span class="n">ItemFlags</span><span class="w"> </span><span class="nf">flags</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">new_landmark</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_click</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_double_click</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_header_click</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_visibility</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_eigen_row</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="n">matrix</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">row_to_remove</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">visibility_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LandmarkVisibility</span><span class="o">::</span><span class="n">ALL_VISIBLE_E</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">button_text_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;  Place  &quot;</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">LandmarkDefinition</span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmarks_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">QIcon</span><span class="w"> </span><span class="n">visible_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QIcon</span><span class="w"> </span><span class="n">visible_off_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">active_domain_</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<p>// QT Includes</p>
+<h1 id="include">include <Data/Session.h></h1>
+<h1 id="include_1">include <Project/Project.h></h1>
+<h1 id="include_2">include <QAbstractTableModel></h1>
+<h1 id="include_3">include <QIcon></h1>
+<h1 id="include_4">include <QItemSelection></h1>
+<h1 id="include_5">include <QModelIndex></h1>
+<p>namespace shapeworks {</p>
+<p>class Project;</p>
+<p>enum LandmarkColumns { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E };</p>
+<p>enum LandmarkVisibility { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E };</p>
+<p>class LandmarkTableModel : public QAbstractTableModel {
+  Q_OBJECT</p>
+<p>public:
+  LandmarkTableModel(QObject *parent = 0);</p>
+<p>virtual ~LandmarkTableModel();</p>
+<p>void set_session(QSharedPointer<Session> session);</p>
+<p>void store_landmarks();</p>
+<p>void set_active_domain(int domain);</p>
+<p>void update_table();</p>
+<p>void update_cells();</p>
+<p>void remove_rows(const std::vector<int> &amp;rows);</p>
+<p>void toggle_visible();</p>
+<p>void set_placing_landmark(int row);</p>
+<p>void delete_landmarks(const QModelIndexList &amp;list);</p>
+<p>//------------------  QAbstractTableModel implementation ------------------</p>
+<p>int rowCount(const QModelIndex &amp;index) const override;</p>
+<p>int columnCount(const QModelIndex &amp;index) const override;</p>
+<p>QVariant data(const QModelIndex &amp;index, int role) const override;</p>
+<p>bool setData(const QModelIndex &amp;index, const QVariant &amp;value, int role) override;</p>
+<p>QVariant headerData(int section, Qt::Orientation orientation, int role) const override;</p>
+<p>Qt::ItemFlags flags(const QModelIndex &amp;index) const override;</p>
+<p>public Q_SLOTS:</p>
+<p>void new_landmark();</p>
+<p>void handle_click(const QModelIndex &amp;index);</p>
+<p>void handle_double_click(const QModelIndex &amp;index);</p>
+<p>void handle_header_click(int index);</p>
+<p>private:
+  void update_visibility();</p>
+<p>static void remove_eigen_row(Eigen::MatrixXd &amp;matrix, unsigned int row_to_remove);</p>
+<p>std::shared_ptr<Project> project_;
+  QSharedPointer<Session> session_;</p>
+<p>int visibility_ = LandmarkVisibility::ALL_VISIBLE_E;
+  std::string button_text_ = "  Place  ";</p>
+<p>std::vector<LandmarkDefinition> landmarks_;</p>
+<p>QIcon visible_;
+  QIcon visible_off_;</p>
+<p>int active_domain_;
+};
+}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

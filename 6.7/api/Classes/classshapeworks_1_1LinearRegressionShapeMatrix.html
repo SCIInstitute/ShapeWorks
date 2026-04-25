@@ -4339,7 +4339,11 @@
 </tr>
 <tr>
 <td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1LegacyShapeMatrix.html#function-afteriteration">AfterIteration</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1LegacyShapeMatrix.html#function-before-iteration">before_iteration</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classshapeworks_1_1LegacyShapeMatrix.html#function-after-iteration">after_iteration</a></strong>()</td>
 </tr>
 <tr>
 <td>virtual void</td>
@@ -4413,10 +4417,6 @@
 <td>virtual void</td>
 <td><strong><a href="classshapeworks_1_1Observer.html#function-prefixtransformseteventcallback">PrefixTransformSetEventCallback</a></strong>(Object * , const itk::EventObject &amp; )</td>
 </tr>
-<tr>
-<td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1Observer.html#function-neighborhoodseteventcallback">NeighborhoodSetEventCallback</a></strong>(Object * , const itk::EventObject &amp; )</td>
-</tr>
 </tbody>
 </table>
 <p><strong>Protected Functions inherited from <a href="classshapeworks_1_1Observer.html">shapeworks::Observer</a></strong></p>
@@ -4455,170 +4455,169 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-datatype">typedef DataType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">LinearRegressionShapeMatrix</span><span class="o">::</span><span class="n">DataType</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef double shapeworks::LinearRegressionShapeMatrix::DataType;</code></p>
 <p>Standard class typedefs </p>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">LinearRegressionShapeMatrix</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">LinearRegressionShapeMatrix</span><span class="o">::</span><span class="n">Self</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef LinearRegressionShapeMatrix shapeworks::LinearRegressionShapeMatrix::Self;</code></p>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">LegacyShapeMatrix</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">LinearRegressionShapeMatrix</span><span class="o">::</span><span class="n">Superclass</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef LegacyShapeMatrix shapeworks::LinearRegressionShapeMatrix::Superclass;</code></p>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">LinearRegressionShapeMatrix</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::SmartPointer&lt;Self&gt; shapeworks::LinearRegressionShapeMatrix::Pointer;</code></p>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">LinearRegressionShapeMatrix</span><span class="o">::</span><span class="n">ConstPointer</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::SmartPointer&lt;const Self&gt; shapeworks::LinearRegressionShapeMatrix::ConstPointer;</code></p>
 <h3 id="typedef-constweakpointer">typedef ConstWeakPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">LinearRegressionShapeMatrix</span><span class="o">::</span><span class="n">ConstWeakPointer</span><span class="p">;</span>
-</code></pre></div>
+<p><code>cpp
+typedef itk::WeakPointer&lt;const Self&gt; shapeworks::LinearRegressionShapeMatrix::ConstWeakPointer;</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Self</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+itkNewMacro(
+    Self 
+)</code></p>
 <p>Method for creation through the object factory. </p>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
-<span class="w">    </span><span class="n">LinearRegressionShapeMatrix</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="n">LegacyShapeMatrix</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+itkTypeMacro(
+    LinearRegressionShapeMatrix ,
+    LegacyShapeMatrix 
+)</code></p>
 <p>Run-time type information (and related methods). </p>
 <h3 id="function-updatemeanmatrix">function UpdateMeanMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateMeanMatrix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void UpdateMeanMatrix()</code></p>
 <h3 id="function-computemean">function ComputeMean</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ComputeMean</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">k</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline vnl_vector&lt; double &gt; ComputeMean(
+    double k
+) const</code></p>
 <h3 id="function-resizeparameters">function ResizeParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResizeParameters</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void ResizeParameters(
+    unsigned int n
+)</code></p>
 <h3 id="function-resizemeanmatrix">function ResizeMeanMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResizeMeanMatrix</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cs</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void ResizeMeanMatrix(
+    int rs,
+    int cs
+)</code></p>
 <h3 id="function-resizeexplanatory">function ResizeExplanatory</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResizeExplanatory</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void ResizeExplanatory(
+    unsigned int n
+)</code></p>
 <h3 id="function-domainaddeventcallback">function DomainAddEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DomainAddEventCallback</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void DomainAddEventCallback(
+    Object * ,
+    const itk::EventObject &amp; e
+)</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1LegacyShapeMatrix.html#function-domainaddeventcallback">shapeworks::LegacyShapeMatrix::DomainAddEventCallback</a></p>
 <p>Callbacks that may be defined by a subclass. If a subclass defines one of these callback methods, the corresponding flag in m_DefinedCallbacks should be set to true so that the <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> will know to register the appropriate event with this method. </p>
 <h3 id="function-positionaddeventcallback">function PositionAddEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionAddEventCallback</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void PositionAddEventCallback(
+    Object * o,
+    const itk::EventObject &amp; e
+)</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1LegacyShapeMatrix.html#function-positionaddeventcallback">shapeworks::LegacyShapeMatrix::PositionAddEventCallback</a></p>
 <h3 id="function-positionseteventcallback">function PositionSetEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionSetEventCallback</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void PositionSetEventCallback(
+    Object * o,
+    const itk::EventObject &amp; e
+)</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1LegacyShapeMatrix.html#function-positionseteventcallback">shapeworks::LegacyShapeMatrix::PositionSetEventCallback</a></p>
 <h3 id="function-positionremoveeventcallback">function PositionRemoveEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionRemoveEventCallback</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual void PositionRemoveEventCallback(
+    Object * ,
+    const itk::EventObject &amp; 
+)</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1LegacyShapeMatrix.html#function-positionremoveeventcallback">shapeworks::LegacyShapeMatrix::PositionRemoveEventCallback</a></p>
 <h3 id="function-setdomainspershape">function SetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetDomainsPerShape(
+    int i
+)</code></p>
 <p>Set/Get the number of domains per shape. This can only be safely done before shapes are initialized with points! </p>
 <h3 id="function-getdomainspershape">function GetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline int GetDomainsPerShape() const</code></p>
 <h3 id="function-setexplanatory">function SetExplanatory</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetExplanatory</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetExplanatory(
+    std::vector&lt; double &gt; v
+)</code></p>
 <h3 id="function-setexplanatory_1">function SetExplanatory</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetExplanatory</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">q</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetExplanatory(
+    unsigned int i,
+    double q
+)</code></p>
 <h3 id="function-getexplanatory">function GetExplanatory</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetExplanatory</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const double &amp; GetExplanatory(
+    unsigned int i
+) const</code></p>
 <h3 id="function-getexplanatory_1">function GetExplanatory</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetExplanatory</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline double &amp; GetExplanatory(
+    unsigned int i
+)</code></p>
 <h3 id="function-getslope">function GetSlope</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetSlope</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const vnl_vector&lt; double &gt; &amp; GetSlope() const</code></p>
 <h3 id="function-getintercept">function GetIntercept</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetIntercept</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline const vnl_vector&lt; double &gt; &amp; GetIntercept() const</code></p>
 <h3 id="function-setslope">function SetSlope</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSlope</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetSlope(
+    const std::vector&lt; double &gt; &amp; v
+)</code></p>
 <h3 id="function-setintercept">function SetIntercept</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIntercept</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetIntercept(
+    const std::vector&lt; double &gt; &amp; v
+)</code></p>
 <h3 id="function-estimateparameters">function EstimateParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">EstimateParameters</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void EstimateParameters()</code></p>
 <h3 id="function-initialize">function Initialize</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline void Initialize()</code></p>
 <h3 id="function-beforeiteration">function BeforeIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1LegacyShapeMatrix.html#function-beforeiteration">shapeworks::LegacyShapeMatrix::BeforeIteration</a></p>
+<p><code>cpp
+inline virtual void BeforeIteration()</code></p>
 <h3 id="function-setregressioninterval">function SetRegressionInterval</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRegressionInterval</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+inline void SetRegressionInterval(
+    int i
+)</code></p>
 <h3 id="function-getregressioninterval">function GetRegressionInterval</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetRegressionInterval</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline int GetRegressionInterval() const</code></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-linearregressionshapematrix">function LinearRegressionShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">LinearRegressionShapeMatrix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline LinearRegressionShapeMatrix()</code></p>
 <h3 id="function-linearregressionshapematrix_1">function ~LinearRegressionShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">LinearRegressionShapeMatrix</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+inline virtual ~LinearRegressionShapeMatrix()</code></p>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<p><code>cpp
+inline void PrintSelf(
+    std::ostream &amp; os,
+    itk::Indent indent
+) const</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:37 +0000</p>
 
 
 

@@ -3805,113 +3805,81 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Shapeworks.h&quot;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span>
-<span class="p">{</span>
-
-<span class="c1">// A logical region of an Image or a Mesh</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">IndexRegion</span><span class="p">;</span>
-
-<span class="c1">// A physical region of an Image or a Mesh</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">PhysicalRegion</span><span class="p">;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">IndexRegion</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Coord</span><span class="w"> </span><span class="n">min</span><span class="p">{</span><span class="mi">1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000000000</span><span class="p">};</span>
-<span class="w">  </span><span class="n">Coord</span><span class="w"> </span><span class="n">max</span><span class="p">{</span><span class="mi">-1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">-1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">-1000000000</span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">IndexRegion</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
-<span class="w">  </span><span class="n">IndexRegion</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">IndexRegion</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">IndexRegion</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dims</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">min</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Coord</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">             </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Coord</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">             </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Coord</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">IndexRegion</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Coord</span><span class="w"> </span><span class="o">&amp;</span><span class="n">_min</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Coord</span><span class="w"> </span><span class="o">&amp;</span><span class="n">_max</span><span class="p">)</span><span class="w"> </span><span class="o">:</span>
-<span class="w">    </span><span class="n">min</span><span class="p">{</span><span class="n">_min</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">_min</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">_min</span><span class="p">[</span><span class="mi">2</span><span class="p">]},</span><span class="w"> </span><span class="n">max</span><span class="p">{</span><span class="n">_max</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">_max</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">_max</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span><span class="w"> </span><span class="p">{}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">IndexRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">min</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">min</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">max</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">valid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">max</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">max</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">max</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">Coord</span><span class="w"> </span><span class="n">origin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Coord</span><span class="p">({</span><span class="n">min</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">2</span><span class="p">]});</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">Dims</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Dims</span><span class="p">({</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Dims</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">max</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span>
-<span class="w">                 </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Dims</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">max</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span>
-<span class="w">                 </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Dims</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">max</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)});</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">IndexRegion</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">padding</span><span class="p">);</span>
-
-<span class="p">};</span>
-
-<span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IndexRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="n">region</span><span class="p">);</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">PhysicalRegion</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Point</span><span class="w"> </span><span class="n">min</span><span class="p">;</span>
-<span class="w">  </span><span class="n">Point</span><span class="w"> </span><span class="n">max</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">PhysicalRegion</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">PhysicalRegion</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">_min</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">_max</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">min</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_min</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="w">    </span><span class="n">min</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_min</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-<span class="w">    </span><span class="n">min</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_min</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-<span class="w">    </span><span class="n">max</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_max</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="w">    </span><span class="n">max</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_max</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-<span class="w">    </span><span class="n">max</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_max</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">PhysicalRegion</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Point</span><span class="p">({</span><span class="mi">1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000000000</span><span class="p">});</span>
-<span class="w">    </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Point</span><span class="p">({</span><span class="mi">-1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">-1000000000</span><span class="p">,</span><span class="w"> </span><span class="mi">-1000000000</span><span class="p">});</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">PhysicalRegion</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">min</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">min</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">max</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">valid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">minLessThanMax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">max</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">max</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">max</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">min</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">minLessThanMax</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">Point</span><span class="w"> </span><span class="n">origin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">min</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">Point</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">min</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="n">PhysicalRegion</span><span class="o">&amp;</span><span class="w"> </span><span class="n">shrink</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="n">other</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">PhysicalRegion</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="n">other</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">PhysicalRegion</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">PhysicalRegion</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">pad</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">padding</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">to_string</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="p">};</span>
-
-<span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="n">region</span><span class="p">);</span>
-
-<span class="p">}</span><span class="w"> </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include-shapeworksh">include "Shapeworks.h"</h1>
+<p>namespace shapeworks
+{</p>
+<p>// A logical region of an Image or a Mesh
+class IndexRegion;</p>
+<p>// A physical region of an Image or a Mesh
+class PhysicalRegion;</p>
+<p>class IndexRegion
+{
+public:
+  Coord min{1000000000, 1000000000, 1000000000};
+  Coord max{-1000000000, -1000000000, -1000000000};</p>
+<p>IndexRegion() = default;
+  IndexRegion(const IndexRegion&amp;) = default;</p>
+<p>IndexRegion(const Dims &amp;dims) : min{0, 0, 0} {
+    if (0 != (dims[0] + dims[1] + dims[2])) {
+      max = {static_cast<Coord::value_type>(dims[0]) - 1,
+             static_cast<Coord::value_type>(dims[1]) - 1,
+             static_cast<Coord::value_type>(dims[2]) - 1};
+    }
+  }</p>
+<p>IndexRegion(const Coord &amp;_min, const Coord &amp;_max) :
+    min{_min[0], _min[1], _min[2]}, max{_max[0], _max[1], _max[2]} {}</p>
+<p>bool operator==(const IndexRegion &amp;other) const { return min == other.min &amp;&amp; max == other.max; }</p>
+<p>bool valid() const { return max[0] &gt; min[0] &amp;&amp; max[1] &gt; min[1] &amp;&amp; max[2] &gt; min[2]; }</p>
+<p>Coord origin() const { return Coord({min[0], min[1], min[2]}); }</p>
+<p>Dims size() const {
+    return Dims({static_cast<Dims::value_type>(max[0] - min[0] + 1),
+                 static_cast<Dims::value_type>(max[1] - min[1] + 1),
+                 static_cast<Dims::value_type>(max[2] - min[2] + 1)});
+  }</p>
+<p>IndexRegion&amp; pad(int padding);</p>
+<p>};</p>
+<p>std::ostream &amp;operator&lt;&lt;(std::ostream &amp;os, const IndexRegion &amp;region);</p>
+<p>class PhysicalRegion
+{
+public:
+  Point min;
+  Point max;</p>
+<p>PhysicalRegion(const PhysicalRegion&amp;) = default;</p>
+<p>PhysicalRegion(const Point &amp;_min, const Point &amp;_max) {
+    min[0] = _min[0];
+    min[1] = _min[1];
+    min[2] = _min[2];
+    max[0] = _max[0];
+    max[1] = _max[1];
+    max[2] = _max[2];
+  }</p>
+<p>PhysicalRegion() {
+    min = Point({1000000000, 1000000000, 1000000000});
+    max = Point({-1000000000, -1000000000, -1000000000});
+  }</p>
+<p>PhysicalRegion(std::string str);</p>
+<p>bool operator==(const PhysicalRegion &amp;other) const {
+    return min == other.min &amp;&amp; max == other.max;
+  }</p>
+<p>bool valid() const {
+    bool minLessThanMax = max[0] &gt; min[0] &amp;&amp; max[1] &gt; min[1] &amp;&amp; max[2] &gt; min[2];
+    return minLessThanMax;
+  }</p>
+<p>Point origin() const { return min; }</p>
+<p>Point size() const { return max - min; }</p>
+<p>PhysicalRegion&amp; shrink(const PhysicalRegion &amp;other);</p>
+<p>PhysicalRegion&amp; expand(const PhysicalRegion &amp;other);</p>
+<p>PhysicalRegion&amp; expand(const Point &amp;pt);</p>
+<p>PhysicalRegion&amp; pad(double padding);</p>
+<p>std::string to_string() const;</p>
+<p>};</p>
+<p>std::ostream &amp;operator&lt;&lt;(std::ostream &amp;os, const PhysicalRegion &amp;region);</p>
+<p>} // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

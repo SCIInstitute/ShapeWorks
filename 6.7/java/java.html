@@ -3766,25 +3766,21 @@
 </ol>
 <h1 id="building-the-shapeworks-java-interface">Building the ShapeWorks Java Interface</h1>
 <p>The ShapeWorks Java interface is built using the Java Compiler.  To build it:</p>
-<div class="highlight"><pre><span></span><code>cd shapeworks/Java
-javac -d . *.java
-</code></pre></div>
+<p><code>cd shapeworks/Java
+javac -d . *.java</code></p>
 <p>This will place the compiled classes in the <code>shapeworks/Java</code> directory.</p>
 <h1 id="building-the-example-java-program">Building the Example Java Program</h1>
-<div class="highlight"><pre><span></span><code>cd shapeworks/Examples/Java
-javac -cp ../../Java *.java
-</code></pre></div>
+<p><code>cd shapeworks/Examples/Java
+javac -cp ../../Java *.java</code></p>
 <h1 id="running-the-example-java-program">Running the Example Java Program</h1>
 <p>Note: The example Java program assumes that the ShapeWorks executable is in $PATH.  Ensure that you can run <code>shapeworks</code> from the command line before running the example Java program.</p>
-<div class="highlight"><pre><span></span><code>java -cp ../../Java:. JavaExample
-</code></pre></div>
+<p><code>java -cp ../../Java:. JavaExample</code></p>
 <p>This will run the example Java program. The output should look like this:</p>
-<div class="highlight"><pre><span></span><code>Saving project...
+<p><code>Saving project...
 Loading project...
 Running groom...
 Running optimize...
-Opening ShapeWorksStudio...
-</code></pre></div>
+Opening ShapeWorksStudio...</code></p>
 <p>And the ShapeWorks Analysis GUI will open.</p>
 <p>From here you can change to the analysis module and examine the shape model.</p>
 <p><img alt="Studio Java Example" src="java_example.png" width="600" /></p>

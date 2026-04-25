@@ -3779,43 +3779,39 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <vector></h1>
+<p>using namespace std;</p>
+<h1 id="include-femeshh">include "FEMesh.h"</h1>
+<p>class FENodeFaceList
+{
+public:
+    FENodeFaceList(FEMesh* pm);
+    ~FENodeFaceList(void);</p>
+<pre><code>void Build();
+void BuildSorted();
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+int Nodes() { return (int) m_node.size(); }
+FENode&amp; Node(int i) { return m_pm-&gt;Node(m_node[i]); }
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;FEMesh.h&quot;</span>
+int Valence(int i) { return m_val[i]; }
+FEFace* Face(int n, int i) { return m_pface[m_off[n] + i]; }
 
-<span class="k">class</span><span class="w"> </span><span class="nc">FENodeFaceList</span>
-<span class="p">{</span>
-<span class="k">public</span><span class="o">:</span>
-<span class="w">    </span><span class="n">FENodeFaceList</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
-<span class="w">    </span><span class="o">~</span><span class="n">FENodeFaceList</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Build</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">BuildSorted</span><span class="p">();</span>
-
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="n">m_node</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="n">FENode</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">Node</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_pm</span><span class="o">-&gt;</span><span class="n">Node</span><span class="p">(</span><span class="n">m_node</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Valence</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_val</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="n">FEFace</span><span class="o">*</span><span class="w"> </span><span class="nf">Face</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_pface</span><span class="p">[</span><span class="n">m_off</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasFace</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">FEFace</span><span class="o">*</span><span class="w"> </span><span class="n">pf</span><span class="p">);</span>
-
-<span class="k">protected</span><span class="o">:</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Sort</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">node</span><span class="p">);</span>
-
-<span class="k">protected</span><span class="o">:</span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">m_pm</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_node</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_val</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FEFace</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">m_pface</span><span class="p">;</span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_off</span><span class="p">;</span>
-<span class="p">};</span>
-</code></pre></div>
+bool HasFace(int n, FEFace* pf);
+</code></pre>
+<p>protected:
+    void Sort(int node);</p>
+<p>protected:
+    FEMesh* m_pm;
+    vector<int> m_node;
+    vector<int> m_val;
+    vector<FEFace*> m_pface;
+    vector<int> m_off;
+};
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

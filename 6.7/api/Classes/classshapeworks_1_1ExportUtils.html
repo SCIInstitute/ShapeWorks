@@ -3789,6 +3789,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-get_mesh_file_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_mesh_file_filter
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3845,46 +3854,53 @@
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1ExportUtils.html#function-write-pca-scores">write_pca_scores</a></strong>(<a href="classshapeworks_1_1ShapeWorksStudioApp.html">ShapeWorksStudioApp</a> * app, <a href="classshapeworks_1_1ParticleShapeStatistics.html">ParticleShapeStatistics</a> * stats, QString filename)</td>
 </tr>
+<tr>
+<td>QString</td>
+<td><strong><a href="classshapeworks_1_1ExportUtils.html#function-get-mesh-file-filter">get_mesh_file_filter</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-get_save_filename">function get_save_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_save_filename</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">title</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filetypes</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">default_ext</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static QString get_save_filename(
+    ShapeWorksStudioApp * parent,
+    QString title,
+    QString filetypes,
+    QString default_ext
+)</code></p>
 <h3 id="function-export_all_subjects_particle_scalars">function export_all_subjects_particle_scalars</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">export_all_subjects_particle_scalars</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static void export_all_subjects_particle_scalars(
+    ShapeWorksStudioApp * parent,
+    QSharedPointer&lt; Session &gt; session
+)</code></p>
 <h3 id="function-write_scalars">function write_scalars</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">write_scalars</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">app</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static bool write_scalars(
+    ShapeWorksStudioApp * app,
+    vtkSmartPointer&lt; vtkPolyData &gt; poly_data,
+    QString filename
+)</code></p>
 <h3 id="function-write_particle_scalars">function write_particle_scalars</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">write_particle_scalars</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">app</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static bool write_particle_scalars(
+    ShapeWorksStudioApp * app,
+    std::shared_ptr&lt; Shape &gt; shape,
+    QString filename
+)</code></p>
 <h3 id="function-write_pca_scores">function write_pca_scores</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">write_pca_scores</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">app</span><span class="p">,</span>
-<span class="w">    </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">stats</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+static bool write_pca_scores(
+    ShapeWorksStudioApp * app,
+    ParticleShapeStatistics * stats,
+    QString filename
+)</code></p>
+<h3 id="function-get_mesh_file_filter">function get_mesh_file_filter</h3>
+<p><code>cpp
+static QString get_mesh_file_filter()</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:37 +0000</p>
 
 
 

@@ -3805,212 +3805,142 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrixOffsetTransformBase.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
-
-<span class="c1">// studio</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshGroup.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshManager.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;StudioEnums.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;StudioMesh.h&quot;</span>
-
-<span class="c1">// shapeworks</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Optimize/Constraints/Constraints.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Subject.h&gt;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="n">ShapeList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ShapeHandle</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MeshWrapper</span><span class="p">;</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">Point</span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="k">public</span><span class="o">:</span>
-<span class="w">    </span><span class="n">Point</span><span class="p">(){};</span>
-<span class="w">    </span><span class="n">Point</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">_x</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">_y</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">_z</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="p">(</span><span class="n">_x</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="n">_y</span><span class="p">),</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">_z</span><span class="p">){};</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">;</span>
-<span class="w">  </span><span class="p">};</span>
-
-<span class="w">  </span><span class="n">Shape</span><span class="p">();</span>
-
-<span class="w">  </span><span class="o">~</span><span class="n">Shape</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_display_name</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="nf">get_meshes</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_annotations</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">annotations</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">only_overwrite_blank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_annotations</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mesh_manager</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_subject</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="o">&gt;</span><span class="w"> </span><span class="n">subject</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_subject</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_subject</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_fixed</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_excluded</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">import_original_file</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="nf">get_original_meshes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="nf">get_groomed_meshes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="nf">get_reconstructed_meshes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reconstructed_meshes</span><span class="p">(</span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">meshes</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_groomed_mesh</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_global_point_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_local_point_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_landmarks_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">store_landmarks</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_constraints</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">store_constraints</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particles</span><span class="p">(</span><span class="n">Particles</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_particles</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particle_transform</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_alignment_type</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">alignment</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_global_correspondence_points</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_particles_for_display</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_local_correspondence_points</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_reconstructed_mesh</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_id</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_id</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_annotations</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames</span><span class="p">();</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames_with_path</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_original_filename</span><span class="p">();</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_original_filename_with_path</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_groomed_filename</span><span class="p">();</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_groomed_filename_with_path</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_global_point_filename</span><span class="p">();</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_global_point_filename_with_path</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_local_point_filename</span><span class="p">();</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_local_point_filename_with_path</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_transform</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_inverse_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_alignment</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reconstruction_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">);</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_reconstruction_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_procrustes_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_procrustes_transforms</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_alignment</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_feature</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_volume</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_volume_name</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_point_features</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_point_features</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">values</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_feature_from_scalar_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_name</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_override_feature</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_override_feature</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">landmarks</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Constraints</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">constraints</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">Constraints</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_constraints</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain_id</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_planes</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshWrapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">();</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">generate_meshes</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span><span class="w"> </span><span class="n">MeshGroup</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh_list</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">save_transform</span><span class="p">,</span>
-<span class="w">                       </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">import_point_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_feature_to_points</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_feature_from_mesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature</span><span class="p">,</span><span class="w"> </span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">id_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">original_meshes_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">groomed_meshes_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">reconstructed_meshes_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshWrapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">groomed_mesh_wrappers_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">override_feature_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_point_filenames_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">local_point_filenames_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">point_features_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="n">particles_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Subject</span><span class="o">&gt;</span><span class="w"> </span><span class="n">subject_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">reconstruction_transforms_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">corner_annotations_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">landmarks_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">&gt;</span><span class="w"> </span><span class="n">image_volume_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_volume_filename_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Constraints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraints_</span><span class="p">;</span><span class="w">  </span><span class="c1">// one set for each domain</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_type_</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <itkMatrixOffsetTransformBase.h></h1>
+<h1 id="include_1">include <Eigen/Dense></h1>
+<h1 id="include_2">include <Eigen/Sparse></h1>
+<h1 id="include_3">include <string></h1>
+<p>// studio</p>
+<h1 id="include-meshgrouph">include "MeshGroup.h"</h1>
+<h1 id="include-meshmanagerh">include "MeshManager.h"</h1>
+<h1 id="include-studioenumsh">include "StudioEnums.h"</h1>
+<h1 id="include-studiomeshh">include "StudioMesh.h"</h1>
+<p>// shapeworks</p>
+<h1 id="include_4">include <Analyze/Particles.h></h1>
+<h1 id="include_5">include <Libs/Optimize/Constraints/Constraints.h></h1>
+<h1 id="include_6">include <Project/Subject.h></h1>
+<p>namespace shapeworks {</p>
+<p>class Shape;
+using ShapeHandle = std::shared_ptr<Shape>;
+using ShapeList = std::vector<ShapeHandle>;
+class Surface;</p>
+<p>class Shape {
+ public:
+  class Point {
+   public:
+    Point(){};
+    Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z){};
+    double x = 0, y = 0, z = 0;
+  };</p>
+<p>Shape();</p>
+<p>~Shape();</p>
+<p>std::string get_display_name();</p>
+<p>MeshGroup get_meshes(DisplayMode display_mode, bool wait = false);</p>
+<p>void set_annotations(std::vector<std::string> annotations, bool only_overwrite_blank = true);
+  std::vector<std::string> get_annotations();</p>
+<p>void set_mesh_manager(std::shared_ptr<MeshManager> mesh_manager);</p>
+<p>void set_subject(std::shared_ptr<shapeworks::Subject> subject);</p>
+<p>bool is_subject();</p>
+<p>std::shared_ptr<shapeworks::Subject> get_subject();</p>
+<p>bool is_fixed();</p>
+<p>bool is_excluded();</p>
+<p>void import_original_file(const std::string&amp; filename);</p>
+<p>MeshGroup get_original_meshes(bool wait = false);</p>
+<p>MeshGroup get_groomed_meshes(bool wait = false);</p>
+<p>MeshGroup get_reconstructed_meshes(bool wait = false);</p>
+<p>void set_reconstructed_meshes(MeshGroup meshes);</p>
+<p>void reset_groomed_mesh();</p>
+<p>bool import_global_point_files(std::vector<std::string> filenames);</p>
+<p>bool import_local_point_files(std::vector<std::string> filenames);</p>
+<p>bool import_landmarks_files(std::vector<std::string> filenames);</p>
+<p>bool store_landmarks();</p>
+<p>bool import_constraints(std::vector<std::string> filenames);</p>
+<p>bool store_constraints();</p>
+<p>void set_particles(Particles particles);</p>
+<p>Particles get_particles();</p>
+<p>void set_particle_transform(vtkSmartPointer<vtkTransform> transform);</p>
+<p>void set_groomed_centroids(const std::vector<Eigen::Vector3d>&amp; centroids);</p>
+<p>void set_alignment_type(int alignment);</p>
+<p>Eigen::VectorXd get_global_correspondence_points();</p>
+<p>std::vector<Eigen::VectorXd> get_particles_for_display();</p>
+<p>Eigen::VectorXd get_local_correspondence_points();</p>
+<p>void clear_reconstructed_mesh();</p>
+<p>int get_id();</p>
+<p>void set_id(int id);</p>
+<p>void update_annotations();</p>
+<p>std::vector<std::string> get_original_filenames();
+  std::vector<std::string> get_original_filenames_with_path();</p>
+<p>std::string get_original_filename();
+  std::string get_original_filename_with_path();</p>
+<p>std::string get_groomed_filename();
+  std::string get_groomed_filename_with_path(int domain);</p>
+<p>std::string get_global_point_filename();
+  std::string get_global_point_filename_with_path();</p>
+<p>std::string get_local_point_filename();
+  std::string get_local_point_filename_with_path();</p>
+<p>void set_transform(vtkSmartPointer<vtkTransform> transform);
+  vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
+  vtkSmartPointer<vtkTransform> get_inverse_transform(int domain = 0);</p>
+<p>bool has_alignment();</p>
+<p>vtkSmartPointer<vtkTransform> get_original_transform(int domain = 0);</p>
+<p>void set_reconstruction_transforms(std::vector<vtkSmartPointer\<vtkTransform>> transforms);
+  vtkSmartPointer<vtkTransform> get_reconstruction_transform(int domain);</p>
+<p>vtkSmartPointer<vtkTransform> get_groomed_transform(int domain = 0);</p>
+<p>std::vector<Eigen::Vector3d> get_groomed_centroids();</p>
+<p>vtkSmartPointer<vtkTransform> get_procrustes_transform(int domain = 0);
+  std::vector<vtkSmartPointer\<vtkTransform>> get_procrustes_transforms();</p>
+<p>vtkSmartPointer<vtkTransform> get_alignment(int domain = 0);</p>
+<p>void load_feature(DisplayMode display_mode, std::string feature);</p>
+<p>std::shared_ptr<Image> get_image_volume(std::string image_volume_name);</p>
+<p>std::shared_ptr<Image> get_segmentation();
+  std::string get_segmentation_filename() { return segmentation_filename_; }</p>
+<p>Eigen::VectorXd get_point_features(std::string feature);</p>
+<p>void set_point_features(std::string feature, Eigen::VectorXd values);</p>
+<p>void load_feature_from_scalar_file(std::string filename, std::string feature_name);</p>
+<p>void set_override_feature(std::string feature);
+  std::string get_override_feature();</p>
+<p>Eigen::MatrixXd&amp; landmarks();</p>
+<p>std::vector<Constraints>&amp; constraints();</p>
+<p>Constraints&amp; get_constraints(int domain_id);</p>
+<p>bool has_constraints();</p>
+<p>bool has_planes();</p>
+<p>std::vector<std::shared_ptr\<Surface>> get_groomed_mesh_wrappers();</p>
+<p>void recompute_original_surface();</p>
+<p>void ensure_segmentation();</p>
+<p>private:
+  void generate_meshes(std::vector<std::string> filenames, MeshGroup&amp; mesh_list, bool save_transform,
+                       bool wait = false);</p>
+<p>static bool import_point_file(std::string filename, Eigen::VectorXd&amp; points);</p>
+<p>void apply_feature_to_points(std::string feature, ImageType::Pointer image);
+  void load_feature_from_mesh(std::string feature, MeshHandle mesh);</p>
+<p>int id_;</p>
+<p>MeshGroup original_meshes_;
+  MeshGroup groomed_meshes_;
+  MeshGroup reconstructed_meshes_;
+  std::vector<std::shared_ptr\<Surface>> groomed_mesh_wrappers_;</p>
+<p>std::string override_feature_;</p>
+<p>std::vector<std::string> global_point_filenames_;
+  std::vector<std::string> local_point_filenames_;</p>
+<p>std::map<std::string, Eigen::VectorXd> point_features_;
+  Particles particles_;</p>
+<p>std::shared_ptr<Subject> subject_;</p>
+<p>vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();</p>
+<p>std::vector<vtkSmartPointer\<vtkTransform>> reconstruction_transforms_;</p>
+<p>std::vector<std::string> corner_annotations_;</p>
+<p>std::shared_ptr<MeshManager> mesh_manager_;</p>
+<p>Eigen::MatrixXd landmarks_;</p>
+<p>std::shared_ptr<Image> image_volume_;
+  std::string image_volume_filename_;</p>
+<p>std::shared_ptr<Image> segmentation_;
+  std::string segmentation_filename_;</p>
+<p>std::vector<Constraints> constraints_;  // one set for each domain
+  int alignment_type_;
+};
+}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

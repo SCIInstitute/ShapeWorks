@@ -3801,57 +3801,42 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkMatrix4x4.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;chrono&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;random&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Shapeworks.h&quot;</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksUtils</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">time_point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">time_point</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">steady_clock</span><span class="o">&gt;</span><span class="p">;</span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">time_point</span><span class="w"> </span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">steady_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">elapsed</span><span class="p">(</span><span class="n">time_point</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">time_point</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">print_elapsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="nf">get_rng_seed</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">rng_seed_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_rng_seed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">seed</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="nf">get_random_number</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mt_</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// TODO: in C++17 this is a standard function</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_directory</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// TODO: in C++17 this is a standard function</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">file_exists</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup_console_logging</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show_progress</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">xml_status</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_progress_callback</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">);</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup_threads</span><span class="p">();</span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Matrix33</span><span class="w"> </span><span class="nf">convert_matrix</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkMatrix4x4</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">mat</span><span class="p">);</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="nf">get_offset</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkMatrix4x4</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">mat</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">rng_seed_</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="n">mt_</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <oneapi/tbb/global_control.h></h1>
+<h1 id="include_1">include <vtkMatrix4x4.h></h1>
+<h1 id="include_2">include <vtkPolyData.h></h1>
+<h1 id="include_3">include <vtkSmartPointer.h></h1>
+<h1 id="include_4">include <chrono></h1>
+<h1 id="include_5">include <random></h1>
+<h1 id="include-shapeworksh">include "Shapeworks.h"</h1>
+<p>namespace shapeworks {</p>
+<p>class ShapeWorksUtils {
+  using time_point = std::chrono::time_point<std::chrono::steady_clock>;</p>
+<p>public:
+  static time_point now() { return std::chrono::steady_clock::now(); }</p>
+<p>static double elapsed(time_point start, time_point end, bool print_elapsed = true);</p>
+<p>static unsigned get_rng_seed() { return rng_seed_; }</p>
+<p>static void set_rng_seed(const unsigned seed);</p>
+<p>static unsigned get_random_number() { return mt_(); }</p>
+<p>// TODO: in C++17 this is a standard function
+  static bool is_directory(const std::string&amp; pathname);</p>
+<p>// TODO: in C++17 this is a standard function
+  static bool file_exists(const std::string&amp; filename);</p>
+<p>static void setup_console_logging(bool show_progress, bool xml_status);</p>
+<p>static void set_progress_callback(void* ptr);</p>
+<p>static void setup_threads();</p>
+<p>static Matrix33 convert_matrix(const vtkSmartPointer<vtkMatrix4x4>&amp; mat);
+  static Vector3 get_offset(const vtkSmartPointer<vtkMatrix4x4>&amp; mat);</p>
+<p>private:
+  static unsigned rng_seed_;
+  static std::mt19937 mt_;
+  static std::unique_ptr<tbb::global_control> tbb_global_control_;
+};</p>
+<p>}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

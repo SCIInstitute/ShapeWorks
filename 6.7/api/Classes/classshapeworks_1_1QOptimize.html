@@ -3883,9 +3883,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-iteratecallback" class="md-nav__link">
+  <a href="#function-iteratecallbackinternal" class="md-nav__link">
     <span class="md-ellipsis">
-      function IterateCallback
+      function IterateCallbackInternal
     </span>
   </a>
   
@@ -3987,8 +3987,8 @@
 <td><strong><a href="classshapeworks_1_1QOptimize.html#function-setiterationcallback">SetIterationCallback</a></strong>() override<br>Set the iteration callback. Derived classes should override to set their own callback.</td>
 </tr>
 <tr>
-<td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1QOptimize.html#function-iteratecallback">IterateCallback</a></strong>(itk::Object * caller, const itk::EventObject &amp; ) override</td>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-iteratecallbackinternal">IterateCallbackInternal</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -4007,7 +4007,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#using-imagetype">ImageType</a></strong></td>
 </tr>
 <tr>
-<td>using <a href="classshapeworks_1_1VectorFunction.html#typedef-vectortype">VectorFunction::VectorType</a></td>
+<td>using <a href="classshapeworks_1_1VectorFunction.html#using-vectortype">VectorFunction::VectorType</a></td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#using-vectortype">VectorType</a></strong></td>
 </tr>
 <tr>
@@ -4167,19 +4167,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocessingmode">SetProcessingMode</a></strong>(int mode)<br>Set processing mode (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitymode">SetAdaptivityMode</a></strong>(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setmeshffcmode">SetMeshFFCMode</a></strong>(int mesh_ffc_mode)<br>Set <a href="classshapeworks_1_1Mesh.html">Mesh</a> FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitystrength">SetAdaptivityStrength</a></strong>(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4287,6 +4275,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-addmesh">AddMesh</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">Surface</a> &gt; surface, std::shared_ptr&lt; <a href="classshapeworks_1_1Surface.html">Surface</a> &gt; geodesics_surface, std::shared_ptr&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; sw_mesh, double surface_area)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-addcontour">AddContour</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; poly_data)</td>
 </tr>
 <tr>
@@ -4323,11 +4315,43 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setprocustestransforms">SetProcustesTransforms</a></strong>(std::map&lt; int, vnl_matrix_fixed&lt; double, 4, 4 &gt; &gt; transforms)<br>Set Procrustes transforms to load for specific domains (applied after initialization)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setsharedboundaryenabled">SetSharedBoundaryEnabled</a></strong>(bool enabled)<br>Shared boundary settings.</td>
 </tr>
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setsharedboundaryweight">SetSharedBoundaryWeight</a></strong>(double weight)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setsamplingscale">SetSamplingScale</a></strong>(bool enabled)<br>Sampling scale settings.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getsamplingscale">GetSamplingScale</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setsamplingautoscale">SetSamplingAutoScale</a></strong>(bool auto_scale)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getsamplingautoscale">GetSamplingAutoScale</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setsamplingscalevalue">SetSamplingScaleValue</a></strong>(double scale_value)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getsamplingscalevalue">GetSamplingScaleValue</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setearlystoppingconfig">SetEarlyStoppingConfig</a></strong>(<a href="structshapeworks_1_1EarlyStoppingConfig.html">EarlyStoppingConfig</a> config)<br>Early Stopping params.</td>
 </tr>
 <tr>
 <td>const std::vector&lt; int &gt; &amp;</td>
@@ -4380,6 +4404,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setgeodesicsenabled">SetGeodesicsEnabled</a></strong>(bool is_enabled)<br>Set whether or not geodesics are enabled.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getgeodesicsenabled">GetGeodesicsEnabled</a></strong>() const</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4459,10 +4487,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-initialize">Initialize</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-addadaptivity">AddAdaptivity</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4672,18 +4696,6 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-output-cutting-plane-file">m_output_cutting_plane_file</a></strong></td>
 </tr>
 <tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-processing-mode">m_processing_mode</a></strong></td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-mode">m_adaptivity_mode</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-strength">m_adaptivity_strength</a></strong></td>
-</tr>
-<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-mesh-ffc-mode">m_mesh_ffc_mode</a></strong></td>
 </tr>
@@ -4764,6 +4776,10 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-domain-flags">m_domain_flags</a></strong></td>
 </tr>
 <tr>
+<td>std::map&lt; int, vnl_matrix_fixed&lt; double, 4, 4 &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-transforms">m_procrustes_transforms</a></strong></td>
+</tr>
+<tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-narrow-band">m_narrow_band</a></strong></td>
 </tr>
@@ -4794,6 +4810,18 @@
 <tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-geodesic-remesh-percent">m_geodesic_remesh_percent</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-sampling-scale">m_sampling_scale</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-sampling-auto-scale">m_sampling_auto_scale</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-sampling-scale-value">m_sampling_scale_value</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
@@ -4919,56 +4947,52 @@
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-progress">signal progress</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+void progress(
+    int ,
+    QString 
+)</code></p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-qoptimize">function QOptimize</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QOptimize</span><span class="p">(</span>
-<span class="w">    </span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+QOptimize(
+    QObject * parent =nullptr
+)</code></p>
 <h3 id="function-qoptimize_1">function ~QOptimize</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">QOptimize</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+virtual ~QOptimize()</code></p>
 <h3 id="function-getlocalpoints">function GetLocalPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetLocalPoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; GetLocalPoints() override</code></p>
 <p>Return the local points. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getlocalpoints">shapeworks::Optimize::GetLocalPoints</a></p>
 <h3 id="function-getglobalpoints">function GetGlobalPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetGlobalPoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; GetGlobalPoints() override</code></p>
 <p>Return the global points. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getglobalpoints">shapeworks::Optimize::GetGlobalPoints</a></p>
 <h3 id="function-getparticles">function GetParticles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Particles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetParticles</span><span class="p">()</span>
-</code></pre></div>
+<p><code>cpp
+std::vector&lt; Particles &gt; GetParticles()</code></p>
 <h3 id="function-getprocrustestransforms">function GetProcrustesTransforms</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetProcrustesTransforms</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual std::vector&lt; std::vector&lt; std::vector&lt; double &gt; &gt; &gt; GetProcrustesTransforms() override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getprocrustestransforms">shapeworks::Optimize::GetProcrustesTransforms</a></p>
 <h3 id="function-updateexportablepoints">function UpdateExportablePoints</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateExportablePoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual void UpdateExportablePoints() override</code></p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-updateexportablepoints">shapeworks::Optimize::UpdateExportablePoints</a></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-setiterationcallback">function SetIterationCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
+<p><code>cpp
+virtual void SetIterationCallback() override</code></p>
 <p>Set the iteration callback. Derived classes should override to set their own callback. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-setiterationcallback">shapeworks::Optimize::SetIterationCallback</a></p>
-<h3 id="function-iteratecallback">function IterateCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">IterateCallback</span><span class="p">(</span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-iteratecallback">shapeworks::Optimize::IterateCallback</a></p>
+<h3 id="function-iteratecallbackinternal">function IterateCallbackInternal</h3>
+<p><code>cpp
+void IterateCallbackInternal()</code></p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:37 +0000</p>
 
 
 

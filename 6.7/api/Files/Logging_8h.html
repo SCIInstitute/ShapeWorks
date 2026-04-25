@@ -3804,107 +3804,8 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#define-sw_log" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_LOG
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_warn" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_WARN
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_error" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_ERROR
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_debug" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_DEBUG
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_trace" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_TRACE
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_message" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_MESSAGE
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_status" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_STATUS
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_progress" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_PROGRESS
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_close_log" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_CLOSE_LOG
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-sw_log_once" class="md-nav__link">
-    <span class="md-ellipsis">
-      define SW_LOG_ONCE
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#source-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Source code
-    </span>
-  </a>
   
 </li>
       
@@ -3994,6 +3895,10 @@
 </tr>
 <tr>
 <td></td>
+<td><strong><a href="Logging_8h.html#define-sw-log-only">SW_LOG_ONLY</a></strong>(message, ...) <br>Log only macro.</td>
+</tr>
+<tr>
+<td></td>
 <td><strong><a href="Logging_8h.html#define-sw-warn">SW_WARN</a></strong>(message, ...) <br>Log warning macro.</td>
 </tr>
 <tr>
@@ -4032,235 +3937,225 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-safe_format">function safe_format</h3>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">safe_format</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fmt_str</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Args</span><span class="w"> </span><span class="o">&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span>
-<span class="p">)</span>
-</code></pre></div>
+<p><code>cpp
+template &lt;typename... Args&gt;
+std::string safe_format(
+    const std::string &amp; fmt_str,
+    const Args &amp;... args
+)</code></p>
 <h2 id="macros-documentation">Macros Documentation</h2>
 <h3 id="define-sw_log_stack">define SW_LOG_STACK</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_LOG_STACK(</span>
-<span class="w">    </span><span class="n">message</span>
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_stack</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_log_stack_1">define SW_LOG_STACK(</h1>
+<pre><code>message
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().log_stack(message)
+```</p>
 <p>Log stack macro. </p>
 <h3 id="define-sw_log">define SW_LOG</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_LOG(</span>
-<span class="w">    </span><span class="n">message</span><span class="p">,</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_message</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">);</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_log_1">define SW_LOG(</h1>
+<pre><code>message,
+...
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().log_message(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>);
+```</p>
 <p>Log message macro. </p>
+<h3 id="define-sw_log_only">define SW_LOG_ONLY</h3>
+<p>```cpp</p>
+<h1 id="define-sw_log_only_1">define SW_LOG_ONLY(</h1>
+<pre><code>message,
+...
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().log_only(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>, <strong>FUNCTION</strong>);
+```</p>
+<p>Log only macro. </p>
 <h3 id="define-sw_warn">define SW_WARN</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_WARN(</span>
-<span class="w">    </span><span class="n">message</span><span class="p">,</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_warning</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_warn_1">define SW_WARN(</h1>
+<pre><code>message,
+...
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().log_warning(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>)
+```</p>
 <p>Log warning macro. </p>
 <h3 id="define-sw_error">define SW_ERROR</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_ERROR(</span>
-<span class="w">    </span><span class="n">message</span><span class="p">,</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_error</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_error_1">define SW_ERROR(</h1>
+<pre><code>message,
+...
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().log_error(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>)
+```</p>
 <p>Log error macro. </p>
 <h3 id="define-sw_debug">define SW_DEBUG</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_DEBUG(</span>
-<span class="w">    </span><span class="n">message</span><span class="p">,</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_debug</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FUNCTION__</span><span class="p">)</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_debug_1">define SW_DEBUG(</h1>
+<pre><code>message,
+...
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().log_debug(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>, <strong>FUNCTION</strong>)
+```</p>
 <p>Log debug macro. </p>
 <h3 id="define-sw_trace">define SW_TRACE</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_TRACE(</span>
-<span class="w">    </span><span class="n">x</span>
-<span class="p">)</span>
-<span class="n">SW_DEBUG</span><span class="p">(</span><span class="err">#</span><span class="n">x</span><span class="w"> </span><span class="s">&quot; = {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_trace_1">define SW_TRACE(</h1>
+<pre><code>x
+</code></pre>
+<p>)
+SW_DEBUG(#x " = {}", x);
+```</p>
 <p>Variable trace macro (e.g. output variable name = <variable value>) </p>
 <h3 id="define-sw_message">define SW_MESSAGE</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_MESSAGE(</span>
-<span class="w">    </span><span class="n">message</span><span class="p">,</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_message</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_message_1">define SW_MESSAGE(</h1>
+<pre><code>message,
+...
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().show_message(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>)
+```</p>
 <p>Log show message macro. </p>
 <h3 id="define-sw_status">define SW_STATUS</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_STATUS(</span>
-<span class="w">    </span><span class="n">message</span><span class="p">,</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_status</span><span class="p">(</span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_status_1">define SW_STATUS(</h1>
+<pre><code>message,
+...
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().show_status(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>)
+```</p>
 <p>Don't write to log, but set status (e.g. in the Studio statusbar) </p>
 <h3 id="define-sw_progress">define SW_PROGRESS</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_PROGRESS(</span>
-<span class="w">    </span><span class="n">value</span><span class="p">,</span>
-<span class="w">    </span><span class="n">message</span><span class="p">,</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_progress</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">safe_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">));</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_progress_1">define SW_PROGRESS(</h1>
+<pre><code>value,
+message,
+...
+</code></pre>
+<p>)
+shapeworks::Logging::Instance().show_progress(value, safe_format(message, ##<strong>VA_ARGS</strong>));
+```</p>
 <h3 id="define-sw_close_log">define SW_CLOSE_LOG</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_CLOSE_LOG(</span>
-
-<span class="p">)</span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">close_log</span><span class="p">();</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_close_log_1">define SW_CLOSE_LOG(</h1>
+<p>)
+shapeworks::Logging::Instance().close_log();
+```</p>
 <p>Close session macro. </p>
 <h3 id="define-sw_log_once">define SW_LOG_ONCE</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define SW_LOG_ONCE(</span>
-<span class="w">    </span><span class="n">message</span><span class="p">,</span>
-<span class="w">    </span><span class="p">...</span>
-<span class="p">)</span>
-<span class="w">  </span><span class="p">{</span><span class="w">                                   </span>\
-<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">logged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">       </span>\
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">logged</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">                    </span>\
-<span class="w">      </span><span class="n">SW_LOG</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">);</span><span class="w"> </span>\
-<span class="w">      </span><span class="n">logged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">                  </span>\
-<span class="w">    </span><span class="p">}</span><span class="w">                                 </span>\
-<span class="w">  </span><span class="p">}</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="define-sw_log_once_1">define SW_LOG_ONCE(</h1>
+<pre><code>message,
+...
+</code></pre>
+<p>)
+  {                                   \
+    static bool logged = false;       \
+    if (!logged) {                    \
+      SW_LOG(message, ##<strong>VA_ARGS</strong>); \
+      logged = true;                  \
+    }                                 \
+  }
+```</p>
 <p>Log once macro, will only log the message once. </p>
 <h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;spdlog/fmt/fmt.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
-<span class="k">struct</span><span class="w"> </span><span class="nc">fmt</span><span class="o">::</span><span class="n">formatter</span><span class="o">&lt;</span><span class="n">QString</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">parse</span><span class="p">(</span><span class="n">format_parse_context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">begin</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">FormatContext</span><span class="o">&gt;</span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">format</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="n">FormatContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">out</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format_to</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">out</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">qUtf8Printable</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">};</span>
-
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">safe_format</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fmt_str</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Args</span><span class="o">&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">fmt_str</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">...);</span>
-<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Handle formatting errors here, example:</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error formatting string: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">fmt_str</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; : &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Logging</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Logging</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Instance</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">open_file_log</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">check_log_open</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_log_filename</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_message</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_stack</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_error</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_message</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_status</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_debug</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">function</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_warning</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">close_log</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_error_callback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_message_callback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_warning_callback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_debug_callback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_status_callback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_progress_callback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="n">Logging</span><span class="p">();</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">log_filename_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">log_open_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">error_callback_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">message_callback_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">warning_callback_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">debug_callback_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">status_callback_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback_</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="cp">#define SW_LOG_STACK(message) shapeworks::Logging::Instance().log_stack(message)</span>
-
-<span class="cp">#define SW_LOG(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__);</span>
-
-<span class="cp">#define SW_WARN(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_warning(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
-
-<span class="cp">#define SW_ERROR(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_error(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
-
-<span class="cp">#define SW_DEBUG(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().log_debug(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__, __FUNCTION__)</span>
-
-<span class="cp">#define SW_TRACE(x) SW_DEBUG(#x &quot; = {}&quot;, x);</span>
-
-<span class="cp">#define SW_MESSAGE(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().show_message(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
-
-<span class="cp">#define SW_STATUS(message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().show_status(safe_format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
-
-<span class="cp">#define SW_PROGRESS(value, message, ...) \</span>
-<span class="cp">  shapeworks::Logging::Instance().show_progress(value, safe_format(message, ##__VA_ARGS__));</span>
-
-<span class="cp">#define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();</span>
-
-<span class="cp">#define SW_LOG_ONCE(message, ...)     \</span>
-<span class="cp">  {                                   \</span>
-<span class="cp">    static bool logged = false;       \</span>
-<span class="cp">    if (!logged) {                    \</span>
-<span class="cp">      SW_LOG(message, ##__VA_ARGS__); \</span>
-<span class="cp">      logged = true;                  \</span>
-<span class="cp">    }                                 \</span>
-<span class="cp">  }</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
-</code></pre></div>
+<p>```cpp</p>
+<h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <spdlog/fmt/fmt.h></h1>
+<h1 id="include_1">include <QString></h1>
+<h1 id="include_2">include <functional></h1>
+<h1 id="include_3">include <iostream></h1>
+<p>template &lt;&gt;
+struct fmt::formatter<QString> {
+  constexpr auto parse(format_parse_context&amp; ctx) -&gt; decltype(ctx.begin()) { return ctx.end(); }</p>
+<p>template <typename FormatContext>
+  auto format(const QString&amp; str, FormatContext&amp; ctx) const -&gt; decltype(ctx.out()) {
+    return fmt::format_to(ctx.out(), "{}", qUtf8Printable(str));
+  }
+};</p>
+<p>template <typename... Args>
+std::string safe_format(const std::string&amp; fmt_str, const Args&amp;... args) {
+  std::string result;
+  try {
+    result = fmt::format(fmt_str, args...);
+  } catch (const std::exception&amp; e) {
+    // Handle formatting errors here, example:
+    std::cerr &lt;&lt; "Error formatting string: " &lt;&lt; fmt_str &lt;&lt; " : " &lt;&lt; e.what() &lt;&lt; std::endl;
+  }
+  return result;
+}</p>
+<p>namespace shapeworks {</p>
+<p>class Logging {
+ public:
+  static Logging&amp; Instance();</p>
+<p>void open_file_log(const std::string&amp; filename);</p>
+<p>bool check_log_open() const;</p>
+<p>std::string get_log_filename() const;</p>
+<p>void log_message(const std::string&amp; message, const int line, const char* file) const;</p>
+<p>void log_only(const std::string&amp; message, const int line, const char<em> file, const char </em>function) const;</p>
+<p>void log_stack(const std::string&amp; message) const;</p>
+<p>void log_error(const std::string&amp; message, const int line, const char* file) const;</p>
+<p>void show_message(const std::string&amp; message, const int line, const char* file) const;</p>
+<p>void show_status(const std::string&amp; message, const int line, const char* file) const;</p>
+<p>void show_progress(double value, const std::string&amp; message);</p>
+<p>void log_debug(const std::string&amp; message, const int line, const char<em> file, const char</em> function) const;</p>
+<p>void log_warning(const std::string&amp; message, const int line, const char* file) const;</p>
+<p>void close_log();</p>
+<p>void set_error_callback(const std::function<void(std::string)>&amp; callback);</p>
+<p>void set_message_callback(const std::function<void(std::string)>&amp; callback);</p>
+<p>void set_warning_callback(const std::function<void(std::string)>&amp; callback);</p>
+<p>void set_debug_callback(const std::function<void(std::string)>&amp; callback);</p>
+<p>void set_status_callback(const std::function<void(std::string)>&amp; callback);</p>
+<p>void set_progress_callback(const std::function<void(double, std::string)>&amp; callback);</p>
+<p>private:
+  Logging();</p>
+<p>std::string log_filename_;
+  bool log_open_ = false;</p>
+<p>std::function<void(std::string)> error_callback_;</p>
+<p>std::function<void(std::string)> message_callback_;</p>
+<p>std::function<void(std::string)> warning_callback_;</p>
+<p>std::function<void(std::string)> debug_callback_;</p>
+<p>std::function<void(std::string)> status_callback_;</p>
+<p>std::function<void(double, std::string)> progress_callback_;
+};</p>
+<h1 id="define-sw_log_stackmessage-shapeworkslogginginstancelog_stackmessage">define SW_LOG_STACK(message) shapeworks::Logging::Instance().log_stack(message)</h1>
+<p>#define SW_LOG(message, ...) \
+  shapeworks::Logging::Instance().log_message(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>);</p>
+<p>#define SW_LOG_ONLY(message, ...) \
+  shapeworks::Logging::Instance().log_only(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>, <strong>FUNCTION</strong>);</p>
+<p>#define SW_WARN(message, ...) \
+  shapeworks::Logging::Instance().log_warning(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>)</p>
+<p>#define SW_ERROR(message, ...) \
+  shapeworks::Logging::Instance().log_error(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>)</p>
+<p>#define SW_DEBUG(message, ...) \
+  shapeworks::Logging::Instance().log_debug(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>, <strong>FUNCTION</strong>)</p>
+<h1 id="define-sw_tracex-sw_debugx-x">define SW_TRACE(x) SW_DEBUG(#x " = {}", x);</h1>
+<p>#define SW_MESSAGE(message, ...) \
+  shapeworks::Logging::Instance().show_message(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>)</p>
+<p>#define SW_STATUS(message, ...) \
+  shapeworks::Logging::Instance().show_status(safe_format(message, ##<strong>VA_ARGS</strong>), <strong>LINE</strong>, <strong>FILE</strong>)</p>
+<p>#define SW_PROGRESS(value, message, ...) \
+  shapeworks::Logging::Instance().show_progress(value, safe_format(message, ##<strong>VA_ARGS</strong>));</p>
+<h1 id="define-sw_close_log-shapeworkslogginginstanceclose_log">define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();</h1>
+<p>#define SW_LOG_ONCE(message, ...)     \
+  {                                   \
+    static bool logged = false;       \
+    if (!logged) {                    \
+      SW_LOG(message, ##<strong>VA_ARGS</strong>); \
+      logged = true;                  \
+    }                                 \
+  }
+}  // namespace shapeworks
+```</p>
 <hr />
-<p>Updated on 2024-03-17 at 12:58:44 -0600</p>
+<p>Updated on 2026-04-25 at 07:49:38 +0000</p>
 
 
 

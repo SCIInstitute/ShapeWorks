@@ -3762,13 +3762,11 @@
 <p>To add a new class,</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>py:class_&lt;c++ClassName&gt; objectName(m, &quot;pythonClassName);
-</code></pre></div>
+<p><code>py:class_&lt;c++ClassName&gt; objectName(m, "pythonClassName);</code></p>
 <ul>
 <li>To add a new function,</li>
 </ul>
-<div class="highlight"><pre><span></span><code>objectName.def(&quot;pythonFunctionName&quot;, &amp;c++ClassName::c++FunctionName, &quot;description/help&quot;, &quot;argument1&quot;_a, &quot;argument2&quot;_a=defaultValue)
-</code></pre></div>
+<p><code>objectName.def("pythonFunctionName", &amp;c++ClassName::c++FunctionName, "description/help", "argument1"_a, "argument2"_a=defaultValue)</code></p>
 <p>For more information on how to add pybind bindings, check out <a href="https://pybind11.readthedocs.io/en/stable/">pybind</a> documentation.</p>
 
 
