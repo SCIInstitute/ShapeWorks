@@ -19,7 +19,7 @@ SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.
 
 TODO - This should be automated from a single place
 
-- `Studio/Python/PythonWorker.h`
+- `Libs/Application/Job/PythonWorker.h`
 
 ```
   constexpr static const char* python_api_version = "6.5";
@@ -44,6 +44,12 @@ SW_MAJOR_VERSION=6.5
 python -c "import sys; print('\n'.join(sys.path))" > "%USERPROFILE%\.shapeworks\python_path_6.5.txt"
 python -c "import sys; print(sys.prefix)" > "%USERPROFILE%\.shapeworks\python_home_6.5.txt"
 echo %PATH% > "%USERPROFILE%\.shapeworks\path_6.5.txt"
+```
+
+- `devenv.sh`
+
+```
+SW_MAJOR_VERSION=6.5
 ```
 
 * Update Release Notes
