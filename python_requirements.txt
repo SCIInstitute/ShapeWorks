@@ -355,7 +355,7 @@ jupyter-events==0.12.0
     #   jupyter-server
 jupyter-lsp==2.3.0
     # via jupyterlab
-jupyter-server==2.17.0
+jupyter-server==2.18.0
     # via
     #   -r requirements.in
     #   jupyter-lsp
