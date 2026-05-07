@@ -39,11 +39,8 @@ set(_bundled_dir "${CMAKE_BINARY_DIR}/_bundled_python")
 set(_archive_path "${_bundled_dir}/${_archive_name}")
 set(BUNDLED_PYTHON_ROOT "${_bundled_dir}/python" CACHE PATH "Root of bundled standalone Python" FORCE)
 
-if(APPLE)
-  set(BUNDLED_PYTHON_EXECUTABLE "${BUNDLED_PYTHON_ROOT}/bin/python3" CACHE FILEPATH "Bundled Python executable" FORCE)
-else()
-  set(BUNDLED_PYTHON_EXECUTABLE "${BUNDLED_PYTHON_ROOT}/bin/python3" CACHE FILEPATH "Bundled Python executable" FORCE)
-endif()
+# Python executable is in bin/ on all Unix platforms
+set(BUNDLED_PYTHON_EXECUTABLE "${BUNDLED_PYTHON_ROOT}/bin/python3" CACHE FILEPATH "Bundled Python executable" FORCE)
 
 # ---------------------------------------------------------------------------
 # Download + extract (only if not already present)

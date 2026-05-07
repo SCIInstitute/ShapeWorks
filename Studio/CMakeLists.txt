@@ -359,6 +359,17 @@ IF(APPLE)
     )
 ENDIF(APPLE)
 
+# Linux: Add RPATH for bundled Python library
+if(UNIX AND NOT APPLE)
+  if(USE_BUNDLED_PYTHON)
+    set_property(
+      TARGET ShapeWorksStudio
+      APPEND PROPERTY INSTALL_RPATH
+      "$ORIGIN/../lib/python/lib"
+    )
+  endif()
+endif()
+
 TARGET_LINK_LIBRARIES(ShapeWorksStudio
   PUBLIC 
   Qt5::Widgets

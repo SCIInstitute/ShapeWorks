@@ -504,32 +504,45 @@ bool PythonWorker::install_torch(std::function<void(std::string)> output_callbac
 
 //---------------------------------------------------------------------------
 std::string PythonWorker::find_bundled_python_home() {
-  // On macOS .app: applicationDirPath() = .../Contents/MacOS
-  // So ../Resources/Python reaches the bundled Python
+  // Application directory varies by platform and context:
+  // - macOS .app: .../Contents/MacOS
+  // - Linux installed: .../bin
+  // - Build tree (macOS .app): .../bin/ShapeWorksStudio.app/Contents/MacOS
+  // - Build tree (CLI/Linux): .../bin
   QString app_dir = QCoreApplication::applicationDirPath();
   QDir dir(app_dir);
 
-  // Try macOS .app bundle layout
-  QString candidate = dir.absoluteFilePath("../Resources/Python");
-  QDir candidate_dir(candidate);
-  QString canonical = candidate_dir.canonicalPath();
+  // Candidates for installed bundles (in priority order)
+  QStringList installed_candidates = {
+#ifdef __APPLE__
+      // macOS .app bundle: ../Resources/Python relative to Contents/MacOS
+      dir.absoluteFilePath("../Resources/Python"),
+#else
+      // Linux installed: ../lib/python relative to bin/
+      dir.absoluteFilePath("../lib/python"),
+#endif
+  };
 
-  if (!canonical.isEmpty() && QFile::exists(canonical + "/lib/python3.12/os.py")) {
-    return canonical.toStdString();
+  for (const auto& c : installed_candidates) {
+    QDir candidate_dir(c);
+    QString canonical = candidate_dir.canonicalPath();
+    if (!canonical.isEmpty() && QFile::exists(canonical + "/lib/python3.12/os.py")) {
+      return canonical.toStdString();
+    }
   }
 
   // Try build-tree layouts.
   // Studio .app: executable is in bin/ShapeWorksStudio.app/Contents/MacOS/
-  // CLI:         executable is in bin/
+  // CLI/Linux:   executable is in bin/
   // Bundled Python is in _bundled_python/python/ (sibling to bin/)
   QStringList build_tree_candidates = {
-      dir.absoluteFilePath("../../../../_bundled_python/python"),  // .app bundle
-      dir.absoluteFilePath("../_bundled_python/python"),           // CLI executable
+      dir.absoluteFilePath("../../../../_bundled_python/python"),  // macOS .app bundle
+      dir.absoluteFilePath("../_bundled_python/python"),           // CLI executable or Linux
   };
 
   for (const auto& c : build_tree_candidates) {
-    candidate_dir = QDir(c);
-    canonical = candidate_dir.canonicalPath();
+    QDir candidate_dir(c);
+    QString canonical = candidate_dir.canonicalPath();
     if (!canonical.isEmpty() && QFile::exists(canonical + "/lib/python3.12/os.py")) {
       return canonical.toStdString();
     }
