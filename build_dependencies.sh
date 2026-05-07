@@ -39,6 +39,24 @@ WIN_LFLAGS="-DEBUG" # windows release compilation flags
 #FLAGS="-g" # turn on symbols for all builds
 FLAGS=""
 
+# Normalize Windows OSTYPE flavors. The GHA windows-2022 runner image now
+# reports "cygwin" (was "msys" before the recent bump). Both are git-bash-
+# like environments and we want every Windows check below to fire for any
+# of them. Without this, the script falls through to the macOS branch and
+# adds clang-only flags that MSVC then rejects with D8021.
+echo "OSTYPE=[$OSTYPE]"
+case "$OSTYPE" in
+  cygwin*) OSTYPE="msys" ;;
+esac
+echo "OSTYPE (normalized)=[$OSTYPE]"
+
+# Defensive: clear compiler-flag env vars on Windows. CMake reads CXXFLAGS
+# into CMAKE_CXX_FLAGS, and cl.exe also prepends $CL / appends $_CL_ to
+# every invocation. Cheap insurance against future env leaks.
+if [[ $OSTYPE == msys* ]]; then
+  unset CXXFLAGS CFLAGS CL _CL_
+fi
+
 usage()
 {
   echo "usage: ./build_dependencies.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] | [-h | --help]]"
@@ -136,8 +154,8 @@ build_vtk()
   patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.5.patch
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DVTK_MODULE_ENABLE_VTK_hdf5=NO -DBUILD_EXAMPLES:BOOL=OFF -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
+  if [[ $OSTYPE == msys* ]]; then
+      cmake -DCMAKE_CXX_FLAGS="" -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DVTK_MODULE_ENABLE_VTK_hdf5=NO -DBUILD_EXAMPLES:BOOL=OFF -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
@@ -179,8 +197,8 @@ build_itk()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -DZLIB_SYMBOL_PREFIX="itkzlib_" -Wno-dev ..
+  if [[ $OSTYPE == msys* ]]; then
+      cmake -DCMAKE_CXX_FLAGS="" -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -DZLIB_SYMBOL_PREFIX="itkzlib_" -Wno-dev ..
       
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
@@ -216,8 +234,8 @@ build_xlnt()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DSTATIC=OFF ..
+  if [[ $OSTYPE == msys* ]]; then
+      cmake -DCMAKE_CXX_FLAGS="" -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DSTATIC=OFF ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
@@ -246,7 +264,7 @@ build_jkqtplotter()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
-  if [[ $OSTYPE == "msys" ]]; then
+  if [[ $OSTYPE == msys* ]]; then
       cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DJKQtPlotter_BUILD_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
@@ -276,8 +294,8 @@ build_openvdb()
 
   CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
       
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DOPENVDB_CORE_STATIC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+  if [[ $OSTYPE == msys* ]]; then
+      cmake -DCMAKE_CXX_FLAGS="" -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DOPENVDB_CORE_STATIC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
       cmake --build . --config ${BUILD_TYPE} || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   elif [[ "$OSTYPE" == "linux"* ]]; then
@@ -317,7 +335,7 @@ build_geometry_central()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
-  if [[ $OSTYPE == "msys" ]]; then
+  if [[ $OSTYPE == msys* ]]; then
       cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       # no make install, so we do this manually
@@ -356,7 +374,7 @@ build_acvd()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
-  if [[ $OSTYPE == "msys" ]]; then
+  if [[ $OSTYPE == msys* ]]; then
       cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DVTK_DIR="${VTK_DIR}" -DBUILD_EXAMPLES:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
@@ -482,7 +500,7 @@ echo "##  $*"
 echo "##"
 echo ""
 
-if [[ $OSTYPE != "msys" ]]; then
+if [[ $OSTYPE != msys* ]]; then
     verify_qt
 fi
 
