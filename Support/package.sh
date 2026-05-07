@@ -105,18 +105,36 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	install_name_tool -add_rpath $QT_LIB_LOCATION $i || echo ok
     done
 
-    # Copy libraries from anaconda
-    conda_libs="libpython libboost_filesystem"
-    for clib in $conda_libs; do
-        cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
-    done
+    # Check if bundled Python is present in the .app
+    if [ -d "ShapeWorksStudio.app/Contents/Resources/Python" ]; then
+        echo "Bundled Python detected — skipping conda libpython copy"
 
+        # Fix install names for bundled libpython
+        for lib in ShapeWorksStudio.app/Contents/Resources/Python/lib/libpython3.12*.dylib ; do
+            if [ -f "$lib" ]; then
+                libname=$(basename "$lib")
+                install_name_tool -id "@rpath/${libname}" "$lib" || echo ok
+            fi
+        done
 
-    # # Fix transitive loaded libs
-    # for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
-    # 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
-    # done
-    # install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
+        # Fix shapeworks_py.so to find bundled libpython via @rpath
+        if [ -f "ShapeWorksStudio.app/Contents/Resources/Python/lib/python3.12/site-packages/shapeworks_py.so" ]; then
+            install_name_tool -add_rpath "@loader_path/../../.." \
+                "ShapeWorksStudio.app/Contents/Resources/Python/lib/python3.12/site-packages/shapeworks_py.so" || echo ok
+        fi
+
+        # Copy non-python conda libs (e.g. boost)
+        conda_libs="libboost_filesystem"
+        for clib in $conda_libs; do
+            cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
+        done
+    else
+        # Copy libraries from anaconda (legacy conda-based workflow)
+        conda_libs="libpython libboost_filesystem"
+        for clib in $conda_libs; do
+            cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
+        done
+    fi
 
     cd ..
 

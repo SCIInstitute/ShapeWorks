@@ -4,6 +4,7 @@
 // qt
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QProgressDialog>
 #include <QThread>
 
 // shapeworks
@@ -873,6 +874,38 @@ void DeepSSMTool::restore_defaults() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_tool(DeepSSMJob::JobType job_type) {
+  // Check if PyTorch is available; if not, offer to install it
+  if (!PythonWorker::is_torch_available()) {
+    auto reply = QMessageBox::question(this, "PyTorch Required",
+                                       "DeepSSM requires PyTorch, which is not currently installed.\n\n"
+                                       "Would you like to download and install it now?\n"
+                                       "This may take several minutes.",
+                                       QMessageBox::Yes | QMessageBox::No);
+    if (reply != QMessageBox::Yes) {
+      return;
+    }
+
+    QProgressDialog progress_dialog("Installing PyTorch...", QString(), 0, 0, this);
+    progress_dialog.setWindowModality(Qt::WindowModal);
+    progress_dialog.setMinimumDuration(0);
+    progress_dialog.show();
+    QCoreApplication::processEvents();
+
+    bool success = PythonWorker::install_torch([&](std::string msg) {
+      SW_LOG(msg);
+      progress_dialog.setLabelText(QString::fromStdString(msg));
+      QCoreApplication::processEvents();
+    });
+
+    progress_dialog.close();
+
+    if (!success) {
+      QMessageBox::warning(this, "Installation Failed",
+                           "PyTorch installation failed. Check the log for details.");
+      return;
+    }
+  }
+
   current_tool_ = job_type;
   Q_EMIT progress(-1);
 
