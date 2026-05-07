@@ -28,8 +28,10 @@ if(APPLE)
   endif()
 elseif(UNIX)
   set(_platform_tag "x86_64-unknown-linux-gnu")
+elseif(WIN32)
+  set(_platform_tag "x86_64-pc-windows-msvc")
 else()
-  message(FATAL_ERROR "USE_BUNDLED_PYTHON: unsupported platform (Windows not yet supported)")
+  message(FATAL_ERROR "USE_BUNDLED_PYTHON: unsupported platform")
 endif()
 
 set(_archive_name "cpython-${BUNDLED_PYTHON_VERSION}+${BUNDLED_PYTHON_RELEASE}-${_platform_tag}-install_only_stripped.tar.gz")
@@ -39,13 +41,16 @@ set(_bundled_dir "${CMAKE_BINARY_DIR}/_bundled_python")
 set(_archive_path "${_bundled_dir}/${_archive_name}")
 set(BUNDLED_PYTHON_ROOT "${_bundled_dir}/python" CACHE PATH "Root of bundled standalone Python" FORCE)
 
-# Python executable is in bin/ on all Unix platforms
-set(BUNDLED_PYTHON_EXECUTABLE "${BUNDLED_PYTHON_ROOT}/bin/python3" CACHE FILEPATH "Bundled Python executable" FORCE)
+if(WIN32)
+  set(BUNDLED_PYTHON_EXECUTABLE "${BUNDLED_PYTHON_ROOT}/python.exe" CACHE FILEPATH "Bundled Python executable" FORCE)
+else()
+  set(BUNDLED_PYTHON_EXECUTABLE "${BUNDLED_PYTHON_ROOT}/bin/python3" CACHE FILEPATH "Bundled Python executable" FORCE)
+endif()
 
 # ---------------------------------------------------------------------------
 # Download + extract (only if not already present)
 # ---------------------------------------------------------------------------
-if(NOT EXISTS "${BUNDLED_PYTHON_ROOT}/bin/python3")
+if(NOT EXISTS "${BUNDLED_PYTHON_EXECUTABLE}")
   message(STATUS "Downloading bundled Python from ${_download_url}")
 
   file(MAKE_DIRECTORY "${_bundled_dir}")
@@ -79,31 +84,64 @@ else()
 endif()
 
 # Verify extraction
-if(NOT EXISTS "${BUNDLED_PYTHON_ROOT}/bin/python3")
-  message(FATAL_ERROR "Bundled Python extraction failed — ${BUNDLED_PYTHON_ROOT}/bin/python3 not found")
+if(NOT EXISTS "${BUNDLED_PYTHON_EXECUTABLE}")
+  message(FATAL_ERROR "Bundled Python extraction failed — ${BUNDLED_PYTHON_EXECUTABLE} not found")
 endif()
 
 # ---------------------------------------------------------------------------
-# Copy conda's lib-dynload into the bundled tree.
+# Copy conda's extension modules into the bundled tree (Unix only).
 # The build-time embedded interpreter uses conda's libpython, which expects
-# C extension modules (math, _json, etc.) as .so files in lib-dynload/.
+# C extension modules (math, _json, etc.) as separate .so files.
 # python-build-standalone compiles these statically into its libpython,
 # leaving lib-dynload nearly empty. Copying conda's extensions ensures
-# the interpreter works in both the build tree and the installed .app.
+# the interpreter works in both the build tree and the installed app.
+#
+# On Windows this is NOT needed — the bundled Python's install_only variant
+# already ships all .pyd files in DLLs/, and conda's .pyd files are
+# ABI-incompatible (different libffi naming, different build).
 # ---------------------------------------------------------------------------
 find_package(Python3 3.12 REQUIRED COMPONENTS Interpreter)
-get_filename_component(_conda_prefix "${Python3_EXECUTABLE}" DIRECTORY)  # .../bin
-get_filename_component(_conda_prefix "${_conda_prefix}" DIRECTORY)       # .../
-set(_conda_lib_dynload "${_conda_prefix}/lib/python3.12/lib-dynload")
-set(_bundled_lib_dynload "${BUNDLED_PYTHON_ROOT}/lib/python3.12/lib-dynload")
+get_filename_component(_conda_prefix "${Python3_EXECUTABLE}" DIRECTORY)  # .../bin or .../
+if(WIN32)
+  # On Windows, Python3_EXECUTABLE is directly in the conda prefix (no bin/ subdir)
+  set(_conda_prefix "${_conda_prefix}")
+  message(STATUS "Windows: skipping conda extension copy (bundled Python has its own DLLs)")
 
-if(EXISTS "${_conda_lib_dynload}" AND IS_DIRECTORY "${_conda_lib_dynload}")
-  file(GLOB _conda_so_files "${_conda_lib_dynload}/*.so" "${_conda_lib_dynload}/*.dylib")
-  list(LENGTH _conda_so_files _num_so)
-  message(STATUS "Copying ${_num_so} extension modules from conda lib-dynload to bundled Python")
-  file(COPY ${_conda_so_files} DESTINATION "${_bundled_lib_dynload}")
+  # Copy specific conda DLLs needed by Python's .pyd extensions to the build
+  # output directory. Conda's .pyd extensions (pyexpat, _ssl, etc.) have implicit
+  # DLL dependencies in Library/bin/. We only copy the Python-specific ones to
+  # avoid conflicting with Qt/VTK/Boost DLLs already in the build directory.
+  set(_conda_lib_bin "${_conda_prefix}/Library/bin")
+  set(_python_dep_dlls
+    libexpat.dll        # pyexpat.pyd
+    libssl-3-x64.dll    # _ssl.pyd
+    libcrypto-3-x64.dll # _hashlib.pyd
+    libffi-8.dll        # _ctypes.pyd (if present)
+    zlib.dll            # zlib module
+    libbz2.dll          # _bz2.pyd
+    liblzma.dll         # _lzma.pyd
+    sqlite3.dll         # _sqlite3.pyd
+  )
+  foreach(_dll ${_python_dep_dlls})
+    if(EXISTS "${_conda_lib_bin}/${_dll}")
+      message(STATUS "Copying ${_dll} from conda Library/bin to build output")
+      file(COPY "${_conda_lib_bin}/${_dll}" DESTINATION "${CMAKE_BINARY_DIR}/bin/Release")
+      file(COPY "${_conda_lib_bin}/${_dll}" DESTINATION "${CMAKE_BINARY_DIR}/bin")
+    endif()
+  endforeach()
 else()
-  message(WARNING "Conda lib-dynload not found at ${_conda_lib_dynload}")
+  get_filename_component(_conda_prefix "${_conda_prefix}" DIRECTORY)       # .../
+  set(_conda_lib_dynload "${_conda_prefix}/lib/python3.12/lib-dynload")
+  set(_bundled_lib_dynload "${BUNDLED_PYTHON_ROOT}/lib/python3.12/lib-dynload")
+
+  if(EXISTS "${_conda_lib_dynload}" AND IS_DIRECTORY "${_conda_lib_dynload}")
+    file(GLOB _conda_ext_files "${_conda_lib_dynload}/*.so" "${_conda_lib_dynload}/*.dylib")
+    list(LENGTH _conda_ext_files _num_ext)
+    message(STATUS "Copying ${_num_ext} extension modules from conda to bundled Python")
+    file(COPY ${_conda_ext_files} DESTINATION "${_bundled_lib_dynload}")
+  else()
+    message(WARNING "Conda extension directory not found at ${_conda_lib_dynload}")
+  endif()
 endif()
 
 # ---------------------------------------------------------------------------
@@ -112,20 +150,37 @@ endif()
 add_definitions(-DSHAPEWORKS_BUNDLED_PYTHON)
 
 # Provide build-tree paths so PythonWorker can find shapeworks Python modules
-# and shapeworks_py.so during development (not needed in installed .app).
-add_compile_definitions(SHAPEWORKS_BUNDLED_PYTHON_BUILD_BIN="${CMAKE_BINARY_DIR}/bin")
+# and shapeworks_py.so during development (not needed in installed app).
+if(WIN32)
+  # On Windows, build output goes to bin/Release or bin/Debug
+  add_compile_definitions(SHAPEWORKS_BUNDLED_PYTHON_BUILD_BIN="${CMAKE_BINARY_DIR}/bin/Release")
+else()
+  add_compile_definitions(SHAPEWORKS_BUNDLED_PYTHON_BUILD_BIN="${CMAKE_BINARY_DIR}/bin")
+endif()
 add_compile_definitions(SHAPEWORKS_BUNDLED_PYTHON_SOURCE_DIR="${CMAKE_SOURCE_DIR}/Python")
 add_compile_definitions(SHAPEWORKS_BUNDLED_PYTHON_CONDA_PREFIX="${_conda_prefix}")
 
 # ---------------------------------------------------------------------------
 # Custom target: install pip packages into the bundled Python
 # ---------------------------------------------------------------------------
-add_custom_target(bundled_pip_install
-  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install --upgrade pip
-  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
-  COMMENT "Installing runtime pip packages into bundled Python"
-  VERBATIM
-)
+if(WIN32)
+  # On Windows GHA runners, pip's platformdirs crashes trying to read
+  # CSIDL_COMMON_APPDATA from the registry. The --isolated flag skips
+  # all config file and environment variable processing.
+  add_custom_target(bundled_pip_install
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install --isolated --upgrade pip
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install --isolated -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
+    COMMENT "Installing runtime pip packages into bundled Python"
+    VERBATIM
+  )
+else()
+  add_custom_target(bundled_pip_install
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install --upgrade pip
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
+    COMMENT "Installing runtime pip packages into bundled Python"
+    VERBATIM
+  )
+endif()
 
 message(STATUS "Bundled Python root: ${BUNDLED_PYTHON_ROOT}")
 message(STATUS "Bundled Python executable: ${BUNDLED_PYTHON_EXECUTABLE}")

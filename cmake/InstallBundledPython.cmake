@@ -2,6 +2,7 @@
 #
 # On macOS: Installs into bin/ShapeWorksStudio.app/Contents/Resources/Python/
 # On Linux: Installs into lib/python/
+# On Windows: Installs into lib/python/ with DLLs copied to bin/
 #
 # This file is included from Studio/CMakeLists.txt AFTER platform-specific
 # deploy steps, and only takes effect when USE_BUNDLED_PYTHON is ON.
@@ -10,10 +11,151 @@ if(NOT USE_BUNDLED_PYTHON)
   return()
 endif()
 
+# ---------------------------------------------------------------------------
+# Common: ShapeWorks Python packages to install into site-packages
+# ---------------------------------------------------------------------------
+set(_sw_python_packages
+  DataAugmentationUtilsPackage/DataAugmentationUtils
+  DatasetUtilsPackage/DatasetUtils
+  DeepSSMUtilsPackage/DeepSSMUtils
+  DocumentationUtilsPackage/DocumentationUtils
+  ShapeCohortGenPackage/ShapeCohortGen
+)
+
+# ###########################################################################
+# Windows install rules (separate section — layout differs significantly)
+# ###########################################################################
 if(WIN32)
-  message(STATUS "InstallBundledPython: skipping (Windows not yet supported)")
-  return()
+
+set(_python_dest "lib/python")
+
+# ---------------------------------------------------------------------------
+# 0. Clean previous bundled Python to avoid stale files
+# ---------------------------------------------------------------------------
+install(CODE "
+  set(_old_python \"${CMAKE_INSTALL_PREFIX}/${_python_dest}\")
+  if(IS_DIRECTORY \"\${_old_python}\")
+    message(STATUS \"Removing previous bundled Python at \${_old_python}\")
+    file(REMOVE_RECURSE \"\${_old_python}\")
+  endif()
+" COMPONENT Runtime)
+
+# ---------------------------------------------------------------------------
+# 1. Install Python standard library (Lib/ on Windows, excluding bloat)
+# ---------------------------------------------------------------------------
+install(DIRECTORY "${BUNDLED_PYTHON_ROOT}/Lib/"
+  DESTINATION "${_python_dest}/Lib"
+  PATTERN "__pycache__" EXCLUDE
+  PATTERN "test" EXCLUDE
+  PATTERN "tests" EXCLUDE
+  PATTERN "tkinter" EXCLUDE
+  PATTERN "ensurepip" EXCLUDE
+  PATTERN "idlelib" EXCLUDE
+  PATTERN "turtledemo" EXCLUDE
+  PATTERN "turtle.py" EXCLUDE
+  PATTERN "lib2to3" EXCLUDE
+)
+
+# ---------------------------------------------------------------------------
+# 2. Install DLLs directory (C extension modules + dependency DLLs)
+# ---------------------------------------------------------------------------
+install(DIRECTORY "${BUNDLED_PYTHON_ROOT}/DLLs/"
+  DESTINATION "${_python_dest}/DLLs"
+  PATTERN "__pycache__" EXCLUDE
+  PATTERN "_test*" EXCLUDE
+)
+
+# ---------------------------------------------------------------------------
+# 3. Install python.exe (needed for multiprocessing and on-demand installs)
+# ---------------------------------------------------------------------------
+install(PROGRAMS "${BUNDLED_PYTHON_ROOT}/python.exe"
+  DESTINATION "${_python_dest}"
+)
+if(EXISTS "${BUNDLED_PYTHON_ROOT}/pythonw.exe")
+  install(PROGRAMS "${BUNDLED_PYTHON_ROOT}/pythonw.exe"
+    DESTINATION "${_python_dest}"
+  )
 endif()
+
+# ---------------------------------------------------------------------------
+# 4. Install python DLLs — python312.dll and python3.dll to both bin/ and lib/python/
+#    They must be in bin/ so the main executables find them, and in lib/python/
+#    so the bundled python.exe finds them.
+# ---------------------------------------------------------------------------
+install(FILES
+  "${BUNDLED_PYTHON_ROOT}/python312.dll"
+  "${BUNDLED_PYTHON_ROOT}/python3.dll"
+  DESTINATION bin
+)
+install(FILES
+  "${BUNDLED_PYTHON_ROOT}/python312.dll"
+  "${BUNDLED_PYTHON_ROOT}/python3.dll"
+  DESTINATION "${_python_dest}"
+)
+# Also install vcruntime from the bundled Python (may differ from system)
+foreach(_vcrt vcruntime140.dll vcruntime140_1.dll)
+  if(EXISTS "${BUNDLED_PYTHON_ROOT}/${_vcrt}")
+    install(FILES "${BUNDLED_PYTHON_ROOT}/${_vcrt}" DESTINATION bin)
+    install(FILES "${BUNDLED_PYTHON_ROOT}/${_vcrt}" DESTINATION "${_python_dest}")
+  endif()
+endforeach()
+
+# Copy critical dependency DLLs from DLLs/ to bin/ so they are findable by the
+# embedded interpreter. When python312.dll is loaded inside ShapeWorksStudio.exe,
+# .pyd extensions (like _ctypes.pyd) need their implicit DLL dependencies
+# (like libffi-8.dll) on the DLL search path. Placing them in bin/ (next to the
+# host executable) ensures they are always found.
+foreach(_dll libffi-8.dll libcrypto-3-x64.dll libssl-3-x64.dll sqlite3.dll)
+  if(EXISTS "${BUNDLED_PYTHON_ROOT}/DLLs/${_dll}")
+    install(FILES "${BUNDLED_PYTHON_ROOT}/DLLs/${_dll}" DESTINATION bin)
+  endif()
+endforeach()
+
+# ---------------------------------------------------------------------------
+# 5. Install ShapeWorks Python packages into site-packages
+# ---------------------------------------------------------------------------
+set(_site_packages "${_python_dest}/Lib/site-packages")
+
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/Python/shapeworks/shapeworks"
+  DESTINATION "${_site_packages}"
+  PATTERN "__pycache__" EXCLUDE
+  PATTERN "*.pyc" EXCLUDE
+)
+
+foreach(_pkg ${_sw_python_packages})
+  if(EXISTS "${CMAKE_SOURCE_DIR}/Python/${_pkg}")
+    install(DIRECTORY "${CMAKE_SOURCE_DIR}/Python/${_pkg}"
+      DESTINATION "${_site_packages}"
+      PATTERN "__pycache__" EXCLUDE
+      PATTERN "*.pyc" EXCLUDE
+    )
+  endif()
+endforeach()
+
+# ---------------------------------------------------------------------------
+# 6. Install shapeworks_py pybind11 module (.pyd) into site-packages
+# ---------------------------------------------------------------------------
+install(CODE "
+  file(GLOB _pybind_module \"${CMAKE_INSTALL_PREFIX}/bin/shapeworks_py*.pyd\")
+  if(_pybind_module)
+    list(GET _pybind_module 0 _pybind_src)
+    get_filename_component(_pybind_name \"\${_pybind_src}\" NAME)
+    file(INSTALL \"\${_pybind_src}\"
+      DESTINATION \"${CMAKE_INSTALL_PREFIX}/${_site_packages}\"
+    )
+    message(STATUS \"Installed \${_pybind_name} into bundled site-packages\")
+  else()
+    message(WARNING \"shapeworks_py module not found in ${CMAKE_INSTALL_PREFIX}/bin/\")
+  endif()
+" COMPONENT Runtime)
+
+message(STATUS "InstallBundledPython: will install bundled Python to ${_python_dest}")
+return()
+endif() # WIN32
+
+# ###########################################################################
+# macOS + Linux install rules (unified with platform-specific variables)
+# ###########################################################################
 
 # ---------------------------------------------------------------------------
 # Platform-specific paths
@@ -131,18 +273,7 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/Python/shapeworks/shapeworks"
   PATTERN "*.pyc" EXCLUDE
 )
 
-# Additional ShapeWorks Python packages
-set(_sw_python_packages
-  DataAugmentationUtilsPackage/DataAugmentationUtils
-  DatasetUtilsPackage/DatasetUtils
-  DeepSSMUtilsPackage/DeepSSMUtils
-  DocumentationUtilsPackage/DocumentationUtils
-  ShapeCohortGenPackage/ShapeCohortGen
-)
-
 foreach(_pkg ${_sw_python_packages})
-  get_filename_component(_pkg_name "${_pkg}" NAME)
-  get_filename_component(_pkg_parent "${_pkg}" DIRECTORY)
   if(EXISTS "${CMAKE_SOURCE_DIR}/Python/${_pkg}")
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/Python/${_pkg}"
       DESTINATION "${_site_packages}"

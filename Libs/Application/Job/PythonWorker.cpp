@@ -168,9 +168,13 @@ bool PythonWorker::init() {
       qputenv("PYTHONNOUSERSITE", "1");
 
       // In the build tree we use conda's libpython, so PYTHONHOME must
-      // point to conda's prefix; in the installed .app it points to the
+      // point to conda's prefix; in the installed app it points to the
       // bundled tree (where libpython and stdlib are self-consistent).
+#ifdef _WIN32
+      std::string site_sw = bundled_home + "/Lib/site-packages/shapeworks/__init__.py";
+#else
       std::string site_sw = bundled_home + "/lib/python3.12/site-packages/shapeworks/__init__.py";
+#endif
       if (!QFile::exists(QString::fromStdString(site_sw))) {
         python_home = QString::fromStdString(std::string(SHAPEWORKS_BUNDLED_PYTHON_CONDA_PREFIX));
         SW_LOG("Build tree detected, PYTHONHOME set to conda: " + python_home.toStdString());
@@ -232,7 +236,55 @@ bool PythonWorker::init() {
   qputenv("PYTHONHOME", python_home.toUtf8());
 
 #ifdef _WIN32
-  if (!using_bundled) {
+  if (using_bundled) {
+    // Conda's .pyd extensions need DLLs from Library/bin/ (e.g. libexpat.dll).
+    // In the build tree, these are copied next to the executables by CMake.
+    // In the installed app, critical DLLs are in bin/ from InstallBundledPython.
+    // Prepend key directories to PATH as a safety net.
+    QString dlls_dir = python_home + "/DLLs";
+    QString app_dir = QCoreApplication::applicationDirPath();
+    QString current_path = qgetenv("PATH");
+    qputenv("PATH", (dlls_dir + ";" + python_home + ";" + app_dir + ";" + current_path).toUtf8());
+
+    // Verbose diagnostics for debugging GHA failures
+    std::cerr << "=== Bundled Python DLL diagnostics ===\n";
+    std::cerr << "  app_dir: " << app_dir.toStdString() << "\n";
+    std::cerr << "  python_home: " << python_home.toStdString() << "\n";
+    std::cerr << "  DLLs dir: " << dlls_dir.toStdString() << "\n";
+    std::cerr << "  DLLs dir exists: " << QDir(dlls_dir).exists() << "\n";
+    std::cerr << "  python_home/Library/bin exists: " << QDir(python_home + "/Library/bin").exists() << "\n";
+
+    // Check critical files
+    QStringList check_files = {
+        python_home + "/python312.dll",
+        python_home + "/python3.dll",
+        python_home + "/DLLs/pyexpat.pyd",
+        python_home + "/Library/bin/libexpat.dll",
+        python_home + "/Lib/os.py",
+        app_dir + "/python312.dll",
+        app_dir + "/libexpat.dll",
+    };
+    for (const auto& f : check_files) {
+      std::cerr << "  " << f.toStdString() << " : " << (QFile::exists(f) ? "EXISTS" : "MISSING") << "\n";
+    }
+
+    // List DLLs in app_dir matching python* or lib*
+    QDir app_dir_obj(app_dir);
+    QStringList dll_filters = {"python*.dll", "lib*.dll"};
+    auto dlls_in_app = app_dir_obj.entryList(dll_filters, QDir::Files);
+    std::cerr << "  DLLs in app_dir: ";
+    for (const auto& d : dlls_in_app) std::cerr << d.toStdString() << " ";
+    std::cerr << "\n";
+
+    std::cerr << "  PATH (first 500 chars): " << qgetenv("PATH").left(500).toStdString() << "\n";
+    std::cerr << "=== End diagnostics ===\n";
+    std::cerr.flush();
+
+    SW_LOG("Registered bundled Python DLL directories");
+  } else {
+    // Legacy conda-based Python path
+    SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_USER_DIRS);
+
     QString home = qgetenv("USERPROFILE");
     if (python_home.isEmpty()) {
       SW_ERROR("Unable to initialize Python\nPlease run install_shapeworks.bat");
@@ -251,10 +303,6 @@ bool PythonWorker::init() {
         SW_LOG("Setting PATH for Python to: " + path.toStdString());
       }
 
-      // Python 3.8+ requires explicit DLL directory registration
-      // PATH environment variable is no longer used for DLL search
-      SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_USER_DIRS);
-
       // Add the Library\bin directory where conda keeps DLLs like libexpat.dll
       QString library_bin = python_home + "/Library/bin";
       AddDllDirectory(library_bin.toStdWString().c_str());
@@ -270,8 +318,33 @@ bool PythonWorker::init() {
 #endif  // ifdef _WIN32
 
   try {
+    std::cerr << "=== About to call py::initialize_interpreter() ===\n";
+    std::cerr.flush();
     py::initialize_interpreter();
+    std::cerr << "=== py::initialize_interpreter() succeeded ===\n";
+    std::cerr.flush();
     interpreter_started_ = true;
+
+#ifdef _WIN32
+    // Register DLL directories AFTER Python init. Python 3.8+ calls
+    // SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS) during
+    // Py_Initialize(), which enables LOAD_LIBRARY_SEARCH_USER_DIRS.
+    // AddDllDirectory calls made AFTER this point are effective for all
+    // subsequent DLL loads (e.g. _ctypes.pyd needing ffi-8.dll).
+    if (using_bundled) {
+      QString dlls_dir = python_home + "/DLLs";
+      AddDllDirectory(dlls_dir.toStdWString().c_str());
+      AddDllDirectory(python_home.toStdWString().c_str());
+      QString library_bin = python_home + "/Library/bin";
+      if (QDir(library_bin).exists()) {
+        AddDllDirectory(library_bin.toStdWString().c_str());
+      }
+      QString app_dir = QCoreApplication::applicationDirPath();
+      AddDllDirectory(app_dir.toStdWString().c_str());
+      std::cerr << "=== AddDllDirectory registered after Python init ===\n";
+      std::cerr.flush();
+    }
+#endif
 
     py::module sys = py::module::import("sys");
 
@@ -289,7 +362,9 @@ bool PythonWorker::init() {
     QString python_executable;
 
 #ifdef _WIN32
-    QStringList exe_candidates = {python_home + "/python.exe"};
+    QStringList exe_candidates = {
+        python_home + "/python.exe",  // bundled or conda root
+    };
 #else
     QStringList exe_candidates = {
         python_home + "/bin/python",
@@ -412,7 +487,11 @@ bool PythonWorker::is_torch_available() {
     return true;  // not bundled, assume conda has torch
   }
 
+#ifdef _WIN32
+  QString python_exe = QString::fromStdString(python_home) + "/python.exe";
+#else
   QString python_exe = QString::fromStdString(python_home) + "/bin/python3";
+#endif
   if (!QFile::exists(python_exe)) {
     return true;  // can't check, assume available
   }
@@ -423,12 +502,24 @@ bool PythonWorker::is_torch_available() {
   QStringList extra_paths = {QString::fromStdString(user_sp)};
 #if defined(SHAPEWORKS_BUNDLED_PYTHON_CONDA_PREFIX)
   // Only add conda site-packages in the build tree (where shapeworks isn't in bundled site-packages)
+#ifdef _WIN32
+  std::string site_sw = python_home + "/Lib/site-packages/shapeworks/__init__.py";
+#else
   std::string site_sw = python_home + "/lib/python3.12/site-packages/shapeworks/__init__.py";
+#endif
   if (!QFile::exists(QString::fromStdString(site_sw))) {
+#ifdef _WIN32
+    extra_paths.append(QString(SHAPEWORKS_BUNDLED_PYTHON_CONDA_PREFIX) + "/Lib/site-packages");
+#else
     extra_paths.append(QString(SHAPEWORKS_BUNDLED_PYTHON_CONDA_PREFIX) + "/lib/python3.12/site-packages");
+#endif
   }
 #endif
+#ifdef _WIN32
+  env.insert("PYTHONPATH", extra_paths.join(";"));
+#else
   env.insert("PYTHONPATH", extra_paths.join(":"));
+#endif
   proc.setProcessEnvironment(env);
   proc.start(python_exe, {"-c", "import torch"});
   proc.waitForFinished(10000);
@@ -446,7 +537,11 @@ bool PythonWorker::install_torch(std::function<void(std::string)> output_callbac
     return false;
   }
 
+#ifdef _WIN32
+  QString python_exe = QString::fromStdString(python_home) + "/python.exe";
+#else
   QString python_exe = QString::fromStdString(python_home) + "/bin/python3";
+#endif
   if (!QFile::exists(python_exe)) {
     if (output_callback) output_callback("Error: bundled Python executable not found");
     return false;
@@ -506,11 +601,19 @@ bool PythonWorker::install_torch(std::function<void(std::string)> output_callbac
 std::string PythonWorker::find_bundled_python_home() {
   // Application directory varies by platform and context:
   // - macOS .app: .../Contents/MacOS
-  // - Linux installed: .../bin
+  // - Linux/Windows installed: .../bin
+  // - Windows build tree: .../bin/Release
   // - Build tree (macOS .app): .../bin/ShapeWorksStudio.app/Contents/MacOS
   // - Build tree (CLI/Linux): .../bin
   QString app_dir = QCoreApplication::applicationDirPath();
   QDir dir(app_dir);
+
+  // The stdlib marker file differs on Windows (Lib/os.py) vs Unix (lib/python3.12/os.py)
+#ifdef _WIN32
+  QString stdlib_marker = "/Lib/os.py";
+#else
+  QString stdlib_marker = "/lib/python3.12/os.py";
+#endif
 
   // Candidates for installed bundles (in priority order)
   QStringList installed_candidates = {
@@ -518,7 +621,7 @@ std::string PythonWorker::find_bundled_python_home() {
       // macOS .app bundle: ../Resources/Python relative to Contents/MacOS
       dir.absoluteFilePath("../Resources/Python"),
 #else
-      // Linux installed: ../lib/python relative to bin/
+      // Linux/Windows installed: ../lib/python relative to bin/
       dir.absoluteFilePath("../lib/python"),
 #endif
   };
@@ -526,7 +629,7 @@ std::string PythonWorker::find_bundled_python_home() {
   for (const auto& c : installed_candidates) {
     QDir candidate_dir(c);
     QString canonical = candidate_dir.canonicalPath();
-    if (!canonical.isEmpty() && QFile::exists(canonical + "/lib/python3.12/os.py")) {
+    if (!canonical.isEmpty() && QFile::exists(canonical + stdlib_marker)) {
       return canonical.toStdString();
     }
   }
@@ -534,16 +637,18 @@ std::string PythonWorker::find_bundled_python_home() {
   // Try build-tree layouts.
   // Studio .app: executable is in bin/ShapeWorksStudio.app/Contents/MacOS/
   // CLI/Linux:   executable is in bin/
+  // Windows:     executable is in bin/Release/
   // Bundled Python is in _bundled_python/python/ (sibling to bin/)
   QStringList build_tree_candidates = {
       dir.absoluteFilePath("../../../../_bundled_python/python"),  // macOS .app bundle
+      dir.absoluteFilePath("../../_bundled_python/python"),        // Windows bin/Release/
       dir.absoluteFilePath("../_bundled_python/python"),           // CLI executable or Linux
   };
 
   for (const auto& c : build_tree_candidates) {
     QDir candidate_dir(c);
     QString canonical = candidate_dir.canonicalPath();
-    if (!canonical.isEmpty() && QFile::exists(canonical + "/lib/python3.12/os.py")) {
+    if (!canonical.isEmpty() && QFile::exists(canonical + stdlib_marker)) {
       return canonical.toStdString();
     }
   }
@@ -554,9 +659,17 @@ std::string PythonWorker::find_bundled_python_home() {
 //---------------------------------------------------------------------------
 std::vector<std::string> PythonWorker::compute_bundled_python_path(const std::string& python_home) {
   std::vector<std::string> paths;
+
+#ifdef _WIN32
+  // Windows layout: Lib/ (stdlib), DLLs/ (C extensions), Lib/site-packages/
+  paths.push_back(python_home + "/Lib");
+  paths.push_back(python_home + "/DLLs");
+  paths.push_back(python_home + "/Lib/site-packages");
+#else
   paths.push_back(python_home + "/lib/python3.12");
   paths.push_back(python_home + "/lib/python3.12/lib-dynload");
   paths.push_back(python_home + "/lib/python3.12/site-packages");
+#endif
 
   // Add versioned user site-packages for on-demand installs (e.g. PyTorch)
   std::string user_sp = get_user_site_packages();
@@ -566,10 +679,14 @@ std::vector<std::string> PythonWorker::compute_bundled_python_path(const std::st
 
 #if defined(SHAPEWORKS_BUNDLED_PYTHON_BUILD_BIN) && defined(SHAPEWORKS_BUNDLED_PYTHON_SOURCE_DIR)
   // In the build tree, shapeworks Python packages live in the source tree,
-  // shapeworks_py.so lives in the build bin/ directory, and third-party
+  // shapeworks_py.so/.pyd lives in the build bin/ directory, and third-party
   // packages (VTK, ITK, etc.) are in conda's site-packages.
   // Check if we're in the build tree by looking for shapeworks in site-packages.
+#ifdef _WIN32
+  std::string site_sw = python_home + "/Lib/site-packages/shapeworks/__init__.py";
+#else
   std::string site_sw = python_home + "/lib/python3.12/site-packages/shapeworks/__init__.py";
+#endif
   if (!QFile::exists(QString::fromStdString(site_sw))) {
     // Build tree: the embedded interpreter uses conda's libpython, so we
     // need conda's stdlib (platform.py, etc.) to match. Replace the bundled
@@ -582,8 +699,13 @@ std::vector<std::string> PythonWorker::compute_bundled_python_path(const std::st
     // shapeworks package wins over any stale conda-installed one), then
     // conda site-packages for third-party packages (VTK, ITK, etc.).
     paths.clear();
+#ifdef _WIN32
+    paths.push_back(conda_prefix + "/Lib");
+    paths.push_back(conda_prefix + "/DLLs");
+#else
     paths.push_back(conda_prefix + "/lib/python3.12");
     paths.push_back(conda_prefix + "/lib/python3.12/lib-dynload");
+#endif
     paths.push_back(build_bin);
 
     QDir python_dir(QString::fromStdString(source_dir));
@@ -593,8 +715,13 @@ std::vector<std::string> PythonWorker::compute_bundled_python_path(const std::st
 
     // Conda site-packages first (has torch, numpy, etc. that match conda's libpython),
     // then bundled site-packages as fallback for packages only in the bundled tree.
+#ifdef _WIN32
+    paths.push_back(conda_prefix + "/Lib/site-packages");
+    paths.push_back(python_home + "/Lib/site-packages");
+#else
     paths.push_back(conda_prefix + "/lib/python3.12/site-packages");
     paths.push_back(python_home + "/lib/python3.12/site-packages");
+#endif
   }
 #endif
 

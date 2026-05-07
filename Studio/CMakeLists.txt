@@ -326,12 +326,13 @@ if(WIN32)
                                 $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.exe
   )
 
-  # install msvcp140.dll and vcruntime140.dll
-  file(TO_CMAKE_PATH "$ENV{windir}/SysWOW64" WIN_SYSDIR)
-  if (NOT EXISTS "${WIN_SYSDIR}")
-    file(TO_CMAKE_PATH "$ENV{windir}/system32" WIN_SYSDIR)
-  endif()
-  install(FILES "${WIN_SYSDIR}/msvcp140.dll" "${WIN_SYSDIR}/vcomp140.dll" "${WIN_SYSDIR}/vcruntime140.dll" "${WIN_SYSDIR}/vcruntime140_1.dll" DESTINATION bin)
+  # install MSVC runtime DLLs (use system32 for 64-bit DLLs)
+  file(TO_CMAKE_PATH "$ENV{windir}/system32" WIN_SYSDIR)
+  foreach(_rtdll msvcp140.dll vcomp140.dll vcruntime140.dll vcruntime140_1.dll)
+    if(EXISTS "${WIN_SYSDIR}/${_rtdll}")
+      install(FILES "${WIN_SYSDIR}/${_rtdll}" DESTINATION bin)
+    endif()
+  endforeach()
     
 endif(WIN32)
 
@@ -466,5 +467,5 @@ if (APPLE)
     ]===] COMPONENT Runtime)
 endif()
 
-# Install bundled Python into the .app (after macdeployqt)
+# Install bundled Python (macOS: into .app after macdeployqt, Windows: into lib/python/)
 include(InstallBundledPython)

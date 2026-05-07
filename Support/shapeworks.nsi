@@ -78,6 +78,10 @@ Section "ShapeWorks (required)"
   File /r /x Studio /x Lib "Python"
   File /r "Installation"
 
+  ; Bundled Python runtime (when USE_BUNDLED_PYTHON=ON)
+  IfFileExists "lib\*.*" 0 +2
+    File /r "lib"
+
   ${registerExtension} "$INSTDIR\bin\ShapeWorksStudio.exe" ".swproj" "ShapeWorks Project"
   
   ; Write the installation path into the registry
