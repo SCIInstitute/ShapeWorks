@@ -120,7 +120,7 @@ function install_conda() {
 	CONDA_PACKAGES+=(zlib=1.2.13 patchelf=0.17.2)
     fi
 
-    if [[ $OSTYPE == "msys" ]]; then
+    if [[ $OSTYPE == msys* || $OSTYPE == cygwin* ]]; then
 	CONDA_PACKAGES+=(zlib)
     fi
     
