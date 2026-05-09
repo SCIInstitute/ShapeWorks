@@ -1,8 +1,6 @@
 
 #include "SamplingFunction.h"
 
-#include <set>
-
 #include "Libs/Common/Logging.h"
 #include "Libs/Optimize/Domain/DomainType.h"
 #include "vnl/vnl_vector_fixed.h"
@@ -267,14 +265,6 @@ SamplingFunction::VectorType SamplingFunction::evaluate(unsigned int idx, unsign
 
       // Scale factor is proportional to surface area
       scale_factor = surface_area / reference_surface_area;
-
-      // Log once per domain using static set
-      static std::set<int> logged_domains;
-      if (logged_domains.find(d) == logged_domains.end()) {
-        logged_domains.insert(d);
-        SW_DEBUG("SamplingFunction: Auto scale for domain " + std::to_string(d) + ", surface_area = " +
-                 std::to_string(surface_area) + ", scale_factor = " + std::to_string(scale_factor));
-      }
     }
 
     // multiply by scaling value (whether auto is on or off)
