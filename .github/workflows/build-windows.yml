@@ -169,14 +169,6 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/download_test_data.sh
       
-    - name: Enable crash dumps
-      shell: cmd
-      run: |
-        reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpFolder /t REG_EXPAND_SZ /d "C:\CrashDumps" /f
-        reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpCount /t REG_DWORD /d 10 /f
-        reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpType /t REG_DWORD /d 2 /f
-        if not exist C:\CrashDumps mkdir C:\CrashDumps
-
     - name: Test
       working-directory: "C:/build"
       shell: bash -l {0}
@@ -184,35 +176,43 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && ctest --output-on-failure -VV -C $BUILD_TYPE --debug
 
-    - name: Analyze crash dumps
+    - name: Diagnose DeepSSM crash with cdb
       if: failure()
-      shell: cmd
+      shell: bash -l {0}
       run: |
-        if not exist C:\CrashDumps\*.dmp (
-          echo No crash dumps found in C:\CrashDumps
-          dir C:\CrashDumps
-          exit /b 0
-        )
-        set CDB="C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe"
-        if not exist %CDB% (
-          echo cdb.exe not found at %CDB%
-          dir "C:\Program Files (x86)\Windows Kits\10\Debuggers"
-          exit /b 0
-        )
-        for %%F in (C:\CrashDumps\*.dmp) do (
-          echo ============================================================
-          echo === Analyzing %%F
-          echo ============================================================
-          %CDB% -z "%%F" -y "srv*c:\symbols*https://msdl.microsoft.com/download/symbols;C:\build\bin\Release" -c ".reload; !analyze -v; ~* kpn 50; lm; q"
-        )
+        set +e
+        CDB="/c/Program Files (x86)/Windows Kits/10/Debuggers/x64/cdb.exe"
+        if [ ! -x "$CDB" ]; then
+            echo "cdb.exe not found at $CDB"
+            ls "/c/Program Files (x86)/Windows Kits/10/Debuggers/" 2>/dev/null
+            exit 0
+        fi
 
-    - name: Upload crash dumps
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: crash-dumps-${{github.sha}}-windows
-        path: C:\CrashDumps\
-        if-no-files-found: warn
+        conda activate shapeworks
+        source ${GITHUB_WORKSPACE}/devenv.sh ./build/bin/Release
+
+        DATA="${GITHUB_WORKSPACE}/Testing/data"
+        if [ ! -d "${DATA}/deepssm/projects" ]; then
+            if [ -f "${DATA}/deepssm_test_data.zip" ]; then
+                unzip -q "${DATA}/deepssm_test_data.zip" -d "${DATA}/deepssm"
+            else
+                echo "No DeepSSM test data at ${DATA}"
+                exit 0
+            fi
+        fi
+
+        cd "${DATA}/deepssm/projects"
+        rm -rf deepssm groomed *_particles
+        export OMP_NUM_THREADS=1
+
+        echo "=========================================================="
+        echo "=== Running shapeworks deepssm under cdb               ==="
+        echo "=== cdb breaks on 2nd-chance AV, prints rich diagnostics"
+        echo "=========================================================="
+        "$CDB" -o -lines -G -g \
+            -y "srv*c:\\symbols*https://msdl.microsoft.com/download/symbols;C:\\build\\bin\\Release" \
+            -c "g; .echo ==== LAST EVENT ====; .lastevent; .echo ==== EXCEPTION RECORD ====; .exr -1; .echo ==== REGISTERS ====; r; .echo ==== DISASSEMBLY AT FAULT ====; u . L20; .echo ==== !analyze -v ====; !analyze -v; .echo ==== ALL THREAD STACKS ====; ~* kpn 100; .echo ==== LOADED MODULES ====; lm; .echo ==== PEB (env, cmdline, image) ====; !peb; q" \
+            "C:/build/bin/Release/shapeworks.exe" deepssm --name default.swproj --all --aug_processes 1
 
     - name: Setup tmate session on failure
       if: ${{ failure() }}
