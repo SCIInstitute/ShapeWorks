@@ -169,13 +169,51 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/download_test_data.sh
       
+    - name: Enable crash dumps
+      shell: cmd
+      run: |
+        reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpFolder /t REG_EXPAND_SZ /d "C:\CrashDumps" /f
+        reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpCount /t REG_DWORD /d 10 /f
+        reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpType /t REG_DWORD /d 2 /f
+        if not exist C:\CrashDumps mkdir C:\CrashDumps
+
     - name: Test
       working-directory: "C:/build"
       shell: bash -l {0}
-      # Execute tests defined by the CMake configuration.  
+      # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && ctest --output-on-failure -VV -C $BUILD_TYPE --debug
-    
+
+    - name: Analyze crash dumps
+      if: failure()
+      shell: cmd
+      run: |
+        if not exist C:\CrashDumps\*.dmp (
+          echo No crash dumps found in C:\CrashDumps
+          dir C:\CrashDumps
+          exit /b 0
+        )
+        set CDB="C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe"
+        if not exist %CDB% (
+          echo cdb.exe not found at %CDB%
+          dir "C:\Program Files (x86)\Windows Kits\10\Debuggers"
+          exit /b 0
+        )
+        for %%F in (C:\CrashDumps\*.dmp) do (
+          echo ============================================================
+          echo === Analyzing %%F
+          echo ============================================================
+          %CDB% -z "%%F" -y "srv*c:\symbols*https://msdl.microsoft.com/download/symbols;C:\build\bin\Release" -c ".reload; !analyze -v; ~* kpn 50; lm; q"
+        )
+
+    - name: Upload crash dumps
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: crash-dumps-${{github.sha}}-windows
+        path: C:\CrashDumps\
+        if-no-files-found: warn
+
     - name: Setup tmate session on failure
       if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
