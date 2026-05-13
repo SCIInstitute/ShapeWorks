@@ -415,4 +415,48 @@ LOC="`dirname "$0"`"
   install(PROGRAMS "${_cli_wrapper_dir}/shapeworks" DESTINATION bin)
 endif()
 
+# ---------------------------------------------------------------------------
+# 8. Install 'swpython' wrapper that launches the bundled Python with
+#    PYTHONHOME pointed at the bundled tree. Mirrors ParaView's pvpython:
+#      swpython my_script.py             (run a script against bundled python)
+#      swpython -m pip install <pkg>     (install into bundled site-packages,
+#                                         or pass --target for read-only installs)
+# ---------------------------------------------------------------------------
+set(_swpython_dir "${CMAKE_BINARY_DIR}/_bundled_python/swpython")
+file(MAKE_DIRECTORY "${_swpython_dir}")
+
+if(APPLE)
+  file(WRITE "${_swpython_dir}/swpython"
+[=[#!/bin/bash
+LOC="`dirname "$0"`"
+PYTHONHOME="${LOC}/ShapeWorksStudio.app/Contents/Resources/Python"
+unset PYTHONPATH
+export PYTHONHOME
+exec "${PYTHONHOME}/bin/python3" "$@"
+]=])
+  install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
+
+elseif(WIN32)
+  file(WRITE "${_swpython_dir}/swpython.bat"
+[=[@echo off
+set "LOC=%~dp0"
+set "PYTHONHOME=%LOC%..\lib\python"
+set "PYTHONPATH="
+"%PYTHONHOME%\python.exe" %*
+]=])
+  install(PROGRAMS "${_swpython_dir}/swpython.bat" DESTINATION bin)
+
+else()
+  # Linux
+  file(WRITE "${_swpython_dir}/swpython"
+[=[#!/bin/bash
+LOC="`dirname "$0"`"
+PYTHONHOME="${LOC}/../lib/python"
+unset PYTHONPATH
+export PYTHONHOME
+exec "${PYTHONHOME}/bin/python3" "$@"
+]=])
+  install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
+endif()
+
 message(STATUS "InstallBundledPython: will install bundled Python to ${_app_python_dest}")
