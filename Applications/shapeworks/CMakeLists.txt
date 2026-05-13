@@ -35,6 +35,19 @@ set_target_properties(shapeworks_exe PROPERTIES
   #ENABLE_EXPORTS TRUE  # needed to enable dependency of shapeworksTests (fixme: doesn't work with gcc, but works with Xcode)
   # https://gitlab.kitware.com/cmake/cmake/-/issues/19527
   )
+
+if(APPLE AND USE_BUNDLED_PYTHON)
+  # The CLI is relocated into ShapeWorksStudio.app/Contents/MacOS/ at install time
+  # (see cmake/InstallBundledPython.cmake) so its bundled-Python lookup at
+  # ../Resources/Python resolves. Link it with RPATH for that final location.
+  set_property(
+    TARGET shapeworks_exe
+    PROPERTY INSTALL_RPATH
+    "@executable_path/../Frameworks"
+    "@executable_path/../Resources/Python/lib"
+    )
+endif()
+
 install(TARGETS shapeworks_exe
   ARCHIVE DESTINATION bin
   RUNTIME DESTINATION bin

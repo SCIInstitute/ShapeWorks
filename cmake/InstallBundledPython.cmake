@@ -381,4 +381,38 @@ else()
   " COMPONENT Runtime)
 endif()
 
+# ---------------------------------------------------------------------------
+# 7. macOS: relocate the shapeworks CLI into the .app so its bundled-Python
+#    lookup (../Resources/Python relative to the executable) resolves.
+#    Leaves a thin wrapper at install/bin/shapeworks for backward compatibility.
+# ---------------------------------------------------------------------------
+if(APPLE)
+  # Generate wrapper script at configure time using bracket syntax
+  # (avoids escape gymnastics inside install(CODE))
+  set(_cli_wrapper_dir "${CMAKE_BINARY_DIR}/_bundled_python/cli_wrapper")
+  file(MAKE_DIRECTORY "${_cli_wrapper_dir}")
+  file(WRITE "${_cli_wrapper_dir}/shapeworks"
+[=[#!/bin/bash
+LOC="`dirname "$0"`"
+"${LOC}/ShapeWorksStudio.app/Contents/MacOS/shapeworks" "$@"
+]=])
+
+  # Move the CLI binary into the .app after macdeployqt runs
+  install(CODE "
+    set(_install_root \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}\")
+    set(_cli_src \"\${_install_root}/bin/shapeworks\")
+    set(_cli_dest_dir \"\${_install_root}/bin/ShapeWorksStudio.app/Contents/MacOS\")
+    set(_cli_dest \"\${_cli_dest_dir}/shapeworks\")
+    if(EXISTS \"\${_cli_src}\" AND NOT IS_SYMLINK \"\${_cli_src}\")
+      file(MAKE_DIRECTORY \"\${_cli_dest_dir}\")
+      file(RENAME \"\${_cli_src}\" \"\${_cli_dest}\")
+      message(STATUS \"Relocated shapeworks CLI into .app/Contents/MacOS/\")
+    endif()
+  " COMPONENT Runtime)
+
+  # Install the wrapper at install/bin/shapeworks (registered after the move so
+  # it lands in the now-empty slot rather than overwriting the binary)
+  install(PROGRAMS "${_cli_wrapper_dir}/shapeworks" DESTINATION bin)
+endif()
+
 message(STATUS "InstallBundledPython: will install bundled Python to ${_app_python_dest}")
