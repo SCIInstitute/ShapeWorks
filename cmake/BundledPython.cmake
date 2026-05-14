@@ -161,26 +161,73 @@ add_compile_definitions(SHAPEWORKS_BUNDLED_PYTHON_SOURCE_DIR="${CMAKE_SOURCE_DIR
 add_compile_definitions(SHAPEWORKS_BUNDLED_PYTHON_CONDA_PREFIX="${_conda_prefix}")
 
 # ---------------------------------------------------------------------------
+# In-source ShapeWorks Python packages — editable-installed into the bundled
+# Python so 'swpython RunUseCase.py' against a source build picks up edits to
+# Python/shapeworks etc. without rebuilding. The install rules copy these
+# directories in separately for the deployed bundle.
+# ---------------------------------------------------------------------------
+set(_sw_editable_packages
+  "${CMAKE_SOURCE_DIR}/Python/shapeworks"
+  "${CMAKE_SOURCE_DIR}/Python/DataAugmentationUtilsPackage"
+  "${CMAKE_SOURCE_DIR}/Python/DatasetUtilsPackage"
+  "${CMAKE_SOURCE_DIR}/Python/DeepSSMUtilsPackage"
+  "${CMAKE_SOURCE_DIR}/Python/DocumentationUtilsPackage"
+  "${CMAKE_SOURCE_DIR}/Python/ShapeCohortGenPackage"
+)
+
+# ---------------------------------------------------------------------------
 # Custom target: install pip packages into the bundled Python
 # ---------------------------------------------------------------------------
 if(WIN32)
   # On Windows GHA runners, pip's platformdirs crashes trying to read
   # CSIDL_COMMON_APPDATA from the registry. The --isolated flag skips
   # all config file and environment variable processing.
-  add_custom_target(bundled_pip_install
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install --isolated --upgrade pip
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install --isolated -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
-    COMMENT "Installing runtime pip packages into bundled Python"
-    VERBATIM
-  )
+  set(_pip_flags --isolated)
 else()
-  add_custom_target(bundled_pip_install
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install --upgrade pip
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
-    COMMENT "Installing runtime pip packages into bundled Python"
-    VERBATIM
-  )
+  set(_pip_flags "")
 endif()
+
+add_custom_target(bundled_pip_install
+  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} --upgrade pip
+  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
+  COMMENT "Installing runtime pip packages into bundled Python"
+  VERBATIM
+)
+
+foreach(_pkg ${_sw_editable_packages})
+  if(EXISTS "${_pkg}/setup.py")
+    add_custom_command(TARGET bundled_pip_install POST_BUILD
+      COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} --no-deps -e "${_pkg}"
+      COMMENT "Editable-installing ${_pkg} into bundled Python"
+      VERBATIM
+    )
+  endif()
+endforeach()
+
+# ---------------------------------------------------------------------------
+# Build-tree swpython wrapper — points at the bundled python in the build dir
+# and puts CMAKE_RUNTIME_OUTPUT_DIRECTORY on PYTHONPATH so shapeworks_py.so is
+# importable. The install-tree variant is generated in InstallBundledPython.cmake.
+# ---------------------------------------------------------------------------
+if(WIN32)
+  set(_dev_wrapper "${CMAKE_BINARY_DIR}/bin/swpython.bat")
+  file(WRITE "${_dev_wrapper}"
+"@echo off
+set \"PYTHONHOME=${BUNDLED_PYTHON_ROOT}\"
+set \"PYTHONPATH=${CMAKE_BINARY_DIR}/bin\"
+\"${BUNDLED_PYTHON_EXECUTABLE}\" %*
+")
+else()
+  set(_dev_wrapper "${CMAKE_BINARY_DIR}/bin/swpython")
+  file(WRITE "${_dev_wrapper}"
+"#!/bin/bash
+export PYTHONHOME='${BUNDLED_PYTHON_ROOT}'
+export PYTHONPATH='${CMAKE_BINARY_DIR}/bin'
+exec '${BUNDLED_PYTHON_EXECUTABLE}' \"\$@\"
+")
+  execute_process(COMMAND chmod 755 "${_dev_wrapper}")
+endif()
+message(STATUS "Build-tree swpython wrapper: ${_dev_wrapper}")
 
 message(STATUS "Bundled Python root: ${BUNDLED_PYTHON_ROOT}")
 message(STATUS "Bundled Python executable: ${BUNDLED_PYTHON_EXECUTABLE}")

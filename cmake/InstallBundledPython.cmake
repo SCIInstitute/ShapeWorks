@@ -54,6 +54,9 @@ install(DIRECTORY "${BUNDLED_PYTHON_ROOT}/Lib/"
   PATTERN "turtledemo" EXCLUDE
   PATTERN "turtle.py" EXCLUDE
   PATTERN "lib2to3" EXCLUDE
+  PATTERN "*.egg-link" EXCLUDE
+  PATTERN "__editable__*" EXCLUDE
+  PATTERN "easy-install.pth" EXCLUDE
 )
 
 # ---------------------------------------------------------------------------
@@ -198,6 +201,11 @@ install(DIRECTORY "${BUNDLED_PYTHON_ROOT}/lib/python3.12/"
   PATTERN "turtledemo" EXCLUDE
   PATTERN "turtle.py" EXCLUDE
   PATTERN "lib2to3" EXCLUDE
+  # Editable-install markers left by `pip install -e` during bundled_pip_install
+  # — pollute the deployed bundle and only point at the build machine's source tree.
+  PATTERN "*.egg-link" EXCLUDE
+  PATTERN "__editable__*" EXCLUDE
+  PATTERN "easy-install.pth" EXCLUDE
 )
 
 # ---------------------------------------------------------------------------
