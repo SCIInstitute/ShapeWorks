@@ -1,5 +1,8 @@
 from typing import List, Optional, Tuple, Any
 
+import shapeworks
+shapeworks.ensure_torch()
+
 from DeepSSMUtils import trainer
 from DeepSSMUtils import loaders
 from DeepSSMUtils import eval
