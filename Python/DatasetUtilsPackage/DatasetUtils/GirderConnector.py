@@ -16,10 +16,10 @@ serverAddress = 'https://girder.shapeworks-cloud.org/'
 
 
 def printDataPortalWelcome():
-    print(' _____    ___      .     ')
-    print('|     |  /   \    / \    ')
-    print('| ShapeWorks Portal  \   ')
-    print('|_____|  \___/  /_____\  ')
+    print(r' _____    ___      .     ')
+    print(r'|     |  /   \    / \    ')
+    print(r'| ShapeWorks Portal  \   ')
+    print(r'|_____|  \___/  /_____\  ')
     print()
 
 

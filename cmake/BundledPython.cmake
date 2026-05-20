@@ -215,6 +215,7 @@ if(WIN32)
 "@echo off
 set \"PYTHONHOME=${BUNDLED_PYTHON_ROOT}\"
 set \"PYTHONPATH=${CMAKE_BINARY_DIR}/bin\"
+set \"PATH=${CMAKE_BINARY_DIR}/bin;%PATH%\"
 \"${BUNDLED_PYTHON_EXECUTABLE}\" %*
 ")
 else()
@@ -223,6 +224,7 @@ else()
 "#!/bin/bash
 export PYTHONHOME='${BUNDLED_PYTHON_ROOT}'
 export PYTHONPATH='${CMAKE_BINARY_DIR}/bin'
+export PATH='${CMAKE_BINARY_DIR}/bin':\"\$PATH\"
 exec '${BUNDLED_PYTHON_EXECUTABLE}' \"\$@\"
 ")
   execute_process(COMMAND chmod 755 "${_dev_wrapper}")

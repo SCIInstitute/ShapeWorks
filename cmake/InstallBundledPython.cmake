@@ -438,8 +438,9 @@ if(APPLE)
 [=[#!/bin/bash
 LOC="`dirname "$0"`"
 PYTHONHOME="${LOC}/ShapeWorksStudio.app/Contents/Resources/Python"
+PATH="${LOC}:${PATH}"
 unset PYTHONPATH
-export PYTHONHOME
+export PYTHONHOME PATH
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
@@ -449,19 +450,29 @@ elseif(WIN32)
 [=[@echo off
 set "LOC=%~dp0"
 set "PYTHONHOME=%LOC%..\lib\python"
+set "PATH=%LOC%;%PATH%"
 set "PYTHONPATH="
 "%PYTHONHOME%\python.exe" %*
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython.bat" DESTINATION bin)
 
 else()
-  # Linux
+  # Linux — prepend bundle lib/ to LD_LIBRARY_PATH so the dynamic linker
+  # finds our libstdc++.so.6 / libgcc_s.so.1 before any pip-installed
+  # extension (e.g. VTK wheels) pulls in the system one. The C++ binaries
+  # don't need this because their own RPATH loads libstdc++ at exec time,
+  # but a pure-Python entry point has nothing loaded yet when the first
+  # extension imports.
+  # Also prepend the bundle bin/ to PATH so `shutil.which("shapeworks")`
+  # in use case scripts finds the CLI sitting next to the wrapper.
   file(WRITE "${_swpython_dir}/swpython"
 [=[#!/bin/bash
 LOC="`dirname "$0"`"
 PYTHONHOME="${LOC}/../lib/python"
+LD_LIBRARY_PATH="${LOC}/../lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+PATH="${LOC}:${PATH}"
 unset PYTHONPATH
-export PYTHONHOME
+export PYTHONHOME LD_LIBRARY_PATH PATH
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
