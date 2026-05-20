@@ -120,6 +120,10 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
+    - name: Smoke test packaged bundle
+      shell: bash
+      run: ./Support/smoke_test_bundle.sh package/$(ls package | head -1)
+
     - name: Download test data
       shell: bash -l {0}
       run: .github/workflows/download_test_data.sh

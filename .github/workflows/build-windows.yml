@@ -160,6 +160,11 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && ./Support/package_windows.sh tag
 
+    - name: Smoke test packaged bundle
+      shell: bash
+      # package_windows.sh stages bin/ lib/ etc. directly in the workspace root
+      run: ./Support/smoke_test_bundle.sh .
+
     - name: Check Disk Space3
       working-directory: ${{runner.workspace}}
       shell: bash -l {0}
