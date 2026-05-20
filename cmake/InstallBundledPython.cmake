@@ -163,9 +163,20 @@ set "LOC=%~dp0"
 set "PYTHONHOME=%LOC%..\lib\python"
 set "PATH=%LOC%;%PATH%"
 set "PYTHONPATH="
+if not defined MPLBACKEND set "MPLBACKEND=Agg"
 "%PYTHONHOME%\python.exe" %*
 ]=])
 install(PROGRAMS "${_swpython_dir}/swpython.bat" DESTINATION bin)
+
+# swpip.bat — pip wrapper that delegates to swpython.bat -m shapeworks.swpip
+set(_swpip_dir "${CMAKE_BINARY_DIR}/_bundled_python/swpip")
+file(MAKE_DIRECTORY "${_swpip_dir}")
+file(WRITE "${_swpip_dir}/swpip.bat"
+[=[@echo off
+set "LOC=%~dp0"
+call "%LOC%swpython.bat" -m shapeworks.swpip %*
+]=])
+install(PROGRAMS "${_swpip_dir}/swpip.bat" DESTINATION bin)
 
 message(STATUS "InstallBundledPython: will install bundled Python to ${_python_dest}")
 return()
@@ -498,6 +509,31 @@ export PYTHONHOME LD_LIBRARY_PATH PATH MPLBACKEND
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
+endif()
+
+# ---------------------------------------------------------------------------
+# 9. Install 'swpip' wrapper — pip for the bundled Python that auto-targets
+#    the ShapeWorks per-user site-packages on `install`. Thin shell wrapper
+#    that delegates to `swpython -m shapeworks.swpip`; the path logic lives
+#    in Python so all three platforms share one source of truth.
+# ---------------------------------------------------------------------------
+set(_swpip_dir "${CMAKE_BINARY_DIR}/_bundled_python/swpip")
+file(MAKE_DIRECTORY "${_swpip_dir}")
+
+if(WIN32)
+  file(WRITE "${_swpip_dir}/swpip.bat"
+[=[@echo off
+set "LOC=%~dp0"
+call "%LOC%swpython.bat" -m shapeworks.swpip %*
+]=])
+  install(PROGRAMS "${_swpip_dir}/swpip.bat" DESTINATION bin)
+else()
+  file(WRITE "${_swpip_dir}/swpip"
+[=[#!/bin/bash
+LOC="`dirname "$0"`"
+exec "${LOC}/swpython" -m shapeworks.swpip "$@"
+]=])
+  install(PROGRAMS "${_swpip_dir}/swpip" DESTINATION bin)
 endif()
 
 message(STATUS "InstallBundledPython: will install bundled Python to ${_app_python_dest}")

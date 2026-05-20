@@ -53,9 +53,11 @@ if [ -d "$BUILD/install/lib/python" ]; then
     # (python312.dll, python3.dll, libffi-8.dll, libssl, libcrypto, etc.)
     cp $BUILD/install/bin/*.dll bin/ 2>/dev/null || true
 
-    # Also copy the swpython.bat wrapper (install/bin/ doesn't get bulk-copied
-    # because the rest of bin/ is staged from $BUILD/bin/Release on line 45)
+    # Also copy the swpython.bat / swpip.bat wrappers (install/bin/ doesn't
+    # get bulk-copied because the rest of bin/ is staged from $BUILD/bin/Release
+    # on line 45)
     cp $BUILD/install/bin/swpython.bat bin/ 2>/dev/null || true
+    cp $BUILD/install/bin/swpip.bat bin/ 2>/dev/null || true
 
     # Still need non-Python dependency DLLs from conda
     for dll in zlib.dll tbb12.dll zstd.dll libpng16.dll half.dll boost_filesystem.dll spdlog.dll pcre2-16.dll ; do

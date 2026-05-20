@@ -275,5 +275,21 @@ exec '${BUNDLED_PYTHON_EXECUTABLE}' \"\$@\"
 endif()
 message(STATUS "Build-tree swpython wrapper: ${_dev_wrapper}")
 
+# Build-tree swpip wrapper — delegates to swpython -m shapeworks.swpip
+if(WIN32)
+  set(_dev_swpip "${CMAKE_BINARY_DIR}/bin/swpip.bat")
+  file(WRITE "${_dev_swpip}"
+"@echo off
+call \"${CMAKE_BINARY_DIR}/bin/swpython.bat\" -m shapeworks.swpip %*
+")
+else()
+  set(_dev_swpip "${CMAKE_BINARY_DIR}/bin/swpip")
+  file(WRITE "${_dev_swpip}"
+"#!/bin/bash
+exec '${CMAKE_BINARY_DIR}/bin/swpython' -m shapeworks.swpip \"\$@\"
+")
+  execute_process(COMMAND chmod 755 "${_dev_swpip}")
+endif()
+
 message(STATUS "Bundled Python root: ${BUNDLED_PYTHON_ROOT}")
 message(STATUS "Bundled Python executable: ${BUNDLED_PYTHON_EXECUTABLE}")
