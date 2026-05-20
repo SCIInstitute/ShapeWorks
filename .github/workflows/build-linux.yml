@@ -122,7 +122,7 @@ jobs:
 
     - name: Smoke test packaged bundle
       shell: bash
-      run: ./Support/smoke_test_bundle.sh package/$(ls package | head -1)
+      run: ./Support/smoke_test_bundle.sh "$(find package -mindepth 1 -maxdepth 1 -type d | head -1)"
 
     - name: Download test data
       shell: bash -l {0}
