@@ -152,6 +152,21 @@ install(CODE "
   endif()
 " COMPONENT Runtime)
 
+# Install 'swpython.bat' wrapper that launches the bundled Python with
+# PYTHONHOME set, and prepends the bundle bin/ to PATH so use case scripts
+# can find the shapeworks CLI via shutil.which.
+set(_swpython_dir "${CMAKE_BINARY_DIR}/_bundled_python/swpython")
+file(MAKE_DIRECTORY "${_swpython_dir}")
+file(WRITE "${_swpython_dir}/swpython.bat"
+[=[@echo off
+set "LOC=%~dp0"
+set "PYTHONHOME=%LOC%..\lib\python"
+set "PATH=%LOC%;%PATH%"
+set "PYTHONPATH="
+"%PYTHONHOME%\python.exe" %*
+]=])
+install(PROGRAMS "${_swpython_dir}/swpython.bat" DESTINATION bin)
+
 message(STATUS "InstallBundledPython: will install bundled Python to ${_python_dest}")
 return()
 endif() # WIN32
