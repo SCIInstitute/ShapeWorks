@@ -454,8 +454,13 @@ if(APPLE)
 LOC="`dirname "$0"`"
 PYTHONHOME="${LOC}/ShapeWorksStudio.app/Contents/Resources/Python"
 PATH="${LOC}:${PATH}"
+# Default matplotlib to a non-interactive backend. swpython is a CLI tool;
+# the macosx backend crashes when invoked from a Background-role process
+# (e.g. headless / non-GUI-login session). Users can override by setting
+# MPLBACKEND themselves before invoking swpython.
+MPLBACKEND="${MPLBACKEND:-Agg}"
 unset PYTHONPATH
-export PYTHONHOME PATH
+export PYTHONHOME PATH MPLBACKEND
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
@@ -467,6 +472,7 @@ set "LOC=%~dp0"
 set "PYTHONHOME=%LOC%..\lib\python"
 set "PATH=%LOC%;%PATH%"
 set "PYTHONPATH="
+if not defined MPLBACKEND set "MPLBACKEND=Agg"
 "%PYTHONHOME%\python.exe" %*
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython.bat" DESTINATION bin)
@@ -486,8 +492,9 @@ LOC="`dirname "$0"`"
 PYTHONHOME="${LOC}/../lib/python"
 LD_LIBRARY_PATH="${LOC}/../lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 PATH="${LOC}:${PATH}"
+MPLBACKEND="${MPLBACKEND:-Agg}"
 unset PYTHONPATH
-export PYTHONHOME LD_LIBRARY_PATH PATH
+export PYTHONHOME LD_LIBRARY_PATH PATH MPLBACKEND
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)

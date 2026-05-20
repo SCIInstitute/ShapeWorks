@@ -205,6 +205,48 @@ foreach(_pkg ${_sw_editable_packages})
 endforeach()
 
 # ---------------------------------------------------------------------------
+# Patch SyntaxWarnings out of upstream pip packages that we ship. mbpls still
+# uses `is not '<literal>'` which Python 3.12 warns about on every import.
+# Patching the installed copy keeps the deployed bundle quiet without forking
+# the upstream package. Idempotent — skips files already patched. Extend the
+# patches list below for new noisy packages.
+# ---------------------------------------------------------------------------
+set(_patch_script "${CMAKE_BINARY_DIR}/_bundled_python/patch_third_party.py")
+file(WRITE "${_patch_script}"
+[=[
+"""Patch SyntaxWarning-emitting upstream packages installed into bundled Python."""
+import os
+import sys
+import sysconfig
+
+PATCHES = [
+    # (relative_path_under_site_packages, [(old_text, new_text), ...])
+    ("mbpls/mbpls.py", [("is not 'SIMPLS'", "!= 'SIMPLS'")]),
+]
+
+site_packages = sysconfig.get_paths()["purelib"]
+for rel_path, replacements in PATCHES:
+    path = os.path.join(site_packages, rel_path)
+    if not os.path.exists(path):
+        continue
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+    new_content = content
+    for old, new in replacements:
+        new_content = new_content.replace(old, new)
+    if new_content != content:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(new_content)
+        print(f"Patched {path}", file=sys.stderr)
+]=])
+
+add_custom_command(TARGET bundled_pip_install POST_BUILD
+  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" "${_patch_script}"
+  COMMENT "Patching SyntaxWarning fixes into upstream pip packages"
+  VERBATIM
+)
+
+# ---------------------------------------------------------------------------
 # Build-tree swpython wrapper — points at the bundled python in the build dir
 # and puts CMAKE_RUNTIME_OUTPUT_DIRECTORY on PYTHONPATH so shapeworks_py.so is
 # importable. The install-tree variant is generated in InstallBundledPython.cmake.
@@ -216,6 +258,7 @@ if(WIN32)
 set \"PYTHONHOME=${BUNDLED_PYTHON_ROOT}\"
 set \"PYTHONPATH=${CMAKE_BINARY_DIR}/bin\"
 set \"PATH=${CMAKE_BINARY_DIR}/bin;%PATH%\"
+if not defined MPLBACKEND set \"MPLBACKEND=Agg\"
 \"${BUNDLED_PYTHON_EXECUTABLE}\" %*
 ")
 else()
@@ -225,6 +268,7 @@ else()
 export PYTHONHOME='${BUNDLED_PYTHON_ROOT}'
 export PYTHONPATH='${CMAKE_BINARY_DIR}/bin'
 export PATH='${CMAKE_BINARY_DIR}/bin':\"\$PATH\"
+export MPLBACKEND=\"\${MPLBACKEND:-Agg}\"
 exec '${BUNDLED_PYTHON_EXECUTABLE}' \"\$@\"
 ")
   execute_process(COMMAND chmod 755 "${_dev_wrapper}")
