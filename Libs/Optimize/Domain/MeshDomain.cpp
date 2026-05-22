@@ -105,8 +105,10 @@ void MeshDomain::SetMesh(std::shared_ptr<Surface> mesh, double geodesic_remesh_p
   } else {
     auto poly_data = surface_->get_polydata();
     Mesh mesh_copy(poly_data);
-    mesh_copy.remeshPercent(geodesic_remesh_percent, 1.0);
-    geodesics_mesh_ = std::make_shared<Surface>(mesh_copy.getVTKMesh());
+    // remeshPercent takes a 0–1 fraction; project value is 0–100
+    mesh_copy.remeshPercent(geodesic_remesh_percent / 100.0, 1.0);
+    // remesh path implies geodesics are enabled — precompute on the small mesh
+    geodesics_mesh_ = std::make_shared<Surface>(mesh_copy.getVTKMesh(), /*geodesics_enabled=*/true);
   }
 }
 

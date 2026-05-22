@@ -858,9 +858,12 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
                         for (size_t i = r.begin(); i < r.end(); ++i) {
                           auto& item = work_items[mesh_work_indices[i]];
 
-                          // Construct the main Surface (triangulation, cleaning, normals, cell locator, geodesics)
+                          // When we'll precompute geodesics on a remeshed copy, skip the (expensive)
+                          // geodesic precompute on the full-resolution surface — it's only used for
+                          // cell-locator / snap / normals / geodesic_walk, none of which need it.
+                          bool geodesics_on_main = geodesics_enabled && !remeshing;
                           auto surface = std::make_shared<shapeworks::Surface>(
-                              item.poly_data, geodesics_enabled,
+                              item.poly_data, geodesics_on_main,
                               static_cast<size_t>(geodesic_cache_multiplier));
 
                           // Create the Mesh wrapper and compute surface area
@@ -869,14 +872,16 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
                           // Create remeshed Surface for geodesics if needed
                           std::shared_ptr<shapeworks::Surface> geodesics_surface;
-                          if (effective_remesh_percent >= 100.0) {
+                          if (!remeshing) {
                             geodesics_surface = surface;
                           } else {
                             auto poly_copy = surface->get_polydata();
                             Mesh mesh_copy(poly_copy);
-                            mesh_copy.remeshPercent(effective_remesh_percent, 1.0);
-                            geodesics_surface =
-                                std::make_shared<shapeworks::Surface>(mesh_copy.getVTKMesh());
+                            // remeshPercent takes a 0–1 fraction; project value is 0–100
+                            mesh_copy.remeshPercent(effective_remesh_percent / 100.0, 1.0);
+                            geodesics_surface = std::make_shared<shapeworks::Surface>(
+                                mesh_copy.getVTKMesh(), geodesics_enabled,
+                                static_cast<size_t>(geodesic_cache_multiplier));
                           }
 
                           item.surface = surface;
