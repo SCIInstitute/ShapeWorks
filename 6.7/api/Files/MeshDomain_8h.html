@@ -3860,6 +3860,10 @@
 <p>std::shared_ptr<Mesh> GetSWMesh() const { return sw_mesh_; }</p>
 <p>void UpdateZeroCrossingPoint() override {}</p>
 <p>std::shared_ptr<Surface> get_surface() const { return surface_; }</p>
+<p>bool is_geodesics_enabled() const {
+    // ask the geodesics surface, since it (not surface_) is the one used for geodesic queries
+    return geodesics_mesh_ &amp;&amp; geodesics_mesh_-&gt;is_geodesics_enabled();
+  }</p>
 <p>private:
   std::shared_ptr<Surface> surface_;
   std::shared_ptr<Surface> geodesics_mesh_;
@@ -3870,7 +3874,7 @@
 <p>}  // namespace shapeworks
 ```</p>
 <hr />
-<p>Updated on 2026-05-17 at 01:13:48 +0000</p>
+<p>Updated on 2026-05-22 at 07:45:58 +0000</p>
 
 
 
