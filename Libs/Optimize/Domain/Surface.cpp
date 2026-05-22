@@ -268,9 +268,15 @@ PointType Surface::geodesic_walk(PointType p, int idx, VectorType vector) const 
   if (idx >= 0 && ending_face >= 0) {
     if (idx >= particle_triangles_.size()) {
       particle_triangles_.resize(idx + 1, -1);
+      particle_face_query_pts_.resize(idx + 1);
+      particle_face_closest_pts_.resize(idx + 1);
     }
 
     particle_triangles_[idx] = ending_face;
+    // new_point_pt is on ending_face, so seed the per-particle face cache so the next
+    // get_triangle_for_point(new_point_pt, idx, ...) hits without a cell_locator query.
+    particle_face_query_pts_[idx] = new_point_pt;
+    particle_face_closest_pts_[idx] = new_point_pt;
     geo_lq_cached_ = false;
 
     calculate_normal_at_point(new_point_pt, idx);
@@ -356,18 +362,40 @@ PointType Surface::get_point_on_mesh() const {
 int Surface::get_triangle_for_point(const double pt[3], int idx, double closest_point[3]) const {
   // given a guess, just check whether it is still valid.
   if (idx >= 0) {
-    // ensure that the cache has enough elements. this will never be resized to more than the number of particles,
+    // ensure that the caches have enough elements. these will never be resized to more than the number of particles.
     if (idx >= particle_triangles_.size()) {
       particle_triangles_.resize(idx + 1, -1);
+      particle_face_query_pts_.resize(idx + 1);
+      particle_face_closest_pts_.resize(idx + 1);
     }
 
     const int guess = particle_triangles_[idx];
 
-    if (guess != -1 && is_in_triangle(pt, guess)) {
-      closest_point[0] = pt[0];
-      closest_point[1] = pt[1];
-      closest_point[2] = pt[2];
-      return guess;
+    if (guess != -1) {
+      // Same query point as the previous lookup for this particle: reuse the cached face and
+      // closest_point. This is the only fast path that works when pt is not on this mesh — e.g.
+      // particles snapped to a separate surface_ being queried against a remeshed geodesics_mesh_.
+      const auto& q = particle_face_query_pts_[idx];
+      if (q[0] == pt[0] && q[1] == pt[1] && q[2] == pt[2]) {
+        const auto& c = particle_face_closest_pts_[idx];
+        closest_point[0] = c[0];
+        closest_point[1] = c[1];
+        closest_point[2] = c[2];
+        return guess;
+      }
+      // pt moved but is still on the cached face (only succeeds when pt lies on this mesh).
+      if (is_in_triangle(pt, guess)) {
+        closest_point[0] = pt[0];
+        closest_point[1] = pt[1];
+        closest_point[2] = pt[2];
+        particle_face_query_pts_[idx][0] = pt[0];
+        particle_face_query_pts_[idx][1] = pt[1];
+        particle_face_query_pts_[idx][2] = pt[2];
+        particle_face_closest_pts_[idx][0] = pt[0];
+        particle_face_closest_pts_[idx][1] = pt[1];
+        particle_face_closest_pts_[idx][2] = pt[2];
+        return guess;
+      }
     }
   }
 
@@ -381,6 +409,12 @@ int Surface::get_triangle_for_point(const double pt[3], int idx, double closest_
   if (idx >= 0) {
     // update cache, no need to check size as it was already checked above
     particle_triangles_[idx] = cell_id;
+    particle_face_query_pts_[idx][0] = pt[0];
+    particle_face_query_pts_[idx][1] = pt[1];
+    particle_face_query_pts_[idx][2] = pt[2];
+    particle_face_closest_pts_[idx][0] = closest_point[0];
+    particle_face_closest_pts_[idx][1] = closest_point[1];
+    particle_face_closest_pts_[idx][2] = closest_point[2];
   }
 
   assert(cell_id >= 0);
@@ -780,6 +814,8 @@ void Surface::invalidate_particle(int idx) {
   assert(idx >= 0); // should always be passed a valid particle
   if (idx >= particle_triangles_.size()) {
     particle_triangles_.resize(idx + 1, -1);
+    particle_face_query_pts_.resize(idx + 1);
+    particle_face_closest_pts_.resize(idx + 1);
   }
   particle_triangles_[idx] = -1;
   geo_lq_cached_ = false;
