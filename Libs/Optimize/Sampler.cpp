@@ -110,7 +110,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       // cast to MeshDomain
       auto mesh_domain = std::dynamic_pointer_cast<MeshDomain>(domain);
 
-      m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(!mesh_domain->get_surface()->is_geodesics_enabled());
+      m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(!mesh_domain->is_geodesics_enabled());
     } else if (domain->GetDomainType() == DomainType::Contour) {
       m_ParticleSystem->GetNeighborhood(i)->set_weighting_enabled(false);
     }
