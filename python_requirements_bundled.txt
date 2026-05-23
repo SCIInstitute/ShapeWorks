@@ -124,7 +124,12 @@ typing-inspection==0.4.1
 tzdata==2025.2
 uri-template==1.3.0
 urllib3==2.6.3
-vtk==9.5.1
+# vtk: on macOS/Linux it is NOT pip-installed — ShapeWorks builds VTK
+# shared+wrapped in build_dependencies.sh and provisions it (+ stub dist-info)
+# into the bundled Python so transitive dependents (pyvista) resolve to it
+# (see cmake/provision_bundled_vtk.py). Windows still builds VTK static and
+# pip-installs vtk until the Windows shared-VTK conversion lands.
+vtk==9.5.1 ; sys_platform == "win32"
 webcolors==24.11.1
 webencodings==0.5.1
 xyzservices==2025.4.0

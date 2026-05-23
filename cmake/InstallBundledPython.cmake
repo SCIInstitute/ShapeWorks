@@ -416,6 +416,54 @@ else()
 endif()
 
 # ---------------------------------------------------------------------------
+# 6b. Shared VTK: bundle the shared libvtk* and point the dep-built vtkmodules
+#     at them. Only when VTK was built shared (libvtk*.dylib/.so present in the
+#     dep lib dir); a static VTK build leaves these globs empty and skips this.
+#     The vtkmodules + stub vtk dist-info are already in site-packages (copied
+#     with the bundled Python tree, provisioned by bundled_pip_install).
+# ---------------------------------------------------------------------------
+get_filename_component(_vtk_lib_dir "${VTK_DIR}/../.." ABSOLUTE)
+if(APPLE)
+  file(GLOB _vtk_shared_check "${_vtk_lib_dir}/libvtk*.dylib")
+  if(_vtk_shared_check)
+    install(CODE "
+      set(_install_root \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}\")
+      set(_fw \"\${_install_root}/bin/ShapeWorksStudio.app/Contents/Frameworks\")
+      file(MAKE_DIRECTORY \"\${_fw}\")
+      # cp -a preserves the libvtkX-9.5.dylib -> -9.5.1 -> -9.5.9.5 symlink chain
+      execute_process(COMMAND bash -c \"cp -a '${_vtk_lib_dir}'/libvtk*.dylib '\${_fw}/'\")
+      message(STATUS \"Bundled shared VTK dylibs into Frameworks\")
+      # vtkmodules .so reference @rpath/libvtk*; add a Frameworks rpath. From
+      # site-packages/vtkmodules/ to Contents/Frameworks is 6 levels up.
+      file(GLOB _vtkmods \"\${_install_root}/${_site_packages}/vtkmodules/*.so\")
+      foreach(_m \${_vtkmods})
+        execute_process(COMMAND install_name_tool -add_rpath \"@loader_path/../../../../../../Frameworks\" \"\${_m}\" ERROR_QUIET)
+      endforeach()
+      message(STATUS \"Set Frameworks RPATH on bundled vtkmodules\")
+    " COMPONENT Runtime)
+  endif()
+else()
+  # Linux: libvtk*.so come along when package.sh copies the dep lib/ into the
+  # package, so they don't need copying here. But the dep-built vtkmodules .so
+  # bake in the build-machine's dep lib path as RPATH — repoint them at the
+  # package lib/ (one level deeper than shapeworks_py.so in site-packages).
+  file(GLOB _vtk_shared_check "${_vtk_lib_dir}/libvtk*.so")
+  if(_vtk_shared_check)
+    install(CODE "
+      set(_install_root \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}\")
+      file(GLOB _vtkmods \"\${_install_root}/${_site_packages}/vtkmodules/*.so\")
+      find_program(_patchelf patchelf)
+      if(_patchelf AND _vtkmods)
+        foreach(_m \${_vtkmods})
+          execute_process(COMMAND \${_patchelf} --set-rpath \"\$ORIGIN/../../../../../lib:\$ORIGIN/../../../../../../lib\" \"\${_m}\")
+        endforeach()
+        message(STATUS \"Set lib/ RPATH on bundled vtkmodules\")
+      endif()
+    " COMPONENT Runtime)
+  endif()
+endif()
+
+# ---------------------------------------------------------------------------
 # 7. macOS: relocate the shapeworks CLI into the .app so its bundled-Python
 #    lookup (../Resources/Python relative to the executable) resolves.
 #    Leaves a thin wrapper at install/bin/shapeworks for backward compatibility.

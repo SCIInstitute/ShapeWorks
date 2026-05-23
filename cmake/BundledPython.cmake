@@ -187,12 +187,41 @@ else()
   set(_pip_flags "")
 endif()
 
-add_custom_target(bundled_pip_install
-  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} --upgrade pip
-  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
-  COMMENT "Installing runtime pip packages into bundled Python"
-  VERBATIM
-)
+# Detect dep-built (shared) VTK Python wrapping in CMAKE_PREFIX_PATH. When present,
+# provision it into the bundled Python (+ a stub vtk dist-info) BEFORE pip runs, so
+# transitive vtk dependents (pyvista) resolve to our build instead of pulling the
+# ~379 MB pip vtk wheel. (BundledPython.cmake is included before find_package(VTK),
+# so we glob CMAKE_PREFIX_PATH rather than use VTK_DIR.)
+set(_dep_vtk_sp "")
+foreach(_pp ${CMAKE_PREFIX_PATH})
+  if(EXISTS "${_pp}/lib/python3.12/site-packages/vtkmodules")
+    set(_dep_vtk_sp "${_pp}/lib/python3.12/site-packages")
+  endif()
+endforeach()
+if(WIN32)
+  set(_bundled_site_packages "${BUNDLED_PYTHON_ROOT}/Lib/site-packages")
+else()
+  set(_bundled_site_packages "${BUNDLED_PYTHON_ROOT}/lib/python3.12/site-packages")
+endif()
+set(_dep_vtk_version "9.5.0")  # matches VTK_VER in build_dependencies.sh
+
+if(_dep_vtk_sp)
+  message(STATUS "Dep-built VTK detected at ${_dep_vtk_sp} — will provision into bundled Python")
+  add_custom_target(bundled_pip_install
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/cmake/provision_bundled_vtk.py" "${_dep_vtk_sp}" "${_bundled_site_packages}" "${_dep_vtk_version}"
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} --upgrade pip
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
+    COMMENT "Provisioning dep VTK + installing runtime pip packages into bundled Python"
+    VERBATIM
+  )
+else()
+  add_custom_target(bundled_pip_install
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} --upgrade pip
+    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
+    COMMENT "Installing runtime pip packages into bundled Python"
+    VERBATIM
+  )
+endif()
 
 foreach(_pkg ${_sw_editable_packages})
   if(EXISTS "${_pkg}/setup.py")
