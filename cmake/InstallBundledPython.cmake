@@ -455,9 +455,15 @@ else()
       find_program(_patchelf patchelf)
       if(_patchelf AND _vtkmods)
         foreach(_m \${_vtkmods})
-          execute_process(COMMAND \${_patchelf} --set-rpath \"\$ORIGIN/../../../../../lib:\$ORIGIN/../../../../../../lib\" \"\${_m}\")
+          # \$ORIGIN: VTK's Linux Python install puts libvtkWrappingPythonCore*.so
+          #   (unversioned) inside vtkmodules/, referenced by plain soname beside
+          #   the module .so — so the module dir itself must be on the rpath.
+          # 6-dotdots+lib: the rest of the shared libvtk* live in the package lib/
+          #   (package.sh copies the dep lib/ there). From
+          #   lib/python/lib/python3.12/site-packages/vtkmodules that is 6 up + lib.
+          execute_process(COMMAND \${_patchelf} --set-rpath \"\$ORIGIN:\$ORIGIN/../../../../../../lib\" \"\${_m}\")
         endforeach()
-        message(STATUS \"Set lib/ RPATH on bundled vtkmodules\")
+        message(STATUS \"Set \$ORIGIN + lib/ RPATH on bundled vtkmodules\")
       endif()
     " COMPONENT Runtime)
   endif()
