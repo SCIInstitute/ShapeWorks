@@ -194,7 +194,14 @@ endif()
 # so we glob CMAKE_PREFIX_PATH rather than use VTK_DIR.)
 set(_dep_vtk_sp "")
 foreach(_pp ${CMAKE_PREFIX_PATH})
-  if(EXISTS "${_pp}/lib/python3.12/site-packages/vtkmodules")
+  # Match ONLY our from-source VTK install, not a conda/pip vtk wheel that
+  # happens to be on CMAKE_PREFIX_PATH (e.g. the build conda env on CI). The
+  # discriminator: our `make install` VTK ships a CMake package config
+  # (lib/cmake/vtk-*); pip wheels never do. Provisioning a pip wheel's
+  # vtkmodules here would drag in auditwheel-vendored libs (libXcursor, ...)
+  # that we don't bundle, breaking `import vtk` at runtime.
+  file(GLOB _vtk_cmake_cfg "${_pp}/lib/cmake/vtk-*")
+  if(EXISTS "${_pp}/lib/python3.12/site-packages/vtkmodules" AND _vtk_cmake_cfg)
     set(_dep_vtk_sp "${_pp}/lib/python3.12/site-packages")
   endif()
 endforeach()
