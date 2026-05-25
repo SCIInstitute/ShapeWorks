@@ -15,6 +15,10 @@ def setup_binary_path():
         # dev/conda invocations where sys.prefix points elsewhere).
         if os.path.exists(os.path.join(candidate, "python312.dll")):
             os.add_dll_directory(candidate)
+        # Build-tree: PYTHONPATH points at the build bin dir where VTK DLLs live
+        pythonpath_bin = os.environ.get("PYTHONPATH", "")
+        if pythonpath_bin and os.path.isdir(pythonpath_bin):
+            os.add_dll_directory(pythonpath_bin)
 
     try:
         import shapeworks_py

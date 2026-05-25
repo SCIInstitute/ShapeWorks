@@ -152,6 +152,27 @@ install(CODE "
   endif()
 " COMPONENT Runtime)
 
+# ---------------------------------------------------------------------------
+# 6b. Install shared VTK DLLs to bin/ (when VTK was built shared)
+# ---------------------------------------------------------------------------
+set(_vtk_lib_dir "")
+foreach(_pp ${CMAKE_PREFIX_PATH})
+  if(EXISTS "${_pp}/bin/vtkCommonCore-9.5.dll")
+    set(_vtk_lib_dir "${_pp}/bin")
+  endif()
+endforeach()
+if(_vtk_lib_dir)
+  install(CODE "
+    file(GLOB _vtk_dlls \"${_vtk_lib_dir}/vtk*.dll\")
+    foreach(_dll \${_vtk_dlls})
+      get_filename_component(_name \"\${_dll}\" NAME)
+      file(INSTALL \"\${_dll}\" DESTINATION \"${CMAKE_INSTALL_PREFIX}/bin\")
+    endforeach()
+    list(LENGTH _vtk_dlls _n)
+    message(STATUS \"Installed \${_n} VTK DLLs to bin/\")
+  " COMPONENT Runtime)
+endif()
+
 # Install 'swpython.bat' wrapper that launches the bundled Python with
 # PYTHONHOME set, and prepends the bundle bin/ to PATH so use case scripts
 # can find the shapeworks CLI via shutil.which.

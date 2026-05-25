@@ -129,6 +129,20 @@ if(WIN32)
       file(COPY "${_conda_lib_bin}/${_dll}" DESTINATION "${CMAKE_BINARY_DIR}/bin")
     endif()
   endforeach()
+
+  # Copy VTK DLLs to build output for build-tree testing (shared VTK only).
+  foreach(_pp ${CMAKE_PREFIX_PATH})
+    file(GLOB _vtk_dlls "${_pp}/bin/vtk*-9.5.dll")
+    if(_vtk_dlls)
+      list(LENGTH _vtk_dlls _n)
+      message(STATUS "Copying ${_n} VTK DLLs from ${_pp}/bin to build output")
+      foreach(_dll ${_vtk_dlls})
+        get_filename_component(_name "${_dll}" NAME)
+        file(COPY "${_dll}" DESTINATION "${CMAKE_BINARY_DIR}/bin/Release")
+        file(COPY "${_dll}" DESTINATION "${CMAKE_BINARY_DIR}/bin")
+      endforeach()
+    endif()
+  endforeach()
 else()
   get_filename_component(_conda_prefix "${_conda_prefix}" DIRECTORY)       # .../
   set(_conda_lib_dynload "${_conda_prefix}/lib/python3.12/lib-dynload")
@@ -196,6 +210,8 @@ set(_dep_vtk_sp "")
 foreach(_pp ${CMAKE_PREFIX_PATH})
   if(EXISTS "${_pp}/lib/python3.12/site-packages/vtkmodules")
     set(_dep_vtk_sp "${_pp}/lib/python3.12/site-packages")
+  elseif(EXISTS "${_pp}/lib/site-packages/vtkmodules")
+    set(_dep_vtk_sp "${_pp}/lib/site-packages")
   endif()
 endforeach()
 if(WIN32)
@@ -281,14 +297,29 @@ add_custom_command(TARGET bundled_pip_install POST_BUILD
 # importable. The install-tree variant is generated in InstallBundledPython.cmake.
 # ---------------------------------------------------------------------------
 if(WIN32)
+  set(_dev_deps_bin "")
+  foreach(_pp ${CMAKE_PREFIX_PATH})
+    if(IS_DIRECTORY "${_pp}/bin")
+      set(_dev_deps_bin "${_dev_deps_bin}${_pp}/bin;")
+    endif()
+  endforeach()
   set(_dev_wrapper "${CMAKE_BINARY_DIR}/bin/swpython.bat")
   file(WRITE "${_dev_wrapper}"
 "@echo off
 set \"PYTHONHOME=${BUNDLED_PYTHON_ROOT}\"
-set \"PYTHONPATH=${CMAKE_BINARY_DIR}/bin\"
-set \"PATH=${CMAKE_BINARY_DIR}/bin;%PATH%\"
+set \"PYTHONPATH=${CMAKE_BINARY_DIR}/bin/Release;${CMAKE_BINARY_DIR}/bin\"
+set \"PATH=${CMAKE_BINARY_DIR}/bin/Release;${CMAKE_BINARY_DIR}/bin;${_dev_deps_bin}%PATH%\"
+set \"SW_DLL_DIRS=${CMAKE_BINARY_DIR}/bin/Release;${CMAKE_BINARY_DIR}/bin\"
 if not defined MPLBACKEND set \"MPLBACKEND=Agg\"
 \"${BUNDLED_PYTHON_EXECUTABLE}\" %*
+")
+  # Write sitecustomize.py to register DLL directories from SW_DLL_DIRS
+  file(WRITE "${BUNDLED_PYTHON_ROOT}/Lib/sitecustomize.py"
+"import os, sys
+if sys.platform == 'win32' and hasattr(os, 'add_dll_directory'):
+    for d in os.environ.get('SW_DLL_DIRS', '').split(';'):
+        if d and os.path.isdir(d):
+            os.add_dll_directory(d)
 ")
 else()
   set(_dev_wrapper "${CMAKE_BINARY_DIR}/bin/swpython")

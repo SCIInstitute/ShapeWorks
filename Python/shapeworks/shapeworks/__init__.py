@@ -1,7 +1,7 @@
-import vtk
 from .setup_path import *
 setup_binary_path()
 
+import vtk
 from shapeworks_py import *
 from .conversion import sw2vtkImage, sw2vtkMesh
 from .plot import plot_meshes, plot_volumes, plot_meshes_volumes_mix, add_mesh_to_plotter, add_volume_to_plotter, plot_mesh_contour,plot_pca_metrics,\

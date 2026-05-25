@@ -237,48 +237,13 @@ bool PythonWorker::init() {
 
 #ifdef _WIN32
   if (using_bundled) {
-    // Conda's .pyd extensions need DLLs from Library/bin/ (e.g. libexpat.dll).
-    // In the build tree, these are copied next to the executables by CMake.
-    // In the installed app, critical DLLs are in bin/ from InstallBundledPython.
-    // Prepend key directories to PATH as a safety net.
+    // Prepend Python DLL directories to PATH. Conda's .pyd extensions need
+    // DLLs from Library/bin/ (e.g. libexpat.dll) in the build tree, and the
+    // installed app has critical DLLs in bin/ from InstallBundledPython.
     QString dlls_dir = python_home + "/DLLs";
     QString app_dir = QCoreApplication::applicationDirPath();
     QString current_path = qgetenv("PATH");
     qputenv("PATH", (dlls_dir + ";" + python_home + ";" + app_dir + ";" + current_path).toUtf8());
-
-    // Verbose diagnostics for debugging GHA failures
-    std::cerr << "=== Bundled Python DLL diagnostics ===\n";
-    std::cerr << "  app_dir: " << app_dir.toStdString() << "\n";
-    std::cerr << "  python_home: " << python_home.toStdString() << "\n";
-    std::cerr << "  DLLs dir: " << dlls_dir.toStdString() << "\n";
-    std::cerr << "  DLLs dir exists: " << QDir(dlls_dir).exists() << "\n";
-    std::cerr << "  python_home/Library/bin exists: " << QDir(python_home + "/Library/bin").exists() << "\n";
-
-    // Check critical files
-    QStringList check_files = {
-        python_home + "/python312.dll",
-        python_home + "/python3.dll",
-        python_home + "/DLLs/pyexpat.pyd",
-        python_home + "/Library/bin/libexpat.dll",
-        python_home + "/Lib/os.py",
-        app_dir + "/python312.dll",
-        app_dir + "/libexpat.dll",
-    };
-    for (const auto& f : check_files) {
-      std::cerr << "  " << f.toStdString() << " : " << (QFile::exists(f) ? "EXISTS" : "MISSING") << "\n";
-    }
-
-    // List DLLs in app_dir matching python* or lib*
-    QDir app_dir_obj(app_dir);
-    QStringList dll_filters = {"python*.dll", "lib*.dll"};
-    auto dlls_in_app = app_dir_obj.entryList(dll_filters, QDir::Files);
-    std::cerr << "  DLLs in app_dir: ";
-    for (const auto& d : dlls_in_app) std::cerr << d.toStdString() << " ";
-    std::cerr << "\n";
-
-    std::cerr << "  PATH (first 500 chars): " << qgetenv("PATH").left(500).toStdString() << "\n";
-    std::cerr << "=== End diagnostics ===\n";
-    std::cerr.flush();
 
     SW_LOG("Registered bundled Python DLL directories");
   } else {
@@ -318,11 +283,7 @@ bool PythonWorker::init() {
 #endif  // ifdef _WIN32
 
   try {
-    std::cerr << "=== About to call py::initialize_interpreter() ===\n";
-    std::cerr.flush();
     py::initialize_interpreter();
-    std::cerr << "=== py::initialize_interpreter() succeeded ===\n";
-    std::cerr.flush();
     interpreter_started_ = true;
 
 #ifdef _WIN32
@@ -330,7 +291,8 @@ bool PythonWorker::init() {
     // SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS) during
     // Py_Initialize(), which enables LOAD_LIBRARY_SEARCH_USER_DIRS.
     // AddDllDirectory calls made AFTER this point are effective for all
-    // subsequent DLL loads (e.g. _ctypes.pyd needing ffi-8.dll).
+    // subsequent DLL loads (e.g. _ctypes.pyd needing ffi-8.dll,
+    // vtkmodules .pyd files needing vtk*.dll).
     if (using_bundled) {
       QString dlls_dir = python_home + "/DLLs";
       AddDllDirectory(dlls_dir.toStdWString().c_str());
@@ -341,8 +303,6 @@ bool PythonWorker::init() {
       }
       QString app_dir = QCoreApplication::applicationDirPath();
       AddDllDirectory(app_dir.toStdWString().c_str());
-      std::cerr << "=== AddDllDirectory registered after Python init ===\n";
-      std::cerr.flush();
     }
 #endif
 

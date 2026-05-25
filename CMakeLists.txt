@@ -48,6 +48,27 @@ if (NOT VTK_FOUND)
   message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
 endif()
 
+# VTK's find_package(Python3) sets Python3::Python IMPORTED_LOCATION to the
+# .dll. MSVC needs the import library (.lib) in the linker line instead.
+if(WIN32 AND TARGET Python3::Python)
+  get_target_property(_py_loc Python3::Python IMPORTED_LOCATION_RELEASE)
+  if(NOT _py_loc)
+    get_target_property(_py_loc Python3::Python IMPORTED_LOCATION)
+  endif()
+  if(_py_loc AND _py_loc MATCHES "\\.dll$")
+    string(REGEX REPLACE "/([^/]+)\\.dll$" "/libs/\\1.lib" _py_lib "${_py_loc}")
+    if(EXISTS "${_py_lib}")
+      set_target_properties(Python3::Python PROPERTIES
+        IMPORTED_LOCATION "${_py_lib}"
+        IMPORTED_LOCATION_RELEASE "${_py_lib}"
+        IMPORTED_LOCATION_DEBUG "${_py_lib}"
+        IMPORTED_LOCATION_MINSIZEREL "${_py_lib}"
+        IMPORTED_LOCATION_RELWITHDEBINFO "${_py_lib}")
+      message(STATUS "Fixed Python3::Python link library: ${_py_lib}")
+    endif()
+  endif()
+endif()
+
 # OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
 if (NOT DEFINED OpenVDB_DIR OR "${OpenVDB_DIR}" STREQUAL "OpenVDB_DIR-NOTFOUND")
   set(OpenVDB_DIR ${CMAKE_PREFIX_PATH}/lib/cmake/OpenVDB)
