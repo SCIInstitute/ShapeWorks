@@ -207,13 +207,39 @@ endif()
 # ~379 MB pip vtk wheel. (BundledPython.cmake is included before find_package(VTK),
 # so we glob CMAKE_PREFIX_PATH rather than use VTK_DIR.)
 set(_dep_vtk_sp "")
-foreach(_pp ${CMAKE_PREFIX_PATH})
-  if(EXISTS "${_pp}/lib/python3.12/site-packages/vtkmodules")
-    set(_dep_vtk_sp "${_pp}/lib/python3.12/site-packages")
-  elseif(EXISTS "${_pp}/lib/site-packages/vtkmodules")
-    set(_dep_vtk_sp "${_pp}/lib/site-packages")
+# Primary: derive from VTK_DIR. CI passes -DVTK_DIR=<deps>/lib/cmake/vtk-9.5
+# explicitly (the deps install is NOT on CMAKE_PREFIX_PATH there — only conda
+# is), and -D cache vars are set before this file is included. Our from-source
+# VTK installs its Python wrapping at <prefix>/lib/python3.12/site-packages
+# (Linux/macOS) or <prefix>/lib/site-packages (Windows).
+if(DEFINED VTK_DIR AND VTK_DIR)
+  get_filename_component(_cand "${VTK_DIR}/../../python3.12/site-packages" ABSOLUTE)
+  if(EXISTS "${_cand}/vtkmodules")
+    set(_dep_vtk_sp "${_cand}")
   endif()
-endforeach()
+  if(NOT _dep_vtk_sp)
+    get_filename_component(_cand "${VTK_DIR}/../../site-packages" ABSOLUTE)
+    if(EXISTS "${_cand}/vtkmodules")
+      set(_dep_vtk_sp "${_cand}")
+    endif()
+  endif()
+endif()
+# Fallback for local dev that puts the deps install on CMAKE_PREFIX_PATH
+# instead of passing -DVTK_DIR. Require a CMake package config (lib/cmake/vtk-*)
+# so we match our from-source VTK, never a conda/pip vtk wheel (which ships no
+# CMake config and whose vtkmodules need auditwheel-vendored libs we don't bundle).
+if(NOT _dep_vtk_sp)
+  foreach(_pp ${CMAKE_PREFIX_PATH})
+    file(GLOB _vtk_cmake_cfg "${_pp}/lib/cmake/vtk-*")
+    if(_vtk_cmake_cfg)
+      if(EXISTS "${_pp}/lib/python3.12/site-packages/vtkmodules")
+        set(_dep_vtk_sp "${_pp}/lib/python3.12/site-packages")
+      elseif(EXISTS "${_pp}/lib/site-packages/vtkmodules")
+        set(_dep_vtk_sp "${_pp}/lib/site-packages")
+      endif()
+    endif()
+  endforeach()
+endif()
 if(WIN32)
   set(_bundled_site_packages "${BUNDLED_PYTHON_ROOT}/Lib/site-packages")
 else()

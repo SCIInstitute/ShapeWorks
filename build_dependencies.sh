@@ -428,6 +428,48 @@ verify_qt()
   fi
 }
 
+provision_conda_vtk()
+{
+  # Deduplicate VTK in the active conda environment.
+  #
+  # ShapeWorks' C++ now links the shared, Python-wrapped VTK we build here. If a
+  # *different* VTK (the pip `vtk` wheel that pyvista drags into the conda env) is
+  # imported into one of those VTK-linked processes -- e.g. the in-process Python
+  # interpreter that Optimize and Studio embed, which `import vtk`s -- two complete
+  # VTK builds end up loaded in a single process and the heap corrupts (manifests
+  # as `malloc(): invalid size` or HDF5 I/O errors). With a static C++ VTK this was
+  # harmless; with shared VTK it is fatal.
+  #
+  # pyvista hard-depends on vtk and python_requirements.txt is a pinned pip-compile
+  # lock, so we cannot stop pip from installing the wheel. Instead remove it and
+  # point the env's Python at our dep build via a .pth file. The dep vtkmodules are
+  # left in place (their $ORIGIN-relative RPATH resolves libvtk* under the dep lib
+  # dir), so no copying or RPATH patching is needed.
+  if [[ $OSTYPE == msys* ]]; then return 0; fi   # Windows still uses static VTK + pip vtk
+  if [[ -z "${CONDA_PREFIX}" ]]; then
+    echo "No active conda env (CONDA_PREFIX unset); skipping conda VTK dedup."
+    return 0
+  fi
+
+  local dep_sp="" cand
+  for cand in "${INSTALL_DIR}"/lib/python3.*/site-packages; do
+    if [[ -d "${cand}/vtkmodules" ]]; then dep_sp="${cand}"; break; fi
+  done
+  if [[ -z "${dep_sp}" ]]; then
+    echo "WARNING: no dep-built vtkmodules under ${INSTALL_DIR}; skipping conda VTK dedup."
+    return 0
+  fi
+
+  local conda_sp
+  conda_sp=$(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])") || return 0
+
+  echo ""
+  echo "## Deduplicating VTK in conda env"
+  echo "   removing pip vtk (if present) and pointing ${conda_sp} at ${dep_sp}"
+  python -m pip uninstall -y vtk >/dev/null 2>&1 || true
+  echo "${dep_sp}" > "${conda_sp}/_shapeworks_dep_vtk.pth"
+}
+
 build_all()
 {
   ## create build and install directories
@@ -468,7 +510,11 @@ build_all()
   if [[ -z $ACVD_DIR ]]; then
     build_acvd
   fi
-  
+
+  # Point the active conda env's Python at the VTK we just built (dedup; avoids a
+  # second VTK being loaded into ShapeWorks' embedded Python interpreter).
+  provision_conda_vtk
+
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks
   echo ""
   echo "Dependency paths:"
