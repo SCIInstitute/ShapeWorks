@@ -102,6 +102,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\ShapeWorks"
   CreateShortcut "$SMPROGRAMS\ShapeWorks\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortcut "$SMPROGRAMS\ShapeWorks\ShapeWorksStudio.lnk" "$INSTDIR\bin\ShapeWorksStudio.exe" "" "$INSTDIR\bin\ShapeWorksStudio.exe" 0
+  CreateShortcut "$SMPROGRAMS\ShapeWorks\ShapeWorks Prompt.lnk" "$SYSDIR\cmd.exe" '/K "$INSTDIR\bin\shapeworks_prompt.bat"' "$INSTDIR\bin\ShapeWorksStudio.exe" 0
   
 SectionEnd
 
