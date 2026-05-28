@@ -86,6 +86,13 @@ jobs:
         path: /github/home/install
         key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
+    # Always run — build_dependencies.sh only runs on cache miss, but the
+    # conda-env VTK dedup needs to apply every build (the .pth + pip
+    # uninstall live in the conda env, not in the cached deps install).
+    - name: Dedup VTK in conda env
+      shell: bash -l {0}
+      run: conda activate shapeworks && INSTALL_DIR=$HOME/install bash Support/dedup_conda_vtk.sh
+
     - name: Check space4
       run: df -h
 
