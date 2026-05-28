@@ -58,6 +58,7 @@ if [ -d "$BUILD/install/lib/python" ]; then
     # on line 45)
     cp $BUILD/install/bin/swpython.bat bin/ 2>/dev/null || true
     cp $BUILD/install/bin/swpip.bat bin/ 2>/dev/null || true
+    cp $BUILD/install/bin/shapeworks_prompt.bat bin/ 2>/dev/null || true
 
     # Still need non-Python dependency DLLs from conda
     for dll in zlib.dll tbb12.dll zstd.dll libpng16.dll half.dll boost_filesystem.dll spdlog.dll pcre2-16.dll ; do

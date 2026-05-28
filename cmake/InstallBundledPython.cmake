@@ -178,6 +178,31 @@ call "%LOC%swpython.bat" -m shapeworks.swpip %*
 ]=])
 install(PROGRAMS "${_swpip_dir}/swpip.bat" DESTINATION bin)
 
+# ---------------------------------------------------------------------------
+# 7w. "ShapeWorks Prompt" activation script — opens cmd.exe with PATH, SW_DLL_DIRS,
+#     and PYTHONHOME pre-configured so swpython / shapeworks / Studio are all usable.
+#     The NSIS installer creates a Start Menu shortcut that launches this via
+#     cmd.exe /K.
+# ---------------------------------------------------------------------------
+set(_prompt_dir "${CMAKE_BINARY_DIR}/_bundled_python/prompt")
+file(MAKE_DIRECTORY "${_prompt_dir}")
+file(WRITE "${_prompt_dir}/shapeworks_prompt.bat"
+[=[@echo off
+set "SW_BIN=%~dp0"
+set "SW_BIN=%SW_BIN:~0,-1%"
+set "SHAPEWORKS_HOME=%SW_BIN%\.."
+set "PATH=%SW_BIN%;%PATH%"
+set "SW_DLL_DIRS=%SW_BIN%"
+set "PYTHONHOME=%SHAPEWORKS_HOME%\lib\python"
+if not defined MPLBACKEND set "MPLBACKEND=Agg"
+title ShapeWorks Prompt
+echo.
+echo  ShapeWorks tools are ready.
+echo  Try: swpython, shapeworks, ShapeWorksStudio
+echo.
+]=])
+install(PROGRAMS "${_prompt_dir}/shapeworks_prompt.bat" DESTINATION bin)
+
 message(STATUS "InstallBundledPython: will install bundled Python to ${_python_dest}")
 return()
 endif() # WIN32
