@@ -3911,6 +3911,12 @@ NormalType calculate_normal_at_point(Surface::PointType p, int idx) const;
 // Caches of triangle, normal and position
 // Has to be mutable because all of the accessor APIs are const
 mutable std::vector&lt;int&gt; particle_triangles_;
+// Per-particle position used to look up particle_triangles_[idx] and the corresponding
+// closest point on that face. Used so a query whose pt is not exactly on this mesh
+// (e.g. particles snapped to a different surface) still gets a cache hit when the same
+// pt is queried again, instead of re-running cell_locator_-&gt;FindClosestPoint.
+mutable std::vector&lt;PointType&gt; particle_face_query_pts_;
+mutable std::vector&lt;PointType&gt; particle_face_closest_pts_;
 mutable std::vector&lt;NormalType&gt; particle_normals_;
 mutable std::vector&lt;PointType&gt; particle_positions_;
 mutable std::vector&lt;double&gt; particle_neighboorhood_;
@@ -3978,7 +3984,7 @@ Eigen::MatrixXi faces_;
 } // namespace shapeworks
 ```</p>
 <hr />
-<p>Updated on 2026-05-24 at 01:13:13 +0000</p>
+<p>Updated on 2026-05-28 at 16:46:40 +0000</p>
 
 
 
