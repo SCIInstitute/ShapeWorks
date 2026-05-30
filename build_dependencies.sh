@@ -262,6 +262,25 @@ build_itk()
   CASTXML_EXECUTABLE="${CASTXML_DIR}/bin/castxml${castxml_exe_suffix}"
   echo "## using castxml at ${CASTXML_EXECUTABLE}"
 
+  # The macOS castxml binary is built on a Homebrew Mac and links against
+  # /opt/homebrew/opt/zstd/lib/libzstd.1.dylib. On non-Homebrew Macs
+  # (MacPorts, conda-only dev envs) that path doesn't exist and the next
+  # make step dies with `dyld: Library not loaded: ...libzstd.1.dylib`.
+  # Retarget at whichever libzstd we have (conda env first, MacPorts second)
+  # and re-sign ad-hoc so the kernel will still exec the patched binary.
+  # No-op when castxml already runs (Homebrew is installed).
+  if [[ "$(uname)" == "Darwin" ]] && [[ -x "${CASTXML_EXECUTABLE}" ]] \
+       && ! "${CASTXML_EXECUTABLE}" --version >/dev/null 2>&1; then
+    for cand in "${CONDA_PREFIX:-}/lib/libzstd.1.dylib" /opt/local/lib/libzstd.1.dylib; do
+      if [[ -f "${cand}" ]]; then
+        install_name_tool -change /opt/homebrew/opt/zstd/lib/libzstd.1.dylib "${cand}" "${CASTXML_EXECUTABLE}"
+        codesign --force --sign - "${CASTXML_EXECUTABLE}"
+        echo "## Patched castxml libzstd reference -> ${cand}"
+        break
+      fi
+    done
+  fi
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
