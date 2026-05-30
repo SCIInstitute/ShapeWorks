@@ -171,7 +171,10 @@ function install_conda() {
   # (missing: Development.SABIModule)". Going through pip avoids conda's
   # resolver entirely: conda-forge's cmake 3.31.x requires libzlib >= 1.3.1,
   # but graphviz=4.0.0 and other pinned packages need zlib < 1.3.
-  if ! python -m pip install "cmake==3.31.6";                      then return 1; fi
+  # Pinning to 3.26.4 (the lowest with SABI) keeps us close to the old
+  # cmake=3.23.2 behavior — newer cmake (3.30/3.31) breaks OpenVDB 9.1.0's
+  # vendored FindTBB.cmake with "missing Tbb_INCLUDE_DIR" during configure.
+  if ! python -m pip install "cmake==3.26.4";                      then return 1; fi
 
   # install pytorch using light-the-torch
   # Use python -m to ensure we use the conda env's light_the_torch, not ~/.local/bin/ltt
