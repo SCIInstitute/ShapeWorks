@@ -95,7 +95,7 @@ function install_conda() {
   if [[ "$DEVELOPER" == "YES" ]] ; then
     echo "Developer packages enabled"
 
-    CONDA_PACKAGES+=(cmake=3.31.8 \
+    CONDA_PACKAGES+=(cmake=3.23.2 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
 		     eigen=3.4.0 \
@@ -117,10 +117,7 @@ function install_conda() {
     # linux (only) deps
     if [[ "$(uname)" == "Linux" ]]; then
 	# required by install_python_module.sh
-	# zlib bumped to 1.3.1 in lockstep with the cmake=3.31.8 pin above —
-	# conda-forge's cmake 3.31 ships against zlib 1.3.x and won't resolve
-	# against an older pin. zlib 1.3 is wire-compatible with 1.2.x.
-	CONDA_PACKAGES+=(zlib=1.3.1 patchelf=0.17.2)
+	CONDA_PACKAGES+=(zlib=1.2.13 patchelf=0.17.2)
     fi
 
     if [[ $OSTYPE == msys* || $OSTYPE == cygwin* ]]; then
@@ -162,6 +159,17 @@ function install_conda() {
   echo "========================================"
 
   if ! python -m pip install -r python_requirements.txt;          then return 1; fi
+
+  # Override the conda cmake (pinned at 3.23.2) with a pip-installed newer
+  # cmake. ITK's SABI Python wrapping path (build_dependencies.sh sets
+  # ITK_USE_PYTHON_LIMITED_API on by default for Python >= 3.11) goes through
+  # find_package(Python3 COMPONENTS Interpreter Development.SABIModule), which
+  # needs CMake >= 3.26 — older cmake errors out with
+  # "Could NOT find Python3 (missing: Development.SABIModule)". Installing via
+  # pip keeps it isolated from conda's resolver: conda-forge's cmake 3.31.x
+  # requires libzlib >= 1.3.1, but graphviz=4.0.0 and a few other pinned
+  # packages need zlib < 1.3, so bumping cmake through conda blows up the env.
+  if ! python -m pip install "cmake==3.31.6";                      then return 1; fi
 
   # install pytorch using light-the-torch
   # Use python -m to ensure we use the conda env's light_the_torch, not ~/.local/bin/ltt

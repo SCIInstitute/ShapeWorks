@@ -243,7 +243,7 @@ build_itk()
     # exposes the `_C_API` capsule that the pip itk-elastix wheel imports. Pip
     # elastix is also SABI; without SABI parity, loading elastix against our
     # core raises AttributeError: '_C_API' on first call. (Needs CMake>=3.26
-    # for Development.SABIModule, hence the cmake=3.31.8 pin in
+    # for Development.SABIModule, hence the pip cmake==3.31.6 install in
     # install_shapeworks.sh.)
     # ITK's Python wrap install path defaults to sysconfig's `platlib` for the
     # build-time Python — that's conda's site-packages. We want the wrap to
