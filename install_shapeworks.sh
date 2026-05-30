@@ -95,7 +95,7 @@ function install_conda() {
   if [[ "$DEVELOPER" == "YES" ]] ; then
     echo "Developer packages enabled"
 
-    CONDA_PACKAGES+=(cmake=3.23.2 \
+    CONDA_PACKAGES+=(cmake=3.31.8 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
 		     eigen=3.4.0 \
@@ -117,7 +117,10 @@ function install_conda() {
     # linux (only) deps
     if [[ "$(uname)" == "Linux" ]]; then
 	# required by install_python_module.sh
-	CONDA_PACKAGES+=(zlib=1.2.13 patchelf=0.17.2)
+	# zlib bumped to 1.3.1 in lockstep with the cmake=3.31.8 pin above —
+	# conda-forge's cmake 3.31 ships against zlib 1.3.x and won't resolve
+	# against an older pin. zlib 1.3 is wire-compatible with 1.2.x.
+	CONDA_PACKAGES+=(zlib=1.3.1 patchelf=0.17.2)
     fi
 
     if [[ $OSTYPE == msys* || $OSTYPE == cygwin* ]]; then

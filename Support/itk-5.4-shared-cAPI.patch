@@ -1,0 +1,60 @@
+From: ShapeWorks build_dependencies.sh
+Subject: Always emit _C_API capsule from _ITKCommonPython, even with shared libs
+
+Upstream ITK only emits the _ITKCommonPython._C_API PyCapsule when
+BUILD_SHARED_LIBS=OFF — its rationale being that the singleton-sharing the
+capsule provides is unnecessary when libITKCommon is shared (the loader does
+it). But the pip itk-elastix wheel is a statically-linked SABI .abi3.so that
+unconditionally probes for the capsule; loading elastix against a shared
+ITKCommon raises:
+
+  AttributeError: module 'itk._ITKCommonPython' has no attribute '_C_API'
+
+ShapeWorks ships a shared+wrapped ITK (build_dependencies.sh, BUILD_SHARED_LIBS
+ON, ITK_WRAP_PYTHON ON) and keeps pip itk-elastix as a separately-installed
+wheel. We need the capsule present so pip elastix can load. This patch removes
+the outer BUILD_SHARED_LIBS guard on the producer branch (emit _C_API
+unconditionally) and inlines NOT BUILD_SHARED_LIBS on the consumer branch
+(consumer's singleton-set logic is harmful under shared libITKCommon — it
+would override the existing singleton from every wrap module init).
+---
+ Wrapping/macro_files/itk_end_wrap_module.cmake | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/Wrapping/macro_files/itk_end_wrap_module.cmake b/Wrapping/macro_files/itk_end_wrap_module.cmake
+index e50121d32f..74aaba2568 100644
+--- a/Wrapping/macro_files/itk_end_wrap_module.cmake
++++ b/Wrapping/macro_files/itk_end_wrap_module.cmake
+@@ -277,7 +277,14 @@ macro(itk_end_wrap_module)
+
+   unset(ITK_WRAP_PYTHON_GLOBAL_TIMESTAMP_DECLS)
+   unset(ITK_WRAP_PYTHON_GLOBAL_TIMESTAMP_CALLS)
+-  if(NOT BUILD_SHARED_LIBS)
++  # ShapeWorks patch: always emit the _C_API capsule for _ITKCommonPython, even
++  # when BUILD_SHARED_LIBS=ON. Upstream gates this on static-only because shared
++  # libITKCommon handles singleton sharing on its own — but pip itk-elastix
++  # (statically linked SABI wheel) unconditionally probes for _C_API and fails
++  # with AttributeError if it's missing. Consumer-side singleton-set logic
++  # (the elseif branch) stays guarded — it's a no-op against a shared
++  # libITKCommon and overriding the singleton from every wrap module init
++  # would be harmful.
+     if(WRAPPER_LIBRARY_NAME STREQUAL "ITKCommon")
+
+       if(WIN32)
+@@ -319,7 +326,7 @@ PyModule_AddObject(m, \"_C_API\", cAPIObject);
+ }
+ ${DO_NOT_WAIT_FOR_THREADS_CALLS}
+ ")
+-    elseif("ITKCommon" IN_LIST WRAPPER_LIBRARY_LINK_LIBRARIES)
++    elseif("ITKCommon" IN_LIST WRAPPER_LIBRARY_LINK_LIBRARIES AND NOT BUILD_SHARED_LIBS)
+       set(ITK_WRAP_PYTHON_GLOBAL_TIMESTAMP_DECLS
+           "
+ #include \"itkPyITKCommonCAPI.h\"
+@@ -340,7 +347,6 @@ itk::ObjectFactoryBase::Initialize();
+ ${DO_NOT_WAIT_FOR_THREADS_CALLS}
+ ")
+     endif()
+-  endif()
+
+   # Create the Python customization stuff in the main module
+   # It allows to group the python submodules in a single shared lib (.so),

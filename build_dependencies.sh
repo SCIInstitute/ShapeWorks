@@ -194,16 +194,84 @@ build_itk()
     sed -i 's|<fp.h>|<math.h>|g' Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
   fi
 
+  # Always emit the _ITKCommonPython._C_API capsule, even with shared libs, so
+  # the pip itk-elastix wheel (SABI .abi3.so) can load against our shared
+  # libITKCommon. See Support/itk-5.4-shared-cAPI.patch for the full story.
+  patch -p1 < ${SCRIPT_DIR}/Support/itk-5.4-shared-cAPI.patch
+
+  # Keep ITK_LEGACY_REMOVE=OFF settable when ITK_WRAPPING=ON. Upstream forces
+  # LEGACY_REMOVE on when wrapping is on; ShapeWorks' C++ uses legacy APIs
+  # (Region.h Point arithmetic, itk::SpatialOrientation::ITK_COORDINATE_*)
+  # that disappear under LEGACY_REMOVE. See the patch for details.
+  patch -p1 < ${SCRIPT_DIR}/Support/itk-5.4-legacy-remove.patch
+
+  # Fix an upstream bug in the LEGACY-only Approximate3DNormals() wrapper that
+  # fails to compile once we keep LEGACY_REMOVE off while wrapping is on
+  # (the LEGACY+WRAPPING combination upstream's cmake_dependent_option normally
+  # prevents and therefore never tested).
+  patch -p1 < ${SCRIPT_DIR}/Support/itk-5.4-legacy-computenormals.patch
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
+  # ITK is built shared + Python-wrapped so the bundled Python can reuse the same
+  # C++ ITK that ShapeWorks links — replacing the ~1.5 GB of pip itk-core /
+  # itk-numerics / itk-io / itk-filtering / itk-registration / itk-segmentation
+  # wheels with one shared install.
+  #
+  # itk-elastix stays as a pip wheel (Module_Elastix is a remote module not
+  # shipped by ITK upstream, so vendoring it would add a maintenance pin and
+  # extra build time for a ~90 MB delta). Its statically-linked .abi3.so files
+  # don't expose ITK symbols, so they coexist with our shared libitk* in one
+  # process without the loader-resolution problem the VTK pip wheel had.
+  #
+  # ITK_WRAP_DIMS=2;3 + a minimal scalar-type set keeps the wrap step from
+  # blowing up — the upstream itk-* wheels wrap 11 types x 5 dims and take
+  # hours. Expand if downstream code asks for a missing type.
+  ITK_WRAP_FLAGS=(
+    -DITK_WRAP_PYTHON:BOOL=ON
+    # Dim 4 is needed by pip itk-elastix: its itkTransformixFilter and
+    # itkElastixRegistrationMethod classes reference itkImageSource{D,F,SS,UC,US}4
+    # and importing them fails with AttributeError if dim 4 isn't wrapped.
+    -DITK_WRAP_DIMS:STRING="2;3;4"
+    -DITK_WRAP_unsigned_char:BOOL=ON
+    -DITK_WRAP_unsigned_short:BOOL=ON
+    -DITK_WRAP_signed_short:BOOL=ON
+    -DITK_WRAP_float:BOOL=ON
+    -DITK_WRAP_double:BOOL=ON
+    # SABI defaults ON for Python>=3.11 — required so our dep itk-core .abi3.so
+    # exposes the `_C_API` capsule that the pip itk-elastix wheel imports. Pip
+    # elastix is also SABI; without SABI parity, loading elastix against our
+    # core raises AttributeError: '_C_API' on first call. (Needs CMake>=3.26
+    # for Development.SABIModule, hence the cmake=3.31.8 pin in
+    # install_shapeworks.sh.)
+    # ITK's Python wrap install path defaults to sysconfig's `platlib` for the
+    # build-time Python — that's conda's site-packages. We want the wrap to
+    # land alongside the dep install so cmake/provision_bundled_itk.py can
+    # find it via ${ITK_DIR}/../../python3.12/site-packages.
+    -DPY_SITE_PACKAGES_PATH=${INSTALL_DIR}/lib/python3.12/site-packages
+  )
+
   if [[ $OSTYPE == msys* ]]; then
-      cmake -DCMAKE_CXX_FLAGS="" -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -DZLIB_SYMBOL_PREFIX="itkzlib_" -Wno-dev ..
-      
+      cmake -DCMAKE_CXX_FLAGS="" -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -DZLIB_SYMBOL_PREFIX="itkzlib_" "${ITK_WRAP_FLAGS[@]}" -Wno-dev ..
+
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVTK_DIR="${VTK_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      # Same conda-libstdc++ trick as build_vtk: the linker has to pick the
+      # conda env's libstdc++, not the system one, or shared libitk* loads a
+      # different libstdc++ than the ShapeWorks binaries (compiled by conda's
+      # gcc) and RTTI lookups crash when objects cross the boundary
+      # (typeinfo for std::__future_base::_Result<void*> SIGSEGVs in
+      # itk::ImageSource::GenerateData).
+      if [[ -n "${CONDA_PREFIX}" ]]; then
+          export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH}"
+          CONDA_LINK_FLAGS="-L${CONDA_PREFIX}/lib -Wl,-rpath,${CONDA_PREFIX}/lib"
+      else
+          CONDA_LINK_FLAGS=""
+      fi
+
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVTK_DIR="${VTK_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_EXE_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCMAKE_SHARED_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCMAKE_MODULE_LINKER_FLAGS="${CONDA_LINK_FLAGS}" "${ITK_WRAP_FLAGS[@]}" -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -435,6 +503,11 @@ provision_conda_vtk()
   # cache-miss builds; the conda env state isn't part of the cached deps).
   INSTALL_DIR="${INSTALL_DIR}" bash "${SRC}/Support/dedup_conda_vtk.sh"
 }
+
+# Note: no conda-env ITK dedup. The pip itk-* family is statically linked, so
+# it can coexist with our shared libitk* in one process without the
+# loader-resolution problem that forced the VTK dedup. The bundled-Python
+# tree gets the dep ITK via cmake/provision_bundled_itk.py instead.
 
 build_all()
 {

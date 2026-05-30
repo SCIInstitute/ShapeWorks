@@ -247,23 +247,57 @@ else()
 endif()
 set(_dep_vtk_version "9.5.0")  # matches VTK_VER in build_dependencies.sh
 
+# Detect dep-built (shared) ITK Python wrapping. Same VTK_DIR-trick as above:
+# CI passes -DITK_DIR=<deps>/lib/cmake/ITK-5.4 explicitly; deps install isn't on
+# CMAKE_PREFIX_PATH there. ITK's Python wrapping lands at
+# <prefix>/lib/python3.12/site-packages (Linux/macOS) — same layout as VTK.
+set(_dep_itk_sp "")
+if(DEFINED ITK_DIR AND ITK_DIR)
+  get_filename_component(_cand "${ITK_DIR}/../../python3.12/site-packages" ABSOLUTE)
+  if(EXISTS "${_cand}/itk")
+    set(_dep_itk_sp "${_cand}")
+  endif()
+  if(NOT _dep_itk_sp)
+    get_filename_component(_cand "${ITK_DIR}/../../site-packages" ABSOLUTE)
+    if(EXISTS "${_cand}/itk")
+      set(_dep_itk_sp "${_cand}")
+    endif()
+  endif()
+endif()
+# Local-dev fallback for when the deps install is on CMAKE_PREFIX_PATH instead.
+# Require lib/cmake/ITK-* so we match our from-source build, never a pip itk
+# wheel (which ships no CMake configs and is statically linked / monolithic).
+if(NOT _dep_itk_sp)
+  foreach(_pp ${CMAKE_PREFIX_PATH})
+    file(GLOB _itk_cmake_cfg "${_pp}/lib/cmake/ITK-*")
+    if(_itk_cmake_cfg)
+      if(EXISTS "${_pp}/lib/python3.12/site-packages/itk")
+        set(_dep_itk_sp "${_pp}/lib/python3.12/site-packages")
+      elseif(EXISTS "${_pp}/lib/site-packages/itk")
+        set(_dep_itk_sp "${_pp}/lib/site-packages")
+      endif()
+    endif()
+  endforeach()
+endif()
+set(_dep_itk_version "5.4.4.post1")  # matches the version in python_requirements.txt
+
+set(_provision_cmds)
 if(_dep_vtk_sp)
   message(STATUS "Dep-built VTK detected at ${_dep_vtk_sp} — will provision into bundled Python")
-  add_custom_target(bundled_pip_install
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/cmake/provision_bundled_vtk.py" "${_dep_vtk_sp}" "${_bundled_site_packages}" "${_dep_vtk_version}"
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} --upgrade pip
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
-    COMMENT "Provisioning dep VTK + installing runtime pip packages into bundled Python"
-    VERBATIM
-  )
-else()
-  add_custom_target(bundled_pip_install
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} --upgrade pip
-    COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
-    COMMENT "Installing runtime pip packages into bundled Python"
-    VERBATIM
-  )
+  list(APPEND _provision_cmds COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/cmake/provision_bundled_vtk.py" "${_dep_vtk_sp}" "${_bundled_site_packages}" "${_dep_vtk_version}")
 endif()
+if(_dep_itk_sp)
+  message(STATUS "Dep-built ITK detected at ${_dep_itk_sp} — will provision into bundled Python")
+  list(APPEND _provision_cmds COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/cmake/provision_bundled_itk.py" "${_dep_itk_sp}" "${_bundled_site_packages}" "${_dep_itk_version}")
+endif()
+
+add_custom_target(bundled_pip_install
+  ${_provision_cmds}
+  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} --upgrade pip
+  COMMAND "${BUNDLED_PYTHON_EXECUTABLE}" -m pip install ${_pip_flags} -r "${CMAKE_SOURCE_DIR}/python_requirements_bundled.txt"
+  COMMENT "Provisioning dep VTK/ITK + installing runtime pip packages into bundled Python"
+  VERBATIM
+)
 
 foreach(_pkg ${_sw_editable_packages})
   if(EXISTS "${_pkg}/setup.py")

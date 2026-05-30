@@ -47,15 +47,13 @@ imageio==2.37.0
 importlib-metadata==8.7.0
 importlib-resources==6.5.2
 isoduration==20.11.0
-itk==5.4.4.post1
-itk-core==5.4.4.post1
+# itk-core / itk-numerics / itk-io / itk-filtering / itk-registration /
+# itk-segmentation / itk (meta) are provisioned from the dep build by
+# cmake/provision_bundled_itk.py, which writes stub dist-info entries so pip's
+# resolver treats them as already satisfied. itk-elastix is left as a pip wheel
+# (its .so files overlay onto the dep itk/ dir without conflict). Drop
+# itk-meshtopolydata entirely — it is not used anywhere in ShapeWorks code.
 itk-elastix==0.21.0
-itk-filtering==5.4.4.post1
-itk-io==5.4.4.post1
-itk-meshtopolydata==0.11.0
-itk-numerics==5.4.4.post1
-itk-registration==5.4.4.post1
-itk-segmentation==5.4.4.post1
 jinja2==3.1.6
 joblib==1.5.2
 kiwisolver==1.4.9

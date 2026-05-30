@@ -1,0 +1,30 @@
+From: ShapeWorks build_dependencies.sh
+Subject: Fix Approximate3DNormals() legacy wrapper to call the method
+
+Upstream's legacy SurfaceSpatialObject<>::Approximate3DNormals() wrapper does
+`return ComputeNormals;` — but in current ITK that name resolves to the
+ComputeNormals() member function (`bool (...)()`), not a member variable, and
+the compiler fails the bool conversion. This only fires under
+ITK_WRAPPING=ON + ITK_LEGACY_REMOVE=OFF (the combination
+Support/itk-5.4-legacy-remove.patch enables), because upstream's
+cmake_dependent_option normally forces LEGACY_REMOVE on when wrapping is on,
+so this legacy code path never gets compiled in the upstream-tested config.
+Fix: forward the call (`return this->ComputeNormals();`) so the wrapper
+actually wraps.
+---
+ Modules/Core/SpatialObjects/include/itkSurfaceSpatialObject.hxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Modules/Core/SpatialObjects/include/itkSurfaceSpatialObject.hxx b/Modules/Core/SpatialObjects/include/itkSurfaceSpatialObject.hxx
+index abc123..def456 100644
+--- a/Modules/Core/SpatialObjects/include/itkSurfaceSpatialObject.hxx
++++ b/Modules/Core/SpatialObjects/include/itkSurfaceSpatialObject.hxx
+@@ -70,7 +70,7 @@ template <unsigned int TDimension, typename TSurfacePointType>
+ bool
+ SurfaceSpatialObject<TDimension, TSurfacePointType>::Approximate3DNormals()
+ {
+-  return ComputeNormals;
++  return this->ComputeNormals();
+ }
+ #endif // LEGACY
+

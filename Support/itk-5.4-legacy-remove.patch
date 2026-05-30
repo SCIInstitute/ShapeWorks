@@ -1,0 +1,36 @@
+From: ShapeWorks build_dependencies.sh
+Subject: Decouple ITK_LEGACY_REMOVE from ITK_WRAPPING
+
+Upstream ITK's cmake_dependent_option forces ITK_LEGACY_REMOVE=ON whenever
+ITK_WRAPPING is enabled, ignoring the user's -DITK_LEGACY_REMOVE=OFF flag.
+ShapeWorks' C++ code (Region.h's `Point size() const { return max - min; }`
+plus several callers of itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_*)
+relies on the legacy paths that get gated out when LEGACY_REMOVE is on, so
+turning on Python wrapping breaks the ShapeWorks build today. This patch
+demotes the cmake_dependent_option to a plain option so we can keep
+LEGACY_REMOVE=OFF alongside wrapping=ON. (Long-term we should clean up the
+deprecated usage in ShapeWorks, but that's separate work — for the dedup PR
+we want a single-knob fix that doesn't drag in widespread C++ changes.)
+---
+ CMakeLists.txt | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index abc123..def456 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -302,12 +302,8 @@ set(ITK_MODULES_DIR "${ITK_BINARY_DIR}/${ITK_INSTALL_PACKAGE_DIR}/Modules")
+ #-----------------------------------------------------------------------------
+ # Provide compatibility options.
+ # During major release updates deprecated interface may be needed for backwards compatibility
+-cmake_dependent_option(
+-  ITK_LEGACY_REMOVE
+-  "Remove current legacy code completely."
+-  OFF
+-  "NOT ITK_WRAPPING"
+-  ON)
++# ShapeWorks patch: plain option, not dependent on ITK_WRAPPING. See Support/itk-5.4-legacy-remove.patch.
++option(ITK_LEGACY_REMOVE "Remove current legacy code completely." OFF)
+
+ # During minor releases bugs may be identified that identify broken interface, or
+ # useless interfaces that need to be retained to not break backwards compatibilty.

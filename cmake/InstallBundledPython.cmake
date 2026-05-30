@@ -516,6 +516,57 @@ else()
 endif()
 
 # ---------------------------------------------------------------------------
+# 6c. Shared ITK: same idea as 6b for VTK. ITK_DIR points at
+#     <dep>/lib/cmake/ITK-<ver>, so the shared libitk* live two dirs up.
+#     Skipped when ITK_DIR is unset (e.g. USE_BUNDLED_PYTHON=ON but using a
+#     static dep ITK from an older deps cache).
+# ---------------------------------------------------------------------------
+if(DEFINED ITK_DIR AND ITK_DIR)
+  get_filename_component(_itk_lib_dir "${ITK_DIR}/../.." ABSOLUTE)
+  if(APPLE)
+    file(GLOB _itk_shared_check "${_itk_lib_dir}/libitk*.dylib" "${_itk_lib_dir}/libITK*.dylib")
+    if(_itk_shared_check)
+      install(CODE "
+        set(_install_root \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}\")
+        set(_fw \"\${_install_root}/bin/ShapeWorksStudio.app/Contents/Frameworks\")
+        file(MAKE_DIRECTORY \"\${_fw}\")
+        execute_process(COMMAND bash -c \"cp -a '${_itk_lib_dir}'/libitk*.dylib '${_itk_lib_dir}'/libITK*.dylib '\${_fw}/' 2>/dev/null || true\")
+        message(STATUS \"Bundled shared ITK dylibs into Frameworks\")
+        # itk/*.so files reference @rpath/libITK*. From
+        # ShapeWorksStudio.app/Contents/Resources/Python/lib/python3.12/site-packages/itk
+        # to Contents/Frameworks is 6 levels up.
+        file(GLOB _itkmods \"\${_install_root}/${_site_packages}/itk/*.so\")
+        foreach(_m \${_itkmods})
+          execute_process(COMMAND install_name_tool -add_rpath \"@loader_path/../../../../../../Frameworks\" \"\${_m}\" ERROR_QUIET)
+        endforeach()
+        message(STATUS \"Set Frameworks RPATH on bundled itk modules\")
+      " COMPONENT Runtime)
+    endif()
+  else()
+    # Linux: same shape as the VTK case (6b). package.sh copies the dep lib/
+    # into the bundle, so libitk* are bundled implicitly; just repoint the
+    # itk module .so RPATHs at the package lib/.
+    file(GLOB _itk_shared_check "${_itk_lib_dir}/libitk*.so" "${_itk_lib_dir}/libITK*.so")
+    if(_itk_shared_check)
+      install(CODE "
+        set(_install_root \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}\")
+        file(GLOB _itkmods \"\${_install_root}/${_site_packages}/itk/*.so\")
+        find_program(_patchelf patchelf)
+        if(_patchelf AND _itkmods)
+          foreach(_m \${_itkmods})
+            # \$ORIGIN keeps any wrapping-helper libs ITK may co-locate with the
+            # modules discoverable; the 6-up lib/ is where the dep's libitk*
+            # land after package.sh. Matches the vtkmodules pattern in 6b.
+            execute_process(COMMAND \${_patchelf} --set-rpath \"\$ORIGIN:\$ORIGIN/../../../../../../lib\" \"\${_m}\")
+          endforeach()
+          message(STATUS \"Set \$ORIGIN + lib/ RPATH on bundled itk modules\")
+        endif()
+      " COMPONENT Runtime)
+    endif()
+  endif()
+endif()
+
+# ---------------------------------------------------------------------------
 # 7. macOS: relocate the shapeworks CLI into the .app so its bundled-Python
 #    lookup (../Resources/Python relative to the executable) resolves.
 #    Leaves a thin wrapper at install/bin/shapeworks for backward compatibility.
