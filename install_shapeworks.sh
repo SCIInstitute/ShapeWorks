@@ -95,8 +95,12 @@ function install_conda() {
   if [[ "$DEVELOPER" == "YES" ]] ; then
     echo "Developer packages enabled"
 
-    CONDA_PACKAGES+=(cmake=3.23.2 \
-		     doxygen=1.9.2 \
+    # cmake is installed via pip below (see comment near `pip install
+    # cmake==3.31.6`). Putting it in CONDA_PACKAGES here would land it in
+    # ${CONDA_PREFIX}/Library/bin on Windows, which Conda's activate sequence
+    # puts ahead of ${CONDA_PREFIX}/Scripts where pip's cmake wrapper lives, so
+    # the older conda cmake would win and Development.SABIModule lookup fails.
+    CONDA_PACKAGES+=(doxygen=1.9.2 \
 		     graphviz=4.0.0 \
 		     eigen=3.4.0 \
 		     hdf5=1.12.2 \
@@ -160,15 +164,13 @@ function install_conda() {
 
   if ! python -m pip install -r python_requirements.txt;          then return 1; fi
 
-  # Override the conda cmake (pinned at 3.23.2) with a pip-installed newer
-  # cmake. ITK's SABI Python wrapping path (build_dependencies.sh sets
-  # ITK_USE_PYTHON_LIMITED_API on by default for Python >= 3.11) goes through
+  # Pip-install cmake as the only cmake in the env. ITK's SABI Python wrap
+  # path (ITK_USE_PYTHON_LIMITED_API defaults on for Python >= 3.11) calls
   # find_package(Python3 COMPONENTS Interpreter Development.SABIModule), which
-  # needs CMake >= 3.26 — older cmake errors out with
-  # "Could NOT find Python3 (missing: Development.SABIModule)". Installing via
-  # pip keeps it isolated from conda's resolver: conda-forge's cmake 3.31.x
-  # requires libzlib >= 1.3.1, but graphviz=4.0.0 and a few other pinned
-  # packages need zlib < 1.3, so bumping cmake through conda blows up the env.
+  # needs CMake >= 3.26 — older cmake errors with "Could NOT find Python3
+  # (missing: Development.SABIModule)". Going through pip avoids conda's
+  # resolver entirely: conda-forge's cmake 3.31.x requires libzlib >= 1.3.1,
+  # but graphviz=4.0.0 and other pinned packages need zlib < 1.3.
   if ! python -m pip install "cmake==3.31.6";                      then return 1; fi
 
   # install pytorch using light-the-torch

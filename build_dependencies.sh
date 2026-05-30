@@ -211,6 +211,57 @@ build_itk()
   # prevents and therefore never tested).
   patch -p1 < ${SCRIPT_DIR}/Support/itk-5.4-legacy-computenormals.patch
 
+  # Download a newer castxml than ITK 5.4 pins (0.6.5). The bundled 0.6.5
+  # collides with glibc's _Float64/_Float32x/_Float64x typedefs whenever it
+  # simulates GCC >=13 (CastXML#251 / CastXML#272 fixed in 0.6.9 / 0.6.10).
+  # The CI Linux container is manylinux_2_28_x86_64 (AlmaLinux 8) with
+  # gcc-toolset-13, so castxml-0.6.5 fails to parse <bits/floatn-common.h>
+  # with "typedef redefinition with different types". We feed ITK a
+  # 2026.01.30 binary via CASTXML_EXECUTABLE and let it skip the download.
+  # ITK 6.0b02 already uses this castxml; we backport for the 5.4.4 deps.
+  CASTXML_VER="2026.01.30"
+  CASTXML_DIR="${BUILD_DIR}/castxml"
+  CASTXML_EXECUTABLE=""
+  if [[ $OSTYPE == msys* || $OSTYPE == cygwin* ]]; then
+    castxml_asset="castxml-windows-2022-amd64.zip"
+    castxml_exe_suffix=".exe"
+  elif [[ "$(uname)" == "Darwin" ]]; then
+    if [[ "$(uname -m)" == "arm64" ]]; then
+      castxml_asset="castxml-macos-15-arm64.tar.gz"
+    else
+      castxml_asset="castxml-macos-15-intel-x86_64.tar.gz"
+    fi
+    castxml_exe_suffix=""
+  else
+    if [[ "$(uname -m)" == "aarch64" ]]; then
+      castxml_asset="castxml-alma-linux-8-arm-aarch64.tar.gz"
+    else
+      castxml_asset="castxml-alma-linux-8-x86_64.tar.gz"
+    fi
+    castxml_exe_suffix=""
+  fi
+  if [[ ! -x "${CASTXML_DIR}/bin/castxml${castxml_exe_suffix}" ]]; then
+    mkdir -p "${CASTXML_DIR}"
+    pushd "${CASTXML_DIR}" >/dev/null
+    curl -fsSL -o "${castxml_asset}" \
+      "https://github.com/CastXML/CastXMLSuperbuild/releases/download/v${CASTXML_VER}/${castxml_asset}"
+    if [[ "${castxml_asset}" == *.zip ]]; then
+      unzip -q "${castxml_asset}"
+    else
+      tar xzf "${castxml_asset}"
+    fi
+    rm "${castxml_asset}"
+    # All assets extract to a top-level `castxml/` dir — flatten one level so
+    # the binary lands at ${CASTXML_DIR}/bin/castxml.
+    if [[ -d "${CASTXML_DIR}/castxml" ]]; then
+      mv "${CASTXML_DIR}/castxml"/* "${CASTXML_DIR}/"
+      rmdir "${CASTXML_DIR}/castxml"
+    fi
+    popd >/dev/null
+  fi
+  CASTXML_EXECUTABLE="${CASTXML_DIR}/bin/castxml${castxml_exe_suffix}"
+  echo "## using castxml at ${CASTXML_EXECUTABLE}"
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
@@ -253,7 +304,7 @@ build_itk()
   )
 
   if [[ $OSTYPE == msys* ]]; then
-      cmake -DCMAKE_CXX_FLAGS="" -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -DZLIB_SYMBOL_PREFIX="itkzlib_" "${ITK_WRAP_FLAGS[@]}" -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="" -DCMAKE_C_FLAGS="" -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DModule_ITKIOHDF5=OFF -DITK_USE_SYSTEM_HDF5=ON -DZLIB_SYMBOL_PREFIX="itkzlib_" -DCASTXML_EXECUTABLE="${CASTXML_EXECUTABLE}" "${ITK_WRAP_FLAGS[@]}" -Wno-dev ..
 
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
@@ -271,7 +322,7 @@ build_itk()
           CONDA_LINK_FLAGS=""
       fi
 
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVTK_DIR="${VTK_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_EXE_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCMAKE_SHARED_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCMAKE_MODULE_LINKER_FLAGS="${CONDA_LINK_FLAGS}" "${ITK_WRAP_FLAGS[@]}" -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVTK_DIR="${VTK_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_EXE_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCMAKE_SHARED_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCMAKE_MODULE_LINKER_FLAGS="${CONDA_LINK_FLAGS}" -DCASTXML_EXECUTABLE="${CASTXML_EXECUTABLE}" "${ITK_WRAP_FLAGS[@]}" -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
