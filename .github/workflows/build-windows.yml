@@ -28,7 +28,11 @@ jobs:
   build:
 
     runs-on: windows-2022
-    
+    # Default is 6h; cold deps rebuild (ITK SABI wrap on 4 vCPUs) is right at
+    # the edge of that. Once the deps tarball cache repopulates this drops
+    # back to ~30 min, but we need headroom for the cache-bust cycles.
+    timeout-minutes: 720
+
     steps:
 
     - name: Add to path
