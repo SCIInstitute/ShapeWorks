@@ -143,12 +143,30 @@ at_least_required_version()
   fi
 }
 
+# Retry a git clone up to 5 times to ride out transient GHA-runner DNS / TLS
+# hiccups (we've hit "Could not resolve host: github.com" on the mac and
+# mac-arm64 runners). Exits the script if every attempt fails so the build
+# stops at the clone instead of stumbling forward into a missing source tree.
+git_clone_retry()
+{
+  local attempt
+  for attempt in 1 2 3 4 5; do
+    if git clone "$@"; then
+      return 0
+    fi
+    echo "## git clone attempt ${attempt}/5 failed; retrying in 10s..."
+    sleep 10
+  done
+  echo "ERROR: git clone failed after 5 attempts: $*"
+  exit 1
+}
+
 build_vtk()
 {
   echo ""
   echo "## Building vtk..."
   cd ${BUILD_DIR}
-  git clone https://gitlab.kitware.com/vtk/vtk.git
+  git_clone_retry https://gitlab.kitware.com/vtk/vtk.git
   cd vtk
   git checkout -f tags/${VTK_VER}
   patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.5.patch
@@ -181,7 +199,7 @@ build_itk()
   echo ""
   echo "## Building itk..."
   cd ${BUILD_DIR}
-  git clone https://github.com/InsightSoftwareConsortium/ITK.git
+  git_clone_retry https://github.com/InsightSoftwareConsortium/ITK.git
   cd ITK
   git checkout -f tags/${ITK_VER}
 
@@ -377,7 +395,7 @@ build_xlnt()
   echo ""
   echo "## Building Xlnt..."
   cd ${BUILD_DIR}
-  git clone https://github.com/tfussell/xlnt.git
+  git_clone_retry https://github.com/tfussell/xlnt.git
   cd xlnt
   git checkout -f ${XLNT_VER}
   git submodule init
@@ -416,7 +434,7 @@ build_jkqtplotter()
   echo ""
   echo "## Building JKQTPlotter..."
   cd ${BUILD_DIR}
-  git clone --depth 1 --branch ${JKQTPLOTTER_VER} https://github.com/akenmorris/JKQtPlotter.git jkqtplotter
+  git_clone_retry --depth 1 --branch ${JKQTPLOTTER_VER} https://github.com/akenmorris/JKQtPlotter.git jkqtplotter
   cd jkqtplotter
   # fix compile on windows
   sed -i '1s/^/#include <stdexcept>\n/' lib/jkqtcommon/jkqtpdebuggingtools.h
@@ -443,7 +461,7 @@ build_openvdb()
   echo ""
   echo "## Building OpenVDB..."
   cd ${BUILD_DIR}
-  git clone https://github.com/AcademySoftwareFoundation/openvdb.git
+  git_clone_retry https://github.com/AcademySoftwareFoundation/openvdb.git
   cd openvdb
   git checkout ${OpenVDB_VER}
 
@@ -476,7 +494,7 @@ build_igl()
   echo " "
   echo "## Building Libigl..."
   cd ${INSTALL_DIR}
-  git clone https://github.com/libigl/libigl.git
+  git_clone_retry https://github.com/libigl/libigl.git
   cd libigl
   git checkout -f tags/${libigl_VER}
 
@@ -488,7 +506,7 @@ build_geometry_central()
   echo " "
   echo "## Building Geometry central..."
   cd ${BUILD_DIR}
-  git clone --recursive https://github.com/nmwsharp/geometry-central.git
+  git_clone_retry --recursive https://github.com/nmwsharp/geometry-central.git
   cd geometry-central
   git checkout -f ${geometry_central_VER}
   mkdir build
@@ -522,7 +540,7 @@ build_acvd()
   echo "## Building ACVD..."
   cd ${BUILD_DIR}
   #git clone https://github.com/valette/ACVD.git acvd
-  git clone https://github.com/akenmorris/ACVD.git acvd
+  git_clone_retry https://github.com/akenmorris/ACVD.git acvd
   cd acvd
   git checkout -f ${ACVD_VER}
 
