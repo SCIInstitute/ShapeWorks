@@ -223,7 +223,13 @@ build_itk()
   CASTXML_DIR="${BUILD_DIR}/castxml"
   CASTXML_EXECUTABLE=""
   if [[ $OSTYPE == msys* || $OSTYPE == cygwin* ]]; then
-    castxml_asset="castxml-windows-2022-amd64.zip"
+    # win11-amd64 is MSVC-built (depends on VCRUNTIME140.dll which the GHA
+    # windows-2022 runner already has via the bundled Visual C++ Redist).
+    # The windows-2022-amd64 asset is MinGW-built and the zip ships only
+    # castxml.exe without the libgcc_s_seh-1 / libstdc++-6 / libwinpthread-1
+    # DLLs it links against — every castxml invocation dies with Windows
+    # exit code 0xC0000139 (STATUS_ENTRYPOINT_NOT_FOUND) on the runner.
+    castxml_asset="castxml-windows-win11-amd64.zip"
     castxml_exe_suffix=".exe"
   elif [[ "$(uname)" == "Darwin" ]]; then
     if [[ "$(uname -m)" == "arm64" ]]; then
@@ -320,6 +326,11 @@ build_itk()
     # land alongside the dep install so cmake/provision_bundled_itk.py can
     # find it via ${ITK_DIR}/../../python3.12/site-packages.
     -DPY_SITE_PACKAGES_PATH=${INSTALL_DIR}/lib/python3.12/site-packages
+    # Disable LTO/IPO. The CI Linux container's gcc-toolset-13 lto1 ICEs
+    # ("internal compiler error: in get_token, at opts-common.cc:2123") while
+    # linking _ITKPyBasePython.abi3.so. We don't need IPO on a dep build, and
+    # disabling it sidesteps the toolset-13 LTO bug without changing toolchain.
+    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=OFF
   )
 
   if [[ $OSTYPE == msys* ]]; then
