@@ -1,0 +1,32 @@
+From: ShapeWorks build_dependencies.sh
+Subject: Respect CMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF in wrap modules
+
+Upstream itk_end_wrap_module.cmake unconditionally sets
+INTERPROCEDURAL_OPTIMIZATION_RELEASE=TRUE on every Python wrap target whenever
+the host compiler reports IPO support, which overrides the
+CMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF cache var the user passes in. That makes
+the wrap link go through LTO regardless of the user's intent. The CI manylinux
+container's gcc-toolset-13 lto1 ICEs ("internal compiler error: in get_token,
+at opts-common.cc:2123") trying to link _ITKPyBasePython.abi3.so, and there is
+no way to opt out without patching here. Gate the per-target enable on the
+cache var so -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF actually wins. (If the
+cache var is unset, behavior is unchanged from upstream — IPO still enabled.)
+---
+ Wrapping/macro_files/itk_end_wrap_module.cmake | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Wrapping/macro_files/itk_end_wrap_module.cmake b/Wrapping/macro_files/itk_end_wrap_module.cmake
+index abc123..def456 100644
+--- a/Wrapping/macro_files/itk_end_wrap_module.cmake
++++ b/Wrapping/macro_files/itk_end_wrap_module.cmake
+@@ -442,7 +442,9 @@
+       include(CheckIPOSupported)
+       check_ipo_supported(RESULT ipo_is_supported)
+       if(ipo_is_supported)
+-        set_property(TARGET ${lib} PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
++        if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION OR CMAKE_INTERPROCEDURAL_OPTIMIZATION)
++          set_property(TARGET ${lib} PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
++        endif()
+       endif()
+       unset(ipo_is_supported)
+     endif()

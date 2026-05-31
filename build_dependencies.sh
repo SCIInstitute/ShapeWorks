@@ -211,6 +211,11 @@ build_itk()
   # prevents and therefore never tested).
   patch -p1 < ${SCRIPT_DIR}/Support/itk-5.4-legacy-computenormals.patch
 
+  # Honor -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF in the Python wrap step.
+  # Upstream itk_end_wrap_module.cmake forces per-target IPO regardless of the
+  # cache var; gcc-toolset-13's lto1 ICEs trying to link the wrap modules.
+  patch -p1 < ${SCRIPT_DIR}/Support/itk-5.4-respect-ipo-off.patch
+
   # Download a newer castxml than ITK 5.4 pins (0.6.5). The bundled 0.6.5
   # collides with glibc's _Float64/_Float32x/_Float64x typedefs whenever it
   # simulates GCC >=13 (CastXML#251 / CastXML#272 fixed in 0.6.9 / 0.6.10).
