@@ -254,12 +254,19 @@ build_itk()
   if [[ ! -x "${CASTXML_DIR}/bin/castxml${castxml_exe_suffix}" ]]; then
     mkdir -p "${CASTXML_DIR}"
     pushd "${CASTXML_DIR}" >/dev/null
-    curl -fsSL -o "${castxml_asset}" \
-      "https://github.com/CastXML/CastXMLSuperbuild/releases/download/v${CASTXML_VER}/${castxml_asset}"
+    # --retry covers GitHub's transient 5xx CDN hiccups (HTTP 5xx is in
+    # curl's default retry set); || exit 1 stops the script instead of
+    # silently continuing without a castxml binary and surfacing the failure
+    # 200 log lines later in the ITK wrap step. (Avoid --retry-all-errors:
+    # that's curl 7.71+ and the manylinux_2_28 container ships an older curl.)
+    curl -fsSL --retry 5 --retry-delay 10 \
+      -o "${castxml_asset}" \
+      "https://github.com/CastXML/CastXMLSuperbuild/releases/download/v${CASTXML_VER}/${castxml_asset}" \
+      || { echo "ERROR: castxml download failed"; exit 1; }
     if [[ "${castxml_asset}" == *.zip ]]; then
-      unzip -q "${castxml_asset}"
+      unzip -q "${castxml_asset}" || exit 1
     else
-      tar xzf "${castxml_asset}"
+      tar xzf "${castxml_asset}" || exit 1
     fi
     rm "${castxml_asset}"
     # All assets extract to a top-level `castxml/` dir — flatten one level so
