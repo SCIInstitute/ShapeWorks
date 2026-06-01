@@ -5,7 +5,7 @@ on:
     branches:
       - master
       - release_v*
-      - amorris/python-deployment
+      - amorris/python-bundle
     tags:
     - '*'
   pull_request:
