@@ -132,13 +132,9 @@ All DeepSSM parameters (data split, augmentation count, network architecture, TL
 
 ## Using the DeepSSM Python Package
 
-The ShapeWorks DeepSSM package, `DeepSSMUtils`, is installed with the rest of the ShapeWorks Anaconda environment using `install_shapeworks`.
+The ShapeWorks DeepSSM package, `DeepSSMUtils`, ships inside ShapeWorks' bundled Python environment. Run your scripts with the `swpython` wrapper (installed alongside Studio) and the package is importable directly. PyTorch is installed on demand the first time you use DeepSSM — see [PyTorch GPU Support](pytorch-gpu.md) for details.
 
-!!! danger "Activate shapeworks environment"
-    Each time you use ShapeWorks and/or its Python packages, you must first activate its environment using the `conda activate shapeworks` command on the terminal.
-
-
-To use the `DeepSSMUtils` package, make sure you have the shapeworks conda environment is activated and add the following import to your Python code:
+To use the `DeepSSMUtils` package, run your script with `swpython` and add the following import to your Python code:
 
 ```python 
 import DeepSSMUtils

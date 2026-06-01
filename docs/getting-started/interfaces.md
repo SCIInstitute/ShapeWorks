@@ -14,8 +14,8 @@ We are consolidating these tools into a [single, reusable API](../new/shapeworks
 The `shapeworks` executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see [shapeworks commands documentation](../tools/ShapeWorksCommands.md) for the list of available commands.
 
 
-!!! danger "Activate shapeworks environment"
-    Each time you use [ShapeWorks from the command line](../tools/ShapeWorksCommands.md), you must first activate its environment using the `conda activate shapeworks` command on the terminal.
+!!! note "Running the shapeworks CLI"
+    ShapeWorks 6.8 ships with its Python environment built in — no conda step required. On Windows, open the **ShapeWorks Prompt** from the Start Menu. On macOS and Linux, either add the ShapeWorks `bin/` directory to `PATH` or invoke the tools by their full paths (e.g. `/Applications/ShapeWorks/bin/shapeworks`).
     
 ## ShapeWorks in Python
 
