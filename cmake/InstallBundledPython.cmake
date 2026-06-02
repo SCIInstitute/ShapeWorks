@@ -162,7 +162,11 @@ file(WRITE "${_swpython_dir}/swpython.bat"
 set "LOC=%~dp0"
 set "PYTHONHOME=%LOC%..\lib\python"
 set "PATH=%LOC%;%PATH%"
-set "PYTHONPATH="
+rem Put the per-user ShapeWorks site-packages on PYTHONPATH so on-demand-
+rem installed PyTorch and swpip-installed packages are importable from any
+rem `swpython script.py`, not only after `from shapeworks import ensure_torch`.
+rem Version segment "6.8" must match python_api_version in PythonWorker.h.
+set "PYTHONPATH=%LOCALAPPDATA%\ShapeWorks\6.8\site-packages"
 if not defined MPLBACKEND set "MPLBACKEND=Agg"
 "%PYTHONHOME%\python.exe" %*
 ]=])
@@ -495,8 +499,12 @@ PATH="${LOC}:${PATH}"
 # (e.g. headless / non-GUI-login session). Users can override by setting
 # MPLBACKEND themselves before invoking swpython.
 MPLBACKEND="${MPLBACKEND:-Agg}"
-unset PYTHONPATH
-export PYTHONHOME PATH MPLBACKEND
+# Put the per-user ShapeWorks site-packages on PYTHONPATH so on-demand-installed
+# PyTorch and swpip-installed packages are importable from any `swpython
+# script.py`, not only after `from shapeworks import ensure_torch`. Version
+# segment "6.8" must match python_api_version in PythonWorker.h.
+PYTHONPATH="${HOME}/Library/Application Support/ShapeWorks/6.8/site-packages"
+export PYTHONHOME PATH MPLBACKEND PYTHONPATH
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
@@ -529,8 +537,12 @@ PYTHONHOME="${LOC}/../lib/python"
 LD_LIBRARY_PATH="${LOC}/../lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 PATH="${LOC}:${PATH}"
 MPLBACKEND="${MPLBACKEND:-Agg}"
-unset PYTHONPATH
-export PYTHONHOME LD_LIBRARY_PATH PATH MPLBACKEND
+# Put the per-user ShapeWorks site-packages on PYTHONPATH so on-demand-installed
+# PyTorch and swpip-installed packages are importable from any `swpython
+# script.py`, not only after `from shapeworks import ensure_torch`. Version
+# segment "6.8" must match python_api_version in PythonWorker.h.
+PYTHONPATH="${HOME}/.local/share/ShapeWorks/6.8/site-packages"
+export PYTHONHOME LD_LIBRARY_PATH PATH MPLBACKEND PYTHONPATH
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
