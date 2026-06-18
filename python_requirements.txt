@@ -50,7 +50,7 @@ beautifulsoup4==4.13.5
     # via
     #   -r requirements.in
     #   nbconvert
-bleach[css]==6.2.0
+bleach[css]==6.4.0
     # via
     #   -r requirements.in
     #   nbconvert
