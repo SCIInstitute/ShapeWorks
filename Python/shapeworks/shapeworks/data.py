@@ -41,53 +41,53 @@ def download_subset(use_case,datasetName,outputDirectory):
     outputDirectory = outputDirectory + datasetName+"/"
     if(use_case in ["ellipsoid","ellipsoid_cut","left_atrium"]):
         if(generate_download_flag(outputDirectory,"segmentations")):
-            segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
+            segFilesList = sorted([files for files in fileList if re.search(r"^segmentations(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
     elif(use_case in ["femur_cut","lumps","thin_cavity_bean","incremental_supershapes"]):
         if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
+            meshFilesList = sorted([files for files in fileList if re.search(r"^meshes(?:/|\\\).*ply$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
     elif(use_case in ["ellipsoid_mesh"]):
         if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*vtk$",files)])[:3]
+            meshFilesList = sorted([files for files in fileList if re.search(r"^meshes(?:/|\\\).*vtk$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
     if(use_case in ["femur_cut","left_atrium"]):
         if(generate_download_flag(outputDirectory,"images")):
-            imageFilelist = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:3]
+            imageFilelist = sorted([files for files in fileList if re.search(r"^images(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilelist)
     elif(use_case=="deep_ssm"):
         if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:5]
+            meshFilesList = sorted([files for files in fileList if re.search(r"^meshes(?:/|\\\).*ply$",files)])[:5]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
         if(generate_download_flag(outputDirectory,"images/")):
-            imageFilesList = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:5]
+            imageFilesList = sorted([files for files in fileList if re.search(r"^images(?:/|\\\).*nrrd$",files)])[:5]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilesList)
         if(generate_download_flag(outputDirectory,"constraints")):
-            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:5]
+            planeFilesList = sorted([files for files in fileList if re.search(r"^constraints(?:/|\\\).*json$",files)])[:5]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
     elif(use_case=="ellipsoid_multiple_domain"):
         if(generate_download_flag(outputDirectory,"segmentations")):
-            segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:6]
+            segFilesList = sorted([files for files in fileList if re.search(r"^segmentations(?:/|\\\).*nrrd$",files)])[:6]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
     elif(use_case in ["ellipsoid_multiple_domain_mesh","hip_multiple_domain"]):
         if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*vtk$",files)])[:6]
+            meshFilesList = sorted([files for files in fileList if re.search(r"^meshes(?:/|\\\).*vtk$",files)])[:6]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
     elif(use_case=="supershapes_1mode_contour"):
         if(generate_download_flag(outputDirectory,"contours")):
-            contourFilesList = sorted([files for files in fileList if re.search("^contours(?:/|\\\).*vtp$",files)])[:3]
+            contourFilesList = sorted([files for files in fileList if re.search(r"^contours(?:/|\\\).*vtp$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = contourFilesList)
     if(use_case in ["femur_cut","ellipsoid_cut"]):
         if(generate_download_flag(outputDirectory,"constraints")):
-            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:3]
+            planeFilesList = sorted([files for files in fileList if re.search(r"^constraints(?:/|\\\).*json$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
     if(use_case=="peanut_shared_boundary"):
         if(generate_download_flag(outputDirectory,"meshes")):
-            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*stl$",files)])[:2]
+            meshFilesList = sorted([files for files in fileList if re.search(r"^meshes(?:/|\\\).*stl$",files)])[:2]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
     if(use_case in ["hip_multiple_domain"]):
         if(generate_download_flag(outputDirectory,"constraints")):
-            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:6]
+            planeFilesList = sorted([files for files in fileList if re.search(r"^constraints(?:/|\\\).*json$",files)])[:6]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
 
 

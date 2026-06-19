@@ -326,12 +326,13 @@ if(WIN32)
                                 $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.exe
   )
 
-  # install msvcp140.dll and vcruntime140.dll
-  file(TO_CMAKE_PATH "$ENV{windir}/SysWOW64" WIN_SYSDIR)
-  if (NOT EXISTS "${WIN_SYSDIR}")
-    file(TO_CMAKE_PATH "$ENV{windir}/system32" WIN_SYSDIR)
-  endif()
-  install(FILES "${WIN_SYSDIR}/msvcp140.dll" "${WIN_SYSDIR}/vcomp140.dll" "${WIN_SYSDIR}/vcruntime140.dll" "${WIN_SYSDIR}/vcruntime140_1.dll" DESTINATION bin)
+  # install MSVC runtime DLLs (use system32 for 64-bit DLLs)
+  file(TO_CMAKE_PATH "$ENV{windir}/system32" WIN_SYSDIR)
+  foreach(_rtdll msvcp140.dll vcomp140.dll vcruntime140.dll vcruntime140_1.dll)
+    if(EXISTS "${WIN_SYSDIR}/${_rtdll}")
+      install(FILES "${WIN_SYSDIR}/${_rtdll}" DESTINATION bin)
+    endif()
+  endforeach()
     
 endif(WIN32)
 
@@ -355,8 +356,20 @@ IF(APPLE)
     PROPERTY INSTALL_RPATH
     "@executable_path/../../../../lib"
     "@executable_path/../Frameworks"
+    "@executable_path/../Resources/Python/lib"
     )
 ENDIF(APPLE)
+
+# Linux: Add RPATH for bundled Python library
+if(UNIX AND NOT APPLE)
+  if(USE_BUNDLED_PYTHON)
+    set_property(
+      TARGET ShapeWorksStudio
+      APPEND PROPERTY INSTALL_RPATH
+      "$ORIGIN/../lib/python/lib"
+    )
+  endif()
+endif()
 
 TARGET_LINK_LIBRARIES(ShapeWorksStudio
   PUBLIC 
@@ -420,4 +433,39 @@ if (APPLE)
   install(CODE [===[
     execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app" "-no-strip" "-verbose=3")
     ]===] COMPONENT Runtime)
+
+  # Copy non-Qt @rpath dependencies that macdeployqt doesn't handle
+  # (xlnt, JKQTPlotter, OpenVDB, etc.)
+  set(_dep_lib_dir "${CMAKE_PREFIX_PATH}/lib")
+  set(_app_frameworks "\${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app/Contents/Frameworks")
+  install(CODE "set(_dep_lib_dir \"${_dep_lib_dir}\")" COMPONENT Runtime)
+  install(CODE [===[
+    set(_app_frameworks "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app/Contents/Frameworks")
+    set(_app_binary "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio")
+
+    # Find all @rpath libraries the binary needs
+    execute_process(COMMAND otool -L "${_app_binary}" OUTPUT_VARIABLE _otool_out)
+    string(REGEX MATCHALL "@rpath/[^\t\n ]+" _rpath_libs "${_otool_out}")
+
+    foreach(_rpath_ref ${_rpath_libs})
+      string(REPLACE "@rpath/" "" _libname "${_rpath_ref}")
+      set(_fw_path "${_app_frameworks}/${_libname}")
+      if(NOT EXISTS "${_fw_path}" OR IS_SYMLINK "${_fw_path}")
+        set(_src "${_dep_lib_dir}/${_libname}")
+        if(EXISTS "${_src}")
+          # Resolve symlinks to copy the actual file
+          file(REAL_PATH "${_src}" _real_src)
+          message(STATUS "Bundling missing dependency: ${_libname}")
+          file(COPY "${_real_src}" DESTINATION "${_app_frameworks}")
+          get_filename_component(_real_name "${_real_src}" NAME)
+          if(NOT "${_real_name}" STREQUAL "${_libname}")
+            file(RENAME "${_app_frameworks}/${_real_name}" "${_fw_path}")
+          endif()
+        endif()
+      endif()
+    endforeach()
+    ]===] COMPONENT Runtime)
 endif()
+
+# Install bundled Python (macOS: into .app after macdeployqt, Windows: into lib/python/)
+include(InstallBundledPython)

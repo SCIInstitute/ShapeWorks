@@ -90,7 +90,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DITK_DIR=$HOME/install/lib/cmake/ITK-5.4 -DVTK_DIR=$HOME/install/lib/cmake/vtk-9.5 -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRYCENTRAL_DIR=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DUSE_ORIGIN_RPATH=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DITK_DIR=$HOME/install/lib/cmake/ITK-5.4 -DVTK_DIR=$HOME/install/lib/cmake/vtk-9.5 -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRYCENTRAL_DIR=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DUSE_ORIGIN_RPATH=ON -DUSE_BUNDLED_PYTHON=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
 
     - name: Check space5
       run: df -h
@@ -98,6 +98,10 @@ jobs:
     - name: make
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make -j4
+
+    - name: Install bundled Python packages
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && make bundled_pip_install
 
     - name: Check space6
       run: df -h
@@ -114,6 +118,10 @@ jobs:
       env:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+
+    - name: Smoke test packaged bundle
+      shell: bash
+      run: ./Support/smoke_test_bundle.sh "$(find package -mindepth 1 -maxdepth 1 -type d | head -1)"
 
     - name: Download test data
       shell: bash -l {0}

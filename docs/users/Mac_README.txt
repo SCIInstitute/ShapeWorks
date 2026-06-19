@@ -17,65 +17,74 @@ models, and visualizing the results.
 
 Welcome to ShapeWorks!
 
+ShapeWorks 6.8 ships with a complete Python environment built in. There is no
+conda environment to set up.
+
 
 1. Install the ShapeWorks .pkg file by double-clicking on the file.
+   It installs into /Applications/ShapeWorks/.
 
-2. Open a terminal and change directory to the installation path.
-`cd /Applications/ShapeWorks`
+2. (Optional, for convenience) Put the ShapeWorks command-line tools on your PATH.
+   Add this to your ~/.zshrc or ~/.bash_profile:
 
-3. Create a protected conda environment that installs everything necessary to run.
-`source install_shapeworks.sh`
-  **Note:** You can pass a different name for the environment, enabling multiple installations.
-  `source install_shapeworks.sh shapeworks_61`
+     export PATH="/Applications/ShapeWorks/bin:$PATH"
+
+   Without this step you can still run the tools using their full paths, e.g.
+   /Applications/ShapeWorks/bin/swpython RunUseCase.py ...
 
 
 ### ShapeWorks comes with examples to get you started.
 
 #### Studio
 
-1. Copy the /Applications/ShapeWorks/Examples folder to another location of your choosing. (You can also use Finder.)
+1. Open /Applications/ShapeWorks/ShapeWorksStudio.app (double-click in Finder,
+   or `open /Applications/ShapeWorks/ShapeWorksStudio.app` from a terminal).
 
-2. Open ShapeWorks Studio
+2. Select "Open Existing Project".
 
-3. Select "Open Exising Project"
+3. Select Examples/Studio/Ellipsoid/ellipsoid.xlsx.
 
-4. Select Examples/Studio/Ellipsoid/ellipsoid.xlsx
-
-5. Experiment with the Studio interface.
+4. Experiment with the Studio interface.
 
 
 #### Python
 
-1. Open a terminal and activate the shapeworks conda environment (use the environment name passed to **install_shapeworks** above).
-`conda activate shapeworks`
+1. Copy the Examples folder to a writable location.
 
-2. Copy the Examples folder to another location of your choosing.
-`cp -r Examples $HOME/ShapeWorks-Examples`
+     cp -r /Applications/ShapeWorks/Examples $HOME/ShapeWorks-Examples
 
-3. Change to the Python folder of the Examples directory you copied.
-`cd $HOME/ShapeWorks-Examples/Python`
+2. Change to the Python folder of the Examples directory you copied.
 
-4. Run one of the included use cases. To list them all, run: `python RunUseCase.py --help`.
-`python RunUseCase.py <insert name of use case here>`
+     cd $HOME/ShapeWorks-Examples/Python
 
+3. Run one of the included use cases. To list them all, run:
+   `swpython RunUseCase.py --help`.
+
+     swpython RunUseCase.py <insert name of use case here>
+
+The first time you run a DeepSSM use case, ShapeWorks downloads and installs
+PyTorch into ~/Library/Application Support/ShapeWorks/<version>/site-packages/
+(~3 GB, one-time). Subsequent runs use the cached install.
 
 
 #### ShapeWorks also includes interactive Jupyter Python notebook examples.
 
-1. Open a terminal and activate the shapeworks conda environment (use the environment name passed to **install_shapeworks** above).
-`conda activate shapeworks`
+1. Install Jupyter the first time you use it:
+
+     swpip install jupyter
+
+   This installs to your per-user ShapeWorks site-packages and persists across
+   sessions.
 
 2. Change to the notebook tutorials folder of the Examples directory you copied.
-`cd $HOME/ShapeWorks-Examples/Python/notebooks/tutorials`
 
-3. Start the Jupyter notebook server. This will open a new tab in your web brower.
-`jupyter notebook`
+     cd $HOME/ShapeWorks-Examples/Python/notebooks/tutorials
+
+3. Start the Jupyter notebook server. This will open a new tab in your web browser.
+
+     swpython -m jupyter notebook
 
 4. Click on a notebook to get started.
-
-!!! note "Important"
-    Your shapeworks conda environment must always be activated before using ShapeWorks.
-
 
 
 =====================

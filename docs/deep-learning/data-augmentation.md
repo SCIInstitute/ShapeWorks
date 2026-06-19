@@ -4,14 +4,9 @@ ShapeWorks includes a Python package, `DataAugmentationUtils`, that supports mod
 
 ## Using the Data Augmentation Package
 
-The ShapeWorks data augmentation package, `DataAugmentationUtils`, is installed with the rest of the ShapeWorks Anaconda environment using `install_shapeworks`.
+The ShapeWorks data augmentation package, `DataAugmentationUtils`, ships inside ShapeWorks' bundled Python environment. Run your scripts with the `swpython` wrapper (installed alongside Studio) and the package is importable directly.
 
-
-!!! danger "Activate shapeworks environment"
-    Each time you use ShapeWorks and/or its Python packages, you must first activate its environment using the `conda activate shapeworks` command on the terminal.
-
-
-To use the `DataAugmentationUtils ` package, make sure you have the shapeworks conda environment is activated and add the following import to your Python code.
+To use the `DataAugmentationUtils` package, run your script with `swpython` and add the following import to your Python code.
 
 ```python
 import DataAugmentationUtils

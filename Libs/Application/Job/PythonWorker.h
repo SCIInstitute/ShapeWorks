@@ -1,5 +1,9 @@
 #pragma once
 
+#include <functional>
+#include <string>
+#include <vector>
+
 // qt
 #include <QObject>
 #include <QSharedPointer>
@@ -36,6 +40,19 @@ class PythonWorker : public QObject {
 
   void abort_job();
 
+  //! Check if PyTorch is available in the bundled Python.
+  //! Returns true if torch can be imported successfully.
+  static bool is_torch_available();
+
+  //! Install PyTorch via light-the-torch into the user site-packages directory.
+  //! The output_callback receives lines of output from the install process.
+  //! Returns true on success.
+  static bool install_torch(std::function<void(std::string)> output_callback = nullptr);
+
+  //! Get the versioned user site-packages directory for on-demand package installs.
+  //! e.g. ~/Library/Application Support/ShapeWorks/6.7/site-packages/
+  static std::string get_user_site_packages();
+
  public Q_SLOTS:
 
   bool init();
@@ -50,8 +67,12 @@ class PythonWorker : public QObject {
   void finished();
 
  private:
+  static std::string find_bundled_python_home();
+  static std::vector<std::string> compute_bundled_python_path(const std::string& python_home);
+
   bool initialized_ = false;
   bool initialized_success_ = false;
+  bool interpreter_started_ = false;
 
   vtkSmartPointer<ShapeWorksVtkOutputWindow> studio_vtk_output_window_;
 
