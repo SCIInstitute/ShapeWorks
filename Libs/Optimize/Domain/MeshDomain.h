@@ -84,6 +84,11 @@ class MeshDomain : public ParticleDomain {
 
   std::shared_ptr<Surface> get_surface() const { return surface_; }
 
+  bool is_geodesics_enabled() const {
+    // ask the geodesics surface, since it (not surface_) is the one used for geodesic queries
+    return geodesics_mesh_ && geodesics_mesh_->is_geodesics_enabled();
+  }
+
  private:
   std::shared_ptr<Surface> surface_;
   std::shared_ptr<Surface> geodesics_mesh_;

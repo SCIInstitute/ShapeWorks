@@ -114,6 +114,12 @@ class Surface {
     // Caches of triangle, normal and position
     // Has to be mutable because all of the accessor APIs are const
     mutable std::vector<int> particle_triangles_;
+    // Per-particle position used to look up particle_triangles_[idx] and the corresponding
+    // closest point on that face. Used so a query whose pt is not exactly on this mesh
+    // (e.g. particles snapped to a different surface) still gets a cache hit when the same
+    // pt is queried again, instead of re-running cell_locator_->FindClosestPoint.
+    mutable std::vector<PointType> particle_face_query_pts_;
+    mutable std::vector<PointType> particle_face_closest_pts_;
     mutable std::vector<NormalType> particle_normals_;
     mutable std::vector<PointType> particle_positions_;
     mutable std::vector<double> particle_neighboorhood_;
