@@ -3803,14 +3803,17 @@
 <h2 id="source-code">Source code</h2>
 <p>```cpp</p>
 <h1 id="pragma-once">pragma once</h1>
+<h1 id="include">include <functional></h1>
+<h1 id="include_1">include <string></h1>
+<h1 id="include_2">include <vector></h1>
 <p>// qt</p>
-<h1 id="include">include <QObject></h1>
-<h1 id="include_1">include <QSharedPointer></h1>
+<h1 id="include_3">include <QObject></h1>
+<h1 id="include_4">include <QSharedPointer></h1>
 <p>// vtk</p>
-<h1 id="include_2">include <vtkSmartPointer.h></h1>
+<h1 id="include_5">include <vtkSmartPointer.h></h1>
 <p>// studio</p>
-<h1 id="include_3">include <Job/Job.h></h1>
-<h1 id="include_4">include <Libs/Application/ShapeWorksVtkOutputWindow.h></h1>
+<h1 id="include_6">include <Job/Job.h></h1>
+<h1 id="include_7">include <Libs/Application/ShapeWorksVtkOutputWindow.h></h1>
 <p>namespace shapeworks {
 class PythonLogger;</p>
 <p>class PythonWorker : public QObject {
@@ -3827,6 +3830,9 @@ class PythonLogger;</p>
   void incoming_python_progress(double value, std::string message);</p>
 <p>void end_python();</p>
 <p>void abort_job();</p>
+<p>static bool is_torch_available();</p>
+<p>static bool install_torch(std::function<void(std::string)> output_callback = nullptr);</p>
+<p>static std::string get_user_site_packages();</p>
 <p>public Q_SLOTS:</p>
 <p>bool init();</p>
 <p>void start_job(QSharedPointer<Job> job);</p>
@@ -3835,8 +3841,11 @@ class PythonLogger;</p>
 <p>void result_ready();
   void finished();</p>
 <p>private:
-  bool initialized_ = false;
-  bool initialized_success_ = false;</p>
+  static std::string find_bundled_python_home();
+  static std::vector<std::string> compute_bundled_python_path(const std::string&amp; python_home);</p>
+<p>bool initialized_ = false;
+  bool initialized_success_ = false;
+  bool interpreter_started_ = false;</p>
 <p>vtkSmartPointer<ShapeWorksVtkOutputWindow> studio_vtk_output_window_;</p>
 <p>QSharedPointer<PythonLogger> python_logger_;</p>
 <p>QSharedPointer<Job> current_job_;</p>
@@ -3845,7 +3854,7 @@ class PythonLogger;</p>
 }  // namespace shapeworks
 ```</p>
 <hr />
-<p>Updated on 2026-06-14 at 01:23:52 +0000</p>
+<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
 
 
 

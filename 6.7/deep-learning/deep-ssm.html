@@ -4355,12 +4355,8 @@ shapeworks deepssm my_project.swproj --prep groom_training</code></p>
 <h3 id="configuring-deepssm-parameters">Configuring DeepSSM Parameters</h3>
 <p>All DeepSSM parameters (data split, augmentation count, network architecture, TL-DeepSSM settings, fine-tuning, etc.) are stored in the project file. These can be configured in Studio before running via the CLI, or set programmatically using the ShapeWorks Python API. See the <a href="#config-file-parameter-descriptions">training configuration parameters</a> section below for details on available settings.</p>
 <h2 id="using-the-deepssm-python-package">Using the DeepSSM Python Package</h2>
-<p>The ShapeWorks DeepSSM package, <code>DeepSSMUtils</code>, is installed with the rest of the ShapeWorks Anaconda environment using <code>install_shapeworks</code>.</p>
-<div class="admonition danger">
-<p class="admonition-title">Activate shapeworks environment</p>
-<p>Each time you use ShapeWorks and/or its Python packages, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
-</div>
-<p>To use the <code>DeepSSMUtils</code> package, make sure you have the shapeworks conda environment is activated and add the following import to your Python code:</p>
+<p>The ShapeWorks DeepSSM package, <code>DeepSSMUtils</code>, ships inside ShapeWorks' bundled Python environment. Run your scripts with the <code>swpython</code> wrapper (installed alongside Studio) and the package is importable directly. PyTorch is installed on demand the first time you use DeepSSM — see <a href="pytorch-gpu.html">PyTorch GPU Support</a> for details.</p>
+<p>To use the <code>DeepSSMUtils</code> package, run your script with <code>swpython</code> and add the following import to your Python code:</p>
 <p><code>python 
 import DeepSSMUtils</code></p>
 <h3 id="get-train-and-validation-torch-loaders">Get train and validation torch loaders</h3>

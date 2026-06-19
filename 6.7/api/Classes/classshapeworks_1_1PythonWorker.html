@@ -3936,6 +3936,33 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-is_torch_available" class="md-nav__link">
+    <span class="md-ellipsis">
+      function is_torch_available
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-install_torch" class="md-nav__link">
+    <span class="md-ellipsis">
+      function install_torch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_user_site_packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_user_site_packages
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4077,6 +4104,18 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1PythonWorker.html#function-abort-job">abort_job</a></strong>()</td>
 </tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1PythonWorker.html#function-is-torch-available">is_torch_available</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1PythonWorker.html#function-install-torch">install_torch</a></strong>(std::function&lt; void(std::string)&gt; output_callback =nullptr)</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1PythonWorker.html#function-get-user-site-packages">get_user_site_packages</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-attributes">Public Attributes</h2>
@@ -4157,12 +4196,26 @@ void end_python()</code></p>
 <h3 id="function-abort_job">function abort_job</h3>
 <p><code>cpp
 void abort_job()</code></p>
+<h3 id="function-is_torch_available">function is_torch_available</h3>
+<p><code>cpp
+static bool is_torch_available()</code></p>
+<p>Check if PyTorch is available in the bundled Python. Returns true if torch can be imported successfully. </p>
+<h3 id="function-install_torch">function install_torch</h3>
+<p><code>cpp
+static bool install_torch(
+    std::function&lt; void(std::string)&gt; output_callback =nullptr
+)</code></p>
+<p>Install PyTorch via light-the-torch into the user site-packages directory. The output_callback receives lines of output from the install process. Returns true on success. </p>
+<h3 id="function-get_user_site_packages">function get_user_site_packages</h3>
+<p><code>cpp
+static std::string get_user_site_packages()</code></p>
+<p>Get the versioned user site-packages directory for on-demand package installs. e.g. ~/Library/Application Support/ShapeWorks/6.7/site-packages/ </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-python_api_version">variable python_api_version</h3>
 <p><code>cpp
 static constexpr static const char * python_api_version = "6.8";</code></p>
 <hr />
-<p>Updated on 2026-06-14 at 01:23:51 +0000</p>
+<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
 
 
 

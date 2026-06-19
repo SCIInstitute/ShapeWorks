@@ -3870,9 +3870,9 @@
 <p>ShapeWorks consists of a set of independent command line tools for preprocessing binary segmentations and surface meshes (<a href="../workflow/groom.html">Groom</a>) and computing landmark-based shape models (<a href="../workflow/optimize.html">Optimize</a>). It also includes an interactive user interface called <a href="#shapeworksstudio">ShapeWorks Studio</a> to analyze and visualize the optimized shape models (<a href="../workflow/analyze.html">Analyze</a>). </p>
 <p>We are consolidating these tools into a <a href="../new/shapeworks-command.html">single, reusable API</a> that is shared across different computational libraries in ShapeWorks, and a standalone <code>shapeworks</code> command. Visit <a href="../new/shapeworks-command.html">ShapeWorks Command</a> for an illustrative example.</p>
 <p>The <code>shapeworks</code> executable is highly flexible, modular, and loosely coupled, with standardized subcommands and interactive help to perform individual operations needed for a typical shape modeling workflow that includes the Groom, Optimize, and Analyze phases. Please see <a href="../tools/ShapeWorksCommands.html">shapeworks commands documentation</a> for the list of available commands.</p>
-<div class="admonition danger">
-<p class="admonition-title">Activate shapeworks environment</p>
-<p>Each time you use <a href="../tools/ShapeWorksCommands.html">ShapeWorks from the command line</a>, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
+<div class="admonition note">
+<p class="admonition-title">Running the shapeworks CLI</p>
+<p>ShapeWorks 6.8 ships with its Python environment built in — no conda step required. On Windows, open the <strong>ShapeWorks Prompt</strong> from the Start Menu. On macOS and Linux, either add the ShapeWorks <code>bin/</code> directory to <code>PATH</code> or invoke the tools by their full paths (e.g. <code>/Applications/ShapeWorks/bin/shapeworks</code>).</p>
 </div>
 <h2 id="shapeworks-in-python">ShapeWorks in Python</h2>
 <p>We are developing Python bindings to enable users to script their customized shape modeling workflows. See <a href="../new/shapeworks-python.html">ShapeWorks in Python</a> for more details and pointers to step-by-step, hands-on tutorials on different aspects of the shape modeling workflow in a transparent, reproducible, and sharable manner.</p>

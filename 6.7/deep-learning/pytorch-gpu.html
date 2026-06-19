@@ -2036,18 +2036,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#checking-if-pytorch-installation-has-gpu-support" class="md-nav__link">
+  <a href="#how-the-on-demand-install-works" class="md-nav__link">
     <span class="md-ellipsis">
-      Checking if PyTorch installation has GPU support
+      How the on-demand install works
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#reinstalling-the-correct-pytorch-version" class="md-nav__link">
+  <a href="#checking-if-pytorch-has-gpu-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Reinstalling the Correct PyTorch Version
+      Checking if PyTorch has GPU support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reinstalling-a-different-pytorch-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reinstalling a different PyTorch version
     </span>
   </a>
   
@@ -3792,18 +3801,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#checking-if-pytorch-installation-has-gpu-support" class="md-nav__link">
+  <a href="#how-the-on-demand-install-works" class="md-nav__link">
     <span class="md-ellipsis">
-      Checking if PyTorch installation has GPU support
+      How the on-demand install works
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#reinstalling-the-correct-pytorch-version" class="md-nav__link">
+  <a href="#checking-if-pytorch-has-gpu-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Reinstalling the Correct PyTorch Version
+      Checking if PyTorch has GPU support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reinstalling-a-different-pytorch-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reinstalling a different PyTorch version
     </span>
   </a>
   
@@ -3829,45 +3847,44 @@
 
 
 <h1 id="pytorch-gpu-support-for-shapeworks">PyTorch GPU Support for ShapeWorks</h1>
-<p>ShapeWorks deep learning tools, such as the <code>DeepSSMUtils</code> package, requires PyTorch with GPU support. 
-This is installed with the rest of the ShapeWorks Anaconda environment using <code>install_shapeworks</code>. 
-It selects the most recent stable release of PyTorch which can be found at <a href="https://pytorch.org/">pytorch.org</a>.  </p>
-<p>When the Anaconda enironment is created using <code>install_shapeworks</code>, PyTorch with GPU support is installed if the system's current CUDA driver version is supported. Otherwise it selects the CPU version of PyTorch.</p>
-<h2 id="checking-if-pytorch-installation-has-gpu-support">Checking if PyTorch installation has GPU support</h2>
-<p>To check if your <code>shapeworks</code> environment has PyTorch with GPU support, run the following:
-```
-conda activate shapeworks
-python</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>import torch
-print(torch.cuda.is_available())
-exit()
-<code>``
-If</code>torch.cuda.is_available()<code>is True then PyTorch has GPU support, otherwise the CPU version was installed. 
-If</code>torch<code>cannot be imported than PyTorch was not installed to the</code>shapeworks` environment. </p>
-</blockquote>
-</blockquote>
-</blockquote>
-<h2 id="reinstalling-the-correct-pytorch-version">Reinstalling the Correct PyTorch Version</h2>
-<p>If you find that your system requires an older version of PyTorch or <code>install_shapeworks</code> did not correcty find your CUDA version, 
-the following steps explain how to install a different PyTorch version in the <code>shapeworks</code> conda environment.</p>
-<p>Detailed instructions about the different ways to install PyTorch can be found here: <a href="https://pytorch.org/get-started/locally/">PyTorch Getting Started</a> </p>
-<p>CUDA compatibility can be checked here: <a href="https://docs.nvidia.com/deploy/cuda-compatibility/">CUDA-Compatibility</a></p>
+<p>ShapeWorks deep learning tools (the <code>DeepSSMUtils</code> package and <code>shapeworks
+deepssm</code> CLI) require PyTorch. ShapeWorks installs PyTorch on demand the first
+time you use a DeepSSM feature.</p>
+<h2 id="how-the-on-demand-install-works">How the on-demand install works</h2>
+<p>The first time a DeepSSM operation runs — whether through ShapeWorks Studio,
+the <code>shapeworks deepssm</code> CLI, or <code>swpython RunUseCase.py deep_ssm</code> — ShapeWorks
+uses <a href="https://github.com/pmeier/light-the-torch"><code>light-the-torch</code></a> to detect
+your CUDA driver and download the matching PyTorch wheel. If CUDA is supported,
+the GPU build is installed; otherwise the CPU build is used.</p>
+<p>PyTorch is installed into a per-user directory that persists across ShapeWorks
+sessions (and survives reinstalls of the bundle):</p>
+<ul>
+<li><strong>macOS:</strong> <code>~/Library/Application Support/ShapeWorks/&lt;version&gt;/site-packages/</code></li>
+<li><strong>Linux:</strong> <code>~/.local/share/ShapeWorks/&lt;version&gt;/site-packages/</code></li>
+<li><strong>Windows:</strong> <code>%LOCALAPPDATA%\ShapeWorks\&lt;version&gt;\site-packages\</code></li>
+</ul>
+<p>The first install downloads ~3 GB; subsequent runs reuse the cached copy.</p>
+<h2 id="checking-if-pytorch-has-gpu-support">Checking if PyTorch has GPU support</h2>
+<p>Run from the <strong>ShapeWorks Prompt</strong> (Windows) or a terminal with the ShapeWorks
+<code>bin/</code> on <code>PATH</code> (macOS / Linux):</p>
+<p><code>swpython -c "import torch; print(torch.cuda.is_available())"</code></p>
+<p>If this prints <code>True</code>, PyTorch has GPU support. If it prints <code>False</code>, the CPU
+build was installed (no compatible CUDA driver was detected). If <code>torch</code> cannot
+be imported, no DeepSSM operation has run yet and PyTorch has not been
+installed — kick one off and try again, or trigger the install manually:</p>
+<p><code>swpython -c "from shapeworks import ensure_torch; ensure_torch()"</code></p>
+<h2 id="reinstalling-a-different-pytorch-version">Reinstalling a different PyTorch version</h2>
+<p>If you need a different PyTorch version than <code>light-the-torch</code> selected:</p>
 <ol>
-<li>If the CPU version of PyTorch was installed, that first needs to be uninstalled. To uninstall run:
-<code>conda activate shapeworks
-pip uninstall torch torchvision torchaudio</code></li>
-<li>Check which CUDA version is installed on your system using one of the methods explained here: <a href="https://varhowto.com/check-pytorch-cuda-version/">How to check CUDA version</a></li>
-<li>
-<p>Install the correct PyTorch to <code>shapeworks</code> environment using: 
-<code>pip install torch===1.7.1+cu&lt;VERSION&gt; torchvision===0.8.2+cu&lt;VERSION&gt; torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html</code>
-  Where <code>VERSION</code> is your CUDA version with no dot (such as 92 for 9.2 or 110 for 11.0).</p>
-</li>
-<li>
-<p>Restart your system and check if <code>shapeworks</code> now has PyTorch with GPU support using the instructions above. </p>
-</li>
+<li>Uninstall the current PyTorch:
+   <code>swpip uninstall torch torchvision torchaudio</code></li>
+<li>Check your CUDA version (see <a href="https://docs.nvidia.com/deploy/cuda-compatibility/">CUDA compatibility</a>
+   and <a href="https://varhowto.com/check-pytorch-cuda-version/">How to check CUDA version</a>).</li>
+<li>Install the version you want using <code>swpip</code> and the appropriate index URL from
+   <a href="https://pytorch.org/get-started/locally/">PyTorch Getting Started</a>:
+   <code>swpip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu&lt;VERSION&gt;</code>
+   Where <code>&lt;VERSION&gt;</code> is your CUDA version with no dot (such as <code>121</code> for CUDA 12.1).</li>
+<li>Verify with the GPU-support check above.</li>
 </ol>
 
 

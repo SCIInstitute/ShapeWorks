@@ -759,6 +759,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#building-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building from source
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4151,6 +4160,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#building-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building from source
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4171,45 +4189,47 @@
 
 
 <h1 id="how-to-install-shapeworks">How to Install ShapeWorks?</h1>
+<p>ShapeWorks 6.8 ships with a complete Python environment built in. There is no
+conda environment to set up — install the package and you can run Studio, the
+<code>shapeworks</code> CLI, and Python use cases right away.</p>
 <h2 id="first-download-shapeworks"><em><strong>First, download ShapeWorks</strong></em></h2>
 <div class="admonition important">
 <p class="admonition-title">Release Builds</p>
-<p>We provide <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">official user releases</a> for Windows, MacOS, and Linux.  </p>
+<p>We provide <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">official user releases</a> for Windows, MacOS, and Linux.</p>
 <p>Their features can be seen at <a href="../about/release-notes.html">Release Notes</a>.</p>
 </div>
 <div class="admonition danger">
 <p class="admonition-title">Development Builds</p>
-<p>We also provide up-to-date development builds from the <strong>master</strong> branch<br />
-<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows">Windows Dev Build</a><br />
-<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac">Mac Dev Build</a><br />
+<p>We also provide up-to-date development builds from the <strong>master</strong> branch
+<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows">Windows Dev Build</a>
+<a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac">Mac Dev Build</a>
 <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux">Linux Dev Build</a></p>
 <p>Please understand that these are in-progress development builds, not official releases.</p>
 </div>
 <h2 id="next-follow-the-instructions-for-your-platform"><em><strong>Next, follow the instructions for your platform.</strong></em></h2>
-<p><a href="#installing-shapeworks-on-windows">Windows</a><br />
-<a href="#installing-shapeworks-on-mac">Mac</a><br />
+<p><a href="#installing-shapeworks-on-windows">Windows</a>
+<a href="#installing-shapeworks-on-mac">Mac</a>
 <a href="#installing-shapeworks-on-linux">Linux</a></p>
 <h2 id="installing-shapeworks-on-windows">Installing ShapeWorks on Windows</h2>
 <p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows">Windows</a> <em>(remember these are in-progress development builds, not official releases).</em></p>
 <div class="admonition warning">
 <p class="admonition-title">Windows 11: Smart App Control affects Python features</p>
 <p>On Windows 11, a security feature called <strong>Smart App Control</strong> will block
-the Python libraries that ShapeWorks installs. <strong>ShapeWorks Studio itself
+the Python libraries that ShapeWorks ships. <strong>ShapeWorks Studio itself
 will still run</strong>, and you can use its grooming, optimization, and analysis
 features normally. However, the following will not work until Smart App
 Control is turned off:</p>
 <ul>
-<li>Python use cases (<code>python RunUseCase.py ...</code>)</li>
+<li>Python use cases (<code>swpython RunUseCase.py ...</code>)</li>
 <li>Jupyter notebook examples</li>
 <li>DeepSSM and other Python-based features inside Studio</li>
 </ul>
 <p>If affected, you will see errors like:</p>
 <p><em>"ImportError: DLL load failed while importing vtkWebCore: An Application Control policy has blocked this file."</em></p>
-<p>This happens because ShapeWorks relies on common scientific Python
-libraries (VTK, PyTorch, etc.) that are not digitally signed by Microsoft.
-Smart App Control blocks unsigned files, even though they are safe.
-Most other scientific Python tools (PyTorch, SciPy, OpenCV, ...) have the
-same issue.</p>
+<p>This happens because ShapeWorks bundles common scientific Python libraries
+(VTK, PyTorch, etc.) that are not digitally signed by Microsoft. Smart App
+Control blocks unsigned files, even though they are safe. Most other
+scientific Python tools (PyTorch, SciPy, OpenCV, ...) have the same issue.</p>
 <p><strong>To turn Smart App Control off:</strong></p>
 <ol>
 <li>Click the <strong>Start</strong> button and type <strong>Smart App Control</strong>.</li>
@@ -4217,52 +4237,33 @@ same issue.</p>
 <li>Select <strong>Off</strong>.</li>
 </ol>
 <p><strong>Important:</strong> Turning Smart App Control off is a one-way change. The only
-way to turn it back on later is to reset Windows. If you are unsure
-whether your computer has Smart App Control enabled, the
-<code>install_shapeworks.bat</code> script will detect it and warn you.</p>
+way to turn it back on later is to reset Windows.</p>
 </div>
 <ol>
 <li>
-<p>Download and install Miniconda for Windows.<br />
-<a href="https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe">https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe</a></p>
+<p>Double-click the ShapeWorks installer that you downloaded and follow the steps.</p>
 </li>
 <li>
-<p>Double-click on the ShapeWorks installer that you downloaded and follow the installation steps.</p>
-</li>
-<li>
-<p>Open an Anaconda terminal and change directory to the chosen installation path.<br />
-<code>cd "C:\Program Files\ShapeWorks"</code></p>
-</li>
-<li>
-<p>Create the <strong>shapeworks</strong> conda environment, installing everything necessary to run.<br />
-<code>install_shapeworks.bat</code>  </p>
+<p>The installer creates a <strong>ShapeWorks Prompt</strong> shortcut in the Start Menu. Open
+it whenever you want to run ShapeWorks from the command line — it opens a
+terminal with <code>shapeworks</code>, <code>swpython</code>, and <code>swpip</code> already on <code>PATH</code>.</p>
 </li>
 </ol>
-<p><strong>Note:</strong> You can pass a different name for the environment, enabling multiple installations.<br />
-<code>install_shapeworks shapeworks_61</code></p>
-<div class="admonition danger">
-<p class="admonition-title">Warning</p>
-<p>If you already have anaconda/miniconda installed, this step may hang.  If so please uninstall anaconda/miniconda, re-install it, then run install_shapeworks again. This seems to be an occasional problem with Anaconda on Windows.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Important</p>
-<p>Your shapeworks conda environment must always be activated before using ShapeWorks python packages.</p>
-</div>
 <h3 id="shapeworks-comes-with-examples-to-get-you-started">ShapeWorks comes with examples to get you started.</h3>
 <ol>
 <li>Copy the Examples folder to another location of your choosing (you can also use Explorer).
-<code>xcopy /E/H Examples %HOMEPATH%\ShapeWorks-Examples\</code></li>
+<code>xcopy /E/H "C:\Program Files\ShapeWorks\Examples" %HOMEPATH%\ShapeWorks-Examples\</code></li>
 </ol>
 <h4 id="studio">Studio</h4>
 <ol>
 <li>
-<p>Open ShapeWorks Studio</p>
+<p>Open ShapeWorks Studio from the Start Menu.</p>
 </li>
 <li>
-<p>Select "Open Exising Project"</p>
+<p>Select "Open Existing Project".</p>
 </li>
 <li>
-<p>Select Examples/Studio/Ellipsoid/ellipsoid.xlsx</p>
+<p>Select <code>Examples/Studio/Ellipsoid/ellipsoid.xlsx</code>.</p>
 </li>
 <li>
 <p>Experiment with the Studio interface.</p>
@@ -4271,31 +4272,36 @@ whether your computer has Smart App Control enabled, the
 <h4 id="python">Python</h4>
 <ol>
 <li>
-<p>Open an Anaconda terminal and activate the shapeworks conda environment (use the environment name passed to <code>install_shapeworks</code> above).<br />
-<code>conda activate shapeworks</code></p>
+<p>Open the <strong>ShapeWorks Prompt</strong> from the Start Menu.</p>
 </li>
 <li>
-<p>Change to the Python folder of the Examples directory you copied.<br />
+<p>Change to the Python folder of the Examples directory you copied.
 <code>cd %HOMEPATH%\ShapeWorks-Examples\Python</code></p>
 </li>
 <li>
-<p>Run one of the included use cases. To list them all, run: <code>python RunUseCase.py --help</code>.<br />
-<code>python RunUseCase.py ellipsoid</code></p>
+<p>Run one of the included use cases. To list them all, run: <code>swpython RunUseCase.py --help</code>.
+<code>swpython RunUseCase.py ellipsoid</code></p>
 </li>
 </ol>
+<p>The first time you run a DeepSSM use case, ShapeWorks downloads and installs
+PyTorch into a per-user directory (~3 GB, one-time). Subsequent runs use the
+cached install.</p>
 <h4 id="shapeworks-also-includes-interactive-jupyter-python-notebook-examples">ShapeWorks also includes interactive Jupyter Python notebook examples.</h4>
 <ol>
 <li>
-<p>Open an Anaconda terminal and activate the shapeworks conda environment (use the environment name passed to <code>install_shapeworks</code> above).<br />
-<code>conda activate shapeworks</code></p>
+<p>Open the <strong>ShapeWorks Prompt</strong> from the Start Menu.</p>
 </li>
 <li>
-<p>Change to the notebook tutorials folder of the Examples directory you copied.<br />
+<p>Install Jupyter the first time you use it: <code>swpip install jupyter</code>.
+This installs to your per-user ShapeWorks site-packages and persists across sessions.</p>
+</li>
+<li>
+<p>Change to the notebook tutorials folder of the Examples directory you copied.
 <code>cd %HOMEPATH%\ShapeWorks-Examples\Python\notebooks\tutorials</code></p>
 </li>
 <li>
-<p>Start the Jupyter notebook server. This will open a new tab in your web browser.<br />
-<code>jupyter notebook</code></p>
+<p>Start the Jupyter notebook server. This will open a new tab in your web browser.
+<code>swpython -m jupyter notebook</code></p>
 </li>
 <li>
 <p>Click on a notebook to get started.</p>
@@ -4305,37 +4311,29 @@ whether your computer has Smart App Control enabled, the
 <p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac">Mac</a> <em>(remember these are in-progress development builds, not official releases).</em></p>
 <ol>
 <li>
-<p>Install the ShapeWorks .pkg file by double-clicking on the file.</p>
+<p>Install the ShapeWorks <code>.pkg</code> file by double-clicking it. It installs into
+<code>/Applications/ShapeWorks/</code>.</p>
 </li>
 <li>
-<p>Open a terminal and change directory to the installation path.<br />
-<code>cd /Applications/ShapeWorks</code></p>
-</li>
-<li>
-<p>Create a protected conda environment that installs everything necessary to run.<br />
-<code>source install_shapeworks.sh</code><br />
-<strong>Note:</strong> You can pass a different name for the environment, enabling multiple installations.<br />
-<code>source install_shapeworks.sh shapeworks_61</code></p>
+<p>(Optional, for convenience) Put the ShapeWorks command-line tools on your
+<code>PATH</code>. Add this to your <code>~/.zshrc</code> or <code>~/.bash_profile</code>:
+<code>export PATH="/Applications/ShapeWorks/bin:$PATH"</code></p>
 </li>
 </ol>
-<div class="admonition note">
-<p class="admonition-title">Important</p>
-<p>Your shapeworks conda environment must always be activated before using ShapeWorks python packages.</p>
-</div>
+<p>Without this step you can still run the tools using their full paths, e.g.
+<code>/Applications/ShapeWorks/bin/swpython RunUseCase.py ...</code>.</p>
 <h3 id="shapeworks-comes-with-examples-to-get-you-started_1">ShapeWorks comes with examples to get you started.</h3>
 <h4 id="studio_1">Studio</h4>
 <ol>
 <li>
-<p>Copy the /Applications/ShapeWorks/Examples folder to another location of your choosing. (You can also use Finder.)</p>
+<p>Open <code>/Applications/ShapeWorks/ShapeWorksStudio.app</code> (double-click in Finder,
+or <code>open /Applications/ShapeWorks/ShapeWorksStudio.app</code> from a terminal).</p>
 </li>
 <li>
-<p>Open ShapeWorks Studio</p>
+<p>Select "Open Existing Project".</p>
 </li>
 <li>
-<p>Select "Open Exising Project"</p>
-</li>
-<li>
-<p>Select Examples/Studio/Ellipsoid/ellipsoid.xlsx</p>
+<p>Select <code>Examples/Studio/Ellipsoid/ellipsoid.xlsx</code>.</p>
 </li>
 <li>
 <p>Experiment with the Studio interface.</p>
@@ -4344,38 +4342,39 @@ whether your computer has Smart App Control enabled, the
 <h4 id="python_1">Python</h4>
 <ol>
 <li>
-<p>Open a terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
-<code>conda activate shapeworks</code></p>
+<p>Copy the Examples folder to a writable location.
+<code>cp -r /Applications/ShapeWorks/Examples $HOME/ShapeWorks-Examples</code></p>
 </li>
 <li>
-<p>Copy the Examples folder to another location of your choosing.<br />
-<code>cp -r Examples $HOME/ShapeWorks-Examples</code></p>
-</li>
-<li>
-<p>Change to the Python folder of the Examples directory you copied.<br />
+<p>Change to the Python folder of the Examples directory you copied.
 <code>cd $HOME/ShapeWorks-Examples/Python</code></p>
 </li>
 <li>
-<p>Run one of the included use cases. To list them all, run: <code>python RunUseCase.py --help</code>.<br />
-<code>python RunUseCase.py &lt;insert name of use case here&gt;</code></p>
-</li>
-<li>
-<p>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</p>
+<p>Run one of the included use cases. To list them all, run: <code>swpython RunUseCase.py --help</code>.
+<code>swpython RunUseCase.py &lt;insert name of use case here&gt;</code></p>
 </li>
 </ol>
+<p>If you didn't add <code>/Applications/ShapeWorks/bin</code> to your <code>PATH</code>, use the full
+path: <code>/Applications/ShapeWorks/bin/swpython RunUseCase.py ...</code>.</p>
+<p>The first time you run a DeepSSM use case, ShapeWorks downloads and installs
+PyTorch into <code>~/Library/Application Support/ShapeWorks/&lt;version&gt;/site-packages/</code>
+(~3 GB, one-time). Subsequent runs use the cached install.</p>
+<ul>
+<li>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</li>
+</ul>
 <h4 id="shapeworks-also-includes-interactive-jupyter-python-notebook-examples_1">ShapeWorks also includes interactive Jupyter Python notebook examples.</h4>
 <ol>
 <li>
-<p>Open a terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
-<code>conda activate shapeworks</code></p>
+<p>Install Jupyter the first time you use it: <code>swpip install jupyter</code>.
+This installs to your per-user ShapeWorks site-packages and persists across sessions.</p>
 </li>
 <li>
-<p>Change to the notebook tutorials folder of the Examples directory you copied.<br />
+<p>Change to the notebook tutorials folder of the Examples directory you copied.
 <code>cd $HOME/ShapeWorks-Examples/Python/notebooks/tutorials</code></p>
 </li>
 <li>
-<p>Start the Jupyter notebook server. This will open a new tab in your web broswer.<br />
-<code>jupyter notebook</code></p>
+<p>Start the Jupyter notebook server. This will open a new tab in your web browser.
+<code>swpython -m jupyter notebook</code></p>
 </li>
 <li>
 <p>Click on a notebook to get started.</p>
@@ -4385,31 +4384,26 @@ whether your computer has Smart App Control enabled, the
 <p>Please make sure that you download the <a href="https://github.com/SCIInstitute/ShapeWorks/releases/latest">latest ShapeWorks binary release</a>, or up-to-date development builds from the master branch for <a href="https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux">Linux</a> <em>(remember these are in-progress development builds, not official releases).</em></p>
 <ol>
 <li>
-<p>Open a terminal and change directory to the installation path (where you unzipped the downloaded file).<br />
-<code>cd /path/to/shapeworks</code></p>
+<p>Extract the downloaded archive (e.g. <code>tar xzf ShapeWorks-*.tar.gz</code>).</p>
 </li>
 <li>
-<p>Create a protected conda environment that installs everything necessary to run.<br />
-<code>source install_shapeworks.sh</code><br />
-<strong>Note:</strong> You can pass a different name for the environment, enabling multiple installations.<br />
-<code>source install_shapeworks.sh shapeworks_61</code></p>
+<p>(Optional, for convenience) Put the ShapeWorks command-line tools on your
+<code>PATH</code>. Add this to your <code>~/.bashrc</code>:
+<code>export PATH="/path/to/ShapeWorks-&lt;version&gt;-linux/bin:$PATH"</code></p>
 </li>
 </ol>
-<div class="admonition note">
-<p class="admonition-title">Important</p>
-<p>Your shapeworks conda environment must always be activated before using ShapeWorks python packages.</p>
-</div>
+<p>Without this step you can still run the tools using their full paths.</p>
 <h3 id="shapeworks-comes-with-examples-to-get-you-started_2">ShapeWorks comes with examples to get you started.</h3>
 <h4 id="studio_2">Studio</h4>
 <ol>
 <li>
-<p>Open ShapeWorks Studio</p>
+<p>Run <code>./bin/ShapeWorksStudio</code> from the extracted directory.</p>
 </li>
 <li>
-<p>Select "Open Exising Project"</p>
+<p>Select "Open Existing Project".</p>
 </li>
 <li>
-<p>Select Examples/Studio/Ellipsoid/ellipsoid.xlsx</p>
+<p>Select <code>Examples/Studio/Ellipsoid/ellipsoid.xlsx</code>.</p>
 </li>
 <li>
 <p>Experiment with the Studio interface.</p>
@@ -4418,43 +4412,46 @@ whether your computer has Smart App Control enabled, the
 <h4 id="python_2">Python</h4>
 <ol>
 <li>
-<p>Open a terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
-<code>conda activate shapeworks</code></p>
+<p>Copy the Examples folder to a writable location.
+<code>cp -r /path/to/ShapeWorks-&lt;version&gt;-linux/Examples $HOME/ShapeWorks-Examples</code></p>
 </li>
 <li>
-<p>Copy the Examples folder to another location of your choosing.<br />
-<code>cp -r Examples $HOME/ShapeWorks-Examples</code></p>
-</li>
-<li>
-<p>Change to the Python folder of the Examples directory you copied.  <br />
+<p>Change to the Python folder of the Examples directory you copied.
 <code>cd $HOME/ShapeWorks-Examples/Python</code></p>
 </li>
 <li>
-<p>Run one of the included use cases. To list them all, run: <code>python RunUseCase.py --help</code>.<br />
-<code>python RunUseCase.py &lt;insert name of use case here&gt;</code></p>
-</li>
-<li>
-<p>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</p>
+<p>Run one of the included use cases. To list them all, run: <code>swpython RunUseCase.py --help</code>.
+<code>swpython RunUseCase.py &lt;insert name of use case here&gt;</code></p>
 </li>
 </ol>
+<p>The first time you run a DeepSSM use case, ShapeWorks downloads and installs
+PyTorch into <code>~/.local/share/ShapeWorks/&lt;version&gt;/site-packages/</code>
+(~3 GB, one-time). Subsequent runs use the cached install.</p>
+<ul>
+<li>More information about running use cases can be found <a href="../use-cases/use-cases.html#running-the-use-cases">here</a>.</li>
+</ul>
 <h4 id="shapeworks-also-includes-interactive-jupyter-python-notebook-examples_2">ShapeWorks also includes interactive Jupyter Python notebook examples.</h4>
 <ol>
 <li>
-<p>Open a terminal and activate the shapeworks conda environment (use the environment name passed to <strong>install_shapeworks</strong> above).<br />
-<code>conda activate shapeworks</code></p>
+<p>Install Jupyter the first time you use it: <code>swpip install jupyter</code>.
+This installs to your per-user ShapeWorks site-packages and persists across sessions.</p>
 </li>
 <li>
-<p>Change to the notebook tutorials folder of the Examples directory you copied.<br />
+<p>Change to the notebook tutorials folder of the Examples directory you copied.
 <code>cd $HOME/ShapeWorks-Examples/Python/notebooks/tutorials</code></p>
 </li>
 <li>
-<p>Start the Jupyter notebook server. This will open a new tab in your web broswer.<br />
-<code>jupyter notebook</code></p>
+<p>Start the Jupyter notebook server. This will open a new tab in your web browser.
+<code>swpython -m jupyter notebook</code></p>
 </li>
 <li>
 <p>Click on a notebook to get started.</p>
 </li>
 </ol>
+<hr />
+<h2 id="building-from-source">Building from source</h2>
+<p>Developers who want to build ShapeWorks from source — and the conda-based
+workflow that comes with it — should see the <a href="../dev/build.html">build documentation</a>.</p>
 
 
 
