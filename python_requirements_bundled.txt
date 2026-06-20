@@ -75,7 +75,7 @@ pandas==2.3.2
 pandocfilters==1.5.1
 param==2.2.1
 patsy==1.0.1
-pillow==12.1.1
+pillow==12.2.0
 platformdirs==4.4.0
 pooch==1.8.2
 prometheus-client==0.22.1
