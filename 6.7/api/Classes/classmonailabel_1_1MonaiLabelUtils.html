@@ -3899,59 +3899,59 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-createdir">function createDir</h3>
-<p><code>cpp
-static bool createDir(
-    const QString &amp; dirPath
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">createDir</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dirPath</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-copysegmentation">function copySegmentation</h3>
-<p><code>cpp
-static bool copySegmentation(
-    const QString &amp; sourcePath,
-    const QString &amp; destinationPath
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">copySegmentation</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sourcePath</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">destinationPath</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-deletetempfile">function deleteTempFile</h3>
-<p><code>cpp
-static bool deleteTempFile(
-    const QString &amp; filePath
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">deleteTempFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filePath</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getfeaturename">function getFeatureName</h3>
-<p><code>cpp
-static std::string getFeatureName(
-    QSharedPointer&lt; shapeworks::Session &gt; session
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">getFeatureName</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-loadnrrd">function loadNRRD</h3>
-<p><code>cpp
-static ImageType::Pointer loadNRRD(
-    const std::string &amp; filePath
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">loadNRRD</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filePath</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-extractorgansegmentation">function extractOrganSegmentation</h3>
-<p><code>cpp
-static ImageType::Pointer extractOrganSegmentation(
-    ImageType::Pointer inputImage,
-    int label
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">extractOrganSegmentation</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">inputImage</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">label</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-savenrrd">function saveNRRD</h3>
-<p><code>cpp
-static void saveNRRD(
-    ImageType::Pointer image,
-    const std::string &amp; outputPath
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">saveNRRD</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputPath</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-isorganpresent">function isOrganPresent</h3>
-<p><code>cpp
-static bool isOrganPresent(
-    ImageType::Pointer image
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isOrganPresent</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-processsegmentation">function processSegmentation</h3>
-<p><code>cpp
-static void processSegmentation(
-    const std::string &amp; segmentationPath,
-    const std::map&lt; int, std::string &gt; &amp; organLabels,
-    const std::string &amp; outputDir,
-    const std::string &amp; sampleId,
-    std::vector&lt; std::string &gt; &amp; organSegmentationPaths
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">processSegmentation</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">segmentationPath</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">organLabels</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputDir</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sampleId</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">organSegmentationPaths</span>
+<span class="p">)</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:36 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:36 +0000</p>
 
 
 

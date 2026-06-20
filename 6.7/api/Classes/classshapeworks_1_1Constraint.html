@@ -4006,82 +4006,82 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::Constraint;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Constraint</span><span class="p">;</span>
+</code></pre></div>
 <p>This class is the general constraint class. Each instance represents a single constraint, either cutting-plane, sphere or free-form. They all inherit from this class. This class containts all the infrastructure to handle gradients and evaluations, which is shared among all constraint types. NOTE: Not actually using the augmented lagrangian. We are using quadratic penalty and not lagrangian because it works better. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-isviolated">function isViolated</h3>
-<p><code>cpp
-inline bool isViolated(
-    const vnl_vector&lt; double &gt; &amp; pt
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isViolated</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Returns if pt in vnl_vector format is violated by the constraint. </p>
 <h3 id="function-isviolated_1">function isViolated</h3>
-<p><code>cpp
-virtual bool isViolated(
-    const Eigen::Vector3d &amp; pt
-) const =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isViolated</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p>Returns if pt in Eigen format is violated by the constraint. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1FreeFormConstraint.html#function-isviolated">shapeworks::FreeFormConstraint::isViolated</a>, <a href="classshapeworks_1_1PlaneConstraint.html#function-isviolated">shapeworks::PlaneConstraint::isViolated</a></p>
 <h3 id="function-print">function print</h3>
-<p><code>cpp
-virtual void print() const =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p>Prints the constraint neatly. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1FreeFormConstraint.html#function-print">shapeworks::FreeFormConstraint::print</a>, <a href="classshapeworks_1_1PlaneConstraint.html#function-print">shapeworks::PlaneConstraint::print</a></p>
 <h3 id="function-setmus">function setMus</h3>
-<p><code>cpp
-inline void setMus(
-    std::vector&lt; double &gt; inmu
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setMus</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">inmu</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Initializes mu. </p>
 <h3 id="function-getmus">function getMus</h3>
-<p><code>cpp
-inline std::vector&lt; double &gt; getMus()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getMus</span><span class="p">()</span>
+</code></pre></div>
 <p>Gets mu. </p>
 <h3 id="function-constraintgradient">function constraintGradient</h3>
-<p><code>cpp
-virtual Eigen::Vector3d constraintGradient(
-    const Eigen::Vector3d &amp; pt
-) const =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">constraintGradient</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p>Returns the gradient of the constraint. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1FreeFormConstraint.html#function-constraintgradient">shapeworks::FreeFormConstraint::constraintGradient</a>, <a href="classshapeworks_1_1PlaneConstraint.html#function-constraintgradient">shapeworks::PlaneConstraint::constraintGradient</a></p>
 <h3 id="function-constrainteval">function constraintEval</h3>
-<p><code>cpp
-virtual double constraintEval(
-    const Eigen::Vector3d &amp; pt
-) const =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">constraintEval</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p>Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1FreeFormConstraint.html#function-constrainteval">shapeworks::FreeFormConstraint::constraintEval</a>, <a href="classshapeworks_1_1PlaneConstraint.html#function-constrainteval">shapeworks::PlaneConstraint::constraintEval</a></p>
 <h3 id="function-updatemu">function updateMu</h3>
-<p><code>cpp
-void updateMu(
-    const Eigen::Vector3d &amp; pt,
-    double C,
-    size_t index
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updateMu</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Updates the value of mu according to the augmented lagrangian update. </p>
 <h3 id="function-lagragiangradient">function lagragianGradient</h3>
-<p><code>cpp
-Eigen::Vector3d lagragianGradient(
-    const Eigen::Vector3d &amp; pt,
-    double C,
-    size_t index
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">lagragianGradient</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Computes the lagrangian gradient based on lagrangian inequality equations. NOTE: Not actually lagrangian. We are using quadratic penalty and not lagrangian because it works better. </p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-sgn">function sgn</h3>
-<p><code>cpp
-inline int sgn(
-    double val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">sgn</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Returns the sign of the double. </p>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-mus_">variable mus_</h3>
-<p><code>cpp
-std::vector&lt; double &gt; mus_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mus_</span><span class="p">;</span>
+</code></pre></div>
 <p>Mu is the lagrangian momentum term. </p>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:36 +0000</p>
 
 
 

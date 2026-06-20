@@ -3801,26 +3801,33 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include-projectreaderh">include "ProjectReader.h"</h1>
-<p>namespace shapeworks {</p>
-<p>class JsonProjectReader : public ProjectReader {
- public:
-  JsonProjectReader(Project &amp;project);
-  ~JsonProjectReader();</p>
-<p>bool read_project(std::string filename) override;</p>
-<p>StringMap get_parameters(std::string name) override;</p>
-<p>StringMultiMap get_multi_parameters(std::string name) override;</p>
-<p>private:
-  // pimpl container
-  class Container;
-  std::unique_ptr<Container> container_;
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ProjectReader.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonProjectReader</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ProjectReader</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">JsonProjectReader</span><span class="p">(</span><span class="n">Project</span><span class="w"> </span><span class="o">&amp;</span><span class="n">project</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">JsonProjectReader</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">read_project</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_parameters</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">StringMultiMap</span><span class="w"> </span><span class="nf">get_multi_parameters</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="c1">// pimpl container</span>
+<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">Container</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Container</span><span class="o">&gt;</span><span class="w"> </span><span class="n">container_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

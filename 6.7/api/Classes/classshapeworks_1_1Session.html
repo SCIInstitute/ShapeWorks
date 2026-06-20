@@ -6052,646 +6052,646 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::Session;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="p">;</span>
+</code></pre></div>
 <p>Representation of a session. </p>
 <p>The <a href="classshapeworks_1_1Session.html">Session</a> class encapsulates everything about a session/project. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-alignmenttype">using AlignmentType</h3>
-<p><code>cpp
-using shapeworks::Session::AlignmentType =  Analyze::AlignmentType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="o">::</span><span class="n">AlignmentType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">Analyze</span><span class="o">::</span><span class="n">AlignmentType</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-set_feature_auto_scale">slot set_feature_auto_scale</h3>
-<p><code>cpp
-void set_feature_auto_scale(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="slot-set_landmark_drag_mode">slot set_landmark_drag_mode</h3>
-<p><code>cpp
-void set_landmark_drag_mode(
-    bool mode
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmark_drag_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="slot-get_landmark_drag_mode">slot get_landmark_drag_mode</h3>
-<p><code>cpp
-bool get_landmark_drag_mode()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_landmark_drag_mode</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="slot-handle_clear_cache">slot handle_clear_cache</h3>
-<p><code>cpp
-void handle_clear_cache()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_clear_cache</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="slot-handle_new_mesh">slot handle_new_mesh</h3>
-<p><code>cpp
-void handle_new_mesh()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="slot-handle_thread_complete">slot handle_thread_complete</h3>
-<p><code>cpp
-void handle_thread_complete()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_thread_complete</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-data_changed">signal data_changed</h3>
-<p><code>cpp
-void data_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">data_changed</span><span class="p">()</span>
+</code></pre></div>
 <p>signal that the data has changed </p>
 <h3 id="signal-tool_state_changed">signal tool_state_changed</h3>
-<p><code>cpp
-void tool_state_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">tool_state_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-points_changed">signal points_changed</h3>
-<p><code>cpp
-void points_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">points_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-landmarks_changed">signal landmarks_changed</h3>
-<p><code>cpp
-void landmarks_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">landmarks_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-planes_changed">signal planes_changed</h3>
-<p><code>cpp
-void planes_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">planes_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-ffc_changed">signal ffc_changed</h3>
-<p><code>cpp
-void ffc_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ffc_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-update_display">signal update_display</h3>
-<p><code>cpp
-void update_display()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_display</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-feature_map_changed">signal feature_map_changed</h3>
-<p><code>cpp
-void feature_map_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">feature_map_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-reset_stats">signal reset_stats</h3>
-<p><code>cpp
-void reset_stats()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_stats</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-new_mesh">signal new_mesh</h3>
-<p><code>cpp
-void new_mesh()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_mesh</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-feature_range_changed">signal feature_range_changed</h3>
-<p><code>cpp
-void feature_range_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">feature_range_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-update_view_mode">signal update_view_mode</h3>
-<p><code>cpp
-void update_view_mode()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_view_mode</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-image_slice_settings_changed">signal image_slice_settings_changed</h3>
-<p><code>cpp
-void image_slice_settings_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">image_slice_settings_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-paint_mode_changed">signal paint_mode_changed</h3>
-<p><code>cpp
-void paint_mode_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paint_mode_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-repaint">signal repaint</h3>
-<p><code>cpp
-void repaint()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">repaint</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-reinsert_shapes">signal reinsert_shapes</h3>
-<p><code>cpp
-void reinsert_shapes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reinsert_shapes</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-annotations_changed">signal annotations_changed</h3>
-<p><code>cpp
-void annotations_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">annotations_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-save">signal save</h3>
-<p><code>cpp
-void save()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">save</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-session_title_changed">signal session_title_changed</h3>
-<p><code>cpp
-void session_title_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">session_title_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-image_name_changed">signal image_name_changed</h3>
-<p><code>cpp
-void image_name_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">image_name_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="signal-fill_all_ffc_requested">signal fill_all_ffc_requested</h3>
-<p><code>cpp
-void fill_all_ffc_requested()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">fill_all_ffc_requested</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-session">function Session</h3>
-<p><code>cpp
-Session(
-    QWidget * parent,
-    Preferences &amp; prefs
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Session</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>constructor </p>
 <h3 id="function-session_1">function ~Session</h3>
-<p><code>cpp
-~Session()</code></p>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Session</span><span class="p">()</span>
+</code></pre></div>
 <p>destructor </p>
 <h3 id="function-set_parent">function set_parent</h3>
-<p><code>cpp
-void set_parent(
-    QWidget * parent
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_parent</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>set QWidget parent </p>
 <h3 id="function-save_project">function save_project</h3>
-<p><code>cpp
-bool save_project(
-    QString filename
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">save_project</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>save project to file </p>
 <h3 id="function-load_project">function load_project</h3>
-<p><code>cpp
-bool load_project(
-    QString filename
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">load_project</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>load project from file </p>
 <h3 id="function-load_light_project">function load_light_project</h3>
-<p><code>cpp
-bool load_light_project(
-    QString filename
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">load_light_project</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>read a lightweight project file </p>
 <h3 id="function-load_xl_project">function load_xl_project</h3>
-<p><code>cpp
-bool load_xl_project(
-    QString filename
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">load_xl_project</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>load a shapeworks project </p>
 <h3 id="function-set_project_path">function set_project_path</h3>
-<p><code>cpp
-void set_project_path(
-    QString relative_path
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_project_path</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">relative_path</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_project">function get_project</h3>
-<p><code>cpp
-std::shared_ptr&lt; shapeworks::Project &gt; get_project()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_project</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-load_original_files">function load_original_files</h3>
-<p><code>cpp
-void load_original_files(
-    std::vector&lt; std::string &gt; filenames
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_original_files</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>import files </p>
 <h3 id="function-load_groomed_files">function load_groomed_files</h3>
-<p><code>cpp
-void load_groomed_files(
-    std::vector&lt; std::string &gt; file_names,
-    double iso,
-    int domains_per_shape
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_groomed_files</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">file_names</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">iso</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>load groomed files </p>
 <h3 id="function-load_point_files">function load_point_files</h3>
-<p><code>cpp
-bool load_point_files(
-    std::vector&lt; std::string &gt; local,
-    std::vector&lt; std::string &gt; world,
-    int domains_per_shape
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">load_point_files</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">local</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">world</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-update_particles">function update_particles</h3>
-<p><code>cpp
-bool update_particles(
-    std::vector&lt; Particles &gt; particles
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">update_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Particles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_num_particles">function get_num_particles</h3>
-<p><code>cpp
-int get_num_particles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_particles</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the total number of particles for all domains, combined. </p>
 <h3 id="function-get_local_particle_system">function get_local_particle_system</h3>
-<p><code>cpp
-ParticleSystemEvaluation get_local_particle_system(
-    int domain
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="n">get_local_particle_system</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-update_procrustes_transforms">function update_procrustes_transforms</h3>
-<p><code>cpp
-void update_procrustes_transforms(
-    std::vector&lt; std::vector&lt; std::vector&lt; double &gt; &gt; &gt; transforms
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_procrustes_transforms</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-is_light_project">function is_light_project</h3>
-<p><code>cpp
-bool is_light_project()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_light_project</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_groomed_present">function get_groomed_present</h3>
-<p><code>cpp
-bool get_groomed_present()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_groomed_present</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-remove_shapes">function remove_shapes</h3>
-<p><code>cpp
-void remove_shapes(
-    QList&lt; int &gt; list
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove_shapes</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QList</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>remove shapes </p>
 <h3 id="function-get_shapes">function get_shapes</h3>
-<p><code>cpp
-ShapeList get_shapes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span>
+</code></pre></div>
 <p>return all shapes </p>
 <h3 id="function-get_non_excluded_shapes">function get_non_excluded_shapes</h3>
-<p><code>cpp
-ShapeList get_non_excluded_shapes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_non_excluded_shapes</span><span class="p">()</span>
+</code></pre></div>
 <p>return all non-excluded shapes </p>
 <h3 id="function-calculate_reconstructed_samples">function calculate_reconstructed_samples</h3>
-<p><code>cpp
-void calculate_reconstructed_samples()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">calculate_reconstructed_samples</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_filename">function get_filename</h3>
-<p><code>cpp
-QString get_filename()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_filename</span><span class="p">()</span>
+</code></pre></div>
 <p>get the filename </p>
 <h3 id="function-get_display_name">function get_display_name</h3>
-<p><code>cpp
-QString get_display_name()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span>
+</code></pre></div>
 <p>get file display name </p>
 <h3 id="function-original_present">function original_present</h3>
-<p><code>cpp
-bool original_present()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">original_present</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-groomed_present">function groomed_present</h3>
-<p><code>cpp
-bool groomed_present()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">groomed_present</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-particles_present">function particles_present</h3>
-<p><code>cpp
-bool particles_present()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">particles_present</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-groups_available">function groups_available</h3>
-<p><code>cpp
-bool groups_available()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">groups_available</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_num_shapes">function get_num_shapes</h3>
-<p><code>cpp
-int get_num_shapes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_shapes</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_domains_per_shape">function get_domains_per_shape</h3>
-<p><code>cpp
-int get_domains_per_shape()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_domains_per_shape</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_default_feature_map">function get_default_feature_map</h3>
-<p><code>cpp
-std::string get_default_feature_map()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_default_feature_map</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_mesh_manager">function get_mesh_manager</h3>
-<p><code>cpp
-inline std::shared_ptr&lt; MeshManager &gt; get_mesh_manager()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshManager</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_manager</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-parameters">function parameters</h3>
-<p><code>cpp
-shapeworks::Parameters &amp; parameters()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">Parameters</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">parameters</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_groomed_domain_types">function get_groomed_domain_types</h3>
-<p><code>cpp
-std::vector&lt; DomainType &gt; get_groomed_domain_types()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_domain_types</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-update_auto_glyph_size">function update_auto_glyph_size</h3>
-<p><code>cpp
-double update_auto_glyph_size()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">update_auto_glyph_size</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_auto_glyph_size">function get_auto_glyph_size</h3>
-<p><code>cpp
-double get_auto_glyph_size()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_auto_glyph_size</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-clear_particles">function clear_particles</h3>
-<p><code>cpp
-void clear_particles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_particles</span><span class="p">()</span>
+</code></pre></div>
 <p>clear particles from session (e.g. groom start, optimize start) </p>
 <h3 id="function-get_feature_auto_scale">function get_feature_auto_scale</h3>
-<p><code>cpp
-bool get_feature_auto_scale()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_feature_auto_scale</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_feature_range_max">function get_feature_range_max</h3>
-<p><code>cpp
-double get_feature_range_max()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_feature_range_max</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_feature_range_min">function get_feature_range_min</h3>
-<p><code>cpp
-double get_feature_range_min()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_feature_range_min</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_feature_range">function set_feature_range</h3>
-<p><code>cpp
-void set_feature_range(
-    double min,
-    double max
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_range</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_feature_range_min">function set_feature_range_min</h3>
-<p><code>cpp
-void set_feature_range_min(
-    double value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_range_min</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_feature_range_max">function set_feature_range_max</h3>
-<p><code>cpp
-void set_feature_range_max(
-    double value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_range_max</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_feature_uniform_scale">function set_feature_uniform_scale</h3>
-<p><code>cpp
-void set_feature_uniform_scale(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_uniform_scale</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_feature_uniform_scale">function get_feature_uniform_scale</h3>
-<p><code>cpp
-bool get_feature_uniform_scale()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_feature_uniform_scale</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-handle_ctrl_click">function handle_ctrl_click</h3>
-<p><code>cpp
-void handle_ctrl_click(
-    PickResult result
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-trigger_landmarks_changed">function trigger_landmarks_changed</h3>
-<p><code>cpp
-void trigger_landmarks_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_landmarks_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-trigger_planes_changed">function trigger_planes_changed</h3>
-<p><code>cpp
-void trigger_planes_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_planes_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-trigger_ffc_changed">function trigger_ffc_changed</h3>
-<p><code>cpp
-void trigger_ffc_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_ffc_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-trigger_annotations_changed">function trigger_annotations_changed</h3>
-<p><code>cpp
-void trigger_annotations_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_annotations_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-trigger_save">function trigger_save</h3>
-<p><code>cpp
-void trigger_save()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_save</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-trigger_data_changed">function trigger_data_changed</h3>
-<p><code>cpp
-void trigger_data_changed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_data_changed</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-reload_particles">function reload_particles</h3>
-<p><code>cpp
-void reload_particles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reload_particles</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-trigger_fill_all_ffc">function trigger_fill_all_ffc</h3>
-<p><code>cpp
-void trigger_fill_all_ffc()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_fill_all_ffc</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_active_landmark_domain">function set_active_landmark_domain</h3>
-<p><code>cpp
-void set_active_landmark_domain(
-    int id
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_active_landmark_domain</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_active_landmark_domain">function get_active_landmark_domain</h3>
-<p><code>cpp
-int get_active_landmark_domain()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_active_landmark_domain</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_placing_landmark">function set_placing_landmark</h3>
-<p><code>cpp
-void set_placing_landmark(
-    int id
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_placing_landmark</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_placing_landmark">function get_placing_landmark</h3>
-<p><code>cpp
-int get_placing_landmark()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_placing_landmark</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_landmarks_active">function set_landmarks_active</h3>
-<p><code>cpp
-void set_landmarks_active(
-    bool active
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmarks_active</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_landmarks_active">function get_landmarks_active</h3>
-<p><code>cpp
-bool get_landmarks_active()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_landmarks_active</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_planes_active">function set_planes_active</h3>
-<p><code>cpp
-void set_planes_active(
-    bool active
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_planes_active</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_planes_active">function get_planes_active</h3>
-<p><code>cpp
-bool get_planes_active()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_planes_active</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_show_landmark_labels">function set_show_landmark_labels</h3>
-<p><code>cpp
-void set_show_landmark_labels(
-    bool show
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmark_labels</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_show_landmark_labels">function get_show_landmark_labels</h3>
-<p><code>cpp
-bool get_show_landmark_labels()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmark_labels</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_show_planes">function set_show_planes</h3>
-<p><code>cpp
-void set_show_planes(
-    bool show
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_planes</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_show_planes">function get_show_planes</h3>
-<p><code>cpp
-bool get_show_planes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_planes</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-should_show_planes">function should_show_planes</h3>
-<p><code>cpp
-bool should_show_planes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">should_show_planes</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_show_landmarks">function set_show_landmarks</h3>
-<p><code>cpp
-void set_show_landmarks(
-    bool show
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_landmarks</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_show_landmarks">function get_show_landmarks</h3>
-<p><code>cpp
-bool get_show_landmarks()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_landmarks</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_image_name">function set_image_name</h3>
-<p><code>cpp
-bool set_image_name(
-    std::string image_name
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">set_image_name</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_name</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_image_name">function get_image_name</h3>
-<p><code>cpp
-std::string get_image_name()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_image_name</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_image_axis">function set_image_axis</h3>
-<p><code>cpp
-void set_image_axis(
-    QString axis
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_axis</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">axis</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_image_axis">function get_image_axis</h3>
-<p><code>cpp
-Axis get_image_axis()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Axis</span><span class="w"> </span><span class="n">get_image_axis</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_image_3d_mode">function set_image_3d_mode</h3>
-<p><code>cpp
-void set_image_3d_mode(
-    bool mode
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_3d_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_image_3d_mode">function get_image_3d_mode</h3>
-<p><code>cpp
-bool get_image_3d_mode()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_3d_mode</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_image_share_window_and_level">function set_image_share_window_and_level</h3>
-<p><code>cpp
-void set_image_share_window_and_level(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_share_window_and_level</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_image_share_brightness_contrast">function get_image_share_brightness_contrast</h3>
-<p><code>cpp
-bool get_image_share_brightness_contrast()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_share_brightness_contrast</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_image_sync_slice">function set_image_sync_slice</h3>
-<p><code>cpp
-void set_image_sync_slice(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_sync_slice</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_image_sync_slice">function get_image_sync_slice</h3>
-<p><code>cpp
-bool get_image_sync_slice()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_sync_slice</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_image_thickness_feature">function set_image_thickness_feature</h3>
-<p><code>cpp
-void set_image_thickness_feature(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_image_thickness_feature</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_image_thickness_feature">function get_image_thickness_feature</h3>
-<p><code>cpp
-bool get_image_thickness_feature()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_image_thickness_feature</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_feature_map">function set_feature_map</h3>
-<p><code>cpp
-void set_feature_map(
-    std::string feature_map
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_map</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_feature_map">function get_feature_map</h3>
-<p><code>cpp
-std::string get_feature_map()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_feature_map</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-has_constraints">function has_constraints</h3>
-<p><code>cpp
-bool has_constraints()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_constraints</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_loading">function set_loading</h3>
-<p><code>cpp
-void set_loading(
-    bool loading
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_loading</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">loading</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-is_loading">function is_loading</h3>
-<p><code>cpp
-bool is_loading()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_tool_state">function set_tool_state</h3>
-<p><code>cpp
-void set_tool_state(
-    std::string state
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_tool_state</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">state</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_tool_state">function get_tool_state</h3>
-<p><code>cpp
-std::string get_tool_state()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_tool_state</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-is_analysis_mode">function is_analysis_mode</h3>
-<p><code>cpp
-bool is_analysis_mode()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_analysis_mode</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_ffc_paint_active">function set_ffc_paint_active</h3>
-<p><code>cpp
-void set_ffc_paint_active(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ffc_paint_active</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_ffc_paint_active">function get_ffc_paint_active</h3>
-<p><code>cpp
-bool get_ffc_paint_active()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_ffc_paint_active</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_seg_paint_active">function set_seg_paint_active</h3>
-<p><code>cpp
-void set_seg_paint_active(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_seg_paint_active</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_seg_paint_active">function get_seg_paint_active</h3>
-<p><code>cpp
-bool get_seg_paint_active()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_seg_paint_active</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_seg_paint_value">function set_seg_paint_value</h3>
-<p><code>cpp
-void set_seg_paint_value(
-    int value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_seg_paint_value</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_seg_paint_value">function get_seg_paint_value</h3>
-<p><code>cpp
-int get_seg_paint_value()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_seg_paint_value</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_ffc_paint_mode_inclusive">function set_ffc_paint_mode_inclusive</h3>
-<p><code>cpp
-void set_ffc_paint_mode_inclusive(
-    bool inclusive
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ffc_paint_mode_inclusive</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_ffc_paint_mode_inclusive">function get_ffc_paint_mode_inclusive</h3>
-<p><code>cpp
-bool get_ffc_paint_mode_inclusive()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_ffc_paint_mode_inclusive</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_ffc_paint_size">function set_ffc_paint_size</h3>
-<p><code>cpp
-void set_ffc_paint_size(
-    double size
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ffc_paint_size</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_ffc_paint_size">function get_ffc_paint_size</h3>
-<p><code>cpp
-double get_ffc_paint_size()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_ffc_paint_size</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_seg_paint_size">function set_seg_paint_size</h3>
-<p><code>cpp
-void set_seg_paint_size(
-    double size
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_seg_paint_size</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_seg_paint_size">function get_seg_paint_size</h3>
-<p><code>cpp
-double get_seg_paint_size()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_seg_paint_size</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_show_good_bad_particles">function get_show_good_bad_particles</h3>
-<p><code>cpp
-bool get_show_good_bad_particles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_good_bad_particles</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_show_good_bad_particles">function set_show_good_bad_particles</h3>
-<p><code>cpp
-void set_show_good_bad_particles(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_good_bad_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_show_difference_vectors">function get_show_difference_vectors</h3>
-<p><code>cpp
-bool get_show_difference_vectors()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_show_difference_vectors</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_show_difference_vectors">function set_show_difference_vectors</h3>
-<p><code>cpp
-void set_show_difference_vectors(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_difference_vectors</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-should_difference_vectors_show">function should_difference_vectors_show</h3>
-<p><code>cpp
-bool should_difference_vectors_show()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">should_difference_vectors_show</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_good_bad_particles">function get_good_bad_particles</h3>
-<p><code>cpp
-std::vector&lt; bool &gt; get_good_bad_particles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_good_bad_particles</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_good_bad_particles">function set_good_bad_particles</h3>
-<p><code>cpp
-void set_good_bad_particles(
-    const std::vector&lt; bool &gt; &amp; good_bad
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_good_bad_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">good_bad</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_difference_particles">function set_difference_particles</h3>
-<p><code>cpp
-inline void set_difference_particles(
-    Particles particles
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_difference_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Particles</span><span class="w"> </span><span class="n">particles</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_difference_particles">function get_difference_particles</h3>
-<p><code>cpp
-inline Particles get_difference_particles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Particles</span><span class="w"> </span><span class="n">get_difference_particles</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_compare_settings">function set_compare_settings</h3>
-<p><code>cpp
-void set_compare_settings(
-    CompareSettings settings
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_compare_settings</span><span class="p">(</span>
+<span class="w">    </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">settings</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_compare_settings">function get_compare_settings</h3>
-<p><code>cpp
-CompareSettings get_compare_settings()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">CompareSettings</span><span class="w"> </span><span class="n">get_compare_settings</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-trigger_repaint">function trigger_repaint</h3>
-<p><code>cpp
-void trigger_repaint()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_repaint</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-trigger_reinsert_shapes">function trigger_reinsert_shapes</h3>
-<p><code>cpp
-void trigger_reinsert_shapes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_reinsert_shapes</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_display_mode">function set_display_mode</h3>
-<p><code>cpp
-void set_display_mode(
-    DisplayMode mode
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_display_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">mode</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>set display mode (original, groomed, reconstructed) </p>
 <h3 id="function-get_display_mode">function get_display_mode</h3>
-<p><code>cpp
-DisplayMode get_display_mode()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">DisplayMode</span><span class="w"> </span><span class="n">get_display_mode</span><span class="p">()</span>
+</code></pre></div>
 <p>return the current display mode </p>
 <h3 id="function-set_glyph_lut">function set_glyph_lut</h3>
-<p><code>cpp
-inline void set_glyph_lut(
-    vtkSmartPointer&lt; vtkLookupTable &gt; lut
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_lut</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_glyph_lut">function get_glyph_lut</h3>
-<p><code>cpp
-inline vtkSmartPointer&lt; vtkLookupTable &gt; get_glyph_lut()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_lut</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_py_worker">function set_py_worker</h3>
-<p><code>cpp
-inline void set_py_worker(
-    QSharedPointer&lt; PythonWorker &gt; worker
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_py_worker</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PythonWorker</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">worker</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_py_worker">function get_py_worker</h3>
-<p><code>cpp
-inline QSharedPointer&lt; PythonWorker &gt; get_py_worker()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PythonWorker</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_py_worker</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_all_particles">function get_all_particles</h3>
-<p><code>cpp
-Eigen::MatrixXd get_all_particles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_all_particles</span><span class="p">()</span>
+</code></pre></div>
 <p>Return all world particles (number of shapes, 3 x num particles) </p>
 <h3 id="function-get_all_scalars">function get_all_scalars</h3>
-<p><code>cpp
-Eigen::MatrixXd get_all_scalars(
-    std::string target_feature
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_all_scalars</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">target_feature</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Return all scalars for all shapes, given target feature. </p>
 <h3 id="function-set_current_alignment">function set_current_alignment</h3>
-<p><code>cpp
-inline void set_current_alignment(
-    AlignmentType alignment
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_current_alignment</span><span class="p">(</span>
+<span class="w">    </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">alignment</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_current_alignment">function get_current_alignment</h3>
-<p><code>cpp
-inline AlignmentType get_current_alignment()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">get_current_alignment</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-is_modified">function is_modified</h3>
-<p><code>cpp
-inline bool is_modified()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_modified</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_modified">function set_modified</h3>
-<p><code>cpp
-void set_modified(
-    bool modified
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_modified</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">modified</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-recompute_surfaces">function recompute_surfaces</h3>
-<p><code>cpp
-void recompute_surfaces()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">recompute_surfaces</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-is_supported_file_format">function is_supported_file_format</h3>
-<p><code>cpp
-static bool is_supported_file_format(
-    std::string filename
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_supported_file_format</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_point">function get_point</h3>
-<p><code>cpp
-static Point3 get_point(
-    const Eigen::VectorXd &amp; points,
-    int i
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">get_point</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-data_c">variable DATA_C</h3>
-<p><code>cpp
-static const std::string DATA_C;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DATA_C</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-groom_c">variable GROOM_C</h3>
-<p><code>cpp
-static const std::string GROOM_C;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_C</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-optimize_c">variable OPTIMIZE_C</h3>
-<p><code>cpp
-static const std::string OPTIMIZE_C;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">OPTIMIZE_C</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-analysis_c">variable ANALYSIS_C</h3>
-<p><code>cpp
-static const std::string ANALYSIS_C;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ANALYSIS_C</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-deepssm_c">variable DEEPSSM_C</h3>
-<p><code>cpp
-static const std::string DEEPSSM_C;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-monai_c">variable MONAI_C</h3>
-<p><code>cpp
-static const std::string MONAI_C;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_C</span><span class="p">;</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

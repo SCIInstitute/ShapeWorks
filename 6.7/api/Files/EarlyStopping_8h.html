@@ -3801,62 +3801,66 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Eigen/Dense></h1>
-<h1 id="include-libsoptimizeparticlesystemh">include "Libs/Optimize/ParticleSystem.h"</h1>
-<h1 id="include-libsoptimizeearlystoppingconfigh">include "Libs/Optimize/EarlyStoppingConfig.h"</h1>
-<h1 id="include-morphologicaldeviationscoreh">include "MorphologicalDeviationScore.h"</h1>
-<p>namespace shapeworks {</p>
-<p>class EarlyStopping {
-public:
-    typedef typename ParticleSystem::PointType PointType;
-    constexpr static int VDimension = 3;
-    EarlyStopping();
-    void SetConfigParams(int frequency,
-                  int window_size,
-                  double threshold,
-                  EarlyStoppingStrategy strategy = EarlyStoppingStrategy::RelativeDifference,
-                  double ema_alpha = 0.2,
-                  bool enable_logging = false,
-                  const std::string&amp; logger_name = "",
-                  int warmup_iters = 1000);</p>
-<pre><code>void reset();
-void update(int iteration, const ParticleSystem* p);
-bool ShouldStop() const;
-bool SetControlShapes(const ParticleSystem* p);
-Eigen::MatrixXd GetTestShapes(const ParticleSystem* p);
-</code></pre>
-<p>private:
-    std::deque<Eigen::VectorXd> score_history_;
-    int frequency_, window_size_;
-    double threshold_, ema_alpha_;
-    int last_checked_iter_;
-    int warmup_iters_;
-    // bool stop_flag_;
-    mutable std::atomic<bool> stop_flag_{false};
-    bool enable_logging_;
-    std::string logger_name_;
-    Eigen::MatrixXd control_shapes_; 
-    MorphologicalDeviationScore score_func_;
-    EarlyStoppingStrategy strategy_;
-    mutable Eigen::VectorXd ema_diff_;
-    mutable bool ema_initialized_ = false;</p>
-<pre><code>Eigen::VectorXd ComputeScore(const Eigen::MatrixXd&amp; X) ;
-Eigen::VectorXd ComputeRelativeDiff(const Eigen::VectorXd&amp; a, const Eigen::VectorXd&amp; b) const;
-bool HasConverged() const;
-bool CheckRelativeDifference() const;
-bool CheckExponentialMovingAverage() const;
-void LogStatus(int iter,
-               const Eigen::VectorXd&amp; current_score,
-               const Eigen::VectorXd&amp; diff,
-               const std::vector&lt;bool&gt;&amp; per_subject_convergence) const;
-</code></pre>
-<p>};</p>
-<p>} // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/ParticleSystem.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/EarlyStoppingConfig.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MorphologicalDeviationScore.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">EarlyStopping</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">    </span><span class="n">EarlyStopping</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">SetConfigParams</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">frequency</span><span class="p">,</span>
+<span class="w">                  </span><span class="kt">int</span><span class="w"> </span><span class="n">window_size</span><span class="p">,</span>
+<span class="w">                  </span><span class="kt">double</span><span class="w"> </span><span class="n">threshold</span><span class="p">,</span>
+<span class="w">                  </span><span class="n">EarlyStoppingStrategy</span><span class="w"> </span><span class="n">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EarlyStoppingStrategy</span><span class="o">::</span><span class="n">RelativeDifference</span><span class="p">,</span>
+<span class="w">                  </span><span class="kt">double</span><span class="w"> </span><span class="n">ema_alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
+<span class="w">                  </span><span class="kt">bool</span><span class="w"> </span><span class="n">enable_logging</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">logger_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                  </span><span class="kt">int</span><span class="w"> </span><span class="n">warmup_iters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">ShouldStop</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SetControlShapes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">GetTestShapes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">deque</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">score_history_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">frequency_</span><span class="p">,</span><span class="w"> </span><span class="n">window_size_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">threshold_</span><span class="p">,</span><span class="w"> </span><span class="n">ema_alpha_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">last_checked_iter_</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">warmup_iters_</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// bool stop_flag_;</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stop_flag_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enable_logging_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">logger_name_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">control_shapes_</span><span class="p">;</span><span class="w"> </span>
+<span class="w">    </span><span class="n">MorphologicalDeviationScore</span><span class="w"> </span><span class="n">score_func_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">EarlyStoppingStrategy</span><span class="w"> </span><span class="n">strategy_</span><span class="p">;</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">ema_diff_</span><span class="p">;</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ema_initialized_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">ComputeScore</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">X</span><span class="p">)</span><span class="w"> </span><span class="p">;</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">ComputeRelativeDiff</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasConverged</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">CheckRelativeDifference</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">CheckExponentialMovingAverage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">LogStatus</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="p">,</span>
+<span class="w">                   </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">current_score</span><span class="p">,</span>
+<span class="w">                   </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">diff</span><span class="p">,</span>
+<span class="w">                   </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">per_subject_convergence</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w"> </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

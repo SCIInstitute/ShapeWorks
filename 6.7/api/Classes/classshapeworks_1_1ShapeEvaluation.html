@@ -3873,55 +3873,55 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-shapeevaluation">function ShapeEvaluation</h3>
-<p><code>cpp
-ShapeEvaluation()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeEvaluation</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-compute_compactness">function compute_compactness</h3>
-<p><code>cpp
-static double compute_compactness(
-    const ParticleSystemEvaluation &amp; particle_system,
-    int num_modes,
-    const std::string &amp; save_to =""
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">compute_compactness</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_modes</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">save_to</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-compute_full_compactness">function compute_full_compactness</h3>
-<p><code>cpp
-static Eigen::VectorXd compute_full_compactness(
-    const ParticleSystemEvaluation &amp; particle_system,
-    std::function&lt; void(float)&gt; progress_callback =nullptr
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">compute_full_compactness</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-compute_generalization">function compute_generalization</h3>
-<p><code>cpp
-static double compute_generalization(
-    const ParticleSystemEvaluation &amp; particle_system,
-    int num_modes,
-    const std::string &amp; save_to ="",
-    bool surface_distance_mode =false
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">compute_generalization</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_modes</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">save_to</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-compute_full_generalization">function compute_full_generalization</h3>
-<p><code>cpp
-static Eigen::VectorXd compute_full_generalization(
-    const ParticleSystemEvaluation &amp; particle_system,
-    std::function&lt; void(float)&gt; progress_callback =nullptr,
-    std::function&lt; bool()&gt; check_abort =nullptr,
-    bool surface_distance_mode =false
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">compute_full_generalization</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-compute_specificity">function compute_specificity</h3>
-<p><code>cpp
-static double compute_specificity(
-    const ParticleSystemEvaluation &amp; particle_system,
-    int num_mode,
-    const std::string &amp; save_to ="",
-    bool surface_distance_mode =false
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">compute_specificity</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_mode</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">save_to</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-compute_full_specificity">function compute_full_specificity</h3>
-<p><code>cpp
-static Eigen::VectorXd compute_full_specificity(
-    const ParticleSystemEvaluation &amp; particle_system,
-    std::function&lt; void(float)&gt; progress_callback =nullptr,
-    std::function&lt; bool()&gt; check_abort =nullptr,
-    bool surface_distance_mode =false
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">compute_full_specificity</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

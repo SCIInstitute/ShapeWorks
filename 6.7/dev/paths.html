@@ -3912,16 +3912,19 @@ the developer's source--this includes the compiled portion of the Python binding
 and eliminates the need to <strong>pip install</strong> any of the Python modules during
 development.</p>
 <p>As an example of using it with a make-based build directory inside source on Linux or OSX:
-<code>(shapeworks) ~/code/ShapeWorks$ source ./devenv.sh ./build/bin</code></p>
+<div class="highlight"><pre><span></span><code>(shapeworks) ~/code/ShapeWorks$ source ./devenv.sh ./build/bin
+</code></pre></div></p>
 <p>On Windows, to point to the RelWithDebInfo binaries in a build directory inside source:
-<code>(shapeworks) ~/code/ShapeWorks&gt; devenv .\build\bin\RelWithDebInfo</code></p>
+<div class="highlight"><pre><span></span><code>(shapeworks) ~/code/ShapeWorks&gt; devenv .\build\bin\RelWithDebInfo
+</code></pre></div></p>
 <div class="admonition note">
 <p class="admonition-title">Using <strong>git-bash</strong> on Windows</p>
 <p>Windows may also have a <strong>git-bash</strong> command line available. This also works with <code>devenv</code>: just <code>source ./devenv.sh</code> like you would on linux/osx.<br />
 There is one important issue: running Python scripts requires prefixing with <code>winpty</code>. For example, <code>winpty python RunUseCase.py ...</code>.</p>
 </div>
 <p>Any path can be passed as the parameter for this script and it can be called from any location. Another example:
-<code>(shapeworks) ~/code/ShapeWorks/build_xcode/bin/Debug$ source ../../devenv.sh Debug</code></p>
+<div class="highlight"><pre><span></span><code>(shapeworks) ~/code/ShapeWorks/build_xcode/bin/Debug$ source ../../devenv.sh Debug
+</code></pre></div></p>
 <h3 id="manually-adding-paths">Manually adding paths</h3>
 <p>While unnecessary for the use of ShapeWorks, these are the steps to manually add items to your paths.</p>
 <h4 id="osxlinux">OSX/Linux</h4>

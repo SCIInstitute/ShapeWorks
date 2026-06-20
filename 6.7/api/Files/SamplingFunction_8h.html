@@ -3801,92 +3801,119 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Libs/Optimize/Container/GenericContainerArray.h></h1>
-<h1 id="include-vectorfunctionh">include "VectorFunction.h"</h1>
-<p>namespace shapeworks {</p>
-<p>class SamplingFunction : public VectorFunction {
- public:
-  constexpr static int VDimension = 3;</p>
-<p>static std::shared_ptr<SamplingFunction> New() {
-    return std::make_shared<SamplingFunction>();
-  }</p>
-<p>using VectorType = vnl_vector_fixed<double, 3>;
-  using PointType = ParticleSystem::PointType;
-  using GradientVectorType = vnl_vector_fixed<float, 3>;
-  using SigmaCacheType = GenericContainerArray<double>;</p>
-<p>VectorType evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double&amp; d) const override {
-    double e;
-    return evaluate(a, b, c, d, e);
-  }</p>
-<p>VectorType evaluate(unsigned int, unsigned int, const ParticleSystem*, double&amp;, double&amp;) const override;</p>
-<p>void before_evaluate(unsigned int, unsigned int, const ParticleSystem*) override;</p>
-<p>double energy(unsigned int a, unsigned int b, const ParticleSystem* c) const override {
-    double d, e;
-    evaluate(a, b, c, d, e);
-    return e;
-  }</p>
-<p>double EstimateSigma(unsigned int idx, unsigned int dom, const shapeworks::ParticleDomain* domain,
-                       const PointType&amp; pos, double initial_sigma, double precision, int&amp; err, double&amp; avg_kappa) const;</p>
-<p>void SetSharedBoundaryWeight(double w) { m_SharedBoundaryWeight = w; }
-  double GetSharedBoundaryWeight() const { return m_SharedBoundaryWeight; }</p>
-<p>void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
-  bool GetSharedBoundaryEnabled() const { return m_IsSharedBoundaryEnabled; }</p>
-<p>void SetSamplingScale(bool enabled) { m_SamplingScale = enabled; }
-  bool GetSamplingScale() const { return m_SamplingScale; }</p>
-<p>void SetSamplingAutoScale(bool auto_scale) { m_SamplingAutoScale = auto_scale; }
-  bool GetSamplingAutoScale() const { return m_SamplingAutoScale; }</p>
-<p>void SetSamplingScaleValue(double scale_value) { m_SamplingScaleValue = scale_value; }
-  double GetSamplingScaleValue() const { return m_SamplingScaleValue; }</p>
-<p>void SetSpatialSigmaCache(SigmaCacheType<em> s) { m_SpatialSigmaCache = s; }
-  SigmaCacheType</em> GetSpatialSigmaCache() { return m_SpatialSigmaCache.GetPointer(); }
-  const SigmaCacheType* GetSpatialSigmaCache() const { return m_SpatialSigmaCache.GetPointer(); }</p>
-<p>void SetMinimumNeighborhoodRadius(double s) { m_MinimumNeighborhoodRadius = s; }
-  double GetMinimumNeighborhoodRadius() const { return m_MinimumNeighborhoodRadius; }</p>
-<p>void SetMaximumNeighborhoodRadius(double s) { m_MaximumNeighborhoodRadius = s; }
-  double GetMaximumNeighborhoodRadius() const { return m_MaximumNeighborhoodRadius; }</p>
-<p>void SetFlatCutoff(double s) { m_FlatCutoff = s; }
-  double GetFlatCutoff() const { return m_FlatCutoff; }
-  void SetNeighborhoodToSigmaRatio(double s) { m_NeighborhoodToSigmaRatio = s; }
-  double GetNeighborhoodToSigmaRatio() const { return m_NeighborhoodToSigmaRatio; }</p>
-<p>void reset_buffers() override { m_SpatialSigmaCache-&gt;ZeroAllValues(); }</p>
-<p>std::shared_ptr<VectorFunction> clone() override;</p>
-<p>SamplingFunction() {}
-  ~SamplingFunction() override = default;</p>
-<p>private:
-  SamplingFunction(const SamplingFunction&amp;) = delete;
-  SamplingFunction&amp; operator=(const SamplingFunction&amp;) = delete;</p>
-<p>struct CrossDomainNeighborhood {
-    ParticlePointIndexPair pi_pair;
-    double weight;
-    double distance;
-    int dom;</p>
-<pre><code>CrossDomainNeighborhood(const ParticlePointIndexPair&amp; pi_pair_, double weight_, double distance_, int dom_)
-    : pi_pair(pi_pair_), weight(weight_), distance(distance_), dom(dom_) {}
-</code></pre>
-<p>};
-  std::vector<CrossDomainNeighborhood> m_CurrentNeighborhood;
-  void UpdateNeighborhood(const PointType&amp; pos, int idx, int d, double radius, const ParticleSystem* system);</p>
-<p>unsigned int m_Counter{0};
-  double m_avgKappa{0};
-  bool m_IsSharedBoundaryEnabled{false};
-  double m_SharedBoundaryWeight{1.0};
-  bool m_SamplingScale{true};
-  bool m_SamplingAutoScale{true};
-  double m_SamplingScaleValue{1.0};
-  double m_CurrentSigma{0.0};
-  float m_MaxMoveFactor{0};
-  double m_MinimumNeighborhoodRadius{0};
-  double m_MaximumNeighborhoodRadius{0};
-  double m_FlatCutoff{0.05};
-  double m_NeighborhoodToSigmaRatio{3.0};</p>
-<p>SigmaCacheType::Pointer m_SpatialSigmaCache;
-};</p>
-<p>}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Optimize/Container/GenericContainerArray.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;VectorFunction.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SamplingFunction</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SamplingFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">SamplingFunction</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">GradientVectorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">SigmaCacheType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">VectorType</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">before_evaluate</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
+<span class="w">    </span><span class="n">evaluate</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">EstimateSigma</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dom</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleDomain</span><span class="o">*</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
+<span class="w">                       </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">initial_sigma</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">err</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">avg_kappa</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryWeight</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">w</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SharedBoundaryWeight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">w</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSharedBoundaryWeight</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_SharedBoundaryWeight</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSharedBoundaryEnabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_IsSharedBoundaryEnabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetSharedBoundaryEnabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_IsSharedBoundaryEnabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingScale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SamplingScale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetSamplingScale</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_SamplingScale</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingAutoScale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">auto_scale</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SamplingAutoScale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">auto_scale</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetSamplingAutoScale</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_SamplingAutoScale</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSamplingScaleValue</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">scale_value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SamplingScaleValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scale_value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSamplingScaleValue</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_SamplingScaleValue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSpatialSigmaCache</span><span class="p">(</span><span class="n">SigmaCacheType</span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SpatialSigmaCache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">SigmaCacheType</span><span class="o">*</span><span class="w"> </span><span class="nf">GetSpatialSigmaCache</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_SpatialSigmaCache</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">SigmaCacheType</span><span class="o">*</span><span class="w"> </span><span class="nf">GetSpatialSigmaCache</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_SpatialSigmaCache</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMinimumNeighborhoodRadius</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_MinimumNeighborhoodRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetMinimumNeighborhoodRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_MinimumNeighborhoodRadius</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMaximumNeighborhoodRadius</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_MaximumNeighborhoodRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetMaximumNeighborhoodRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_MaximumNeighborhoodRadius</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFlatCutoff</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_FlatCutoff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetFlatCutoff</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FlatCutoff</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNeighborhoodToSigmaRatio</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_NeighborhoodToSigmaRatio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetNeighborhoodToSigmaRatio</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_NeighborhoodToSigmaRatio</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_buffers</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_SpatialSigmaCache</span><span class="o">-&gt;</span><span class="n">ZeroAllValues</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">VectorFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clone</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">SamplingFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="o">~</span><span class="n">SamplingFunction</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">SamplingFunction</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SamplingFunction</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
+<span class="w">  </span><span class="n">SamplingFunction</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SamplingFunction</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">CrossDomainNeighborhood</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ParticlePointIndexPair</span><span class="w"> </span><span class="n">pi_pair</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">distance</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">dom</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">CrossDomainNeighborhood</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticlePointIndexPair</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pi_pair_</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">weight_</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">distance_</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dom_</span><span class="p">)</span>
+<span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">pi_pair</span><span class="p">(</span><span class="n">pi_pair_</span><span class="p">),</span><span class="w"> </span><span class="n">weight</span><span class="p">(</span><span class="n">weight_</span><span class="p">),</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span><span class="n">distance_</span><span class="p">),</span><span class="w"> </span><span class="n">dom</span><span class="p">(</span><span class="n">dom_</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="p">};</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">CrossDomainNeighborhood</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_CurrentNeighborhood</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateNeighborhood</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_avgKappa</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_IsSharedBoundaryEnabled</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SharedBoundaryWeight</span><span class="p">{</span><span class="mf">1.0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_SamplingScale</span><span class="p">{</span><span class="nb">true</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_SamplingAutoScale</span><span class="p">{</span><span class="nb">true</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SamplingScaleValue</span><span class="p">{</span><span class="mf">1.0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_CurrentSigma</span><span class="p">{</span><span class="mf">0.0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">m_MaxMoveFactor</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_MinimumNeighborhoodRadius</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_MaximumNeighborhoodRadius</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_FlatCutoff</span><span class="p">{</span><span class="mf">0.05</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_NeighborhoodToSigmaRatio</span><span class="p">{</span><span class="mf">3.0</span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">SigmaCacheType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_SpatialSigmaCache</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

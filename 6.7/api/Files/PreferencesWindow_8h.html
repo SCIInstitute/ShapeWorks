@@ -3801,43 +3801,60 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <QDialog></h1>
-<h1 id="include-datapreferencesh">include "Data/Preferences.h"</h1>
-<p>class Ui_PreferencesWindow;
-class QAbstractButton;</p>
-<p>namespace shapeworks {</p>
-<p>class PreferencesWindow : public QDialog {
-  Q_OBJECT</p>
-<p>public:
-  PreferencesWindow(QWidget* parent, Preferences&amp; prefs);</p>
-<p>void set_values_from_preferences();</p>
-<p>void closeEvent(QCloseEvent* event) override;</p>
-<p>public Q_SLOTS:
-  void on_mesh_cache_enabled_stateChanged(int state);
-  void on_mesh_cache_memory_valueChanged(int value);
-  void on_color_scheme_currentIndexChanged(int index);
-  void on_pca_range_valueChanged(double value);
-  void on_pca_steps_valueChanged(int value);
-  void on_parallel_enabled_toggled(bool b);
-  void on_num_threads_valueChanged(int i);</p>
-<p>void accept() override;</p>
-<p>void restore_defaults();</p>
-<p>void save_to_preferences();</p>
-<p>Q_SIGNALS:
-  void clear_cache();
-  void update_view();
-  void slider_update();</p>
-<p>private:
-  void update_labels();
-  Preferences&amp; preferences_;
-  Ui_PreferencesWindow* ui_;
-};</p>
-<p>}
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDialog&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Data/Preferences.h&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_PreferencesWindow</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QAbstractButton</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PreferencesWindow</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QDialog</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">PreferencesWindow</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_values_from_preferences</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">closeEvent</span><span class="p">(</span><span class="n">QCloseEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">on_mesh_cache_enabled_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_mesh_cache_memory_valueChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_color_scheme_currentIndexChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_pca_range_valueChanged</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_pca_steps_valueChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_parallel_enabled_toggled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_num_threads_valueChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">accept</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_to_preferences</span><span class="p">();</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_cache</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">slider_update</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_labels</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Ui_PreferencesWindow</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

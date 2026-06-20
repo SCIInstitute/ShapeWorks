@@ -3801,27 +3801,34 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include-libsoptimizecontainermeancurvaturecontainerh">include "Libs/Optimize/Container/MeanCurvatureContainer.h"</h1>
-<h1 id="include-particlesystemh">include "ParticleSystem.h"</h1>
-<p>namespace shapeworks {</p>
-<p>class ParticleGoodBadAssessment {
- public:
-  using MeanCurvatureCacheType = MeanCurvatureContainer<float, 3>;</p>
-<p>void set_domains_per_shape(int i) { domains_per_shape_ = i; }</p>
-<p>void set_criterion_angle(double a) { criterion_angle_ = a; }</p>
-<p>std::vector<std::vector\<int>> run_assessment(const ParticleSystem<em> ps,
-                                               MeanCurvatureCacheType</em> mean_curvature_cache);</p>
-<p>private:
-  vnl_matrix<double> compute_particles_normals(int d, const ParticleSystem* ps);
-  int domains_per_shape_ = 1;
-  double criterion_angle_ = 90.0;
-};</p>
-<p>}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Container/MeanCurvatureContainer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleGoodBadAssessment</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MeanCurvatureContainer</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_domains_per_shape</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">domains_per_shape_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_criterion_angle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">criterion_angle_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">run_assessment</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span>
+<span class="w">                                               </span><span class="n">MeanCurvatureCacheType</span><span class="o">*</span><span class="w"> </span><span class="n">mean_curvature_cache</span><span class="p">);</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">compute_particles_normals</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">criterion_angle_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">90.0</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

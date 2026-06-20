@@ -4042,82 +4042,82 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::PlaneConstraint;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">PlaneConstraint</span><span class="p">;</span>
+</code></pre></div>
 <p>Encapsulate functionality related to cutting-plane constraints. Inherits from <a href="classshapeworks_1_1Constraint.html">Constraint</a>. See [Constraint.h] for more information </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-isviolated">function isViolated</h3>
-<p><code>cpp
-virtual bool isViolated(
-    const Eigen::Vector3d &amp; pt
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isViolated</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>Returns if pt in Eigen format is violated by the constraint. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-isviolated">shapeworks::Constraint::isViolated</a></p>
 <h3 id="function-print">function print</h3>
-<p><code>cpp
-virtual void print() const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>Prints the constraint neatly. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-print">shapeworks::Constraint::print</a></p>
 <h3 id="function-getplanenormal">function getPlaneNormal</h3>
-<p><code>cpp
-inline Eigen::Vector3d getPlaneNormal()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getPlaneNormal</span><span class="p">()</span>
+</code></pre></div>
 <p>Get plane normal. </p>
 <h3 id="function-setplanenormal">function setPlaneNormal</h3>
-<p><code>cpp
-inline void setPlaneNormal(
-    const Eigen::Vector3d &amp; inPlane
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setPlaneNormal</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inPlane</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set plane normal. </p>
 <h3 id="function-getplanepoint">function getPlanePoint</h3>
-<p><code>cpp
-inline Eigen::Vector3d getPlanePoint()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getPlanePoint</span><span class="p">()</span>
+</code></pre></div>
 <p>Get plane center point. </p>
 <h3 id="function-setplanepoint">function setPlanePoint</h3>
-<p><code>cpp
-inline void setPlanePoint(
-    const vnl_vector&lt; double &gt; &amp; point
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setPlanePoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set plane center point. </p>
 <h3 id="function-setplanepoint_1">function setPlanePoint</h3>
-<p><code>cpp
-inline void setPlanePoint(
-    const Eigen::Vector3d &amp; p
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setPlanePoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set plane center point. </p>
 <h3 id="function-constraintgradient">function constraintGradient</h3>
-<p><code>cpp
-inline virtual Eigen::Vector3d constraintGradient(
-    const Eigen::Vector3d &amp; pt
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">constraintGradient</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>Returns the gradient of the constraint. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-constraintgradient">shapeworks::Constraint::constraintGradient</a></p>
 <h3 id="function-points">function points</h3>
-<p><code>cpp
-inline std::vector&lt; Eigen::Vector3d &gt; &amp; points()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-getoffset">function getOffset</h3>
-<p><code>cpp
-double getOffset()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getOffset</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setoffset">function setOffset</h3>
-<p><code>cpp
-void setOffset(
-    double offset
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setOffset</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">offset</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-constrainteval">function constraintEval</h3>
-<p><code>cpp
-virtual double constraintEval(
-    const Eigen::Vector3d &amp; pt
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">constraintEval</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-constrainteval">shapeworks::Constraint::constraintEval</a></p>
 <h3 id="function-updateplanefrompoints">function updatePlaneFromPoints</h3>
-<p><code>cpp
-void updatePlaneFromPoints()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updatePlaneFromPoints</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-getvtkplane">function getVTKPlane</h3>
-<p><code>cpp
-vtkSmartPointer&lt; vtkPlane &gt; getVTKPlane()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPlane</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getVTKPlane</span><span class="p">()</span>
+</code></pre></div>
 <p>Return this plane as a vtkPlane. </p>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

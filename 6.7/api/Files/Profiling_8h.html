@@ -3771,8 +3771,44 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#define-time_stop" class="md-nav__link">
+    <span class="md-ellipsis">
+      define TIME_STOP
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#define-time_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      define TIME_SCOPE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#define-time_finalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      define TIME_FINALIZE
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Source code
+    </span>
+  </a>
   
 </li>
       
@@ -3869,112 +3905,123 @@
 </table>
 <h2 id="macros-documentation">Macros Documentation</h2>
 <h3 id="define-time_start">define TIME_START</h3>
-<p>```cpp</p>
-<h1 id="define-time_start_1">define TIME_START(</h1>
-<pre><code>name
-</code></pre>
-<p>)
-shapeworks::Profiler::instance().start_timer(name);
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define TIME_START(</span>
+<span class="w">    </span><span class="n">name</span>
+<span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Profiler</span><span class="o">::</span><span class="n">instance</span><span class="p">().</span><span class="n">start_timer</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+</code></pre></div>
 <h3 id="define-time_stop">define TIME_STOP</h3>
-<p>```cpp</p>
-<h1 id="define-time_stop_1">define TIME_STOP(</h1>
-<pre><code>name
-</code></pre>
-<p>)
-shapeworks::Profiler::instance().stop_timer(name);
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define TIME_STOP(</span>
+<span class="w">    </span><span class="n">name</span>
+<span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Profiler</span><span class="o">::</span><span class="n">instance</span><span class="p">().</span><span class="n">stop_timer</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+</code></pre></div>
 <h3 id="define-time_scope">define TIME_SCOPE</h3>
-<p>```cpp</p>
-<h1 id="define-time_scope_1">define TIME_SCOPE(</h1>
-<pre><code>name
-</code></pre>
-<p>)
-shapeworks::ScopedTimer <em>scoped_timer</em>##<strong>LINE</strong>(name)
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define TIME_SCOPE(</span>
+<span class="w">    </span><span class="n">name</span>
+<span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">ScopedTimer</span><span class="w"> </span><span class="n">_scoped_timer_</span><span class="err">##</span><span class="n">__LINE__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div>
 <h3 id="define-time_finalize">define TIME_FINALIZE</h3>
-<p>```cpp</p>
-<h1 id="define-time_finalize_1">define TIME_FINALIZE(</h1>
-<p>)
-shapeworks::Profiler::instance().finalize()
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define TIME_FINALIZE(</span>
+
+<span class="p">)</span>
+<span class="n">shapeworks</span><span class="o">::</span><span class="n">Profiler</span><span class="o">::</span><span class="n">instance</span><span class="p">().</span><span class="n">finalize</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <QElapsedTimer></h1>
-<h1 id="include_1">include <QMutex></h1>
-<h1 id="include_2">include <QString></h1>
-<h1 id="include_3">include <QThread></h1>
-<h1 id="include_4">include <unordered_map></h1>
-<h1 id="include_5">include <vector></h1>
-<p>namespace shapeworks {</p>
-<p>//---------------------------------------------------------------------------
-struct ProfileEntry {
-  QString name;
-  double exclusive_time_ms;
-  double inclusive_time_ms;
-  int call_count;
-  int subcall_count;
-  Qt::HANDLE thread_id;
-};</p>
-<p>//---------------------------------------------------------------------------
-struct TraceEvent {
-  QString name;
-  QString phase;  // "B" for begin, "E" for end
-  qint64 timestamp_us;
-  Qt::HANDLE thread_id;
-  int process_id;
-};</p>
-<p>//---------------------------------------------------------------------------
-class TimerStackEntry {
- public:
-  TimerStackEntry(const QString&amp; name, qint64 start_time_us);</p>
-<p>QString name;
-  qint64 start_time_us;
-  double accumulated_child_time_ms;
-};</p>
-<p>//---------------------------------------------------------------------------
-class Profiler {
- public:
-  static Profiler&amp; instance();</p>
-<p>void start_timer(const QString&amp; name);
-  void stop_timer(const QString&amp; name);
-  void finalize();</p>
-<p>bool is_profiling_enabled() const { return profiling_enabled_; }
-  bool is_tracing_enabled() const { return tracing_enabled_; }</p>
-<p>private:
-  Profiler();
-  ~Profiler();</p>
-<p>void write_profile_report();
-  void write_trace_file();
-  QString format_time(double ms);</p>
-<p>bool profiling_enabled_;
-  bool tracing_enabled_;
-  qint64 start_time_us_;</p>
-<p>QMutex mutex_;
-  std::unordered_map<Qt::HANDLE, std::vector\<std::unique_ptr\<TimerStackEntry>>> timer_stacks_;
-  std::unordered_map<QString, ProfileEntry> profile_entries_;
-  std::vector<TraceEvent> trace_events_;</p>
-<p>QElapsedTimer elapsed_timer_;
-};</p>
-<p>//---------------------------------------------------------------------------
-class ScopedTimer {
- public:
-  ScopedTimer(const QString&amp; name);
-  ~ScopedTimer();</p>
-<p>private:
-  QString name_;
-  bool enabled_;
-};</p>
-<p>}  // namespace shapeworks</p>
-<p>// Profiling macros</p>
-<h1 id="define-time_startname-shapeworksprofilerinstancestart_timername">define TIME_START(name) shapeworks::Profiler::instance().start_timer(name);</h1>
-<h1 id="define-time_stopname-shapeworksprofilerinstancestop_timername">define TIME_STOP(name) shapeworks::Profiler::instance().stop_timer(name);</h1>
-<h1 id="define-time_scopename-shapeworksscopedtimer-scoped_timerlinename">define TIME_SCOPE(name) shapeworks::ScopedTimer <em>scoped_timer</em>##<strong>LINE</strong>(name)</h1>
-<h1 id="define-time_finalize-shapeworksprofilerinstancefinalize">define TIME_FINALIZE() shapeworks::Profiler::instance().finalize()</h1>
-<p>```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMutex&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QThread&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unordered_map&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="c1">//---------------------------------------------------------------------------</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">ProfileEntry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">exclusive_time_ms</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">inclusive_time_ms</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">call_count</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">subcall_count</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Qt</span><span class="o">::</span><span class="n">HANDLE</span><span class="w"> </span><span class="n">thread_id</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">//---------------------------------------------------------------------------</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">TraceEvent</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">phase</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;B&quot; for begin, &quot;E&quot; for end</span>
+<span class="w">  </span><span class="n">qint64</span><span class="w"> </span><span class="n">timestamp_us</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Qt</span><span class="o">::</span><span class="n">HANDLE</span><span class="w"> </span><span class="n">thread_id</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">process_id</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">//---------------------------------------------------------------------------</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimerStackEntry</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">TimerStackEntry</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">qint64</span><span class="w"> </span><span class="n">start_time_us</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">  </span><span class="n">qint64</span><span class="w"> </span><span class="n">start_time_us</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">accumulated_child_time_ms</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">//---------------------------------------------------------------------------</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Profiler</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Profiler</span><span class="o">&amp;</span><span class="w"> </span><span class="n">instance</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_timer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">stop_timer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">finalize</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_profiling_enabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">profiling_enabled_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_tracing_enabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">tracing_enabled_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Profiler</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">Profiler</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">write_profile_report</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">write_trace_file</span><span class="p">();</span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">format_time</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">profiling_enabled_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">tracing_enabled_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">qint64</span><span class="w"> </span><span class="n">start_time_us_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QMutex</span><span class="w"> </span><span class="n">mutex_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Qt</span><span class="o">::</span><span class="n">HANDLE</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">TimerStackEntry</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">timer_stacks_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">QString</span><span class="p">,</span><span class="w"> </span><span class="n">ProfileEntry</span><span class="o">&gt;</span><span class="w"> </span><span class="n">profile_entries_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TraceEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="n">trace_events_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">elapsed_timer_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">//---------------------------------------------------------------------------</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScopedTimer</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ScopedTimer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">ScopedTimer</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">name_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+
+<span class="c1">// Profiling macros</span>
+<span class="cp">#define TIME_START(name) shapeworks::Profiler::instance().start_timer(name);</span>
+<span class="cp">#define TIME_STOP(name) shapeworks::Profiler::instance().stop_timer(name);</span>
+<span class="cp">#define TIME_SCOPE(name) shapeworks::ScopedTimer _scoped_timer_##__LINE__(name)</span>
+<span class="cp">#define TIME_FINALIZE() shapeworks::Profiler::instance().finalize()</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

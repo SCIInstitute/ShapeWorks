@@ -3767,19 +3767,22 @@
 </ol>
 <h1 id="building-the-shapeworks-java-interface">Building the ShapeWorks Java Interface</h1>
 <p>The ShapeWorks Java interface is built using the Java Compiler.  To build it:</p>
-<p><code>cd shapeworks/Java
-javac -d . *.java</code></p>
+<div class="highlight"><pre><span></span><code>cd shapeworks/Java
+javac -d . *.java
+</code></pre></div>
 <p>This will place the compiled classes in the <code>shapeworks/Java</code> directory.</p>
 <h1 id="building-the-example-java-program">Building the Example Java Program</h1>
-<p><code>cd shapeworks/Examples/Java
-javac -cp ../../Java *.java</code></p>
+<div class="highlight"><pre><span></span><code>cd shapeworks/Examples/Java
+javac -cp ../../Java *.java
+</code></pre></div>
 <h1 id="running-the-example-matlab-program">Running the Example Matlab Program</h1>
 <p>Note: The example Matlab program uses the Java interface and needs the paths to the ShapeWorks executables.  Ensure that you update the paths in the start of the script.</p>
 <h1 id="running-the-example-matlab-program_1">Running the Example Matlab Program</h1>
 <p>From the Matlab terminal, run the following:</p>
-<p><code>cd shapeworks/Examples/Matlab
-javaaddpath('../../Java')
-MatlabExample</code></p>
+<div class="highlight"><pre><span></span><code>cd shapeworks/Examples/Matlab
+javaaddpath(&#39;../../Java&#39;)
+MatlabExample
+</code></pre></div>
 <p><img alt="Matlab Example" src="matlab_example1.png" width="600" /></p>
 <p><img alt="Studio Matlab Example" src="matlab_example2.png" width="600" /></p>
 

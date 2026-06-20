@@ -3801,171 +3801,275 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <StringUtils.h></h1>
-<h1 id="include_1">include <itkImage.h></h1>
-<h1 id="include_2">include <itkImageRegionIterator.h></h1>
-<h1 id="include_3">include <itkLinearInterpolateImageFunction.h></h1>
-<h1 id="include_4">include <itkStatisticsImageFilter.h></h1>
-<h1 id="include_5">include <vtkImageData.h></h1>
-<h1 id="include_6">include <vtkPolyData.h></h1>
-<h1 id="include_7">include <vtkSmartPointer.h></h1>
-<h1 id="include_8">include <limits></h1>
-<h1 id="include-regionh">include "Region.h"</h1>
-<h1 id="include-shapeworksh">include "Shapeworks.h"</h1>
-<p>namespace shapeworks {</p>
-<p>class Mesh;</p>
-<p>class Image {
- public:
-  enum InterpolationType { Linear, NearestNeighbor };</p>
-<p>using PixelType = float;
-  using ImageType = itk::Image<PixelType, 3>;
-  using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
-  using ImageIterator = itk::ImageRegionIterator<ImageType>;
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType>;</p>
-<p>// constructors and assignment operators //
-  explicit Image(const Dims dims);
-  explicit Image(const std::string&amp; pathname) : itk_image_(read(pathname)) {}
-  explicit Image(ImageType::Pointer imagePtr) : itk_image_(imagePtr) {
-    if (!itk_image_) throw std::invalid_argument("null imagePtr");
-  }
-  explicit Image(const vtkSmartPointer<vtkImageData> vtkImage);</p>
-<p>Image(Image&amp;&amp; img) : itk_image_(nullptr) { this-&gt;itk_image_.Swap(img.itk_image_); }
-  Image(const Image&amp; img) : itk_image_(cloneData(img.itk_image_)) {}
-  Image&amp; operator=(const Image&amp; img);<br />
-  Image&amp; operator=(Image&amp;&amp; img);       </p>
-<p>operator ImageType::Pointer() { return itk_image_; }
-  ImageType::Pointer getITKImage() const { return itk_image_; }</p>
-<p>vtkSmartPointer<vtkImageData> getVTKImage() const;</p>
-<p>// modification functions //</p>
-<p>Image&amp; operator-();</p>
-<p>Image operator+(const Image&amp; other) const;
-  Image&amp; operator+=(const Image&amp; other);</p>
-<p>Image operator-(const Image&amp; other) const;
-  Image&amp; operator-=(const Image&amp; other);</p>
-<p>Image operator*(const Image&amp; other) const;</p>
-<p>Image operator<em>(const PixelType x) const;
-  Image&amp; operator</em>=(const PixelType x);</p>
-<p>Image operator/(const PixelType x) const;
-  Image&amp; operator/=(const PixelType x);</p>
-<p>Image operator+(const PixelType x) const;
-  Image&amp; operator+=(const PixelType x);</p>
-<p>Image operator-(const PixelType x) const;
-  Image&amp; operator-=(const PixelType x);</p>
-<p>Image&amp; antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 3);</p>
-<p>Image&amp; recenter();</p>
-<p>Image&amp; resample(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
-                  const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);</p>
-<p>Image&amp; resample(const Vector&amp; physicalSpacing, InterpolationType interp = Linear);</p>
-<p>Image&amp; resample(double isoSpacing = 1.0, InterpolationType interp = Linear);</p>
-<p>Image&amp; resize(Dims logicalDims, InterpolationType interp = Linear);</p>
-<p>Image&amp; pad(int padding, PixelType value = 0.0);</p>
-<p>Image&amp; pad(int padx, int pady, int padz, PixelType value = 0.0);</p>
-<p>Image&amp; pad(IndexRegion&amp; region, PixelType value = 0.0);</p>
-<p>Image&amp; translate(const Vector3&amp; v);</p>
-<p>Image&amp; scale(const Vector3&amp; v);</p>
-<p>Image&amp; rotate(const double angle, const Vector3&amp; axis);</p>
-<p>Image&amp; rotate(const double angle, Axis axis);</p>
-<p>TransformPtr createCenterOfMassTransform();</p>
-<p>TransformPtr createRigidRegistrationTransform(const Image&amp; target_dt, float isoValue = 0.0, unsigned iterations = 20);</p>
-<p>Image&amp; applyTransform(const TransformPtr transform, InterpolationType interp = Linear);</p>
-<p>Image&amp; applyTransform(const TransformPtr transform, const Point3 origin, const Dims dims, const Vector3 spacing,
-                        const ImageType::DirectionType direction, InterpolationType interp = NearestNeighbor);</p>
-<p>Image&amp; applyTransform(const TransformPtr transform, const Image&amp; referenceImage, InterpolationType interp = Linear);</p>
-<p>Image&amp; extractLabel(const PixelType label = 1.0);</p>
-<p>Image&amp; closeHoles(const PixelType foreground = 0.0);</p>
-<p>Image&amp; binarize(PixelType minVal = 0.0, PixelType maxVal = std::numeric_limits<PixelType>::max(),
-                  PixelType innerVal = 1.0, PixelType outerVal = 0.0);</p>
-<p>Image&amp; computeDT(PixelType isoValue = 0.0);</p>
-<p>Image&amp; applyCurvatureFilter(unsigned iterations = 10);</p>
-<p>Image&amp; applyGradientFilter();</p>
-<p>Image&amp; applySigmoidFilter(double alpha = 10.0, double beta = 10.0);</p>
-<p>Image&amp; applyTPLevelSetFilter(const Image&amp; featureImage, double scaling = 20.0);</p>
-<p>Image&amp; topologyPreservingSmooth(float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0);</p>
-<p>Image&amp; applyIntensityFilter(double minVal, double maxVal);</p>
-<p>Image&amp; gaussianBlur(double sigma = 0.0);</p>
-<p>Image&amp; crop(PhysicalRegion region, const int padding = 0);</p>
-<p>Image&amp; fitRegion(PhysicalRegion region, const PixelType value = 0.0);</p>
-<p>Image&amp; clip(const Plane plane, const PixelType val = 0.0);</p>
-<p>Image&amp; reflect(const Axis&amp; axis);</p>
-<p>Image&amp; setOrigin(Point3 origin = Point3({0, 0, 0}));</p>
-<p>Image&amp; setSpacing(Vector3 spacing);</p>
-<p>Image&amp; setCoordsys(ImageType::DirectionType coordsys);</p>
-<p>Image&amp; isolate();</p>
-<p>// query functions //</p>
-<p>Dims dims() const { return itk_image_-&gt;GetLargestPossibleRegion().GetSize(); }</p>
-<p>Point3 size() const { return toPoint(spacing()) * toPoint(dims()); }</p>
-<p>double get_largest_dimension_size() const;</p>
-<p>Vector spacing() const { return itk_image_-&gt;GetSpacing(); }</p>
-<p>double get_minimum_spacing() const;</p>
-<p>Point3 origin() const { return itk_image_-&gt;GetOrigin(); }</p>
-<p>Point3 center() const { return origin() + size() / 2.0; }</p>
-<p>ImageType::DirectionType coordsys() const { return itk_image_-&gt;GetDirection(); };</p>
-<p>Point3 centerOfMass(PixelType minVal = 0.0, PixelType maxVal = 1.0) const;</p>
-<p>PixelType min();</p>
-<p>PixelType max();</p>
-<p>PixelType mean();</p>
-<p>PixelType std();</p>
-<p>IndexRegion logicalBoundingBox() const;</p>
-<p>PhysicalRegion physicalBoundingBox() const;</p>
-<p>PhysicalRegion physicalBoundingBox(PixelType isovalue) const;</p>
-<p>PhysicalRegion logicalToPhysical(IndexRegion region) const;</p>
-<p>IndexRegion physicalToLogical(PhysicalRegion region) const;</p>
-<p>Point3 logicalToPhysical(const Coord&amp; c) const;</p>
-<p>Coord physicalToLogical(const Point3&amp; p) const;</p>
-<p>bool isInside(const Point3&amp; p) const;</p>
-<p>ImageIterator iterator();</p>
-<p>bool compare(const Image&amp; other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-6) const;</p>
-<p>bool operator==(const Image&amp; other) const { return compare(other); }</p>
-<p>// export functions //</p>
-<p>Image&amp; write(const std::string&amp; filename, bool compressed = true);</p>
-<p>Mesh toMesh(PixelType isovalue) const;</p>
-<p>Image::PixelType evaluate(Point p);</p>
-<p>void paintSphere(Point p, double radius, PixelType value);</p>
-<p>void paintCircle(Point p, double radius, unsigned int axis, PixelType value);</p>
-<p>bool isPainted() const { return painted_; }</p>
-<p>Image&amp; fill(PixelType value);</p>
-<p>bool isDistanceTransform() const;</p>
-<p>static std::vector<std::string> getSupportedTypes() {
-    return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
-  }</p>
-<p>static bool isSupportedType(const std::string&amp; filename) {
-    for (const auto&amp; type : Image::getSupportedTypes()) {
-      if (StringUtils::hasSuffix(filename, type)) {
-        return true;
-      }
-    }
-    return false;
-  }</p>
-<p>private:
-  friend struct SharedCommandData;
-  Image()
-      : itk_image_(nullptr) {
-  }  // only for use by SharedCommandData since an Image should always be valid, never "empty"</p>
-<p>static ImageType::Pointer read(const std::string&amp; filename);
-  static ImageType::Pointer readDICOMImage(const std::string&amp; pathname);</p>
-<p>static ImageType::Pointer cloneData(const ImageType::Pointer img);</p>
-<p>static vtkSmartPointer<vtkPolyData> getPolyData(const Image&amp; image, PixelType isoValue = 0.0);</p>
-<p>Image&amp; pad(Dims lowerExtendRegion, Dims upperExtendRegion, PixelType value = 0.0);</p>
-<p>StatsPtr statsFilter() const;</p>
-<p>ImageType::Pointer itk_image_;</p>
-<p>bool painted_ = false;</p>
-<p>InterpolatorType::Pointer interpolator_;
-};</p>
-<p>std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Image&amp; img);</p>
-<p>template &lt;&gt;
-Image operator<em>(const Image&amp; img, const double x);
-template &lt;&gt;
-Image operator/(const Image&amp; img, const double x);
-template &lt;&gt;
-Image&amp; operator</em>=(Image&amp; img, const double x);
-template &lt;&gt;
-Image&amp; operator/=(Image&amp; img, const double x);</p>
-<p>}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;StringUtils.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImage.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImageRegionIterator.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkLinearInterpolateImageFunction.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkStatisticsImageFilter.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkImageData.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;limits&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Region.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Shapeworks.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Mesh</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Image</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">InterpolationType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Linear</span><span class="p">,</span><span class="w"> </span><span class="n">NearestNeighbor</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">float</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">StatsPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">StatisticsImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">ImageIterator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">InterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// constructors and assignment operators //</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="p">);</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">itk_image_</span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">pathname</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">imagePtr</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">itk_image_</span><span class="p">(</span><span class="n">imagePtr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">itk_image_</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">invalid_argument</span><span class="p">(</span><span class="s">&quot;null imagePtr&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">Image</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vtkImage</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="p">(</span><span class="n">Image</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">itk_image_</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">itk_image_</span><span class="p">.</span><span class="n">Swap</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">itk_image_</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">Image</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">itk_image_</span><span class="p">(</span><span class="n">cloneData</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">itk_image_</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">);</span><span class="w">  </span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">Image</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">);</span><span class="w">       </span>
+
+<span class="w">  </span><span class="k">operator</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">itk_image_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">getITKImage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">itk_image_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getVTKImage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// modification functions //</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">antialias</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">maxRMSErr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.01f</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">layers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">recenter</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">resample</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">origin</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="n">direction</span><span class="p">,</span><span class="w"> </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NearestNeighbor</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">resample</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector</span><span class="o">&amp;</span><span class="w"> </span><span class="n">physicalSpacing</span><span class="p">,</span><span class="w"> </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Linear</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">resample</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">isoSpacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Linear</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">resize</span><span class="p">(</span><span class="n">Dims</span><span class="w"> </span><span class="n">logicalDims</span><span class="p">,</span><span class="w"> </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Linear</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">pad</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">padding</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">pad</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">padx</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pady</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">padz</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">pad</span><span class="p">(</span><span class="n">IndexRegion</span><span class="o">&amp;</span><span class="w"> </span><span class="n">region</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">translate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">TransformPtr</span><span class="w"> </span><span class="nf">createCenterOfMassTransform</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">TransformPtr</span><span class="w"> </span><span class="nf">createRigidRegistrationTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">target_dt</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Linear</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">origin</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="n">spacing</span><span class="p">,</span>
+<span class="w">                        </span><span class="k">const</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="n">direction</span><span class="p">,</span><span class="w"> </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NearestNeighbor</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">TransformPtr</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">referenceImage</span><span class="p">,</span><span class="w"> </span><span class="n">InterpolationType</span><span class="w"> </span><span class="n">interp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Linear</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">extractLabel</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">closeHoles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">foreground</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">binarize</span><span class="p">(</span><span class="n">PixelType</span><span class="w"> </span><span class="n">minVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">maxVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">(),</span>
+<span class="w">                  </span><span class="n">PixelType</span><span class="w"> </span><span class="n">innerVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">outerVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">computeDT</span><span class="p">(</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyCurvatureFilter</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyGradientFilter</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applySigmoidFilter</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">10.0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">10.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyTPLevelSetFilter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">featureImage</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">20.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">topologyPreservingSmooth</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">20.0</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">sigmoidAlpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">10.5</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">sigmoidBeta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">10.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyIntensityFilter</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">minVal</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">maxVal</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">gaussianBlur</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">sigma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">crop</span><span class="p">(</span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">padding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fitRegion</span><span class="p">(</span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">clip</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">reflect</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="o">&amp;</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">setOrigin</span><span class="p">(</span><span class="n">Point3</span><span class="w"> </span><span class="n">origin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Point3</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">}));</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">setSpacing</span><span class="p">(</span><span class="n">Vector3</span><span class="w"> </span><span class="n">spacing</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">setCoordsys</span><span class="p">(</span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="n">coordsys</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">isolate</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// query functions //</span>
+
+<span class="w">  </span><span class="n">Dims</span><span class="w"> </span><span class="nf">dims</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">itk_image_</span><span class="o">-&gt;</span><span class="n">GetLargestPossibleRegion</span><span class="p">().</span><span class="n">GetSize</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">toPoint</span><span class="p">(</span><span class="n">spacing</span><span class="p">())</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">toPoint</span><span class="p">(</span><span class="n">dims</span><span class="p">());</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_largest_dimension_size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Vector</span><span class="w"> </span><span class="nf">spacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">itk_image_</span><span class="o">-&gt;</span><span class="n">GetSpacing</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_minimum_spacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">origin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">itk_image_</span><span class="o">-&gt;</span><span class="n">GetOrigin</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">origin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="nf">coordsys</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">itk_image_</span><span class="o">-&gt;</span><span class="n">GetDirection</span><span class="p">();</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">centerOfMass</span><span class="p">(</span><span class="n">PixelType</span><span class="w"> </span><span class="n">minVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">maxVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">PixelType</span><span class="w"> </span><span class="nf">min</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">PixelType</span><span class="w"> </span><span class="nf">max</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">PixelType</span><span class="w"> </span><span class="nf">mean</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">PixelType</span><span class="w"> </span><span class="nf">std</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">IndexRegion</span><span class="w"> </span><span class="nf">logicalBoundingBox</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="nf">physicalBoundingBox</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="nf">physicalBoundingBox</span><span class="p">(</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isovalue</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="nf">logicalToPhysical</span><span class="p">(</span><span class="n">IndexRegion</span><span class="w"> </span><span class="n">region</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">IndexRegion</span><span class="w"> </span><span class="nf">physicalToLogical</span><span class="p">(</span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">logicalToPhysical</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Coord</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Coord</span><span class="w"> </span><span class="nf">physicalToLogical</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isInside</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ImageIterator</span><span class="w"> </span><span class="nf">iterator</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">compare</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">verifyall</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">compare</span><span class="p">(</span><span class="n">other</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// export functions //</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">write</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">compressed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="w"> </span><span class="nf">toMesh</span><span class="p">(</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isovalue</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">paintSphere</span><span class="p">(</span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">paintCircle</span><span class="p">(</span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">axis</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isPainted</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">painted_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fill</span><span class="p">(</span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isDistanceTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;nrrd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;nii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;nii.gz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mhd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tiff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;jpeg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;jpg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;png&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dcm&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ima&quot;</span><span class="p">};</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isSupportedType</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Image</span><span class="o">::</span><span class="n">getSupportedTypes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">hasSuffix</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Image</span><span class="p">()</span>
+<span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="n">itk_image_</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// only for use by SharedCommandData since an Image should always be valid, never &quot;empty&quot;</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="nf">readDICOMImage</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="nf">cloneData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">img</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getPolyData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">pad</span><span class="p">(</span><span class="n">Dims</span><span class="w"> </span><span class="n">lowerExtendRegion</span><span class="p">,</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">upperExtendRegion</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">StatsPtr</span><span class="w"> </span><span class="nf">statsFilter</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">itk_image_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">painted_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">InterpolatorType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">interpolator_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">);</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<span class="n">Image</span><span class="w"> </span><span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">/=</span><span class="p">(</span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">img</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

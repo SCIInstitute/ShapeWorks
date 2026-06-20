@@ -3867,22 +3867,26 @@ sessions (and survives reinstalls of the bundle):</p>
 <h2 id="checking-if-pytorch-has-gpu-support">Checking if PyTorch has GPU support</h2>
 <p>Run from the <strong>ShapeWorks Prompt</strong> (Windows) or a terminal with the ShapeWorks
 <code>bin/</code> on <code>PATH</code> (macOS / Linux):</p>
-<p><code>swpython -c "import torch; print(torch.cuda.is_available())"</code></p>
+<div class="highlight"><pre><span></span><code>swpython -c &quot;import torch; print(torch.cuda.is_available())&quot;
+</code></pre></div>
 <p>If this prints <code>True</code>, PyTorch has GPU support. If it prints <code>False</code>, the CPU
 build was installed (no compatible CUDA driver was detected). If <code>torch</code> cannot
 be imported, no DeepSSM operation has run yet and PyTorch has not been
 installed — kick one off and try again, or trigger the install manually:</p>
-<p><code>swpython -c "from shapeworks import ensure_torch; ensure_torch()"</code></p>
+<div class="highlight"><pre><span></span><code>swpython -c &quot;from shapeworks import ensure_torch; ensure_torch()&quot;
+</code></pre></div>
 <h2 id="reinstalling-a-different-pytorch-version">Reinstalling a different PyTorch version</h2>
 <p>If you need a different PyTorch version than <code>light-the-torch</code> selected:</p>
 <ol>
 <li>Uninstall the current PyTorch:
-   <code>swpip uninstall torch torchvision torchaudio</code></li>
+   <div class="highlight"><pre><span></span><code>swpip uninstall torch torchvision torchaudio
+</code></pre></div></li>
 <li>Check your CUDA version (see <a href="https://docs.nvidia.com/deploy/cuda-compatibility/">CUDA compatibility</a>
    and <a href="https://varhowto.com/check-pytorch-cuda-version/">How to check CUDA version</a>).</li>
 <li>Install the version you want using <code>swpip</code> and the appropriate index URL from
    <a href="https://pytorch.org/get-started/locally/">PyTorch Getting Started</a>:
-   <code>swpip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu&lt;VERSION&gt;</code>
+   <div class="highlight"><pre><span></span><code>swpip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu&lt;VERSION&gt;
+</code></pre></div>
    Where <code>&lt;VERSION&gt;</code> is your CUDA version with no dot (such as <code>121</code> for CUDA 12.1).</li>
 <li>Verify with the GPU-support check above.</li>
 </ol>

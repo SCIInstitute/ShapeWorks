@@ -3805,162 +3805,265 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Image/ImageUtils.h></h1>
-<h1 id="include-shapeworksh">include "Shapeworks.h"</h1>
-<p>class vtkStaticCellLocator;
-class vtkKdTreePointLocator;</p>
-<p>namespace shapeworks {</p>
-<p>class Mesh {
- public:
-  enum FieldType { Point, Face };
-  enum AlignmentType { Rigid, Similarity, Affine };
-  enum DistanceMethod { PointToPoint, PointToCell };
-  enum CurvatureType { Principal, Gaussian, Mean };
-  enum SubdivisionType { Butterfly, Loop };</p>
-<p>Mesh(const std::string&amp; pathname);</p>
-<p>void set_id(int id) { id_ = id; }
-  int get_id() const { return id_; }</p>
-<p>Mesh(vtkSmartPointer<vtkPolyData> meshPtr) : poly_data_(meshPtr) {
-    if (!poly_data_) throw std::invalid_argument("null meshPtr");
-    invalidateLocators();
-  }</p>
-<p>Mesh(const Mesh&amp; orig) : poly_data_(vtkSmartPointer<vtkPolyData>::New()) {
-    poly_data_-&gt;DeepCopy(orig.poly_data_);
-    id_ = orig.id_;
-    invalidateLocators();
-  }</p>
-<p>Mesh(Mesh&amp;&amp; orig) : poly_data_(orig.poly_data_), id_{orig.id_} { orig.poly_data_ = nullptr; }</p>
-<p>Mesh&amp; operator=(const Mesh&amp; orig) {
-    poly_data_ = vtkSmartPointer<vtkPolyData>::New();
-    poly_data_-&gt;DeepCopy(orig.poly_data_);
-    id_ = orig.id_;
-    invalidateLocators();
-    return *this;
-  }</p>
-<p>Mesh(const Eigen::MatrixXd&amp; points, const Eigen::MatrixXi&amp; faces);</p>
-<p>Mesh&amp; operator=(Mesh&amp;&amp; orig) {
-    poly_data_ = orig.poly_data_;
-    id_ = orig.id_;
-    orig.poly_data_ = nullptr;
-    orig.id_ = -1;
-    return *this;
-  }</p>
-<p>Mesh&amp; operator+=(const Mesh&amp; otherMesh);</p>
-<p>vtkSmartPointer<vtkPolyData> getVTKMesh() const { return this-&gt;poly_data_; }</p>
-<p>Mesh&amp; write(const std::string&amp; pathname, bool binaryFile = false);</p>
-<p>Mesh&amp; coverage(const Mesh&amp; otherMesh, bool allowBackIntersections = true, double angleThreshold = 0,
-                 double backSearchRadius = 0);</p>
-<p>Mesh&amp; smooth(int iterations = 0, double relaxation = 0.0);</p>
-<p>Mesh&amp; smoothSinc(int iterations = 0, double passband = 0.0);</p>
-<p>Mesh&amp; remesh(int numVertices, double adaptivity = 1.0);</p>
-<p>Mesh&amp; remeshPercent(double percentage, double adaptivity = 1.0);</p>
-<p>Mesh&amp; invertNormals();</p>
-<p>Mesh&amp; reflect(const Axis&amp; axis, const Vector3&amp; origin = makeVector({0.0, 0.0, 0.0}));</p>
-<p>MeshTransform createTransform(const Mesh&amp; target, AlignmentType align = Similarity, unsigned iterations = 10);</p>
-<p>Mesh&amp; applyTransform(const MeshTransform transform);</p>
-<p>Mesh&amp; rotate(const double angle, const Axis axis);</p>
-<p>Mesh&amp; fillHoles(double hole_size = 1000.0);</p>
-<p>Mesh&amp; clean();</p>
-<p>Mesh&amp; probeVolume(const Image&amp; image);</p>
-<p>Mesh&amp; clip(const Plane plane);</p>
-<p>Mesh&amp; translate(const Vector3&amp; v);</p>
-<p>Mesh&amp; scale(const Vector3&amp; v);</p>
-<p>PhysicalRegion boundingBox() const;</p>
-<p>Mesh&amp; fixElement();</p>
-<p>Mesh&amp; fixNonManifold();</p>
-<p>Mesh&amp; extractLargestComponent();</p>
-<p>bool detectNonManifold();</p>
-<p>bool detectTriangular();</p>
-<p>std::vector<Field> distance(const Mesh&amp; target, const DistanceMethod method = PointToCell) const;</p>
-<p>Mesh&amp; clipClosedSurface(const Plane plane);</p>
-<p>Mesh&amp; computeNormals();</p>
-<p>Point3 closestPoint(const Point3 point, double&amp; distance, vtkIdType&amp; face_id) const;</p>
-<p>int closestPointId(const Point3 point) const;</p>
-<p>bool isPointInside(const Point3 point) const;</p>
-<p>double geodesicDistance(int source, int target) const;</p>
-<p>Field geodesicDistance(const Point3 landmark) const;</p>
-<p>Field geodesicDistance(const std::vector<Point3> curve) const;</p>
-<p>Field curvature(const CurvatureType type = Principal) const;</p>
-<p>void computeFieldGradient(const std::string&amp; field) const;</p>
-<p>Eigen::Vector3d computeFieldGradientAtPoint(const std::string&amp; field, const Point3&amp; query) const;</p>
-<p>double interpolateFieldAtPoint(const std::string&amp; field, const Point3&amp; query) const;</p>
-<p>Mesh&amp; applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);</p>
-<p>Image toImage(PhysicalRegion region = PhysicalRegion(), Point3 spacing = Point3({1., 1., 1.})) const;</p>
-<p>Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), const Point3 spacing = Point3({1., 1., 1.}),
-                            const Dims padding = Dims({1, 1, 1})) const;</p>
-<p>Mesh&amp; computeThickness(Image&amp; image, Image* dt = nullptr, double max_dist = 10000, double median_radius = 5.0,
-                         std::string distance_mesh = "");</p>
-<p>Mesh&amp; computeLandmarkGeodesics(const std::vector<Point3>&amp; landmarks);</p>
-<p>// query functions //</p>
-<p>Point3 center() const;</p>
-<p>Point3 centerOfMass() const;</p>
-<p>double getSurfaceArea() const;</p>
-<p>int numPoints() const { return poly_data_-&gt;GetNumberOfPoints(); }</p>
-<p>int numFaces() const { return poly_data_-&gt;GetNumberOfCells(); }</p>
-<p>Eigen::MatrixXd points() const;</p>
-<p>Eigen::MatrixXi faces() const;</p>
-<p>Point3 getPoint(int id) const;</p>
-<p>IPoint3 getFace(int id) const;</p>
-<p>// fields of mesh points //</p>
-<p>std::vector<std::string> getFieldNames() const;</p>
-<p>Mesh&amp; setField(const std::string name, Array array, const FieldType type);</p>
-<p>Field getField(const std::string&amp; name, const FieldType type) const;</p>
-<p>void setFieldValue(const std::string&amp; name, int idx, double value);</p>
-<p>double getFieldValue(const std::string&amp; name, int idx) const;</p>
-<p>Eigen::VectorXd getMultiFieldValue(const std::string&amp; name, int idx) const;</p>
-<p>// mesh comparison //</p>
-<p>bool compareAllPoints(const Mesh&amp; other_mesh) const;</p>
-<p>bool compareAllFaces(const Mesh&amp; other_mesh) const;</p>
-<p>bool compareAllFields(const Mesh&amp; other_mesh, const double eps = 1e4) const;</p>
-<p>bool compareField(const Mesh&amp; other_mesh, const std::string&amp; name1, const std::string&amp; name2 = "",
-                    const double eps = -1.0) const;</p>
-<p>// todo: add support for comparison of fields of mesh faces (ex: their normals)</p>
-<p>bool compare(const Mesh&amp; other_mesh, const double eps = -1.0) const;</p>
-<p>bool operator==(const Mesh&amp; other) const { return compare(other); }</p>
-<p>// public static functions //</p>
-<p>static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }</p>
-<p>double getFFCValue(Eigen::Vector3d query) const;</p>
-<p>Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;</p>
-<p>vtkSmartPointer<vtkPoints> getIGLMesh(Eigen::MatrixXd&amp; V, Eigen::MatrixXi&amp; F)
-      const;  // Copied directly from Surface. this-&gt;poly_data_ becomes this-&gt;mesh. // WARNING: Copied directly
-              // from Surface. TODO: When refactoring, take this into account.</p>
-<p>vtkSmartPointer<vtkPolyData> clipByField(const std::string&amp; name, double value);</p>
-<p>vtkSmartPointer<vtkStaticCellLocator> getCellLocator() const {
-    updateCellLocator();
-    return cellLocator;
-  }</p>
-<p>int getClosestFace(const Point3&amp; point) const;</p>
-<p>Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d&amp; pt, int face)
-      const;  // // WARNING: Copied directly from Surface. TODO: When refactoring, take this into account.</p>
-<p>void interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd positions, Eigen::VectorXd scalar_values);</p>
-<p>std::string checkIntegrity() const;</p>
-<p>private:
-  friend struct SharedCommandData;
-  Mesh()
-      : poly_data_(nullptr) {}  // only for use by SharedCommandData since a Mesh should always be valid, never "empty"</p>
-<p>MeshTransform createRegistrationTransform(const Mesh&amp; target, AlignmentType align = Similarity,
-                                            unsigned iterations = 10) const;</p>
-<p>Mesh&amp; setFieldForFaces(const std::string name, Array array);</p>
-<p>Field getFieldForFaces(const std::string&amp; name) const;</p>
-<p>void invalidateLocators() const;</p>
-<p>mutable vtkSmartPointer<vtkStaticCellLocator> cellLocator;
-  void updateCellLocator() const;</p>
-<p>mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
-  void updatePointLocator() const;</p>
-<p>vtkSmartPointer<vtkPolyData> poly_data_;</p>
-<p>int id_{-1};
-};</p>
-<p>std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Mesh&amp; mesh);</p>
-<p>class MeshReader {
-  static vtkSmartPointer<vtkPolyData> read(const std::string&amp; pathname);
-  friend Mesh::Mesh(const std::string&amp; pathname);
-};</p>
-<p>}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Image/ImageUtils.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Shapeworks.h&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkStaticCellLocator</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkKdTreePointLocator</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Mesh</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">FieldType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Point</span><span class="p">,</span><span class="w"> </span><span class="n">Face</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">AlignmentType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Rigid</span><span class="p">,</span><span class="w"> </span><span class="n">Similarity</span><span class="p">,</span><span class="w"> </span><span class="n">Affine</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">DistanceMethod</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">PointToPoint</span><span class="p">,</span><span class="w"> </span><span class="n">PointToCell</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">CurvatureType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Principal</span><span class="p">,</span><span class="w"> </span><span class="n">Gaussian</span><span class="p">,</span><span class="w"> </span><span class="n">Mean</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">SubdivisionType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Butterfly</span><span class="p">,</span><span class="w"> </span><span class="n">Loop</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_id</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">id_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_id</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">id_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshPtr</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">(</span><span class="n">meshPtr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">poly_data_</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">invalid_argument</span><span class="p">(</span><span class="s">&quot;null meshPtr&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">invalidateLocators</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">orig</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">poly_data_</span><span class="o">-&gt;</span><span class="n">DeepCopy</span><span class="p">(</span><span class="n">orig</span><span class="p">.</span><span class="n">poly_data_</span><span class="p">);</span>
+<span class="w">    </span><span class="n">id_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">orig</span><span class="p">.</span><span class="n">id_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">invalidateLocators</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="p">(</span><span class="n">Mesh</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">orig</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">(</span><span class="n">orig</span><span class="p">.</span><span class="n">poly_data_</span><span class="p">),</span><span class="w"> </span><span class="n">id_</span><span class="p">{</span><span class="n">orig</span><span class="p">.</span><span class="n">id_</span><span class="p">}</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">orig</span><span class="p">.</span><span class="n">poly_data_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">orig</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">poly_data_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">poly_data_</span><span class="o">-&gt;</span><span class="n">DeepCopy</span><span class="p">(</span><span class="n">orig</span><span class="p">.</span><span class="n">poly_data_</span><span class="p">);</span>
+<span class="w">    </span><span class="n">id_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">orig</span><span class="p">.</span><span class="n">id_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">invalidateLocators</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">faces</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">Mesh</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">orig</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">poly_data_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">orig</span><span class="p">.</span><span class="n">poly_data_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">id_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">orig</span><span class="p">.</span><span class="n">id_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">orig</span><span class="p">.</span><span class="n">poly_data_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">orig</span><span class="p">.</span><span class="n">id_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">otherMesh</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getVTKMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">poly_data_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">write</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">binaryFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">coverage</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">otherMesh</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">allowBackIntersections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angleThreshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                 </span><span class="kt">double</span><span class="w"> </span><span class="n">backSearchRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">smooth</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">relaxation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">smoothSinc</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">passband</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">remesh</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numVertices</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">remeshPercent</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">percentage</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">invertNormals</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">reflect</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="o">&amp;</span><span class="w"> </span><span class="n">axis</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">origin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeVector</span><span class="p">({</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">}));</span>
+
+<span class="w">  </span><span class="n">MeshTransform</span><span class="w"> </span><span class="nf">createTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">align</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Similarity</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MeshTransform</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fillHoles</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">hole_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1000.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">clean</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">probeVolume</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">clip</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">translate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="nf">boundingBox</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fixElement</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fixNonManifold</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">extractLargestComponent</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">detectNonManifold</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">detectTriangular</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Field</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PointToCell</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">clipClosedSurface</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">computeNormals</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">closestPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span><span class="w"> </span><span class="n">vtkIdType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">closestPointId</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isPointInside</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">geodesicDistance</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Field</span><span class="w"> </span><span class="nf">geodesicDistance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">landmark</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Field</span><span class="w"> </span><span class="nf">geodesicDistance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">curve</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Field</span><span class="w"> </span><span class="nf">curvature</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CurvatureType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Principal</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">computeFieldGradient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">computeFieldGradientAtPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">interpolateFieldAtPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applySubdivisionFilter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SubdivisionType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Butterfly</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">subdivision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="nf">toImage</span><span class="p">(</span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="p">(),</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Point3</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">}))</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Image</span><span class="w"> </span><span class="nf">toDistanceTransform</span><span class="p">(</span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="p">(),</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Point3</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">}),</span>
+<span class="w">                            </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">padding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Dims</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">}))</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeThickness</span><span class="p">(</span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">median_radius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span>
+<span class="w">                         </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">distance_mesh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">computeLandmarkGeodesics</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point3</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">landmarks</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// query functions //</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">centerOfMass</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">getSurfaceArea</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">numPoints</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">poly_data_</span><span class="o">-&gt;</span><span class="n">GetNumberOfPoints</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">numFaces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">poly_data_</span><span class="o">-&gt;</span><span class="n">GetNumberOfCells</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">points</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="nf">faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">getPoint</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">IPoint3</span><span class="w"> </span><span class="nf">getFace</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// fields of mesh points //</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getFieldNames</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">setField</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">FieldType</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Field</span><span class="w"> </span><span class="nf">getField</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">FieldType</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setFieldValue</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">getFieldValue</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">getMultiFieldValue</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// mesh comparison //</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">compareAllPoints</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">compareAllFaces</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">compareAllFields</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e4</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">compareField</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// todo: add support for comparison of fields of mesh faces (ex: their normals)</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">compare</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">compare</span><span class="p">(</span><span class="n">other</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// public static functions //</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;vtk&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;vtp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ply&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;stl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;obj&quot;</span><span class="p">};</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">getFFCValue</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">getFFCGradient</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getIGLMesh</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">)</span>
+<span class="w">      </span><span class="k">const</span><span class="p">;</span><span class="w">  </span><span class="c1">// Copied directly from Surface. this-&gt;poly_data_ becomes this-&gt;mesh. // WARNING: Copied directly</span>
+<span class="w">              </span><span class="c1">// from Surface. TODO: When refactoring, take this into account.</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clipByField</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkStaticCellLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getCellLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">updateCellLocator</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cellLocator</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">getClosestFace</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">computeBarycentricCoordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">)</span>
+<span class="w">      </span><span class="k">const</span><span class="p">;</span><span class="w">  </span><span class="c1">// // WARNING: Copied directly from Surface. TODO: When refactoring, take this into account.</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">interpolate_scalars_to_mesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">scalar_values</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">checkIntegrity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Mesh</span><span class="p">()</span>
+<span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w">  </span><span class="c1">// only for use by SharedCommandData since a Mesh should always be valid, never &quot;empty&quot;</span>
+
+<span class="w">  </span><span class="n">MeshTransform</span><span class="w"> </span><span class="n">createRegistrationTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">align</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Similarity</span><span class="p">,</span>
+<span class="w">                                            </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">setFieldForFaces</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Field</span><span class="w"> </span><span class="nf">getFieldForFaces</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">invalidateLocators</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">mutable</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkStaticCellLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cellLocator</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateCellLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">mutable</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkKdTreePointLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pointLocator</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updatePointLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">id_</span><span class="p">{</span><span class="mi">-1</span><span class="p">};</span>
+<span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshReader</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">);</span>
+<span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="n">Mesh</span><span class="o">::</span><span class="n">Mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

@@ -4040,81 +4040,81 @@
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-progress">signal progress</h3>
-<p><code>cpp
-void progress(
-    double ,
-    QString  =""
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">QString</span><span class="w">  </span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="signal-finished">signal finished</h3>
-<p><code>cpp
-void finished()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finished</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-job">function Job</h3>
-<p><code>cpp
-Job()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Job</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-job_1">function ~Job</h3>
-<p><code>cpp
-virtual ~Job()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Job</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-run">function run</h3>
-<p><code>cpp
-virtual void run() =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p>run the job </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1DeepSSMJob.html#function-run">shapeworks::DeepSSMJob::run</a>, <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-run">shapeworks::ShapeEvaluationJob::run</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-run">shapeworks::GroupPvalueJob::run</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-run">shapeworks::NetworkAnalysisJob::run</a>, <a href="classshapeworks_1_1ParticleAreaJob.html#function-run">shapeworks::ParticleAreaJob::run</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-run">shapeworks::ParticleNormalEvaluationJob::run</a>, <a href="classshapeworks_1_1ShapeScalarJob.html#function-run">shapeworks::ShapeScalarJob::run</a>, <a href="classshapeworks_1_1StatsGroupDWDJob.html#function-run">shapeworks::StatsGroupDWDJob::run</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-run">shapeworks::StatsGroupLDAJob::run</a>, <a href="classmonailabel_1_1MonaiLabelJob.html#function-run">monailabel::MonaiLabelJob::run</a></p>
 <h3 id="function-execute">function execute</h3>
-<p><code>cpp
-void execute()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">execute</span><span class="p">()</span>
+</code></pre></div>
 <p>execute the job with profiling instrumentation </p>
 <h3 id="function-name">function name</h3>
-<p><code>cpp
-virtual QString name() =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p>get the name of the job </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1DeepSSMJob.html#function-name">shapeworks::DeepSSMJob::name</a>, <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-name">shapeworks::ShapeEvaluationJob::name</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-name">shapeworks::GroupPvalueJob::name</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-name">shapeworks::NetworkAnalysisJob::name</a>, <a href="classshapeworks_1_1ParticleAreaJob.html#function-name">shapeworks::ParticleAreaJob::name</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-name">shapeworks::ParticleNormalEvaluationJob::name</a>, <a href="classshapeworks_1_1ShapeScalarJob.html#function-name">shapeworks::ShapeScalarJob::name</a>, <a href="classshapeworks_1_1StatsGroupDWDJob.html#function-name">shapeworks::StatsGroupDWDJob::name</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-name">shapeworks::StatsGroupLDAJob::name</a>, <a href="classmonailabel_1_1MonaiLabelJob.html#function-name">monailabel::MonaiLabelJob::name</a></p>
 <h3 id="function-get_completion_message">function get_completion_message</h3>
-<p><code>cpp
-virtual QString get_completion_message()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_completion_message</span><span class="p">()</span>
+</code></pre></div>
 <p>get a message to display when the job is complete </p>
 <h3 id="function-get_abort_message">function get_abort_message</h3>
-<p><code>cpp
-virtual QString get_abort_message()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_abort_message</span><span class="p">()</span>
+</code></pre></div>
 <p>get a message to display when the job is aborted </p>
 <h3 id="function-start_timer">function start_timer</h3>
-<p><code>cpp
-void start_timer()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">start_timer</span><span class="p">()</span>
+</code></pre></div>
 <p>start the timer </p>
 <h3 id="function-timer_elapsed">function timer_elapsed</h3>
-<p><code>cpp
-qint64 timer_elapsed()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">qint64</span><span class="w"> </span><span class="n">timer_elapsed</span><span class="p">()</span>
+</code></pre></div>
 <p>how much time has elapsed since the timer was started </p>
 <h3 id="function-set_complete">function set_complete</h3>
-<p><code>cpp
-inline void set_complete(
-    bool complete
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_complete</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">complete</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>set the job as complete </p>
 <h3 id="function-is_complete">function is_complete</h3>
-<p><code>cpp
-inline bool is_complete() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_complete</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>is the job complete? </p>
 <h3 id="function-abort">function abort</h3>
-<p><code>cpp
-inline void abort()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">abort</span><span class="p">()</span>
+</code></pre></div>
 <p>abort the job </p>
 <h3 id="function-is_aborted">function is_aborted</h3>
-<p><code>cpp
-inline bool is_aborted() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_aborted</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>was the job aborted? </p>
 <h3 id="function-set_quiet_mode">function set_quiet_mode</h3>
-<p><code>cpp
-inline void set_quiet_mode(
-    bool quiet
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_quiet_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">quiet</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>set to quiet mode (no progress messages) </p>
 <h3 id="function-get_quiet_mode">function get_quiet_mode</h3>
-<p><code>cpp
-inline bool get_quiet_mode()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">get_quiet_mode</span><span class="p">()</span>
+</code></pre></div>
 <p>get quiet mode </p>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

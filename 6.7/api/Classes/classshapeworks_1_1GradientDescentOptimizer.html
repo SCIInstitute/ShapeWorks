@@ -4291,175 +4291,175 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::GradientDescentOptimizer;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">GradientDescentOptimizer</span><span class="p">;</span>
+</code></pre></div>
 <p>Optimizes particle system positions using gradient descent. </p>
 <p>This class optimizes a list of particle system positions with respect to a specified energy function using a simple gradient descent strategy. A function which computes the gradient of the function with respect to particle position must be specified. The optimization performs Jacobi updates (each particle position is changed as soon as its new position is computed). </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-vectortype">using VectorType</h3>
-<p><code>cpp
-using shapeworks::GradientDescentOptimizer::VectorType =  VectorFunction::VectorType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GradientDescentOptimizer</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span>
+</code></pre></div>
 <p>Numerical vector type. </p>
 <h3 id="using-pointtype">using PointType</h3>
-<p><code>cpp
-using shapeworks::GradientDescentOptimizer::PointType =  ParticleSystem::PointType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">GradientDescentOptimizer</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
+</code></pre></div>
 <p>Point type. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-start_optimization">function start_optimization</h3>
-<p><code>cpp
-inline void start_optimization()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">start_optimization</span><span class="p">()</span>
+</code></pre></div>
 <p>Start the optimization. </p>
 <h3 id="function-start_adaptive_gauss_seidel_optimization">function start_adaptive_gauss_seidel_optimization</h3>
-<p><code>cpp
-void start_adaptive_gauss_seidel_optimization()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">start_adaptive_gauss_seidel_optimization</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_early_stopping_config">function set_early_stopping_config</h3>
-<p><code>cpp
-void set_early_stopping_config(
-    const EarlyStoppingConfig &amp; config
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_early_stopping_config</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">config</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-initialize_early_stopping_score_function">function initialize_early_stopping_score_function</h3>
-<p><code>cpp
-void initialize_early_stopping_score_function(
-    const ParticleSystem * p
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">initialize_early_stopping_score_function</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-augmented_lagrangian_constraints">function augmented_lagrangian_constraints</h3>
-<p><code>cpp
-void augmented_lagrangian_constraints(
-    VectorType &amp; gradient,
-    const PointType &amp; pt,
-    const size_t &amp; dom,
-    const double &amp; maximum_update_allowed,
-    size_t index
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">augmented_lagrangian_constraints</span><span class="p">(</span>
+<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">gradient</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dom</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maximum_update_allowed</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-stop_optimization">function stop_optimization</h3>
-<p><code>cpp
-inline void stop_optimization()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">stop_optimization</span><span class="p">()</span>
+</code></pre></div>
 <p>Sets a flag that aborts the start_optimization method after the current iteration. </p>
 <p>Stop the optimization </p>
 <h3 id="function-abort_processing">function abort_processing</h3>
-<p><code>cpp
-inline void abort_processing()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">abort_processing</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_number_of_iterations">function get_number_of_iterations</h3>
-<p><code>cpp
-inline unsigned int get_number_of_iterations() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">get_number_of_iterations</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Get the number of iterations performed by the solver. </p>
 <h3 id="function-set_number_of_iterations">function set_number_of_iterations</h3>
-<p><code>cpp
-inline void set_number_of_iterations(
-    unsigned int val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_number_of_iterations</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the number of iterations performed by the solver. </p>
 <h3 id="function-set_verbosity">function set_verbosity</h3>
-<p><code>cpp
-inline void set_verbosity(
-    unsigned int val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_verbosity</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the verbosity level. </p>
 <h3 id="function-get_verbosity">function get_verbosity</h3>
-<p><code>cpp
-inline unsigned int get_verbosity() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">get_verbosity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Get the verbosity level. </p>
 <h3 id="function-get_time_step">function get_time_step</h3>
-<p><code>cpp
-inline double get_time_step() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_time_step</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Each update is scaled by this value. </p>
 <p>Get the time step parameter for the update </p>
 <h3 id="function-set_time_step">function set_time_step</h3>
-<p><code>cpp
-inline void set_time_step(
-    double val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_time_step</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the time step parameter for the update. </p>
 <h3 id="function-get_maximum_number_of_iterations">function get_maximum_number_of_iterations</h3>
-<p><code>cpp
-inline unsigned int get_maximum_number_of_iterations() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">get_maximum_number_of_iterations</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Get the maximum number of iterations allowed. </p>
 <h3 id="function-set_maximum_number_of_iterations">function set_maximum_number_of_iterations</h3>
-<p><code>cpp
-inline void set_maximum_number_of_iterations(
-    unsigned int val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_maximum_number_of_iterations</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the maximum number of iterations allowed. </p>
 <h3 id="function-get_tolerance">function get_tolerance</h3>
-<p><code>cpp
-inline double get_tolerance() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_tolerance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Get the precision/tolerance of the solution. </p>
 <h3 id="function-set_tolerance">function set_tolerance</h3>
-<p><code>cpp
-inline void set_tolerance(
-    double val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_tolerance</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the precision/tolerance of the solution. </p>
 <h3 id="function-get_particle_system">function get_particle_system</h3>
-<p><code>cpp
-inline ParticleSystem * get_particle_system()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_particle_system</span><span class="p">()</span>
+</code></pre></div>
 <p>Get the <a href="">ParticleSystem</a> modified by this optimizer. </p>
 <h3 id="function-get_particle_system_1">function get_particle_system</h3>
-<p><code>cpp
-inline const ParticleSystem * get_particle_system() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_particle_system</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Get the <a href="">ParticleSystem</a> modified by this optimizer (const version) </p>
 <h3 id="function-set_particle_system">function set_particle_system</h3>
-<p><code>cpp
-inline void set_particle_system(
-    ParticleSystem * val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_system</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the <a href="">ParticleSystem</a> modified by this optimizer. </p>
 <h3 id="function-get_gradient_function">function get_gradient_function</h3>
-<p><code>cpp
-inline std::shared_ptr&lt; VectorFunction &gt; get_gradient_function()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_gradient_function</span><span class="p">()</span>
+</code></pre></div>
 <p>Get the gradient function used by this optimizer. </p>
 <h3 id="function-get_gradient_function_1">function get_gradient_function</h3>
-<p><code>cpp
-inline std::shared_ptr&lt; const VectorFunction &gt; get_gradient_function() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_gradient_function</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Get the gradient function used by this optimizer (const version) </p>
 <h3 id="function-set_gradient_function">function set_gradient_function</h3>
-<p><code>cpp
-inline void set_gradient_function(
-    std::shared_ptr&lt; VectorFunction &gt; val
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_gradient_function</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the gradient function used by this optimizer. </p>
 <h3 id="function-set_initialization_mode">function set_initialization_mode</h3>
-<p><code>cpp
-inline void set_initialization_mode(
-    bool b
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_initialization_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Determines if this is an initialization (true) or an optimization (false) </p>
 <h3 id="function-set_check_iterations">function set_check_iterations</h3>
-<p><code>cpp
-inline void set_check_iterations(
-    size_t si
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_check_iterations</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">si</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Sets the number of iterations when we check for convergence. </p>
 <h3 id="function-set_initialization_start_scaling_factor">function set_initialization_start_scaling_factor</h3>
-<p><code>cpp
-inline void set_initialization_start_scaling_factor(
-    double si
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_initialization_start_scaling_factor</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">si</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Sets the scaling factor at the beginning of the initialization. </p>
 <h3 id="function-set_iteration_callback">function set_iteration_callback</h3>
-<p><code>cpp
-inline void set_iteration_callback(
-    std::function&lt; void()&gt; callback
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_iteration_callback</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set a callback to be called after each iteration. </p>
 <h3 id="function-get_iteration_callback">function get_iteration_callback</h3>
-<p><code>cpp
-inline std::function&lt; void()&gt; get_iteration_callback() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_iteration_callback</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Get the current iteration callback. </p>
 <h3 id="function-gradientdescentoptimizer">function GradientDescentOptimizer</h3>
-<p><code>cpp
-GradientDescentOptimizer()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">GradientDescentOptimizer</span><span class="p">()</span>
+</code></pre></div>
 <p>Constructor. </p>
 <h3 id="function-gradientdescentoptimizer_1">function ~GradientDescentOptimizer</h3>
-<p><code>cpp
-~GradientDescentOptimizer() =default</code></p>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">GradientDescentOptimizer</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
+</code></pre></div>
 <p>Destructor. </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-dimension">variable Dimension</h3>
-<p><code>cpp
-static constexpr unsigned int Dimension = 3;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

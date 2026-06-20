@@ -3901,40 +3901,40 @@
 </table>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-enabled">variable enabled</h3>
-<p><code>cpp
-bool enabled = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-frequency">variable frequency</h3>
-<p><code>cpp
-int frequency = 100;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">frequency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+</code></pre></div>
 <p>how often (in iterations) to check the stopping criterion </p>
 <h3 id="variable-window_size">variable window_size</h3>
-<p><code>cpp
-int window_size = 5;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">window_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</code></pre></div>
 <p>number of past values to consider in relative difference or EMA </p>
 <h3 id="variable-threshold">variable threshold</h3>
-<p><code>cpp
-double threshold = 0.0001;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0001</span><span class="p">;</span>
+</code></pre></div>
 <p>Threshold for stopping: For RelativeDifference: use ~1e-4 or smaller. For EMA: use ~1e-1 or smaller. </p>
 <h3 id="variable-strategy">variable strategy</h3>
-<p><code>cpp
-EarlyStoppingStrategy strategy = EarlyStoppingStrategy::RelativeDifference;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">EarlyStoppingStrategy</span><span class="w"> </span><span class="n">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EarlyStoppingStrategy</span><span class="o">::</span><span class="n">RelativeDifference</span><span class="p">;</span>
+</code></pre></div>
 <p>strategy used for determining early stopping. </p>
 <h3 id="variable-ema_alpha">variable ema_alpha</h3>
-<p><code>cpp
-double ema_alpha = 0.2;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ema_alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.2</span><span class="p">;</span>
+</code></pre></div>
 <p>higher value of alpha give more weight to recent iterations </p>
 <h3 id="variable-enable_logging">variable enable_logging</h3>
-<p><code>cpp
-bool enable_logging = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">enable_logging</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-logger_name">variable logger_name</h3>
-<p><code>cpp
-std::string logger_name = "early_stopping_log_stats";</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">logger_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;early_stopping_log_stats&quot;</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-warmup_iters">variable warmup_iters</h3>
-<p><code>cpp
-int warmup_iters = 1000;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">warmup_iters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+</code></pre></div>
 <p>to prevent premature stoppin </p>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

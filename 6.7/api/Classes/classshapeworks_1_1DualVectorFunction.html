@@ -4658,233 +4658,233 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::DualVectorFunction;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">DualVectorFunction</span><span class="p">;</span>
+</code></pre></div>
 <p>This class combines the results of evaluating 2 <a href="classshapeworks_1_1VectorFunction.html">VectorFunction</a> and presents the interface of a single function evaluation. Optionally, only the first function can be used by calling SetLinkOff(). </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-vectortype">using VectorType</h3>
-<p><code>cpp
-using shapeworks::DualVectorFunction::VectorType =  VectorFunction::VectorType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DualVectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span>
+</code></pre></div>
 <p>Type of vectors. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-new">function New</h3>
-<p><code>cpp
-static inline std::shared_ptr&lt; DualVectorFunction &gt; New()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">()</span>
+</code></pre></div>
 <p>Factory method for creating instances. </p>
 <h3 id="function-evaluate">function evaluate</h3>
-<p><code>cpp
-inline virtual VectorType evaluate(
-    unsigned int idx,
-    unsigned int d,
-    const ParticleSystem * system,
-    double &amp; maxmove
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmove</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-evaluate">shapeworks::VectorFunction::evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-energya">function EnergyA</h3>
-<p><code>cpp
-inline double EnergyA(
-    unsigned int idx,
-    unsigned int d,
-    const ParticleSystem * system
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">EnergyA</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-energyb">function EnergyB</h3>
-<p><code>cpp
-inline virtual double EnergyB(
-    unsigned int idx,
-    unsigned int d,
-    const ParticleSystem * system
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">EnergyB</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-energy">function energy</h3>
-<p><code>cpp
-inline virtual double energy(
-    unsigned int idx,
-    unsigned int d,
-    const ParticleSystem * system
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">energy</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-energy">shapeworks::VectorFunction::energy</a></p>
 <h3 id="function-evaluate_1">function evaluate</h3>
-<p><code>cpp
-inline virtual VectorType evaluate(
-    unsigned int idx,
-    unsigned int d,
-    const ParticleSystem * system,
-    double &amp; maxmove,
-    double &amp; energy
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmove</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">energy</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-evaluate">shapeworks::VectorFunction::evaluate</a></p>
 <h3 id="function-before_evaluate">function before_evaluate</h3>
-<p><code>cpp
-inline virtual void before_evaluate(
-    unsigned int ,
-    unsigned int ,
-    const ParticleSystem * 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">before_evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-before-evaluate">shapeworks::VectorFunction::before_evaluate</a></p>
 <p>This method may be called to set up the state of the function object before a call to evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the energy as well as the gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
 <h3 id="function-after_iteration">function after_iteration</h3>
-<p><code>cpp
-inline virtual void after_iteration() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">after_iteration</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>This method is called by a solver after each iteration. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-after-iteration">shapeworks::VectorFunction::after_iteration</a></p>
 <h3 id="function-before_iteration">function before_iteration</h3>
-<p><code>cpp
-inline virtual void before_iteration() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">before_iteration</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>This method is called by a solver before each iteration. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-before-iteration">shapeworks::VectorFunction::before_iteration</a></p>
 <h3 id="function-set_particle_system">function set_particle_system</h3>
-<p><code>cpp
-inline virtual void set_particle_system(
-    ParticleSystem * p
-) override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_system</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>Some subclasses may require a pointer to the particle system and its domain number. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-set-particle-system">shapeworks::VectorFunction::set_particle_system</a></p>
 <h3 id="function-set_domain_number">function set_domain_number</h3>
-<p><code>cpp
-inline virtual void set_domain_number(
-    unsigned int i
-) override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_domain_number</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-set-domain-number">shapeworks::VectorFunction::set_domain_number</a></p>
 <h3 id="function-set_function_a">function set_function_a</h3>
-<p><code>cpp
-inline void set_function_a(
-    std::shared_ptr&lt; VectorFunction &gt; o
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_function_a</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_function_a">function get_function_a</h3>
-<p><code>cpp
-inline std::shared_ptr&lt; VectorFunction &gt; get_function_a()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_function_a</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-get_function_b">function get_function_b</h3>
-<p><code>cpp
-inline std::shared_ptr&lt; VectorFunction &gt; get_function_b()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_function_b</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_function_b">function set_function_b</h3>
-<p><code>cpp
-inline void set_function_b(
-    std::shared_ptr&lt; VectorFunction &gt; o
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_function_b</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_a_on">function set_a_on</h3>
-<p><code>cpp
-inline void set_a_on()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_a_on</span><span class="p">()</span>
+</code></pre></div>
 <p>Turn each term on and off. </p>
 <h3 id="function-set_a_off">function set_a_off</h3>
-<p><code>cpp
-inline void set_a_off()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_a_off</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_a_on_1">function set_a_on</h3>
-<p><code>cpp
-inline void set_a_on(
-    bool s
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_a_on</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_a_on">function get_a_on</h3>
-<p><code>cpp
-inline bool get_a_on() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">get_a_on</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-set_b_on">function set_b_on</h3>
-<p><code>cpp
-inline void set_b_on()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_b_on</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_b_off">function set_b_off</h3>
-<p><code>cpp
-inline void set_b_off()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_b_off</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_b_on_1">function set_b_on</h3>
-<p><code>cpp
-inline void set_b_on(
-    bool s
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_b_on</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_b_on">function get_b_on</h3>
-<p><code>cpp
-inline bool get_b_on() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">get_b_on</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-set_relative_energy_scaling">function set_relative_energy_scaling</h3>
-<p><code>cpp
-inline virtual void set_relative_energy_scaling(
-    double r
-) override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_relative_energy_scaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>The relative scaling scales the gradient B relative to A. By default this value is 1.0. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-set-relative-energy-scaling">shapeworks::VectorFunction::set_relative_energy_scaling</a></p>
 <h3 id="function-get_relative_energy_scaling">function get_relative_energy_scaling</h3>
-<p><code>cpp
-inline virtual double get_relative_energy_scaling() const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_relative_energy_scaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-get-relative-energy-scaling">shapeworks::VectorFunction::get_relative_energy_scaling</a></p>
 <h3 id="function-set_relative_gradient_scaling">function set_relative_gradient_scaling</h3>
-<p><code>cpp
-inline void set_relative_gradient_scaling(
-    double r
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_relative_gradient_scaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_relative_gradient_scaling">function get_relative_gradient_scaling</h3>
-<p><code>cpp
-inline double get_relative_gradient_scaling() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_relative_gradient_scaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-get_average_grad_mag_a">function get_average_grad_mag_a</h3>
-<p><code>cpp
-inline double get_average_grad_mag_a() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_average_grad_mag_a</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-get_average_grad_mag_b">function get_average_grad_mag_b</h3>
-<p><code>cpp
-inline double get_average_grad_mag_b() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_average_grad_mag_b</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-get_average_energy_a">function get_average_energy_a</h3>
-<p><code>cpp
-inline double get_average_energy_a() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_average_energy_a</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-get_average_energy_b">function get_average_energy_b</h3>
-<p><code>cpp
-inline double get_average_energy_b() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_average_energy_b</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-clone">function clone</h3>
-<p><code>cpp
-inline virtual std::shared_ptr&lt; VectorFunction &gt; clone() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">clone</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-clone">shapeworks::VectorFunction::clone</a></p>
 <h3 id="function-dualvectorfunction">function DualVectorFunction</h3>
-<p><code>cpp
-inline DualVectorFunction()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-dualvectorfunction_1">function ~DualVectorFunction</h3>
-<p><code>cpp
-~DualVectorFunction() override =default</code></p>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">DualVectorFunction</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
+</code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-dualvectorfunction_2">function DualVectorFunction</h3>
-<p><code>cpp
-DualVectorFunction(
-    const DualVectorFunction &amp; 
-) =delete</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">DualVectorFunction</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">delete</span>
+</code></pre></div>
 <h3 id="function-operator">function operator=</h3>
-<p><code>cpp
-DualVectorFunction &amp; operator=(
-    const DualVectorFunction &amp; 
-) =delete</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">DualVectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">delete</span>
+</code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-vdimension">variable VDimension</h3>
-<p><code>cpp
-static constexpr static int VDimension = 3;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-dimension">variable Dimension</h3>
-<p><code>cpp
-static constexpr static unsigned int Dimension = VDimension;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VDimension</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-a_on_">variable a_on_</h3>
-<p><code>cpp
-bool a_on_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">a_on_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-b_on_">variable b_on_</h3>
-<p><code>cpp
-bool b_on_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">b_on_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-relative_gradient_scaling_">variable relative_gradient_scaling_</h3>
-<p><code>cpp
-double relative_gradient_scaling_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">relative_gradient_scaling_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-relative_energy_scaling_">variable relative_energy_scaling_</h3>
-<p><code>cpp
-double relative_energy_scaling_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">relative_energy_scaling_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-average_grad_mag_a_">variable average_grad_mag_a_</h3>
-<p><code>cpp
-double average_grad_mag_a_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">average_grad_mag_a_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-average_grad_mag_b_">variable average_grad_mag_b_</h3>
-<p><code>cpp
-double average_grad_mag_b_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">average_grad_mag_b_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-average_energy_a_">variable average_energy_a_</h3>
-<p><code>cpp
-double average_energy_a_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">average_energy_a_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-average_energy_b_">variable average_energy_b_</h3>
-<p><code>cpp
-double average_energy_b_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">average_energy_b_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-counter_">variable counter_</h3>
-<p><code>cpp
-double counter_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">counter_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-function_a_">variable function_a_</h3>
-<p><code>cpp
-std::shared_ptr&lt; VectorFunction &gt; function_a_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">function_a_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-function_b_">variable function_b_</h3>
-<p><code>cpp
-std::shared_ptr&lt; VectorFunction &gt; function_b_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">function_b_</span><span class="p">;</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:36 +0000</p>
 
 
 

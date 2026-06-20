@@ -4219,131 +4219,131 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::VectorFunction;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">VectorFunction</span><span class="p">;</span>
+</code></pre></div>
 <p>This is the base class defining the API for a function that takes a particle system, domain, and location index as arguments and returns a vector-valued result. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-vectortype">using VectorType</h3>
-<p><code>cpp
-using shapeworks::VectorFunction::VectorType =  vnl_vector_fixed&lt;double, Dimension&gt;;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
 <p>Type of vectors. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-evaluate">function evaluate</h3>
-<p><code>cpp
-virtual VectorType evaluate(
-    unsigned int ,
-    unsigned int ,
-    const ParticleSystem * ,
-    double &amp; maxtimestep
-) const =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxtimestep</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1CorrespondenceFunction.html#function-evaluate">shapeworks::CorrespondenceFunction::evaluate</a>, <a href="classshapeworks_1_1DisentangledCorrespondenceFunction.html#function-evaluate">shapeworks::DisentangledCorrespondenceFunction::evaluate</a>, <a href="classshapeworks_1_1LegacyCorrespondenceFunction.html#function-evaluate">shapeworks::LegacyCorrespondenceFunction::evaluate</a>, <a href="classshapeworks_1_1SamplingFunction.html#function-evaluate">shapeworks::SamplingFunction::evaluate</a>, <a href="classshapeworks_1_1DualVectorFunction.html#function-evaluate">shapeworks::DualVectorFunction::evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-evaluate_1">function evaluate</h3>
-<p><code>cpp
-virtual VectorType evaluate(
-    unsigned int ,
-    unsigned int ,
-    const ParticleSystem * ,
-    double &amp; maxtimestep,
-    double &amp; energy
-) const =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxtimestep</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">energy</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1DualVectorFunction.html#function-evaluate">shapeworks::DualVectorFunction::evaluate</a>, <a href="classshapeworks_1_1CorrespondenceFunction.html#function-evaluate">shapeworks::CorrespondenceFunction::evaluate</a>, <a href="classshapeworks_1_1DisentangledCorrespondenceFunction.html#function-evaluate">shapeworks::DisentangledCorrespondenceFunction::evaluate</a>, <a href="classshapeworks_1_1LegacyCorrespondenceFunction.html#function-evaluate">shapeworks::LegacyCorrespondenceFunction::evaluate</a>, <a href="classshapeworks_1_1SamplingFunction.html#function-evaluate">shapeworks::SamplingFunction::evaluate</a></p>
 <h3 id="function-energy">function energy</h3>
-<p><code>cpp
-virtual double energy(
-    unsigned int ,
-    unsigned int ,
-    const ParticleSystem * 
-) const =0</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">energy</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1CorrespondenceFunction.html#function-energy">shapeworks::CorrespondenceFunction::energy</a>, <a href="classshapeworks_1_1DisentangledCorrespondenceFunction.html#function-energy">shapeworks::DisentangledCorrespondenceFunction::energy</a>, <a href="classshapeworks_1_1LegacyCorrespondenceFunction.html#function-energy">shapeworks::LegacyCorrespondenceFunction::energy</a>, <a href="classshapeworks_1_1SamplingFunction.html#function-energy">shapeworks::SamplingFunction::energy</a>, <a href="classshapeworks_1_1DualVectorFunction.html#function-energy">shapeworks::DualVectorFunction::energy</a></p>
 <h3 id="function-reset_buffers">function reset_buffers</h3>
-<p><code>cpp
-inline virtual void reset_buffers()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">reset_buffers</span><span class="p">()</span>
+</code></pre></div>
 <p>May be called by the solver class. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1SamplingFunction.html#function-reset-buffers">shapeworks::SamplingFunction::reset_buffers</a></p>
 <h3 id="function-after_iteration">function after_iteration</h3>
-<p><code>cpp
-inline virtual void after_iteration()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">after_iteration</span><span class="p">()</span>
+</code></pre></div>
 <p>This method is called by a solver after each iteration. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1CorrespondenceFunction.html#function-after-iteration">shapeworks::CorrespondenceFunction::after_iteration</a>, <a href="classshapeworks_1_1DisentangledCorrespondenceFunction.html#function-after-iteration">shapeworks::DisentangledCorrespondenceFunction::after_iteration</a>, <a href="classshapeworks_1_1DualVectorFunction.html#function-after-iteration">shapeworks::DualVectorFunction::after_iteration</a>, <a href="classshapeworks_1_1LegacyCorrespondenceFunction.html#function-after-iteration">shapeworks::LegacyCorrespondenceFunction::after_iteration</a></p>
 <h3 id="function-before_iteration">function before_iteration</h3>
-<p><code>cpp
-inline virtual void before_iteration()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">before_iteration</span><span class="p">()</span>
+</code></pre></div>
 <p>This method is called by a solver before each iteration. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1CorrespondenceFunction.html#function-before-iteration">shapeworks::CorrespondenceFunction::before_iteration</a>, <a href="classshapeworks_1_1DisentangledCorrespondenceFunction.html#function-before-iteration">shapeworks::DisentangledCorrespondenceFunction::before_iteration</a>, <a href="classshapeworks_1_1LegacyCorrespondenceFunction.html#function-before-iteration">shapeworks::LegacyCorrespondenceFunction::before_iteration</a>, <a href="classshapeworks_1_1DualVectorFunction.html#function-before-iteration">shapeworks::DualVectorFunction::before_iteration</a></p>
 <h3 id="function-before_evaluate">function before_evaluate</h3>
-<p><code>cpp
-inline virtual void before_evaluate(
-    unsigned int ,
-    unsigned int ,
-    const ParticleSystem * 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">before_evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1DualVectorFunction.html#function-before-evaluate">shapeworks::DualVectorFunction::before_evaluate</a>, <a href="classshapeworks_1_1SamplingFunction.html#function-before-evaluate">shapeworks::SamplingFunction::before_evaluate</a></p>
 <p>This method may be called to set up the state of the function object before a call to evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the energy as well as the gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
 <h3 id="function-set_particle_system">function set_particle_system</h3>
-<p><code>cpp
-inline virtual void set_particle_system(
-    ParticleSystem * p
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_system</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Some subclasses may require a pointer to the particle system and its domain number. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1DualVectorFunction.html#function-set-particle-system">shapeworks::DualVectorFunction::set_particle_system</a></p>
 <h3 id="function-get_particle_system">function get_particle_system</h3>
-<p><code>cpp
-inline virtual ParticleSystem * get_particle_system() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_particle_system</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-set_domain_number">function set_domain_number</h3>
-<p><code>cpp
-inline virtual void set_domain_number(
-    unsigned int i
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_domain_number</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1DualVectorFunction.html#function-set-domain-number">shapeworks::DualVectorFunction::set_domain_number</a></p>
 <h3 id="function-get_domain_number">function get_domain_number</h3>
-<p><code>cpp
-inline virtual int get_domain_number() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">get_domain_number</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-clone">function clone</h3>
-<p><code>cpp
-inline virtual std::shared_ptr&lt; VectorFunction &gt; clone()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">clone</span><span class="p">()</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1CorrespondenceFunction.html#function-clone">shapeworks::CorrespondenceFunction::clone</a>, <a href="classshapeworks_1_1DisentangledCorrespondenceFunction.html#function-clone">shapeworks::DisentangledCorrespondenceFunction::clone</a>, <a href="classshapeworks_1_1DualVectorFunction.html#function-clone">shapeworks::DualVectorFunction::clone</a>, <a href="classshapeworks_1_1LegacyCorrespondenceFunction.html#function-clone">shapeworks::LegacyCorrespondenceFunction::clone</a>, <a href="classshapeworks_1_1SamplingFunction.html#function-clone">shapeworks::SamplingFunction::clone</a></p>
 <h3 id="function-get_relative_energy_scaling">function get_relative_energy_scaling</h3>
-<p><code>cpp
-inline virtual double get_relative_energy_scaling() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">get_relative_energy_scaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1DualVectorFunction.html#function-get-relative-energy-scaling">shapeworks::DualVectorFunction::get_relative_energy_scaling</a></p>
 <h3 id="function-set_relative_energy_scaling">function set_relative_energy_scaling</h3>
-<p><code>cpp
-inline virtual void set_relative_energy_scaling(
-    double r
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_relative_energy_scaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1DualVectorFunction.html#function-set-relative-energy-scaling">shapeworks::DualVectorFunction::set_relative_energy_scaling</a></p>
 <h3 id="function-vectorfunction">function ~VectorFunction</h3>
-<p><code>cpp
-virtual ~VectorFunction() =default</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">VectorFunction</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
+</code></pre></div>
 <p>Virtual destructor for proper cleanup of derived classes. </p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-vectorfunction_1">function VectorFunction</h3>
-<p><code>cpp
-inline VectorFunction()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">VectorFunction</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-vectorfunction_2">function VectorFunction</h3>
-<p><code>cpp
-VectorFunction(
-    const VectorFunction &amp; 
-) =delete</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">VectorFunction</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">delete</span>
+</code></pre></div>
 <h3 id="function-operator">function operator=</h3>
-<p><code>cpp
-VectorFunction &amp; operator=(
-    const VectorFunction &amp; 
-) =delete</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">delete</span>
+</code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-dimension">variable Dimension</h3>
-<p><code>cpp
-static constexpr static unsigned int Dimension = 3;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-particle_system_">variable particle_system_</h3>
-<p><code>cpp
-ParticleSystem * particle_system_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">particle_system_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-domain_number_">variable domain_number_</h3>
-<p><code>cpp
-unsigned int domain_number_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_number_</span><span class="p">;</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

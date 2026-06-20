@@ -3801,93 +3801,130 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<p>// qt</p>
-<h1 id="include">include <QElapsedTimer></h1>
-<h1 id="include_1">include <QSharedPointer></h1>
-<h1 id="include_2">include <QWidget></h1>
-<h1 id="include_3">include <DeepSSM/DeepSSMJob.h></h1>
-<p>// studio</p>
-<h1 id="include_4">include <Data/Preferences.h></h1>
-<h1 id="include_5">include <Project.h></h1>
-<h1 id="include_6">include <Shape.h></h1>
-<p>class Ui_DeepSSMTool;
-class QLabel;
-class QTableWidget;
-class QLineEdit;</p>
-<p>namespace shapeworks {</p>
-<p>class Session;
-class Lightbox;
-class DeepSSMJob;
-class ShapeWorksStudioApp;</p>
-<p>class DeepSSMTool : public QWidget {
-  Q_OBJECT;</p>
-<p>public:</p>
-<p>DeepSSMTool(Preferences&amp; prefs);
-  ~DeepSSMTool();</p>
-<p>void set_session(QSharedPointer<Session> session);</p>
-<p>void set_app(ShapeWorksStudioApp* app);</p>
-<p>bool is_active();</p>
-<p>void load_params();
-  void store_params();</p>
-<p>void shutdown();</p>
-<p>ShapeList get_shapes();</p>
-<p>void resizeEvent(QResizeEvent* event) override;</p>
-<p>std::string get_display_feature();</p>
-<p>public Q_SLOTS:</p>
-<p>void run_clicked();
-  void run_prep_clicked(int step);
-  void restore_defaults();</p>
-<p>void handle_thread_complete();</p>
-<p>void handle_progress(int val, QString message);
-  void handle_error(QString msg);</p>
-<p>void tab_changed(int tab);</p>
-<p>void update_panels();
-  void update_split();</p>
-<p>void handle_new_mesh();</p>
-<p>void training_fine_tuning_changed();</p>
-<p>Q_SIGNALS:</p>
-<p>void update_view();
-  void progress(int);</p>
-<p>private:
-  void update_meshes();
-  void run_tool(DeepSSMJob::JobType type);
-  void show_augmentation_meshes();
-  void update_tables();
-  void show_training_meshes();
-  void show_testing_meshes();
-  void update_testing_meshes();
-  void load_plots();
-  void resize_plots();</p>
-<p>std::string get_feature_name();
-  void set_subject_image_filename(const std::shared_ptr<Subject>&amp; subject, const std::string&amp; filename);</p>
-<p>QPixmap load_plot(QString filename);
-  void set_plot(QLabel* qlabel, QPixmap pixmap);</p>
-<p>void populate_table_from_csv(QTableWidget* table, QString filename, bool header);</p>
-<p>QStringList read_images_from_csv(QString filename);</p>
-<p>Preferences&amp; preferences_;</p>
-<p>Ui_DeepSSMTool<em> ui_;
-  QSharedPointer<Session> session_;
-  ShapeWorksStudioApp</em> app_;
-  DeepSSMJob::PrepStep prep_step_ = DeepSSMJob::PrepStep::NOT_STARTED;</p>
-<p>bool tool_is_running_ = false;
-  DeepSSMJob::JobType current_tool_ = DeepSSMJob::JobType::DeepSSM_AugmentationType;
-  QSharedPointer<DeepSSMJob> deep_ssm_;
-  QElapsedTimer timer_;</p>
-<p>ShapeList shapes_;
-  QPixmap violin_plot_;
-  QPixmap training_plot_;
-  QPixmap training_plot_ft_;
-  // training plots for TL mode
-  QPixmap training_plot_tl1_;
-  QPixmap training_plot_tl2_;
-  QPixmap training_plot_tl3_;
-};</p>
-<p>}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="c1">// qt</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;DeepSSM/DeepSSMJob.h&gt;</span>
+
+<span class="c1">// studio</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_DeepSSMTool</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QLabel</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QTableWidget</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QLineEdit</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMJob</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+
+<span class="w">  </span><span class="n">DeepSSMTool</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">DeepSSMTool</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_app</span><span class="p">(</span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">app</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_active</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_params</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_params</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resizeEvent</span><span class="p">(</span><span class="n">QResizeEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_display_feature</span><span class="p">();</span>
+
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">run_clicked</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_prep_clicked</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">step</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">tab_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">tab</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_panels</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_split</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">training_fine_tuning_changed</span><span class="p">();</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_meshes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_tool</span><span class="p">(</span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_augmentation_meshes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_tables</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_training_meshes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_testing_meshes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_testing_meshes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_plots</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resize_plots</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_feature_name</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_subject_image_filename</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Subject</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="nf">load_plot</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_plot</span><span class="p">(</span><span class="n">QLabel</span><span class="o">*</span><span class="w"> </span><span class="n">qlabel</span><span class="p">,</span><span class="w"> </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">pixmap</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">populate_table_from_csv</span><span class="p">(</span><span class="n">QTableWidget</span><span class="o">*</span><span class="w"> </span><span class="n">table</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">header</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="nf">read_images_from_csv</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Ui_DeepSSMTool</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">app_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">PrepStep</span><span class="w"> </span><span class="n">prep_step_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">PrepStep</span><span class="o">::</span><span class="n">NOT_STARTED</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">tool_is_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">current_tool_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DeepSSMJob</span><span class="o">::</span><span class="n">JobType</span><span class="o">::</span><span class="n">DeepSSM_AugmentationType</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">DeepSSMJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deep_ssm_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">violin_plot_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">training_plot_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">training_plot_ft_</span><span class="p">;</span>
+<span class="w">  </span><span class="c1">// training plots for TL mode</span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">training_plot_tl1_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">training_plot_tl2_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">training_plot_tl3_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

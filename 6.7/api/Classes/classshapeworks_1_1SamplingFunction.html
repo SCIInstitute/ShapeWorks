@@ -4441,185 +4441,185 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::SamplingFunction;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">SamplingFunction</span><span class="p">;</span>
+</code></pre></div>
 <p>This function is responsible for the sampling term of the optimization. E.g. the repulsion force between particles on a single shape </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-vectortype">using VectorType</h3>
-<p><code>cpp
-using shapeworks::SamplingFunction::VectorType =  vnl_vector_fixed&lt;double, 3&gt;;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">SamplingFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-pointtype">using PointType</h3>
-<p><code>cpp
-using shapeworks::SamplingFunction::PointType =  ParticleSystem::PointType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">SamplingFunction</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-gradientvectortype">using GradientVectorType</h3>
-<p><code>cpp
-using shapeworks::SamplingFunction::GradientVectorType =  vnl_vector_fixed&lt;float, 3&gt;;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">SamplingFunction</span><span class="o">::</span><span class="n">GradientVectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-sigmacachetype">using SigmaCacheType</h3>
-<p><code>cpp
-using shapeworks::SamplingFunction::SigmaCacheType =  GenericContainerArray&lt;double&gt;;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">SamplingFunction</span><span class="o">::</span><span class="n">SigmaCacheType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">GenericContainerArray</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-new">function New</h3>
-<p><code>cpp
-static inline std::shared_ptr&lt; SamplingFunction &gt; New()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SamplingFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">()</span>
+</code></pre></div>
 <p>Factory method for creating instances. </p>
 <h3 id="function-evaluate">function evaluate</h3>
-<p><code>cpp
-inline virtual VectorType evaluate(
-    unsigned int ,
-    unsigned int ,
-    const ParticleSystem * ,
-    double &amp; maxtimestep
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxtimestep</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-evaluate">shapeworks::VectorFunction::evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-evaluate_1">function evaluate</h3>
-<p><code>cpp
-virtual VectorType evaluate(
-    unsigned int ,
-    unsigned int ,
-    const ParticleSystem * ,
-    double &amp; ,
-    double &amp; 
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-evaluate">shapeworks::VectorFunction::evaluate</a></p>
 <h3 id="function-before_evaluate">function before_evaluate</h3>
-<p><code>cpp
-virtual void before_evaluate(
-    unsigned int ,
-    unsigned int ,
-    const ParticleSystem * 
-) override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">before_evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-before-evaluate">shapeworks::VectorFunction::before_evaluate</a></p>
 <p>This method may be called to set up the state of the function object before a call to evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the energy as well as the gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
 <h3 id="function-energy">function energy</h3>
-<p><code>cpp
-inline virtual double energy(
-    unsigned int a,
-    unsigned int b,
-    const ParticleSystem * c
-) const override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">energy</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-energy">shapeworks::VectorFunction::energy</a></p>
 <h3 id="function-estimatesigma">function EstimateSigma</h3>
-<p><code>cpp
-double EstimateSigma(
-    unsigned int idx,
-    unsigned int dom,
-    const shapeworks::ParticleDomain * domain,
-    const PointType &amp; pos,
-    double initial_sigma,
-    double precision,
-    int &amp; err,
-    double &amp; avg_kappa
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">EstimateSigma</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dom</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleDomain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">initial_sigma</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">err</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">avg_kappa</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Estimate the best sigma for Parzen windowing in a given neighborhood. The best sigma is the sigma that maximizes probability at the given point </p>
 <h3 id="function-setsharedboundaryweight">function SetSharedBoundaryWeight</h3>
-<p><code>cpp
-inline void SetSharedBoundaryWeight(
-    double w
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryWeight</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getsharedboundaryweight">function GetSharedBoundaryWeight</h3>
-<p><code>cpp
-inline double GetSharedBoundaryWeight() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetSharedBoundaryWeight</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setsharedboundaryenabled">function SetSharedBoundaryEnabled</h3>
-<p><code>cpp
-inline void SetSharedBoundaryEnabled(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryEnabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getsharedboundaryenabled">function GetSharedBoundaryEnabled</h3>
-<p><code>cpp
-inline bool GetSharedBoundaryEnabled() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetSharedBoundaryEnabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setsamplingscale">function SetSamplingScale</h3>
-<p><code>cpp
-inline void SetSamplingScale(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingScale</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getsamplingscale">function GetSamplingScale</h3>
-<p><code>cpp
-inline bool GetSamplingScale() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetSamplingScale</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setsamplingautoscale">function SetSamplingAutoScale</h3>
-<p><code>cpp
-inline void SetSamplingAutoScale(
-    bool auto_scale
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingAutoScale</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">auto_scale</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getsamplingautoscale">function GetSamplingAutoScale</h3>
-<p><code>cpp
-inline bool GetSamplingAutoScale() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetSamplingAutoScale</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setsamplingscalevalue">function SetSamplingScaleValue</h3>
-<p><code>cpp
-inline void SetSamplingScaleValue(
-    double scale_value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingScaleValue</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">scale_value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getsamplingscalevalue">function GetSamplingScaleValue</h3>
-<p><code>cpp
-inline double GetSamplingScaleValue() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetSamplingScaleValue</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setspatialsigmacache">function SetSpatialSigmaCache</h3>
-<p><code>cpp
-inline void SetSpatialSigmaCache(
-    SigmaCacheType * s
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSpatialSigmaCache</span><span class="p">(</span>
+<span class="w">    </span><span class="n">SigmaCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Access the cache of sigma values for each particle position. This cache is populated by registering this object as an observer of the correct particle system (see SetParticleSystem). </p>
 <h3 id="function-getspatialsigmacache">function GetSpatialSigmaCache</h3>
-<p><code>cpp
-inline SigmaCacheType * GetSpatialSigmaCache()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">SigmaCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetSpatialSigmaCache</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-getspatialsigmacache_1">function GetSpatialSigmaCache</h3>
-<p><code>cpp
-inline const SigmaCacheType * GetSpatialSigmaCache() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SigmaCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetSpatialSigmaCache</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setminimumneighborhoodradius">function SetMinimumNeighborhoodRadius</h3>
-<p><code>cpp
-inline void SetMinimumNeighborhoodRadius(
-    double s
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMinimumNeighborhoodRadius</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Minimum radius of the neighborhood of points that are considered in the calculation. The neighborhood is a spherical radius in 3D space. The actual radius used in a calculation may exceed this value, but will not exceed the MaximumNeighborhoodRadius. </p>
 <h3 id="function-getminimumneighborhoodradius">function GetMinimumNeighborhoodRadius</h3>
-<p><code>cpp
-inline double GetMinimumNeighborhoodRadius() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMinimumNeighborhoodRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setmaximumneighborhoodradius">function SetMaximumNeighborhoodRadius</h3>
-<p><code>cpp
-inline void SetMaximumNeighborhoodRadius(
-    double s
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMaximumNeighborhoodRadius</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Maximum radius of the neighborhood of points that are considered in the calculation. The neighborhood is a spherical radius in 3D space. </p>
 <h3 id="function-getmaximumneighborhoodradius">function GetMaximumNeighborhoodRadius</h3>
-<p><code>cpp
-inline double GetMaximumNeighborhoodRadius() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMaximumNeighborhoodRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setflatcutoff">function SetFlatCutoff</h3>
-<p><code>cpp
-inline void SetFlatCutoff(
-    double s
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFlatCutoff</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Numerical parameters </p>
 <h3 id="function-getflatcutoff">function GetFlatCutoff</h3>
-<p><code>cpp
-inline double GetFlatCutoff() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetFlatCutoff</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setneighborhoodtosigmaratio">function SetNeighborhoodToSigmaRatio</h3>
-<p><code>cpp
-inline void SetNeighborhoodToSigmaRatio(
-    double s
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNeighborhoodToSigmaRatio</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getneighborhoodtosigmaratio">function GetNeighborhoodToSigmaRatio</h3>
-<p><code>cpp
-inline double GetNeighborhoodToSigmaRatio() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetNeighborhoodToSigmaRatio</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-reset_buffers">function reset_buffers</h3>
-<p><code>cpp
-inline virtual void reset_buffers() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">reset_buffers</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p>May be called by the solver class. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-reset-buffers">shapeworks::VectorFunction::reset_buffers</a></p>
 <h3 id="function-clone">function clone</h3>
-<p><code>cpp
-virtual std::shared_ptr&lt; VectorFunction &gt; clone() override</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">clone</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-clone">shapeworks::VectorFunction::clone</a></p>
 <h3 id="function-samplingfunction">function SamplingFunction</h3>
-<p><code>cpp
-inline SamplingFunction()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">SamplingFunction</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-samplingfunction_1">function ~SamplingFunction</h3>
-<p><code>cpp
-~SamplingFunction() override =default</code></p>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">SamplingFunction</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
+</code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-vdimension">variable VDimension</h3>
-<p><code>cpp
-static constexpr static int VDimension = 3;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

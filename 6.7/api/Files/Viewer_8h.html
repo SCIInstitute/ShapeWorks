@@ -3805,190 +3805,272 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Shape.h></h1>
-<h1 id="include_1">include <Visualization/ColorMap.h></h1>
-<h1 id="include_2">include <Visualization/ColorSchemes.h></h1>
-<h1 id="include_3">include <Visualization/SliceView.h></h1>
-<h1 id="include_4">include <QPointF></h1>
-<h1 id="include_5">include <QSharedPointer></h1>
-<p>class vtkRenderer;
-class vtkLookupTable;
-class vtkRenderWindowInteractor;
-class vtkImageData;
-class vtkCamera;
-class vtkGlyph3D;
-class vtkSphereSource;
-class vtkArrowSource;
-class vtkTransformPolyDataFilter;
-class vtkScalarBarActor;
-class vtkCornerAnnotation;
-class vtkPolyDataMapper;
-class vtkActor;
-class vtkTransform;
-class vtkReverseSense;
-class vtkHandleWidget;
-class vtkPolygonalSurfacePointPlacer;
-class vtkImageSlice;
-class vtkImageSliceMapper;
-class vtkImageData;
-class vtkCellPicker;
-class vtkPropPicker;
-class vtkColorSeries;</p>
-<p>namespace shapeworks {</p>
-<p>class Shape;
-class Viewer;
-class Visualizer;
-class StudioInteractorStyle;
-class LandmarkWidget;
-class PlaneWidget;
-class PaintWidget;
-class Session;</p>
-<p>typedef QSharedPointer<Viewer> ViewerHandle;
-typedef QVector<ViewerHandle> ViewerList;</p>
-<p>class PickResult {
- public:
-  Shape::Point pos_;
-  int domain_ = -1;
-  int subject_ = -1;
-};</p>
-<p>class Viewer {
- public:
-  Viewer();
-  ~Viewer() = default;</p>
-<p>void set_renderer(vtkSmartPointer<vtkRenderer> renderer);
-  vtkSmartPointer<vtkRenderer> get_renderer();</p>
-<p>void display_shape(std::shared_ptr<Shape> shape);
-  void update_annotations();</p>
-<p>void clear_viewer();
-  void reset_camera(std::array<double, 3> c);
-  void reset_camera();</p>
-<p>void set_color_series(ColorMap color_series);
-  void set_glyph_size_and_quality(double size, double quality);
-  double get_glyph_size();
-  double get_glyph_quality();
-  void set_session(QSharedPointer<Session> session);
-  QSharedPointer<Session> get_session();</p>
-<p>void set_show_glyphs(bool show);
-  void set_show_surface(bool show);
-  void set_scale_arrows(bool scale);</p>
-<p>void update_points();
-  void update_glyph_properties();</p>
-<p>int handle_pick(int* click_pos);</p>
-<p>PickResult handle_ctrl_click(int* click_pos);</p>
-<p>void set_selected_point(int id);</p>
-<p>void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);</p>
-<p>void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);</p>
-<p>void set_color_scheme(int i);</p>
-<p>void handle_new_mesh();</p>
-<p>bool is_viewer_ready();</p>
-<p>void set_visualizer(Visualizer* visualizer);</p>
-<p>void update_feature_range(double* range);
-  void reset_feature_range();</p>
-<p>void update_opacities();</p>
-<p>std::shared_ptr<Shape> get_shape();</p>
-<p>void update_landmarks();
-  void update_planes();
-  void update_paint_mode();</p>
-<p>std::vector<vtkSmartPointer\<vtkActor>> get_surface_actors();
-  std::vector<vtkSmartPointer\<vtkActor>> get_unclipped_surface_actors();</p>
-<p>MeshGroup get_meshes();</p>
-<p>vtkSmartPointer<vtkTransform> get_transform(int alignment_domain, int domain);</p>
-<p>vtkSmartPointer<vtkTransform> get_landmark_transform(int domain);</p>
-<p>vtkSmartPointer<vtkTransform> get_inverse_landmark_transform(int domain);</p>
-<p>vtkSmartPointer<vtkTransform> get_image_transform();</p>
-<p>vtkSmartPointer<vtkTransform> get_inverse_image_transform();</p>
-<p>SliceView&amp; slice_view();</p>
-<p>void update_image_volume(bool force = false);</p>
-<p>vtkSmartPointer<vtkPoints> get_glyph_points();</p>
-<p>vtkSmartPointer<vtkTransform> get_alignment_transform();</p>
-<p>void update_clipping_planes();</p>
-<p>vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();</p>
-<p>void handle_paint(double display_pos[2], double world_pos[3]);</p>
-<p>void fill_all_ffc();</p>
-<p>static bool is_reverse(vtkSmartPointer<vtkTransform> transform);</p>
-<p>void update_actors();</p>
-<p>void remove_scalar_bar();</p>
-<p>bool is_ready() { return mesh_ready_; }</p>
-<p>vtkFloatArray* get_particle_scalars();</p>
-<p>vtkSmartPointer<vtkPolyData> get_particle_poly_data();</p>
-<p>void insert_compare_meshes();</p>
-<p>void set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSmartPointer<vtkPolyDataMapper> mapper,
-                             std::string scalar);</p>
-<p>vtkSmartPointer<vtkLookupTable> get_surface_lut() { return surface_lut_; }</p>
-<p>bool showing_feature_map();</p>
-<p>private:
-  void initialize_surfaces();</p>
-<p>void display_vector_field();</p>
-<p>void compute_point_differences(const Eigen::VectorXd&amp; points, vtkSmartPointer<vtkFloatArray> magnitudes,
-                                 vtkSmartPointer<vtkFloatArray> vectors);</p>
-<p>void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors);</p>
-<p>void update_difference_lut(float r0, float r1);</p>
-<p>std::string get_displayed_feature_map();</p>
-<p>vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);</p>
-<p>bool visible_ = false;</p>
-<p>std::shared_ptr<Shape> shape_;</p>
-<p>bool show_glyphs_ = true;
-  bool show_surface_ = true;</p>
-<p>double glyph_size_ = 1.0f;
-  double glyph_quality_ = 5.0f;
-  bool scale_arrows_{true};
-  ColorMap color_series_;</p>
-<p>vtkSmartPointer<vtkRenderer> renderer_;</p>
-<p>vtkSmartPointer<vtkSphereSource> sphere_source_;
-  vtkSmartPointer<vtkReverseSense> reverse_sphere_;</p>
-<p>vtkSmartPointer<vtkPoints> glyph_points_;
-  vtkSmartPointer<vtkPolyData> glyph_point_set_;
-  vtkSmartPointer<vtkGlyph3D> glyphs_;
-  vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
-  vtkSmartPointer<vtkActor> glyph_actor_;</p>
-<p>std::vector<vtkSmartPointer\<vtkPolyDataMapper>> surface_mappers_;
-  std::vector<vtkSmartPointer\<vtkActor>> surface_actors_;
-  std::vector<vtkSmartPointer\<vtkPolyDataMapper>> unclipped_surface_mappers_;
-  std::vector<vtkSmartPointer\<vtkActor>> unclipped_surface_actors_;
-  std::vector<vtkSmartPointer\<vtkLookupTable>> ffc_luts_;</p>
-<p>// for comparing to other shapes (e.g. original vs groomed)
-  std::vector<vtkSmartPointer\<vtkPolyDataMapper>> compare_mappers_;
-  std::vector<vtkSmartPointer\<vtkActor>> compare_actors_;</p>
-<p>vtkSmartPointer<vtkLookupTable> glyph_lut_;
-  vtkSmartPointer<vtkLookupTable> surface_lut_;</p>
-<p>vtkSmartPointer<vtkArrowSource> arrow_source_;
-  vtkSmartPointer<vtkTransformPolyDataFilter> arrow_flip_filter_;
-  vtkSmartPointer<vtkGlyph3D> arrow_glyphs_;
-  vtkSmartPointer<vtkPolyDataMapper> arrow_glyph_mapper_;
-  vtkSmartPointer<vtkActor> arrow_glyph_actor_;
-  vtkSmartPointer<vtkTransform> transform_180_;
-  vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;</p>
-<p>vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;</p>
-<p>bool arrows_visible_ = false;</p>
-<p>ColorSchemes color_schemes_;
-  int scheme_ = 0;</p>
-<p>bool mesh_ready_ = false;
-  bool viewer_ready_ = false;
-  bool loading_displayed_ = false;</p>
-<p>MeshGroup meshes_;
-  MeshGroup compare_meshes_;</p>
-<p>Visualizer* visualizer_{nullptr};</p>
-<p>int number_of_domains_ = 0;
-  double lut_min_ = 0;
-  double lut_max_ = 0;</p>
-<p>std::shared_ptr<LandmarkWidget> landmark_widget_;
-  std::shared_ptr<PlaneWidget> plane_widget_;
-  vtkSmartPointer<PaintWidget> paint_widget_;</p>
-<p>QSharedPointer<Session> session_;</p>
-<p>std::string current_image_name_ = "-none-";</p>
-<p>vtkSmartPointer<vtkCellPicker> cell_picker_;
-  vtkSmartPointer<vtkPropPicker> prop_picker_;
-  vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
-  vtkSmartPointer<vtkImageActorPointPlacer> slice_point_placer_;</p>
-<p>// slice viewer
-  SliceView slice_view_{this};
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/ColorMap.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/ColorSchemes.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/SliceView.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QPointF&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkRenderer</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkLookupTable</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkRenderWindowInteractor</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageData</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkCamera</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkGlyph3D</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkSphereSource</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkArrowSource</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkTransformPolyDataFilter</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkScalarBarActor</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkCornerAnnotation</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkPolyDataMapper</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkActor</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkTransform</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkReverseSense</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkHandleWidget</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkPolygonalSurfacePointPlacer</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageSlice</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageSliceMapper</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkImageData</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkCellPicker</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkPropPicker</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkColorSeries</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Viewer</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioInteractorStyle</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LandmarkWidget</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlaneWidget</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PaintWidget</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Viewer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ViewerHandle</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">ViewerHandle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ViewerList</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PickResult</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Shape</span><span class="o">::</span><span class="n">Point</span><span class="w"> </span><span class="n">pos_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">domain_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">subject_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Viewer</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Viewer</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">Viewer</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_renderer</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renderer</span><span class="p">);</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_renderer</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_shape</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_annotations</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_viewer</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_color_series</span><span class="p">(</span><span class="n">ColorMap</span><span class="w"> </span><span class="n">color_series</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_size_and_quality</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">quality</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_glyph_size</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_glyph_quality</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_session</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_glyphs</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_surface</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_scale_arrows</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">scale</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_points</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_glyph_properties</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">handle_pick</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">PickResult</span><span class="w"> </span><span class="nf">handle_ctrl_click</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_loading_screen</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">loading_screen</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_color_scheme</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_viewer_ready</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_visualizer</span><span class="p">(</span><span class="n">Visualizer</span><span class="o">*</span><span class="w"> </span><span class="n">visualizer</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_range</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">range</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_feature_range</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_opacities</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shape</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_landmarks</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_planes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_paint_mode</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_surface_actors</span><span class="p">();</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_unclipped_surface_actors</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="nf">get_meshes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmark_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_inverse_landmark_transform</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_transform</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_inverse_image_transform</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">SliceView</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">slice_view</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_image_volume</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">force</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_glyph_points</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_alignment_transform</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_clipping_planes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolygonalSurfacePointPlacer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_point_placer</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_paint</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">display_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">fill_all_ffc</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_reverse</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_actors</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_scalar_bar</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_ready</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_ready_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">vtkFloatArray</span><span class="o">*</span><span class="w"> </span><span class="nf">get_particle_scalars</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_particle_poly_data</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">insert_compare_meshes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_scalar_visibility</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mapper</span><span class="p">,</span>
+<span class="w">                             </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">scalar</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface_lut</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">surface_lut_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">showing_feature_map</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initialize_surfaces</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_vector_field</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_point_differences</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">magnitudes</span><span class="p">,</span>
+<span class="w">                                 </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vectors</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_surface_differences</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">magnitudes</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vectors</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_difference_lut</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">r0</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">r1</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_displayed_feature_map</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPlane</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform_plane</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPlane</span><span class="o">&gt;</span><span class="w"> </span><span class="n">plane</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">visible_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_glyphs_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_surface_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">glyph_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">glyph_quality_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.0f</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">scale_arrows_</span><span class="p">{</span><span class="nb">true</span><span class="p">};</span>
+<span class="w">  </span><span class="n">ColorMap</span><span class="w"> </span><span class="n">color_series_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renderer_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkSphereSource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sphere_source_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkReverseSense</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reverse_sphere_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_points_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_point_set_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkGlyph3D</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyphs_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_mapper_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_actor_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">surface_mappers_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">surface_actors_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">unclipped_surface_mappers_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">unclipped_surface_actors_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ffc_luts_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// for comparing to other shapes (e.g. original vs groomed)</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">compare_mappers_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">compare_actors_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">surface_lut_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkArrowSource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrow_source_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransformPolyDataFilter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrow_flip_filter_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkGlyph3D</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrow_glyphs_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrow_glyph_mapper_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrow_glyph_actor_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform_180_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkScalarBarActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">scalar_bar_actor_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCornerAnnotation</span><span class="o">&gt;</span><span class="w"> </span><span class="n">corner_annotation_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">arrows_visible_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ColorSchemes</span><span class="w"> </span><span class="n">color_schemes_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">scheme_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">mesh_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">viewer_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">loading_displayed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">meshes_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">MeshGroup</span><span class="w"> </span><span class="n">compare_meshes_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Visualizer</span><span class="o">*</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_domains_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">lut_min_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">lut_max_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LandmarkWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmark_widget_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">PlaneWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">plane_widget_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">PaintWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">paint_widget_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_image_name_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;-none-&quot;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellPicker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cell_picker_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPropPicker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prop_picker_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolygonalSurfacePointPlacer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">point_placer_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageActorPointPlacer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_point_placer_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// slice viewer</span>
+<span class="w">  </span><span class="n">SliceView</span><span class="w"> </span><span class="n">slice_view_</span><span class="p">{</span><span class="k">this</span><span class="p">};</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

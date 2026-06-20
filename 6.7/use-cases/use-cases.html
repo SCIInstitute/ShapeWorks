@@ -4110,10 +4110,12 @@
 <p>However, some do not involve grooming, and some only demonstrate the functionality of ShapeWorks statistical tools. For an overview and brief description of the available use cases, see <a href="../getting-started/examples.html">Examples</a>.</p>
 <h2 id="running-a-use-case">Running A Use Case</h2>
 <p>The use cases are located at: <code>Examples/Python/</code>. ShapeWorks installs a <code>swpython</code> wrapper alongside Studio (in <code>bin/</code>) that runs scripts against the bundled Python — no conda environment needed. On Windows, open the <strong>ShapeWorks Prompt</strong> from the Start Menu; on macOS / Linux, add <code>/Applications/ShapeWorks/bin</code> (or the equivalent extracted path) to <code>PATH</code> (or use the full path to <code>swpython</code>).</p>
-<p><code>$ cd /path/to/shapeworks/Examples/Python
-$ swpython RunUseCase.py [use case name]</code></p>
+<div class="highlight"><pre><span></span><code>$ cd /path/to/shapeworks/Examples/Python
+$ swpython RunUseCase.py [use case name]
+</code></pre></div>
 <p>To see the names currently supported use cases and the complete list of optional arguments, run:
-<code>$ swpython RunUseCase.py --help</code>
+<div class="highlight"><pre><span></span><code>$ swpython RunUseCase.py --help
+</code></pre></div>
 When a use case is run, the dataset required for the use case is automatically downloaded. This requires registering for a <em>free</em> ShapeWorks account by visiting the <a href="https://girder.shapeworks-cloud.org/">ShapeWorks Data Portal</a>.</p>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
@@ -4146,8 +4148,9 @@ Note: You are only required to enter your credentials the first time you run a u
 <!-- --overwrite - which controls any existing dataset with same name should be deleted or not. if --overwrite is specified it will delete the existing dataset. -->
 
 <p>For example refer the following command
-<code>$ import shapeworks as sw
-$ sw.upload_dataset(dataset_name, licence_filename, acknowledgement_filename, description, project_file, overwrite)</code></p>
+<div class="highlight"><pre><span></span><code>$ import shapeworks as sw
+$ sw.upload_dataset(dataset_name, licence_filename, acknowledgement_filename, description, project_file, overwrite)
+</code></pre></div></p>
 <h3 id="downloading-a-dataset">Downloading a Dataset</h3>
 <p>Downloading a Dataset requires the following parameters:</p>
 <ol>
@@ -4159,24 +4162,28 @@ $ sw.upload_dataset(dataset_name, licence_filename, acknowledgement_filename, de
 </li>
 </ol>
 <p>For example refer the following command
-<code>$ python portal.py [dataset name] [output directory]</code></p>
+<div class="highlight"><pre><span></span><code>$ python portal.py [dataset name] [output directory]
+</code></pre></div></p>
 <h3 id="use-case-data">Use Case Data</h3>
 <p>When a use case runs, the appropriate zipped data downloads to <code>Examples/Python/Data/</code>. The data is then extracted to <code>Examples/Python/output/use_case_name/</code> where all the output from running the use case is also saved.</p>
 <p>The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and project excel sheets). </p>
 <p>An "project.swproj" file is included so that the resulting shape model can be visualized in Studio without running the use case.
 For example, to view the shape model downloaded for the ellipsoid use case run:
-<code>$ cd Examples/Python/Output/ellipsoid/ellipsoid_1mode/
+<div class="highlight"><pre><span></span><code>$ cd Examples/Python/Output/ellipsoid/ellipsoid_1mode/
 $ cp shape_model ../
 $ ShapeWorksStudio ellipsoid_multiscale.xlsx or
-$ ShapeWorksStudio ellipsoid_multiscale.swproj</code></p>
+$ ShapeWorksStudio ellipsoid_multiscale.swproj
+</code></pre></div></p>
 <h3 id="use-cases-arguments">Use Cases Arguments</h3>
 <p>When calling <code>RunUseCase.py</code>, various optional arguments can be used. 
 To see the complete list of supported arguments from the command line, run:
-<code>$ swpython RunUseCase.py --help</code>
+<div class="highlight"><pre><span></span><code>$ swpython RunUseCase.py --help
+</code></pre></div>
 A description of each optional argument and how to use it is provided below.</p>
 <h4 id="-use_subsample">--use_subsample</h4>
 <p>Users can run a use case on a subset of the data by adding the <code>--use_subsample</code> argument followed by the <code>--num_subsample</code> argument with the number of samples you wish to use. This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is determined by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If <code>--use_subsample</code> is used without <code>--num_subsample</code>, it will use the default number of subsamples which is 3. Note the entire dataset will still be downloaded to run the clustering.</p>
-<p><code>$ swpython RunUseCase.py [use case name] --use_subsample --num_subsample 10</code></p>
+<div class="highlight"><pre><span></span><code>$ swpython RunUseCase.py [use case name] --use_subsample --num_subsample 10
+</code></pre></div>
 <h4 id="-use_single_scale">--use_single_scale</h4>
 <p>Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo <em>initialization</em> and <em>optimization</em> stages. The multi-scale argument triggers both the initialization and optimization stages. The single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). </p>
 <p>The differences between <em>initialization</em> and <em>optimization</em> stages are: </p>
@@ -4188,13 +4195,16 @@ A description of each optional argument and how to use it is provided below.</p>
 <p>How the notion of correspondence (inter-surface) is quantified. In initialization, especially when we do not have enough particles to describe the geometry of each surface, we use mean energy (i.e., pushing all shapes in the shape space to the mean shape or, in other words, the covariance matrix is assumed to be identity). In optimization, we use the entropy of the distribution of the shapes (assuming Gaussian-distributed shapes), which is quantified based on the covariance matrix. In the multi-scale setting, we can use shape statistics at later scales using the <code>use_shape_statistics_after</code> parameter, where we have more particles that can reveal the covariance structure.The default mode is multi-scale. To run single-scale, use the <code>--use_single_scale</code> argument.</p>
 </li>
 </ol>
-<p><code>$ swpython RunUseCase.py [use case name] --use_single_scale</code></p>
+<div class="highlight"><pre><span></span><code>$ swpython RunUseCase.py [use case name] --use_single_scale
+</code></pre></div>
 <h4 id="-mesh_mode">--mesh_mode</h4>
 <p>Use cases that optimize on distance transforms can be run in mesh mode to optimize on meshes instead. When the <code>--mesh_mode</code> argument is used, groomed distance transforms are converted to meshes (by extracting the isosurface at zero), and those meshes are passed to the optimizer. The <code>--mesh_mode</code> argument does not affect mesh-based use cases.</p>
-<p><code>$ swpython RunUseCase.py [insert name of image-based use case here] --mesh_mode</code></p>
+<div class="highlight"><pre><span></span><code>$ swpython RunUseCase.py [insert name of image-based use case here] --mesh_mode
+</code></pre></div>
 <h4 id="-tiny_test">--tiny_test</h4>
 <p>Users can run a fast version of the use case using the <code>--tiny_test</code> argument. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to quickly test that use cases can run, not to create a good correspondence model. Only a subset of the data will be downloaded directly in the <code>Output</code> folder for the tiny test, and no zip file will be downloaded in the <code>Data</code> folder. No new data will be downloaded if the data has already been unzipped in the <code>Output</code> folder.</p>
-<p><code>$ swpython RunUseCase.py [use case name] --tiny_test</code></p>
+<div class="highlight"><pre><span></span><code>$ swpython RunUseCase.py [use case name] --tiny_test
+</code></pre></div>
 <h4 id="-verify">--verify</h4>
 <h2 id="use-case-workflow-overview">Use Case Workflow Overview</h2>
 <p>The use cases which demomstrate the <a href="../getting-started/workflow.html">Shape Modeling Workflow</a> follow this general outline:</p>

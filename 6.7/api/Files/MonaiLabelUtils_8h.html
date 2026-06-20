@@ -3808,70 +3808,76 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <QLineEdit></h1>
-<h1 id="include_1">include <QString></h1>
-<h1 id="include_2">include <QUrl></h1>
-<h1 id="include_3">include <QWidget></h1>
-<h1 id="include_4">include <QValidator></h1>
-<h1 id="include_5">include <QSharedPointer></h1>
-<h1 id="include_6">include <Data/Session.h></h1>
-<h1 id="include_7">include <itkImage.h></h1>
-<p>namespace shapeworks {
-    class Session;
-}
-namespace monailabel {</p>
-<p>typedef float PixelType;
-typedef itk::Image&lt; PixelType, 3 &gt; ImageType;</p>
-<p>class UrlValidator : public QValidator {
- public:
-  UrlValidator(QObject* parent = nullptr) : QValidator(parent) {}</p>
-<p>QValidator::State validate(QString&amp; input, int&amp; pos) const override {
-    Q_UNUSED(pos);
-    QUrl url(input);
-    if (!url.isValid() || (url.scheme() != "http" &amp;&amp; url.scheme() != "https")) {
-      return QValidator::Invalid;
-    }
-    // Allow '0.0.0.0'
-    if (url.host() == "0.0.0.0") {
-      if (url.port() == -1) {
-        return QValidator::Invalid;
-      }
-      return QValidator::Acceptable;
-    }
-    if (url.host().isEmpty()) {
-      return QValidator::Invalid;
-    }
-    if (url.port() == -1) {
-      return QValidator::Invalid;
-    }
-    return QValidator::Acceptable;
-  }
-};
-class MonaiLabelUtils {
- public:
-  static bool createDir(const QString&amp; dirPath);
-  static bool copySegmentation(const QString&amp; sourcePath,
-                               const QString&amp; destinationPath);
-  static bool deleteTempFile(const QString&amp; filePath);
-  static std::string getFeatureName(
-      QSharedPointer<shapeworks::Session> session);
-  static ImageType::Pointer loadNRRD(const std::string&amp; filePath);
-  static ImageType::Pointer extractOrganSegmentation(ImageType::Pointer inputImage,
-                                              int label);
-  static void saveNRRD(ImageType::Pointer image, const std::string&amp; outputPath);
-  static bool isOrganPresent(ImageType::Pointer image);</p>
-<p>static void processSegmentation(const std::string&amp; segmentationPath,
-                           const std::map<int, std::string>&amp; organLabels,
-                           const std::string&amp; outputDir,
-                           const std::string&amp; sampleId,
-                           std::vector<std::string>&amp; organSegmentationPaths);
-};</p>
-<p>}  // namespace monailabel
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QLineEdit&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QUrl&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QValidator&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImage.h&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">monailabel</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">PixelType</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UrlValidator</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QValidator</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">UrlValidator</span><span class="p">(</span><span class="n">QObject</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">QValidator</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">  </span><span class="n">QValidator</span><span class="o">::</span><span class="n">State</span><span class="w"> </span><span class="n">validate</span><span class="p">(</span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pos</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Q_UNUSED</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+<span class="w">    </span><span class="n">QUrl</span><span class="w"> </span><span class="nf">url</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">url</span><span class="p">.</span><span class="n">isValid</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="n">scheme</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">url</span><span class="p">.</span><span class="n">scheme</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;https&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">QValidator</span><span class="o">::</span><span class="n">Invalid</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// Allow &#39;0.0.0.0&#39;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="n">host</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;0.0.0.0&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="n">port</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">QValidator</span><span class="o">::</span><span class="n">Invalid</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">QValidator</span><span class="o">::</span><span class="n">Acceptable</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="n">host</span><span class="p">().</span><span class="n">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">QValidator</span><span class="o">::</span><span class="n">Invalid</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="n">port</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">QValidator</span><span class="o">::</span><span class="n">Invalid</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">QValidator</span><span class="o">::</span><span class="n">Acceptable</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">};</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MonaiLabelUtils</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">createDir</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dirPath</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">copySegmentation</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">sourcePath</span><span class="p">,</span>
+<span class="w">                               </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">destinationPath</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">deleteTempFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filePath</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">getFeatureName</span><span class="p">(</span>
+<span class="w">      </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="nf">loadNRRD</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filePath</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="nf">extractOrganSegmentation</span><span class="p">(</span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">inputImage</span><span class="p">,</span>
+<span class="w">                                              </span><span class="kt">int</span><span class="w"> </span><span class="n">label</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">saveNRRD</span><span class="p">(</span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputPath</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isOrganPresent</span><span class="p">(</span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">processSegmentation</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">segmentationPath</span><span class="p">,</span>
+<span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">organLabels</span><span class="p">,</span>
+<span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputDir</span><span class="p">,</span>
+<span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">sampleId</span><span class="p">,</span>
+<span class="w">                           </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">organSegmentationPaths</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace monailabel</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

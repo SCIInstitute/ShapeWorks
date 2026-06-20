@@ -3854,53 +3854,73 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-q_declare_metatype">function Q_DECLARE_METATYPE</h3>
-<p><code>cpp
-Q_DECLARE_METATYPE(
-    shapeworks::MeshWorkItem 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span>
+<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWorkItem</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<p>// stl</p>
-<h1 id="include">include <list></h1>
-<p>// qt</p>
-<h1 id="include_1">include <QMetaType></h1>
-<h1 id="include_2">include <QMutex></h1>
-<p>// eigen</p>
-<h1 id="include_3">include <Eigen/Eigen></h1>
-<p>namespace shapeworks {</p>
-<p>class MeshWorkItem {
- public:
-  std::string filename;
-  Eigen::VectorXd points;
-  int domain{0};</p>
-<p>size_t memory_size{0};</p>
-<p>friend bool operator&lt;(const MeshWorkItem &amp;a, const MeshWorkItem &amp;b);</p>
-<p>friend bool operator==(const MeshWorkItem &amp;a, const MeshWorkItem &amp;b);
-};</p>
-<p>class MeshWorkQueue {
- public:
-  using WorkList = std::list<MeshWorkItem>;</p>
-<p>MeshWorkQueue();
-  ~MeshWorkQueue();</p>
-<p>void push(const MeshWorkItem &amp;item);</p>
-<p>MeshWorkItem *get_next_work_item();</p>
-<p>bool is_inside(const MeshWorkItem &amp;item);</p>
-<p>void remove(const MeshWorkItem &amp;item);</p>
-<p>bool is_empty();</p>
-<p>int size();</p>
-<p>private:
-  bool in_inside_list(const MeshWorkItem &amp;item, const WorkList &amp;list);</p>
-<p>// for concurrent access
-  QMutex mutex_;</p>
-<p>WorkList work_list_;</p>
-<p>WorkList processing_list_;
-};
-}  // namespace shapeworks</p>
-<p>Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="c1">// stl</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;list&gt;</span>
+
+<span class="c1">// qt</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMetaType&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMutex&gt;</span>
+
+<span class="c1">// eigen</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshWorkItem</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">points</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">memory_size</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">friend</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshWorkQueue</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">WorkList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">MeshWorkItem</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">MeshWorkQueue</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">MeshWorkQueue</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">push</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">item</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">*</span><span class="nf">get_next_work_item</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_inside</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">item</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">item</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">size</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">in_inside_list</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">item</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">WorkList</span><span class="w"> </span><span class="o">&amp;</span><span class="n">list</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// for concurrent access</span>
+<span class="w">  </span><span class="n">QMutex</span><span class="w"> </span><span class="n">mutex_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">WorkList</span><span class="w"> </span><span class="n">work_list_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">WorkList</span><span class="w"> </span><span class="n">processing_list_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+
+<span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWorkItem</span><span class="p">);</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

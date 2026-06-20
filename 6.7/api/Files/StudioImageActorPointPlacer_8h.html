@@ -3779,31 +3779,37 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include-vtkimageactorpointplacerh">include "vtkImageActorPointPlacer.h"</h1>
-<p>class StudioImageActorPointPlacer : public vtkImageActorPointPlacer {
- public:
-  static StudioImageActorPointPlacer* New();
-  vtkTypeMacro(StudioImageActorPointPlacer, vtkImageActorPointPlacer);
-  void PrintSelf(ostream&amp; os, vtkIndent indent) override;</p>
-<p>// Override ComputeWorldPosition to take transform into account
-  int ComputeWorldPosition(vtkRenderer* renderer, double displayPos[2], double worldPos[3],
-                           double worldOrient[9]) override;</p>
-<p>// Override ValidateWorldPosition
-  int ValidateWorldPosition(double worldPos[3]) override;</p>
-<p>// Override UpdateWorldPosition
-  int UpdateWorldPosition(vtkRenderer* renderer, double worldPos[3], double worldOrient[9]) override;</p>
-<p>protected:
-  StudioImageActorPointPlacer();
-  ~StudioImageActorPointPlacer() override;</p>
-<p>private:
-  StudioImageActorPointPlacer(const StudioImageActorPointPlacer&amp;) = delete;
-  void operator=(const StudioImageActorPointPlacer&amp;) = delete;
-};
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vtkImageActorPointPlacer.h&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioImageActorPointPlacer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">vtkImageActorPointPlacer</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StudioImageActorPointPlacer</span><span class="o">*</span><span class="w"> </span><span class="n">New</span><span class="p">();</span>
+<span class="w">  </span><span class="n">vtkTypeMacro</span><span class="p">(</span><span class="n">StudioImageActorPointPlacer</span><span class="p">,</span><span class="w"> </span><span class="n">vtkImageActorPointPlacer</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">vtkIndent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Override ComputeWorldPosition to take transform into account</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">ComputeWorldPosition</span><span class="p">(</span><span class="n">vtkRenderer</span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">displayPos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">worldPos</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+<span class="w">                           </span><span class="kt">double</span><span class="w"> </span><span class="n">worldOrient</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Override ValidateWorldPosition</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">ValidateWorldPosition</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">worldPos</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Override UpdateWorldPosition</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">UpdateWorldPosition</span><span class="p">(</span><span class="n">vtkRenderer</span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">worldPos</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">worldOrient</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">StudioImageActorPointPlacer</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">StudioImageActorPointPlacer</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">StudioImageActorPointPlacer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StudioImageActorPointPlacer</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StudioImageActorPointPlacer</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

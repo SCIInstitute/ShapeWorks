@@ -3821,33 +3821,33 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-compute_thickness">function compute_thickness</h3>
-<p><code>cpp
-void compute_thickness(
-    Mesh &amp; mesh,
-    Image &amp; image,
-    Image * dt,
-    double max_dist,
-    double median_radius,
-    std::string distance_mesh
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">compute_thickness</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">median_radius</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">distance_mesh</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Compute the cortical thickness of a mesh and image (e.g. CT) </p>
 <h3 id="function-compute_inner_mesh">function compute_inner_mesh</h3>
-<p><code>cpp
-Mesh compute_inner_mesh(
-    const Mesh &amp; mesh,
-    std::string array_name
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="n">compute_inner_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">array_name</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Compute an internal mesh based on the thickness values. </p>
 <h3 id="function-summarize_internal_intensities">function summarize_internal_intensities</h3>
-<p><code>cpp
-void summarize_internal_intensities(
-    Mesh &amp; outer_mesh,
-    Mesh &amp; inner_mesh,
-    Image &amp; image
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">summarize_internal_intensities</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">outer_mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inner_mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Summarize the internal intensities values of the area inside the inner mesh on the outer mesh. </p>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

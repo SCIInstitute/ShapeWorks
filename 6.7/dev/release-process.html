@@ -3762,11 +3762,12 @@
 <p>Update the version number in <code>CMakeLists.txt</code></p>
 </li>
 </ul>
-<p><code>SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
-SET(SHAPEWORKS_MINOR_VERSION 5 CACHE INTERNAL "Minor version number" FORCE)
-SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.5.0-RC1")
-SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.${SHAPEWORKS_PATCH_VERSION}")</code></p>
+<div class="highlight"><pre><span></span><code>SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL &quot;Major version number&quot; FORCE)
+SET(SHAPEWORKS_MINOR_VERSION 5 CACHE INTERNAL &quot;Minor version number&quot; FORCE)
+SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL &quot;Patch version number&quot; FORCE)
+SET(SHAPEWORKS_VERSION_STRING &quot;6.5.0-RC1&quot;)
+SET(SHAPEWORKS_VERSION &quot;${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.${SHAPEWORKS_PATCH_VERSION}&quot;)
+</code></pre></div>
 <ul>
 <li>Confirm the API version is set correctly in the following files</li>
 </ul>
@@ -3774,26 +3775,31 @@ SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.
 <ul>
 <li><code>Libs/Application/Job/PythonWorker.h</code></li>
 </ul>
-<p><code>constexpr static const char* python_api_version = "6.5";</code></p>
+<div class="highlight"><pre><span></span><code>  constexpr static const char* python_api_version = &quot;6.5&quot;;
+</code></pre></div>
 <ul>
 <li><code>Python/shapeworks/shapeworks/utils.py</code></li>
 </ul>
-<p><code>def get_api_version():
-    return "6.5"</code></p>
+<div class="highlight"><pre><span></span><code>def get_api_version():
+    return &quot;6.5&quot;
+</code></pre></div>
 <ul>
 <li><code>install_shapeworks.sh</code> </li>
 </ul>
-<p><code>SW_MAJOR_VERSION=6.5</code></p>
+<div class="highlight"><pre><span></span><code>SW_MAJOR_VERSION=6.5
+</code></pre></div>
 <ul>
 <li><code>install_shapeworks.bat</code></li>
 </ul>
-<p><code>python -c "import sys; print('\n'.join(sys.path))" &gt; "%USERPROFILE%\.shapeworks\python_path_6.5.txt"
-python -c "import sys; print(sys.prefix)" &gt; "%USERPROFILE%\.shapeworks\python_home_6.5.txt"
-echo %PATH% &gt; "%USERPROFILE%\.shapeworks\path_6.5.txt"</code></p>
+<div class="highlight"><pre><span></span><code>python -c &quot;import sys; print(&#39;\n&#39;.join(sys.path))&quot; &gt; &quot;%USERPROFILE%\.shapeworks\python_path_6.5.txt&quot;
+python -c &quot;import sys; print(sys.prefix)&quot; &gt; &quot;%USERPROFILE%\.shapeworks\python_home_6.5.txt&quot;
+echo %PATH% &gt; &quot;%USERPROFILE%\.shapeworks\path_6.5.txt&quot;
+</code></pre></div>
 <ul>
 <li><code>devenv.sh</code></li>
 </ul>
-<p><code>SW_MAJOR_VERSION=6.5</code></p>
+<div class="highlight"><pre><span></span><code>SW_MAJOR_VERSION=6.5
+</code></pre></div>
 <ul>
 <li>
 <p>Update Release Notes</p>

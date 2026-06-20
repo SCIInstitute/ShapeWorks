@@ -3801,87 +3801,113 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp
-/<em>=========================================================================
- *
- *  Copyright UMC Utrecht and contributors
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0.txt
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- </em>=========================================================================<em>/
-/</em>=========================================================================</p>
-<p>Program:   Insight Segmentation &amp; Registration Toolkit
-  Module:    $RCSfile: itkThinPlateSplineKernelTransform2.h,v $
-  Language:  C++
-  Date:      $Date: 2006-11-28 14:22:18 $
-  Version:   $Revision: 1.1 $</p>
-<p>Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.</p>
-<pre><code> This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notices for more information.
-</code></pre>
-<p>=========================================================================*/</p>
-<h1 id="ifndef-__itkthinplatesplinekerneltransform2_h">ifndef __itkThinPlateSplineKernelTransform2_h</h1>
-<h1 id="define-__itkthinplatesplinekerneltransform2_h">define __itkThinPlateSplineKernelTransform2_h</h1>
-<h1 id="include-itkkerneltransform2h">include "itkKernelTransform2.h"</h1>
-<p>namespace itk
-{
-template&lt; class TScalarType,         // Data type for scalars (float or double)
-unsigned int NDimensions = 3 &gt;
-// Number of dimensions
-class ThinPlateSplineKernelTransform2 :
-  public KernelTransform2&lt; TScalarType, NDimensions &gt;
-{
-public:</p>
-<p>typedef ThinPlateSplineKernelTransform2              Self;
-  typedef KernelTransform2&lt; TScalarType, NDimensions &gt; Superclass;
-  typedef SmartPointer&lt; Self &gt;                         Pointer;
-  typedef SmartPointer&lt; const Self &gt;                   ConstPointer;</p>
-<p>itkNewMacro( Self );</p>
-<p>itkTypeMacro( ThinPlateSplineKernelTransform2, KernelTransform2 );</p>
-<p>typedef typename Superclass::ScalarType ScalarType;</p>
-<p>typedef typename Superclass::ParametersType ParametersType;</p>
-<p>typedef typename Superclass::JacobianType JacobianType;</p>
-<p>itkStaticConstMacro( SpaceDimension, unsigned int, Superclass::SpaceDimension );</p>
-<p>typedef typename Superclass::InputPointType            InputPointType;
-  typedef typename Superclass::OutputPointType           OutputPointType;
-  typedef typename Superclass::InputVectorType           InputVectorType;
-  typedef typename Superclass::OutputVectorType          OutputVectorType;
-  typedef typename Superclass::InputCovariantVectorType  InputCovariantVectorType;
-  typedef typename Superclass::OutputCovariantVectorType OutputCovariantVectorType;
-  typedef typename Superclass::PointsIterator            PointsIterator;</p>
-<p>void SetSigma(double sigma){}; // this is only to match the compact supported class</p>
-<p>protected:</p>
-<p>ThinPlateSplineKernelTransform2()
-  {
-    this-&gt;m_FastComputationPossible = true;
-  }</p>
-<p>virtual ~ThinPlateSplineKernelTransform2() {}</p>
-<p>typedef typename Superclass::GMatrixType GMatrixType;</p>
-<p>void ComputeG( const InputVectorType &amp; x, GMatrixType &amp; GMatrix ) const;</p>
-<p>virtual void ComputeDeformationContribution(
-    const InputPointType &amp; inputPoint, OutputPointType &amp; result ) const;</p>
-<p>private:</p>
-<p>ThinPlateSplineKernelTransform2( const Self &amp; ); // purposely not implemented
-  void operator=( const Self &amp; );                  // purposely not implemented</p>
-<p>};</p>
-<p>} // namespace itk</p>
-<h1 id="include-itkthinplatesplinekerneltransform2cpp">include "itkThinPlateSplineKernelTransform2.cpp"</h1>
-<h1 id="endif-__itkthinplatesplinekerneltransform2_h">endif // __itkThinPlateSplineKernelTransform2_h</h1>
-<p>```</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/*=========================================================================</span>
+<span class="cm"> *</span>
+<span class="cm"> *  Copyright UMC Utrecht and contributors</span>
+<span class="cm"> *</span>
+<span class="cm"> *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="cm"> *  you may not use this file except in compliance with the License.</span>
+<span class="cm"> *  You may obtain a copy of the License at</span>
+<span class="cm"> *</span>
+<span class="cm"> *        http://www.apache.org/licenses/LICENSE-2.0.txt</span>
+<span class="cm"> *</span>
+<span class="cm"> *  Unless required by applicable law or agreed to in writing, software</span>
+<span class="cm"> *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="cm"> *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="cm"> *  See the License for the specific language governing permissions and</span>
+<span class="cm"> *  limitations under the License.</span>
+<span class="cm"> *</span>
+<span class="cm"> *=========================================================================*/</span>
+<span class="cm">/*=========================================================================</span>
+
+<span class="cm">  Program:   Insight Segmentation &amp; Registration Toolkit</span>
+<span class="cm">  Module:    $RCSfile: itkThinPlateSplineKernelTransform2.h,v $</span>
+<span class="cm">  Language:  C++</span>
+<span class="cm">  Date:      $Date: 2006-11-28 14:22:18 $</span>
+<span class="cm">  Version:   $Revision: 1.1 $</span>
+
+<span class="cm">  Copyright (c) Insight Software Consortium. All rights reserved.</span>
+<span class="cm">  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.</span>
+
+<span class="cm">     This software is distributed WITHOUT ANY WARRANTY; without even</span>
+<span class="cm">     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR</span>
+<span class="cm">     PURPOSE.  See the above copyright notices for more information.</span>
+
+<span class="cm">=========================================================================*/</span>
+<span class="cp">#ifndef __itkThinPlateSplineKernelTransform2_h</span>
+<span class="cp">#define __itkThinPlateSplineKernelTransform2_h</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkKernelTransform2.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span>
+<span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TScalarType</span><span class="p">,</span><span class="w">         </span><span class="c1">// Data type for scalars (float or double)</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="c1">// Number of dimensions</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ThinPlateSplineKernelTransform2</span><span class="w"> </span><span class="o">:</span>
+<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ThinPlateSplineKernelTransform2</span><span class="w">              </span><span class="n">Self</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&gt;</span><span class="w">                         </span><span class="n">Pointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&gt;</span><span class="w">                   </span><span class="n">ConstPointer</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ThinPlateSplineKernelTransform2</span><span class="p">,</span><span class="w"> </span><span class="n">KernelTransform2</span><span class="w"> </span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ScalarType</span><span class="w"> </span><span class="n">ScalarType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ParametersType</span><span class="w"> </span><span class="n">ParametersType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">JacobianType</span><span class="w"> </span><span class="n">JacobianType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"> </span><span class="n">SpaceDimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SpaceDimension</span><span class="w"> </span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">InputPointType</span><span class="w">            </span><span class="n">InputPointType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">OutputPointType</span><span class="w">           </span><span class="n">OutputPointType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">InputVectorType</span><span class="w">           </span><span class="n">InputVectorType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">OutputVectorType</span><span class="w">          </span><span class="n">OutputVectorType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">InputCovariantVectorType</span><span class="w">  </span><span class="n">InputCovariantVectorType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">OutputCovariantVectorType</span><span class="w"> </span><span class="n">OutputCovariantVectorType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">PointsIterator</span><span class="w">            </span><span class="n">PointsIterator</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSigma</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">sigma</span><span class="p">){};</span><span class="w"> </span><span class="c1">// this is only to match the compact supported class</span>
+
+<span class="k">protected</span><span class="o">:</span>
+
+<span class="w">  </span><span class="n">ThinPlateSplineKernelTransform2</span><span class="p">()</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FastComputationPossible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ThinPlateSplineKernelTransform2</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">GMatrixType</span><span class="w"> </span><span class="n">GMatrixType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeG</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GMatrix</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeDeformationContribution</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inputPoint</span><span class="p">,</span><span class="w"> </span><span class="n">OutputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
+
+<span class="w">  </span><span class="n">ThinPlateSplineKernelTransform2</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">);</span><span class="w"> </span><span class="c1">// purposely not implemented</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">);</span><span class="w">                  </span><span class="c1">// purposely not implemented</span>
+
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w"> </span><span class="c1">// namespace itk</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkThinPlateSplineKernelTransform2.cpp&quot;</span>
+
+<span class="cp">#endif </span><span class="c1">// __itkThinPlateSplineKernelTransform2_h</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

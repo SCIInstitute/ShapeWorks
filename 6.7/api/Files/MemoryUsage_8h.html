@@ -3804,21 +3804,22 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-process_mem_usage">function process_mem_usage</h3>
-<p><code>cpp
-void process_mem_usage(
-    double &amp; vm_usage,
-    double &amp; resident_set
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">process_mem_usage</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vm_usage</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">resident_set</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<p>//TODO: Figure out memory logging in Windows or get rid of this
-// Disabled by default because this code is *nix specific.
-// #define LOG_MEMORY_USAGE</p>
-<p>void process_mem_usage(double&amp; vm_usage, double&amp; resident_set);
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="c1">//TODO: Figure out memory logging in Windows or get rid of this</span>
+<span class="c1">// Disabled by default because this code is *nix specific.</span>
+<span class="c1">// #define LOG_MEMORY_USAGE</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">process_mem_usage</span><span class="p">(</span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vm_usage</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">resident_set</span><span class="p">);</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

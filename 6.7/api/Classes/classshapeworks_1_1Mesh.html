@@ -5020,8 +5020,8 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::Mesh;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Mesh</span><span class="p">;</span>
+</code></pre></div>
 <p>This class encapsulates a <a href="classshapeworks_1_1Mesh.html">Mesh</a> and operations that can be performed on meshes </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="enum-fieldtype">enum FieldType</h3>
@@ -5146,504 +5146,504 @@ class shapeworks::Mesh;</code></p>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-mesh">function Mesh</h3>
-<p><code>cpp
-Mesh(
-    const std::string &amp; pathname
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-set_id">function set_id</h3>
-<p><code>cpp
-inline void set_id(
-    int id
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_id</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_id">function get_id</h3>
-<p><code>cpp
-inline int get_id() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">get_id</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-mesh_1">function Mesh</h3>
-<p><code>cpp
-inline Mesh(
-    vtkSmartPointer&lt; vtkPolyData &gt; meshPtr
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">meshPtr</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-mesh_2">function Mesh</h3>
-<p><code>cpp
-inline Mesh(
-    const Mesh &amp; orig
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">orig</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-mesh_3">function Mesh</h3>
-<p><code>cpp
-inline Mesh(
-    Mesh &amp;&amp; orig
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">orig</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-operator">function operator=</h3>
-<p><code>cpp
-inline Mesh &amp; operator=(
-    const Mesh &amp; orig
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">orig</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-mesh_4">function Mesh</h3>
-<p><code>cpp
-Mesh(
-    const Eigen::MatrixXd &amp; points,
-    const Eigen::MatrixXi &amp; faces
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">faces</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-operator_1">function operator=</h3>
-<p><code>cpp
-inline Mesh &amp; operator=(
-    Mesh &amp;&amp; orig
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">orig</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-operator_2">function operator+=</h3>
-<p><code>cpp
-Mesh &amp; operator+=(
-    const Mesh &amp; otherMesh
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">otherMesh</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>append two meshes </p>
 <h3 id="function-getvtkmesh">function getVTKMesh</h3>
-<p><code>cpp
-inline vtkSmartPointer&lt; vtkPolyData &gt; getVTKMesh() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getVTKMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>return the current mesh </p>
 <h3 id="function-write">function write</h3>
-<p><code>cpp
-Mesh &amp; write(
-    const std::string &amp; pathname,
-    bool binaryFile =false
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">write</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">binaryFile</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>writes mesh, format specified by filename extension </p>
 <h3 id="function-coverage">function coverage</h3>
-<p><code>cpp
-Mesh &amp; coverage(
-    const Mesh &amp; otherMesh,
-    bool allowBackIntersections =true,
-    double angleThreshold =0,
-    double backSearchRadius =0
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">coverage</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">otherMesh</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">allowBackIntersections</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">angleThreshold</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">backSearchRadius</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>determines coverage between current mesh and another mesh (e.g. acetabular cup / femoral head) </p>
 <h3 id="function-smooth">function smooth</h3>
-<p><code>cpp
-Mesh &amp; smooth(
-    int iterations =0,
-    double relaxation =0.0
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">smooth</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">relaxation</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>applies laplacian smoothing </p>
 <h3 id="function-smoothsinc">function smoothSinc</h3>
-<p><code>cpp
-Mesh &amp; smoothSinc(
-    int iterations =0,
-    double passband =0.0
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">smoothSinc</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">passband</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>applies vtk windowed sinc smoothing </p>
 <h3 id="function-remesh">function remesh</h3>
-<p><code>cpp
-Mesh &amp; remesh(
-    int numVertices,
-    double adaptivity =1.0
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">remesh</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numVertices</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity </p>
 <h3 id="function-remeshpercent">function remeshPercent</h3>
-<p><code>cpp
-Mesh &amp; remeshPercent(
-    double percentage,
-    double adaptivity =1.0
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">remeshPercent</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">percentage</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity </p>
 <h3 id="function-invertnormals">function invertNormals</h3>
-<p><code>cpp
-Mesh &amp; invertNormals()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">invertNormals</span><span class="p">()</span>
+</code></pre></div>
 <p>handle flipping normals </p>
 <h3 id="function-reflect">function reflect</h3>
-<p><code>cpp
-Mesh &amp; reflect(
-    const Axis &amp; axis,
-    const Vector3 &amp; origin =makeVector({0.0, 0.0, 0.0})
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">reflect</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">axis</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">origin</span><span class="w"> </span><span class="o">=</span><span class="n">makeVector</span><span class="p">({</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">})</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>reflect meshes with respect to a specified center and specific axis </p>
 <h3 id="function-createtransform">function createTransform</h3>
-<p><code>cpp
-MeshTransform createTransform(
-    const Mesh &amp; target,
-    AlignmentType align =Similarity,
-    unsigned iterations =10
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">MeshTransform</span><span class="w"> </span><span class="n">createTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span>
+<span class="w">    </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">align</span><span class="w"> </span><span class="o">=</span><span class="n">Similarity</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>creates transform to target mesh using specified AlignmentType (Mesh::Rigid, Mesh::Similarity, Mesh::Affine) for specified number of iterations </p>
 <h3 id="function-applytransform">function applyTransform</h3>
-<p><code>cpp
-Mesh &amp; applyTransform(
-    const MeshTransform transform
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applyTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshTransform</span><span class="w"> </span><span class="n">transform</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>applies the given transformation to the mesh </p>
 <h3 id="function-rotate">function rotate</h3>
-<p><code>cpp
-Mesh &amp; rotate(
-    const double angle,
-    const Axis axis
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rotate</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="n">axis</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>applies the given rotation to the given axis </p>
 <h3 id="function-fillholes">function fillHoles</h3>
-<p><code>cpp
-Mesh &amp; fillHoles(
-    double hole_size =1000.0
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fillHoles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">hole_size</span><span class="w"> </span><span class="o">=</span><span class="mf">1000.0</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>finds holes in a mesh and closes them </p>
 <h3 id="function-clean">function clean</h3>
-<p><code>cpp
-Mesh &amp; clean()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">clean</span><span class="p">()</span>
+</code></pre></div>
 <p>clean mesh </p>
 <h3 id="function-probevolume">function probeVolume</h3>
-<p><code>cpp
-Mesh &amp; probeVolume(
-    const Image &amp; image
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">probeVolume</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>samples image data values at point locations specified by image </p>
 <h3 id="function-clip">function clip</h3>
-<p><code>cpp
-Mesh &amp; clip(
-    const Plane plane
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">clip</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>clips a mesh using a cutting plane </p>
 <h3 id="function-translate">function translate</h3>
-<p><code>cpp
-Mesh &amp; translate(
-    const Vector3 &amp; v
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">translate</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>helper to translate mesh </p>
 <h3 id="function-scale">function scale</h3>
-<p><code>cpp
-Mesh &amp; scale(
-    const Vector3 &amp; v
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">scale</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Vector3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>helper to scale mesh </p>
 <h3 id="function-boundingbox">function boundingBox</h3>
-<p><code>cpp
-PhysicalRegion boundingBox() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>computes bounding box of current mesh </p>
 <h3 id="function-fixelement">function fixElement</h3>
-<p><code>cpp
-Mesh &amp; fixElement()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fixElement</span><span class="p">()</span>
+</code></pre></div>
 <p>fix element winding of mesh </p>
 <h3 id="function-fixnonmanifold">function fixNonManifold</h3>
-<p><code>cpp
-Mesh &amp; fixNonManifold()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fixNonManifold</span><span class="p">()</span>
+</code></pre></div>
 <p>Attempt to fix non-manifold edges. </p>
 <h3 id="function-extractlargestcomponent">function extractLargestComponent</h3>
-<p><code>cpp
-Mesh &amp; extractLargestComponent()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">extractLargestComponent</span><span class="p">()</span>
+</code></pre></div>
 <p>Extract the largest connected component from the mesh. </p>
 <h3 id="function-detectnonmanifold">function detectNonManifold</h3>
-<p><code>cpp
-bool detectNonManifold()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">detectNonManifold</span><span class="p">()</span>
+</code></pre></div>
 <p>Detect if mesh contain non-manifold edges. </p>
 <h3 id="function-detecttriangular">function detectTriangular</h3>
-<p><code>cpp
-bool detectTriangular()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">detectTriangular</span><span class="p">()</span>
+</code></pre></div>
 <p>Detect if mesh is triangular;. </p>
 <h3 id="function-distance">function distance</h3>
-<p><code>cpp
-std::vector&lt; Field &gt; distance(
-    const Mesh &amp; target,
-    const DistanceMethod method =PointToCell
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="n">PointToCell</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Computes distance from each vertex to closest cell or point in target mesh, specified as PointToCell (default) or PointToPoint. Returns Fields containing distance to target and ids of the associated cells or points. </p>
 <h3 id="function-clipclosedsurface">function clipClosedSurface</h3>
-<p><code>cpp
-Mesh &amp; clipClosedSurface(
-    const Plane plane
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">clipClosedSurface</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>clips a mesh using a cutting plane resulting in a closed surface </p>
 <h3 id="function-computenormals">function computeNormals</h3>
-<p><code>cpp
-Mesh &amp; computeNormals()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeNormals</span><span class="p">()</span>
+</code></pre></div>
 <p>computes and adds oriented point and cell normals </p>
 <h3 id="function-closestpoint">function closestPoint</h3>
-<p><code>cpp
-Point3 closestPoint(
-    const Point3 point,
-    double &amp; distance,
-    vtkIdType &amp; face_id
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">closestPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkIdType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_id</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Returns closest point on this mesh to the given point in space. In addition, returns by reference:</p>
 <ul>
 <li>the distance of the point in space from this mesh</li>
 <li>the face_id containing the closest point </li>
 </ul>
 <h3 id="function-closestpointid">function closestPointId</h3>
-<p><code>cpp
-int closestPointId(
-    const Point3 point
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">closestPointId</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>returns closest point id in this mesh to the given point in space </p>
 <h3 id="function-ispointinside">function isPointInside</h3>
-<p><code>cpp
-bool isPointInside(
-    const Point3 point
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">isPointInside</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>returns if the given point is inside the mesh </p>
 <h3 id="function-geodesicdistance">function geodesicDistance</h3>
-<p><code>cpp
-double geodesicDistance(
-    int source,
-    int target
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">source</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>computes geodesic distance between two vertices (specified by their indices) on mesh </p>
 <h3 id="function-geodesicdistance_1">function geodesicDistance</h3>
-<p><code>cpp
-Field geodesicDistance(
-    const Point3 landmark
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">landmark</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>computes geodesic distance between a point (landmark) and each vertex on mesh </p>
 <h3 id="function-geodesicdistance_2">function geodesicDistance</h3>
-<p><code>cpp
-Field geodesicDistance(
-    const std::vector&lt; Point3 &gt; curve
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">geodesicDistance</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">curve</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>computes geodesic distance between a set of points (curve) and each vertex on mesh </p>
 <h3 id="function-curvature">function curvature</h3>
-<p><code>cpp
-Field curvature(
-    const CurvatureType type =Principal
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">curvature</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">CurvatureType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="n">Principal</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>computes curvature using principal (default) or gaussian or mean algorithms </p>
 <h3 id="function-computefieldgradient">function computeFieldGradient</h3>
-<p><code>cpp
-void computeFieldGradient(
-    const std::string &amp; field
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">computeFieldGradient</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>compute the gradient of a scalar field for all vertices </p>
 <h3 id="function-computefieldgradientatpoint">function computeFieldGradientAtPoint</h3>
-<p><code>cpp
-Eigen::Vector3d computeFieldGradientAtPoint(
-    const std::string &amp; field,
-    const Point3 &amp; query
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">computeFieldGradientAtPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">query</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>compute the gradient of a scalar field at a point </p>
 <h3 id="function-interpolatefieldatpoint">function interpolateFieldAtPoint</h3>
-<p><code>cpp
-double interpolateFieldAtPoint(
-    const std::string &amp; field,
-    const Point3 &amp; query
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">interpolateFieldAtPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">query</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>interpolate a scalar field at a given point </p>
 <h3 id="function-applysubdivisionfilter">function applySubdivisionFilter</h3>
-<p><code>cpp
-Mesh &amp; applySubdivisionFilter(
-    const SubdivisionType type =Butterfly,
-    int subdivision =1
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applySubdivisionFilter</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SubdivisionType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="n">Butterfly</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">subdivision</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>applies subdivision filter (butterfly (default) or loop) </p>
 <h3 id="function-toimage">function toImage</h3>
-<p><code>cpp
-Image toImage(
-    PhysicalRegion region =PhysicalRegion(),
-    Point3 spacing =Point3({1., 1., 1.})
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">toImage</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="n">PhysicalRegion</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">Point3</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="n">Point3</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">})</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>rasterizes specified region to create binary image of desired dims (default: unit spacing) </p>
 <h3 id="function-todistancetransform">function toDistanceTransform</h3>
-<p><code>cpp
-Image toDistanceTransform(
-    PhysicalRegion region =PhysicalRegion(),
-    const Point3 spacing =Point3({1., 1., 1.}),
-    const Dims padding =Dims({1, 1, 1})
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="nf">toDistanceTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="n">PhysicalRegion</span><span class="p">(),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">spacing</span><span class="w"> </span><span class="o">=</span><span class="n">Point3</span><span class="p">({</span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">}),</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">padding</span><span class="w"> </span><span class="o">=</span><span class="n">Dims</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">})</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>converts specified region to distance transform image (default: unit spacing) with (logical) padding </p>
 <h3 id="function-computethickness">function computeThickness</h3>
-<p><code>cpp
-Mesh &amp; computeThickness(
-    Image &amp; image,
-    Image * dt =nullptr,
-    double max_dist =10000,
-    double median_radius =5.0,
-    std::string distance_mesh =""
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeThickness</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">median_radius</span><span class="w"> </span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">distance_mesh</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>assign cortical thickness values from mesh points </p>
 <h3 id="function-computelandmarkgeodesics">function computeLandmarkGeodesics</h3>
-<p><code>cpp
-Mesh &amp; computeLandmarkGeodesics(
-    const std::vector&lt; Point3 &gt; &amp; landmarks
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeLandmarkGeodesics</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarks</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>compute geodesic distances to landmarks and assign as fields </p>
 <h3 id="function-center">function center</h3>
-<p><code>cpp
-Point3 center() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>center of mesh </p>
 <h3 id="function-centerofmass">function centerOfMass</h3>
-<p><code>cpp
-Point3 centerOfMass() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">centerOfMass</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>center of mass of mesh </p>
 <h3 id="function-getsurfacearea">function getSurfaceArea</h3>
-<p><code>cpp
-double getSurfaceArea() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getSurfaceArea</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>surface area of mesh </p>
 <h3 id="function-numpoints">function numPoints</h3>
-<p><code>cpp
-inline int numPoints() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numPoints</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>number of points </p>
 <h3 id="function-numfaces">function numFaces</h3>
-<p><code>cpp
-inline int numFaces() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numFaces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>number of faces </p>
 <h3 id="function-points">function points</h3>
-<p><code>cpp
-Eigen::MatrixXd points() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">points</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>matrix with number of points with (x,y,z) coordinates of each point </p>
 <h3 id="function-faces">function faces</h3>
-<p><code>cpp
-Eigen::MatrixXi faces() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="n">faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>matrix with number of faces with indices of the three points from which each face is composed </p>
 <h3 id="function-getpoint">function getPoint</h3>
-<p><code>cpp
-Point3 getPoint(
-    int id
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">getPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>(x,y,z) coordinates of vertex at given index </p>
 <h3 id="function-getface">function getFace</h3>
-<p><code>cpp
-IPoint3 getFace(
-    int id
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">IPoint3</span><span class="w"> </span><span class="n">getFace</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>return indices of the three points with which the face at the given index is composed </p>
 <h3 id="function-getfieldnames">function getFieldNames</h3>
-<p><code>cpp
-std::vector&lt; std::string &gt; getFieldNames() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getFieldNames</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>print all field names in mesh </p>
 <h3 id="function-setfield">function setField</h3>
-<p><code>cpp
-Mesh &amp; setField(
-    const std::string name,
-    Array array,
-    const FieldType type
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">setField</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Array</span><span class="w"> </span><span class="n">array</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FieldType</span><span class="w"> </span><span class="n">type</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>sets the given field for points or faces with array (*does not copy array's values) </p>
 <h3 id="function-getfield">function getField</h3>
-<p><code>cpp
-Field getField(
-    const std::string &amp; name,
-    const FieldType type
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Field</span><span class="w"> </span><span class="n">getField</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FieldType</span><span class="w"> </span><span class="n">type</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>gets a pointer to the requested field of points or faces, null if field doesn't exist </p>
 <h3 id="function-setfieldvalue">function setFieldValue</h3>
-<p><code>cpp
-void setFieldValue(
-    const std::string &amp; name,
-    int idx,
-    double value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setFieldValue</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>sets the given index of field to value </p>
 <h3 id="function-getfieldvalue">function getFieldValue</h3>
-<p><code>cpp
-double getFieldValue(
-    const std::string &amp; name,
-    int idx
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFieldValue</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>gets the value at the given index of field (NOTE: returns first component of vector fields) </p>
 <h3 id="function-getmultifieldvalue">function getMultiFieldValue</h3>
-<p><code>cpp
-Eigen::VectorXd getMultiFieldValue(
-    const std::string &amp; name,
-    int idx
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">getMultiFieldValue</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>gets the multi value at the given index of [vertex] field </p>
 <h3 id="function-compareallpoints">function compareAllPoints</h3>
-<p><code>cpp
-bool compareAllPoints(
-    const Mesh &amp; other_mesh
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareAllPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>compare if values of the points in two (corresponding) meshes are (eps)equal </p>
 <h3 id="function-compareallfaces">function compareAllFaces</h3>
-<p><code>cpp
-bool compareAllFaces(
-    const Mesh &amp; other_mesh
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareAllFaces</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>compare if face indices in two (corresponding) meshes are equal </p>
 <h3 id="function-compareallfields">function compareAllFields</h3>
-<p><code>cpp
-bool compareAllFields(
-    const Mesh &amp; other_mesh,
-    const double eps =1e4
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareAllFields</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="mf">1e4</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>compare if all fields in two meshes are (eps)equal </p>
 <h3 id="function-comparefield">function compareField</h3>
-<p><code>cpp
-bool compareField(
-    const Mesh &amp; other_mesh,
-    const std::string &amp; name1,
-    const std::string &amp; name2 ="",
-    const double eps =-1.0
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compareField</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name1</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name2</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="mf">-1.0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>compare field of meshes to be (eps)equal (same field for both if only one specified) </p>
 <h3 id="function-compare">function compare</h3>
-<p><code>cpp
-bool compare(
-    const Mesh &amp; other_mesh,
-    const double eps =-1.0
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compare</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other_mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"> </span><span class="o">=</span><span class="mf">-1.0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>compare meshes </p>
 <h3 id="function-operator_3">function operator==</h3>
-<p><code>cpp
-inline bool operator==(
-    const Mesh &amp; other
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>compare meshes </p>
 <h3 id="function-getffcvalue">function getFFCValue</h3>
-<p><code>cpp
-double getFFCValue(
-    Eigen::Vector3d query
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFFCValue</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Gets values for FFCs. </p>
 <h3 id="function-getffcgradient">function getFFCGradient</h3>
-<p><code>cpp
-Eigen::Vector3d getFFCGradient(
-    Eigen::Vector3d query
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getFFCGradient</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Gets gradients for FFCs. </p>
 <h3 id="function-getiglmesh">function getIGLMesh</h3>
-<p><code>cpp
-vtkSmartPointer&lt; vtkPoints &gt; getIGLMesh(
-    Eigen::MatrixXd &amp; V,
-    Eigen::MatrixXi &amp; F
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPoints</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getIGLMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Formats mesh into an IGL format. </p>
 <h3 id="function-clipbyfield">function clipByField</h3>
-<p><code>cpp
-vtkSmartPointer&lt; vtkPolyData &gt; clipByField(
-    const std::string &amp; name,
-    double value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">clipByField</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Clips the mesh according to a field value. </p>
 <h3 id="function-getcelllocator">function getCellLocator</h3>
-<p><code>cpp
-inline vtkSmartPointer&lt; vtkStaticCellLocator &gt; getCellLocator() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkStaticCellLocator</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getCellLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Returns the cell locator. </p>
 <h3 id="function-getclosestface">function getClosestFace</h3>
-<p><code>cpp
-int getClosestFace(
-    const Point3 &amp; point
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">getClosestFace</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-computebarycentriccoordinates">function computeBarycentricCoordinates</h3>
-<p><code>cpp
-Eigen::Vector3d computeBarycentricCoordinates(
-    const Eigen::Vector3d &amp; pt,
-    int face
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">computeBarycentricCoordinates</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <p>Computes baricentric coordinates given a query point and a face number. </p>
 <h3 id="function-interpolate_scalars_to_mesh">function interpolate_scalars_to_mesh</h3>
-<p><code>cpp
-void interpolate_scalars_to_mesh(
-    std::string name,
-    Eigen::VectorXd positions,
-    Eigen::VectorXd scalar_values
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">interpolate_scalars_to_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">scalar_values</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Interpolates scalar values at points (e.g. correspondence points) to the mesh, assign/create a field with the given name </p>
 <h3 id="function-checkintegrity">function checkIntegrity</h3>
-<p><code>cpp
-std::string checkIntegrity() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">checkIntegrity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
-<p><code>cpp
-static inline std::vector&lt; std::string &gt; getSupportedTypes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span>
+</code></pre></div>
 <p>Return supported file types. </p>
 <h2 id="friends_1">Friends</h2>
 <h3 id="friend-sharedcommanddata">friend SharedCommandData</h3>
-<p><code>cpp
-friend struct SharedCommandData(
-    SharedCommandData 
-);</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">(</span>
+<span class="w">    </span><span class="n">SharedCommandData</span><span class="w"> </span>
+<span class="p">);</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

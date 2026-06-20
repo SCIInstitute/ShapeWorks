@@ -6914,990 +6914,990 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<p><code>cpp
-class shapeworks::Optimize;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Optimize</span><span class="p">;</span>
+</code></pre></div>
 <p><strong>Par</strong>: Overview of Optimize</p>
 <p>This class is the top-level API for the optimization library</p>
 <p>The <a href="classshapeworks_1_1Optimize.html">Optimize</a> class controls all aspect of the particle system library provides a top-level public API for running optimization </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-imagetype">using ImageType</h3>
-<p><code>cpp
-using shapeworks::Optimize::ImageType =  itk::Image&lt;float, 3&gt;;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Optimize</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-vectortype">using VectorType</h3>
-<p><code>cpp
-using shapeworks::Optimize::VectorType =  VectorFunction::VectorType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Optimize</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-matrixtype">using MatrixType</h3>
-<p><code>cpp
-using shapeworks::Optimize::MatrixType =  Eigen::MatrixXd;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Optimize</span><span class="o">::</span><span class="n">MatrixType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-optimize">function Optimize</h3>
-<p><code>cpp
-Optimize()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Optimize</span><span class="p">()</span>
+</code></pre></div>
 <p>Constructor. </p>
 <h3 id="function-optimize_1">function ~Optimize</h3>
-<p><code>cpp
-virtual ~Optimize()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Optimize</span><span class="p">()</span>
+</code></pre></div>
 <p>Destructor. </p>
 <h3 id="function-run">function Run</h3>
-<p><code>cpp
-bool Run()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">Run</span><span class="p">()</span>
+</code></pre></div>
 <p>Run the optimization. </p>
 <h3 id="function-loadparameterfile">function LoadParameterFile</h3>
-<p><code>cpp
-bool LoadParameterFile(
-    std::string filename
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">LoadParameterFile</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Load a parameter file. </p>
 <h3 id="function-setupoptimize">function SetUpOptimize</h3>
-<p><code>cpp
-bool SetUpOptimize(
-    ProjectHandle project
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">SetUpOptimize</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set up this <a href="classshapeworks_1_1Optimize.html">Optimize</a> object using a ShapeWorks project. </p>
 <h3 id="function-setproject">function SetProject</h3>
-<p><code>cpp
-void SetProject(
-    std::shared_ptr&lt; Project &gt; project
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProject</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the <a href="">Project</a> object. </p>
 <h3 id="function-setiterationcallbackfunction">function SetIterationCallbackFunction</h3>
-<p><code>cpp
-inline void SetIterationCallbackFunction(
-    const std::function&lt; void(void)&gt; &amp; f
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallbackFunction</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set an iteration callback function to be called after each iteration. </p>
 <h3 id="function-abortoptimization">function AbortOptimization</h3>
-<p><code>cpp
-void AbortOptimization()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AbortOptimization</span><span class="p">()</span>
+</code></pre></div>
 <p>Abort optimization. </p>
 <h3 id="function-getaborted">function GetAborted</h3>
-<p><code>cpp
-bool GetAborted()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetAborted</span><span class="p">()</span>
+</code></pre></div>
 <p>Return if the optimization was aborted. </p>
 <h3 id="function-getlocalpoints">function GetLocalPoints</h3>
-<p><code>cpp
-virtual std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; GetLocalPoints()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetLocalPoints</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the local points. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-getlocalpoints">shapeworks::QOptimize::GetLocalPoints</a></p>
 <h3 id="function-getglobalpoints">function GetGlobalPoints</h3>
-<p><code>cpp
-virtual std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; GetGlobalPoints()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetGlobalPoints</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the global points. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-getglobalpoints">shapeworks::QOptimize::GetGlobalPoints</a></p>
 <h3 id="function-setcutplanes">function SetCutPlanes</h3>
-<p><code>cpp
-void SetCutPlanes(
-    std::vector&lt; std::array&lt; itk::Point&lt; double &gt;, 3 &gt; &gt; cut_planes
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCutPlanes</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">cut_planes</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set cutting planes. </p>
 <h3 id="function-setverbosity">function SetVerbosity</h3>
-<p><code>cpp
-void SetVerbosity(
-    int verbosity_level
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetVerbosity</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">verbosity_level</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the verbosity level (0-5) </p>
 <h3 id="function-setdomainspershape">function SetDomainsPerShape</h3>
-<p><code>cpp
-void SetDomainsPerShape(
-    int domains_per_shape
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the number of domains per shape. </p>
 <h3 id="function-getdomainspershape">function GetDomainsPerShape</h3>
-<p><code>cpp
-int GetDomainsPerShape()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the number of domains per shape. </p>
 <h3 id="function-setdomaintype">function SetDomainType</h3>
-<p><code>cpp
-void SetDomainType(
-    shapeworks::DomainType type
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainType</span><span class="p">(</span>
+<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">type</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getdomaintype">function GetDomainType</h3>
-<p><code>cpp
-shapeworks::DomainType GetDomainType()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">GetDomainType</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setnumberofparticles">function SetNumberOfParticles</h3>
-<p><code>cpp
-void SetNumberOfParticles(
-    std::vector&lt; int &gt; number_of_particles
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNumberOfParticles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">number_of_particles</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the numbers of particles (vector of numbers, one for each domain) </p>
 <h3 id="function-getnumberofparticles">function GetNumberOfParticles</h3>
-<p><code>cpp
-std::vector&lt; int &gt; GetNumberOfParticles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetNumberOfParticles</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the numbers of particles per domain. </p>
 <h3 id="function-settransformfile">function SetTransformFile</h3>
-<p><code>cpp
-void SetTransformFile(
-    std::string filename
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the transform file. </p>
 <h3 id="function-gettransformfile">function GetTransformFile</h3>
-<p><code>cpp
-std::string GetTransformFile()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GetTransformFile</span><span class="p">()</span>
+</code></pre></div>
 <p>Get the transform file. </p>
 <h3 id="function-setprefixtransformfile">function SetPrefixTransformFile</h3>
-<p><code>cpp
-void SetPrefixTransformFile(
-    std::string prefix_transform_file
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix_transform_file</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the prefix transform file (TODO: details) </p>
 <h3 id="function-getprefixtransformfile">function GetPrefixTransformFile</h3>
-<p><code>cpp
-std::string GetPrefixTransformFile()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GetPrefixTransformFile</span><span class="p">()</span>
+</code></pre></div>
 <p>Get the prefix transform file. </p>
 <h3 id="function-setoutputdir">function SetOutputDir</h3>
-<p><code>cpp
-void SetOutputDir(
-    std::string output_dir
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetOutputDir</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">output_dir</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the output directory. </p>
 <h3 id="function-setoutputtransformfile">function SetOutputTransformFile</h3>
-<p><code>cpp
-void SetOutputTransformFile(
-    std::string output_transform_file
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetOutputTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">output_transform_file</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the output transform file. </p>
 <h3 id="function-setoutputindividualtransformfiles">function SetOutputIndividualTransformFiles</h3>
-<p><code>cpp
-void SetOutputIndividualTransformFiles(
-    bool value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetOutputIndividualTransformFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set whether individual transforms should be written. </p>
 <h3 id="function-setusemeshbasedattributes">function SetUseMeshBasedAttributes</h3>
-<p><code>cpp
-void SetUseMeshBasedAttributes(
-    bool use_mesh_based_attributes
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseMeshBasedAttributes</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_mesh_based_attributes</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if mesh based attributes should be used. </p>
 <h3 id="function-getusemeshbasedattributes">function GetUseMeshBasedAttributes</h3>
-<p><code>cpp
-bool GetUseMeshBasedAttributes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetUseMeshBasedAttributes</span><span class="p">()</span>
+</code></pre></div>
 <p>Get if mesh based attributes are being used. </p>
 <h3 id="function-setusexyz">function SetUseXYZ</h3>
-<p><code>cpp
-void SetUseXYZ(
-    std::vector&lt; bool &gt; use_xyz
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseXYZ</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">use_xyz</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if XYZ is used, one value per domain. </p>
 <h3 id="function-setusenormals">function SetUseNormals</h3>
-<p><code>cpp
-void SetUseNormals(
-    std::vector&lt; bool &gt; use_normals
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseNormals</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">use_normals</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if Normals are being used, one value per domain. </p>
 <h3 id="function-setattributesperdomain">function SetAttributesPerDomain</h3>
-<p><code>cpp
-void SetAttributesPerDomain(
-    std::vector&lt; int &gt; attributes_per_domain
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributesPerDomain</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">attributes_per_domain</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the attributes per domain. </p>
 <h3 id="function-getattributesperdomain">function GetAttributesPerDomain</h3>
-<p><code>cpp
-std::vector&lt; int &gt; GetAttributesPerDomain()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetAttributesPerDomain</span><span class="p">()</span>
+</code></pre></div>
 <p>Get attributes per domain. </p>
 <h3 id="function-setdistributiondomainid">function SetDistributionDomainID</h3>
-<p><code>cpp
-void SetDistributionDomainID(
-    int distribution_domain_id
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetDistributionDomainID</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">distribution_domain_id</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the distribution domain ID (TODO: details) </p>
 <h3 id="function-getdistributiondomainid">function GetDistributionDomainID</h3>
-<p><code>cpp
-int GetDistributionDomainID()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetDistributionDomainID</span><span class="p">()</span>
+</code></pre></div>
 <p>Get the distribution domain ID. </p>
 <h3 id="function-setoutputcuttingplanefile">function SetOutputCuttingPlaneFile</h3>
-<p><code>cpp
-void SetOutputCuttingPlaneFile(
-    std::string output_cutting_plane_file
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetOutputCuttingPlaneFile</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">output_cutting_plane_file</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the output cutting plane file. </p>
 <h3 id="function-setusecuttingplanes">function SetUseCuttingPlanes</h3>
-<p><code>cpp
-void SetUseCuttingPlanes(
-    bool use_cutting_planes
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseCuttingPlanes</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_cutting_planes</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if using cutting planes. </p>
 <h3 id="function-setcuttingplane">function SetCuttingPlane</h3>
-<p><code>cpp
-void SetCuttingPlane(
-    unsigned int i,
-    const vnl_vector_fixed&lt; double, 3 &gt; &amp; va,
-    const vnl_vector_fixed&lt; double, 3 &gt; &amp; vb,
-    const vnl_vector_fixed&lt; double, 3 &gt; &amp; vc
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCuttingPlane</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">va</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vc</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set a given cutting plane for a shape. </p>
 <h3 id="function-setmeshffcmode">function SetMeshFFCMode</h3>
-<p><code>cpp
-inline void SetMeshFFCMode(
-    int mesh_ffc_mode
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFFCMode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mesh_ffc_mode</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set <a href="classshapeworks_1_1Mesh.html">Mesh</a> FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode. </p>
 <h3 id="function-settimeptspersubject">function SetTimePtsPerSubject</h3>
-<p><code>cpp
-void SetTimePtsPerSubject(
-    int time_pts_per_subject
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetTimePtsPerSubject</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">time_pts_per_subject</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the number of time points per subject (TODO: details) </p>
 <h3 id="function-gettimeptspersubject">function GetTimePtsPerSubject</h3>
-<p><code>cpp
-int GetTimePtsPerSubject()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetTimePtsPerSubject</span><span class="p">()</span>
+</code></pre></div>
 <p>Get the number of time points per subject (TODO: details) </p>
 <h3 id="function-setoptimizationiterations">function SetOptimizationIterations</h3>
-<p><code>cpp
-void SetOptimizationIterations(
-    int optimization_iterations
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetOptimizationIterations</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">optimization_iterations</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the number of optimization iterations. </p>
 <h3 id="function-setoptimizationiterationscompleted">function SetOptimizationIterationsCompleted</h3>
-<p><code>cpp
-void SetOptimizationIterationsCompleted(
-    int optimization_iterations_completed
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetOptimizationIterationsCompleted</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">optimization_iterations_completed</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the number of optimization iterations already completed (TODO: details) </p>
 <h3 id="function-setiterationspersplit">function SetIterationsPerSplit</h3>
-<p><code>cpp
-void SetIterationsPerSplit(
-    int iterations_per_split
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationsPerSplit</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iterations_per_split</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the number of iterations per split. </p>
 <h3 id="function-setuseshapestatisticsininit">function SetUseShapeStatisticsInInit</h3>
-<p><code>cpp
-void SetUseShapeStatisticsInInit(
-    bool use_shape_statistics_in_init
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseShapeStatisticsInInit</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_shape_statistics_in_init</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if shape statistics should be used in initialization. </p>
 <h3 id="function-setprocrustesinterval">function SetProcrustesInterval</h3>
-<p><code>cpp
-void SetProcrustesInterval(
-    int procrustes_interval
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProcrustesInterval</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">procrustes_interval</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the interval for running procrustes (0 to disable) </p>
 <h3 id="function-setprocrustesscaling">function SetProcrustesScaling</h3>
-<p><code>cpp
-void SetProcrustesScaling(
-    bool procrustes_scaling
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProcrustesScaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">procrustes_scaling</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if procrustes scaling should be used. </p>
 <h3 id="function-setprocrustesrotationtranslation">function SetProcrustesRotationTranslation</h3>
-<p><code>cpp
-void SetProcrustesRotationTranslation(
-    bool procrustes_rotation_translation
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProcrustesRotationTranslation</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">procrustes_rotation_translation</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if procrustes rotation/translation should be used. </p>
 <h3 id="function-setrelativeweighting">function SetRelativeWeighting</h3>
-<p><code>cpp
-void SetRelativeWeighting(
-    double relative_weighting
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeWeighting</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">relative_weighting</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the relative weighting (TODO: details) </p>
 <h3 id="function-setinitialrelativeweighting">function SetInitialRelativeWeighting</h3>
-<p><code>cpp
-void SetInitialRelativeWeighting(
-    double initial_relative_weighting
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialRelativeWeighting</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">initial_relative_weighting</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the initial relative weigting (TODO: details) </p>
 <h3 id="function-setstartingregularization">function SetStartingRegularization</h3>
-<p><code>cpp
-void SetStartingRegularization(
-    double starting_regularization
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetStartingRegularization</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">starting_regularization</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the starting regularization (TODO: details) </p>
 <h3 id="function-setendingregularization">function SetEndingRegularization</h3>
-<p><code>cpp
-void SetEndingRegularization(
-    double ending_regularization
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetEndingRegularization</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ending_regularization</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the ending regularization (TODO: details) </p>
 <h3 id="function-setrecomputeregularizationinterval">function SetRecomputeRegularizationInterval</h3>
-<p><code>cpp
-void SetRecomputeRegularizationInterval(
-    int recompute_regularization_interval
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetRecomputeRegularizationInterval</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">recompute_regularization_interval</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the interval for recomputing regularization (TODO: details) </p>
 <h3 id="function-setsaveinitsplits">function SetSaveInitSplits</h3>
-<p><code>cpp
-void SetSaveInitSplits(
-    bool save_init_splits
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetSaveInitSplits</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">save_init_splits</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if initialization splits should be saved or not. </p>
 <h3 id="function-setcheckpointinginterval">function SetCheckpointingInterval</h3>
-<p><code>cpp
-void SetCheckpointingInterval(
-    int checkpointing_interval
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCheckpointingInterval</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">checkpointing_interval</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the checkpointing interval. </p>
 <h3 id="function-setkeepcheckpoints">function SetKeepCheckpoints</h3>
-<p><code>cpp
-void SetKeepCheckpoints(
-    int keep_checkpoints
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetKeepCheckpoints</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">keep_checkpoints</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if checkpoints should be kept (0=disable, 1=enable) </p>
 <h3 id="function-setuseregression">function SetUseRegression</h3>
-<p><code>cpp
-void SetUseRegression(
-    bool use_regression
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseRegression</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_regression</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if regression should be used (TODO: details) </p>
 <h3 id="function-setusemixedeffects">function SetUseMixedEffects</h3>
-<p><code>cpp
-void SetUseMixedEffects(
-    bool use_mixed_effects
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseMixedEffects</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_mixed_effects</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if mixed effects should be used (TODO: details) </p>
 <h3 id="function-setusedisentangledspatiotemporalssm">function SetUseDisentangledSpatiotemporalSSM</h3>
-<p><code>cpp
-void SetUseDisentangledSpatiotemporalSSM(
-    bool use_disentangled_ssm_4d
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseDisentangledSpatiotemporalSSM</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_disentangled_ssm_4d</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if optimization should be done using disentangled spatiotemporal SSM method. </p>
 <h3 id="function-getusedisentangledspatiotemporalssm">function GetUseDisentangledSpatiotemporalSSM</h3>
-<p><code>cpp
-bool GetUseDisentangledSpatiotemporalSSM()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetUseDisentangledSpatiotemporalSSM</span><span class="p">()</span>
+</code></pre></div>
 <p>Returns true if optimization is to be done using disentangled spatiotemporal SSM method. </p>
 <h3 id="function-setnormalangle">function SetNormalAngle</h3>
-<p><code>cpp
-void SetNormalAngle(
-    double normal_angle
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNormalAngle</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">normal_angle</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>For good/bad analysis, set the normal angle to use (TODO: details) </p>
 <h3 id="function-setperformgoodbad">function SetPerformGoodBad</h3>
-<p><code>cpp
-void SetPerformGoodBad(
-    bool perform_good_bad
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetPerformGoodBad</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">perform_good_bad</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if good/bad analysis should be done (TODO: details) </p>
 <h3 id="function-setlogenergy">function SetLogEnergy</h3>
-<p><code>cpp
-void SetLogEnergy(
-    bool log_energy
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetLogEnergy</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">log_energy</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the log energy (TODO: details) </p>
 <h3 id="function-addimage">function AddImage</h3>
-<p><code>cpp
-void AddImage(
-    ImageType::Pointer image,
-    std::string name =""
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddImage</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the shape input images. </p>
 <h3 id="function-addmesh">function AddMesh</h3>
-<p><code>cpp
-void AddMesh(
-    vtkSmartPointer&lt; vtkPolyData &gt; poly_data
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-addmesh_1">function AddMesh</h3>
-<p><code>cpp
-void AddMesh(
-    std::shared_ptr&lt; Surface &gt; surface,
-    std::shared_ptr&lt; Surface &gt; geodesics_surface,
-    std::shared_ptr&lt; Mesh &gt; sw_mesh,
-    double surface_area
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">surface</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Surface</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">geodesics_surface</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">sw_mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">surface_area</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-addcontour">function AddContour</h3>
-<p><code>cpp
-void AddContour(
-    vtkSmartPointer&lt; vtkPolyData &gt; poly_data
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddContour</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-setfilenames">function SetFilenames</h3>
-<p><code>cpp
-void SetFilenames(
-    const std::vector&lt; std::string &gt; &amp; filenames
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFilenames</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filenames</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the shape filenames (TODO: details) </p>
 <h3 id="function-setpointfiles">function SetPointFiles</h3>
-<p><code>cpp
-void SetPointFiles(
-    const std::vector&lt; std::string &gt; &amp; point_files
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetPointFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point_files</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set starting point files (TODO: details) </p>
 <h3 id="function-setinitialpoints">function SetInitialPoints</h3>
-<p><code>cpp
-void SetInitialPoints(
-    std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; initial_points
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">initial_points</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set initial particle positions (e.g. for fixed subjects) </p>
 <h3 id="function-getnumshapes">function GetNumShapes</h3>
-<p><code>cpp
-int GetNumShapes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetNumShapes</span><span class="p">()</span>
+</code></pre></div>
 <p>Get number of shapes. </p>
 <h3 id="function-setattributescales">function SetAttributeScales</h3>
-<p><code>cpp
-void SetAttributeScales(
-    const std::vector&lt; double &gt; &amp; scales
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributeScales</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">scales</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set attribute scales (TODO: details) </p>
 <h3 id="function-setfieldattributes">function SetFieldAttributes</h3>
-<p><code>cpp
-void SetFieldAttributes(
-    const std::vector&lt; std::string &gt; &amp; field_attributes
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFieldAttributes</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">field_attributes</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the field attributes. </p>
 <h3 id="function-setparticleflags">function SetParticleFlags</h3>
-<p><code>cpp
-void SetParticleFlags(
-    std::vector&lt; int &gt; flags
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetParticleFlags</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">flags</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set Particle Flags (TODO: details) </p>
 <h3 id="function-setfixeddomains">function SetFixedDomains</h3>
-<p><code>cpp
-void SetFixedDomains(
-    std::vector&lt; int &gt; flags
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFixedDomains</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">flags</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set Domain Flags (TODO: details) </p>
 <h3 id="function-setprocustestransforms">function SetProcustesTransforms</h3>
-<p><code>cpp
-void SetProcustesTransforms(
-    std::map&lt; int, vnl_matrix_fixed&lt; double, 4, 4 &gt; &gt; transforms
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetProcustesTransforms</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set Procrustes transforms to load for specific domains (applied after initialization) </p>
 <h3 id="function-setsharedboundaryenabled">function SetSharedBoundaryEnabled</h3>
-<p><code>cpp
-void SetSharedBoundaryEnabled(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryEnabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Shared boundary settings. </p>
 <h3 id="function-setsharedboundaryweight">function SetSharedBoundaryWeight</h3>
-<p><code>cpp
-void SetSharedBoundaryWeight(
-    double weight
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryWeight</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-setsamplingscale">function SetSamplingScale</h3>
-<p><code>cpp
-void SetSamplingScale(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingScale</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Sampling scale settings. </p>
 <h3 id="function-getsamplingscale">function GetSamplingScale</h3>
-<p><code>cpp
-bool GetSamplingScale()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetSamplingScale</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setsamplingautoscale">function SetSamplingAutoScale</h3>
-<p><code>cpp
-void SetSamplingAutoScale(
-    bool auto_scale
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingAutoScale</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">auto_scale</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getsamplingautoscale">function GetSamplingAutoScale</h3>
-<p><code>cpp
-bool GetSamplingAutoScale()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetSamplingAutoScale</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setsamplingscalevalue">function SetSamplingScaleValue</h3>
-<p><code>cpp
-void SetSamplingScaleValue(
-    double scale_value
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingScaleValue</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">scale_value</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getsamplingscalevalue">function GetSamplingScaleValue</h3>
-<p><code>cpp
-double GetSamplingScaleValue()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">GetSamplingScaleValue</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setearlystoppingconfig">function SetEarlyStoppingConfig</h3>
-<p><code>cpp
-void SetEarlyStoppingConfig(
-    EarlyStoppingConfig config
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetEarlyStoppingConfig</span><span class="p">(</span>
+<span class="w">    </span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">config</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Early Stopping params. </p>
 <h3 id="function-getdomainflags">function GetDomainFlags</h3>
-<p><code>cpp
-const std::vector&lt; int &gt; &amp; GetDomainFlags()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetDomainFlags</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setfileoutputenabled">function SetFileOutputEnabled</h3>
-<p><code>cpp
-void SetFileOutputEnabled(
-    bool enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFileOutputEnabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set if file output is enabled. </p>
 <h3 id="function-getusexyz">function GetUseXYZ</h3>
-<p><code>cpp
-std::vector&lt; bool &gt; GetUseXYZ()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetUseXYZ</span><span class="p">()</span>
+</code></pre></div>
 <p>Return if XYZ is used, per shape. </p>
 <h3 id="function-getusenormals">function GetUseNormals</h3>
-<p><code>cpp
-std::vector&lt; bool &gt; GetUseNormals()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetUseNormals</span><span class="p">()</span>
+</code></pre></div>
 <p>Return if Normals are used, per shape. </p>
 <h3 id="function-setnarrowband">function SetNarrowBand</h3>
-<p><code>cpp
-void SetNarrowBand(
-    double v
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNarrowBand</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the narrow band used to be +/- the given value as a multiple of the spacing. </p>
 <h3 id="function-getnarrowband">function GetNarrowBand</h3>
-<p><code>cpp
-double GetNarrowBand()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">GetNarrowBand</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the narrow band to be used. </p>
 <h3 id="function-setuseshapestatisticsafter">function SetUseShapeStatisticsAfter</h3>
-<p><code>cpp
-void SetUseShapeStatisticsAfter(
-    int num_particles
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseShapeStatisticsAfter</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_particles</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the number of particles when correspondence based multiscale takes over. </p>
 <h3 id="function-getuseshapestatisticsafter">function GetUseShapeStatisticsAfter</h3>
-<p><code>cpp
-int GetUseShapeStatisticsAfter()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetUseShapeStatisticsAfter</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the number of particles when correspondence based multiscale takes over. </p>
 <h3 id="function-printparaminfo">function PrintParamInfo</h3>
-<p><code>cpp
-void PrintParamInfo()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintParamInfo</span><span class="p">()</span>
+</code></pre></div>
 <p>Print parameter info to stdout. </p>
 <h3 id="function-getsampler">function GetSampler</h3>
-<p><code>cpp
-inline std::shared_ptr&lt; Sampler &gt; GetSampler()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Sampler</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetSampler</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the <a href="">Sampler</a>. </p>
 <h3 id="function-getparticlesystem">function GetParticleSystem</h3>
-<p><code>cpp
-MatrixContainer GetParticleSystem()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">MatrixContainer</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span>
+</code></pre></div>
 <p>Return the particle system as a matrix. </p>
 <h3 id="function-setpythonfile">function SetPythonFile</h3>
-<p><code>cpp
-void SetPythonFile(
-    std::string filename
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetPythonFile</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the python file to run at startup. </p>
 <h3 id="function-setgeodesicsenabled">function SetGeodesicsEnabled</h3>
-<p><code>cpp
-void SetGeodesicsEnabled(
-    bool is_enabled
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetGeodesicsEnabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_enabled</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set whether or not geodesics are enabled. </p>
 <h3 id="function-getgeodesicsenabled">function GetGeodesicsEnabled</h3>
-<p><code>cpp
-inline bool GetGeodesicsEnabled() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetGeodesicsEnabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-setgeodesicscachesizemultiplier">function SetGeodesicsCacheSizeMultiplier</h3>
-<p><code>cpp
-void SetGeodesicsCacheSizeMultiplier(
-    size_t n
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetGeodesicsCacheSizeMultiplier</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set cache size multiplier for geodesics. The total number of cache entries will be n * number_of_triangles </p>
 <h3 id="function-setgeodesicsremeshpercent">function SetGeodesicsRemeshPercent</h3>
-<p><code>cpp
-void SetGeodesicsRemeshPercent(
-    double percent
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetGeodesicsRemeshPercent</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">percent</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Set the remeshing percent for the mesh used for computing geodesics (0-100) </p>
 <h3 id="function-getvisualizer">function GetVisualizer</h3>
-<p><code>cpp
-OptimizationVisualizer &amp; GetVisualizer()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetVisualizer</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setshowvisualizer">function SetShowVisualizer</h3>
-<p><code>cpp
-void SetShowVisualizer(
-    bool show
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetShowVisualizer</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-getshowvisualizer">function GetShowVisualizer</h3>
-<p><code>cpp
-bool GetShowVisualizer()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetShowVisualizer</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-getmeshffcmode">function GetMeshFFCMode</h3>
-<p><code>cpp
-inline bool GetMeshFFCMode()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetMeshFFCMode</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-transformpoint">function TransformPoint</h3>
-<p><code>cpp
-vnl_vector_fixed&lt; double, 3 &gt; TransformPoint(
-    int domain,
-    vnl_vector_fixed&lt; double, 3 &gt; input
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">input</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>transform a point if necessary </p>
 <h3 id="function-updateprogress">function UpdateProgress</h3>
-<p><code>cpp
-void UpdateProgress()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateProgress</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-set_particle_format">function set_particle_format</h3>
-<p><code>cpp
-inline void set_particle_format(
-    std::string format
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_format</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">format</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-setiterationcallback">function SetIterationCallback</h3>
-<p><code>cpp
-virtual void SetIterationCallback()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span>
+</code></pre></div>
 <p>Set the iteration callback. Derived classes should override to set their own callback. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-setiterationcallback">shapeworks::QOptimize::SetIterationCallback</a></p>
 <h3 id="function-computetotaliterations">function ComputeTotalIterations</h3>
-<p><code>cpp
-void ComputeTotalIterations()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeTotalIterations</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-optimizerstop">function OptimizerStop</h3>
-<p><code>cpp
-void OptimizerStop()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">OptimizerStop</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-readtransformfile">function ReadTransformFile</h3>
-<p><code>cpp
-void ReadTransformFile()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadTransformFile</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-readprefixtransformfile">function ReadPrefixTransformFile</h3>
-<p><code>cpp
-void ReadPrefixTransformFile(
-    const std::string &amp; s
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadPrefixTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-initializesampler">function InitializeSampler</h3>
-<p><code>cpp
-void InitializeSampler()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InitializeSampler</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-getminneighborhoodradius">function GetMinNeighborhoodRadius</h3>
-<p><code>cpp
-double GetMinNeighborhoodRadius()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">GetMinNeighborhoodRadius</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-addsinglepoint">function AddSinglePoint</h3>
-<p><code>cpp
-void AddSinglePoint()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddSinglePoint</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-initialize">function Initialize</h3>
-<p><code>cpp
-void Initialize()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-runoptimize">function RunOptimize</h3>
-<p><code>cpp
-void RunOptimize()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RunOptimize</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-computeenergyafteriteration">function ComputeEnergyAfterIteration</h3>
-<p><code>cpp
-void ComputeEnergyAfterIteration()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeEnergyAfterIteration</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setcotansigma">function SetCotanSigma</h3>
-<p><code>cpp
-void SetCotanSigma()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCotanSigma</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-writetransformfile">function WriteTransformFile</h3>
-<p><code>cpp
-void WriteTransformFile(
-    int iter =-1
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-writetransformfile_1">function WriteTransformFile</h3>
-<p><code>cpp
-void WriteTransformFile(
-    std::string iter_prefix
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">iter_prefix</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-writetransformfiles">function WriteTransformFiles</h3>
-<p><code>cpp
-void WriteTransformFiles(
-    int iter =-1
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteTransformFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-writetransformfiles_1">function WriteTransformFiles</h3>
-<p><code>cpp
-void WriteTransformFiles(
-    std::string iter_prefix
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteTransformFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">iter_prefix</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-writepointfiles">function WritePointFiles</h3>
-<p><code>cpp
-void WritePointFiles(
-    int iter =-1
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WritePointFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-writepointfiles_1">function WritePointFiles</h3>
-<p><code>cpp
-void WritePointFiles(
-    std::string iter_prefix
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WritePointFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">iter_prefix</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-writepointfileswithfeatures">function WritePointFilesWithFeatures</h3>
-<p><code>cpp
-void WritePointFilesWithFeatures(
-    int iter =-1
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WritePointFilesWithFeatures</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-writepointfileswithfeatures_1">function WritePointFilesWithFeatures</h3>
-<p><code>cpp
-void WritePointFilesWithFeatures(
-    std::string iter_prefix
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WritePointFilesWithFeatures</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">iter_prefix</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-writeenergyfiles">function WriteEnergyFiles</h3>
-<p><code>cpp
-void WriteEnergyFiles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteEnergyFiles</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-writesplitfiles">function WriteSplitFiles</h3>
-<p><code>cpp
-void WriteSplitFiles(
-    std::string name
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteSplitFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-writecuttingplanepoints">function WriteCuttingPlanePoints</h3>
-<p><code>cpp
-void WriteCuttingPlanePoints(
-    int iter =-1
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteCuttingPlanePoints</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-writeparameters">function WriteParameters</h3>
-<p><code>cpp
-void WriteParameters(
-    std::string output_dir =""
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteParameters</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">output_dir</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-reportbadparticles">function ReportBadParticles</h3>
-<p><code>cpp
-void ReportBadParticles()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReportBadParticles</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-setparameters">function SetParameters</h3>
-<p><code>cpp
-int SetParameters()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">SetParameters</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-writemodes">function WriteModes</h3>
-<p><code>cpp
-void WriteModes()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteModes</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-printstartmessage">function PrintStartMessage</h3>
-<p><code>cpp
-void PrintStartMessage(
-    std::string str,
-    unsigned int vlevel =0
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintStartMessage</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">vlevel</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-printdonemessage">function PrintDoneMessage</h3>
-<p><code>cpp
-void PrintDoneMessage(
-    unsigned int vlevel =0
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintDoneMessage</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">vlevel</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-updateexportablepoints">function UpdateExportablePoints</h3>
-<p><code>cpp
-virtual void UpdateExportablePoints()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateExportablePoints</span><span class="p">()</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-updateexportablepoints">shapeworks::QOptimize::UpdateExportablePoints</a></p>
 <h3 id="function-getprocrustestransforms">function GetProcrustesTransforms</h3>
-<p><code>cpp
-virtual std::vector&lt; std::vector&lt; std::vector&lt; double &gt; &gt; &gt; GetProcrustesTransforms()</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetProcrustesTransforms</span><span class="p">()</span>
+</code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-getprocrustestransforms">shapeworks::QOptimize::GetProcrustesTransforms</a></p>
 <h3 id="function-updateproject">function UpdateProject</h3>
-<p><code>cpp
-void UpdateProject()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateProject</span><span class="p">()</span>
+</code></pre></div>
 <h3 id="function-getcheckpointdir">function GetCheckpointDir</h3>
-<p><code>cpp
-std::string GetCheckpointDir()</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GetCheckpointDir</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_sampler">variable m_sampler</h3>
-<p><code>cpp
-std::shared_ptr&lt; Sampler &gt; m_sampler;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Sampler</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_sampler</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_procrustes">variable m_procrustes</h3>
-<p><code>cpp
-ProcrustesRegistration::Pointer m_procrustes;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">ProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_good_bad">variable m_good_bad</h3>
-<p><code>cpp
-std::shared_ptr&lt; ParticleGoodBadAssessment &gt; m_good_bad;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ParticleGoodBadAssessment</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_good_bad</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_verbosity_level">variable m_verbosity_level</h3>
-<p><code>cpp
-unsigned int m_verbosity_level = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_local_points">variable m_local_points</h3>
-<p><code>cpp
-std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; m_local_points;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_local_points</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_global_points">variable m_global_points</h3>
-<p><code>cpp
-std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; m_global_points;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_global_points</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_checkpoint_counter">variable m_checkpoint_counter</h3>
-<p><code>cpp
-int m_checkpoint_counter = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_checkpoint_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_procrustes_counter">variable m_procrustes_counter</h3>
-<p><code>cpp
-int m_procrustes_counter = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_use_cutting_planes">variable m_use_cutting_planes</h3>
-<p><code>cpp
-bool m_use_cutting_planes = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_cutting_planes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_optimizing">variable m_optimizing</h3>
-<p><code>cpp
-bool m_optimizing = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_optimizing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_use_regression">variable m_use_regression</h3>
-<p><code>cpp
-bool m_use_regression = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_regression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_use_mixed_effects">variable m_use_mixed_effects</h3>
-<p><code>cpp
-bool m_use_mixed_effects = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_mixed_effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_use_disentangled_ssm">variable m_use_disentangled_ssm</h3>
-<p><code>cpp
-bool m_use_disentangled_ssm = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_disentangled_ssm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_domains_per_shape">variable m_domains_per_shape</h3>
-<p><code>cpp
-unsigned int m_domains_per_shape = 1;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_domains_per_shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_domain_type">variable m_domain_type</h3>
-<p><code>cpp
-shapeworks::DomainType m_domain_type = shapeworks::DomainType::Image;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">m_domain_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="o">::</span><span class="n">Image</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_number_of_particles">variable m_number_of_particles</h3>
-<p><code>cpp
-std::vector&lt; int &gt; m_number_of_particles;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_number_of_particles</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_transform_file">variable m_transform_file</h3>
-<p><code>cpp
-std::string m_transform_file;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_transform_file</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_prefix_transform_file">variable m_prefix_transform_file</h3>
-<p><code>cpp
-std::string m_prefix_transform_file;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_prefix_transform_file</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_output_dir">variable m_output_dir</h3>
-<p><code>cpp
-std::string m_output_dir;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_output_dir</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_output_transform_file">variable m_output_transform_file</h3>
-<p><code>cpp
-std::string m_output_transform_file;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_output_transform_file</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_output_transform_files">variable m_output_transform_files</h3>
-<p><code>cpp
-bool m_output_transform_files = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_output_transform_files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_mesh_based_attributes">variable m_mesh_based_attributes</h3>
-<p><code>cpp
-bool m_mesh_based_attributes = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_mesh_based_attributes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_use_xyz">variable m_use_xyz</h3>
-<p><code>cpp
-std::vector&lt; bool &gt; m_use_xyz;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_use_xyz</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_use_normals">variable m_use_normals</h3>
-<p><code>cpp
-std::vector&lt; bool &gt; m_use_normals;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_use_normals</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_attributes_per_domain">variable m_attributes_per_domain</h3>
-<p><code>cpp
-std::vector&lt; int &gt; m_attributes_per_domain;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_attributes_per_domain</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_distribution_domain_id">variable m_distribution_domain_id</h3>
-<p><code>cpp
-int m_distribution_domain_id = -1;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_distribution_domain_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_output_cutting_plane_file">variable m_output_cutting_plane_file</h3>
-<p><code>cpp
-std::string m_output_cutting_plane_file;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_output_cutting_plane_file</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_mesh_ffc_mode">variable m_mesh_ffc_mode</h3>
-<p><code>cpp
-bool m_mesh_ffc_mode = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_timepts_per_subject">variable m_timepts_per_subject</h3>
-<p><code>cpp
-unsigned int m_timepts_per_subject = 1;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_timepts_per_subject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_optimization_iterations">variable m_optimization_iterations</h3>
-<p><code>cpp
-int m_optimization_iterations = 2000;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_optimization_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_optimization_iterations_completed">variable m_optimization_iterations_completed</h3>
-<p><code>cpp
-int m_optimization_iterations_completed = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_optimization_iterations_completed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_iterations_per_split">variable m_iterations_per_split</h3>
-<p><code>cpp
-int m_iterations_per_split = 1000;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_iterations_per_split</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_use_shape_statistics_in_init">variable m_use_shape_statistics_in_init</h3>
-<p><code>cpp
-bool m_use_shape_statistics_in_init = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_shape_statistics_in_init</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_procrustes_interval">variable m_procrustes_interval</h3>
-<p><code>cpp
-unsigned int m_procrustes_interval = 3;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_procrustes_scaling">variable m_procrustes_scaling</h3>
-<p><code>cpp
-bool m_procrustes_scaling = true;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_procrustes_scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_procrustes_rotation_translation">variable m_procrustes_rotation_translation</h3>
-<p><code>cpp
-bool m_procrustes_rotation_translation = true;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_procrustes_rotation_translation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_relative_weighting">variable m_relative_weighting</h3>
-<p><code>cpp
-double m_relative_weighting = 1.0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_relative_weighting</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_initial_relative_weighting">variable m_initial_relative_weighting</h3>
-<p><code>cpp
-double m_initial_relative_weighting = 0.05;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_initial_relative_weighting</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.05</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_starting_regularization">variable m_starting_regularization</h3>
-<p><code>cpp
-double m_starting_regularization = 1000;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_starting_regularization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_ending_regularization">variable m_ending_regularization</h3>
-<p><code>cpp
-double m_ending_regularization = 1.0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_ending_regularization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_recompute_regularization_interval">variable m_recompute_regularization_interval</h3>
-<p><code>cpp
-int m_recompute_regularization_interval = 1;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_recompute_regularization_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_save_init_splits">variable m_save_init_splits</h3>
-<p><code>cpp
-bool m_save_init_splits = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_save_init_splits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_checkpointing_interval">variable m_checkpointing_interval</h3>
-<p><code>cpp
-unsigned int m_checkpointing_interval = 50;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_checkpointing_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_keep_checkpoints">variable m_keep_checkpoints</h3>
-<p><code>cpp
-int m_keep_checkpoints = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_keep_checkpoints</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_cotan_sigma_factor">variable m_cotan_sigma_factor</h3>
-<p><code>cpp
-double m_cotan_sigma_factor = 5.0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_cotan_sigma_factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_particle_flags">variable m_particle_flags</h3>
-<p><code>cpp
-std::vector&lt; int &gt; m_particle_flags;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_particle_flags</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_domain_flags">variable m_domain_flags</h3>
-<p><code>cpp
-std::vector&lt; int &gt; m_domain_flags;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_domain_flags</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_procrustes_transforms">variable m_procrustes_transforms</h3>
-<p><code>cpp
-std::map&lt; int, vnl_matrix_fixed&lt; double, 4, 4 &gt; &gt; m_procrustes_transforms;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_procrustes_transforms</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_narrow_band">variable m_narrow_band</h3>
-<p><code>cpp
-double m_narrow_band = 0.0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_narrow_band</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_narrow_band_set">variable m_narrow_band_set</h3>
-<p><code>cpp
-bool m_narrow_band_set = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_narrow_band_set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_fixed_domains_present">variable m_fixed_domains_present</h3>
-<p><code>cpp
-bool m_fixed_domains_present = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_fixed_domains_present</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_use_shape_statistics_after">variable m_use_shape_statistics_after</h3>
-<p><code>cpp
-int m_use_shape_statistics_after = -1;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_use_shape_statistics_after</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_python_filename">variable m_python_filename</h3>
-<p><code>cpp
-std::string m_python_filename;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_python_filename</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_geodesics_enabled">variable m_geodesics_enabled</h3>
-<p><code>cpp
-bool m_geodesics_enabled = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_geodesics_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_geodesic_cache_size_multiplier">variable m_geodesic_cache_size_multiplier</h3>
-<p><code>cpp
-size_t m_geodesic_cache_size_multiplier = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">size_t</span><span class="w"> </span><span class="n">m_geodesic_cache_size_multiplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_geodesic_remesh_percent">variable m_geodesic_remesh_percent</h3>
-<p><code>cpp
-double m_geodesic_remesh_percent = 100.0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_geodesic_remesh_percent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">100.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_sampling_scale">variable m_sampling_scale</h3>
-<p><code>cpp
-bool m_sampling_scale = true;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_sampling_scale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_sampling_auto_scale">variable m_sampling_auto_scale</h3>
-<p><code>cpp
-bool m_sampling_auto_scale = true;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_sampling_auto_scale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_sampling_scale_value">variable m_sampling_scale_value</h3>
-<p><code>cpp
-double m_sampling_scale_value = 1.0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_sampling_scale_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_spacing">variable m_spacing</h3>
-<p><code>cpp
-double m_spacing = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_filenames">variable m_filenames</h3>
-<p><code>cpp
-std::vector&lt; std::string &gt; m_filenames;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_filenames</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_num_shapes">variable m_num_shapes</h3>
-<p><code>cpp
-int m_num_shapes = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_num_shapes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_energy_a">variable m_energy_a</h3>
-<p><code>cpp
-std::vector&lt; double &gt; m_energy_a;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_energy_a</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_energy_b">variable m_energy_b</h3>
-<p><code>cpp
-std::vector&lt; double &gt; m_energy_b;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_energy_b</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_total_energy">variable m_total_energy</h3>
-<p><code>cpp
-std::vector&lt; double &gt; m_total_energy;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_total_energy</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_log_energy">variable m_log_energy</h3>
-<p><code>cpp
-bool m_log_energy = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_log_energy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_str_energy">variable m_str_energy</h3>
-<p><code>cpp
-std::string m_str_energy;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_str_energy</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_bad_ids">variable m_bad_ids</h3>
-<p><code>cpp
-std::vector&lt; std::vector&lt; int &gt; &gt; m_bad_ids;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_bad_ids</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_normal_angle">variable m_normal_angle</h3>
-<p><code>cpp
-double m_normal_angle = itk::Math::pi / 2.0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_normal_angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Math</span><span class="o">::</span><span class="n">pi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_perform_good_bad">variable m_perform_good_bad</h3>
-<p><code>cpp
-bool m_perform_good_bad = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_perform_good_bad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_cutting_planes_per_input">variable m_cutting_planes_per_input</h3>
-<p><code>cpp
-std::vector&lt; int &gt; m_cutting_planes_per_input;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_cutting_planes_per_input</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_spheres_per_input">variable m_spheres_per_input</h3>
-<p><code>cpp
-std::vector&lt; int &gt; m_spheres_per_input;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_spheres_per_input</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_file_output_enabled">variable m_file_output_enabled</h3>
-<p><code>cpp
-bool m_file_output_enabled = true;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_file_output_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_aborted">variable m_aborted</h3>
-<p><code>cpp
-bool m_aborted = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_aborted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_cut_planes">variable m_cut_planes</h3>
-<p><code>cpp
-std::vector&lt; std::array&lt; itk::Point&lt; double &gt;, 3 &gt; &gt; m_cut_planes;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_cut_planes</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_total_iterations">variable m_total_iterations</h3>
-<p><code>cpp
-int m_total_iterations = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_total_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_iteration_count">variable m_iteration_count</h3>
-<p><code>cpp
-int m_iteration_count = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_iteration_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_split_number">variable m_split_number</h3>
-<p><code>cpp
-int m_split_number = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_split_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-current_particle_iterations_">variable current_particle_iterations_</h3>
-<p><code>cpp
-int current_particle_iterations_ = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">current_particle_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-total_particle_iterations_">variable total_particle_iterations_</h3>
-<p><code>cpp
-int total_particle_iterations_ = 0;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">total_particle_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-iteration_callback_">variable iteration_callback_</h3>
-<p><code>cpp
-std::function&lt; void(void)&gt; iteration_callback_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">iteration_callback_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-show_visualizer_">variable show_visualizer_</h3>
-<p><code>cpp
-bool show_visualizer_ = false;</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">show_visualizer_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-visualizer_">variable visualizer_</h3>
-<p><code>cpp
-shapeworks::OptimizationVisualizer visualizer_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-particle_format_">variable particle_format_</h3>
-<p><code>cpp
-std::string particle_format_ = "particles";</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">particle_format_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;particles&quot;</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-project_">variable project_</h3>
-<p><code>cpp
-std::shared_ptr&lt; Project &gt; project_;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_start_time">variable m_start_time</h3>
-<p><code>cpp
-std::chrono::system_clock::time_point m_start_time;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_start_time</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_last_update_time">variable m_last_update_time</h3>
-<p><code>cpp
-std::chrono::system_clock::time_point m_last_update_time;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_last_update_time</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_last_remaining_update_time">variable m_last_remaining_update_time</h3>
-<p><code>cpp
-std::chrono::system_clock::time_point m_last_remaining_update_time;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_last_remaining_update_time</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_remaining_time_message">variable m_remaining_time_message</h3>
-<p><code>cpp
-std::string m_remaining_time_message;</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

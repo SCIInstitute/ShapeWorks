@@ -3863,47 +3863,59 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-q_declare_metatype">function Q_DECLARE_METATYPE</h3>
-<p><code>cpp
-Q_DECLARE_METATYPE(
-    Eigen::VectorXd 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-q_declare_metatype_1">function Q_DECLARE_METATYPE</h3>
-<p><code>cpp
-Q_DECLARE_METATYPE(
-    shapeworks::ShapeEvaluationJob::JobType 
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span>
+<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Data/Worker.h></h1>
-<h1 id="include_1">include <Job/Job.h></h1>
-<h1 id="include_2">include <ParticleShapeStatistics.h></h1>
-<h1 id="include_3">include <QSharedPointer></h1>
-<p>namespace shapeworks {</p>
-<p>class Session;</p>
-<p>class ShapeEvaluationJob : public Job {
-  Q_OBJECT
- public:
-  enum class JobType { CompactnessType, SpecificityType, GeneralizationType };</p>
-<p>ShapeEvaluationJob(JobType job_type, ParticleShapeStatistics stats, QSharedPointer<Session> session);</p>
-<p>void run() override;</p>
-<p>QString name() override;</p>
-<p>Q_SIGNALS:</p>
-<p>void report_progress(shapeworks::ShapeEvaluationJob::JobType job_type, float progress);
-  void result_ready(shapeworks::ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);</p>
-<p>private:
-  void receive_progress(float progress);
-  void prep_meshes();</p>
-<p>JobType job_type_;
-  ParticleShapeStatistics stats_;
-  QSharedPointer<Session> session_;
-};
-}  // namespace shapeworks</p>
-<p>Q_DECLARE_METATYPE(Eigen::VectorXd);
-Q_DECLARE_METATYPE(shapeworks::ShapeEvaluationJob::JobType);
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Worker.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Job/Job.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ParticleShapeStatistics.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeEvaluationJob</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">JobType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">CompactnessType</span><span class="p">,</span><span class="w"> </span><span class="n">SpecificityType</span><span class="p">,</span><span class="w"> </span><span class="n">GeneralizationType</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">ShapeEvaluationJob</span><span class="p">(</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats</span><span class="p">,</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">report_progress</span><span class="p">(</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">result_ready</span><span class="p">(</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">receive_progress</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">prep_meshes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+
+<span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="p">);</span>
+<span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="p">);</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

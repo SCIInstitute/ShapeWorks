@@ -4064,101 +4064,101 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-pointtype">using PointType</h3>
-<p><code>cpp
-using shapeworks::Surface::PointType =  ParticleDomain::PointType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Surface</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-gradntype">using GradNType</h3>
-<p><code>cpp
-using shapeworks::Surface::GradNType =  ParticleDomain::GradNType;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Surface</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">GradNType</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-normaltype">using NormalType</h3>
-<p><code>cpp
-using shapeworks::Surface::NormalType =  vnl_vector_fixed&lt;float, 3&gt;;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Surface</span><span class="o">::</span><span class="n">NormalType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-vectortype">using VectorType</h3>
-<p><code>cpp
-using shapeworks::Surface::VectorType =  vnl_vector_fixed&lt;double, 3&gt;;</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Surface</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-surface">function Surface</h3>
-<p><code>cpp
-explicit Surface(
-    vtkSmartPointer&lt; vtkPolyData &gt; mesh,
-    bool geodesics_enabled =false,
-    size_t geodesics_cache_multiplier_size =0
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">Surface</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">geodesics_enabled</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">geodesics_cache_multiplier_size</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-surface_1">function ~Surface</h3>
-<p><code>cpp
-~Surface() =default</code></p>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Surface</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
+</code></pre></div>
 <h3 id="function-compute_distance">function compute_distance</h3>
-<p><code>cpp
-double compute_distance(
-    const PointType &amp; pointa,
-    int idxa,
-    const PointType &amp; pointb,
-    int idxb,
-    VectorType * out_grad =nullptr
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">compute_distance</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idxa</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idxb</span><span class="p">,</span>
+<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_grad</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-is_within_distance">function is_within_distance</h3>
-<p><code>cpp
-bool is_within_distance(
-    const PointType &amp; pointa,
-    int idxa,
-    const PointType &amp; pointb,
-    int idxb,
-    double test_dist,
-    double &amp; dist
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_within_distance</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idxa</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idxb</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">test_dist</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dist</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-geodesic_walk">function geodesic_walk</h3>
-<p><code>cpp
-PointType geodesic_walk(
-    PointType p,
-    int idx,
-    VectorType vector
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">PointType</span><span class="w"> </span><span class="n">geodesic_walk</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="n">vector</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-project_vector_to_surface_tangent">function project_vector_to_surface_tangent</h3>
-<p><code>cpp
-VectorType project_vector_to_surface_tangent(
-    const PointType &amp; pointa,
-    int idx,
-    VectorType &amp; vector
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">VectorType</span><span class="w"> </span><span class="n">project_vector_to_surface_tangent</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">VectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-sample_normal_at_point">function sample_normal_at_point</h3>
-<p><code>cpp
-NormalType sample_normal_at_point(
-    PointType p,
-    int idx =-1
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">NormalType</span><span class="w"> </span><span class="n">sample_normal_at_point</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-sample_gradient_normal_at_point">function sample_gradient_normal_at_point</h3>
-<p><code>cpp
-GradNType sample_gradient_normal_at_point(
-    PointType p,
-    int idx
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">GradNType</span><span class="w"> </span><span class="n">sample_gradient_normal_at_point</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-snap_to_mesh">function snap_to_mesh</h3>
-<p><code>cpp
-PointType snap_to_mesh(
-    PointType pointa,
-    int idx
-) const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">PointType</span><span class="w"> </span><span class="n">snap_to_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-get_point_on_mesh">function get_point_on_mesh</h3>
-<p><code>cpp
-PointType get_point_on_mesh() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">PointType</span><span class="w"> </span><span class="n">get_point_on_mesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-get_mesh_lower_bound">function get_mesh_lower_bound</h3>
-<p><code>cpp
-inline const PointType &amp; get_mesh_lower_bound() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_mesh_lower_bound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-get_mesh_upper_bound">function get_mesh_upper_bound</h3>
-<p><code>cpp
-inline const PointType &amp; get_mesh_upper_bound() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_mesh_upper_bound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-invalidate_particle">function invalidate_particle</h3>
-<p><code>cpp
-virtual void invalidate_particle(
-    int idx
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">invalidate_particle</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="function-get_polydata">function get_polydata</h3>
-<p><code>cpp
-inline vtkSmartPointer&lt; vtkPolyData &gt; get_polydata() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_polydata</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h3 id="function-is_geodesics_enabled">function is_geodesics_enabled</h3>
-<p><code>cpp
-inline bool is_geodesics_enabled() const</code></p>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_geodesics_enabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

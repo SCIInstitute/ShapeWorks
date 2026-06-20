@@ -3801,83 +3801,122 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <functional></h1>
-<h1 id="include_1">include <vector></h1>
-<h1 id="include-earlystoppingconfigh">include "EarlyStoppingConfig.h"</h1>
-<h1 id="include-libsoptimizedomainimagedomainwithgradientsh">include "Libs/Optimize/Domain/ImageDomainWithGradients.h"</h1>
-<h1 id="include-libsoptimizefunctionearlystopearlystoppingh">include "Libs/Optimize/Function/EarlyStop/EarlyStopping.h"</h1>
-<h1 id="include-libsoptimizefunctionvectorfunctionh">include "Libs/Optimize/Function/VectorFunction.h"</h1>
-<h1 id="include-particlesystemh">include "ParticleSystem.h"</h1>
-<p>namespace shapeworks {</p>
-<p>class GradientDescentOptimizer {
- public:
-  static constexpr unsigned int Dimension = 3;</p>
-<p>using VectorType = VectorFunction::VectorType;</p>
-<p>using PointType = ParticleSystem::PointType;</p>
-<p>void start_optimization() { start_adaptive_gauss_seidel_optimization(); }
-  void start_adaptive_gauss_seidel_optimization();
-  void set_early_stopping_config(const EarlyStoppingConfig&amp; config);
-  void initialize_early_stopping_score_function(const ParticleSystem* p);</p>
-<p>void augmented_lagrangian_constraints(VectorType&amp; gradient, const PointType&amp; pt, const size_t&amp; dom,
-                                        const double&amp; maximum_update_allowed, size_t index);</p>
-<p>void stop_optimization() { stop_optimization_ = true; }</p>
-<p>void abort_processing() {
-    stop_optimization_ = true;
-    abort_processing_ = true;
-  }</p>
-<p>unsigned int get_number_of_iterations() const { return number_of_iterations_; }</p>
-<p>void set_number_of_iterations(unsigned int val) { number_of_iterations_ = val; }</p>
-<p>void set_verbosity(unsigned int val) { verbosity_ = val; }</p>
-<p>unsigned int get_verbosity() const { return verbosity_; }</p>
-<p>double get_time_step() const { return time_step_; }</p>
-<p>void set_time_step(double val) { time_step_ = val; }</p>
-<p>unsigned int get_maximum_number_of_iterations() const { return max_iterations_; }</p>
-<p>void set_maximum_number_of_iterations(unsigned int val) { max_iterations_ = val; }</p>
-<p>double get_tolerance() const { return tolerance_; }</p>
-<p>void set_tolerance(double val) { tolerance_ = val; }</p>
-<p>ParticleSystem* get_particle_system() { return particle_system_.GetPointer(); }</p>
-<p>const ParticleSystem* get_particle_system() const { return particle_system_.GetPointer(); }</p>
-<p>void set_particle_system(ParticleSystem* val) { particle_system_ = val; }</p>
-<p>std::shared_ptr<VectorFunction> get_gradient_function() { return gradient_function_; }</p>
-<p>std::shared_ptr<const VectorFunction> get_gradient_function() const { return gradient_function_; }</p>
-<p>void set_gradient_function(std::shared_ptr<VectorFunction> val) { gradient_function_ = val; }</p>
-<p>void set_initialization_mode(bool b) { initialization_mode_ = b; }</p>
-<p>void set_check_iterations(size_t si) { check_iterations_ = si; }</p>
-<p>void set_initialization_start_scaling_factor(double si) { init_start_scaling_factor_ = si; }</p>
-<p>void set_iteration_callback(std::function<void()> callback) { iteration_callback_ = callback; }</p>
-<p>std::function<void()> get_iteration_callback() const { return iteration_callback_; }</p>
-<p>GradientDescentOptimizer();</p>
-<p>~GradientDescentOptimizer() = default;</p>
-<p>private:
-  GradientDescentOptimizer(const GradientDescentOptimizer&amp;) = delete;</p>
-<p>GradientDescentOptimizer&amp; operator=(const GradientDescentOptimizer&amp;) = delete;</p>
-<p>void reset_time_step_vectors();</p>
-<p>ParticleSystem::Pointer particle_system_;
-  std::shared_ptr<VectorFunction> gradient_function_;
-  bool stop_optimization_ = false;
-  bool abort_processing_ = false;
-  unsigned int number_of_iterations_ = 0;
-  unsigned int max_iterations_ = 0;
-  double tolerance_ = 0.0;
-  double time_step_ = 1.0;
-  std::vector<std::vector\<double>> time_steps_;
-  unsigned int verbosity_ = 0;
-  EarlyStopping early_stopping_;
-  bool early_stopping_enabled_ = false;
-  bool early_stopping_score_ready_ = false;</p>
-<p>// Adaptive Initialization variables
-  bool initialization_mode_ = false;
-  size_t check_iterations_ = 50;
-  double init_start_scaling_factor_ = 0.0;</p>
-<p>// Iteration callback
-  std::function<void()> iteration_callback_;
-};</p>
-<p>}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;EarlyStoppingConfig.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/ImageDomainWithGradients.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/EarlyStop/EarlyStopping.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/VectorFunction.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GradientDescentOptimizer</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_optimization</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">start_adaptive_gauss_seidel_optimization</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_adaptive_gauss_seidel_optimization</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_early_stopping_config</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">EarlyStoppingConfig</span><span class="o">&amp;</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize_early_stopping_score_function</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">augmented_lagrangian_constraints</span><span class="p">(</span><span class="n">VectorType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gradient</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dom</span><span class="p">,</span>
+<span class="w">                                        </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">maximum_update_allowed</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">stop_optimization</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">stop_optimization_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">abort_processing</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">stop_optimization_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">abort_processing_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_number_of_iterations</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">number_of_iterations_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_number_of_iterations</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">number_of_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_verbosity</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">verbosity_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_verbosity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">verbosity_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_time_step</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">time_step_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_time_step</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">time_step_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_maximum_number_of_iterations</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">max_iterations_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_maximum_number_of_iterations</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">max_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_tolerance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">tolerance_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tolerance</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">tolerance_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="nf">get_particle_system</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">particle_system_</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="nf">get_particle_system</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">particle_system_</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particle_system</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">particle_system_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">VectorFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_gradient_function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">gradient_function_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">VectorFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_gradient_function</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">gradient_function_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_gradient_function</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">VectorFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">gradient_function_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_initialization_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">initialization_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_check_iterations</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">si</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">check_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_initialization_start_scaling_factor</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">si</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">init_start_scaling_factor_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_iteration_callback</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">iteration_callback_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">callback</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_iteration_callback</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">iteration_callback_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">GradientDescentOptimizer</span><span class="p">();</span>
+
+<span class="w">  </span><span class="o">~</span><span class="n">GradientDescentOptimizer</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">GradientDescentOptimizer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">GradientDescentOptimizer</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">GradientDescentOptimizer</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">GradientDescentOptimizer</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_time_step_vectors</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">particle_system_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">VectorFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gradient_function_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">stop_optimization_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">abort_processing_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">time_step_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">time_steps_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">verbosity_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="n">EarlyStopping</span><span class="w"> </span><span class="n">early_stopping_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">early_stopping_enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">early_stopping_score_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Adaptive Initialization variables</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">initialization_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">check_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">init_start_scaling_factor_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Iteration callback</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">iteration_callback_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

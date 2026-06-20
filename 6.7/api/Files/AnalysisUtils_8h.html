@@ -3801,25 +3801,33 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Particles/ParticleSystemEvaluation.h></h1>
-<h1 id="include_1">include <QColor></h1>
-<h1 id="include_2">include <QString></h1>
-<p>class JKQTPlotter;</p>
-<p>namespace shapeworks {</p>
-<p>class Session;</p>
-<p>class AnalysisUtils {
- public:
-  static ParticleSystemEvaluation get_local_particle_system(Session* session, int domain);</p>
-<p>static void create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label);</p>
-<p>static void create_box_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label,
-                              QColor color = Qt::blue);
-};</p>
-<p>}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Particles/ParticleSystemEvaluation.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QColor&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">JKQTPlotter</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisUtils</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="n">get_local_particle_system</span><span class="p">(</span><span class="n">Session</span><span class="o">*</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_plot</span><span class="p">(</span><span class="n">JKQTPlotter</span><span class="o">*</span><span class="w"> </span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">x_label</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">y_label</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_box_plot</span><span class="p">(</span><span class="n">JKQTPlotter</span><span class="o">*</span><span class="w"> </span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">x_label</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">QColor</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Qt</span><span class="o">::</span><span class="n">blue</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

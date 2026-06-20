@@ -3801,59 +3801,82 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Data/Session.h></h1>
-<h1 id="include_1">include <Job/Job.h></h1>
-<h1 id="include_2">include <ParticleShapeStatistics.h></h1>
-<h1 id="include_3">include <QPixmap></h1>
-<p>namespace shapeworks {</p>
-<p>class Project;</p>
-<p>class ShapeScalarJob : public Job {
-  Q_OBJECT
- public:
-  enum class JobType { Find_Components, MSE_Plot, Predict };
-  enum class Direction { To_Shape, To_Scalar };</p>
-<p>ShapeScalarJob(QSharedPointer<Session> session, QString target_feature, Eigen::MatrixXd target_particles,
-                 JobType job_type);
-  void run() override;
-  QString name() override;</p>
-<p>QPixmap get_plot();</p>
-<p>void set_number_of_components(int num_components) { num_components_ = num_components; }
-  void set_number_of_folds(int num_folds) { num_folds_ = num_folds; }
-  void set_max_number_of_components(int num) { max_components_ = num; }</p>
-<p>Eigen::VectorXd get_prediction() { return prediction_; };</p>
-<p>static Eigen::VectorXd predict_scalars(QSharedPointer<Session> session, QString target_feature,
-                                         Eigen::MatrixXd target_particles);</p>
-<p>static Eigen::VectorXd predict_shape(QSharedPointer<Session> session, QString target_feature,
-                                       Eigen::MatrixXd target_particles);</p>
-<p>static void clear_model() { needs_clear_ = true; };</p>
-<p>void set_direction(Direction direction) { direction_ = direction; }</p>
-<p>private:
-  void prep_data();</p>
-<p>bool run_fit();
-  void run_prediction();</p>
-<p>static Eigen::VectorXd predict(QSharedPointer<Session> session, QString target_feature,
-                                 Eigen::MatrixXd target_particles, Direction direction);</p>
-<p>QSharedPointer<Session> session_;</p>
-<p>ParticleShapeStatistics stats_;</p>
-<p>QString target_feature_;</p>
-<p>QPixmap plot_;</p>
-<p>Eigen::MatrixXd all_particles_;
-  Eigen::MatrixXd all_scalars_;</p>
-<p>Eigen::MatrixXd target_values_;
-  Eigen::VectorXd prediction_;</p>
-<p>bool num_components_ = 3;
-  int num_folds_ = 5;
-  int max_components_ = 20;</p>
-<p>Direction direction_{Direction::To_Scalar};
-  JobType job_type_;</p>
-<p>static std::atomic<bool> needs_clear_;
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Job/Job.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ParticleShapeStatistics.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QPixmap&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeScalarJob</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">JobType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Find_Components</span><span class="p">,</span><span class="w"> </span><span class="n">MSE_Plot</span><span class="p">,</span><span class="w"> </span><span class="n">Predict</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Direction</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">To_Shape</span><span class="p">,</span><span class="w"> </span><span class="n">To_Scalar</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">ShapeScalarJob</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">target_feature</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">target_particles</span><span class="p">,</span>
+<span class="w">                 </span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="nf">get_plot</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_number_of_components</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_components</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">num_components_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_components</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_number_of_folds</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_folds</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">num_folds_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_folds</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_max_number_of_components</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">max_components_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_prediction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">prediction_</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">predict_scalars</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">target_feature</span><span class="p">,</span>
+<span class="w">                                         </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">target_particles</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">predict_shape</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">target_feature</span><span class="p">,</span>
+<span class="w">                                       </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">target_particles</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_model</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">needs_clear_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_direction</span><span class="p">(</span><span class="n">Direction</span><span class="w"> </span><span class="n">direction</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">direction_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">direction</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">prep_data</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">run_fit</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_prediction</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">target_feature</span><span class="p">,</span>
+<span class="w">                                 </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">target_particles</span><span class="p">,</span><span class="w"> </span><span class="n">Direction</span><span class="w"> </span><span class="n">direction</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">target_feature_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">plot_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">all_particles_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">all_scalars_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">target_values_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">prediction_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">num_components_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_folds_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">max_components_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Direction</span><span class="w"> </span><span class="n">direction_</span><span class="p">{</span><span class="n">Direction</span><span class="o">::</span><span class="n">To_Scalar</span><span class="p">};</span>
+<span class="w">  </span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">needs_clear_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

@@ -3801,21 +3801,26 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<p>class QPushButton;</p>
-<p>namespace shapeworks {</p>
-<p>class Style
-{
-public:
-  Style();</p>
-<p>static void apply_normal_button_style(QPushButton <em>button);
-  static void apply_abort_button_style(QPushButton </em>button);
-};</p>
-<p>}
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">QPushButton</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Style</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Style</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_normal_button_style</span><span class="p">(</span><span class="n">QPushButton</span><span class="w"> </span><span class="o">*</span><span class="n">button</span><span class="p">);</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_abort_button_style</span><span class="p">(</span><span class="n">QPushButton</span><span class="w"> </span><span class="o">*</span><span class="n">button</span><span class="p">);</span>
+<span class="p">};</span>
+
+
+<span class="p">}</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

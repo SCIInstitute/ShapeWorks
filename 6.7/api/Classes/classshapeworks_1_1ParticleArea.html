@@ -3847,41 +3847,41 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-assign_vertex_particles">function assign_vertex_particles</h3>
-<p><code>cpp
-static void assign_vertex_particles(
-    vtkSmartPointer&lt; vtkPolyData &gt; poly_data,
-    std::vector&lt; itk::Point&lt; double &gt; &gt; particles
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">assign_vertex_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>assign particle ids for each vertex based on closest geodesic distance </p>
 <h3 id="function-assign_vertex_colors">function assign_vertex_colors</h3>
-<p><code>cpp
-static void assign_vertex_colors(
-    vtkSmartPointer&lt; vtkPolyData &gt; poly_data,
-    std::vector&lt; QColor &gt; colors
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">assign_vertex_colors</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QColor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">colors</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>assign vertex colors based on particle ids </p>
 <h3 id="function-assign_vertex_areas">function assign_vertex_areas</h3>
-<p><code>cpp
-static void assign_vertex_areas(
-    vtkSmartPointer&lt; vtkPolyData &gt; poly_data,
-    Eigen::VectorXd areas
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">assign_vertex_areas</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">areas</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>assign vertex areas based on particle ids </p>
 <h3 id="function-colors_from_lut">function colors_from_lut</h3>
-<p><code>cpp
-static std::vector&lt; QColor &gt; colors_from_lut(
-    vtkSmartPointer&lt; vtkLookupTable &gt; lut
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QColor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">colors_from_lut</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>convert lut to array of colors </p>
 <h3 id="function-compute_particle_triangle_areas">function compute_particle_triangle_areas</h3>
-<p><code>cpp
-static Eigen::VectorXd compute_particle_triangle_areas(
-    vtkSmartPointer&lt; vtkPolyData &gt; poly_data,
-    std::vector&lt; itk::Point&lt; double &gt; &gt; particles
-)</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">compute_particle_triangle_areas</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>compute the area assigned to each particle </p>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:37 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:37 +0000</p>
 
 
 

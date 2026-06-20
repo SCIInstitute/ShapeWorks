@@ -3814,79 +3814,118 @@
 <p>Mesh warping capability. </p>
 <p>The MeshWarper provides an object to warp meshes for surface reconstruction </p>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <igl/min_quad_with_fixed.h></h1>
-<h1 id="include_1">include <vtkPolyData.h></h1>
-<h1 id="include_2">include <Eigen/Eigen></h1>
-<h1 id="include_3">include <vector></h1>
-<p>namespace shapeworks {</p>
-<p>enum class WarpMethod { Laplacian, Biharmonic };</p>
-<p>class MeshWarper {
- public:
-  void set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh, const Eigen::MatrixXd&amp; reference_particles,
-                          const Eigen::MatrixXd&amp; landmarks = {});</p>
-<p>bool generate_warp();</p>
-<p>bool get_warp_available();</p>
-<p>bool is_contour() const { return is_contour_; }</p>
-<p>vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd&amp; particles);</p>
-<p>Eigen::MatrixXd extract_landmarks(vtkSmartPointer<vtkPolyData> warped_mesh);</p>
-<p>bool is_contour() { return this-&gt;is_contour_; }</p>
-<p>std::map<int, int> get_landmarks_map() const { return landmarks_map_; }</p>
-<p>std::vector<int> get_good_particle_indices() const { return good_particles_; }</p>
-<p>const Eigen::MatrixXd&amp; get_warp_matrix() const { return this-&gt;warp_; }</p>
-<p>bool has_bad_particles() const { return this-&gt;bad_particle_count() &gt; 0; }</p>
-<p>vtkSmartPointer<vtkPolyData> get_reference_mesh() { return this-&gt;reference_mesh_; }</p>
-<p>const Eigen::MatrixXd&amp; get_reference_particles() const { return this-&gt;reference_particles_; }</p>
-<p>void set_warp_method(WarpMethod method) { warp_method_ = method; }</p>
-<p>WarpMethod get_warp_method() const { return warp_method_; }</p>
-<p>int get_num_warp_vertices() const;</p>
-<p>protected:
-  virtual void update_progress(float p) {}</p>
-<p>private:
-  bool check_warp_ready();</p>
-<p>void add_particle_vertices(Eigen::MatrixXd&amp; vertices);</p>
-<p>Eigen::MatrixXd remove_bad_particles(const Eigen::MatrixXd&amp; particles);</p>
-<p>void split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1,
-                          std::vector<vtkSmartPointer\<vtkIdList>>&amp; new_triangles);</p>
-<p>void find_good_particles();</p>
-<p>bool find_landmarks_vertices_on_ref_mesh();</p>
-<p>bool generate_warp_matrix(Eigen::MatrixXd target_vertices, Eigen::MatrixXi target_faces,
-                            const Eigen::MatrixXd&amp; references_vertices, Eigen::MatrixXd&amp; warp);</p>
-<p>vtkSmartPointer<vtkPolyData> warp_mesh(const Eigen::MatrixXd&amp; points);</p>
-<p>size_t bad_particle_count() const { return size_t(reference_particles_.rows()) - good_particles_.size(); }</p>
-<p>void diagnose_biharmonic_failure(const Eigen::MatrixXd&amp; TV, const Eigen::MatrixXi&amp; TF,
-                                   const std::vector<std::vector\<int>>&amp; S, int k);</p>
-<p>bool generate_laplacian_warp(const Eigen::MatrixXd&amp; V, const Eigen::MatrixXi&amp; F,
-                               const Eigen::MatrixXd&amp; control_points);</p>
-<p>vtkSmartPointer<vtkPolyData> warp_mesh_laplacian(const Eigen::MatrixXd&amp; points);</p>
-<p>// Members
-  Eigen::MatrixXi faces_;
-  Eigen::MatrixXd vertices_;
-  Eigen::MatrixXd warp_;
-  Eigen::MatrixXd landmarks_points_;</p>
-<p>std::vector<int> good_particles_;</p>
-<p>bool needs_warp_ = true;</p>
-<p>bool warp_available_ = false;</p>
-<p>std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the
-                                      // clean Reference mesh
-  vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
-  vtkSmartPointer<vtkPolyData> reference_mesh_;
-  Eigen::MatrixXd reference_particles_;
-  bool is_contour_ = false;</p>
-<p>WarpMethod warp_method_ = WarpMethod::Biharmonic;</p>
-<p>igl::min_quad_with_fixed_data<double> mqwf_data_;
-  Eigen::MatrixXd laplacian_rhs_;         <br />
-  Eigen::MatrixXd laplacian_vertices_;    <br />
-  Eigen::VectorXi laplacian_handles_;     <br />
-  Eigen::SparseMatrix<double> handle_map_;<br />
-  Eigen::MatrixXd handle_default_;        <br />
-  bool laplacian_ready_ = false;
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;igl/min_quad_with_fixed.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">WarpMethod</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Laplacian</span><span class="p">,</span><span class="w"> </span><span class="n">Biharmonic</span><span class="w"> </span><span class="p">};</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshWarper</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_reference_mesh</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reference_mesh</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">reference_particles</span><span class="p">,</span>
+<span class="w">                          </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">generate_warp</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_warp_available</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_contour</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">is_contour_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">build_mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">extract_landmarks</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">warped_mesh</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_contour</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">is_contour_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_landmarks_map</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">landmarks_map_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_good_particle_indices</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">good_particles_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_warp_matrix</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">warp_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">has_bad_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bad_particle_count</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_reference_mesh</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">reference_mesh_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_reference_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">reference_particles_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_warp_method</span><span class="p">(</span><span class="n">WarpMethod</span><span class="w"> </span><span class="n">method</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">warp_method_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">method</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">WarpMethod</span><span class="w"> </span><span class="n">get_warp_method</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">warp_method_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">get_num_warp_vertices</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">update_progress</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">check_warp_ready</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_particle_vertices</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vertices</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="nf">remove_bad_particles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">split_cell_on_edge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">cell_id</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">new_vertex</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">v0</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">v1</span><span class="p">,</span>
+<span class="w">                          </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkIdList</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">new_triangles</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">find_good_particles</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">find_landmarks_vertices_on_ref_mesh</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">generate_warp_matrix</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">target_vertices</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="n">target_faces</span><span class="p">,</span>
+<span class="w">                            </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">references_vertices</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">warp</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">warp_mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="nf">bad_particle_count</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kt">size_t</span><span class="p">(</span><span class="n">reference_particles_</span><span class="p">.</span><span class="n">rows</span><span class="p">())</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">good_particles_</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">diagnose_biharmonic_failure</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">TV</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">TF</span><span class="p">,</span>
+<span class="w">                                   </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">generate_laplacian_warp</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="o">&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">,</span>
+<span class="w">                               </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">control_points</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">warp_mesh_laplacian</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Members</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="n">faces_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">vertices_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">warp_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">landmarks_points_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">good_particles_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">needs_warp_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">warp_available_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmarks_map_</span><span class="p">;</span><span class="w">  </span><span class="c1">// map the landmarks id (Key) to the vertex(point) id (Value) belonging to the</span>
+<span class="w">                                      </span><span class="c1">// clean Reference mesh</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">incoming_reference_mesh_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reference_mesh_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">reference_particles_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_contour_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">WarpMethod</span><span class="w"> </span><span class="n">warp_method_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">WarpMethod</span><span class="o">::</span><span class="n">Biharmonic</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">igl</span><span class="o">::</span><span class="n">min_quad_with_fixed_data</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mqwf_data_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">laplacian_rhs_</span><span class="p">;</span><span class="w">           </span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">laplacian_vertices_</span><span class="p">;</span><span class="w">      </span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXi</span><span class="w"> </span><span class="n">laplacian_handles_</span><span class="p">;</span><span class="w">       </span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">handle_map_</span><span class="p">;</span><span class="w">  </span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">handle_default_</span><span class="p">;</span><span class="w">          </span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">laplacian_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

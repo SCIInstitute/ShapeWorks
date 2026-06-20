@@ -3801,100 +3801,160 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <Data/Preferences.h></h1>
-<h1 id="include_1">include <Visualization/Viewer.h></h1>
-<h1 id="include_2">include <vtkActor.h></h1>
-<h1 id="include_3">include <vtkCamera.h></h1>
-<h1 id="include_4">include <vtkPoints.h></h1>
-<h1 id="include_5">include <vtkPolyDataMapper.h></h1>
-<h1 id="include_6">include <vtkSmartPointer.h></h1>
-<h1 id="include_7">include <QSharedPointer></h1>
-<h1 id="include_8">include <QTimer></h1>
-<h1 id="include_9">include <QVector></h1>
-<p>class vtkOrientationMarkerWidget;</p>
-<p>namespace shapeworks {</p>
-<p>class StudioMesh;
-class Shape;
-class StudioInteractorStyle;
-class StudioSliceInteractorStyle;
-class Visualizer;</p>
-<p>class Lightbox;
-typedef QSharedPointer<Lightbox> LightboxHandle;</p>
-<p>class Lightbox : public QObject {
-  Q_OBJECT;</p>
-<p>public:
-  Lightbox();
-  ~Lightbox();</p>
-<p>void set_shapes(ShapeList shapes);
-  ShapeList get_shapes();</p>
-<p>void set_interactor(vtkRenderWindowInteractor* interactor);</p>
-<p>void set_render_window(vtkRenderWindow* render_window);</p>
-<p>void set_tile_layout(int width, int height);</p>
-<p>void setup_renderers();</p>
-<p>int get_num_rows();
-  int get_num_rows_visible();</p>
-<p>void set_start_row(int row);</p>
-<p>ViewerList get_viewers();</p>
-<p>void redraw();</p>
-<p>void handle_pick(int<em> click_pos, bool one, bool ctrl, vtkRenderer</em> renderer);</p>
-<p>void handle_hover(int* click_pos);</p>
-<p>void handle_key(int* click_pos, std::string key);</p>
-<p>void handle_right_click(int<em> click_pos, vtkRenderer</em> renderer);</p>
-<p>void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
-  void set_session(QSharedPointer<Session> session);</p>
-<p>void set_visualizer(Visualizer* visualizer);</p>
-<p>bool render_window_ready() { return render_window_ != NULL; }</p>
-<p>void clear_renderers();</p>
-<p>std::array<double, 3> initPos();</p>
-<p>void handle_new_mesh();</p>
-<p>void reset_camera();</p>
-<p>void reset_camera_clipping_range();</p>
-<p>void set_orientation_marker(Preferences::OrientationMarkerType type, Preferences::OrientationMarkerCorner corner);</p>
-<p>void set_orientation_marker_viewport();</p>
-<p>void update_feature_range();</p>
-<p>void update_interactor_style();</p>
-<p>void set_shared_brightness_and_contrast(double brightness, double contrast);</p>
-<p>vtkRenderWindow* get_render_window();</p>
-<p>int get_start_shape();</p>
-<p>public Q_SLOTS:
-  void handle_timer_callback();</p>
-<p>Q_SIGNALS:
-  void right_click(int index);</p>
-<p>private:
-  vtkSmartPointer<vtkOrientationMarkerWidget> create_orientation_marker();</p>
-<p>void check_for_first_draw();</p>
-<p>void display_shapes();</p>
-<p>void insert_shape_into_viewer(std::shared_ptr<Shape> shape, int position);</p>
-<p>vtkSmartPointer<vtkRenderer> renderer_;</p>
-<p>ShapeList shapes_;</p>
-<p>// there is one viewer for every tile in the lightbox display
-  ViewerList viewers_;</p>
-<p>vtkRenderWindow* render_window_ = nullptr;</p>
-<p>vtkRenderWindowInteractor* interactor_ = nullptr;</p>
-<p>vtkCamera* camera_ = nullptr;</p>
-<p>int tile_layout_width_ = 4;
-  int tile_layout_height_ = 4;</p>
-<p>int start_row_ = 0;</p>
-<p>bool first_draw_ = true;</p>
-<p>vtkSmartPointer<StudioInteractorStyle> style_;
-  vtkSmartPointer<StudioSliceInteractorStyle> slice_style_;</p>
-<p>Visualizer* visualizer_{nullptr};</p>
-<p>std::vector<vtkSmartPointer\<vtkImageData>> spinner_images_;</p>
-<p>QTimer loading_timer_;</p>
-<p>int timer_callback_count_ = 0;</p>
-<p>std::array<double, 3> initPos_;</p>
-<p>vtkSmartPointer<vtkOrientationMarkerWidget> orientation_marker_widget_;</p>
-<p>Preferences::OrientationMarkerType current_orientation_marker_type_ = Preferences::OrientationMarkerType::none;
-  Preferences::OrientationMarkerCorner current_orientation_marker_corner_ =
-      Preferences::OrientationMarkerCorner::upper_right;</p>
-<p>QSharedPointer<Session> session_;
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Viewer.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkActor.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkCamera.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyDataMapper.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkOrientationMarkerWidget</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioMesh</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioInteractorStyle</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioSliceInteractorStyle</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Lightbox</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LightboxHandle</span><span class="p">;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Lightbox</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">Lightbox</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shapes</span><span class="p">(</span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_interactor</span><span class="p">(</span><span class="n">vtkRenderWindowInteractor</span><span class="o">*</span><span class="w"> </span><span class="n">interactor</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_render_window</span><span class="p">(</span><span class="n">vtkRenderWindow</span><span class="o">*</span><span class="w"> </span><span class="n">render_window</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tile_layout</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup_renderers</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_rows</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_rows_visible</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_start_row</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">row</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">ViewerList</span><span class="w"> </span><span class="nf">get_viewers</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">redraw</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pick</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ctrl</span><span class="p">,</span><span class="w"> </span><span class="n">vtkRenderer</span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_hover</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_key</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_right_click</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"> </span><span class="n">vtkRenderer</span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_visualizer</span><span class="p">(</span><span class="n">Visualizer</span><span class="o">*</span><span class="w"> </span><span class="n">visualizer</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">render_window_ready</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">render_window_</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_renderers</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">initPos</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera_clipping_range</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation_marker</span><span class="p">(</span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">corner</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation_marker_viewport</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_range</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_interactor_style</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shared_brightness_and_contrast</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">brightness</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">contrast</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkRenderWindow</span><span class="o">*</span><span class="w"> </span><span class="nf">get_render_window</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_start_shape</span><span class="p">();</span>
+
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">handle_timer_callback</span><span class="p">();</span>
+
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">right_click</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkOrientationMarkerWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create_orientation_marker</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">check_for_first_draw</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">insert_shape_into_viewer</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">position</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renderer_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// there is one viewer for every tile in the lightbox display</span>
+<span class="w">  </span><span class="n">ViewerList</span><span class="w"> </span><span class="n">viewers_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkRenderWindow</span><span class="o">*</span><span class="w"> </span><span class="n">render_window_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkRenderWindowInteractor</span><span class="o">*</span><span class="w"> </span><span class="n">interactor_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkCamera</span><span class="o">*</span><span class="w"> </span><span class="n">camera_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">tile_layout_width_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">tile_layout_height_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">start_row_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">first_draw_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioInteractorStyle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">style_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">StudioSliceInteractorStyle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">slice_style_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Visualizer</span><span class="o">*</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">spinner_images_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">loading_timer_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">timer_callback_count_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">initPos_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkOrientationMarkerWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">orientation_marker_widget_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">current_orientation_marker_type_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="o">::</span><span class="n">none</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">current_orientation_marker_corner_</span><span class="w"> </span><span class="o">=</span>
+<span class="w">      </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="o">::</span><span class="n">upper_right</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 

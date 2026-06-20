@@ -4016,17 +4016,19 @@
 </table>
 <h3 id="python-api">Python API</h3>
 <p>The warp method can also be set programmatically using the Python API:</p>
-<p>```python
-import shapeworks</p>
-<p>warper = shapeworks.MeshWarper()</p>
-<h1 id="set-warp-method-default-is-biharmonic">Set warp method (default is Biharmonic)</h1>
-<p>warper.setWarpMethod(shapeworks.WarpMethod.Laplacian)</p>
-<h1 id="or">or</h1>
-<p>warper.setWarpMethod(shapeworks.WarpMethod.Biharmonic)</p>
-<h1 id="set-up-and-run-warping">Set up and run warping</h1>
-<p>warper.generateWarp(reference_mesh, reference_particles)
-warped_mesh = warper.buildMesh(target_particles)
-```</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">shapeworks</span>
+
+<span class="n">warper</span> <span class="o">=</span> <span class="n">shapeworks</span><span class="o">.</span><span class="n">MeshWarper</span><span class="p">()</span>
+
+<span class="c1"># Set warp method (default is Biharmonic)</span>
+<span class="n">warper</span><span class="o">.</span><span class="n">setWarpMethod</span><span class="p">(</span><span class="n">shapeworks</span><span class="o">.</span><span class="n">WarpMethod</span><span class="o">.</span><span class="n">Laplacian</span><span class="p">)</span>
+<span class="c1"># or</span>
+<span class="n">warper</span><span class="o">.</span><span class="n">setWarpMethod</span><span class="p">(</span><span class="n">shapeworks</span><span class="o">.</span><span class="n">WarpMethod</span><span class="o">.</span><span class="n">Biharmonic</span><span class="p">)</span>
+
+<span class="c1"># Set up and run warping</span>
+<span class="n">warper</span><span class="o">.</span><span class="n">generateWarp</span><span class="p">(</span><span class="n">reference_mesh</span><span class="p">,</span> <span class="n">reference_particles</span><span class="p">)</span>
+<span class="n">warped_mesh</span> <span class="o">=</span> <span class="n">warper</span><span class="o">.</span><span class="n">buildMesh</span><span class="p">(</span><span class="n">target_particles</span><span class="p">)</span>
+</code></pre></div>
 
 
 

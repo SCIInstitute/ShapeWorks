@@ -3801,27 +3801,34 @@
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
-<p>```cpp</p>
-<h1 id="pragma-once">pragma once</h1>
-<h1 id="include">include <vtkOutputWindow.h></h1>
-<h1 id="include_1">include <QObject></h1>
-<p>namespace shapeworks {</p>
-<p>class ShapeWorksVtkOutputWindow : public QObject, public vtkOutputWindow {
-  Q_OBJECT;</p>
-<p>public:
-  static ShapeWorksVtkOutputWindow* New();</p>
-<p>vtkTypeMacro(ShapeWorksVtkOutputWindow, vtkOutputWindow);</p>
-<p>ShapeWorksVtkOutputWindow();</p>
-<p>void DisplayErrorText(const char<em> text) override;
-  void DisplayWarningText(const char</em> text) override;
-  void DisplayGenericWarningText(const char<em> text) override;
-  void DisplayDebugText(const char</em> text) override;
- private:
-};
-}  // namespace shapeworks
-```</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkOutputWindow.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksVtkOutputWindow</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">vtkOutputWindow</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">ShapeWorksVtkOutputWindow</span><span class="o">*</span><span class="w"> </span><span class="n">New</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">vtkTypeMacro</span><span class="p">(</span><span class="n">ShapeWorksVtkOutputWindow</span><span class="p">,</span><span class="w"> </span><span class="n">vtkOutputWindow</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">ShapeWorksVtkOutputWindow</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisplayErrorText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisplayWarningText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisplayGenericWarningText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">DisplayDebugText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="p">};</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-06-19 at 23:35:38 +0000</p>
+<p>Updated on 2026-06-20 at 13:09:38 +0000</p>
 
 
 
