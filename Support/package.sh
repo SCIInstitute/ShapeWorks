@@ -105,18 +105,36 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	install_name_tool -add_rpath $QT_LIB_LOCATION $i || echo ok
     done
 
-    # Copy libraries from anaconda
-    conda_libs="libpython libboost_filesystem"
-    for clib in $conda_libs; do
-        cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
-    done
+    # Check if bundled Python is present in the .app
+    if [ -d "ShapeWorksStudio.app/Contents/Resources/Python" ]; then
+        echo "Bundled Python detected — skipping conda libpython copy"
 
+        # Fix install names for bundled libpython
+        for lib in ShapeWorksStudio.app/Contents/Resources/Python/lib/libpython3.12*.dylib ; do
+            if [ -f "$lib" ]; then
+                libname=$(basename "$lib")
+                install_name_tool -id "@rpath/${libname}" "$lib" || echo ok
+            fi
+        done
 
-    # # Fix transitive loaded libs
-    # for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
-    # 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
-    # done
-    # install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
+        # Fix shapeworks_py.so to find bundled libpython via @rpath
+        if [ -f "ShapeWorksStudio.app/Contents/Resources/Python/lib/python3.12/site-packages/shapeworks_py.so" ]; then
+            install_name_tool -add_rpath "@loader_path/../../.." \
+                "ShapeWorksStudio.app/Contents/Resources/Python/lib/python3.12/site-packages/shapeworks_py.so" || echo ok
+        fi
+
+        # Copy non-python conda libs (e.g. boost)
+        conda_libs="libboost_filesystem"
+        for clib in $conda_libs; do
+            cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
+        done
+    else
+        # Copy libraries from anaconda (legacy conda-based workflow)
+        conda_libs="libpython libboost_filesystem"
+        for clib in $conda_libs; do
+            cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
+        done
+    fi
 
     cd ..
 
@@ -125,21 +143,60 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     rm lib/*.a
 
 else
-    # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma libtbb libHalf libpython libz libspd"
-    for clib in $conda_libs; do
-        cp ${CONDA_PREFIX}/lib/${clib}* lib
-    done
+    # Linux packaging
+
+    # Check if bundled Python is present
+    if [ -d "lib/python" ]; then
+        echo "Bundled Python detected — skipping conda libpython copy"
+
+        # Copy non-python conda libs
+        conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma libtbb libHalf libz libspd"
+        for clib in $conda_libs; do
+            cp ${CONDA_PREFIX}/lib/${clib}* lib 2>/dev/null || true
+        done
+
+        # Fix RPATH on shapeworks_py.so in bundled site-packages
+        PYBIND_SO=$(find lib/python -name "shapeworks_py*.so" 2>/dev/null | head -1)
+        if [ -n "$PYBIND_SO" ] && command -v patchelf &> /dev/null; then
+            echo "Setting RPATH on bundled $PYBIND_SO"
+            # From site-packages, need to reach lib/ for dependencies
+            patchelf --set-rpath '$ORIGIN/../../../../lib:$ORIGIN/../../../../../lib' "$PYBIND_SO" || echo ok
+        fi
+
+        # Fix RPATH on bundled python3 executable
+        if [ -f "lib/python/bin/python3" ] && command -v patchelf &> /dev/null; then
+            echo "Setting RPATH on bundled python3"
+            patchelf --set-rpath '$ORIGIN/../lib' lib/python/bin/python3 || echo ok
+        fi
+    else
+        # Copy libraries from anaconda (legacy conda-based workflow)
+        conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma libtbb libHalf libpython libz libspd"
+        for clib in $conda_libs; do
+            cp ${CONDA_PREFIX}/lib/${clib}* lib 2>/dev/null || true
+        done
+    fi
 
     # remove static libs
-    rm lib/*.a
-    
+    rm -f lib/*.a
+
+    # Move bundled Python out of the way before linuxdeployqt — it recursively
+    # scans all .so files and chokes on scipy/numpy internal libs (e.g.
+    # libgfortran -> libquadmath "not found").
+    if [ -d "lib/python" ]; then
+        mv lib/python /tmp/_bundled_python_$$
+    fi
+
     cd bin
     linuxdeployqt ShapeWorksStudio -verbose=2
     cd ..
-    
+
+    # Move bundled Python back
+    if [ -d "/tmp/_bundled_python_$$" ]; then
+        mv /tmp/_bundled_python_$$ lib/python
+    fi
+
     # Keep libfreetype as harfbuzz depends on it (FT_Get_Transform requires freetype 2.11+)
-    rm lib/libxcb* lib/libX* lib/libfont*
+    rm -f lib/libxcb* lib/libX* lib/libfont*
     rm -rf geometry-central doc
 fi
 

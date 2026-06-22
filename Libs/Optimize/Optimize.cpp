@@ -1748,9 +1748,11 @@ void Optimize::AddMesh(vtkSmartPointer<vtkPolyData> poly_data) {
     m_sampler->AddMesh(nullptr);
   } else {
     double geodesic_remesh_percent = m_geodesics_enabled ? m_geodesic_remesh_percent : 100;
+    // If we'll precompute geodesics on a remeshed copy, skip the precompute on the full-res surface.
+    bool geodesics_on_main = m_geodesics_enabled && geodesic_remesh_percent >= 100.0;
 
     const auto mesh =
-        std::make_shared<shapeworks::Surface>(poly_data, m_geodesics_enabled, m_geodesic_cache_size_multiplier);
+        std::make_shared<shapeworks::Surface>(poly_data, geodesics_on_main, m_geodesic_cache_size_multiplier);
     m_sampler->AddMesh(mesh, geodesic_remesh_percent);
   }
   this->m_num_shapes++;

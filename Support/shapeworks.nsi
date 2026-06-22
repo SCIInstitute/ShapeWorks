@@ -78,6 +78,10 @@ Section "ShapeWorks (required)"
   File /r /x Studio /x Lib "Python"
   File /r "Installation"
 
+  ; Bundled Python runtime (when USE_BUNDLED_PYTHON=ON)
+  IfFileExists "lib\*.*" 0 +2
+    File /r "lib"
+
   ${registerExtension} "$INSTDIR\bin\ShapeWorksStudio.exe" ".swproj" "ShapeWorks Project"
   
   ; Write the installation path into the registry
@@ -98,6 +102,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\ShapeWorks"
   CreateShortcut "$SMPROGRAMS\ShapeWorks\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortcut "$SMPROGRAMS\ShapeWorks\ShapeWorksStudio.lnk" "$INSTDIR\bin\ShapeWorksStudio.exe" "" "$INSTDIR\bin\ShapeWorksStudio.exe" 0
+  CreateShortcut "$SMPROGRAMS\ShapeWorks\ShapeWorks Prompt.lnk" "$SYSDIR\cmd.exe" '/K "$INSTDIR\bin\shapeworks_prompt.bat"' "$INSTDIR\bin\ShapeWorksStudio.exe" 0
   
 SectionEnd
 

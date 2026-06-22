@@ -20,10 +20,10 @@ _LOGIN_FILE_NAME = 'Output/shapeworksCloudLogin.txt'
 
 
 def printDataPortalWelcome():
-    print(' _____    ___      .     ')
-    print('|     |  /   \    / \    ')
-    print('|  ShapeWorks Cloud  \   ')
-    print('|_____|  \___/  /_____\  ')
+    print(r' _____    ___      .     ')
+    print(r'|     |  /   \    / \    ')
+    print(r'|  ShapeWorks Cloud  \   ')
+    print(r'|_____|  \___/  /_____\  ')
     print()
 
 

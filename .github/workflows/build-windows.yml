@@ -126,13 +126,23 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_CXX_FLAGS_RELEASE="-FS /Zm500 /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_C_FLAGS_RELEASE="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DITK_DIR="C:\deps\lib\cmake\ITK-5.4" -DVTK_DIR="C:\deps\lib\cmake\vtk-9.5" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRYCENTRAL_DIR="C:\deps" -DACVD_DIR="C:\deps" -DBuild_Studio=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET
+      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_CXX_FLAGS_RELEASE="-FS /Zm500 /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_C_FLAGS_RELEASE="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-LTCG /DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSE_BUNDLED_PYTHON=ON -DITK_DIR="C:\deps\lib\cmake\ITK-5.4" -DVTK_DIR="C:\deps\lib\cmake\vtk-9.5" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRYCENTRAL_DIR="C:\deps" -DACVD_DIR="C:\deps" -DBuild_Studio=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET
 
     - name: Build
       working-directory: "C:/build"
       shell: bash -l {0}
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: conda activate shapeworks && cmake --build . --config $BUILD_TYPE --parallel
+
+    - name: Install Bundled Python Packages
+      working-directory: "C:/build"
+      shell: bash -l {0}
+      run: conda activate shapeworks && cmake --build . --config $BUILD_TYPE --target bundled_pip_install
+
+    - name: Install Bundled Python
+      working-directory: "C:/build"
+      shell: bash -l {0}
+      run: conda activate shapeworks && cmake --install . --config $BUILD_TYPE
 
     - name: Check Disk Space2
       working-directory: ${{runner.workspace}}
@@ -149,6 +159,11 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && ./Support/package_windows.sh tag
 
+    - name: Smoke test packaged bundle
+      shell: bash
+      # package_windows.sh stages bin/ lib/ etc. directly in the workspace root
+      run: ./Support/smoke_test_bundle.sh .
+
     - name: Check Disk Space3
       working-directory: ${{runner.workspace}}
       shell: bash -l {0}
@@ -161,10 +176,48 @@ jobs:
     - name: Test
       working-directory: "C:/build"
       shell: bash -l {0}
-      # Execute tests defined by the CMake configuration.  
+      # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && ctest --output-on-failure -VV -C $BUILD_TYPE --debug
-    
+
+    - name: Diagnose DeepSSM crash with cdb
+      if: failure()
+      shell: bash -l {0}
+      run: |
+        set +e
+        CDB="/c/Program Files (x86)/Windows Kits/10/Debuggers/x64/cdb.exe"
+        if [ ! -x "$CDB" ]; then
+            echo "cdb.exe not found at $CDB"
+            ls "/c/Program Files (x86)/Windows Kits/10/Debuggers/" 2>/dev/null
+            exit 0
+        fi
+
+        conda activate shapeworks
+        source ${GITHUB_WORKSPACE}/devenv.sh ./build/bin/Release
+
+        DATA="${GITHUB_WORKSPACE}/Testing/data"
+        if [ ! -d "${DATA}/deepssm/projects" ]; then
+            if [ -f "${DATA}/deepssm_test_data.zip" ]; then
+                unzip -q "${DATA}/deepssm_test_data.zip" -d "${DATA}/deepssm"
+            else
+                echo "No DeepSSM test data at ${DATA}"
+                exit 0
+            fi
+        fi
+
+        cd "${DATA}/deepssm/projects"
+        rm -rf deepssm groomed *_particles
+        export OMP_NUM_THREADS=1
+
+        echo "=========================================================="
+        echo "=== Running shapeworks deepssm under cdb               ==="
+        echo "=== cdb breaks on 2nd-chance AV, prints rich diagnostics"
+        echo "=========================================================="
+        "$CDB" -o -lines -G -g \
+            -y "srv*c:\\symbols*https://msdl.microsoft.com/download/symbols;C:\\build\\bin\\Release" \
+            -c "g; .echo ==== LAST EVENT ====; .lastevent; .echo ==== EXCEPTION RECORD ====; .exr -1; .echo ==== REGISTERS ====; r; .echo ==== DISASSEMBLY AT FAULT ====; u . L20; .echo ==== !analyze -v ====; !analyze -v; .echo ==== ALL THREAD STACKS ====; ~* kpn 100; .echo ==== LOADED MODULES ====; lm; .echo ==== PEB (env, cmdline, image) ====; !peb; q" \
+            "C:/build/bin/Release/shapeworks.exe" deepssm --name default.swproj --all --aug_processes 1
+
     - name: Setup tmate session on failure
       if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3

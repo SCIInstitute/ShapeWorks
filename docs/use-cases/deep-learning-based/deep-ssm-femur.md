@@ -4,11 +4,9 @@
 The `deep_ssm` use case demonstrates how to get shape models from unsegmented images using deep learning on the femur data. This includes performing data augmentation as well as building, training and testing a DeepSSM model. For a detailed description of these processes, please see [Data Augmentation for Deep Learning](../../deep-learning/data-augmentation.md) and [SSMs Directly from Images](../../deep-learning/deep-ssm.md). The image and shape data used for training and testing results from running the [femur use case](../constraint-based/femur-cutting-planes.md). Note running this use case does not require running the [femur use case](../constraint-based/femur-cutting-planes.md), the required data will automatically be downloaded.
 
 !!! danger "On CUDA"
-    This use case uses Pytorch and requires a GPU to run in a timely manner. When you source `install_shapeworks.sh`, it detects if you have a GPU and installs the version of Pytorch compatible with your version of CUDA. 
-    
-    Note we only support the three most recent versions of CUDA. If your GPU requires an older CUDA version, you will need to update the Pytorch install in your shapeworks conda environment to the correct CUDA version. For more information on doing so, see [pytorch.org](https://pytorch.org/). 
-    
-    To do a quick check to see if Pytorch is running on your GPU, you can run the use case with the `--tiny-test` tag. This will quickly run the use case on a few examples and print an error if it is not running on the GPU.
+    This use case uses PyTorch and requires a GPU to run in a timely manner. The first time you run a DeepSSM use case, ShapeWorks downloads and installs PyTorch via `light-the-torch`, which detects your CUDA version and selects a matching GPU build (falling back to CPU if no compatible CUDA is found). See [PyTorch GPU Support for ShapeWorks](../../deep-learning/pytorch-gpu.md) for how to verify GPU support and how to reinstall a different PyTorch version with `swpip`.
+
+    To do a quick check to see if PyTorch is running on your GPU, you can run the use case with the `--tiny-test` tag. This will quickly run the use case on a few examples and print an error if it is not running on the GPU.
 
 ## Relevant Arguments
 [--tiny_test](../use-cases.md#-tiny_test)

@@ -12,3 +12,4 @@ from .stats import compute_pvalues_for_group_difference,lda,dwd_loadings
 from .network_analysis import NetworkAnalysis
 from .portal import download_dataset
 from .shape_scalars import run_mbpls
+from .torch_install import ensure_torch, is_torch_available

@@ -7,6 +7,8 @@ Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 import os
 import glob
 import platform
+import shapeworks as sw
+sw.ensure_torch()
 import torch
 import random
 import shutil
@@ -14,7 +16,6 @@ import math
 import numpy as np
 import subprocess
 import json
-import shapeworks as sw
 import DataAugmentationUtils
 import DeepSSMUtils
 from shapeworks.utils import sw_message

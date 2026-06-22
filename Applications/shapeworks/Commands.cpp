@@ -437,6 +437,18 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
   ProjectHandle project = std::make_shared<Project>();
   project->load(project_file);
 
+  // Check if PyTorch is available; install if needed
+  if (!PythonWorker::is_torch_available()) {
+    std::cout << "PyTorch is not installed. Installing via light-the-torch...\n";
+    bool success = PythonWorker::install_torch([](std::string msg) {
+      std::cout << msg << "\n";
+    });
+    if (!success) {
+      std::cerr << "Error: Failed to install PyTorch. DeepSSM requires PyTorch.\n";
+      return false;
+    }
+  }
+
   PythonWorker python_worker;
   python_worker.set_cli_mode(true);
 

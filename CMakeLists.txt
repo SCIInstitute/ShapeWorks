@@ -18,6 +18,7 @@ endif()
 set(CMAKE_CXX_STANDARD 17)             # available options are [98, 11, 14, 17. 20]
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+include(BundledPython)
 find_package(Python3 3.12 EXACT REQUIRED COMPONENTS Interpreter Development)
 
 if (NOT APPLE)
@@ -199,7 +200,7 @@ FILE(GLOB ORDERED_MAP_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/ordered
 INSTALL(FILES ${ORDERED_MAP_INCLUDES}
   DESTINATION include)
 
-SET(PYBIND11_PYTHON_VERSION 3.9)
+SET(PYBIND11_PYTHON_VERSION 3.12)
 find_package(pybind11 2.5.0 REQUIRED)
 
 add_subdirectory(ExternalLibs)
