@@ -20,8 +20,17 @@ Cohort construction:
   cost (it depends only on matrix size), so this is a valid and reproducible basis
   for a pure runtime/utilization study.
 
+Phases: a run has an initialization phase (particle splitting; iters_per_split
+iterations per level) and an optimization phase (optimization_iterations at the
+full count). By default initialization runs in mean-energy mode with NO SVD and
+parallelizes well; the O(N^3) SVD is in the optimization (entropy) phase. Drive
+initialization with --iters-per-split / --init-schedule to study both phases.
+(In multiscale runs, later scales' init switches to entropy and does run the SVD.)
+
 Metrics per (N, P) cell -> scaling_results.csv:
   wall_s            total optimize wall-clock (s)
+  init_ms           inclusive time in Optimize::Initialize (splitting phase)
+  runopt_ms         inclusive time in Optimize::RunOptimize (optimization phase)
   svd_ms            inclusive time in correspondence::svd (from profile.txt)
   gram_ms           inclusive time in correspondence::gramMat
   sampling_ms       inclusive time in parallel_sampling
@@ -60,6 +69,8 @@ PROFILE_KEYS = {
     "sampling_ms": "parallel_sampling",                    # parallel per-particle gradient
     "before_iter_ms": "gradient_before_iteration",
     "optimize_ms": "optimize",                             # total optimize scope
+    "init_ms": "Optimize::Initialize",                     # initialization phase (splitting; mean-energy, no SVD by default)
+    "runopt_ms": "Optimize::RunOptimize",                  # optimization phase (entropy, runs the SVD)
 }
 
 
@@ -153,7 +164,8 @@ def make_cohort(base_path, n, cohort_dir, rot_deg=4.0, trans_mm=2.0, noise_mm=0.
 # --------------------------------------------------------------------------
 # Project / optimize
 # --------------------------------------------------------------------------
-def build_project(cohort_files, particles, iterations, proj_path, use_normals=0):
+def build_project(cohort_files, particles, iterations, proj_path, use_normals=0,
+                  iters_per_split=0, multiscale=0, multiscale_particles=32):
     subjects = []
     identity = np.eye(4).flatten()
     proj_dir = os.path.dirname(os.path.abspath(proj_path))
@@ -175,7 +187,7 @@ def build_project(cohort_files, particles, iterations, proj_path, use_normals=0)
         "normals_strength": 10.0,
         "checkpointing_interval": 0,
         "keep_checkpoints": 0,
-        "iterations_per_split": 0,
+        "iterations_per_split": iters_per_split,
         "optimization_iterations": iterations,
         "starting_regularization": 1000,
         "ending_regularization": 10,
@@ -186,7 +198,8 @@ def build_project(cohort_files, particles, iterations, proj_path, use_normals=0)
         "procrustes_scaling": 0,
         "save_init_splits": 0,
         "verbosity": 0,
-        "multiscale": 0,
+        "multiscale": multiscale,
+        "multiscale_particles": multiscale_particles,
     }
     for k, v in pdict.items():
         params.set(k, sw.Variant([v]))
@@ -323,6 +336,15 @@ def main():
                          "Per-iteration metrics make cells comparable across different iter counts.")
     ap.add_argument("--use-normals", type=int, default=0,
                     help="0=Legacy correspondence (matches user config); 1=mesh-based (normals)")
+    ap.add_argument("--iters-per-split", type=int, default=0,
+                    help="initialization iterations per particle-split level (mean-energy phase, no SVD). "
+                         "Default 0 measures the optimization phase only.")
+    ap.add_argument("--init-schedule", default="",
+                    help="adaptive iters-per-split as 'nmax:iters,...' (overrides --iters-per-split per N)")
+    ap.add_argument("--multiscale", type=int, default=0,
+                    help="1 enables multiscale; later scales run the SVD during init (use_shape_statistics_in_init)")
+    ap.add_argument("--multiscale-particles", type=int, default=32,
+                    help="coarsest-scale particle count when --multiscale 1")
     ap.add_argument("--time-cap", type=float, default=2700, help="per-cell wall-clock cap (s)")
     ap.add_argument("--base", default=DEFAULT_BASE)
     ap.add_argument("--work-dir", default="Output/scaling_study")
@@ -337,7 +359,8 @@ def main():
     os.makedirs(args.work_dir, exist_ok=True)
     base_path = make_base(args.base, args.work_dir)
 
-    fieldnames = ["n", "p", "iterations", "use_normals", "wall_s", "mean_cores",
+    fieldnames = ["n", "p", "iterations", "iters_per_split", "multiscale", "use_normals",
+                  "wall_s", "init_ms", "runopt_ms", "mean_cores",
                   "peak_cores", "peak_rss_mb", "cov_entropy_ms", "cov_mean_ms",
                   "svd_ms", "gram_ms", "sampling_ms", "before_iter_ms",
                   "optimize_ms", "n_samples", "status"]
@@ -349,28 +372,35 @@ def main():
         csv_fh.flush()
 
     schedule = parse_schedule(args.iter_schedule)
+    init_schedule = parse_schedule(args.init_schedule)
     log(f"grid: N={args.n_list} x P={args.p_list}, "
-        f"iters={'schedule '+args.iter_schedule if schedule else args.iterations}, cap={args.time_cap}s")
+        f"iters={'schedule '+args.iter_schedule if schedule else args.iterations}, "
+        f"iters_per_split={'schedule '+args.init_schedule if init_schedule else args.iters_per_split}, "
+        f"multiscale={args.multiscale}, cap={args.time_cap}s")
     nmax = max(args.n_list)
     for n in args.n_list:
         cohort_dir = os.path.join(args.work_dir, f"cohort_{nmax:05d}")
         cohort = make_cohort(base_path, n, cohort_dir)[:n]
         iters = iters_for_n(n, schedule, args.iterations)
+        ips = iters_for_n(n, init_schedule, args.iters_per_split)
         for p in args.p_list:
             cell_dir = os.path.join(args.work_dir, f"run_n{n:05d}_p{p:04d}")
             os.makedirs(cell_dir, exist_ok=True)
             proj = os.path.join(cell_dir, "scaling.swproj")
-            build_project(cohort, p, iters, proj, use_normals=args.use_normals)
-            log(f"running N={n} P={p} iters={iters} ...")
+            build_project(cohort, p, iters, proj, use_normals=args.use_normals,
+                          iters_per_split=ips, multiscale=args.multiscale,
+                          multiscale_particles=args.multiscale_particles)
+            log(f"running N={n} P={p} iters={iters} iters_per_split={ips} ...")
             m = run_optimize(proj, args.time_cap)
-            row = {"n": n, "p": p, "iterations": iters,
-                   "use_normals": args.use_normals, **m}
+            row = {"n": n, "p": p, "iterations": iters, "iters_per_split": ips,
+                   "multiscale": args.multiscale, "use_normals": args.use_normals, **m}
             writer.writerow(row)
             csv_fh.flush()
             serial_corr = m["cov_entropy_ms"] + m["svd_ms"] + m["gram_ms"]
-            log(f"  -> {m['status']} wall={m['wall_s']}s serial_corr={serial_corr:.0f}ms "
-                f"sampling={m['sampling_ms']}ms mean_cores={m['mean_cores']} "
-                f"peak_cores={m['peak_cores']} rss={m['peak_rss_mb']}MB")
+            log(f"  -> {m['status']} wall={m['wall_s']}s "
+                f"init={m['init_ms']/1000:.1f}s opt={m['runopt_ms']/1000:.1f}s "
+                f"serial_corr={serial_corr:.0f}ms sampling={m['sampling_ms']}ms "
+                f"mean_cores={m['mean_cores']} peak_cores={m['peak_cores']} rss={m['peak_rss_mb']}MB")
     csv_fh.close()
     log(f"done -> {args.csv}")
 
