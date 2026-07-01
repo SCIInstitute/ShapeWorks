@@ -8,6 +8,7 @@
 #include <cstdio>
 
 #include "../Testing.h"
+#include "Libs/Optimize/Constraints/PlaneConstraint.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
@@ -22,15 +23,15 @@ static void prep_temp(std::string data, std::string name) {
 }
 
 //---------------------------------------------------------------------------
-static bool check_constraint_violations(Optimize &app, double slack) {
+static bool check_constraint_violations(Optimize& app, double slack) {
   // Check that points don't violate the constraints
   size_t domains_per_shape = app.GetSampler()->GetParticleSystem()->GetDomainsPerShape();
   size_t num_doms = app.GetSampler()->GetParticleSystem()->GetNumberOfDomains();
 
-  std::vector<std::vector<itk::FixedArray<double, 3> > > lists;
+  std::vector<std::vector<itk::FixedArray<double, 3>>> lists;
 
   for (size_t domain = 0; domain < num_doms; domain++) {
-    std::vector<itk::FixedArray<double, 3> > list;
+    std::vector<itk::FixedArray<double, 3>> list;
     for (auto k = 0; k < app.GetSampler()->GetParticleSystem()->GetPositions(domain)->GetSize(); k++) {
       list.push_back(app.GetSampler()->GetParticleSystem()->GetPositions(domain)->Get(k));
     }
@@ -220,8 +221,7 @@ TEST(OptimizeTests, fixed_domain_procrustes) {
 TEST(OptimizeTests, fixed_domain_independence) {
   // Helper lambda: run optimization with specified fixed/excluded/new configuration
   // Returns local particles for each domain, indexed by domain index in the project
-  auto run_optimize = [](const std::string& temp_name,
-                         const std::vector<bool>& is_fixed,
+  auto run_optimize = [](const std::string& temp_name, const std::vector<bool>& is_fixed,
                          const std::vector<bool>& is_excluded) -> std::vector<std::vector<itk::Point<double>>> {
     prep_temp("/optimize/fixed_domain", temp_name);
 
@@ -246,24 +246,18 @@ TEST(OptimizeTests, fixed_domain_independence) {
 
   // Project has 4 shapes: sphere10, sphere20, sphere30, sphere40
   // Run A: sphere10,20 fixed; sphere30,40 both new
-  auto points_together = run_optimize(
-      "fixed_domain_indep_together",
-      {true, true, false, false},   // is_fixed
-      {false, false, false, false}  // is_excluded
+  auto points_together = run_optimize("fixed_domain_indep_together", {true, true, false, false},  // is_fixed
+                                      {false, false, false, false}                                // is_excluded
   );
 
   // Run B: sphere10,20 fixed; sphere30 new; sphere40 excluded
-  auto points_30_alone = run_optimize(
-      "fixed_domain_indep_30",
-      {true, true, false, false},  // is_fixed
-      {false, false, false, true}  // is_excluded: sphere40 excluded
+  auto points_30_alone = run_optimize("fixed_domain_indep_30", {true, true, false, false},  // is_fixed
+                                      {false, false, false, true}  // is_excluded: sphere40 excluded
   );
 
   // Run C: sphere10,20 fixed; sphere40 new; sphere30 excluded
-  auto points_40_alone = run_optimize(
-      "fixed_domain_indep_40",
-      {true, true, false, false},  // is_fixed
-      {false, false, true, false}  // is_excluded: sphere30 excluded
+  auto points_40_alone = run_optimize("fixed_domain_indep_40", {true, true, false, false},  // is_fixed
+                                      {false, false, true, false}  // is_excluded: sphere30 excluded
   );
 
   // In run A (together), domains are: 0=sphere10, 1=sphere20, 2=sphere30, 3=sphere40
@@ -675,6 +669,81 @@ TEST(OptimizeTests, cutting_plane_test) {
             << shapeworks::ShapeWorksUtils::elapsed(start, end, false) << "sec \n";
 
   ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+// Editing a cutting plane's center/normal (e.g. in the Studio table) rebuilds its defining points
+// via updatePointsFromPlane().  Verify that the edited center/normal survive a round-trip back through
+// updatePlaneFromPoints() (the derivation used everywhere else).
+TEST(OptimizeTests, plane_constraint_update_points_from_plane) {
+  PlaneConstraint plane;
+
+  // start from three points defining an arbitrary plane
+  plane.points() = {Eigen::Vector3d(1, 0, 0), Eigen::Vector3d(0, 1, 0), Eigen::Vector3d(0, 0, 1)};
+  plane.updatePlaneFromPoints();
+
+  // edit the center and normal, then rebuild the defining points
+  const Eigen::Vector3d new_center(3.0, -2.0, 5.0);
+  const Eigen::Vector3d new_normal = Eigen::Vector3d(1.0, 2.0, -2.0).normalized();
+  plane.setPlanePoint(new_center);
+  plane.setPlaneNormal(new_normal);
+  plane.updatePointsFromPlane();
+
+  ASSERT_EQ(plane.points().size(), 3);
+
+  // re-derive center/normal from the rebuilt points and confirm they match the edited values
+  plane.updatePlaneFromPoints();
+  ASSERT_TRUE(plane.getPlanePoint().isApprox(new_center, 1e-6));
+  // normal direction must be preserved (not flipped)
+  ASSERT_NEAR(plane.getPlaneNormal().normalized().dot(new_normal), 1.0, 1e-6);
+}
+
+//---------------------------------------------------------------------------
+// Editing the center/normal in the Studio table should move the plane while preserving the shape of
+// the three user-placed defining points (setPlaneCenter translates, setPlaneNormalDirection rotates).
+TEST(OptimizeTests, plane_constraint_edit_preserves_point_shape) {
+  // a deliberately non-equilateral triangle
+  const std::vector<Eigen::Vector3d> original = {Eigen::Vector3d(0, 0, 0), Eigen::Vector3d(4, 0, 0),
+                                                 Eigen::Vector3d(0, 1, 0)};
+
+  // the three squared edge lengths characterize the triangle's shape/size
+  auto edge_lengths = [](const std::vector<Eigen::Vector3d>& p) {
+    return Eigen::Vector3d((p[1] - p[0]).norm(), (p[2] - p[1]).norm(), (p[0] - p[2]).norm());
+  };
+  const Eigen::Vector3d original_edges = edge_lengths(original);
+
+  // --- center edit: translate ---
+  {
+    PlaneConstraint plane;
+    plane.points() = original;
+    plane.updatePlaneFromPoints();
+    const Eigen::Vector3d old_normal = plane.getPlaneNormal();
+
+    const Eigen::Vector3d new_center(10.0, -5.0, 7.0);
+    plane.setPlaneCenter(new_center);
+    plane.updatePlaneFromPoints();
+
+    ASSERT_TRUE(plane.getPlanePoint().isApprox(new_center, 1e-6));             // center applied
+    ASSERT_TRUE(edge_lengths(plane.points()).isApprox(original_edges, 1e-6));  // shape preserved
+    ASSERT_NEAR(plane.getPlaneNormal().dot(old_normal), 1.0, 1e-6);            // normal unchanged
+  }
+
+  // --- normal edit: rotate ---
+  {
+    PlaneConstraint plane;
+    plane.points() = original;
+    plane.updatePlaneFromPoints();
+    const Eigen::Vector3d old_center = plane.getPlanePoint();
+
+    const Eigen::Vector3d new_normal = Eigen::Vector3d(1.0, 1.0, 1.0).normalized();
+    // pass a non-unit vector to confirm it is normalized internally
+    plane.setPlaneNormalDirection(2.0 * new_normal);
+    plane.updatePlaneFromPoints();
+
+    ASSERT_NEAR(plane.getPlaneNormal().normalized().dot(new_normal), 1.0, 1e-6);  // normal applied
+    ASSERT_TRUE(plane.getPlanePoint().isApprox(old_center, 1e-6));                // center preserved
+    ASSERT_TRUE(edge_lengths(plane.points()).isApprox(original_edges, 1e-6));     // shape preserved
+  }
 }
 
 //---------------------------------------------------------------------------

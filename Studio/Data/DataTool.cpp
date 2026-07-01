@@ -12,9 +12,14 @@
 #include <vtkPointData.h>
 #include <vtkTransformPolyDataFilter.h>
 
+#include <Eigen/Core>
+#include <QAbstractItemDelegate>
+#include <QAbstractItemView>
 #include <QDebug>
 #include <QMenu>
 #include <QMessageBox>
+#include <QStyledItemDelegate>
+#include <QTableWidgetItem>
 #include <QThread>
 
 #include "SegmentationToolPanel.h"
@@ -25,7 +30,58 @@ static QString click_message = "⌘+click";
 static QString click_message = "ctrl+click";
 #endif
 
+namespace {
+// Item delegate that keeps a count of open editors so the owning table isn't rebuilt out from
+// under an in-progress edit. Reference counting (rather than a single bool) is required to handle
+// Tab navigation, where the next cell's editor is created before the previous one is destroyed.
+class EditTrackingDelegate : public QStyledItemDelegate {
+ public:
+  EditTrackingDelegate(int* open_count, QObject* parent) : QStyledItemDelegate(parent), open_count_(open_count) {}
+
+  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const override {
+    ++(*open_count_);
+    return QStyledItemDelegate::createEditor(parent, option, index);
+  }
+
+  void destroyEditor(QWidget* editor, const QModelIndex& index) const override {
+    if (*open_count_ > 0) {
+      --(*open_count_);
+    }
+    QStyledItemDelegate::destroyEditor(editor, index);
+  }
+
+ private:
+  int* open_count_;
+};
+}  // namespace
+
 namespace shapeworks {
+
+//---------------------------------------------------------------------------
+// Parse a "x,y,z" string into a 3D vector. Returns false if the string is not three finite numbers.
+static bool parse_vector3(const QString& text, Eigen::Vector3d& out) {
+  const QStringList parts = text.split(",");
+  if (parts.size() != 3) {
+    return false;
+  }
+  bool ok[3] = {false, false, false};
+  const double x = parts[0].trimmed().toDouble(&ok[0]);
+  const double y = parts[1].trimmed().toDouble(&ok[1]);
+  const double z = parts[2].trimmed().toDouble(&ok[2]);
+  if (!ok[0] || !ok[1] || !ok[2]) {
+    return false;
+  }
+  out = Eigen::Vector3d(x, y, z);
+  // reject nan/inf (QString::toDouble accepts "nan"/"inf" as valid)
+  return out.allFinite();
+}
+
+//---------------------------------------------------------------------------
+// Format a 3D vector as "x,y,z" with enough precision to round-trip a double edit without silently
+// truncating the coordinates the user did not touch.
+static QString format_vector3(const Eigen::Vector3d& v) {
+  return QString::number(v[0], 'g', 12) + "," + QString::number(v[1], 'g', 12) + "," + QString::number(v[2], 'g', 12);
+}
 
 //---------------------------------------------------------------------------
 DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
@@ -53,6 +109,16 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->delete_plane_, &QPushButton::clicked, this, &DataTool::delete_planes_clicked);
   connect(ui_->delete_ffc_, &QPushButton::clicked, this, &DataTool::delete_ffc_clicked);
+
+  // when a plane's center/normal is edited in the table
+  connect(ui_->plane_table_, &QTableWidget::itemChanged, this, &DataTool::plane_table_data_edited);
+  // track open editors so the table isn't rebuilt while the user is editing a cell
+  auto* plane_delegate = new EditTrackingDelegate(&plane_table_editors_open_, ui_->plane_table_);
+  ui_->plane_table_->setItemDelegate(plane_delegate);
+  // flush any deferred plane table rebuild once the user finishes editing a cell (queued so any
+  // editor transition, e.g. Tab to the next cell, has settled before we decide whether to rebuild)
+  connect(plane_delegate, &QAbstractItemDelegate::closeEditor, this, &DataTool::plane_table_editing_finished,
+          Qt::QueuedConnection);
 
   connect(ui_->notes, &QTextEdit::textChanged, this, [this] { session_->set_modified(true); });
 
@@ -285,6 +351,15 @@ void DataTool::delete_ffc_clicked() {
 
 //---------------------------------------------------------------------------
 void DataTool::update_plane_table() {
+  // don't rebuild the table while the user is editing a cell; doing so would destroy the in-progress
+  // editor (losing focus mid-type). Defer the rebuild until editing finishes (see
+  // plane_table_editing_finished).
+  if (plane_table_editors_open_ > 0) {
+    plane_table_update_pending_ = true;
+    return;
+  }
+  plane_table_update_pending_ = false;
+
   auto shapes = session_->get_shapes();
   auto domain_names = session_->get_project()->get_domain_names();
 
@@ -306,6 +381,8 @@ void DataTool::update_plane_table() {
   table_headers << "Normal";
 
   QTableWidget* table = ui_->plane_table_;
+  // block itemChanged signals while we populate the table so plane_table_data_edited() doesn't fire
+  table->blockSignals(true);
   table->clear();
   table->setRowCount(plane_count);
   table->setColumnCount(table_headers.size());
@@ -322,38 +399,46 @@ void DataTool::update_plane_table() {
         int plane_id = 0;
         for (auto& plane : planes) {
           plane.updatePlaneFromPoints();
-          // shape
+          bool valid = plane.points().size() == 3;
+          // shape (not editable)
           auto* new_item = new QTableWidgetItem(QString::fromStdString(shape->get_display_name()));
           new_item->setData(Qt::UserRole, i);  // shape id
+          new_item->setFlags(new_item->flags() & ~Qt::ItemIsEditable);
           table->setItem(row, 0, new_item);
-          // domain
+          // domain (not editable)
           new_item = new QTableWidgetItem(QString::fromStdString(domain_names[domain_id]));
           new_item->setData(Qt::UserRole, domain_id);
+          new_item->setFlags(new_item->flags() & ~Qt::ItemIsEditable);
           table->setItem(row, 1, new_item);
 
           auto center = plane.getPlanePoint();
           auto normal = plane.getPlaneNormal();
-          auto center_string =
-              QString::number(center[0]) + "," + QString::number(center[1]) + "," + QString::number(center[2]);
-          auto normal_string =
-              QString::number(normal[0]) + "," + QString::number(normal[1]) + "," + QString::number(normal[2]);
-          if (plane.points().size() != 3) {
+          auto center_string = format_vector3(center);
+          auto normal_string = format_vector3(normal);
+          if (!valid) {
             normal_string = "N/A";
             center_string = "N/A";
           }
-          // center
+          // center (editable only when the plane is well-defined)
           new_item = new QTableWidgetItem(center_string);
           new_item->setData(Qt::UserRole, plane_id++);
+          if (!valid) {
+            new_item->setFlags(new_item->flags() & ~Qt::ItemIsEditable);
+          }
           table->setItem(row, 2, new_item);
 
-          // normal
+          // normal (editable only when the plane is well-defined)
           new_item = new QTableWidgetItem(normal_string);
+          if (!valid) {
+            new_item->setFlags(new_item->flags() & ~Qt::ItemIsEditable);
+          }
           table->setItem(row, 3, new_item);
           row++;
         }
       }
     }
   }
+  table->blockSignals(false);
 
   if (table->rowCount() < 1) {
     table->setMaximumHeight(ui_->table_label->height() * 2);
@@ -363,6 +448,75 @@ void DataTool::update_plane_table() {
   table->resizeColumnsToContents();
   table->horizontalHeader()->setStretchLastSection(false);
   table->setSelectionBehavior(QAbstractItemView::SelectRows);
+}
+
+//---------------------------------------------------------------------------
+void DataTool::plane_table_data_edited(QTableWidgetItem* item) {
+  if (!item || !session_) {
+    return;
+  }
+
+  // only the center (column 2) and normal (column 3) hold editable plane data
+  const int row = item->row();
+  const int col = item->column();
+  if (col != 2 && col != 3) {
+    return;
+  }
+
+  auto* table = ui_->plane_table_;
+  if (row < 0 || row >= table->rowCount() || !table->item(row, 0) || !table->item(row, 1) || !table->item(row, 2)) {
+    return;
+  }
+
+  const int shape_id = table->item(row, 0)->data(Qt::UserRole).toInt();
+  const int domain_id = table->item(row, 1)->data(Qt::UserRole).toInt();
+  const int plane_id = table->item(row, 2)->data(Qt::UserRole).toInt();
+
+  auto shapes = session_->get_shapes();
+  if (shape_id < 0 || shape_id >= shapes.size()) {
+    return;
+  }
+  auto& planes = shapes[shape_id]->get_constraints(domain_id).getPlaneConstraints();
+  if (plane_id < 0 || plane_id >= planes.size()) {
+    return;
+  }
+  auto& plane = planes[plane_id];
+  if (plane.points().size() != 3) {
+    return;
+  }
+
+  Eigen::Vector3d value;
+  if (!parse_vector3(item->text(), value)) {
+    // quietly revert (status message only, no error dialog) once the user finishes editing
+    SW_LOG("Ignoring plane value '{}'; expected three comma-separated numbers", item->text());
+    update_plane_table();  // deferred while editing; reverts the display to the stored values
+    return;
+  }
+  if (col == 3 && value.norm() < 1e-12) {
+    SW_LOG("Ignoring plane normal of zero length");
+    update_plane_table();  // deferred; reverts
+    return;
+  }
+
+  // apply the edited component, moving the defining points so the change takes effect while
+  // preserving the triangle's shape (the normal is normalized inside setPlaneNormalDirection)
+  if (col == 2) {
+    plane.setPlaneCenter(value);
+  } else {
+    plane.setPlaneNormalDirection(value);
+  }
+
+  session_->set_modified(true);
+  session_->trigger_planes_changed();
+}
+
+//---------------------------------------------------------------------------
+void DataTool::plane_table_editing_finished() {
+  // a rebuild was requested while the user was editing; now that editing has finished, apply it.
+  // (this connection is queued, so any editor transition has settled and the open count is accurate)
+  if (plane_table_update_pending_ && plane_table_editors_open_ == 0) {
+    update_plane_table();
+  }
 }
 
 //---------------------------------------------------------------------------

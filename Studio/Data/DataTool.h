@@ -12,6 +12,7 @@
 
 class Ui_DataTool;
 class QComboBox;
+class QTableWidgetItem;
 
 namespace shapeworks {
 
@@ -72,6 +73,8 @@ class DataTool : public QWidget {
   void table_selection_changed();
   void subject_notes_changed();
   void table_data_edited();
+  void plane_table_data_edited(QTableWidgetItem* item);
+  void plane_table_editing_finished();
 
  Q_SIGNALS:
   void import_button_clicked();
@@ -89,5 +92,13 @@ class DataTool : public QWidget {
   std::shared_ptr<LandmarkTableModel> landmark_table_model_;
 
   bool block_table_update_{false};
+
+  //! number of open editors in the plane table (tracked via a custom item delegate). While > 0 the
+  //! table must not be rebuilt, or the in-progress editor would be destroyed (losing focus mid-type).
+  int plane_table_editors_open_{0};
+
+  //! set when a plane table rebuild is requested while the user is editing a cell, so the rebuild
+  //! can be deferred until editing finishes (avoids destroying the in-progress editor)
+  bool plane_table_update_pending_{false};
 };
 }  // namespace shapeworks
