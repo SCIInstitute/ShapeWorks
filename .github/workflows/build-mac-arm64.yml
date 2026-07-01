@@ -72,6 +72,12 @@ jobs:
         path: /Users/runner/install
         key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
 
+    # Rewrite SDK-versioned libiconv.tbd/libm.tbd paths that ITK hardcodes to -l flags, so the
+    # cached dependencies keep linking after a runner Xcode/SDK bump. See issue #2570.
+    - name: Fix hardcoded SDK library paths in dependencies
+      shell: bash -l {0}
+      run: .github/workflows/fix_mac_dependency_paths.sh
+
     - name: cmake
       shell: bash -l {0}
       run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS="-g -Wno-enum-constexpr-conversion" -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DBUILD_DOCUMENTATION=ON -DUSE_BUNDLED_PYTHON=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
