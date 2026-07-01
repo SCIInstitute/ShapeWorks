@@ -14,7 +14,8 @@ namespace shapeworks {
  * \class PlaneConstraint
  * \ingroup Group-Constraints
  *
- *  Encapsulate functionality related to cutting-plane constraints. Inherits from Constraint. See Constraint.h for more information
+ *  Encapsulate functionality related to cutting-plane constraints. Inherits from Constraint. See Constraint.h for more
+ * information
  *
  */
 
@@ -46,6 +47,20 @@ class PlaneConstraint : public Constraint {
   double constraintEval(const Eigen::Vector3d &pt) const override;
 
   void updatePlaneFromPoints();
+
+  //! Rebuild the three defining points from the current plane point and normal.
+  //! This is the inverse of updatePlaneFromPoints() and is used when the center/normal
+  //! are edited directly (e.g. in the Studio cutting-plane table).
+  void updatePointsFromPlane();
+
+  //! Move the plane to a new center by translating the defining points. Preserves the triangle's
+  //! shape and normal. Used when the center is edited directly (e.g. in the Studio cutting-plane table).
+  void setPlaneCenter(const Eigen::Vector3d &center);
+
+  //! Reorient the plane to a new normal by rotating the defining points about the current center.
+  //! Preserves the triangle's shape and center. The input need not be a unit vector. Used when the
+  //! normal is edited directly (e.g. in the Studio cutting-plane table).
+  void setPlaneNormalDirection(const Eigen::Vector3d &normal);
 
   //! Return this plane as a vtkPlane
   vtkSmartPointer<vtkPlane> getVTKPlane();
