@@ -3880,6 +3880,33 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-updatepointsfromplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      function updatePointsFromPlane
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setplanecenter" class="md-nav__link">
+    <span class="md-ellipsis">
+      function setPlaneCenter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setplanenormaldirection" class="md-nav__link">
+    <span class="md-ellipsis">
+      function setPlaneNormalDirection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getvtkplane" class="md-nav__link">
     <span class="md-ellipsis">
       function getVTKPlane
@@ -3976,6 +4003,18 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-updateplanefrompoints">updatePlaneFromPoints</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-updatepointsfromplane">updatePointsFromPlane</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-setplanecenter">setPlaneCenter</a></strong>(const Eigen::Vector3d &amp; center)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1PlaneConstraint.html#function-setplanenormaldirection">setPlaneNormalDirection</a></strong>(const Eigen::Vector3d &amp; normal)</td>
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkPlane &gt;</td>
@@ -4112,12 +4151,28 @@
 <h3 id="function-updateplanefrompoints">function updatePlaneFromPoints</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updatePlaneFromPoints</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-updatepointsfromplane">function updatePointsFromPlane</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updatePointsFromPlane</span><span class="p">()</span>
+</code></pre></div>
+<p>Rebuild the three defining points from the current plane point and normal. This is the inverse of updatePlaneFromPoints() and is used when the center/normal are edited directly (e.g. in the Studio cutting-plane table). </p>
+<h3 id="function-setplanecenter">function setPlaneCenter</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setPlaneCenter</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">center</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Move the plane to a new center by translating the defining points. Preserves the triangle's shape and normal. Used when the center is edited directly (e.g. in the Studio cutting-plane table). </p>
+<h3 id="function-setplanenormaldirection">function setPlaneNormalDirection</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setPlaneNormalDirection</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">normal</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Reorient the plane to a new normal by rotating the defining points about the current center. Preserves the triangle's shape and center. The input need not be a unit vector. Used when the normal is edited directly (e.g. in the Studio cutting-plane table). </p>
 <h3 id="function-getvtkplane">function getVTKPlane</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPlane</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getVTKPlane</span><span class="p">()</span>
 </code></pre></div>
 <p>Return this plane as a vtkPlane. </p>
 <hr />
-<p>Updated on 2026-07-01 at 17:40:37 +0000</p>
+<p>Updated on 2026-07-01 at 23:50:08 +0000</p>
 
 
 

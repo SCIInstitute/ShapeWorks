@@ -3815,6 +3815,7 @@
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_DataTool</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QComboBox</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QTableWidgetItem</span><span class="p">;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
@@ -3873,6 +3874,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">table_selection_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">subject_notes_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">table_data_edited</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">plane_table_data_edited</span><span class="p">(</span><span class="n">QTableWidgetItem</span><span class="o">*</span><span class="w"> </span><span class="n">item</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">plane_table_editing_finished</span><span class="p">();</span>
 
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">import_button_clicked</span><span class="p">();</span>
@@ -3890,11 +3893,15 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LandmarkTableModel</span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmark_table_model_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_table_update_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">plane_table_editors_open_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">plane_table_update_pending_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-01 at 17:40:37 +0000</p>
+<p>Updated on 2026-07-01 at 23:50:09 +0000</p>
 
 
 
