@@ -30,7 +30,7 @@ def main():
     ax.plot(df["n"], df["opt_s"], "o-", color="crimson", label="optimization (entropy, O(N³) SVD)")
     ax.set_xscale("log", base=2); ax.set_yscale("log")
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Phase wall-clock (s)")
-    ax.set_title(f"Initialization vs optimization wall time (P={p})")
+    ax.set_title(f"INITIALIZATION vs OPTIMIZATION: phase wall time (P={p})")
     ax.legend(); ax.grid(True, which="both", alpha=0.3)
     fig.tight_layout(); fig.savefig(f"{args.out_dir}/phase_walltime_vs_N.png", dpi=130)
 
@@ -40,7 +40,7 @@ def main():
     ax.axhline(50, ls="--", color="gray", alpha=0.6)
     ax.set_xscale("log", base=2)
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("% of run in optimization (SVD) phase")
-    ax.set_title(f"Where the time goes vs subjects (P={p})")
+    ax.set_title(f"INITIALIZATION vs OPTIMIZATION: share of run in optimization (P={p})")
     ax.set_ylim(0, 100); ax.grid(True, alpha=0.3)
     fig.tight_layout(); fig.savefig(f"{args.out_dir}/opt_fraction_vs_N.png", dpi=130)
 
@@ -50,7 +50,7 @@ def main():
     ax.plot(df["n"], df["peak_cores"], "o--", color="lightsteelblue", alpha=0.7, label="peak cores")
     ax.set_xscale("log", base=2)
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Cores busy")
-    ax.set_title(f"CPU utilization, realistic init+opt run (P={p})")
+    ax.set_title(f"INITIALIZATION + OPTIMIZATION: CPU utilization, realistic run (P={p})")
     ax.legend(); ax.grid(True, alpha=0.3)
     fig.tight_layout(); fig.savefig(f"{args.out_dir}/cores_mixed_vs_N.png", dpi=130)
 

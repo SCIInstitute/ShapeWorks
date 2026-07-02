@@ -40,7 +40,7 @@ def main():
     ax.plot(ref_n, w_anchor * (ref_n / n_anchor) ** 3, "k--", alpha=0.6, label="N³ reference")
     ax.set_xscale("log", base=2); ax.set_yscale("log")
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Wall-clock per iteration (s)")
-    ax.set_title("Optimize runtime per iteration vs subjects")
+    ax.set_title("OPTIMIZATION phase: runtime per iteration vs subjects\n(iterations_per_split=0, optimization only)")
     ax.legend(); ax.grid(True, which="both", alpha=0.3)
     fig.tight_layout(); fig.savefig(f"{args.out_dir}/runtime_vs_N.png", dpi=130)
 
@@ -51,7 +51,7 @@ def main():
         ax.plot(d["p"], d["wall_iter_s"], "s-", label=f"N={n}")
     ax.set_xscale("log", base=2); ax.set_yscale("log")
     ax.set_xlabel("Number of particles (P)"); ax.set_ylabel("Wall-clock per iteration (s)")
-    ax.set_title("Optimize runtime per iteration vs particles")
+    ax.set_title("OPTIMIZATION phase: runtime per iteration vs particles")
     ax.legend(fontsize=8, ncol=2); ax.grid(True, which="both", alpha=0.3)
     fig.tight_layout(); fig.savefig(f"{args.out_dir}/runtime_vs_P.png", dpi=130)
 
@@ -64,7 +64,7 @@ def main():
             label="parallel sampling (high-N inflated by 1-time setup)")
     ax.set_xscale("log", base=2); ax.set_yscale("log")
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Time per iteration (s)")
-    ax.set_title(f"Serial vs parallel phase time, per iteration (P={p})")
+    ax.set_title(f"OPTIMIZATION phase: serial SVD vs parallel sampling, per iteration (P={p})")
     ax.legend(fontsize=8); ax.grid(True, which="both", alpha=0.3)
     fig.tight_layout(); fig.savefig(f"{args.out_dir}/phase_vs_N.png", dpi=130)
 
@@ -75,7 +75,8 @@ def main():
         ax.plot(d["n"], d["mean_cores"], "o-", label=f"P={p}")
     ax.set_xscale("log", base=2)
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Mean cores busy")
-    ax.set_title("CPU utilization vs subjects"); ax.legend(); ax.grid(True, alpha=0.3)
+    ax.set_title("OPTIMIZATION phase: CPU utilization vs subjects\n(iterations_per_split=0, optimization only)")
+    ax.legend(); ax.grid(True, alpha=0.3)
     fig.tight_layout(); fig.savefig(f"{args.out_dir}/cores_vs_N.png", dpi=130)
 
     print(f"wrote 4 plots to {args.out_dir}")
