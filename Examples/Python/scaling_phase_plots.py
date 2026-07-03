@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
 
 
 def main():
@@ -49,6 +50,7 @@ def main():
     ax.plot(df["n"], df["mean_cores"], "o-", color="steelblue", label="mean cores busy (whole run)")
     ax.plot(df["n"], df["peak_cores"], "o--", color="lightsteelblue", alpha=0.7, label="peak cores")
     ax.set_xscale("log", base=2)
+    ax.set_xticks(df["n"]); ax.get_xaxis().set_major_formatter(ScalarFormatter()); ax.minorticks_off()
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Cores busy")
     ax.set_title(f"INITIALIZATION + OPTIMIZATION: CPU utilization, realistic run (P={p})")
     ax.legend(); ax.grid(True, alpha=0.3)

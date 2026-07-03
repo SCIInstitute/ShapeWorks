@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
 
 
 def main():
@@ -74,6 +75,9 @@ def main():
         d = df[df["p"] == p].sort_values("n")
         ax.plot(d["n"], d["mean_cores"], "o-", label=f"P={p}")
     ax.set_xscale("log", base=2)
+    ax.set_xticks(ns)
+    ax.get_xaxis().set_major_formatter(ScalarFormatter())
+    ax.minorticks_off()
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Mean cores busy")
     ax.set_title("OPTIMIZATION phase: CPU utilization vs subjects\n(iterations_per_split=0, optimization only)")
     ax.legend(); ax.grid(True, alpha=0.3)
