@@ -8,7 +8,14 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.ticker import ScalarFormatter
+from matplotlib.ticker import ScalarFormatter, NullLocator
+
+
+def _int_xaxis(ax, ticks):
+    """Plain-integer log2 x-axis (8, 16, ...) instead of 2^n; keeps y minor ticks."""
+    ax.set_xticks(list(ticks))
+    ax.xaxis.set_major_formatter(ScalarFormatter())
+    ax.xaxis.set_minor_locator(NullLocator())
 
 
 def main():
@@ -29,7 +36,7 @@ def main():
     fig, ax = plt.subplots(figsize=(7, 5))
     ax.plot(df["n"], df["init_s"], "o-", color="seagreen", label="initialization (mean-energy, no SVD)")
     ax.plot(df["n"], df["opt_s"], "o-", color="crimson", label="optimization (entropy, O(N³) SVD)")
-    ax.set_xscale("log", base=2); ax.set_yscale("log")
+    ax.set_xscale("log", base=2); ax.set_yscale("log"); _int_xaxis(ax, df["n"])
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Phase wall-clock (s)")
     ax.set_title(f"INITIALIZATION vs OPTIMIZATION: phase wall time (P={p})")
     ax.legend(); ax.grid(True, which="both", alpha=0.3)
@@ -39,7 +46,7 @@ def main():
     fig, ax = plt.subplots(figsize=(7, 5))
     ax.plot(df["n"], 100 * df["opt_frac"], "o-", color="darkorange")
     ax.axhline(50, ls="--", color="gray", alpha=0.6)
-    ax.set_xscale("log", base=2)
+    ax.set_xscale("log", base=2); _int_xaxis(ax, df["n"])
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("% of run in optimization (SVD) phase")
     ax.set_title(f"INITIALIZATION vs OPTIMIZATION: share of run in optimization (P={p})")
     ax.set_ylim(0, 100); ax.grid(True, alpha=0.3)
@@ -49,8 +56,7 @@ def main():
     fig, ax = plt.subplots(figsize=(7, 5))
     ax.plot(df["n"], df["mean_cores"], "o-", color="steelblue", label="mean cores busy (whole run)")
     ax.plot(df["n"], df["peak_cores"], "o--", color="lightsteelblue", alpha=0.7, label="peak cores")
-    ax.set_xscale("log", base=2)
-    ax.set_xticks(df["n"]); ax.get_xaxis().set_major_formatter(ScalarFormatter()); ax.minorticks_off()
+    ax.set_xscale("log", base=2); _int_xaxis(ax, df["n"])
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Cores busy")
     ax.set_title(f"INITIALIZATION + OPTIMIZATION: CPU utilization, realistic run (P={p})")
     ax.legend(); ax.grid(True, alpha=0.3)

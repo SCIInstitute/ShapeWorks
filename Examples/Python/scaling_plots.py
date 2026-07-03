@@ -8,7 +8,15 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.ticker import ScalarFormatter
+from matplotlib.ticker import ScalarFormatter, NullLocator
+
+
+def _int_xaxis(ax, ticks):
+    """Label a log2 x-axis with plain integers (8, 16, ...) instead of 2^n,
+    removing only the x minor ticks so y-axis log minor ticks are kept."""
+    ax.set_xticks(list(ticks))
+    ax.xaxis.set_major_formatter(ScalarFormatter())
+    ax.xaxis.set_minor_locator(NullLocator())
 
 
 def main():
@@ -39,7 +47,7 @@ def main():
     n_anchor, w_anchor = d0["n"].iloc[-1], d0["wall_iter_s"].iloc[-1]
     ref_n = np.array([n for n in ns if n >= 64], dtype=float)
     ax.plot(ref_n, w_anchor * (ref_n / n_anchor) ** 3, "k--", alpha=0.6, label="N³ reference")
-    ax.set_xscale("log", base=2); ax.set_yscale("log")
+    ax.set_xscale("log", base=2); ax.set_yscale("log"); _int_xaxis(ax, ns)
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Wall-clock per iteration (s)")
     ax.set_title("OPTIMIZATION phase: runtime per iteration vs subjects\n(iterations_per_split=0, optimization only)")
     ax.legend(); ax.grid(True, which="both", alpha=0.3)
@@ -50,7 +58,7 @@ def main():
     for n in ns:
         d = df[df["n"] == n].sort_values("p")
         ax.plot(d["p"], d["wall_iter_s"], "s-", label=f"N={n}")
-    ax.set_xscale("log", base=2); ax.set_yscale("log")
+    ax.set_xscale("log", base=2); ax.set_yscale("log"); _int_xaxis(ax, ps)
     ax.set_xlabel("Number of particles (P)"); ax.set_ylabel("Wall-clock per iteration (s)")
     ax.set_title("OPTIMIZATION phase: runtime per iteration vs particles")
     ax.legend(fontsize=8, ncol=2); ax.grid(True, which="both", alpha=0.3)
@@ -63,7 +71,7 @@ def main():
     ax.plot(d["n"], d["serial_iter_s"], "o-", color="crimson", label="serial correspondence/SVD")
     ax.plot(d["n"], d["samp_iter_s"], "o-", color="steelblue",
             label="parallel sampling (high-N inflated by 1-time setup)")
-    ax.set_xscale("log", base=2); ax.set_yscale("log")
+    ax.set_xscale("log", base=2); ax.set_yscale("log"); _int_xaxis(ax, ns)
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Time per iteration (s)")
     ax.set_title(f"OPTIMIZATION phase: serial SVD vs parallel sampling, per iteration (P={p})")
     ax.legend(fontsize=8); ax.grid(True, which="both", alpha=0.3)
@@ -74,10 +82,7 @@ def main():
     for p in ps:
         d = df[df["p"] == p].sort_values("n")
         ax.plot(d["n"], d["mean_cores"], "o-", label=f"P={p}")
-    ax.set_xscale("log", base=2)
-    ax.set_xticks(ns)
-    ax.get_xaxis().set_major_formatter(ScalarFormatter())
-    ax.minorticks_off()
+    ax.set_xscale("log", base=2); _int_xaxis(ax, ns)
     ax.set_xlabel("Number of subjects (N)"); ax.set_ylabel("Mean cores busy")
     ax.set_title("OPTIMIZATION phase: CPU utilization vs subjects\n(iterations_per_split=0, optimization only)")
     ax.legend(); ax.grid(True, alpha=0.3)
