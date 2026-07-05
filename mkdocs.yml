@@ -28,6 +28,7 @@ nav:
    - Shape Model Optimization:
       - 'How to Optimize Your Shape Model?': 'workflow/optimize.md'
       - 'Optimization Parameters':           'workflow/parameters.md'
+      - 'Optimization Performance & Scaling': 'workflow/optimize-scaling.md'
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - Feature Highlights:
    - 'Studio Features':                      'new/new-studio.md'
