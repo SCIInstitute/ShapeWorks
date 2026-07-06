@@ -160,13 +160,13 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
 
   vnl_diag_matrix<double> W;
 
-  vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
-  vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);  // gramMat inverse
-
   if (this->m_UseMeanEnergy) {
-    pinvMat.set_identity();
+    // In mean-energy mode the inverse covariance is the identity, so the update
+    // is just the mean-centered points. Skip building an N×N identity and the
+    // subsequent multiply, which is a no-op costing O(P·N²) per iteration.
+    m_PointsUpdate->update(points_minus_mean);
   } else {
-    gramMat = points_minus_mean.transpose() * points_minus_mean;
+    vnl_matrix_type gramMat = points_minus_mean.transpose() * points_minus_mean;
 
     vnl_svd<double> svd(gramMat);
 
@@ -178,13 +178,13 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
     invLambda.set_diagonal(invLambda.get_diagonal() / (double)(num_samples - 1) + m_MinimumVariance);
     invLambda.invert_in_place();
 
-    pinvMat = (UG * invLambda) * UG.transpose();
+    vnl_matrix_type pinvMat = (UG * invLambda) * UG.transpose();
 
     // Note: The full dM × dM inverse covariance matrix is NOT needed.
     // Per thesis equation 2.35, the gradient is simply: Y × (Y^T Y + αI)^{-1}
     // which is Y × pinvMat. No covariance matrix multiplication required.
+    m_PointsUpdate->update(points_minus_mean * pinvMat);
   }
-  m_PointsUpdate->update(points_minus_mean * pinvMat);
 
   //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
 

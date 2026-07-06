@@ -178,12 +178,17 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
   vnl_diag_matrix<double> W;
 
-  vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
-  vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);  // gramMat inverse
+  vnl_matrix_type Q;
 
   if (this->m_UseMeanEnergy) {
-    pinvMat.set_identity();
+    // In mean-energy mode the inverse covariance is the identity, so Q is just
+    // the mean-centered points. Skip building an N×N identity and the multiply,
+    // which is a no-op costing O(P·N²) per iteration.
+    Q = points_minus_mean;
   } else {
+    vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
+    vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);  // gramMat inverse
+
     TIME_START("correspondence::gramMat");
 
     // Create Eigen maps that point to the VNL data
@@ -216,9 +221,8 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     // Note: The full dM × dM inverse covariance matrix is NOT needed.
     // Per thesis equation 2.35, the gradient is simply: Y × (Y^T Y + αI)^{-1}
     // which is Y × pinvMat. No covariance_multiply required.
+    Q = points_minus_mean * pinvMat;
   }
-
-  vnl_matrix_type Q = points_minus_mean * pinvMat;
 
   // Compute the update matrix in coordinate space by multiplication with the
   // Jacobian.  Each shape gradient must be transformed by a different Jacobian
