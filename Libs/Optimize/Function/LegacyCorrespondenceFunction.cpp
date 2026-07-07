@@ -1,6 +1,7 @@
 
 #include "LegacyCorrespondenceFunction.h"
 
+#include <cstring>
 #include <string>
 
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
@@ -168,22 +169,32 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
   } else {
     vnl_matrix_type gramMat = points_minus_mean.transpose() * points_minus_mean;
 
-    vnl_svd<double> svd(gramMat);
+    // gramMat = Yᵀ Y is symmetric positive-semidefinite, so a self-adjoint
+    // eigensolver yields the same eigenpairs as a general SVD but much faster,
+    // and it parallelizes the surrounding dense algebra through Eigen. gramMat is
+    // symmetric, so the row-major VNL buffer maps to an identical Eigen matrix.
+    Eigen::Map<Eigen::MatrixXd> gram_map(gramMat.data_block(), num_samples, num_samples);
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(gram_map);
+    const Eigen::VectorXd& eigvals = eig.eigenvalues();
+    const Eigen::MatrixXd& UG = eig.eigenvectors();
 
-    vnl_matrix_type UG = svd.U();
-    W = svd.W();
+    // Energy term uses the eigenvalues (== singular values of the Gram matrix).
+    W = vnl_diag_matrix<double>(num_samples);
+    for (unsigned int i = 0; i < num_samples; ++i) W(i) = eigvals(i);
 
-    vnl_diag_matrix<double> invLambda = svd.W();
+    // pinvMat = UG · diag(1 / (λ/(N-1) + α)) · UGᵀ  (symmetric).
+    using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    Eigen::ArrayXd invLambda = (eigvals.array() / (double)(num_samples - 1) + m_MinimumVariance).inverse();
+    Eigen::MatrixXd pinv = UG * invLambda.matrix().asDiagonal() * UG.transpose();
 
-    invLambda.set_diagonal(invLambda.get_diagonal() / (double)(num_samples - 1) + m_MinimumVariance);
-    invLambda.invert_in_place();
+    // update = Y · pinvMat  (thesis eq. 2.35: gradient is Y × (YᵀY + αI)⁻¹).
+    Eigen::Map<RowMatrixXd> Y_map(points_minus_mean.data_block(), num_dims, num_samples);
+    RowMatrixXd update_eigen;
+    update_eigen.noalias() = Y_map * pinv;
 
-    vnl_matrix_type pinvMat = (UG * invLambda) * UG.transpose();
-
-    // Note: The full dM × dM inverse covariance matrix is NOT needed.
-    // Per thesis equation 2.35, the gradient is simply: Y × (Y^T Y + αI)^{-1}
-    // which is Y × pinvMat. No covariance matrix multiplication required.
-    m_PointsUpdate->update(points_minus_mean * pinvMat);
+    vnl_matrix_type update(num_dims, num_samples);
+    std::memcpy(update.data_block(), update_eigen.data(), update_eigen.size() * sizeof(double));
+    m_PointsUpdate->update(update);
   }
 
   //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
