@@ -8,6 +8,8 @@
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
 
+#include <Eigen/Dense>
+
 namespace shapeworks {
 
 void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
@@ -178,47 +180,53 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
   vnl_diag_matrix<double> W;
 
-  vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
-  vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);  // gramMat inverse
+  vnl_matrix_type Q;
 
   if (this->m_UseMeanEnergy) {
-    pinvMat.set_identity();
+    // In mean-energy mode the inverse covariance is the identity, so Q is just
+    // the mean-centered points. Skip building an N×N identity and the multiply,
+    // which is a no-op costing O(P·N²) per iteration.
+    Q = points_minus_mean;
   } else {
+    using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
     TIME_START("correspondence::gramMat");
 
     // Create Eigen maps that point to the VNL data
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> points_minus_mean_map(
-        points_minus_mean.data_block(), points_minus_mean.rows(), points_minus_mean.cols());
+    Eigen::Map<RowMatrixXd> points_minus_mean_map(points_minus_mean.data_block(), points_minus_mean.rows(),
+                                                  points_minus_mean.cols());
 
-    // Perform the computation directly on the mapped data
+    // gramMat = Yᵀ Y is symmetric positive-semidefinite.
     Eigen::MatrixXd gramMat_eigen = points_minus_mean_map.transpose() * points_minus_mean_map;
-
-    // Copy result back to VNL matrix
-    gramMat.set_size(gramMat_eigen.rows(), gramMat_eigen.cols());
-    std::memcpy(gramMat.data_block(), gramMat_eigen.data(), gramMat_eigen.size() * sizeof(double));
 
     TIME_STOP("correspondence::gramMat");
 
     TIME_START("correspondence::svd");
-    vnl_svd<double> svd(gramMat);
-    vnl_matrix_type UG = svd.U();
-    W = svd.W();
-    vnl_diag_matrix<double> invLambda = svd.W();
+    // The Gram matrix is symmetric positive-semidefinite, so a self-adjoint
+    // eigensolver yields the same eigenpairs as a general SVD but much faster,
+    // and it parallelizes the surrounding dense algebra through Eigen.
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(gramMat_eigen);
+    const Eigen::VectorXd& eigvals = eig.eigenvalues();
+    const Eigen::MatrixXd& UG = eig.eigenvectors();
     TIME_STOP("correspondence::svd");
 
-    invLambda.set_diagonal(invLambda.get_diagonal() / (double)(num_samples - 1) + m_MinimumVariance);
-    invLambda.invert_in_place();
+    // Energy term uses the eigenvalues (== singular values of the Gram matrix).
+    W = vnl_diag_matrix<double>(num_samples);
+    for (int i = 0; i < num_samples; ++i) W(i) = eigvals(i);
+
+    // pinvMat = UG · diag(1 / (λ/(N-1) + α)) · UGᵀ  (symmetric).
+    Eigen::ArrayXd invLambda = (eigvals.array() / (double)(num_samples - 1) + m_MinimumVariance).inverse();
 
     TIME_START("correspondence::pinvMat");
-    pinvMat = (UG * invLambda) * UG.transpose();
+    Eigen::MatrixXd pinv = UG * invLambda.matrix().asDiagonal() * UG.transpose();
     TIME_STOP("correspondence::pinvMat");
 
-    // Note: The full dM × dM inverse covariance matrix is NOT needed.
-    // Per thesis equation 2.35, the gradient is simply: Y × (Y^T Y + αI)^{-1}
-    // which is Y × pinvMat. No covariance_multiply required.
+    // Q = Y · pinvMat  (thesis eq. 2.35: gradient is Y × (YᵀY + αI)⁻¹).
+    RowMatrixXd Q_eigen;
+    Q_eigen.noalias() = points_minus_mean_map * pinv;
+    Q.set_size(num_dims, num_samples);
+    std::memcpy(Q.data_block(), Q_eigen.data(), Q_eigen.size() * sizeof(double));
   }
-
-  vnl_matrix_type Q = points_minus_mean * pinvMat;
 
   // Compute the update matrix in coordinate space by multiplication with the
   // Jacobian.  Each shape gradient must be transformed by a different Jacobian

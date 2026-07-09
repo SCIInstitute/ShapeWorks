@@ -1,117 +1,117 @@
 # Optimization Performance & Scaling
 
-This page explains how `shapeworks optimize` scales with the size of your dataset: how runtime grows
-with the number of shapes and particles, and why very large cohorts tend to use only a single CPU
-core. If you are optimizing hundreds or thousands of shapes and seeing long runtimes or low CPU
-utilization, this page describes what to expect and what you can do about it.
+This page explains how `shapeworks optimize` scales with the size of your dataset, and what recent
+improvements changed. If you are optimizing hundreds or thousands of shapes and want to know what to
+expect for runtime and CPU usage, start here.
 
 ## What to expect
 
-- Runtime grows cubically with the number of shapes (subjects, N). Doubling the number of shapes can
-  multiply optimization time by roughly 8x in the large-cohort regime.
-- Large cohorts use about one CPU core. Small and medium datasets parallelize across many cores. As
-  the number of shapes grows into the thousands, the optimizer spends most of its time in a serial
-  step, so utilization falls toward a single core.
-- Particle count is much cheaper than shape count. Increasing the number of particles grows runtime
-  far more slowly than increasing the number of shapes.
+- Runtime grows faster with the number of shapes (subjects, N) than with the number of particles. The
+  correspondence step at the center of each iteration decomposes an N×N matrix built from the shapes,
+  which costs O(N³), so adding shapes is much more expensive than adding particles.
+- Recent improvements cut this cost and restored multi-core use in both phases of a run. A full run at
+  N=1024 is about 3.5x faster than before, and the gap grows with N. See
+  [Recent improvements](#recent-improvements) below.
+- Adding particles is much cheaper than adding shapes.
 
-## What you can do
+## Recent improvements
 
-- Use incremental optimization for large cohorts. It optimizes a small initial subset of shapes from
-  scratch, then adds the remaining shapes in batches. The expensive particle initialization runs only
-  on the initial subset, and each later batch starts from already-placed particles, so the
-  full-cohort passes need far fewer iterations. This lowers total runtime. It does not remove the
-  per-iteration cost: the final batch still includes every shape and pays the O(N³) SVD each
-  iteration. See [Incremental Supershapes](../use-cases/multistep/incremental_supershapes.md) for a
-  worked example. Incremental optimization is available through the Python and command-line
-  interfaces; ShapeWorks Studio does not currently support it.
-- Lowering the iteration count does not reduce the per-iteration cost. The expensive step runs every
-  iteration, so lowering `optimization_iterations` reduces the number of iterations but not the cost
-  of each one.
-- If you need higher-resolution models, adding particles is much cheaper than adding shapes.
+Two changes to the per-iteration correspondence update made both phases of a run faster and brought
+back multi-core usage on large cohorts. Neither changes the optimization result.
 
-## Why
+1. Initialization no longer multiplies by an identity matrix. In the initialization (mean-energy)
+   phase the update reduces to the mean-centered points, but the code used to build an N×N identity
+   and run the full multiply every iteration, an O(P·N²) no-op. Removing it makes initialization far
+   faster at scale (the whole initialization phase at N=2048 went from about 10 minutes to about 45
+   seconds) and keeps it multi-core.
+
+2. The optimization phase uses a symmetric eigensolver. The N×N matrix is symmetric
+   positive-semidefinite, so a symmetric eigensolver replaces the general SVD and the surrounding
+   matrix work runs multithreaded. This is faster per iteration by an amount that grows with N: about
+   2.6x at N=512, 8x at N=2048, and 14x at N=4096.
+
+End to end, both changes together (initialization plus optimization), on the same cohorts:
+
+![end to end before and after](../img/optimize-scaling/improvement_e2e_walltime.png)
+
+| N | before | after | speedup |
+|---|---|---|---|
+| 256 | 10.0 s | 8.0 s | 1.3x |
+| 512 | 53.6 s | 22.6 s | 2.4x |
+| 1024 | 224.9 s | 64.0 s | 3.5x |
+
+Below a few hundred shapes the difference is small, because the parts these changes target only
+dominate at larger N. The payoff grows with the cohort.
+
+CPU utilization also recovers. Mean cores busy for each phase (of 24), before and after, at P=256:
+
+| N | initialization before / after | optimization before / after |
+|---|---|---|
+| 256 | 11.9 / 13.8 | 9.0 / 10.9 |
+| 1024 | 4.0 / 12.7 | 4.0 / 7.4 |
+| 2048 | 2.0 / 12.6 | 2.4 / 7.0 |
+
+![CPU utilization vs N](../img/optimize-scaling/cores_vs_N.png)
+
+Before the changes, optimization utilization fell to about 1.5 cores at N=4096. After, it stays around
+6, because the eigensolve itself is still serial even though the matrix work around it is now
+threaded. So utilization is much better but still declines at the very high end.
+
+## Why shapes cost more than particles
 
 Each optimization iteration has two parts:
 
 | part | complexity | parallel? |
 |---|---|---|
 | per-particle gradient update (`tbb::parallel_for` over subjects) | O(N·P) | yes, across subjects |
-| correspondence entropy: an N×N Gram matrix and one SVD | O(N³) | no, single-threaded |
+| correspondence: build the N×N matrix and decompose it | O(N³) | the eigensolve is serial; the surrounding matrix work runs multithreaded |
 
-N is the number of subjects and P the number of particles. The per-particle gradient is spread across
-cores, but the correspondence step runs a serial SVD on an N×N matrix once per iteration, which is
-O(N³). As N grows, that serial cubic step dominates, so total runtime grows cubically and CPU usage
-falls toward one core. This happens whether or not `use_normals` is enabled, because both
-correspondence formulations build the same N×N SVD.
+N is the number of subjects and P the number of particles. The decomposition is O(N³) in the number
+of shapes, so runtime still grows cubically with N even after the improvements. The changes lower the
+constant and parallelize most of the surrounding work, but the eigensolve itself is serial, which is
+why very large cohorts remain expensive. This holds whether or not `use_normals` is enabled, because
+both correspondence formulations build the same N×N decomposition.
+
+![runtime vs N](../img/optimize-scaling/runtime_vs_N.png)
+
+Optimization time per iteration, before and after. Both follow the N³ reference at large N, so the
+slope is unchanged, but the eigensolver change shifts the curve down by a widening margin, reaching
+about 14x at N=4096. At very small N the two are within measurement noise; the eigensolver has a small
+fixed overhead that does not matter once the matrices are tiny.
+
+![runtime vs P](../img/optimize-scaling/runtime_vs_P.png)
+
+Adding particles grows the cheaper terms, not the cubic decomposition, so it scales far more slowly
+than adding shapes.
+
+## What you can do for very large cohorts
+
+- Use incremental optimization. It optimizes a small initial subset of shapes from scratch, then adds
+  the remaining shapes in batches. The expensive particle initialization runs only on the initial
+  subset, and each later batch starts from already-placed particles, so the full-cohort passes need
+  far fewer iterations. It does not remove the per-iteration cost: the final batch still includes
+  every shape and pays the O(N³) decomposition each iteration. See
+  [Incremental Supershapes](../use-cases/multistep/incremental_supershapes.md) for a worked example.
+  Incremental optimization is available through the Python and command-line interfaces; ShapeWorks
+  Studio does not currently support it.
+- Lowering the iteration count does not reduce the per-iteration cost. The decomposition runs every
+  iteration, so lowering `optimization_iterations` reduces the number of iterations but not the cost
+  of each one.
+- If you need higher-resolution models, adding particles is much cheaper than adding shapes.
 
 ## Measurements
 
 Measured on a 24-core machine with 128 GB of memory. Cohorts were built by replicating a single femur
 mesh (15,002 vertices) N times with a small random rigid transform and per-vertex noise, so N can be
-varied over a wide range. Shape content does not affect the O(N³) SVD, which depends only on the
-matrix size. Metrics are reported per iteration, since a full 100-iteration run at N=4096 takes days.
-
-### Runtime per iteration vs number of shapes
-
-![runtime vs N](../img/optimize-scaling/runtime_vs_N.png)
-
-The curve is flat at small N, where the parallel work dominates, then bends up to follow the N³
-reference beyond N=512. The lines converge because the SVD cost does not depend on the particle
-count.
-
-### The serial SVD overtakes the parallel work
-
-![phase vs N](../img/optimize-scaling/phase_vs_N.png)
-
-The serial SVD (slope near 3) passes the parallel per-particle work (slope near 1) at about N=1024 and
-dominates beyond that.
-
-### CPU utilization vs number of shapes
-
-![cores vs N](../img/optimize-scaling/cores_vs_N.png)
-
-Mean cores busy rises to a peak around N=64, then falls as the serial SVD takes over, dropping to
-about 1.3 cores at N=4096. A cohort of thousands of shapes sits on the right side of this curve, in
-the single-core regime. The high utilization on small datasets is the left side of the same curve.
-
-### Particle scaling is much milder
-
-![runtime vs P](../img/optimize-scaling/runtime_vs_P.png)
-
-Adding particles grows the cheaper terms, not the cubic SVD, so it scales far more slowly than adding
-shapes.
-
-## Initialization vs optimization
-
-A run has two phases. Initialization adds particles by splitting, running `iterations_per_split`
-iterations at each level. Optimization then runs `optimization_iterations` at the full particle count.
-The expensive SVD runs in the optimization phase; initialization uses a cheaper mean-energy mode. For
-a typical run, initialization is often the majority of the wall time.
-
-![cores init vs opt](../img/optimize-scaling/cores_init_vs_opt.png)
-
-Core utilization for each phase measured in isolation (P=256):
-
-| N | initialization cores | optimization cores |
-|---|---|---|
-| 256 | 11.9 | 9.0 |
-| 1024 | 4.0 | 4.0 |
-| 2048 | 2.0 | 2.4 |
-
-Initialization parallelizes well for typical cohorts of up to a few hundred shapes, but at thousands
-of shapes it also becomes serial-bound. Very large cohorts see reduced CPU utilization in both phases.
-
-![cores mixed](../img/optimize-scaling/cores_mixed_vs_N.png)
-
-The blended view of a realistic run shows high utilization at small N, falling toward a single core as
-the number of shapes reaches the thousands.
+varied over a wide range. Shape content does not affect the decomposition cost, which depends only on
+the matrix size. Before and after numbers come from back-to-back runs with the binary swapped per N
+under the same load, since machine contention alone can move cross-run timings by roughly 1.8x.
 
 ## Summary
 
-- The cubic runtime and single-core behavior on large cohorts are expected. A serial O(N³) SVD runs
-  once per optimization iteration.
+- Runtime still grows cubically with the number of shapes, because the correspondence step decomposes
+  an N×N matrix each iteration. Recent improvements lowered the constant and restored multi-core use,
+  but did not change the cubic shape.
 - The number of shapes drives the cost. The number of particles has less of an impact.
-- No setting removes the per-iteration O(N³) cost. Incremental optimization is the most useful option
-  for large cohorts: it does the expensive initialization on a small subset and lets later batches run
-  with far fewer iterations.
+- For very large cohorts, incremental optimization is the most useful option: it does the expensive
+  initialization on a small subset and lets later batches run with far fewer iterations.

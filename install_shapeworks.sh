@@ -57,6 +57,26 @@ fi
 echo "Creating new conda environment for ShapeWorks called \"$CONDAENV\"..."
 
 
+# Retry a network-flaky command (e.g. pip installs) up to $RETRY_MAX times.
+# pip's own --retries only covers connection errors, not a completed-but-corrupt
+# download that fails sha256 validation, so we retry at the shell level and purge
+# any partially-cached/corrupt downloads between attempts.
+RETRY_MAX=${RETRY_MAX:-3}
+retry() {
+  local attempt=1
+  while true; do
+    "$@" && return 0
+    if (( attempt >= RETRY_MAX )); then
+      echo "Command failed after ${attempt} attempts: $*"
+      return 1
+    fi
+    echo "Command failed (attempt ${attempt}/${RETRY_MAX}), purging pip cache and retrying in 10s: $*"
+    python -m pip cache purge || true
+    sleep 10
+    attempt=$((attempt+1))
+  done
+}
+
 function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "Installing Miniconda..."
@@ -158,7 +178,7 @@ function install_conda() {
   echo "PATH: $PATH"
   echo "========================================"
 
-  if ! python -m pip install -r python_requirements.txt;          then return 1; fi
+  if ! retry python -m pip install -r python_requirements.txt;    then return 1; fi
 
   # install pytorch using light-the-torch
   # Use python -m to ensure we use the conda env's light_the_torch, not ~/.local/bin/ltt
@@ -172,24 +192,24 @@ function install_conda() {
   echo "========================================="
   if [[ $(uname -s) == "Darwin" ]] && [[ $(uname -m) == "x86_64" ]]; then
     # Intel Mac - use older versions with NumPy 1.x
-    if ! python -m light_the_torch install torch==2.2.2 torchaudio==2.2.2 torchvision==0.17.2; then return 1; fi
+    if ! retry python -m light_the_torch install torch==2.2.2 torchaudio==2.2.2 torchvision==0.17.2; then return 1; fi
     python -m pip install "numpy<2"
   else
     # Apple Silicon, Linux, Windows - use latest with NumPy 2.x support
-    if ! python -m light_the_torch install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi
+    if ! retry python -m light_the_torch install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0; then return 1; fi
   fi
 
   # for network analysis (optional - not available on all platforms/Python versions)
   # open3d needs to be installed differently on each platform so it's not part of python_requirements.txt
   OPEN3D_INSTALLED=NO
   if [[ "$(uname)" == "Linux" ]]; then
-      if python -m pip install open3d-cpu==0.19.0; then
+      if retry python -m pip install open3d-cpu==0.19.0; then
         OPEN3D_INSTALLED=YES
       else
         echo "WARNING: open3d-cpu could not be installed. Network analysis features will not be available."
       fi
   elif [[ "$(uname)" == "Darwin" ]]; then
-      if python -m pip install open3d==0.19.0; then
+      if retry python -m pip install open3d==0.19.0; then
         OPEN3D_INSTALLED=YES
         if [[ "$(uname -m)" == "arm64" ]]; then
           pushd $CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu
@@ -202,7 +222,7 @@ function install_conda() {
         echo "WARNING: open3d could not be installed. Network analysis features will not be available."
       fi
   else
-      if python -m pip install open3d==0.19.0; then
+      if retry python -m pip install open3d==0.19.0; then
         OPEN3D_INSTALLED=YES
       else
         echo "WARNING: open3d could not be installed. Network analysis features will not be available."
