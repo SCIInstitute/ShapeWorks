@@ -42,7 +42,7 @@ jobs:
         brew install ccache pigz gnu-tar coreutils
 
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         lfs: true
 
@@ -55,7 +55,7 @@ jobs:
 
     - name: Restore Dependencies Cache
       id: cache-deps-restore
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
         path: /Users/runner/install
         key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
@@ -67,7 +67,7 @@ jobs:
 
     - name: Save Dependencies Cache
       if: steps.cache-deps-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: /Users/runner/install
         key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
@@ -129,15 +129,23 @@ jobs:
         name: artifact-${{github.sha}}-mac-arm64
         path: ${{runner.workspace}}/ShapeWorks/artifacts
 
+    - name: Remove previous dev release
+      if: github.ref == 'refs/heads/master'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: .github/workflows/delete_dev_release.sh dev-mac-arm64
+
     - name: Deploy
       id: deploy
       if: github.ref == 'refs/heads/master'
-      uses: marvinpinto/action-automatic-releases@latest
+      uses: softprops/action-gh-release@v2
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "dev-mac-arm64"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: "dev-mac-arm64"
+        target_commitish: ${{ github.sha }}
         prerelease: true
-        title: "Development Build for Mac Arm64"
+        name: "Development Build for Mac Arm64"
         files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
              ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg
