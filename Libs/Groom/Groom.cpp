@@ -189,17 +189,29 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   std::string groomed_name = get_output_filename(original, DomainType::Image);
 
   if (params.get_convert_to_mesh()) {
-    // Use isovalue 0.0 for distance transforms (the zero level set is the surface)
-    Mesh mesh = image.toMesh(0.0);
+    // Choose the contouring isovalue based on the image content.  A signed
+    // distance transform (produced by fast marching or antialiasing) has the
+    // surface at the zero level set, so isovalue 0.0 is correct.  A raw binary
+    // segmentation -- which is what we have when the DT/antialias steps are
+    // skipped -- has values {0, 1}; contouring it at 0.0 sits on the background
+    // value and produces an empty mesh, which then crashes the mesh pipeline
+    // (see issue #2456).  Contour such images at the midpoint (0.5) instead.
+    double img_min = image.min();
+    double img_max = image.max();
+    const double isovalue = (img_min >= 0.0) ? (img_min + img_max) / 2.0 : 0.0;
+    Mesh mesh = image.toMesh(isovalue);
     if (mesh.numPoints() == 0) {
-      throw std::runtime_error("Empty mesh generated from segmentation - segmentation may have no valid data");
+      throw std::runtime_error(
+          fmt::format("Empty mesh generated from image '{}' at isovalue {}", original, isovalue));
     }
     // Check for valid cells
     auto poly_data = mesh.getVTKMesh();
     if (poly_data->GetNumberOfCells() == 0) {
-      throw std::runtime_error("Mesh has no cells - segmentation may have no valid surface");
+      throw std::runtime_error(
+          fmt::format("Mesh generated from image '{}' at isovalue {} has no cells", original, isovalue));
     }
-    SW_DEBUG("Mesh after toMesh: {} points, {} cells", poly_data->GetNumberOfPoints(), poly_data->GetNumberOfCells());
+    SW_DEBUG("Mesh after toMesh at isovalue {}: {} points, {} cells", isovalue, poly_data->GetNumberOfPoints(),
+             poly_data->GetNumberOfCells());
     run_mesh_pipeline(mesh, params, original);
     groomed_name = get_output_filename(original, DomainType::Mesh);
     // save the groomed mesh
