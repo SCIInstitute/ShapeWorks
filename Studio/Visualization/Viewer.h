@@ -53,6 +53,9 @@ class PickResult {
   int subject_ = -1;
 };
 
+//! Axis-aligned camera orientations (anatomical view directions)
+enum class ViewOrientation { Anterior, Posterior, Left, Right, Superior, Inferior };
+
 //! 3D Viewer
 /*!
  * The Viewer class encapsulates all the functionality for visualizing a single subject/shape
@@ -72,6 +75,9 @@ class Viewer {
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
   void reset_camera();
+
+  //! Snap the camera to an axis-aligned (anatomical) orientation, fitting the scene
+  void set_orientation(ViewOrientation orientation);
 
   void set_color_series(ColorMap color_series);
   void set_glyph_size_and_quality(double size, double quality);
