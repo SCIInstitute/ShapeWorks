@@ -68,7 +68,7 @@ jobs:
     #       miniconda-version: 'latest'
 
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         lfs: true
 
@@ -91,7 +91,7 @@ jobs:
 
     - name: Restore Dependencies Cache
       id: cache-deps-restore
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
         path: C:\deps
         key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
@@ -103,7 +103,7 @@ jobs:
 
     - name: Save Dependencies Cache
       if: steps.cache-deps-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: C:\deps
         key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
@@ -233,13 +233,21 @@ jobs:
       shell: bash -l {0}
       run: df -h
         
+    - name: Remove previous dev release
+      if: github.ref == 'refs/heads/master'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: .github/workflows/delete_dev_release.sh dev-windows
+
     - name: Deploy
       if: github.ref == 'refs/heads/master'
-      uses: marvinpinto/action-automatic-releases@latest
+      uses: softprops/action-gh-release@v2
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "dev-windows"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: "dev-windows"
+        target_commitish: ${{ github.sha }}
         prerelease: true
-        title: "Development Build for Windows"
+        name: "Development Build for Windows"
         files: |
              d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe

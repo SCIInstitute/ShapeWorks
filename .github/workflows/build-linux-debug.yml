@@ -46,7 +46,7 @@ jobs:
       run: df -h
 
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         lfs: true
 
@@ -65,7 +65,7 @@ jobs:
 
     - name: Restore Dependencies Cache
       id: cache-deps-restore
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
         path: /github/home/install
         key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
@@ -106,7 +106,7 @@ jobs:
 
     - name: Save Dependencies Cache
       if: steps.cache-deps-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: /github/home/install
         key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
