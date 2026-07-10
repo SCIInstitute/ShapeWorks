@@ -82,6 +82,10 @@ TEST(pythonTests, imageInfoTest) {
   run_test("imageinfo.py");
 }
 
+TEST(pythonTests, dicomSeriesTest) {
+  run_test("dicomseries.py");
+}
+
 TEST(pythonTests, meshInfoTest) {
   run_test("meshinfo.py");
 }

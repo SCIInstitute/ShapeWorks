@@ -328,6 +328,20 @@ Image::ImageType::Pointer Image::readDICOMImage(const std::string& pathname) {
   return reader->GetOutput();
 }
 
+std::vector<std::string> Image::getDICOMSeriesUIDs(const std::string& pathname) {
+  if (pathname.empty()) {
+    throw std::invalid_argument("Empty pathname");
+  }
+
+  auto names_generator = itk::GDCMSeriesFileNames::New();
+  names_generator->SetUseSeriesDetails(true);
+  names_generator->AddSeriesRestriction("0008|0021");  // group DICOM files by series date
+  names_generator->SetGlobalWarningDisplay(false);
+  names_generator->SetDirectory(pathname);
+
+  return names_generator->GetSeriesUIDs();
+}
+
 Image& Image::write(const std::string& filename, bool compressed) {
   TIME_SCOPE("Image::write");
   if (!this->itk_image_) {

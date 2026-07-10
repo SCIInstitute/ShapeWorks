@@ -315,6 +315,9 @@ class Image {
     return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"};
   }
 
+  //! Return the DICOM series UIDs found in the given directory
+  static std::vector<std::string> getDICOMSeriesUIDs(const std::string& pathname);
+
   //! Return if the file type is supported
   static bool isSupportedType(const std::string& filename) {
     for (const auto& type : Image::getSupportedTypes()) {

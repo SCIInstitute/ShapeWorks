@@ -13,6 +13,12 @@ TEST(ImageTests, dicomReadTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, dicomSeriesUIDsTest) {
+  auto uids = Image::getDICOMSeriesUIDs(std::string(TEST_DATA_DIR) + "/dcm_files");
+  ASSERT_FALSE(uids.empty());
+  ASSERT_FALSE(uids[0].empty());
+}
+
 TEST(ImageTests, readTest) {
   try {
     Image image(std::string(TEST_DATA_DIR) + "foo.nrrd");

@@ -117,6 +117,9 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def(py::init<const std::string&>())
       .def(py::init<const Image&>())
 
+      .def_static("getDICOMSeriesUIDs", &Image::getDICOMSeriesUIDs,
+                  "return the list of DICOM series UIDs found in the given directory", "pathname"_a)
+
       // constructor that wraps numpy float32 array
       .def(py::init
            // The reasons we don't simply specify py::array_t<float>
