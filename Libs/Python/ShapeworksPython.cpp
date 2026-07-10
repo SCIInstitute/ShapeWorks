@@ -947,10 +947,14 @@ PYBIND11_MODULE(shapeworks_py, m) {
           "distance",
           [](Mesh& mesh, const Mesh& target, const Mesh::DistanceMethod method) -> decltype(auto) {
             auto distances_and_ids = mesh.distance(target, method);
-            return py::make_tuple(arrToPy(distances_and_ids[0], MOVE_ARRAY), arrToPy(distances_and_ids[1], MOVE_ARRAY));
+            // Also store the distances as a "distance" point field so the result can be written directly
+            // as a heat map (e.g. mesh.distance(other); mesh.write(...)). See issue #1939.
+            mesh.setField("distance", distances_and_ids[0], Mesh::FieldType::Point);
+            return py::make_tuple(arrToPy(distances_and_ids[0], COPY_ARRAY), arrToPy(distances_and_ids[1], MOVE_ARRAY));
           },
-          "computes closest distance from vertices of this mesh to target mesh, returning indices of faces or vertices "
-          "in target mesh that contain closest points",
+          "computes closest distance from vertices of this mesh to target mesh, returning the distances and the "
+          "indices of faces or vertices in the target mesh that contain the closest points; the distances are also "
+          "stored on this mesh as a 'distance' point field",
           "target"_a, "method"_a = Mesh::DistanceMethod::PointToCell)
 
       .def(
@@ -1080,7 +1084,8 @@ PYBIND11_MODULE(shapeworks_py, m) {
             auto vtkarr = pyToArr(array);
             return mesh.setField(name, vtkarr, type);
           },
-          "sets the given field for points with array", "name"_a, "array"_a, "type"_a)
+          "sets the given field for points with array (type defaults to Point)", "name"_a, "array"_a,
+          "type"_a = Mesh::FieldType::Point)
 
       .def(
           "getField",

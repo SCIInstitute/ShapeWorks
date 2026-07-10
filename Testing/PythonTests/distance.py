@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 from shapeworks import *
 
 success = True
@@ -35,5 +36,27 @@ def distanceTest2():
   return femur1 == fwd and femur2 == rev
 
 success &= utils.test(distanceTest2)
+
+# issue #1939: distance() should store the result as a "distance" point field automatically,
+# without a separate setField call
+def distanceAutoFieldTest():
+  femur1 = Mesh(os.environ["DATA"] + "/m03_L_femur.ply")
+  femur2 = Mesh(os.environ["DATA"] + "/m04_L_femur.ply")
+  distances, ids = femur1.distance(femur2)
+  field = femur1.getField("distance", Mesh.Point)
+  return np.allclose(np.asarray(field).ravel(), np.asarray(distances).ravel())
+
+success &= utils.test(distanceAutoFieldTest)
+
+# issue #1939: setField's type argument should default to Point
+def setFieldDefaultTypeTest():
+  femur1 = Mesh(os.environ["DATA"] + "/m03_L_femur.ply")
+  femur2 = Mesh(os.environ["DATA"] + "/m04_L_femur.ply")
+  distances, ids = femur1.distance(femur2)
+  femur1.setField("my_distance", distances)  # no explicit type -> defaults to Point
+  field = femur1.getField("my_distance", Mesh.Point)
+  return np.allclose(np.asarray(field).ravel(), np.asarray(distances).ravel())
+
+success &= utils.test(setFieldDefaultTypeTest)
 
 sys.exit(not success)
