@@ -1129,6 +1129,27 @@ TEST(ImageTests, isolateTest1) {
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, isolateMinimumSizeTest) {
+  const std::string input = std::string(TEST_DATA_DIR) + "/isolate_input.nrrd";
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/isolate_output.nrrd");
+
+  // minimum_size == 0 preserves the default behavior: keep only the largest object
+  Image default_behavior(input);
+  default_behavior.isolate(0);
+  ASSERT_TRUE(default_behavior == ground_truth);
+
+  // a positive minimum_size keeps every component at least that large, so the smaller objects the
+  // default discards are retained -- the result must therefore differ from the largest-only output
+  Image keep_all(input);
+  keep_all.isolate(1);
+  ASSERT_FALSE(keep_all == ground_truth);
+
+  // a minimum_size larger than every component removes everything, leaving an empty (all-zero) image
+  Image empty(input);
+  empty.isolate(std::numeric_limits<int64_t>::max());
+  ASSERT_EQ(empty.max(), 0.0f);
+}
+
 TEST(ImageTests, evaluateTest) {
   Image image(std::string(TEST_DATA_DIR) + "/computedt2.nrrd");
   Point pt1({37.0, 46.0, 50.0});    // outside close
