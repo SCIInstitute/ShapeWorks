@@ -561,7 +561,10 @@ PYBIND11_MODULE(shapeworks_py, m) {
           "toMesh", [](Image& image, Image::PixelType isovalue) { return image.toMesh(isovalue); },
           "converts image to mesh at specified isovalue", "isovalue"_a)
 
-      .def("isolate", &Image::isolate, "isolate largest object")
+      .def("isolate", &Image::isolate,
+           "isolate the largest object (minimum_size=0), or keep every connected component with at least "
+           "minimum_size voxels",
+           "minimum_size"_a = 0)
 
       .def(
           "evaluate",

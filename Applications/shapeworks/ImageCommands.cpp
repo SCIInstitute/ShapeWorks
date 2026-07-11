@@ -1362,8 +1362,10 @@ bool ImageToMesh::execute(const optparse::Values &options, SharedCommandData &sh
 void Isolate::buildParser()
 {
   const std::string prog = "isolate";
-  const std::string desc = "finds the largest object in a binary segmentation and removes all other objects";
+  const std::string desc = "finds the largest object in a binary segmentation and removes all other objects (or, with --minsize, keeps every object at least that many voxels)";
   parser.prog(prog).description(desc);
+
+  parser.add_option("--minsize").action("store").type("int").set_default(0).help("Keep every connected component with at least this many voxels; 0 keeps only the largest object [default: %default].");
 
   Command::buildParser();
 }
@@ -1376,7 +1378,9 @@ bool Isolate::execute(const optparse::Values &options, SharedCommandData &shared
     return false;
   }
 
-  sharedData.image.isolate();
+  int minsize = static_cast<int>(options.get("minsize"));
+
+  sharedData.image.isolate(minsize);
   return true;
 }
 

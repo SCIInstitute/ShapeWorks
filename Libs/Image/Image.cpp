@@ -22,6 +22,7 @@
 #include <itkIntensityWindowingImageFilter.h>
 #include <itkMultiplyImageFilter.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
+#include <itkNumericTraits.h>
 #include <itkOrientImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
@@ -30,7 +31,6 @@
 #include <itkScalableAffineTransform.h>
 #include <itkSigmoidImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
-#include <itkThresholdImageFilter.h>
 #include <itkVTKImageExport.h>
 #include <itkVTKImageToImageFilter.h>
 #include <vtkCleanPolyData.h>
@@ -884,9 +884,10 @@ Image& Image::setCoordsys(ImageType::DirectionType coordsys) {
   return *this;
 }
 
-Image& Image::isolate() {
+Image& Image::isolate(int64_t minimum_size) {
   TIME_SCOPE("Image::isolate");
-  typedef itk::Image<unsigned char, 3> IsolateType;
+  // Use a wide label type so noisy segmentations with many components don't overflow.
+  typedef itk::Image<unsigned int, 3> IsolateType;
   typedef itk::CastImageFilter<ImageType, IsolateType> ToIntType;
   ToIntType::Pointer filter = ToIntType::New();
   filter->SetInput(this->itk_image_);
@@ -901,13 +902,21 @@ Image& Image::isolate() {
   auto relabel = itk::RelabelComponentImageFilter<IsolateType, IsolateType>::New();
   relabel->SetInput(cc->GetOutput());
   relabel->SortByObjectSizeOn();
+  if (minimum_size > 0) {
+    // Discard components smaller than minimum_size (they are relabeled to background).
+    relabel->SetMinimumObjectSize(minimum_size);
+  }
   relabel->Update();
 
-  auto thresh = itk::ThresholdImageFilter<IsolateType>::New();
+  // Components are sorted largest-first (label 1 = largest). With the default minimum_size of 0
+  // keep only the largest object; otherwise keep every component that survived the size filter.
+  const unsigned int upper = (minimum_size > 0) ? itk::NumericTraits<unsigned int>::max() : 1u;
+  auto thresh = itk::BinaryThresholdImageFilter<IsolateType, IsolateType>::New();
   thresh->SetInput(relabel->GetOutput());
+  thresh->SetLowerThreshold(1);
+  thresh->SetUpperThreshold(upper);
+  thresh->SetInsideValue(1);
   thresh->SetOutsideValue(0);
-  thresh->ThresholdBelow(0);
-  thresh->ThresholdAbove(1);
   thresh->Update();
 
   auto cast = itk::CastImageFilter<IsolateType, ImageType>::New();

@@ -9,6 +9,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+#include <cstdint>
 #include <limits>
 
 #include "Region.h"
@@ -207,8 +208,9 @@ class Image {
   /// sets the coordinate system in which this image lives in physical space
   Image& setCoordsys(ImageType::DirectionType coordsys);
 
-  /// isolate the largest object in a binary segmentation
-  Image& isolate();
+  /// isolate objects in a binary segmentation. By default (minimum_size == 0) only the single largest
+  /// object is kept; if minimum_size > 0, every connected component with at least that many voxels is kept.
+  Image& isolate(int64_t minimum_size = 0);
 
   // query functions //
 
