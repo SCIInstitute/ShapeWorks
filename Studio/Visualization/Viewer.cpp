@@ -1,5 +1,6 @@
 // vtk
 #include <vtkArrowSource.h>
+#include <vtkCamera.h>
 #include <vtkCell.h>
 #include <vtkCellPicker.h>
 #include <vtkColorSeries.h>
@@ -888,6 +889,48 @@ void Viewer::reset_camera(std::array<double, 3> c) { renderer_->ResetCamera(); }
 //-----------------------------------------------------------------------------
 void Viewer::reset_camera() {
   slice_view_.update_camera();
+  renderer_->ResetCamera();
+  renderer_->ResetCameraClippingRange();
+  renderer_->GetRenderWindow()->Render();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_orientation(ViewOrientation orientation) {
+  // Direction of projection (from the camera toward the scene) and the view-up, in world axes.
+  // Anatomical labels assume the medical convention +X=Left, +Y=Posterior, +Z=Superior.
+  double dir[3] = {0, 0, 0};
+  double up[3] = {0, 0, 1};
+  switch (orientation) {
+    case ViewOrientation::Anterior:   // look from the front (-Y) toward +Y
+      dir[1] = 1;
+      break;
+    case ViewOrientation::Posterior:  // look from behind (+Y) toward -Y
+      dir[1] = -1;
+      break;
+    case ViewOrientation::Left:       // look from the left (+X) toward -X
+      dir[0] = -1;
+      break;
+    case ViewOrientation::Right:      // look from the right (-X) toward +X
+      dir[0] = 1;
+      break;
+    case ViewOrientation::Superior:   // look down from the top (+Z), anterior toward the top of the screen
+      dir[2] = -1;
+      up[1] = -1;
+      up[2] = 0;
+      break;
+    case ViewOrientation::Inferior:   // look up from below (-Z)
+      dir[2] = 1;
+      up[1] = 1;
+      up[2] = 0;
+      break;
+  }
+
+  auto camera = renderer_->GetActiveCamera();
+  camera->SetPosition(0, 0, 0);
+  camera->SetFocalPoint(dir[0], dir[1], dir[2]);
+  camera->SetViewUp(up[0], up[1], up[2]);
+  // ResetCamera keeps the direction of projection and view-up we just set, repositioning the
+  // camera to fit all visible props.
   renderer_->ResetCamera();
   renderer_->ResetCameraClippingRange();
   renderer_->GetRenderWindow()->Render();

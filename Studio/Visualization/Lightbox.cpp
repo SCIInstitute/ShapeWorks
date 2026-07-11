@@ -96,6 +96,14 @@ void Lightbox::reset_camera() {
 }
 
 //-----------------------------------------------------------------------------
+void Lightbox::set_orientation(ViewOrientation orientation) {
+  for (int i = 0; i < viewers_.size(); i++) {
+    viewers_[i]->set_orientation(orientation);
+  }
+  redraw();
+}
+
+//-----------------------------------------------------------------------------
 void Lightbox::reset_camera_clipping_range() {
   vtkBoundingBox bbox;
   for (int i = 0; i < viewers_.size(); i++) {

@@ -3,13 +3,16 @@
 #include <iostream>
 
 // qt
+#include <QAction>
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QMenu>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QProcess>
 #include <QPushButton>
 #include <QTextStream>
+#include <QToolButton>
 #include <QWidgetAction>
 
 // vtk
@@ -66,6 +69,47 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_ = new Ui_ShapeWorksStudioApp;
   ui_->setupUi(this);
   setAcceptDrops(true);
+
+  // populate the "Views" dropdown for snapping the 3D camera to axis-aligned orientations. The item
+  // labels follow the orientation-marker preference: anatomical names when the medical cube is shown,
+  // axis labels (X+/X-/...) for the triad marker or when no marker is shown.
+  {
+    struct ViewItem {
+      QString anatomical;
+      QString axis;
+      QString key;  // matching keyboard shortcut, shown as a hint in the menu
+      ViewOrientation orientation;
+    };
+    const std::vector<ViewItem> views = {
+        {tr("Left"), "X+", "x", ViewOrientation::Left},
+        {tr("Right"), "X-", "Shift+X", ViewOrientation::Right},
+        {tr("Posterior"), "Y+", "y", ViewOrientation::Posterior},
+        {tr("Anterior"), "Y-", "Shift+Y", ViewOrientation::Anterior},
+        {tr("Superior"), "Z+", "z", ViewOrientation::Superior},
+        {tr("Inferior"), "Z-", "Shift+Z", ViewOrientation::Inferior},
+    };
+    auto view_menu = new QMenu(ui_->view_direction_button);
+    for (const auto& view : views) {
+      ViewOrientation orientation = view.orientation;
+      connect(view_menu->addAction(view.anatomical), &QAction::triggered, this, [this, orientation]() {
+        if (lightbox_) {
+          lightbox_->set_orientation(orientation);
+        }
+      });
+    }
+    ui_->view_direction_button->setMenu(view_menu);
+    // open the menu when the button body (not just the dropdown arrow) is clicked
+    connect(ui_->view_direction_button, &QToolButton::clicked, ui_->view_direction_button, &QToolButton::showMenu);
+    // relabel the items to match the current orientation-marker preference each time the menu opens
+    connect(view_menu, &QMenu::aboutToShow, this, [this, view_menu, views]() {
+      bool anatomical = preferences_.get_orientation_marker_type() == Preferences::OrientationMarkerType::medical;
+      auto actions = view_menu->actions();
+      for (int i = 0; i < actions.size() && i < static_cast<int>(views.size()); i++) {
+        QString label = anatomical ? views[i].anatomical : views[i].axis;
+        actions[i]->setText(label + "  (" + views[i].key + ")");
+      }
+    });
+  }
 
   status_bar_ = new StatusBarWidget(this);
   connect(status_bar_, &StatusBarWidget::toggle_log_window, this, &ShapeWorksStudioApp::toggle_log_window);

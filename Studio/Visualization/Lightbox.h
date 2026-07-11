@@ -80,6 +80,9 @@ class Lightbox : public QObject {
 
   void reset_camera();
 
+  //! Snap every viewer's camera to an axis-aligned (anatomical) orientation
+  void set_orientation(ViewOrientation orientation);
+
   void reset_camera_clipping_range();
 
   void set_orientation_marker(Preferences::OrientationMarkerType type, Preferences::OrientationMarkerCorner corner);

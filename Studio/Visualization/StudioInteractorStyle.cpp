@@ -79,9 +79,29 @@ void StudioInteractorStyle::OnKeyDown() {
     case 'r':
       this->lightbox_->reset_camera();
       break;
+
+    // snap the 3D view to an axis-aligned orientation (lower-case = +axis, shift = -axis)
+    case 'x':
+      this->lightbox_->set_orientation(ViewOrientation::Left);  // X+
+      break;
+    case 'X':
+      this->lightbox_->set_orientation(ViewOrientation::Right);  // X-
+      break;
+    case 'y':
+      this->lightbox_->set_orientation(ViewOrientation::Posterior);  // Y+
+      break;
+    case 'Y':
+      this->lightbox_->set_orientation(ViewOrientation::Anterior);  // Y-
+      break;
+    case 'z':
+      this->lightbox_->set_orientation(ViewOrientation::Superior);  // Z+
+      break;
+    case 'Z':
+      this->lightbox_->set_orientation(ViewOrientation::Inferior);  // Z-
+      break;
   }
 
-  if (keysym == "Up" | keysym == "Down") {
+  if (keysym == "Up" || keysym == "Down") {
     lightbox_->handle_key(click_pos, keysym);
   }
 
