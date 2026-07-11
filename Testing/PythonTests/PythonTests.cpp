@@ -90,6 +90,10 @@ TEST(pythonTests, medianShapeTest) {
   run_test("median.py");
 }
 
+TEST(pythonTests, getShapesTest) {
+  run_test("get_shapes.py");
+}
+
 TEST(pythonTests, meshInfoTest) {
   run_test("meshinfo.py");
 }
