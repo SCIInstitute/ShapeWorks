@@ -3883,6 +3883,8 @@
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">subject_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
 <span class="p">};</span>
 
+<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ViewOrientation</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Anterior</span><span class="p">,</span><span class="w"> </span><span class="n">Posterior</span><span class="p">,</span><span class="w"> </span><span class="n">Left</span><span class="p">,</span><span class="w"> </span><span class="n">Right</span><span class="p">,</span><span class="w"> </span><span class="n">Superior</span><span class="p">,</span><span class="w"> </span><span class="n">Inferior</span><span class="w"> </span><span class="p">};</span>
+
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Viewer</span><span class="w"> </span><span class="p">{</span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
@@ -3898,6 +3900,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_viewer</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_orientation</span><span class="p">(</span><span class="n">ViewOrientation</span><span class="w"> </span><span class="n">orientation</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_color_series</span><span class="p">(</span><span class="n">ColorMap</span><span class="w"> </span><span class="n">color_series</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_size_and_quality</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">quality</span><span class="p">);</span>
@@ -4093,7 +4097,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-10 at 21:10:04 +0000</p>
+<p>Updated on 2026-07-11 at 15:18:26 +0000</p>
 
 
 

@@ -3835,6 +3835,7 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
 
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cstdint&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;limits&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Region.h&quot;</span>
@@ -3971,7 +3972,7 @@
 
 <span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">setCoordsys</span><span class="p">(</span><span class="n">ImageType</span><span class="o">::</span><span class="n">DirectionType</span><span class="w"> </span><span class="n">coordsys</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">isolate</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">isolate</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">minimum_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// query functions //</span>
 
@@ -4045,7 +4046,9 @@
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;nrrd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;nii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;nii.gz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mhd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tiff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;jpeg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;jpg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;png&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dcm&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ima&quot;</span><span class="p">};</span>
 <span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isSupportedType</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getDICOMSeriesUIDs</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isSupportedType</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Image</span><span class="o">::</span><span class="n">getSupportedTypes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">hasSuffix</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
@@ -4092,7 +4095,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-10 at 21:10:04 +0000</p>
+<p>Updated on 2026-07-11 at 15:18:26 +0000</p>
 
 
 

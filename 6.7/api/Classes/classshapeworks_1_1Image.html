@@ -4719,6 +4719,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-getdicomseriesuids" class="md-nav__link">
+    <span class="md-ellipsis">
+      function getDICOMSeriesUIDs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-issupportedtype" class="md-nav__link">
     <span class="md-ellipsis">
       function isSupportedType
@@ -5069,7 +5078,7 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Image.html#function-isolate">isolate</a></strong>()<br>isolate the largest object in a binary segmentation</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-isolate">isolate</a></strong>(int64_t minimum_size =0)</td>
 </tr>
 <tr>
 <td>Dims</td>
@@ -5202,6 +5211,10 @@
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-getsupportedtypes">getSupportedTypes</a></strong>()<br>Return supported file types.</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-getdicomseriesuids">getDICOMSeriesUIDs</a></strong>(const std::string &amp; pathname)<br>Return the DICOM series UIDs found in the given directory.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -5645,9 +5658,11 @@
 </code></pre></div>
 <p>sets the coordinate system in which this image lives in physical space </p>
 <h3 id="function-isolate">function isolate</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">isolate</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">isolate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">minimum_size</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
-<p>isolate the largest object in a binary segmentation </p>
+<p>isolate objects in a binary segmentation. By default (minimum_size == 0) only the single largest object is kept; if minimum_size &gt; 0, every connected component with at least that many voxels is kept. </p>
 <h3 id="function-dims">function dims</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -5820,6 +5835,12 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span>
 </code></pre></div>
 <p>Return supported file types. </p>
+<h3 id="function-getdicomseriesuids">function getDICOMSeriesUIDs</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getDICOMSeriesUIDs</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Return the DICOM series UIDs found in the given directory. </p>
 <h3 id="function-issupportedtype">function isSupportedType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isSupportedType</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
@@ -5833,7 +5854,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-10 at 21:10:03 +0000</p>
+<p>Updated on 2026-07-11 at 15:18:26 +0000</p>
 
 
 
