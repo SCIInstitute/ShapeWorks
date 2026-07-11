@@ -750,6 +750,7 @@ QToolBar QToolButton::checked {
      </property>
      <addaction name="action_export_current_mesh"/>
      <addaction name="action_export_current_mesh_clipped"/>
+     <addaction name="action_export_all_meshes"/>
      <addaction name="action_export_current_particles"/>
      <addaction name="action_export_particle_scalars"/>
      <addaction name="action_export_mesh_scalars"/>
@@ -1135,6 +1136,11 @@ QToolBar QToolButton::checked {
   <action name="action_export_current_mesh">
    <property name="text">
     <string>Export Current Mesh...</string>
+   </property>
+  </action>
+  <action name="action_export_all_meshes">
+   <property name="text">
+    <string>Export All Meshes...</string>
    </property>
   </action>
   <action name="action_export_mesh_scalars">
