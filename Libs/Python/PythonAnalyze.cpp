@@ -29,6 +29,19 @@ void define_python_analyze(py::module_ m) {
              auto particles = analyze.get_mean_shape_points();
              return particles.get_combined_global_particles();
            })
+      .def("get_median_shape_points",
+           [](Analyze& analyze) -> decltype(auto) {
+             auto particles = analyze.get_median_shape_points();
+             return particles.get_combined_global_particles();
+           })
+      .def("get_median_shape",
+           [](Analyze& analyze) {
+             auto mesh_group = analyze.get_median_shape()->get_reconstructed_meshes(true);
+             if (!mesh_group.valid()) {
+               throw std::runtime_error("Invalid mesh group");
+             }
+             return Mesh(mesh_group.meshes()[0]->get_poly_data());
+           })
       .def("get_shape_points", &Analyze::get_shape_points)
       .def("get_mode_shape", &Analyze::get_mode_shape)
       .def("groups_active", &Analyze::groups_active)

@@ -45,6 +45,12 @@ class Analyze {
   /// Return the mean shape
   ShapeHandle get_mean_shape();
 
+  /// Return the median shape (the sample with minimum L1 distance to all others) as particle points
+  Particles get_median_shape_points();
+
+  /// Return the median shape as a reconstructed mesh
+  ShapeHandle get_median_shape();
+
   Particles get_group_shape_particles(double ratio);
   ShapeHandle get_group_shape(double ratio);
 
