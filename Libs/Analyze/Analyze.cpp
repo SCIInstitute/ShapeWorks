@@ -349,6 +349,30 @@ ShapeHandle Analyze::get_mean_shape() {
 }
 
 //---------------------------------------------------------------------------
+Particles Analyze::get_median_shape_points() {
+  SW_DEBUG("get_median_shape_points");
+  if (!compute_stats()) {
+    return Particles();
+  }
+
+  int median = stats_.compute_median_shape(-32);  // -32 = median over all shapes (both groups)
+  auto shapes = get_shapes();
+  if (median < 0 || median >= static_cast<int>(shapes.size())) {
+    SW_ERROR("Unable to compute median shape, stats returned an invalid median index");
+    return Particles();
+  }
+
+  return shapes[median]->get_particles();
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle Analyze::get_median_shape() {
+  SW_DEBUG("get_median_shape");
+  auto shape_points = get_median_shape_points();
+  return create_shape_from_points(shape_points);
+}
+
+//---------------------------------------------------------------------------
 Particles Analyze::get_shape_points(int mode, double value) {
   if (!compute_stats() || stats_.get_eigen_vectors().size() <= 1) {
     return Particles();
