@@ -513,6 +513,29 @@ TEST(OptimizeTests, contour_domain_test) {
 }
 
 //---------------------------------------------------------------------------
+// #2377: a contour stored as a VTK polyline (a single line cell with more than two points)
+// was misdetected as a mesh and crashed optimization. Verify it is treated as a contour
+// and optimizes successfully.
+TEST(OptimizeTests, contour_polyline_test) {
+  prep_temp("/optimize/contour_polyline", "contour_polyline");
+
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.swproj"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  ASSERT_TRUE(app.Run());
+
+  // each polyline domain should be treated as a contour and receive the requested particles
+  auto ps = app.GetSampler()->GetParticleSystem();
+  ASSERT_EQ(ps->GetNumberOfDomains(), 3);
+  for (size_t d = 0; d < ps->GetNumberOfDomains(); d++) {
+    EXPECT_EQ(ps->GetDomain(d)->GetDomainType(), DomainType::Contour);
+    EXPECT_EQ(ps->GetPositions(d)->GetSize(), 16);
+  }
+}
+
+//---------------------------------------------------------------------------
 TEST(OptimizeTests, procrustes_disabled_test) {
   prep_temp("/optimize/procrustes", "procrustes_disabled_test");
 
