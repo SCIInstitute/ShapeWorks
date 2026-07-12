@@ -561,6 +561,39 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   }
 
   if (project_->get_fixed_subjects_present()) {
+    // #2192: fixed-domain particles are pre-optimized and are not re-split during
+    // optimization, so the requested number of particles must match the existing
+    // (original) particle count.  A mismatch otherwise silently produces a broken
+    // model, so reject the inconsistent configuration up front.
+    auto requested = get_number_of_particles();
+    for (const auto& s : subjects) {
+      if (!s->is_fixed()) {
+        continue;
+      }
+      const auto& particle_files = s->get_local_particle_filenames();
+      for (int d = 0; d < domains_per_shape; d++) {
+        if (d >= static_cast<int>(particle_files.size())) {
+          continue;  // missing particle files are reported elsewhere
+        }
+        int expected = 0;
+        if (requested.size() == static_cast<size_t>(domains_per_shape)) {
+          expected = requested[d];
+        } else if (requested.size() == 1) {
+          expected = requested[0];
+        } else {
+          continue;  // parameter/domain count mismatch is reported by the optimizer
+        }
+        int actual = static_cast<int>(read_particles_as_vector(particle_files[d]).size());
+        if (actual != expected) {
+          throw std::invalid_argument(
+              "Fixed domain particle count mismatch: subject '" + s->get_display_name() + "' domain " +
+              std::to_string(d) + " has " + std::to_string(actual) + " particles, but number_of_particles is set to " +
+              std::to_string(expected) +
+              ". When using fixed domains, the number of particles must match the original model.");
+        }
+      }
+    }
+
     int idx = 0;
     std::vector<int> fixed_domains;
 

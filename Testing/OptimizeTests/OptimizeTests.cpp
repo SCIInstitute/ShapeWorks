@@ -173,6 +173,25 @@ TEST(OptimizeTests, fixed_domain) {
 }
 
 //---------------------------------------------------------------------------
+// #2192: when using fixed domains, the requested number of particles must match
+// the existing (original) particle count.  A mismatch should be reported as an
+// error rather than silently producing a broken model.
+TEST(OptimizeTests, fixed_domain_particle_count_mismatch) {
+  prep_temp("/optimize/fixed_domain", "fixed_domain_particle_count_mismatch");
+
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.swproj"));
+  OptimizeParameters params(project);
+
+  // the fixed shapes have 32 particles; request a different count
+  params.set_number_of_particles({64});
+
+  // set_up_optimize should refuse the inconsistent configuration
+  EXPECT_THROW(params.set_up_optimize(&app), std::invalid_argument);
+}
+
+//---------------------------------------------------------------------------
 TEST(OptimizeTests, fixed_domain_procrustes) {
   prep_temp("/optimize/fixed_domain", "fixed_domain_procrustes");
 
