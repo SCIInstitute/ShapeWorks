@@ -91,6 +91,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_actionExport_PCA_Mode_Points_triggered();
   void on_action_preferences_triggered();
   void action_export_current_mesh_triggered(int index = 0, bool clip_constraints = false);
+  void on_action_export_all_meshes_triggered();
   void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();

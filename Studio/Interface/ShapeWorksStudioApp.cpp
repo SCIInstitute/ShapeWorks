@@ -535,6 +535,7 @@ void ShapeWorksStudioApp::disable_all_actions() {
   ui_->action_save_project->setEnabled(false);
   ui_->menu_save_project_as->setEnabled(false);
   ui_->actionExport_PCA_Mesh->setEnabled(false);
+  ui_->action_export_all_meshes->setEnabled(false);
   ui_->actionExport_Eigenvalues->setEnabled(false);
   ui_->actionExport_Eigenvectors->setEnabled(false);
   ui_->actionExport_PCA_Mode_Points->setEnabled(false);
@@ -572,6 +573,7 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   ui_->action_save_project->setEnabled(save_enabled);
   ui_->menu_save_project_as->setEnabled(true);
   ui_->actionExport_PCA_Mesh->setEnabled(analysis_ready);
+  ui_->action_export_all_meshes->setEnabled(analysis_ready);
   ui_->actionExport_Eigenvalues->setEnabled(analysis_ready);
   ui_->actionExport_Eigenvectors->setEnabled(analysis_ready);
   ui_->actionExport_PCA_Mode_Points->setEnabled(analysis_ready);
@@ -1720,6 +1722,55 @@ void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index, bool c
       SW_MESSAGE("Wrote: " + name.toStdString());
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_export_all_meshes_triggered() {
+  auto shapes = session_->get_shapes();
+  if (shapes.empty()) {
+    SW_ERROR("No meshes to export");
+    return;
+  }
+
+  QString filename =
+      ExportUtils::get_save_filename(this, tr("Export All Meshes"), ExportUtils::get_mesh_file_filter(), ".vtk");
+  if (filename.isEmpty()) {
+    return;
+  }
+
+  // the chosen filename is used as a prefix; each subject's mesh is written as <base>_<subject>.<ext>
+  // (matching Export All Subjects Particle Scalars)
+  QFileInfo fi(filename);
+  QString base = fi.path() + QDir::separator() + fi.completeBaseName();
+  QString suffix = fi.completeSuffix();
+  auto domain_names = session_->get_project()->get_domain_names();
+  bool multi_domain = domain_names.size() > 1;
+
+  int count = 0;
+  for (auto& shape : shapes) {
+    // the reconstructed meshes are the per-subject shape-model meshes (one per domain)
+    auto mesh_group = shape->get_reconstructed_meshes(true);
+    if (!mesh_group.valid()) {
+      SW_ERROR("Unable to export mesh for " + shape->get_display_name() + ": not ready");
+      return;
+    }
+    auto meshes = mesh_group.meshes();
+    QString subject = QString::fromStdString(shape->get_display_name());
+    for (int domain = 0; domain < static_cast<int>(meshes.size()); domain++) {
+      QString name = base + "_" + subject;
+      if (multi_domain) {
+        name += "_" + QString::fromStdString(domain_names[domain]);
+      }
+      name += "." + suffix;
+
+      if (!StudioUtils::write_mesh(meshes[domain]->get_poly_data(), name)) {
+        return;
+      }
+      SW_MESSAGE("Wrote: " + name.toStdString());
+      count++;
+    }
+  }
+  SW_MESSAGE("Exported " + std::to_string(count) + " meshes");
 }
 
 //---------------------------------------------------------------------------
