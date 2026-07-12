@@ -52,6 +52,43 @@ TEST(ProjectTests, conversion_to_json_test) {
 }
 
 //---------------------------------------------------------------------------
+// #1985: columns that are blank for every subject (e.g. an orphan "world_particles_ghost"
+// header left over from a copy/pasted spreadsheet) should be ignored, not turned into a
+// phantom domain or a blank file read.
+TEST(ProjectTests, ignore_blank_columns_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/project", "project_ignore_blank_columns_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("ignore_blank_columns.swproj");
+
+  // the all-blank "ghost" domain should be dropped, leaving only the real domains
+  auto domain_names = project->get_domain_names();
+  ASSERT_EQ(domain_names.size(), 2);
+  EXPECT_EQ(domain_names[0], "femur");
+  EXPECT_EQ(domain_names[1], "pelvis");
+
+  auto subjects = project->get_subjects();
+  ASSERT_EQ(subjects.size(), 2);
+  for (auto& subject : subjects) {
+    EXPECT_EQ(subject->get_number_of_domains(), 2);
+
+    // no blank filenames should be produced from the ghost columns
+    EXPECT_EQ(subject->get_original_filenames().size(), 2);
+    EXPECT_EQ(subject->get_groomed_filenames().size(), 2);
+    EXPECT_EQ(subject->get_local_particle_filenames().size(), 2);
+    ASSERT_EQ(subject->get_world_particle_filenames().size(), 2);
+    for (const auto& filename : subject->get_world_particle_filenames()) {
+      EXPECT_FALSE(filename.empty());
+    }
+
+    // the all-blank extra column should be ignored
+    EXPECT_EQ(subject->get_extra_values().count("custom_blank"), 0u);
+    // the populated group column is preserved
+    EXPECT_EQ(subject->get_group_values().count("side"), 1u);
+  }
+}
+
+//---------------------------------------------------------------------------
 TEST(ProjectTests, conversion_to_excel_test) {
   TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/project", "project_convert_to_excel_test");
 
