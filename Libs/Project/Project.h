@@ -83,6 +83,12 @@ class Project {
 
   void update_subjects();
 
+  //! Clear the local and world particle filenames for all non-fixed subjects.
+  /*! Used when an optimization fails or is aborted so that the project isn't left
+   *  referencing particle files that were never written (#2455). Fixed subjects
+   *  keep their filenames since those particles are pre-existing inputs. */
+  void clear_particle_filenames();
+
   //! Return if originals are present
   bool get_originals_present() const;
 

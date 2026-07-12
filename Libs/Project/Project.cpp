@@ -191,6 +191,18 @@ void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects
 }
 
 //---------------------------------------------------------------------------
+void Project::clear_particle_filenames() {
+  for (auto& subject : subjects_) {
+    if (subject->is_fixed()) {
+      continue;  // fixed subjects' particles are pre-existing inputs, not optimize outputs
+    }
+    subject->set_local_particle_filenames({});
+    subject->set_world_particle_filenames({});
+  }
+  update_subjects();
+}
+
+//---------------------------------------------------------------------------
 void Project::update_subjects() {
   originals_present_ = false;
   groomed_present_ = false;
