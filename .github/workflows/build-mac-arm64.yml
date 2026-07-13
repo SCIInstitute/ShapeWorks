@@ -58,7 +58,7 @@ jobs:
       uses: actions/cache/restore@v4
       with:
         path: /Users/runner/install
-        key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'build_dependencies.sh') }}
 
     - name: Build Dependencies
       if: steps.cache-deps-restore.outputs.cache-hit != 'true'
@@ -70,7 +70,7 @@ jobs:
       uses: actions/cache/save@v4
       with:
         path: /Users/runner/install
-        key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-arm64-deps-osx${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'build_dependencies.sh') }}
 
     # Rewrite SDK-versioned libiconv.tbd/libm.tbd paths that ITK hardcodes to -l flags, so the
     # cached dependencies keep linking after a runner Xcode/SDK bump. See issue #2570.
