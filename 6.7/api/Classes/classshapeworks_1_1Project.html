@@ -3939,6 +3939,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-clear_particle_filenames" class="md-nav__link">
+    <span class="md-ellipsis">
+      function clear_particle_filenames
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_originals_present" class="md-nav__link">
     <span class="md-ellipsis">
       function get_originals_present
@@ -4290,6 +4299,10 @@
 <td><strong><a href="classshapeworks_1_1Project.html#function-update-subjects">update_subjects</a></strong>()</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-clear-particle-filenames">clear_particle_filenames</a></strong>()<br>Clear the local and world particle filenames for all non-fixed subjects.</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-originals-present">get_originals_present</a></strong>() const<br>Return if originals are present.</td>
 </tr>
@@ -4488,6 +4501,11 @@
 <h3 id="function-update_subjects">function update_subjects</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_subjects</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-clear_particle_filenames">function clear_particle_filenames</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_particle_filenames</span><span class="p">()</span>
+</code></pre></div>
+<p>Clear the local and world particle filenames for all non-fixed subjects. </p>
+<p>Used when an optimization fails or is aborted so that the project isn't left referencing particle files that were never written (#2455). Fixed subjects keep their filenames since those particles are pre-existing inputs. </p>
 <h3 id="function-get_originals_present">function get_originals_present</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_originals_present</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -4626,7 +4644,7 @@
 </code></pre></div>
 <p>Get the groomed domain types. </p>
 <hr />
-<p>Updated on 2026-07-12 at 18:22:40 +0000</p>
+<p>Updated on 2026-07-13 at 05:29:25 +0000</p>
 
 
 
