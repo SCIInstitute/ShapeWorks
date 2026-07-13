@@ -16,6 +16,9 @@ env:
   BUILD_TYPE: Debug
   SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
   CACHE_HOST: ${{ secrets.SSH_HOST }}
+  CCACHE_DIR: /github/home/.ccache
+  CCACHE_MAXSIZE: "500M"
+  CCACHE_COMPRESS: "true"
 #  LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
 
 concurrency:
@@ -68,7 +71,7 @@ jobs:
       uses: actions/cache/restore@v4
       with:
         path: /github/home/install
-        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'build_dependencies.sh') }}
 
     - name: Check space3.5
       run: df -h
@@ -109,7 +112,7 @@ jobs:
       uses: actions/cache/save@v4
       with:
         path: /github/home/install
-        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'python_requirements.txt', 'build_dependencies.sh') }}
+        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'build_dependencies.sh') }}
 
     - name: Check space5
       run: df -h
@@ -121,9 +124,30 @@ jobs:
     - name: Check space6
       run: df -h
 
+    - name: Restore ccache
+      uses: actions/cache/restore@v4
+      with:
+        path: /github/home/.ccache
+        key: ${{ runner.os }}-ccache-debug-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-debug-
+
     - name: make
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make -j2
+
+    - name: ccache stats
+      if: always()
+      shell: bash -l {0}
+      run: ccache -s || true
+
+    - name: Save ccache
+      if: always()
+      continue-on-error: true
+      uses: actions/cache/save@v4
+      with:
+        path: /github/home/.ccache
+        key: ${{ runner.os }}-ccache-debug-${{ github.sha }}
 
     - name: Check space7
       run: df -h
