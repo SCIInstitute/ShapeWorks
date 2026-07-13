@@ -18,6 +18,9 @@ env:
   CACHE_HOST: ${{ secrets.SSH_HOST }}
   GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
   GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
+  CCACHE_DIR: /github/home/.ccache
+  CCACHE_MAXSIZE: "500M"
+  CCACHE_COMPRESS: "true"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -95,9 +98,30 @@ jobs:
     - name: Check space5
       run: df -h
 
+    - name: Restore ccache
+      uses: actions/cache/restore@v4
+      with:
+        path: /github/home/.ccache
+        key: ${{ runner.os }}-ccache-release-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-release-
+
     - name: make
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make -j4
+
+    - name: ccache stats
+      if: always()
+      shell: bash -l {0}
+      run: ccache -s || true
+
+    - name: Save ccache
+      if: always()
+      continue-on-error: true
+      uses: actions/cache/save@v4
+      with:
+        path: /github/home/.ccache
+        key: ${{ runner.os }}-ccache-release-${{ github.sha }}
 
     - name: Install bundled Python packages
       shell: bash -l {0}
