@@ -227,6 +227,11 @@ void OptimizeTool::handle_optimize_failed() {
   optimization_is_running_ = false;
   Q_EMIT progress(100);
 
+  // The optimizer assigns output particle filenames to each subject during setup, but on
+  // failure those files are never written. Clear them so saving the project doesn't leave
+  // dangling particle references that make it unreadable on reload (#2455).
+  session_->get_project()->clear_particle_filenames();
+
   std::string duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1).toStdString();
   SW_LOG("Optimize Failed.  Duration: " + duration + " seconds");
   Q_EMIT optimize_complete();

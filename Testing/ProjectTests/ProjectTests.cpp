@@ -89,6 +89,47 @@ TEST(ProjectTests, ignore_blank_columns_test) {
 }
 
 //---------------------------------------------------------------------------
+// #2455: after a failed/aborted optimization, the project should not be left referencing
+// particle files that were never written. clear_particle_filenames() clears them for
+// non-fixed subjects (fixed subjects keep their pre-existing input particles).
+TEST(ProjectTests, clear_particle_filenames_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/project", "project_clear_particle_filenames_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("json_read.swproj");
+
+  auto& subjects = project->get_subjects();
+  ASSERT_GE(subjects.size(), 2);
+
+  // mark the first subject fixed; its particles are pre-existing inputs and must be kept
+  subjects[0]->set_fixed(true);
+  ASSERT_FALSE(subjects[1]->get_world_particle_filenames().empty());
+
+  project->clear_particle_filenames();
+
+  // the fixed subject keeps its particle filenames
+  EXPECT_FALSE(subjects[0]->get_local_particle_filenames().empty());
+  EXPECT_FALSE(subjects[0]->get_world_particle_filenames().empty());
+
+  // non-fixed subjects are cleared
+  for (size_t i = 1; i < subjects.size(); i++) {
+    EXPECT_TRUE(subjects[i]->get_local_particle_filenames().empty());
+    EXPECT_TRUE(subjects[i]->get_world_particle_filenames().empty());
+  }
+
+  // and a saved+reloaded project no longer references the missing particle files
+  project->save("cleared.swproj");
+  ProjectHandle reloaded = std::make_shared<Project>();
+  reloaded->load("cleared.swproj");
+  auto reloaded_subjects = reloaded->get_subjects();
+  ASSERT_EQ(reloaded_subjects.size(), subjects.size());
+  for (size_t i = 1; i < reloaded_subjects.size(); i++) {
+    EXPECT_TRUE(reloaded_subjects[i]->get_local_particle_filenames().empty());
+    EXPECT_TRUE(reloaded_subjects[i]->get_world_particle_filenames().empty());
+  }
+}
+
+//---------------------------------------------------------------------------
 TEST(ProjectTests, conversion_to_excel_test) {
   TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/project", "project_convert_to_excel_test");
 
