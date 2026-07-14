@@ -143,6 +143,9 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
 void OptimizeParameters::save_to_project() { project_->set_parameters(Parameters::OPTIMIZE_PARAMS, params_); }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::has_optimize_parameters() { return !params_.get_map().empty(); }
+
+//---------------------------------------------------------------------------
 std::vector<int> OptimizeParameters::get_number_of_particles() { return params_.get(Keys::number_of_particles, {128}); }
 
 //---------------------------------------------------------------------------
@@ -444,6 +447,9 @@ void OptimizeParameters::set_fixed_subjects_choice(std::string choice) {
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
+  if (!has_optimize_parameters()) {
+    SW_WARN("No optimize parameters were provided; using default values.");
+  }
   optimize->SetVerbosity(get_verbosity());
   int domains_per_shape = project_->get_number_of_domains_per_subject();
   bool normals_enabled = get_use_normals()[0];
