@@ -59,6 +59,8 @@ TEST(shapeworksTests, coverageTest) { run_test("coverage.sh"); }
 
 TEST(shapeworksTests, probeTest) { run_test("probe.sh"); }
 
+TEST(shapeworksTests, convertProjectTest) { run_test("convert-project.sh"); }
+
 TEST(shapeworksTests, compareTest) { run_test("compare.sh"); }
 
 TEST(shapeworksTests, antialiasTest) { run_test("antialias.sh"); }
