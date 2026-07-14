@@ -3,6 +3,7 @@
 #include <StringUtils.h>
 
 #include <algorithm>
+#include <set>
 
 namespace shapeworks {
 
@@ -14,7 +15,35 @@ using namespace project::types;
 ProjectReader::ProjectReader(Project& project) : project_(project) {}
 
 //---------------------------------------------------------------------------
+void ProjectReader::remove_blank_columns(StringMapList& list) {
+  // Determine which columns have a value in at least one subject.
+  std::set<std::string> non_blank;
+  for (const auto& item : list) {
+    for (const auto& [key, value] : item) {
+      if (!value.empty()) {
+        non_blank.insert(key);
+      }
+    }
+  }
+
+  // Remove columns that are blank for every subject.  Copy/pasted spreadsheets
+  // often leave an orphan header (e.g. "world_particles_femur") with no values;
+  // keeping it would create a phantom domain and blank file reads. (#1985)
+  for (auto& item : list) {
+    for (auto it = item.begin(); it != item.end();) {
+      if (non_blank.find(it->first) == non_blank.end()) {
+        it = item.erase(it);
+      } else {
+        ++it;
+      }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
 void ProjectReader::load_subjects(StringMapList list) {
+  remove_blank_columns(list);
+
   std::vector<std::shared_ptr<Subject>> subjects;
   bool first = true;
   for (auto& item : list) {

@@ -41,6 +41,10 @@ class ProjectReader {
 
   static StringList get_keys(StringMap map);
 
+  //! Remove columns that are blank for every subject (e.g. an orphaned header
+  //! left over from a copy/pasted spreadsheet).
+  static void remove_blank_columns(StringMapList &list);
+
   bool contains(StringMap map, std::string key);
 
   Project &project_;

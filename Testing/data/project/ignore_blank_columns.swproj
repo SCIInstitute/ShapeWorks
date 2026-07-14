@@ -1,0 +1,38 @@
+{
+    "data": [
+        {
+            "name": "subject_01",
+            "shape_femur": "01_femur.nrrd",
+            "shape_pelvis": "01_pelvis.ply",
+            "shape_ghost": "",
+            "groomed_femur": "groomed/01_femur_DT.nrrd",
+            "groomed_pelvis": "groomed/01_pelvis_groomed.vtk",
+            "groomed_ghost": "",
+            "local_particles_femur": "particles/01_femur_local.particles",
+            "local_particles_pelvis": "particles/01_pelvis_local.particles",
+            "local_particles_ghost": "",
+            "world_particles_femur": "particles/01_femur_world.particles",
+            "world_particles_pelvis": "particles/01_pelvis_world.particles",
+            "world_particles_ghost": "",
+            "group_side": "left",
+            "custom_blank": ""
+        },
+        {
+            "name": "subject_02",
+            "shape_femur": "02_femur.nrrd",
+            "shape_pelvis": "02_pelvis.ply",
+            "shape_ghost": "",
+            "groomed_femur": "groomed/02_femur_DT.nrrd",
+            "groomed_pelvis": "groomed/02_pelvis_groomed.vtk",
+            "groomed_ghost": "",
+            "local_particles_femur": "particles/02_femur_local.particles",
+            "local_particles_pelvis": "particles/02_pelvis_local.particles",
+            "local_particles_ghost": "",
+            "world_particles_femur": "particles/02_femur_world.particles",
+            "world_particles_pelvis": "particles/02_pelvis_world.particles",
+            "world_particles_ghost": "",
+            "group_side": "right",
+            "custom_blank": ""
+        }
+    ]
+}

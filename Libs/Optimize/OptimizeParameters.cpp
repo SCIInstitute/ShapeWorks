@@ -5,14 +5,14 @@
 #include <Mesh/MeshUtils.h>
 #include <Particles/ParticleFile.h>
 #include <Utils/StringUtils.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 #include <atomic>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <functional>
 #include <optional>
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
 
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Optimize.h"
@@ -123,7 +123,7 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::early_stopping_ema_alpha,
                                          Keys::early_stopping_enabled,
                                          Keys::early_stopping_warmup_iters,
-                                         Keys::early_stopping_enable_logging };
+                                         Keys::early_stopping_enable_logging};
 
   std::vector<std::string> to_remove;
 
@@ -886,47 +886,45 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     std::string loading_message = remeshing ? "Loading and remeshing meshes" : "Loading meshes";
     SW_PROGRESS(0, "{}: 0 / {}", loading_message, total);
 
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, mesh_work_indices.size()),
-                      [&](const tbb::blocked_range<size_t>& r) {
-                        for (size_t i = r.begin(); i < r.end(); ++i) {
-                          auto& item = work_items[mesh_work_indices[i]];
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, mesh_work_indices.size()), [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t i = r.begin(); i < r.end(); ++i) {
+            auto& item = work_items[mesh_work_indices[i]];
 
-                          // When we'll precompute geodesics on a remeshed copy, skip the (expensive)
-                          // geodesic precompute on the full-resolution surface — it's only used for
-                          // cell-locator / snap / normals / geodesic_walk, none of which need it.
-                          bool geodesics_on_main = geodesics_enabled && !remeshing;
-                          auto surface = std::make_shared<shapeworks::Surface>(
-                              item.poly_data, geodesics_on_main,
-                              static_cast<size_t>(geodesic_cache_multiplier));
+            // When we'll precompute geodesics on a remeshed copy, skip the (expensive)
+            // geodesic precompute on the full-resolution surface — it's only used for
+            // cell-locator / snap / normals / geodesic_walk, none of which need it.
+            bool geodesics_on_main = geodesics_enabled && !remeshing;
+            auto surface = std::make_shared<shapeworks::Surface>(item.poly_data, geodesics_on_main,
+                                                                 static_cast<size_t>(geodesic_cache_multiplier));
 
-                          // Create the Mesh wrapper and compute surface area
-                          auto sw_mesh = std::make_shared<Mesh>(surface->get_polydata());
-                          double surface_area = sw_mesh->getSurfaceArea();
+            // Create the Mesh wrapper and compute surface area
+            auto sw_mesh = std::make_shared<Mesh>(surface->get_polydata());
+            double surface_area = sw_mesh->getSurfaceArea();
 
-                          // Create remeshed Surface for geodesics if needed
-                          std::shared_ptr<shapeworks::Surface> geodesics_surface;
-                          if (!remeshing) {
-                            geodesics_surface = surface;
-                          } else {
-                            auto poly_copy = surface->get_polydata();
-                            Mesh mesh_copy(poly_copy);
-                            // remeshPercent takes a 0–1 fraction; project value is 0–100
-                            mesh_copy.remeshPercent(effective_remesh_percent / 100.0, 1.0);
-                            geodesics_surface = std::make_shared<shapeworks::Surface>(
-                                mesh_copy.getVTKMesh(), geodesics_enabled,
-                                static_cast<size_t>(geodesic_cache_multiplier));
-                          }
+            // Create remeshed Surface for geodesics if needed
+            std::shared_ptr<shapeworks::Surface> geodesics_surface;
+            if (!remeshing) {
+              geodesics_surface = surface;
+            } else {
+              auto poly_copy = surface->get_polydata();
+              Mesh mesh_copy(poly_copy);
+              // remeshPercent takes a 0–1 fraction; project value is 0–100
+              mesh_copy.remeshPercent(effective_remesh_percent / 100.0, 1.0);
+              geodesics_surface = std::make_shared<shapeworks::Surface>(mesh_copy.getVTKMesh(), geodesics_enabled,
+                                                                        static_cast<size_t>(geodesic_cache_multiplier));
+            }
 
-                          item.surface = surface;
-                          item.geodesics_surface = geodesics_surface;
-                          item.sw_mesh = sw_mesh;
-                          item.surface_area = surface_area;
+            item.surface = surface;
+            item.geodesics_surface = geodesics_surface;
+            item.sw_mesh = sw_mesh;
+            item.surface_area = surface_area;
 
-                          int done = ++completed;
-                          double progress = static_cast<double>(done) / static_cast<double>(total) * 100.0;
-                          SW_PROGRESS(progress, "{}: {} / {}", loading_message, done, total);
-                        }
-                      });
+            int done = ++completed;
+            double progress = static_cast<double>(done) / static_cast<double>(total) * 100.0;
+            SW_PROGRESS(progress, "{}: {} / {}", loading_message, done, total);
+          }
+        });
   }
 
   // === Phase C: Sequential registration (fast) ===
@@ -1134,14 +1132,12 @@ EarlyStoppingConfig OptimizeParameters::get_early_stopping_config() {
   config.frequency = params_.get(Keys::early_stopping_frequency, 1000);
   config.window_size = params_.get(Keys::early_stopping_window, 5);
   config.threshold = params_.get(Keys::early_stopping_threshold, 0.0001);
-  std::string strategy =
-      params_.get(Keys::early_stopping_strategy, "relative_difference");
+  std::string strategy = params_.get(Keys::early_stopping_strategy, "relative_difference");
   if (strategy == "exponential_moving_average") {
     config.strategy = EarlyStoppingStrategy::ExponentialMovingAverage;
-  } else if (strategy == "relative_difference"){
+  } else if (strategy == "relative_difference") {
     config.strategy = EarlyStoppingStrategy::RelativeDifference;
-  }
-  else {
+  } else {
     throw std::invalid_argument("Invalid strategy for early stopping " + strategy);
   }
   config.ema_alpha = params_.get(Keys::early_stopping_ema_alpha, 0.2);

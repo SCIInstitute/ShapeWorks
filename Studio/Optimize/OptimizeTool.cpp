@@ -110,7 +110,8 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->shared_boundary_weight->setToolTip("Weight of shared boundary optimization");
   ui_->sampling_scale->setToolTip("Enable sampling gradient scaling");
   ui_->sampling_auto_scale->setToolTip("Automatically scale sampling gradient based on surface area");
-  ui_->sampling_scale_value->setToolTip("Scale multiplier for sampling gradient (applied on top of auto-scale when enabled)");
+  ui_->sampling_scale_value->setToolTip(
+      "Scale multiplier for sampling gradient (applied on top of auto-scale when enabled)");
   ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
 
   // hidden for 6.5 release
