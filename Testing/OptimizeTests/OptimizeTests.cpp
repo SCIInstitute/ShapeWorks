@@ -105,6 +105,23 @@ TEST(OptimizeTests, sample) {
 }
 
 //---------------------------------------------------------------------------
+TEST(OptimizeTests, missing_optimize_parameters_test) {
+  prep_temp("/optimize/sphere", "missing_optimize_parameters");
+
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.swproj"));
+
+  // the project defines optimize parameters
+  OptimizeParameters params_with(project);
+  EXPECT_TRUE(params_with.has_optimize_parameters());
+
+  // clearing them means defaults will be used
+  project->clear_parameters(Parameters::OPTIMIZE_PARAMS);
+  OptimizeParameters params_without(project);
+  EXPECT_FALSE(params_without.has_optimize_parameters());
+}
+
+//---------------------------------------------------------------------------
 TEST(OptimizeTests, open_mesh_test) {
   prep_temp("/optimize/hemisphere", "open_mesh_test");
 

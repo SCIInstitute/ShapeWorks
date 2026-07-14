@@ -21,6 +21,9 @@ class OptimizeParameters {
   explicit OptimizeParameters(ProjectHandle project);
   void save_to_project();
 
+  //! Return whether the project supplied any optimize parameters (otherwise defaults are used).
+  bool has_optimize_parameters();
+
   std::string get_optimize_output_prefix();
   void set_optimize_output_prefix(std::string prefix);
 
