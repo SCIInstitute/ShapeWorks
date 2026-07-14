@@ -84,6 +84,17 @@ void Visualizer::update_samples() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks() {
+  // The auto glyph size can change as landmarks are placed (it is derived from the shape when
+  // there are no particles yet), so push the current value to the viewers here. Otherwise the
+  // landmark glyphs would be drawn at a stale size until some other action refreshed it. (#2276)
+  if (preferences_.get_glyph_auto_size()) {
+    double size = session_->get_auto_glyph_size();
+    double quality = std::max<double>(preferences_.get_glyph_quality(), 3);
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+      viewer->set_glyph_size_and_quality(size, quality);
+    }
+    current_glyph_size_ = size;
+  }
   Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
     viewer->update_landmarks();
   }
