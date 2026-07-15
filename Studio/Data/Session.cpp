@@ -855,6 +855,7 @@ void Session::new_plane_point(PickResult result) {
     plane.points().push_back(pos);
     planes.push_back(plane);
   }
+  update_auto_glyph_size();
   Q_EMIT planes_changed();
 }
 

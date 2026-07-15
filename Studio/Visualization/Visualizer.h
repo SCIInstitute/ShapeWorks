@@ -166,6 +166,9 @@ class Visualizer : public QObject {
  private:
   Preferences& preferences_;
 
+  //! Push the current auto glyph size to the viewers (no-op unless auto-size is on).
+  void sync_auto_glyph_size();
+
   void compute_measurements();
 
   void setup_single_selected_point_lut();
