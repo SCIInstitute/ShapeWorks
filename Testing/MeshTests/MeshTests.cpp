@@ -1,4 +1,5 @@
 #include <chrono>
+#include <fstream>
 #include <igl/point_mesh_squared_distance.h>
 
 #include "Image.h"
@@ -30,6 +31,34 @@ TEST(MeshTests, meshLocators) {
   ASSERT_TRUE(mesh2.center() != center_2);                     // function doesn't update any locators, so uses cached
   ASSERT_TRUE(mesh2.getPoint(center_id_1) == center_point_1);  // doesn't update locators
   ASSERT_TRUE(mesh2.closestPointId(center_1) == center_id_1);  // updates point locater, so noop
+}
+
+TEST(MeshTests, corruptFileThrowsTest) {
+  // A malformed VTK file (the POLYGONS size count does not match the connectivity that follows)
+  // used to be read as partial/garbage data and could crash downstream filters. Reading it should
+  // now raise an error instead. (#2048)
+  const std::string corrupt_vtk =
+      "# vtk DataFile Version 4.2\n"
+      "vtk output\n"
+      "ASCII\n"
+      "DATASET POLYDATA\n"
+      "POINTS 5 float\n"
+      "0 10 0\n"
+      "10 10 0\n"
+      "5 5 0\n"
+      "10 0 0\n"
+      "0 0 0\n"
+      "POLYGONS 2 6\n"
+      "3 0 1 2 \n"
+      "3 2 3 4 \n";
+
+  auto dir = TestUtils::Instance().get_output_dir("corrupt_file_throws_test");
+  std::string path = dir + "/corrupt.vtk";
+  std::ofstream out(path);
+  out << corrupt_vtk;
+  out.close();
+
+  ASSERT_ANY_THROW(Mesh mesh(path));
 }
 
 TEST(MeshTests, writeTest1) {
