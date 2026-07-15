@@ -1,0 +1,53 @@
+{
+  "data": [
+    {
+      "name": "c0",
+      "shape_1": "c0.vtk",
+      "groomed_1": "c0.vtk",
+      "local_particles_1": "contour_polyline_particles/c0_local.particles",
+      "world_particles_1": "contour_polyline_particles/c0_world.particles",
+      "alignment_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+      "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+    },
+    {
+      "name": "c1",
+      "shape_1": "c1.vtk",
+      "groomed_1": "c1.vtk",
+      "local_particles_1": "contour_polyline_particles/c1_local.particles",
+      "world_particles_1": "contour_polyline_particles/c1_world.particles",
+      "alignment_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+      "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+    },
+    {
+      "name": "c2",
+      "shape_1": "c2.vtk",
+      "groomed_1": "c2.vtk",
+      "local_particles_1": "contour_polyline_particles/c2_local.particles",
+      "world_particles_1": "contour_polyline_particles/c2_world.particles",
+      "alignment_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+      "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+    }
+  ],
+  "optimize": {
+    "checkpointing_interval": "0",
+    "ending_regularization": "0.100000",
+    "initial_relative_weighting": "0.010000",
+    "iterations_per_split": "100",
+    "keep_checkpoints": "0",
+    "number_of_particles": "16",
+    "optimization_iterations": "100",
+    "procrustes_interval": "0",
+    "procrustes_scaling": "false",
+    "relative_weighting": "1.000000",
+    "save_init_splits": "0",
+    "starting_regularization": "100.000000",
+    "use_normals": "0",
+    "verbosity": "0",
+    "multiscale": "false",
+    "narrow_band": "4.000000",
+    "optimize_output_prefix": "<project>_particles",
+    "procrustes": "false",
+    "use_geodesic_distance": "false",
+    "use_landmarks": "false"
+  }
+}

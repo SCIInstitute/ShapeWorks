@@ -7,6 +7,7 @@
 #include <Utils/StringUtils.h>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
+#include <vtkCellType.h>
 
 #include <atomic>
 #include <boost/algorithm/string.hpp>
@@ -850,7 +851,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           throw std::invalid_argument("Error, mesh had zero cells: " + filename);
         }
         // TODO This is a HACK for detecting contours
-        item.is_contour_hack = (pd->GetCell(0)->GetNumberOfPoints() == 2);
+        // Line cells may be plain lines (two points) or polylines (more than two points),
+        // so detect a contour by cell type rather than point count. (#2377)
+        int cell_type = pd->GetCellType(0);
+        item.is_contour_hack = (cell_type == VTK_LINE || cell_type == VTK_POLY_LINE);
         item.poly_data = pd;
       } else if (domain_type == DomainType::Contour) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());

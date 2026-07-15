@@ -1,5 +1,6 @@
 #include "ContourDomain.h"
 
+#include <vtkCellArray.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkDoubleArray.h>
 #include <numeric>
@@ -11,6 +12,39 @@ namespace shapeworks {
 
 const double epsilon = 1e-6;
 
+//---------------------------------------------------------------------------
+// VTK line cells may be polylines: a single cell with more than two points.
+// The rest of the contour code assumes two-point line cells, so split any
+// polyline cell into a series of two-point segments. (#2377)
+static vtkSmartPointer<vtkPolyData> split_polylines_into_segments(vtkSmartPointer<vtkPolyData> poly_data) {
+  bool needs_split = false;
+  for (vtkIdType i = 0; i < poly_data->GetNumberOfCells(); i++) {
+    if (poly_data->GetCell(i)->GetNumberOfPoints() != 2) {
+      needs_split = true;
+      break;
+    }
+  }
+  if (!needs_split) {
+    return poly_data;
+  }
+
+  auto segments = vtkSmartPointer<vtkCellArray>::New();
+  auto cell = vtkSmartPointer<vtkGenericCell>::New();
+  for (vtkIdType i = 0; i < poly_data->GetNumberOfCells(); i++) {
+    poly_data->GetCell(i, cell);
+    auto ids = cell->GetPointIds();
+    for (vtkIdType j = 0; j + 1 < ids->GetNumberOfIds(); j++) {
+      segments->InsertNextCell(2);
+      segments->InsertCellPoint(ids->GetId(j));
+      segments->InsertCellPoint(ids->GetId(j + 1));
+    }
+  }
+  poly_data->SetLines(segments);
+  poly_data->BuildCells();
+  poly_data->BuildLinks();
+  return poly_data;
+}
+
 void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
   this->m_FixedDomain = false;
 
@@ -19,6 +53,8 @@ void ContourDomain::SetPolyLine(vtkSmartPointer<vtkPolyData> poly_data) {
   this->poly_data_->DeepCopy(poly_data);
   this->poly_data_->BuildCells();
   this->poly_data_->BuildLinks();
+
+  split_polylines_into_segments(this->poly_data_);
 
   auto cell = vtkSmartPointer<vtkGenericCell>::New();
   for (int i = 0; i < this->poly_data_->GetNumberOfCells(); i++) {
