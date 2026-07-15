@@ -685,6 +685,31 @@ double Session::update_auto_glyph_size() {
   }
 
   if (num_particles == 0) {
+    // No optimized particles yet (e.g. only initial landmarks have been placed). Size the
+    // glyphs from the displayed shape's bounding box so they render at a sensible size on the
+    // shape, independent of how many landmarks have been placed. Without this the size fell
+    // back to a fixed value of 1, which is invisibly small on large shapes. (#2276)
+    double extent = 0;
+    auto display_mode = get_display_mode();
+    for (auto& shape : shapes_) {
+      auto meshes = shape->get_meshes(display_mode);
+      if (!meshes.valid()) {
+        continue;
+      }
+      auto poly_data = meshes.get_combined_poly_data();
+      if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
+        continue;
+      }
+      double bounds[6];
+      poly_data->GetBounds(bounds);
+      extent = std::max<double>({extent, bounds[1] - bounds[0], bounds[3] - bounds[2], bounds[5] - bounds[4]});
+    }
+    if (extent <= 0) {
+      return auto_glyph_size_;  // no mesh available yet; keep the default
+    }
+    auto_glyph_size_ = extent / 40.0;  // ~2.5% of the shape extent
+    auto_glyph_size_ = std::max<double>(0.1, auto_glyph_size_);
+    auto_glyph_size_ = std::min<double>(10.0, auto_glyph_size_);
     return auto_glyph_size_;
   }
   auto_glyph_size_ = max_range / std::sqrt(static_cast<double>(num_particles)) / 2;
