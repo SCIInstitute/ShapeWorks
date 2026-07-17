@@ -17,12 +17,14 @@
 #include <igl/principal_curvature.h>
 
 // vtk
+#include <vtkAlgorithm.h>
 #include <vtkAppendPolyData.h>
 #include <vtkButterflySubdivisionFilter.h>
 #include <vtkCenterOfMass.h>
 #include <vtkCleanPolyData.h>
 #include <vtkClipClosedSurface.h>
 #include <vtkClipPolyData.h>
+#include <vtkCommand.h>
 #include <vtkDoubleArray.h>
 #include <vtkFeatureEdges.h>
 #include <vtkFillHolesFilter.h>
@@ -76,6 +78,43 @@
 
 namespace shapeworks {
 
+namespace {
+//! Observes VTK reader error events. VTK file readers typically do not throw or set an error
+//! code on a malformed file; they emit an error event and return partial/garbage data. Capturing
+//! the event lets us turn that silent failure into a thrown exception instead of a crash.
+class MeshReadErrorObserver : public vtkCommand {
+ public:
+  static MeshReadErrorObserver* New() { return new MeshReadErrorObserver; }
+
+  void Execute(vtkObject* /*caller*/, unsigned long /*event*/, void* calldata) override {
+    had_error_ = true;
+    if (calldata) {
+      message_ = static_cast<const char*>(calldata);
+    }
+  }
+
+  bool had_error() const { return had_error_; }
+  const std::string& message() const { return message_; }
+
+ private:
+  bool had_error_ = false;
+  std::string message_;
+};
+
+//! Run a reader's pipeline and throw if it reports an error, guarding against malformed files that
+//! VTK would otherwise load as partial/corrupt data (see issue #2048).
+vtkSmartPointer<vtkPolyData> update_and_check(vtkAlgorithm* reader, const std::string& pathname) {
+  auto observer = vtkSmartPointer<MeshReadErrorObserver>::New();
+  reader->AddObserver(vtkCommand::ErrorEvent, observer);
+  reader->Update();
+  if (observer->had_error()) {
+    SW_DEBUG("VTK reader error for {}: {}", pathname, observer->message());
+    throw std::runtime_error("malformed or unreadable file");
+  }
+  return vtkPolyData::SafeDownCast(reader->GetOutputDataObject(0));
+}
+}  // namespace
+
 vtkSmartPointer<vtkPolyData> MeshReader::read(const std::string& pathname) {
   if (pathname.empty()) {
     throw std::invalid_argument("Empty pathname");
@@ -89,36 +128,31 @@ vtkSmartPointer<vtkPolyData> MeshReader::read(const std::string& pathname) {
       auto reader = vtkSmartPointer<vtkPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->SetReadAllScalars(1);
-      reader->Update();
-      return reader->GetOutput();
+      return update_and_check(reader, pathname);
     }
 
     if (StringUtils::hasSuffix(pathname, ".vtp")) {
       auto reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
-      reader->Update();
-      return reader->GetOutput();
+      return update_and_check(reader, pathname);
     }
 
     if (StringUtils::hasSuffix(pathname, ".stl")) {
       auto reader = vtkSmartPointer<vtkSTLReader>::New();
       reader->SetFileName(pathname.c_str());
-      reader->Update();
-      return reader->GetOutput();
+      return update_and_check(reader, pathname);
     }
 
     if (StringUtils::hasSuffix(pathname, ".obj")) {
       auto reader = vtkSmartPointer<vtkOBJReader>::New();
       reader->SetFileName(pathname.c_str());
-      reader->Update();
-      return reader->GetOutput();
+      return update_and_check(reader, pathname);
     }
 
     if (StringUtils::hasSuffix(pathname, ".ply")) {
       auto reader = vtkSmartPointer<vtkPLYReader>::New();
       reader->SetFileName(pathname.c_str());
-      reader->Update();
-      return reader->GetOutput();
+      return update_and_check(reader, pathname);
     }
 
     throw std::invalid_argument("Unsupported file type");
