@@ -410,11 +410,8 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::str
 
   if (params.get_remesh()) {
     auto poly_data = mesh.getVTKMesh();
-    if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+    if (poly_data->GetNumberOfCells() == 0 || MeshUtils::is_contour(poly_data)) {
       SW_DEBUG("Number of cells: {}", poly_data->GetNumberOfCells());
-      if (poly_data->GetNumberOfCells() > 0) {
-        SW_DEBUG("Number of points in first cell: {}", poly_data->GetCell(0)->GetNumberOfPoints());
-      }
       throw std::runtime_error("malformed mesh, mesh should be triangular");
     }
     int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
@@ -1108,19 +1105,15 @@ Mesh Groom::check_and_fix_mesh(Mesh& mesh, const std::string& step, const std::s
   if (poly_data->GetNumberOfCells() == 0) {
     throw std::runtime_error(fmt::format("Error in mesh, step: {}, file: {}, mesh has zero cells", step, filename));
   }
-  if (poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
-    // try cleaning the mesh
+  if (MeshUtils::is_contour(poly_data)) {
+    // mesh unexpectedly collapsed to line cells; try cleaning it
     Mesh m(poly_data);
     m.clean();
     poly_data = m.getVTKMesh();
 
-    if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+    if (poly_data->GetNumberOfCells() == 0 || MeshUtils::is_contour(poly_data)) {
       // still failed
       SW_DEBUG("Number of cells: {}", poly_data->GetNumberOfCells());
-      SW_DEBUG("Number of points in first cell: {}", poly_data->GetCell(0)->GetNumberOfPoints());
-      // write out to /tmp
-      // std::string tmpname = "/tmp/bad_mesh.vtk";
-      // MeshUtils::threadSafeWriteMesh(tmpname, mesh);
       throw std::runtime_error(
           fmt::format("Error in mesh, step: {}, file: {}, mesh has invalid cells", step, filename));
     }
