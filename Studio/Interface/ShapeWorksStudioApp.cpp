@@ -851,13 +851,13 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   widget->setLayout(layout);
 
   glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
-  glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
+  glyph_size_slider_->setValue(preferences_.get_glyph_size() / glyph_slider_world_per_unit());
   glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
   glyph_arrow_scale_->setChecked(preferences_.get_glyph_scale_arrows());
   glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
 
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
-  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size(), 'g', 3));
 
   connect(glyph_size_slider_, &CustomSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(glyph_quality_slider_, &CustomSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
@@ -896,7 +896,7 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   ui_->glyphs_visible_button->setMenu(menu);
 
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
-  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size(), 'g', 3));
 }
 
 //---------------------------------------------------------------------------
@@ -1433,6 +1433,18 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
 }
 
 //---------------------------------------------------------------------------
+double ShapeWorksStudioApp::glyph_slider_world_per_unit() {
+  // The slider spans [1, 100]. Map its full range to [0.1%, 10%] of the shape's largest dimension,
+  // so slider step = scale / 1000. When no shape is loaded, fall back to the original fixed mapping
+  // (slider 1..100 -> world 0.1..10), which matches a shape whose largest dimension is 100.
+  double scale = session_ ? session_->get_glyph_size_scale() : 0.0;
+  if (scale <= 0.0) {
+    return 0.1;
+  }
+  return scale / 1000.0;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_glyph_changed() {
   visualizer_->set_show_surface(ui_->surface_visible_button->isChecked());
   visualizer_->set_show_glyphs(ui_->glyphs_visible_button->isChecked());
@@ -1440,7 +1452,7 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
     preferences_.set_show_bounding_box(bounding_box_checkbox_->isChecked());
     visualizer_->set_show_bounding_box(bounding_box_checkbox_->isChecked());
   }
-  preferences_.set_glyph_size(glyph_size_slider_->value() / 10.0);
+  preferences_.set_glyph_size(glyph_size_slider_->value() * glyph_slider_world_per_unit());
   preferences_.set_glyph_quality(glyph_quality_slider_->value());
   preferences_.set_glyph_auto_size(glyph_auto_size_->isChecked());
   preferences_.set_glyph_scale_arrows(glyph_arrow_scale_->isChecked());
@@ -1448,12 +1460,12 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   if (glyph_auto_size_->isChecked()) {
     auto glyph_size = session_->get_auto_glyph_size();
     if (glyph_size > 0) {
-      glyph_size_slider_->setValue(glyph_size * 10.0);
+      glyph_size_slider_->setValue(glyph_size / glyph_slider_world_per_unit());
     }
   }
 
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
-  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size(), 'g', 3));
 
   std::vector<bool> domains_to_display;
   for (auto& checkbox : domain_particle_checkboxes_) {

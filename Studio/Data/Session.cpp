@@ -649,6 +649,7 @@ void Session::update_procrustes_transforms(std::vector<std::vector<std::vector<d
 //---------------------------------------------------------------------------
 double Session::update_auto_glyph_size() {
   auto_glyph_size_ = 1;
+  glyph_size_scale_ = 0;
   if (shapes_.empty()) {
     return auto_glyph_size_;
   }
@@ -707,14 +708,18 @@ double Session::update_auto_glyph_size() {
     if (extent <= 0) {
       return auto_glyph_size_;  // no mesh available yet; keep the default
     }
+    glyph_size_scale_ = extent;
     auto_glyph_size_ = extent / 40.0;  // ~2.5% of the shape extent
-    auto_glyph_size_ = std::max<double>(0.1, auto_glyph_size_);
-    auto_glyph_size_ = std::min<double>(10.0, auto_glyph_size_);
+    // Bound to [0.1%, 10%] of the shape's largest dimension so the auto size stays sensible (and
+    // within the slider range) for very small or very large shapes. (#2459)
+    auto_glyph_size_ = std::max<double>(glyph_size_scale_ / 1000.0, auto_glyph_size_);
+    auto_glyph_size_ = std::min<double>(glyph_size_scale_ / 10.0, auto_glyph_size_);
     return auto_glyph_size_;
   }
+  glyph_size_scale_ = max_range;
   auto_glyph_size_ = max_range / std::sqrt(static_cast<double>(num_particles)) / 2;
-  auto_glyph_size_ = std::max<double>(0.1, auto_glyph_size_);
-  auto_glyph_size_ = std::min<double>(10.0, auto_glyph_size_);
+  auto_glyph_size_ = std::max<double>(glyph_size_scale_ / 1000.0, auto_glyph_size_);
+  auto_glyph_size_ = std::min<double>(glyph_size_scale_ / 10.0, auto_glyph_size_);
 
   return auto_glyph_size_;
 }
@@ -945,6 +950,8 @@ Point3 Session::get_point(const Eigen::VectorXd& points, int i) {
 
 //---------------------------------------------------------------------------
 double Session::get_auto_glyph_size() { return auto_glyph_size_; }
+
+double Session::get_glyph_size_scale() { return glyph_size_scale_; }
 
 //---------------------------------------------------------------------------
 void Session::clear_particles() {

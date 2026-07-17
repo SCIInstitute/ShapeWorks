@@ -216,6 +216,11 @@ class ShapeWorksStudioApp : public QMainWindow {
   void set_message(MessageType message_type, QString message);
 
   void create_glyph_submenu();
+
+  //! World-glyph-size represented by one step of the glyph-size slider. Scales with the shape's
+  //! largest dimension so the slider's range stays useful for very small or very large shapes.
+  double glyph_slider_world_per_unit();
+
   void create_iso_submenu();
   void create_compare_submenu();
 
