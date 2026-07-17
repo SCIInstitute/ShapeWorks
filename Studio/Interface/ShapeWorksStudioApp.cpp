@@ -23,8 +23,8 @@
 // shapeworks
 #include <Applications/Configuration.h>
 #include <Logging.h>
-#include <Profiling.h>
 #include <Mesh/Mesh.h>
+#include <Profiling.h>
 #include <SurfaceReconstructor.h>
 #include <Utils/StringUtils.h>
 
@@ -939,6 +939,11 @@ void ShapeWorksStudioApp::create_iso_submenu() {
     iso_opacity_sliders_.push_back(slider);
   }
 
+  bounding_box_checkbox_ = new QCheckBox("Show bounding box", widget);
+  bounding_box_checkbox_->setChecked(preferences_.get_show_bounding_box());
+  connect(bounding_box_checkbox_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  layout->addWidget(bounding_box_checkbox_, static_cast<int>(names.size()), 0, 1, 2);
+
   QWidgetAction* widget_action = new QWidgetAction(widget);
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
@@ -1431,6 +1436,10 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
 void ShapeWorksStudioApp::handle_glyph_changed() {
   visualizer_->set_show_surface(ui_->surface_visible_button->isChecked());
   visualizer_->set_show_glyphs(ui_->glyphs_visible_button->isChecked());
+  if (bounding_box_checkbox_) {
+    preferences_.set_show_bounding_box(bounding_box_checkbox_->isChecked());
+    visualizer_->set_show_bounding_box(bounding_box_checkbox_->isChecked());
+  }
   preferences_.set_glyph_size(glyph_size_slider_->value() / 10.0);
   preferences_.set_glyph_quality(glyph_quality_slider_->value());
   preferences_.set_glyph_auto_size(glyph_auto_size_->isChecked());

@@ -62,6 +62,9 @@ class Preferences : public QObject {
   bool get_glyph_scale_arrows();
   void set_glyph_scale_arrows(bool value);
 
+  bool get_show_bounding_box();
+  void set_show_bounding_box(bool value);
+
   float get_pca_range();
   void set_pca_range(float value);
 

@@ -251,6 +251,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QLabel* glyph_quality_label_;
   QCheckBox* glyph_auto_size_;
   QCheckBox* glyph_arrow_scale_{nullptr};
+  QCheckBox* bounding_box_checkbox_{nullptr};
   QList<QAction*> recent_file_actions_;
   LogWindow log_window_;
   QPointer<StatusBarWidget> status_bar_;

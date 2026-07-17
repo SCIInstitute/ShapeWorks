@@ -114,6 +114,12 @@ bool Preferences::get_glyph_scale_arrows() { return settings_.value("Project/gly
 void Preferences::set_glyph_scale_arrows(bool value) { settings_.setValue("Project/glyph_scale_arrows", value); }
 
 //-----------------------------------------------------------------------------
+bool Preferences::get_show_bounding_box() { return settings_.value("Project/show_bounding_box", false).toBool(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_show_bounding_box(bool value) { settings_.setValue("Project/show_bounding_box", value); }
+
+//-----------------------------------------------------------------------------
 float Preferences::get_pca_range() { return settings_.value("Analysis/pca_range", 2.0).toFloat(); }
 
 //-----------------------------------------------------------------------------
