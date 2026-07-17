@@ -2,11 +2,13 @@
 #include <Visualization/StudioImageActorPointPlacer.h>
 #include <vtkArrowSource.h>
 #include <vtkBoundingBox.h>
+#include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
 #include <vtkCell.h>
 #include <vtkCellPicker.h>
 #include <vtkColorSeries.h>
 #include <vtkCornerAnnotation.h>
+#include <vtkCubeAxesActor.h>
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
 #include <vtkHandleWidget.h>
@@ -187,12 +189,48 @@ Viewer::Viewer() {
   bounding_box_actor_->GetProperty()->LightingOff();
   bounding_box_actor_->PickableOff();
 
+  // Scale bar: labeled world-coordinate tick marks along the edges of the shape's bounding box.
+  // This reads correctly in a perspective view (unlike a 2D legend scale bar). Bounds and camera
+  // are set in update_actors(). White axes/labels to match the dark viewer background.
+  scale_bar_actor_ = vtkSmartPointer<vtkCubeAxesActor>::New();
+  // Closest-triad mode draws a single ruler per axis (meeting at the corner nearest the camera).
+  // Outer-edges mode draws two rulers per axis, whose labels overlap in near-axis-aligned views.
+  scale_bar_actor_->SetFlyModeToClosestTriad();
+  scale_bar_actor_->XAxisMinorTickVisibilityOff();
+  scale_bar_actor_->YAxisMinorTickVisibilityOff();
+  scale_bar_actor_->ZAxisMinorTickVisibilityOff();
+  // Short, non-empty axis titles. Empty titles feed empty text to vtkVectorText, which errors.
+  scale_bar_actor_->SetXTitle("X");
+  scale_bar_actor_->SetYTitle("Y");
+  scale_bar_actor_->SetZTitle("Z");
+  scale_bar_actor_->GetXAxesLinesProperty()->SetColor(1.0, 1.0, 1.0);
+  scale_bar_actor_->GetYAxesLinesProperty()->SetColor(1.0, 1.0, 1.0);
+  scale_bar_actor_->GetZAxesLinesProperty()->SetColor(1.0, 1.0, 1.0);
+  for (int i = 0; i < 3; i++) {
+    scale_bar_actor_->GetLabelTextProperty(i)->SetColor(1.0, 1.0, 1.0);
+    scale_bar_actor_->GetTitleTextProperty(i)->SetColor(1.0, 1.0, 1.0);
+  }
+  scale_bar_actor_->PickableOff();
+
+  scale_bar_render_callback_ = vtkSmartPointer<vtkCallbackCommand>::New();
+  scale_bar_render_callback_->SetCallback(Viewer::on_render_start);
+  scale_bar_render_callback_->SetClientData(this);
+
   corner_annotation_ = vtkSmartPointer<vtkCornerAnnotation>::New();
   corner_annotation_->SetLinearFontScaleFactor(2);
   corner_annotation_->SetNonlinearFontScaleFactor(1);
   corner_annotation_->SetMaximumFontSize(32);
   corner_annotation_->SetMaximumLineHeight(0.03);
   corner_annotation_->SetMinimumFontSize(1);
+}
+
+//-----------------------------------------------------------------------------
+Viewer::~Viewer() {
+  // Remove the scale-bar render observer so it does not fire with a dangling 'this' after the
+  // viewer is destroyed (renderers are pooled and reused across projects).
+  if (renderer_ && scale_bar_observer_tag_) {
+    renderer_->RemoveObserver(scale_bar_observer_tag_);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -955,7 +993,19 @@ void Viewer::set_color_series(ColorMap color_series) {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_renderer(vtkSmartPointer<vtkRenderer> renderer) { renderer_ = renderer; }
+void Viewer::set_renderer(vtkSmartPointer<vtkRenderer> renderer) {
+  if (renderer_ && scale_bar_observer_tag_) {
+    renderer_->RemoveObserver(scale_bar_observer_tag_);
+    scale_bar_observer_tag_ = 0;
+  }
+  renderer_ = renderer;
+  // Recompute the scale-bar font at the start of each render so it can follow zoom (see
+  // update_scale_bar_font()). StartEvent (rather than the camera's ModifiedEvent) avoids firing
+  // re-entrantly from ResetCameraClippingRange while the renderer's transforms are mid-update.
+  if (renderer_) {
+    scale_bar_observer_tag_ = renderer_->AddObserver(vtkCommand::StartEvent, scale_bar_render_callback_);
+  }
+}
 
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkRenderer> Viewer::get_renderer() { return renderer_; }
@@ -1030,6 +1080,94 @@ void Viewer::set_show_surface(bool show) {
 void Viewer::set_show_bounding_box(bool show) {
   show_bounding_box_ = show;
   update_actors();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_show_scale_bar(bool show) {
+  show_scale_bar_ = show;
+  update_actors();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_scale_bar_font_size(double size) {
+  scale_bar_font_base_ = size;
+  update_scale_bar_font();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::on_render_start(vtkObject* /*caller*/, unsigned long /*event*/, void* client_data,
+                             void* /*call_data*/) {
+  auto* self = static_cast<Viewer*>(client_data);
+  if (self) {
+    self->update_scale_bar_font();
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_scale_bar_font() {
+  if (!show_scale_bar_ || !scale_bar_bounds_valid_ || !renderer_ || updating_scale_bar_font_) {
+    return;
+  }
+  updating_scale_bar_font_ = true;
+  int* viewport_size = renderer_->GetSize();
+  if (!viewport_size || viewport_size[0] == 0 || viewport_size[1] == 0) {
+    updating_scale_bar_font_ = false;
+    return;
+  }
+
+  // Project the 8 corners of the bounding box to screen and measure its on-screen size.
+  const double* b = scale_bar_bounds_;
+  double min_x = 1e30, min_y = 1e30, max_x = -1e30, max_y = -1e30;
+  for (int i = 0; i < 8; i++) {
+    double world[4] = {(i & 1) ? b[1] : b[0], (i & 2) ? b[3] : b[2], (i & 4) ? b[5] : b[4], 1.0};
+    renderer_->SetWorldPoint(world);
+    renderer_->WorldToDisplay();
+    double display[3];
+    renderer_->GetDisplayPoint(display);
+    min_x = std::min(min_x, display[0]);
+    max_x = std::max(max_x, display[0]);
+    min_y = std::min(min_y, display[1]);
+    max_y = std::max(max_y, display[1]);
+  }
+  double box_diagonal = std::sqrt(std::pow(max_x - min_x, 2) + std::pow(max_y - min_y, 2));
+  double viewport_diagonal = std::sqrt(std::pow(viewport_size[0], 2) + std::pow(viewport_size[1], 2));
+
+  // Scale the font by how much of the viewport the shape fills. At a fit-to-view size (~80% of the
+  // viewport) the font is the requested size; zooming out shrinks it so the labels do not collide.
+  double fraction = std::min(1.0, box_diagonal / (0.8 * viewport_diagonal));
+  double font = std::max(4.0, std::min(scale_bar_font_base_, scale_bar_font_base_ * fraction));
+  if (std::abs(font - scale_bar_actor_->GetScreenSize()) > 0.5) {
+    scale_bar_actor_->SetScreenSize(font);
+  }
+
+  // Hide the labels on any axis that is too foreshortened to hold them. When the view is rotated so
+  // one axis points nearly into the screen, its labels collapse onto each other; measure each axis's
+  // on-screen length and drop the labels on any axis much shorter than the longest one.
+  double center[3] = {(b[0] + b[1]) / 2, (b[2] + b[3]) / 2, (b[4] + b[5]) / 2};
+  auto axis_screen_length = [&](int axis) {
+    double lo[4] = {center[0], center[1], center[2], 1.0};
+    double hi[4] = {center[0], center[1], center[2], 1.0};
+    lo[axis] = b[2 * axis];
+    hi[axis] = b[2 * axis + 1];
+    double lo_display[3], hi_display[3];
+    renderer_->SetWorldPoint(lo);
+    renderer_->WorldToDisplay();
+    renderer_->GetDisplayPoint(lo_display);
+    renderer_->SetWorldPoint(hi);
+    renderer_->WorldToDisplay();
+    renderer_->GetDisplayPoint(hi_display);
+    return std::sqrt(std::pow(hi_display[0] - lo_display[0], 2) + std::pow(hi_display[1] - lo_display[1], 2));
+  };
+  double length_x = axis_screen_length(0);
+  double length_y = axis_screen_length(1);
+  double length_z = axis_screen_length(2);
+  double length_max = std::max(length_x, std::max(length_y, length_z));
+  const double min_ratio = 0.3;  // hide labels on an axis shorter than 30% of the longest axis
+  scale_bar_actor_->SetXAxisLabelVisibility(length_x >= min_ratio * length_max);
+  scale_bar_actor_->SetYAxisLabelVisibility(length_y >= min_ratio * length_max);
+  scale_bar_actor_->SetZAxisLabelVisibility(length_z >= min_ratio * length_max);
+
+  updating_scale_bar_font_ = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -1145,6 +1283,7 @@ void Viewer::update_actors() {
   renderer_->RemoveActor(arrow_glyph_actor_);
   renderer_->RemoveActor(scalar_bar_actor_);
   renderer_->RemoveActor(bounding_box_actor_);
+  renderer_->RemoveActor(scale_bar_actor_);
 
   cell_picker_->InitializePickList();
   prop_picker_->InitializePickList();
@@ -1203,7 +1342,8 @@ void Viewer::update_actors() {
     renderer_->AddActor(scalar_bar_actor_);
   }
 
-  if (show_bounding_box_) {
+  scale_bar_bounds_valid_ = false;
+  if (show_bounding_box_ || show_scale_bar_) {
     // Union the bounds of the currently-displayed geometry. Actor bounds already reflect the
     // local-to-world transform, so the box wraps the shape as it appears on screen.
     vtkBoundingBox bbox;
@@ -1217,8 +1357,18 @@ void Viewer::update_actors() {
     if (bbox.IsValid()) {
       double bounds[6];
       bbox.GetBounds(bounds);
-      bounding_box_source_->SetBounds(bounds);
-      renderer_->AddActor(bounding_box_actor_);
+      if (show_bounding_box_) {
+        bounding_box_source_->SetBounds(bounds);
+        renderer_->AddActor(bounding_box_actor_);
+      }
+      if (show_scale_bar_) {
+        scale_bar_actor_->SetBounds(bounds);
+        scale_bar_actor_->SetCamera(renderer_->GetActiveCamera());
+        std::copy(bounds, bounds + 6, scale_bar_bounds_);
+        scale_bar_bounds_valid_ = true;
+        renderer_->AddActor(scale_bar_actor_);
+        update_scale_bar_font();
+      }
     }
   }
 
