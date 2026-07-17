@@ -7,7 +7,6 @@
 #include <Utils/StringUtils.h>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
-#include <vtkCellType.h>
 
 #include <atomic>
 #include <boost/algorithm/string.hpp>
@@ -744,7 +743,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
     // For mesh domains — prepared poly_data from Phase A
     vtkSmartPointer<vtkPolyData> poly_data;
-    bool is_contour_hack = false;  // true if mesh cells have 2 points (contour detection hack)
+    bool is_contour = false;  // true if the poly_data is a contour (line cells) rather than a surface mesh
 
     // For image domains
     std::optional<Image> image;
@@ -850,11 +849,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         if (pd->GetNumberOfCells() == 0) {
           throw std::invalid_argument("Error, mesh had zero cells: " + filename);
         }
-        // TODO This is a HACK for detecting contours
-        // Line cells may be plain lines (two points) or polylines (more than two points),
-        // so detect a contour by cell type rather than point count. (#2377)
-        int cell_type = pd->GetCellType(0);
-        item.is_contour_hack = (cell_type == VTK_LINE || cell_type == VTK_POLY_LINE);
+        // Detect a contour by cell content (line cells, no faces) rather than inspecting the first
+        // cell, whose type can vary within a mesh. (#2457)
+        item.is_contour = MeshUtils::is_contour(pd);
         item.poly_data = pd;
       } else if (domain_type == DomainType::Contour) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
@@ -882,7 +879,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   std::vector<size_t> mesh_work_indices;
   for (size_t idx = 0; idx < work_items.size(); idx++) {
     auto& item = work_items[idx];
-    if (item.domain_type == DomainType::Mesh && !item.is_contour_hack && item.poly_data) {
+    if (item.domain_type == DomainType::Mesh && !item.is_contour && item.poly_data) {
       mesh_work_indices.push_back(idx);
     }
   }
@@ -951,10 +948,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     for (size_t wi_idx : si.work_item_indices) {
       auto& item = work_items[wi_idx];
 
-      if (item.domain_type == DomainType::Mesh && !item.is_contour_hack && item.poly_data) {
+      if (item.domain_type == DomainType::Mesh && !item.is_contour && item.poly_data) {
         // Use pre-built Surface data
         optimize->AddMesh(item.surface, item.geodesics_surface, item.sw_mesh, item.surface_area);
-      } else if (item.domain_type == DomainType::Mesh && item.is_contour_hack) {
+      } else if (item.domain_type == DomainType::Mesh && item.is_contour) {
         optimize->AddContour(item.poly_data);
       } else if (item.domain_type == DomainType::Contour) {
         optimize->AddContour(item.poly_data);

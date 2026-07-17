@@ -88,5 +88,10 @@ class MeshUtils {
 
     /// Repair mesh: triangulate, optionally extract largest component, clean, fix non-manifold, remove zero-area triangles
     static vtkSmartPointer<vtkPolyData> repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest = true);
+
+    /// Return true if the polydata is a contour (line cells) rather than a surface mesh (face cells).
+    /// A surface mesh has polygon or triangle-strip cells; a contour has only line cells. This is more
+    /// robust than inspecting the first cell, whose type/point-count can vary within a mesh.
+    static bool is_contour(vtkSmartPointer<vtkPolyData> poly_data);
 };
 } // namespace shapeworks

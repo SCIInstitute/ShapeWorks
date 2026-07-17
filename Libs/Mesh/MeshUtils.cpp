@@ -1153,4 +1153,15 @@ vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData>
   return final;
 }
 
+bool MeshUtils::is_contour(vtkSmartPointer<vtkPolyData> poly_data) {
+  if (!poly_data) {
+    return false;
+  }
+  // A surface mesh has 2D cells (polygons or triangle strips); a contour has only line cells.
+  if (poly_data->GetNumberOfPolys() > 0 || poly_data->GetNumberOfStrips() > 0) {
+    return false;
+  }
+  return poly_data->GetNumberOfLines() > 0;
+}
+
 }  // namespace shapeworks

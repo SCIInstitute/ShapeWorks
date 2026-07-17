@@ -1,3 +1,6 @@
+#include <vtkCellArray.h>
+#include <vtkPoints.h>
+
 #include <chrono>
 #include <fstream>
 #include <igl/point_mesh_squared_distance.h>
@@ -59,6 +62,70 @@ TEST(MeshTests, corruptFileThrowsTest) {
   out.close();
 
   ASSERT_ANY_THROW(Mesh mesh(path));
+}
+
+TEST(MeshTests, isContourTest) {
+  auto make_points = []() {
+    auto points = vtkSmartPointer<vtkPoints>::New();
+    for (int i = 0; i < 4; i++) {
+      points->InsertNextPoint(i, 0, 0);
+    }
+    return points;
+  };
+
+  // A surface mesh (two triangles) is not a contour.
+  {
+    auto pd = vtkSmartPointer<vtkPolyData>::New();
+    pd->SetPoints(make_points());
+    auto polys = vtkSmartPointer<vtkCellArray>::New();
+    vtkIdType t1[3] = {0, 1, 2};
+    vtkIdType t2[3] = {1, 2, 3};
+    polys->InsertNextCell(3, t1);
+    polys->InsertNextCell(3, t2);
+    pd->SetPolys(polys);
+    ASSERT_FALSE(MeshUtils::is_contour(pd));
+  }
+
+  // A set of line segments is a contour.
+  {
+    auto pd = vtkSmartPointer<vtkPolyData>::New();
+    pd->SetPoints(make_points());
+    auto lines = vtkSmartPointer<vtkCellArray>::New();
+    vtkIdType l1[2] = {0, 1};
+    vtkIdType l2[2] = {1, 2};
+    lines->InsertNextCell(2, l1);
+    lines->InsertNextCell(2, l2);
+    pd->SetLines(lines);
+    ASSERT_TRUE(MeshUtils::is_contour(pd));
+  }
+
+  // A single polyline (more than two points in one cell) is still a contour.
+  {
+    auto pd = vtkSmartPointer<vtkPolyData>::New();
+    pd->SetPoints(make_points());
+    auto lines = vtkSmartPointer<vtkCellArray>::New();
+    vtkIdType poly[4] = {0, 1, 2, 3};
+    lines->InsertNextCell(4, poly);
+    pd->SetLines(lines);
+    ASSERT_TRUE(MeshUtils::is_contour(pd));
+  }
+
+  // A surface mesh whose first cell is a line (mixed cells) is NOT a contour. The old
+  // first-cell heuristic misclassified this as a contour. (#2457)
+  {
+    auto pd = vtkSmartPointer<vtkPolyData>::New();
+    pd->SetPoints(make_points());
+    auto lines = vtkSmartPointer<vtkCellArray>::New();
+    vtkIdType l1[2] = {0, 1};
+    lines->InsertNextCell(2, l1);
+    pd->SetLines(lines);
+    auto polys = vtkSmartPointer<vtkCellArray>::New();
+    vtkIdType t1[3] = {0, 1, 2};
+    polys->InsertNextCell(3, t1);
+    pd->SetPolys(polys);
+    ASSERT_EQ(pd->GetCell(0)->GetNumberOfPoints(), 2);  // first cell really is the line
+    ASSERT_FALSE(MeshUtils::is_contour(pd));
+  }
 }
 
 TEST(MeshTests, writeTest1) {
