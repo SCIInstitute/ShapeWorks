@@ -2,10 +2,10 @@
 #include <GroomParameters.h>
 #include <Image/Image.h>
 #include <Logging.h>
-#include <Profiling.h>
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshUtils.h>
 #include <Optimize/Constraints/Constraints.h>
+#include <Profiling.h>
 #include <Project/ProjectUtils.h>
 #include <Utils/StringUtils.h>
 #include <Utils/Utils.h>
@@ -201,8 +201,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
     const double isovalue = (img_min >= 0.0) ? (img_min + img_max) / 2.0 : 0.0;
     Mesh mesh = image.toMesh(isovalue);
     if (mesh.numPoints() == 0) {
-      throw std::runtime_error(
-          fmt::format("Empty mesh generated from image '{}' at isovalue {}", original, isovalue));
+      throw std::runtime_error(fmt::format("Empty mesh generated from image '{}' at isovalue {}", original, isovalue));
     }
     // Check for valid cells
     auto poly_data = mesh.getVTKMesh();
