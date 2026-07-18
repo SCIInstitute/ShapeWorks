@@ -6,18 +6,18 @@
 #include <vtkCellData.h>
 #include <vtkCleanPolyData.h>
 #include <vtkDoubleArray.h>
-#include <vtkPointData.h>
-#include <vtkPolyDataConnectivityFilter.h>
-#include <vtkTriangleFilter.h>
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkLookupTable.h>
 #include <vtkNamedColors.h>
+#include <vtkPointData.h>
+#include <vtkPolyDataConnectivityFilter.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkTriangleFilter.h>
 
 #include "StringUtils.h"
 #include "Utils.h"
@@ -319,8 +319,7 @@ Mesh MeshUtils::extract_boundary_loop(Mesh mesh) {
       const double best_y = V(loop[canonical], 1);
       const double best_z = V(loop[canonical], 2);
       const double best_x = V(loop[canonical], 0);
-      if (cur_y > best_y ||
-          (cur_y == best_y && cur_z > best_z) ||
+      if (cur_y > best_y || (cur_y == best_y && cur_z > best_z) ||
           (cur_y == best_y && cur_z == best_z && cur_x > best_x)) {
         canonical = i;
       }

@@ -65,12 +65,12 @@
 #include "Image.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Logging.h"
-#include "Profiling.h"
 #include "MeshComputeThickness.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"
 #include "PreviewMeshQC/FEVTKImport.h"
+#include "Profiling.h"
 #include "StringUtils.h"
 
 // ACVD
@@ -1669,8 +1669,8 @@ MeshTransform Mesh::createRegistrationTransform(const Mesh& target, Mesh::Alignm
                                                 unsigned iterations) const {
   // Check for empty meshes before attempting ICP
   if (numPoints() == 0 || target.numPoints() == 0) {
-    SW_WARN("Cannot create registration transform: source has {} points, target has {} points",
-            numPoints(), target.numPoints());
+    SW_WARN("Cannot create registration transform: source has {} points, target has {} points", numPoints(),
+            target.numPoints());
     vtkSmartPointer<vtkMatrix4x4> identity = vtkSmartPointer<vtkMatrix4x4>::New();
     identity->Identity();
     return createMeshTransform(identity);

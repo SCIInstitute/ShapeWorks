@@ -1,5 +1,7 @@
 // vtk
+#include <Visualization/StudioImageActorPointPlacer.h>
 #include <vtkArrowSource.h>
+#include <vtkBoundingBox.h>
 #include <vtkCamera.h>
 #include <vtkCell.h>
 #include <vtkCellPicker.h>
@@ -9,10 +11,10 @@
 #include <vtkGlyph3D.h>
 #include <vtkHandleWidget.h>
 #include <vtkImageActor.h>
-#include <Visualization/StudioImageActorPointPlacer.h>
 #include <vtkImageData.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLookupTable.h>
+#include <vtkOutlineSource.h>
 #include <vtkPickingManager.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
@@ -174,6 +176,16 @@ Viewer::Viewer() {
   scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(4);
   scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
   scalar_bar_actor_->GetLabelTextProperty()->SetColor(1, 1, 1);
+
+  bounding_box_source_ = vtkSmartPointer<vtkOutlineSource>::New();
+  bounding_box_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
+  bounding_box_mapper_->SetInputConnection(bounding_box_source_->GetOutputPort());
+  bounding_box_actor_ = vtkSmartPointer<vtkActor>::New();
+  bounding_box_actor_->SetMapper(bounding_box_mapper_);
+  bounding_box_actor_->GetProperty()->SetColor(1.0, 1.0, 0.0);
+  bounding_box_actor_->GetProperty()->SetLineWidth(1.5);
+  bounding_box_actor_->GetProperty()->LightingOff();
+  bounding_box_actor_->PickableOff();
 
   corner_annotation_ = vtkSmartPointer<vtkCornerAnnotation>::New();
   corner_annotation_->SetLinearFontScaleFactor(2);
@@ -783,7 +795,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
 
         if (compare_settings.get_mean_shape_checked()) {
           auto mean_transform = visualizer_->get_transform(shape_, compare_settings.get_display_mode(),
-                                                      visualizer_->get_alignment_domain(), i);
+                                                           visualizer_->get_alignment_domain(), i);
 
           mean_transform->Inverse();
           auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
@@ -901,24 +913,24 @@ void Viewer::set_orientation(ViewOrientation orientation) {
   double dir[3] = {0, 0, 0};
   double up[3] = {0, 0, 1};
   switch (orientation) {
-    case ViewOrientation::Anterior:   // look from the front (-Y) toward +Y
+    case ViewOrientation::Anterior:  // look from the front (-Y) toward +Y
       dir[1] = 1;
       break;
     case ViewOrientation::Posterior:  // look from behind (+Y) toward -Y
       dir[1] = -1;
       break;
-    case ViewOrientation::Left:       // look from the left (+X) toward -X
+    case ViewOrientation::Left:  // look from the left (+X) toward -X
       dir[0] = -1;
       break;
-    case ViewOrientation::Right:      // look from the right (-X) toward +X
+    case ViewOrientation::Right:  // look from the right (-X) toward +X
       dir[0] = 1;
       break;
-    case ViewOrientation::Superior:   // look down from the top (+Z), anterior toward the top of the screen
+    case ViewOrientation::Superior:  // look down from the top (+Z), anterior toward the top of the screen
       dir[2] = -1;
       up[1] = -1;
       up[2] = 0;
       break;
-    case ViewOrientation::Inferior:   // look up from below (-Z)
+    case ViewOrientation::Inferior:  // look up from below (-Z)
       dir[2] = 1;
       up[1] = 1;
       up[2] = 0;
@@ -1011,6 +1023,12 @@ void Viewer::set_show_glyphs(bool show) {
 //-----------------------------------------------------------------------------
 void Viewer::set_show_surface(bool show) {
   show_surface_ = show;
+  update_actors();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_show_bounding_box(bool show) {
+  show_bounding_box_ = show;
   update_actors();
 }
 
@@ -1126,6 +1144,7 @@ void Viewer::update_actors() {
   renderer_->RemoveActor(glyph_actor_);
   renderer_->RemoveActor(arrow_glyph_actor_);
   renderer_->RemoveActor(scalar_bar_actor_);
+  renderer_->RemoveActor(bounding_box_actor_);
 
   cell_picker_->InitializePickList();
   prop_picker_->InitializePickList();
@@ -1182,6 +1201,25 @@ void Viewer::update_actors() {
 
   if ((show_glyphs_ && arrows_visible_) || showing_feature_map()) {
     renderer_->AddActor(scalar_bar_actor_);
+  }
+
+  if (show_bounding_box_) {
+    // Union the bounds of the currently-displayed geometry. Actor bounds already reflect the
+    // local-to-world transform, so the box wraps the shape as it appears on screen.
+    vtkBoundingBox bbox;
+    if (show_surface_ && meshes_.valid()) {
+      for (size_t i = 0; i < surface_actors_.size(); i++) {
+        bbox.AddBounds(surface_actors_[i]->GetBounds());
+      }
+    } else if (show_glyphs_) {
+      bbox.AddBounds(glyph_actor_->GetBounds());
+    }
+    if (bbox.IsValid()) {
+      double bounds[6];
+      bbox.GetBounds(bounds);
+      bounding_box_source_->SetBounds(bounds);
+      renderer_->AddActor(bounding_box_actor_);
+    }
   }
 
   slice_view_.update_renderer();

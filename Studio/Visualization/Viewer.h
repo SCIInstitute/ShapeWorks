@@ -16,6 +16,7 @@ class vtkCamera;
 class vtkGlyph3D;
 class vtkSphereSource;
 class vtkArrowSource;
+class vtkOutlineSource;
 class vtkTransformPolyDataFilter;
 class vtkScalarBarActor;
 class vtkCornerAnnotation;
@@ -88,6 +89,7 @@ class Viewer {
 
   void set_show_glyphs(bool show);
   void set_show_surface(bool show);
+  void set_show_bounding_box(bool show);
   void set_scale_arrows(bool scale);
 
   void update_points();
@@ -196,6 +198,7 @@ class Viewer {
 
   bool show_glyphs_ = true;
   bool show_surface_ = true;
+  bool show_bounding_box_ = false;
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;
@@ -233,6 +236,10 @@ class Viewer {
   vtkSmartPointer<vtkActor> arrow_glyph_actor_;
   vtkSmartPointer<vtkTransform> transform_180_;
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
+
+  vtkSmartPointer<vtkOutlineSource> bounding_box_source_;
+  vtkSmartPointer<vtkPolyDataMapper> bounding_box_mapper_;
+  vtkSmartPointer<vtkActor> bounding_box_actor_;
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;
 

@@ -1,20 +1,17 @@
+#include <igl/point_mesh_squared_distance.h>
 #include <vtkCellArray.h>
 #include <vtkPoints.h>
 
 #include <chrono>
 #include <fstream>
-#include <igl/point_mesh_squared_distance.h>
 
 #include "Image.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
-#include "Image.h"
-#include "ParticleSystemEvaluation.h"
 #include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 #include "Testing.h"
-
-#include <igl/point_mesh_squared_distance.h>
 
 using namespace shapeworks;
 
@@ -843,7 +840,7 @@ TEST(MeshTests, warpTest4) {
 }
 
 // This test will have to wait for #2047 to be fixed
-//TEST(MeshTests, warpTest5) {
+// TEST(MeshTests, warpTest5) {
 //  mesh_warp_test("/mesh_warp/lv_shared2.vtk", "/mesh_warp/lv_shared2.particles", "/mesh_warp/lv_shared2.particles",
 //                 "/mesh_warp/lv_shared2_baseline.vtk");
 //}
@@ -1017,11 +1014,9 @@ TEST(MeshTests, constructFromMatrixes) {
 }
 
 /*
- * Disabled due to the fact that the output of the test is not deterministic across platforms (e.g. arm64), though the output is correct
-TEST(MeshTests, sharedBoundaryExtractor) {
-  Mesh left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_l.vtk");
-  Mesh right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_r.vtk");
-  double tol = 0.001;
+ * Disabled due to the fact that the output of the test is not deterministic across platforms (e.g. arm64), though the
+output is correct TEST(MeshTests, sharedBoundaryExtractor) { Mesh left(std::string(TEST_DATA_DIR) +
+"/shared_boundary/00_l.vtk"); Mesh right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_r.vtk"); double tol = 0.001;
   std::array<Mesh, 3> output = MeshUtils::sharedBoundaryExtractor(left, right, tol);
   Mesh output_l = output[0];
   Mesh output_r = output[1];
@@ -1054,7 +1049,6 @@ TEST(MeshTests, thicknessTest) {
 }
 
 TEST(MeshTests, interpolateFieldAtPoint) {
-  
   Eigen::MatrixXd points;
   Eigen::MatrixXi faces;
 
@@ -1117,4 +1111,3 @@ TEST(MeshTests, extractLargestComponentSingleComponentTest) {
   ASSERT_EQ(femur.numPoints(), original_points);
   ASSERT_EQ(femur.numFaces(), original_faces);
 }
-
