@@ -3939,6 +3939,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-is_contour" class="md-nav__link">
+    <span class="md-ellipsis">
+      function is_contour
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-visualizevectorfieldforffcs" class="md-nav__link">
     <span class="md-ellipsis">
       function visualizeVectorFieldForFFCs
@@ -4064,6 +4073,10 @@
 <tr>
 <td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-repair-mesh">repair_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh, bool extract_largest =true)<br>Repair mesh: triangulate, optionally extract largest component, clean, fix non-manifold, remove zero-area triangles.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-is-contour">is_contour</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; poly_data)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4210,6 +4223,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Repair mesh: triangulate, optionally extract largest component, clean, fix non-manifold, remove zero-area triangles. </p>
+<h3 id="function-is_contour">function is_contour</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_contour</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Return true if the polydata is a contour (line cells) rather than a surface mesh (face cells). A surface mesh has polygon or triangle-strip cells; a contour has only line cells. This is more robust than inspecting the first cell, whose type/point-count can vary within a mesh. </p>
 <h3 id="function-visualizevectorfieldforffcs">function visualizeVectorFieldForFFCs</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">visualizeVectorFieldForFFCs</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
@@ -4224,7 +4243,7 @@
 </code></pre></div>
 <p>Used as an auxiliary function for vector field visualizations. </p>
 <hr />
-<p>Updated on 2026-07-17 at 08:49:51 +0000</p>
+<p>Updated on 2026-07-18 at 01:55:11 +0000</p>
 
 
 
