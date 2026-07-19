@@ -3963,6 +3963,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-getinitialparticlecount" class="md-nav__link">
+    <span class="md-ellipsis">
+      function GetInitialParticleCount
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-addimage" class="md-nav__link">
     <span class="md-ellipsis">
       function AddImage
@@ -4731,6 +4740,10 @@
 <td><strong><a href="classshapeworks_1_1Sampler.html#function-setinitialpoints">SetInitialPoints</a></strong>(std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; initial_points)<br>Set initial particle positions (e.g. for fixed subjects)</td>
 </tr>
 <tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-getinitialparticlecount">GetInitialParticleCount</a></strong>(int domain) const</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Sampler.html#function-addimage">AddImage</a></strong>(ImageType::Pointer image, double narrow_band, std::string name ="")</td>
 </tr>
@@ -5085,6 +5098,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set initial particle positions (e.g. for fixed subjects) </p>
+<h3 id="function-getinitialparticlecount">function GetInitialParticleCount</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetInitialParticleCount</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Return the number of particles the given domain is seeded with (from initial points or a point/landmark file), or 1 if it starts from a single seed point. </p>
 <h3 id="function-addimage">function AddImage</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddImage</span><span class="p">(</span>
 <span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
@@ -5374,7 +5393,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-19 at 03:22:26 +0000</p>
+<p>Updated on 2026-07-19 at 19:42:47 +0000</p>
 
 
 

@@ -4800,6 +4800,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-gettotalparticleiterations" class="md-nav__link">
+    <span class="md-ellipsis">
+      function GetTotalParticleIterations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-getcompletedparticleiterations" class="md-nav__link">
+    <span class="md-ellipsis">
+      function GetCompletedParticleIterations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-set_particle_format" class="md-nav__link">
     <span class="md-ellipsis">
       function set_particle_format
@@ -6421,6 +6439,14 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-updateprogress">UpdateProgress</a></strong>()</td>
 </tr>
 <tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-gettotalparticleiterations">GetTotalParticleIterations</a></strong>() const<br>Return the estimated total number of particle-iterations used for progress reporting.</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getcompletedparticleiterations">GetCompletedParticleIterations</a></strong>() const<br>Return the number of particle-iterations completed so far.</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-set-particle-format">set_particle_format</a></strong>(std::string format)</td>
 </tr>
@@ -7513,6 +7539,14 @@
 <h3 id="function-updateprogress">function UpdateProgress</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateProgress</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-gettotalparticleiterations">function GetTotalParticleIterations</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetTotalParticleIterations</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Return the estimated total number of particle-iterations used for progress reporting. </p>
+<h3 id="function-getcompletedparticleiterations">function GetCompletedParticleIterations</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetCompletedParticleIterations</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Return the number of particle-iterations completed so far. </p>
 <h3 id="function-set_particle_format">function set_particle_format</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_format</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">format</span>
@@ -7920,7 +7954,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-19 at 03:22:26 +0000</p>
+<p>Updated on 2026-07-19 at 19:42:46 +0000</p>
 
 
 

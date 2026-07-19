@@ -3838,21 +3838,21 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Mesh/Mesh.h&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;CorrespondenceMode.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;EarlyStoppingConfig.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;GradientDescentOptimizer.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Container/GenericContainerArray.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Container/MeanCurvatureContainer.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/Surface.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/CorrespondenceFunction.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/SamplingFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/DisentangledCorrespondenceFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/DualVectorFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/LegacyCorrespondenceFunction.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/SamplingFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Neighborhood/ParticleNeighborhood.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_matrix_fixed.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;EarlyStoppingConfig.h&quot;</span>
 
 <span class="c1">// Uncomment to visualize FFCs with scalar and vector fields</span>
 <span class="c1">// #define VIZFFC</span>
@@ -3910,6 +3910,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialPoints</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">initial_points</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">initial_points_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">initial_points</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetInitialParticleCount</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">AddImage</span><span class="p">(</span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
 
@@ -4011,9 +4013,7 @@
 
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DualVectorFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetLinkingFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
-<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetDisentangledEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
@@ -4163,7 +4163,7 @@
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">initial_points_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">early_stopping_config_</span><span class="p">;</span><span class="w"> </span><span class="c1">// config for early stopping</span>
+<span class="w">  </span><span class="n">EarlyStoppingConfig</span><span class="w"> </span><span class="n">early_stopping_config_</span><span class="p">;</span><span class="w">  </span><span class="c1">// config for early stopping</span>
 
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span>
 <span class="p">};</span>
@@ -4171,7 +4171,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-19 at 03:22:27 +0000</p>
+<p>Updated on 2026-07-19 at 19:42:47 +0000</p>
 
 
 
