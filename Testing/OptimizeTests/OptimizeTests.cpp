@@ -190,6 +190,27 @@ TEST(OptimizeTests, fixed_domain) {
 }
 
 //---------------------------------------------------------------------------
+// #2275: the progress/time estimate (total_particle_iterations_) assumed every domain starts from a
+// single seed particle and doubles at each split.  When a domain is seeded with initial points (as
+// with initial landmarks or fixed domains) it starts with many particles and does fewer splits, so
+// the estimate overcounted.  Verify the estimate matches the iterations actually performed, which is
+// what keeps the progress bar and time estimate accurate.
+TEST(OptimizeTests, initial_points_iteration_estimate) {
+  prep_temp("/optimize/fixed_domain", "estimate");
+
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.swproj"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  ASSERT_TRUE(app.Run());
+
+  // The accumulated iterations should exactly reach the pre-computed estimate (progress hits 100%).
+  ASSERT_GT(app.GetTotalParticleIterations(), 0);
+  ASSERT_EQ(app.GetCompletedParticleIterations(), app.GetTotalParticleIterations());
+}
+
+//---------------------------------------------------------------------------
 // #2192: when using fixed domains, the requested number of particles must match
 // the existing (original) particle count.  A mismatch should be reported as an
 // error rather than silently producing a broken model.

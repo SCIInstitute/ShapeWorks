@@ -314,6 +314,12 @@ class Optimize {
 
   void UpdateProgress();
 
+  //! Return the estimated total number of particle-iterations used for progress reporting
+  int GetTotalParticleIterations() const { return total_particle_iterations_; }
+
+  //! Return the number of particle-iterations completed so far
+  int GetCompletedParticleIterations() const { return current_particle_iterations_; }
+
   void set_particle_format(std::string format) { particle_format_ = format; }
 
  protected:

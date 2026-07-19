@@ -140,6 +140,21 @@ void Sampler::initialize_initial_positions() {
 }
 
 //---------------------------------------------------------------------------
+int Sampler::GetInitialParticleCount(int domain) const {
+  if (domain >= 0 && domain < static_cast<int>(initial_points_.size()) && !initial_points_[domain].empty()) {
+    return static_cast<int>(initial_points_[domain].size());
+  }
+  if (domain >= 0 && domain < static_cast<int>(m_PointsFiles.size()) && !m_PointsFiles[domain].empty()) {
+    try {
+      return static_cast<int>(particles::read_particles_as_vector(m_PointsFiles[domain]).size());
+    } catch (const std::exception& e) {
+      SW_WARN("Unable to read initial points file '{}' for iteration estimate: {}", m_PointsFiles[domain], e.what());
+    }
+  }
+  return 1;
+}
+
+//---------------------------------------------------------------------------
 void Sampler::InitializeOptimizationFunctions() {
   // Set the minimum neighborhood radius and maximum sigma based on the
   // domain of the 1st input image.
