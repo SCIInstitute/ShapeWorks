@@ -3957,6 +3957,8 @@
 
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_auto_glyph_size</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_glyph_size_scale</span><span class="p">();</span>
+
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="nf">get_point</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_particles</span><span class="p">();</span>
@@ -4169,6 +4171,8 @@
 
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">auto_glyph_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
 
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">glyph_size_scale_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// largest dimension of the current shapes (0 if none)</span>
+
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">active_landmark_domain_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">placing_landmark_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmark_drag_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
@@ -4199,7 +4203,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-19 at 00:18:39 +0000</p>
+<p>Updated on 2026-07-19 at 03:22:27 +0000</p>
 
 
 

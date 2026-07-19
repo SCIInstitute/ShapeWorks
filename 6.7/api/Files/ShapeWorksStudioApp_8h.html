@@ -4042,6 +4042,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_message</span><span class="p">(</span><span class="n">MessageType</span><span class="w"> </span><span class="n">message_type</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_glyph_submenu</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">glyph_slider_world_per_unit</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_iso_submenu</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_compare_submenu</span><span class="p">();</span>
 
@@ -4077,6 +4080,8 @@
 <span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_auto_size_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_arrow_scale_</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span>
 <span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">bounding_box_checkbox_</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span>
+<span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">scale_bar_checkbox_</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span>
+<span class="w">  </span><span class="n">CustomSlider</span><span class="o">*</span><span class="w"> </span><span class="n">scale_bar_font_slider_</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span>
 <span class="w">  </span><span class="n">QList</span><span class="o">&lt;</span><span class="n">QAction</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">recent_file_actions_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">LogWindow</span><span class="w"> </span><span class="n">log_window_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QPointer</span><span class="o">&lt;</span><span class="n">StatusBarWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">status_bar_</span><span class="p">;</span>
@@ -4106,7 +4111,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-19 at 00:18:40 +0000</p>
+<p>Updated on 2026-07-19 at 03:22:27 +0000</p>
 
 
 
