@@ -4,21 +4,21 @@
 #include <Mesh/Mesh.h>
 
 #include "CorrespondenceMode.h"
+#include "EarlyStoppingConfig.h"
 #include "GradientDescentOptimizer.h"
 #include "Libs/Optimize/Container/GenericContainerArray.h"
 #include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
-#include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
+#include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"
 #include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
 #include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"
 #include "ParticleSystem.h"
 #include "vnl/vnl_matrix_fixed.h"
-#include "EarlyStoppingConfig.h"
 
 // Uncomment to visualize FFCs with scalar and vector fields
 // #define VIZFFC
@@ -89,6 +89,10 @@ class Sampler {
   void SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points) {
     initial_points_ = initial_points;
   }
+
+  //! Return the number of particles the given domain is seeded with (from initial points or a
+  //! point/landmark file), or 1 if it starts from a single seed point.
+  int GetInitialParticleCount(int domain) const;
 
   void AddImage(ImageType::Pointer image, double narrow_band, std::string name = "");
 
@@ -195,9 +199,7 @@ class Sampler {
 
   const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.get(); }
 
-  const LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() const {
-    return m_EnsembleEntropyFunction.get();
-  }
+  const LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() const { return m_EnsembleEntropyFunction.get(); }
 
   const DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() const {
     return m_DisentangledEnsembleEntropyFunction.get();
@@ -348,7 +350,7 @@ class Sampler {
 
   std::vector<std::vector<itk::Point<double>>> initial_points_;
 
-  EarlyStoppingConfig early_stopping_config_; // config for early stopping
+  EarlyStoppingConfig early_stopping_config_;  // config for early stopping
 
   unsigned int m_verbosity;
 };

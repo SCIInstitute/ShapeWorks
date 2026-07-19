@@ -2092,30 +2092,44 @@ void Optimize::SetEarlyStoppingConfig(EarlyStoppingConfig config) { m_sampler->S
 void Optimize::ComputeTotalIterations() {
   total_particle_iterations_ = 0;
 
-  int highest_particle_count = *std::max_element(m_number_of_particles.begin(), m_number_of_particles.end());
+  const int domains_per_shape = static_cast<int>(m_number_of_particles.size());
 
-  int number_of_splits = static_cast<int>(std::log2(static_cast<double>(highest_particle_count)));
-
-  int num_particles = 2;
-  for (int i = 0; i < number_of_splits; i++) {
-    for (int d = 0; d < m_number_of_particles.size(); d++) {
-      double add = m_iterations_per_split * std::min(num_particles, m_number_of_particles[d]);
-      total_particle_iterations_ += add;
+  // Splits double each domain's particles until it reaches its target, so the split count is set by
+  // the domain seeded with the fewest particles. Initial landmarks/points seed many particles and
+  // reduce it; single-seeded (e.g. non-fixed) domains keep it high (#2275).
+  int number_of_splits = 0;
+  for (int j = 0; j < m_num_shapes; j++) {
+    int target = m_number_of_particles[j % domains_per_shape];
+    int seed = std::min(std::max(1, m_sampler->GetInitialParticleCount(j)), target);
+    int splits = 0;
+    for (int count = seed; count < target; count *= 2) {
+      splits++;
     }
+    number_of_splits = std::max(number_of_splits, splits);
+  }
 
-    if (m_use_shape_statistics_after > 0 && num_particles >= m_use_shape_statistics_after) {
-      for (int d = 0; d < m_number_of_particles.size(); d++) {
-        total_particle_iterations_ += m_optimization_iterations * std::min(num_particles, m_number_of_particles[d]);
+  // Progress accumulates over the first shape's domains (see SetIterationCallback), so estimate the
+  // same way: track their particle counts as they split.
+  std::vector<int> current_particles(domains_per_shape);
+  for (int d = 0; d < domains_per_shape; d++) {
+    int initial = std::max(1, m_sampler->GetInitialParticleCount(d));
+    current_particles[d] = std::min(initial, m_number_of_particles[d]);
+  }
+
+  for (int i = 0; i < number_of_splits; i++) {
+    for (int d = 0; d < domains_per_shape; d++) {
+      current_particles[d] = std::min(current_particles[d] * 2, m_number_of_particles[d]);
+      total_particle_iterations_ += m_iterations_per_split * current_particles[d];
+
+      if (m_use_shape_statistics_after > 0 && current_particles[d] >= m_use_shape_statistics_after) {
+        total_particle_iterations_ += m_optimization_iterations * current_particles[d];
       }
     }
-
-    num_particles *= 2;
   }
 
   if (m_use_shape_statistics_after <= 0) {
-    for (int d = 0; d < m_number_of_particles.size(); d++) {
-      double add = m_optimization_iterations * std::min(num_particles, m_number_of_particles[d]);
-      total_particle_iterations_ += add;
+    for (int d = 0; d < domains_per_shape; d++) {
+      total_particle_iterations_ += m_optimization_iterations * m_number_of_particles[d];
     }
   }
 
