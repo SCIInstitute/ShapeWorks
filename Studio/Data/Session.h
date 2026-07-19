@@ -147,6 +147,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   double get_auto_glyph_size();
 
+  //! Largest dimension (X, Y, or Z) of the current shapes, used to scale the glyph-size slider
+  //! bounds to the data. Zero when no shape is loaded. Updated by update_auto_glyph_size().
+  double get_glyph_size_scale();
+
   static Point3 get_point(const Eigen::VectorXd& points, int i);
 
   //! clear particles from session (e.g. groom start, optimize start)
@@ -366,6 +370,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   std::shared_ptr<Project> project_{new Project()};
 
   double auto_glyph_size_ = -1;
+
+  double glyph_size_scale_ = 0;  // largest dimension of the current shapes (0 if none)
 
   int active_landmark_domain_ = -1;
   int placing_landmark_ = -1;
