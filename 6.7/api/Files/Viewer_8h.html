@@ -3846,6 +3846,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkGlyph3D</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkSphereSource</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkArrowSource</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkOutlineSource</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkTransformPolyDataFilter</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkScalarBarActor</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkCornerAnnotation</span><span class="p">;</span>
@@ -3912,6 +3913,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_glyphs</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_surface</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_bounding_box</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_scale_arrows</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">scale</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_points</span><span class="p">();</span>
@@ -4020,6 +4022,7 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_glyphs_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_surface_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_bounding_box_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">glyph_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">glyph_quality_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.0f</span><span class="p">;</span>
@@ -4057,6 +4060,10 @@
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrow_glyph_actor_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform_180_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkScalarBarActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">scalar_bar_actor_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkOutlineSource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bounding_box_source_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bounding_box_mapper_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bounding_box_actor_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCornerAnnotation</span><span class="o">&gt;</span><span class="w"> </span><span class="n">corner_annotation_</span><span class="p">;</span>
 
@@ -4097,7 +4104,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-18 at 01:55:11 +0000</p>
+<p>Updated on 2026-07-19 at 00:18:40 +0000</p>
 
 
 
