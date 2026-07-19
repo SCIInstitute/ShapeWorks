@@ -120,6 +120,18 @@ bool Preferences::get_show_bounding_box() { return settings_.value("Project/show
 void Preferences::set_show_bounding_box(bool value) { settings_.setValue("Project/show_bounding_box", value); }
 
 //-----------------------------------------------------------------------------
+bool Preferences::get_show_scale_bar() { return settings_.value("Project/show_scale_bar", false).toBool(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_show_scale_bar(bool value) { settings_.setValue("Project/show_scale_bar", value); }
+
+//-----------------------------------------------------------------------------
+int Preferences::get_scale_bar_font_size() { return settings_.value("Project/scale_bar_font_size", 10).toInt(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_scale_bar_font_size(int value) { settings_.setValue("Project/scale_bar_font_size", value); }
+
+//-----------------------------------------------------------------------------
 float Preferences::get_pca_range() { return settings_.value("Analysis/pca_range", 2.0).toFloat(); }
 
 //-----------------------------------------------------------------------------

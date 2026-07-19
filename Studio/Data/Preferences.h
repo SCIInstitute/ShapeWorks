@@ -65,6 +65,12 @@ class Preferences : public QObject {
   bool get_show_bounding_box();
   void set_show_bounding_box(bool value);
 
+  bool get_show_scale_bar();
+  void set_show_scale_bar(bool value);
+
+  int get_scale_bar_font_size();
+  void set_scale_bar_font_size(int value);
+
   float get_pca_range();
   void set_pca_range(float value);
 

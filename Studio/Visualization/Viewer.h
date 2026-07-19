@@ -16,6 +16,8 @@ class vtkCamera;
 class vtkGlyph3D;
 class vtkSphereSource;
 class vtkArrowSource;
+class vtkCallbackCommand;
+class vtkCubeAxesActor;
 class vtkOutlineSource;
 class vtkTransformPolyDataFilter;
 class vtkScalarBarActor;
@@ -65,7 +67,7 @@ enum class ViewOrientation { Anterior, Posterior, Left, Right, Superior, Inferio
 class Viewer {
  public:
   Viewer();
-  ~Viewer() = default;
+  ~Viewer();
 
   void set_renderer(vtkSmartPointer<vtkRenderer> renderer);
   vtkSmartPointer<vtkRenderer> get_renderer();
@@ -90,6 +92,8 @@ class Viewer {
   void set_show_glyphs(bool show);
   void set_show_surface(bool show);
   void set_show_bounding_box(bool show);
+  void set_show_scale_bar(bool show);
+  void set_scale_bar_font_size(double size);
   void set_scale_arrows(bool scale);
 
   void update_points();
@@ -179,6 +183,13 @@ class Viewer {
  private:
   void initialize_surfaces();
 
+  //! Recompute the scale-bar label font from the bounding box's current on-screen size so labels
+  //! shrink as the shape is zoomed out (they are otherwise a fixed screen size and collide).
+  void update_scale_bar_font();
+
+  //! Renderer StartEvent callback: forwards to update_scale_bar_font() so the labels track zoom.
+  static void on_render_start(vtkObject* caller, unsigned long event, void* client_data, void* call_data);
+
   void display_vector_field();
 
   void compute_point_differences(const Eigen::VectorXd& points, vtkSmartPointer<vtkFloatArray> magnitudes,
@@ -199,6 +210,7 @@ class Viewer {
   bool show_glyphs_ = true;
   bool show_surface_ = true;
   bool show_bounding_box_ = false;
+  bool show_scale_bar_ = false;
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;
@@ -240,6 +252,14 @@ class Viewer {
   vtkSmartPointer<vtkOutlineSource> bounding_box_source_;
   vtkSmartPointer<vtkPolyDataMapper> bounding_box_mapper_;
   vtkSmartPointer<vtkActor> bounding_box_actor_;
+
+  vtkSmartPointer<vtkCubeAxesActor> scale_bar_actor_;
+  vtkSmartPointer<vtkCallbackCommand> scale_bar_render_callback_;
+  unsigned long scale_bar_observer_tag_ = 0;
+  double scale_bar_font_base_ = 10.0;             // requested font (slider); acts as the upper bound
+  double scale_bar_bounds_[6] = {0, -1, 0, -1, 0, -1};  // bounds of the last drawn scale bar (invalid by default)
+  bool scale_bar_bounds_valid_ = false;
+  bool updating_scale_bar_font_ = false;
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;
 

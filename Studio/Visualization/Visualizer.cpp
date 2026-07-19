@@ -249,6 +249,9 @@ void Visualizer::set_show_surface(bool show) { show_surface_ = show; }
 void Visualizer::set_show_bounding_box(bool show) { show_bounding_box_ = show; }
 
 //-----------------------------------------------------------------------------
+void Visualizer::set_show_scale_bar(bool show) { show_scale_bar_ = show; }
+
+//-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties() {
   double size = preferences_.get_glyph_size();
   double quality = preferences_.get_glyph_quality();
@@ -269,6 +272,8 @@ void Visualizer::update_viewer_properties() {
       viewer->set_show_glyphs(show_glyphs_);
       viewer->set_show_surface(show_surface_);
       viewer->set_show_bounding_box(show_bounding_box_);
+      viewer->set_show_scale_bar(show_scale_bar_);
+      viewer->set_scale_bar_font_size(preferences_.get_scale_bar_font_size());
       viewer->set_scale_arrows(preferences_.get_glyph_scale_arrows());
       viewer->set_color_scheme(preferences_.get_color_scheme());
     }

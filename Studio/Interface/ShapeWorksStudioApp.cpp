@@ -944,6 +944,25 @@ void ShapeWorksStudioApp::create_iso_submenu() {
   connect(bounding_box_checkbox_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   layout->addWidget(bounding_box_checkbox_, static_cast<int>(names.size()), 0, 1, 2);
 
+  scale_bar_checkbox_ = new QCheckBox("Show scale bar", widget);
+  scale_bar_checkbox_->setChecked(preferences_.get_show_scale_bar());
+  connect(scale_bar_checkbox_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  layout->addWidget(scale_bar_checkbox_, static_cast<int>(names.size()) + 1, 0, 1, 2);
+
+  QLabel* scale_bar_font_label = new QLabel("Scale bar font: ");
+  layout->addWidget(scale_bar_font_label, static_cast<int>(names.size()) + 2, 0, 1, 1);
+  scale_bar_font_slider_ = new CustomSlider(widget);
+  scale_bar_font_slider_->setOrientation(Qt::Horizontal);
+  scale_bar_font_slider_->setMinimum(5);
+  scale_bar_font_slider_->setMaximum(30);
+  scale_bar_font_slider_->setPageStep(5);
+  scale_bar_font_slider_->setTickPosition(QSlider::TicksBelow);
+  scale_bar_font_slider_->setTickInterval(5);
+  scale_bar_font_slider_->setMinimumWidth(200);
+  scale_bar_font_slider_->setValue(preferences_.get_scale_bar_font_size());
+  connect(scale_bar_font_slider_, &CustomSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  layout->addWidget(scale_bar_font_slider_, static_cast<int>(names.size()) + 2, 1, 1, 1);
+
   QWidgetAction* widget_action = new QWidgetAction(widget);
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
@@ -1451,6 +1470,13 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   if (bounding_box_checkbox_) {
     preferences_.set_show_bounding_box(bounding_box_checkbox_->isChecked());
     visualizer_->set_show_bounding_box(bounding_box_checkbox_->isChecked());
+  }
+  if (scale_bar_checkbox_) {
+    preferences_.set_show_scale_bar(scale_bar_checkbox_->isChecked());
+    visualizer_->set_show_scale_bar(scale_bar_checkbox_->isChecked());
+  }
+  if (scale_bar_font_slider_) {
+    preferences_.set_scale_bar_font_size(scale_bar_font_slider_->value());
   }
   preferences_.set_glyph_size(glyph_size_slider_->value() * glyph_slider_world_per_unit());
   preferences_.set_glyph_quality(glyph_quality_slider_->value());
