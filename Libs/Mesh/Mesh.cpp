@@ -190,6 +190,10 @@ Mesh::Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces) {
 
   this->poly_data_->SetPoints(vertices);
   this->poly_data_->SetPolys(polys);
+  // Guard against degenerate input triangles: computeNormals() -> vtkPolyDataNormals
+  // AutoOrientNormals -> vtkOrientPolyData segfaults on zero-area cells. This only
+  // alters malformed input (well-formed meshes are returned unchanged).
+  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
   this->computeNormals();
 }
 
@@ -321,6 +325,11 @@ Mesh& Mesh::smooth(int iterations, double relaxation) {
   smoother->Update();
   this->poly_data_ = smoother->GetOutput();
 
+  // Smoothing can collapse triangles to zero area; remove them before computing
+  // normals. vtkPolyDataNormals' AutoOrientNormals uses vtkOrientPolyData, whose
+  // edge-neighbor traversal segfaults on degenerate cells.
+  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+
   // must regenerate normals after smoothing
   computeNormals();
 
@@ -344,6 +353,11 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
 
   smoother->Update();
   this->poly_data_ = smoother->GetOutput();
+
+  // Smoothing can collapse triangles to zero area; remove them before computing
+  // normals. vtkPolyDataNormals' AutoOrientNormals uses vtkOrientPolyData, whose
+  // edge-neighbor traversal segfaults on degenerate cells.
+  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
 
   // must regenerate normals after smoothing
   computeNormals();
@@ -380,12 +394,15 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   // Restore std::cout
   //  std::cout.clear();
 
-  clean();
-  checkIntegrity();
-
   this->poly_data_ = remesh->GetOutput();
 
-  // must regenerate normals after smoothing
+  // ACVD remeshing can produce zero-area (degenerate) triangles. These must be
+  // removed before computing normals: vtkPolyDataNormals with AutoOrientNormals
+  // runs vtkOrientPolyData, which segfaults on degenerate geometry.
+  clean();
+  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+
+  // must regenerate normals after remeshing
   computeNormals();
 
   this->invalidateLocators();
