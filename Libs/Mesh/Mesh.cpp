@@ -191,9 +191,12 @@ Mesh::Mesh(const Eigen::MatrixXd& points, const Eigen::MatrixXi& faces) {
   this->poly_data_->SetPoints(vertices);
   this->poly_data_->SetPolys(polys);
   // Guard against degenerate input triangles: computeNormals() -> vtkPolyDataNormals
-  // AutoOrientNormals -> vtkOrientPolyData segfaults on zero-area cells. This only
-  // alters malformed input (well-formed meshes are returned unchanged).
-  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+  // AutoOrientNormals -> vtkOrientPolyData segfaults on zero-area cells. Only touch the
+  // mesh when a degenerate triangle is actually present, so well-formed input (and its
+  // point ordering) is returned unchanged.
+  if (MeshUtils::has_zero_area_triangles(this->poly_data_)) {
+    this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+  }
   this->computeNormals();
 }
 
@@ -327,8 +330,11 @@ Mesh& Mesh::smooth(int iterations, double relaxation) {
 
   // Smoothing can collapse triangles to zero area; remove them before computing
   // normals. vtkPolyDataNormals' AutoOrientNormals uses vtkOrientPolyData, whose
-  // edge-neighbor traversal segfaults on degenerate cells.
-  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+  // edge-neighbor traversal segfaults on degenerate cells. Only rebuild when such a
+  // triangle is present, so well-formed output is left untouched.
+  if (MeshUtils::has_zero_area_triangles(this->poly_data_)) {
+    this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+  }
 
   // must regenerate normals after smoothing
   computeNormals();
@@ -356,8 +362,11 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
 
   // Smoothing can collapse triangles to zero area; remove them before computing
   // normals. vtkPolyDataNormals' AutoOrientNormals uses vtkOrientPolyData, whose
-  // edge-neighbor traversal segfaults on degenerate cells.
-  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+  // edge-neighbor traversal segfaults on degenerate cells. Only rebuild when such a
+  // triangle is present, so well-formed output is left untouched.
+  if (MeshUtils::has_zero_area_triangles(this->poly_data_)) {
+    this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+  }
 
   // must regenerate normals after smoothing
   computeNormals();
@@ -398,9 +407,11 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
 
   // ACVD remeshing can produce zero-area (degenerate) triangles. These must be
   // removed before computing normals: vtkPolyDataNormals with AutoOrientNormals
-  // runs vtkOrientPolyData, which segfaults on degenerate geometry.
-  clean();
-  this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+  // runs vtkOrientPolyData, which segfaults on degenerate geometry. Only rebuild when
+  // such a triangle is present, so well-formed remesh output is left untouched.
+  if (MeshUtils::has_zero_area_triangles(this->poly_data_)) {
+    this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
+  }
 
   // must regenerate normals after remeshing
   computeNormals();
