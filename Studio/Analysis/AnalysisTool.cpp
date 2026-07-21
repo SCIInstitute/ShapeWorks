@@ -23,9 +23,12 @@
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
 
+#include <QApplication>
 #include <QClipboard>
 #include <QMenu>
 #include <QTimer>
+
+#include <map>
 
 #include "ParticleAreaPanel.h"
 #include "ShapeScalarPanel.h"
@@ -85,7 +88,14 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 #ifdef Q_OS_MACOS
   ui_->tabWidget->tabBar()->setMinimumWidth(200);
   ui_->tabWidget->setStyleSheet(
-      "QTabBar::tab:selected { border-radius: 4px; background-color: #3784f7; color: white; }");
+      // The container already insets the tab widget horizontally, so the pane needs a
+      // larger bottom margin than sides for the box to look evenly spaced (top right bottom left).
+      "QTabWidget::pane { border: none; border-radius: 6px; background-color: rgba(0, 0, 0, 9); "
+      "margin: 4px 4px 11px 4px; padding: 6px; }"
+      "QTabBar::tab { padding: 4px 10px; margin: 3px; border: 1px solid rgba(0, 0, 0, 35); "
+      "border-radius: 5px; background-color: white; color: palette(text); }"
+      "QTabBar::tab:selected { background-color: #3784f7; color: white; border-color: #3784f7; }"
+      "QTabBar::tab:hover:!selected { background-color: #ececec; }");
   ui_->tabWidget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
 #endif
 
@@ -106,6 +116,13 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handle_pca_animate_state_changed()));
   connect(&pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
+
+  // regression settings (regressionSlider is auto-connected by name via on_regressionSlider_valueChanged)
+  connect(ui_->regressionAnimateCheckBox, SIGNAL(stateChanged(int)), this,
+          SLOT(handle_regression_animate_state_changed()));
+  connect(&regression_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_regression_timer()));
+  connect(ui_->regression_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::handle_regression_column_changed);
 
   // multi-level PCA settings
   connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
@@ -149,8 +166,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_->surface_open_button->setChecked(false);
   ui_->metrics_open_button->setChecked(false);
 
-  /// TODO nothing there yet (regression tab)
-  ui_->tabWidget->removeTab(3);
+  // The regression tab is enabled/disabled dynamically based on whether the project
+  // has a numeric per-subject column to regress against (see update_regression_combo()).
+  ui_->regression_hint_label->hide();
 
   for (auto button : {ui_->distance_transform_radio_button, ui_->mesh_warping_radio_button, ui_->legacy_radio_button}) {
     connect(button, &QRadioButton::clicked, this, &AnalysisTool::reconstruction_method_changed);
@@ -897,6 +915,9 @@ ShapeHandle AnalysisTool::get_mca_mode_shape(int mode, double value, McaMode lev
 
 //---------------------------------------------------------------------------
 ShapeHandle AnalysisTool::get_current_shape() {
+  if (get_analysis_mode() == MODE_REGRESSION_C) {
+    return get_regression_shape();
+  }
   int pca_mode = get_pca_mode();
   double pca_value = get_pca_value();
   auto mca_level = get_mca_level();
@@ -905,6 +926,226 @@ ShapeHandle AnalysisTool::get_current_shape() {
   } else {
     return get_mca_mode_shape(pca_mode, pca_value, mca_level);
   }
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::compute_regression() {
+  if (regression_ready_) {
+    return regression_available_;
+  }
+  regression_ready_ = true;
+  regression_available_ = false;
+
+  if (!session_) {
+    return false;
+  }
+
+  std::string column = ui_->regression_combo->currentText().toStdString();
+  if (column.empty()) {
+    return false;
+  }
+
+  // Gather the explanatory value and shape vector for each subject that has a numeric
+  // value for the selected column.  Pairing them in a single pass keeps the explanatory
+  // values aligned with the shape matrix columns regardless of any skipped subjects.
+  std::vector<double> expl;
+  std::vector<Eigen::VectorXd> shapes;
+  for (auto& shape : session_->get_non_excluded_shapes()) {
+    auto extra_values = shape->get_subject()->get_extra_values();
+    auto it = extra_values.find(column);
+    if (it == extra_values.end()) {
+      continue;
+    }
+    double value = 0.0;
+    try {
+      value = std::stod(it->second);
+    } catch (const std::exception&) {
+      continue;  // skip non-numeric entries
+    }
+    Eigen::VectorXd particles = shape->get_global_correspondence_points();
+    if (particles.size() == 0) {
+      continue;
+    }
+    expl.push_back(value);
+    shapes.push_back(particles);
+  }
+
+  const int n = static_cast<int>(shapes.size());
+  if (n < 2) {
+    return false;
+  }
+
+  const int dims = static_cast<int>(shapes[0].size());
+  for (const auto& s : shapes) {
+    if (static_cast<int>(s.size()) != dims) {
+      SW_ERROR("Inconsistent number of particles across shapes; cannot compute regression");
+      return false;
+    }
+  }
+
+  // Explanatory variable per sample (t) and the shape matrix (dims x samples)
+  Eigen::VectorXd t(n);
+  Eigen::MatrixXd matrix(dims, n);
+  for (int i = 0; i < n; i++) {
+    t[i] = expl[i];
+    matrix.col(i) = shapes[i];
+  }
+
+  regression_min_ = t.minCoeff();
+  regression_max_ = t.maxCoeff();
+
+  // Closed-form ordinary least squares per dimension (matches LinearRegressionShapeMatrix):
+  //   slope     = (n*Sum(t*x) - Sum(x)*Sum(t)) / (n*Sum(t^2) - Sum(t)^2)
+  //   intercept = (Sum(x) - slope*Sum(t)) / n
+  const double sum_t = t.sum();
+  const double sum_t2 = t.dot(t);
+  const double denom = n * sum_t2 - sum_t * sum_t;
+  if (std::abs(denom) < 1e-12) {
+    return false;  // explanatory variable has no variation (all values identical)
+  }
+  Eigen::VectorXd sum_x = matrix.rowwise().sum();  // dims
+  Eigen::VectorXd sum_tx = matrix * t;             // dims (Sum over samples of x_d * t)
+
+  regression_slope_ = (n * sum_tx - sum_x * sum_t) / denom;
+  regression_intercept_ = (sum_x - regression_slope_ * sum_t) / n;
+
+  regression_available_ = true;
+  return true;
+}
+
+//---------------------------------------------------------------------------
+double AnalysisTool::get_regression_value() {
+  int slider_value = ui_->regressionSlider->value();
+  int slider_max = ui_->regressionSlider->maximum();
+  if (slider_max == 0) {
+    return regression_min_;
+  }
+  double range = regression_max_ - regression_min_;
+  return regression_min_ + (static_cast<double>(slider_value) / slider_max) * range;
+}
+
+//---------------------------------------------------------------------------
+Particles AnalysisTool::get_regression_shape_points(double value) {
+  if (!compute_regression() || regression_slope_.size() == 0) {
+    return Particles();
+  }
+  ui_->regressionLabel->setText(QString::number(value, 'g', 4));
+  Eigen::VectorXd shape = regression_intercept_ + regression_slope_ * value;
+  return convert_from_combined(shape);
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_regression_shape() {
+  return create_shape_from_points(get_regression_shape_points(get_regression_value()));
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_regression_combo() {
+  if (!session_) {
+    return;
+  }
+  // Count, per candidate column, how many subjects have a numeric value.  A column
+  // needs at least two numeric samples to fit a regression line.
+  std::map<std::string, int> numeric_counts;
+  for (auto& shape : session_->get_non_excluded_shapes()) {
+    for (const auto& kv : shape->get_subject()->get_extra_values()) {
+      try {
+        std::stod(kv.second);
+        numeric_counts[kv.first]++;
+      } catch (const std::exception&) {
+        // not numeric for this subject
+      }
+    }
+  }
+
+  QString previous = ui_->regression_combo->currentText();
+  ui_->regression_combo->blockSignals(true);
+  ui_->regression_combo->clear();
+  for (const auto& kv : numeric_counts) {
+    if (kv.second >= 2) {
+      ui_->regression_combo->addItem(QString::fromStdString(kv.first));
+    }
+  }
+  int index = ui_->regression_combo->findText(previous);
+  if (index >= 0) {
+    ui_->regression_combo->setCurrentIndex(index);
+  }
+  ui_->regression_combo->blockSignals(false);
+
+  update_regression_interface();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_regression_interface() {
+  regression_ready_ = false;
+  bool available = compute_regression();
+
+  ui_->regressionSlider->setEnabled(available);
+  ui_->regressionAnimateCheckBox->setEnabled(available);
+
+  if (available) {
+    ui_->regression_hint_label->hide();
+    ui_->regression_min_label->setText(QString::number(regression_min_, 'g', 4));
+    ui_->regression_max_label->setText(QString::number(regression_max_, 'g', 4));
+    ui_->regressionLabel->setText(QString::number(get_regression_value(), 'g', 4));
+  } else {
+    if (ui_->regression_combo->count() == 0) {
+      ui_->regression_hint_label->setText(
+          "No numeric per-subject columns are available for regression.  Add a numeric column "
+          "(e.g. age or time) to the project spreadsheet.");
+    } else {
+      ui_->regression_hint_label->setText(
+          "The selected column needs at least two subjects with differing numeric values.");
+    }
+    ui_->regression_hint_label->show();
+    ui_->regression_min_label->setText("");
+    ui_->regression_max_label->setText("");
+    ui_->regressionLabel->setText("");
+    ui_->regressionAnimateCheckBox->setChecked(false);
+    regression_animate_timer_.stop();
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_regressionSlider_valueChanged() {
+  // this will make the slider handle redraw making the UI appear more responsive
+  QCoreApplication::processEvents();
+  ui_->regressionLabel->setText(QString::number(get_regression_value(), 'g', 4));
+  Q_EMIT pca_update();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_regression_column_changed() {
+  update_regression_interface();
+  Q_EMIT pca_update();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_regression_animate_state_changed() {
+  if (ui_->regressionAnimateCheckBox->isChecked()) {
+    regression_animate_timer_.setInterval(10);
+    regression_animate_timer_.start();
+  } else {
+    regression_animate_timer_.stop();
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_regression_timer() {
+  if (!ui_->regressionAnimateCheckBox->isChecked()) {
+    return;
+  }
+  int value = ui_->regressionSlider->value();
+  if (regression_animate_direction_) {
+    value += ui_->regressionSlider->singleStep();
+  } else {
+    value -= ui_->regressionSlider->singleStep();
+  }
+  if (value >= ui_->regressionSlider->maximum() || value <= ui_->regressionSlider->minimum()) {
+    regression_animate_direction_ = !regression_animate_direction_;
+  }
+  ui_->regressionSlider->setValue(value);
+  QApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
@@ -931,6 +1172,12 @@ void AnalysisTool::load_settings() {
 
   ui_->group_combo->setCurrentText(QString::fromStdString(params.get("current_group", "-None-")));
   ui_->pca_group_combo->setCurrentText(QString::fromStdString(params.get("current_pca_group", "-None-")));
+
+  update_regression_combo();
+  std::string regression_column = params.get("current_regression_column", "");
+  if (!regression_column.empty()) {
+    ui_->regression_combo->setCurrentText(QString::fromStdString(regression_column));
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -942,6 +1189,7 @@ void AnalysisTool::store_settings() {
   params.set("network_iterations", ui_->network_iterations->text().toStdString());
   params.set("network_pvalue_of_interest", ui_->network_pvalue_of_interest->text().toStdString());
   params.set("network_pvalue_threshold", ui_->network_pvalue_threshold->text().toStdString());
+  params.set("current_regression_column", ui_->regression_combo->currentText().toStdString());
 
   session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
 }
@@ -1293,6 +1541,7 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
   ui_->network_analysis_display->setEnabled(network_ready);
 
   update_group_boxes();
+  update_regression_combo();
   ui_->sampleSpinBox->setMaximum(session_->get_num_shapes() - 1);
   ui_->mesh_warp_sample_spinbox->setMaximum(session_->get_num_shapes() - 1);
 }
@@ -2241,6 +2490,11 @@ void AnalysisTool::handle_tab_changed() {
   stats_ready_ = false;
   compute_stats();
 
+  if (ui_->tabWidget->currentWidget() == ui_->regression_tab) {
+    // recompute the fit against the (possibly changed) shapes when the tab is entered
+    update_regression_interface();
+  }
+
   resize_tab_to_current();
 }
 
@@ -2252,10 +2506,13 @@ void AnalysisTool::resize_tab_to_current() {
   current->layout()->activate();
   int h = current->layout()->minimumSize().height();
   int tab_bar = ui_->tabWidget->tabBar()->sizeHint().height();
-  // Add frame margins
-  int frame = ui_->tabWidget->height() - ui_->tabWidget->currentWidget()->height();
-  if (frame < tab_bar) frame = tab_bar + 6;
-  ui_->tabWidget->setMaximumHeight(frame + h);
+  // Chrome above and below the content: the tab bar plus the styled pane's vertical
+  // margin (4px top, 11px bottom) and padding (6px each).  A fixed height is required so
+  // the pane's bottom margin actually renders (a maximum height lets the widget stay too
+  // short and clips it).  The 11px bottom margin makes the box's bottom gap match its
+  // ~27px horizontal gap (the tab widget is inset ~23px in the panel + 4px pane margin).
+  const int pane_vertical_spacing = 4 + 6 + 6 + 11;
+  ui_->tabWidget->setFixedHeight(tab_bar + pane_vertical_spacing + h);
 }
 
 //---------------------------------------------------------------------------

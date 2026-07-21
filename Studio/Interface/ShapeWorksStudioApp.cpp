@@ -728,7 +728,11 @@ void ShapeWorksStudioApp::handle_mca_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update() {
-  if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_PCA_C) {
+  if (!analysis_tool_->get_active()) {
+    return;
+  }
+  auto mode = analysis_tool_->get_analysis_mode();
+  if (mode == AnalysisTool::MODE_PCA_C || mode == AnalysisTool::MODE_REGRESSION_C) {
     display_mode_shape();
   }
 }
@@ -1589,6 +1593,10 @@ void ShapeWorksStudioApp::update_display(bool force) {
         session_->set_display_mode(DisplayMode::Reconstructed);
         visualizer_->display_shape(analysis_tool_->get_mean_shape());
       } else if (mode == AnalysisTool::MODE_PCA_C) {
+        session_->set_display_mode(DisplayMode::Reconstructed);
+        display_mode_shape();
+        visualizer_->reset_camera();
+      } else if (mode == AnalysisTool::MODE_REGRESSION_C) {
         session_->set_display_mode(DisplayMode::Reconstructed);
         display_mode_shape();
         visualizer_->reset_camera();

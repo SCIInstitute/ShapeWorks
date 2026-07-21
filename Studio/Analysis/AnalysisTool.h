@@ -99,6 +99,16 @@ class AnalysisTool : public QWidget {
   ShapeHandle get_mca_mode_shape(int mode, double value, McaMode level);
   ShapeHandle get_current_shape();
 
+  //! Fit the per-particle linear regression against the selected explanatory variable
+  bool compute_regression();
+  //! Map the regression slider position to the explanatory variable value
+  double get_regression_value();
+  //! Predicted shape (intercept + slope * value) at the given explanatory value
+  Particles get_regression_shape_points(double value);
+  ShapeHandle get_regression_shape();
+  //! Populate the explanatory-variable combo and enable/disable the regression tab
+  void update_regression_combo();
+
   ParticleShapeStatistics get_stats();
   void load_settings();
   void store_settings();
@@ -141,6 +151,12 @@ class AnalysisTool : public QWidget {
 
   void handle_pca_animate_state_changed();
   void handle_pca_timer();
+
+  // Regression
+  void on_regressionSlider_valueChanged();
+  void handle_regression_column_changed();
+  void handle_regression_animate_state_changed();
+  void handle_regression_timer();
 
   void handle_group_animate_state_changed();
   void handle_group_timer();
@@ -251,6 +267,9 @@ class AnalysisTool : public QWidget {
 
   void update_difference_particles();
 
+  //! Recompute the regression fit and refresh the tab's range labels / enabled state
+  void update_regression_interface();
+
   Eigen::VectorXd get_mean_shape_particles();
 
   ShapeHandle create_shape_from_points(Particles points);
@@ -283,6 +302,16 @@ class AnalysisTool : public QWidget {
 
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
+
+  // Regression state
+  bool regression_ready_ = false;
+  bool regression_available_ = false;
+  Eigen::VectorXd regression_slope_;
+  Eigen::VectorXd regression_intercept_;
+  double regression_min_ = 0.0;
+  double regression_max_ = 1.0;
+  bool regression_animate_direction_ = true;
+  QTimer regression_animate_timer_;
 
   ShapeHandle computed_shape_;
 
