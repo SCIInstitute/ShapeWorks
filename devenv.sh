@@ -33,6 +33,19 @@ echo "Binary directory: ${BUILD}"
 export PATH=${BUILD}:$PATH
 export PYTHONPATH=${BUILD}:$PYTHONPATH
 
+# Put the dependency libraries on the runtime loader path. End-user packages get
+# self-contained $ORIGIN RPATHs from linuxdeployqt (see Support/package.sh), but
+# in a dev build tree the dependency libs (e.g. ITK's gdcm) still carry a stale
+# RUNPATH pointing at the old conda env. glibc does not apply the executable's
+# RPATH to those transitive loads, so we set LD_LIBRARY_PATH here instead, which
+# is searched first. The dependency install prefix is recorded in the build's
+# CMake cache as CMAKE_PREFIX_PATH.
+DEPS_PREFIX="$(grep -m1 '^CMAKE_PREFIX_PATH' "$(dirname "${BUILD}")/CMakeCache.txt" 2>/dev/null | cut -d= -f2)"
+if [ -n "${DEPS_PREFIX}" ] && [ -d "${DEPS_PREFIX}/lib" ]; then
+    export LD_LIBRARY_PATH="${DEPS_PREFIX}/lib:${LD_LIBRARY_PATH}"
+    echo "set LD_LIBRARY_PATH to include ${DEPS_PREFIX}/lib"
+fi
+
 # add each module in ${SOURCE}/Python to the PYTHONPATH
 for M in ${SOURCE}/Python/*/; do
     export PYTHONPATH=${M}:$PYTHONPATH

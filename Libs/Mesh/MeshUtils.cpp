@@ -1086,6 +1086,52 @@ vtkSmartPointer<vtkPolyData> MeshUtils::remove_zero_area_triangles(vtkSmartPoint
 }
 
 //---------------------------------------------------------------------------
+bool MeshUtils::has_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh) {
+  // Uses the same relative epsilon as remove_zero_area_triangles(), so this returns
+  // true exactly when that function would drop a triangle. Callers can guard on it to
+  // skip the (point-renumbering) cleanup on well-formed meshes.
+  vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
+  if (!points) {
+    return false;
+  }
+
+  auto cell_point_ids = vtkSmartPointer<vtkIdList>::New();
+
+  // First pass: find max area to establish scale
+  double max_area = 0.0;
+  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
+    mesh->GetCellPoints(cellId, cell_point_ids);
+    if (cell_point_ids->GetNumberOfIds() == 3) {
+      double p0[3], p1[3], p2[3];
+      points->GetPoint(cell_point_ids->GetId(0), p0);
+      points->GetPoint(cell_point_ids->GetId(1), p1);
+      points->GetPoint(cell_point_ids->GetId(2), p2);
+      max_area = std::max(max_area, vtkTriangle::TriangleArea(p0, p1, p2));
+    }
+  }
+
+  const double RELATIVE_EPSILON = 1e-6;
+  const double ABSOLUTE_FLOOR = 1e-15;
+  const double epsilon = std::max(max_area * RELATIVE_EPSILON, ABSOLUTE_FLOOR);
+
+  // Second pass: does any triangle fall at or below the threshold?
+  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
+    mesh->GetCellPoints(cellId, cell_point_ids);
+    if (cell_point_ids->GetNumberOfIds() == 3) {
+      double p0[3], p1[3], p2[3];
+      points->GetPoint(cell_point_ids->GetId(0), p0);
+      points->GetPoint(cell_point_ids->GetId(1), p1);
+      points->GetPoint(cell_point_ids->GetId(2), p2);
+      if (vtkTriangle::TriangleArea(p0, p1, p2) <= epsilon) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshUtils::recreate_mesh(vtkSmartPointer<vtkPolyData> mesh) {
   vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
 

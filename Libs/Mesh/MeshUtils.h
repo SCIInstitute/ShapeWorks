@@ -75,6 +75,9 @@ class MeshUtils {
   /// Remove zero area triangles from a mesh
   static vtkSmartPointer<vtkPolyData> remove_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh);
 
+  /// Return true if the mesh contains any (near) zero-area triangle
+  static bool has_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh);
+
   /// Recreate mesh, dropping deleted cells
   static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
