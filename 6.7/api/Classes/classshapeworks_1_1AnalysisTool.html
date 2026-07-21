@@ -3963,6 +3963,42 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#slot-on_regressionslider_valuechanged" class="md-nav__link">
+    <span class="md-ellipsis">
+      slot on_regressionSlider_valueChanged
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-handle_regression_column_changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      slot handle_regression_column_changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-handle_regression_animate_state_changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      slot handle_regression_animate_state_changed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-handle_regression_timer" class="md-nav__link">
+    <span class="md-ellipsis">
+      slot handle_regression_timer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#slot-handle_group_animate_state_changed" class="md-nav__link">
     <span class="md-ellipsis">
       slot handle_group_animate_state_changed
@@ -4695,6 +4731,51 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-compute_regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      function compute_regression
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_regression_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_regression_value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_regression_shape_points" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_regression_shape_points
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_regression_shape" class="md-nav__link">
+    <span class="md-ellipsis">
+      function get_regression_shape
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-update_regression_combo" class="md-nav__link">
+    <span class="md-ellipsis">
+      function update_regression_combo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_stats" class="md-nav__link">
     <span class="md-ellipsis">
       function get_stats
@@ -4953,6 +5034,22 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-pca-timer">handle_pca_timer</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-on-regressionslider-valuechanged">on_regressionSlider_valueChanged</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-regression-column-changed">handle_regression_column_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-regression-animate-state-changed">handle_regression_animate_state_changed</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-regression-timer">handle_regression_timer</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -5289,6 +5386,26 @@
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-current-shape">get_current_shape</a></strong>()</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-compute-regression">compute_regression</a></strong>()<br>Fit the per-particle linear regression against the selected explanatory variable.</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-regression-value">get_regression_value</a></strong>()<br>Map the regression slider position to the explanatory variable value.</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-regression-shape-points">get_regression_shape_points</a></strong>(double value)<br>Predicted shape (intercept + slope * value) at the given explanatory value.</td>
+</tr>
+<tr>
+<td>ShapeHandle</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-regression-shape">get_regression_shape</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-update-regression-combo">update_regression_combo</a></strong>()<br>Populate the explanatory-variable combo and enable/disable the regression tab.</td>
+</tr>
+<tr>
 <td><a href="classshapeworks_1_1ParticleShapeStatistics.html">ParticleShapeStatistics</a></td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-stats">get_stats</a></strong>()</td>
 </tr>
@@ -5470,6 +5587,18 @@
 </code></pre></div>
 <h3 id="slot-handle_pca_timer">slot handle_pca_timer</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_pca_timer</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="slot-on_regressionslider_valuechanged">slot on_regressionSlider_valueChanged</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_regressionSlider_valueChanged</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="slot-handle_regression_column_changed">slot handle_regression_column_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_regression_column_changed</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="slot-handle_regression_animate_state_changed">slot handle_regression_animate_state_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_regression_animate_state_changed</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="slot-handle_regression_timer">slot handle_regression_timer</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_regression_timer</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="slot-handle_group_animate_state_changed">slot handle_group_animate_state_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_group_animate_state_changed</span><span class="p">()</span>
@@ -5765,6 +5894,27 @@
 <h3 id="function-get_current_shape">function get_current_shape</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_current_shape</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-compute_regression">function compute_regression</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compute_regression</span><span class="p">()</span>
+</code></pre></div>
+<p>Fit the per-particle linear regression against the selected explanatory variable. </p>
+<h3 id="function-get_regression_value">function get_regression_value</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_regression_value</span><span class="p">()</span>
+</code></pre></div>
+<p>Map the regression slider position to the explanatory variable value. </p>
+<h3 id="function-get_regression_shape_points">function get_regression_shape_points</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_regression_shape_points</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Predicted shape (intercept + slope * value) at the given explanatory value. </p>
+<h3 id="function-get_regression_shape">function get_regression_shape</h3>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_regression_shape</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-update_regression_combo">function update_regression_combo</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_regression_combo</span><span class="p">()</span>
+</code></pre></div>
+<p>Populate the explanatory-variable combo and enable/disable the regression tab. </p>
 <h3 id="function-get_stats">function get_stats</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">get_stats</span><span class="p">()</span>
 </code></pre></div>
@@ -5814,7 +5964,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-19 at 19:42:46 +0000</p>
+<p>Updated on 2026-07-21 at 08:21:01 +0000</p>
 
 
 

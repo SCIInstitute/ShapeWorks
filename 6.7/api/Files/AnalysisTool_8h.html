@@ -3920,6 +3920,12 @@
 <span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mca_mode_shape</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">McaMode</span><span class="w"> </span><span class="n">level</span><span class="p">);</span>
 <span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_current_shape</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">compute_regression</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_regression_value</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_regression_shape_points</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_regression_shape</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_regression_combo</span><span class="p">();</span>
+
 <span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_settings</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_settings</span><span class="p">();</span>
@@ -3962,6 +3968,12 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_animate_state_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_timer</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Regression</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_regressionSlider_valueChanged</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_regression_column_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_regression_animate_state_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_regression_timer</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_group_animate_state_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_group_timer</span><span class="p">();</span>
@@ -4069,6 +4081,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_difference_particles</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_regression_interface</span><span class="p">();</span>
+
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_mean_shape_particles</span><span class="p">();</span>
 
 <span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">create_shape_from_points</span><span class="p">(</span><span class="n">Particles</span><span class="w"> </span><span class="n">points</span><span class="p">);</span>
@@ -4102,6 +4116,16 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">group_animate_direction_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">group_animate_timer_</span><span class="p">;</span>
 
+<span class="w">  </span><span class="c1">// Regression state</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">regression_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">regression_available_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">regression_slope_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">regression_intercept_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">regression_min_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">regression_max_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">regression_animate_direction_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">regression_animate_timer_</span><span class="p">;</span>
+
 <span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">computed_shape_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">group1_list_</span><span class="p">;</span>
@@ -4134,7 +4158,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-07-19 at 19:42:47 +0000</p>
+<p>Updated on 2026-07-21 at 08:21:03 +0000</p>
 
 
 
