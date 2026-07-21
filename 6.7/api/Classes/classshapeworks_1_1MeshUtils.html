@@ -3921,6 +3921,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-has_zero_area_triangles" class="md-nav__link">
+    <span class="md-ellipsis">
+      function has_zero_area_triangles
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-recreate_mesh" class="md-nav__link">
     <span class="md-ellipsis">
       function recreate_mesh
@@ -4067,6 +4076,10 @@
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-remove-zero-area-triangles">remove_zero_area_triangles</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Remove zero area triangles from a mesh.</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-has-zero-area-triangles">has_zero_area_triangles</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Return true if the mesh contains any (near) zero-area triangle.</td>
+</tr>
+<tr>
 <td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-recreate-mesh">recreate_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Recreate mesh, dropping deleted cells.</td>
 </tr>
@@ -4210,6 +4223,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Remove zero area triangles from a mesh. </p>
+<h3 id="function-has_zero_area_triangles">function has_zero_area_triangles</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">has_zero_area_triangles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Return true if the mesh contains any (near) zero-area triangle. </p>
 <h3 id="function-recreate_mesh">function recreate_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">recreate_mesh</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
@@ -4243,7 +4262,7 @@
 </code></pre></div>
 <p>Used as an auxiliary function for vector field visualizations. </p>
 <hr />
-<p>Updated on 2026-07-21 at 08:21:02 +0000</p>
+<p>Updated on 2026-07-21 at 17:11:11 +0000</p>
 
 
 
