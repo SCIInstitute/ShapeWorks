@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(OptimizeCommand::getCommand());
   shapeworks.addCommand(GroomCommand::getCommand());
   shapeworks.addCommand(AnalyzeCommand::getCommand());
+  shapeworks.addCommand(CorrespondenceQualityCommand::getCommand());
   shapeworks.addCommand(ConvertProjectCommand::getCommand());
   shapeworks.addCommand(DeepSSMCommand::getCommand());
 

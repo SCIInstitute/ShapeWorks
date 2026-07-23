@@ -4,6 +4,7 @@ set(Particles_sources
   ParticleSystemEvaluation.cpp
   ParticleShapeStatistics.cpp
   ShapeEvaluation.cpp
+  CorrespondenceEvaluation.cpp
   ReconstructSurface.cpp
   ParticleNormalEvaluation.cpp
   ParticleFile.cpp
@@ -14,6 +15,7 @@ set(Particles_headers
   ParticleShapeStatistics.h
   EvaluationUtil.h
   ShapeEvaluation.h
+  CorrespondenceEvaluation.h
   ReconstructSurface.h
   ParticleNormalEvaluation.h
   ParticleFile.h
@@ -34,6 +36,13 @@ target_link_libraries(Particles PUBLIC
   Optimize
   tinyxml
   Eigen3::Eigen
+  )
+
+# Project is only used inside CorrespondenceEvaluation.cpp — keep PRIVATE so it
+# does not propagate to consumers of Particles (which was found to perturb VTK
+# static-init/link ordering in shapeworks_py and break .vtp reads).
+target_link_libraries(Particles PRIVATE
+  Project
   )
 
 # set

@@ -8,9 +8,15 @@
 #include <Optimize/Optimize.h>
 #include <Optimize/OptimizeParameterFile.h>
 #include <Optimize/OptimizeParameters.h>
+#include <Particles/CorrespondenceEvaluation.h>
 #include <Profiling.h>
+#include <Project/Project.h>
 #include <ShapeworksUtils.h>
 #include <Utils/StringUtils.h>
+
+#include <algorithm>
+#include <fstream>
+#include <iomanip>
 
 #include <QCoreApplication>
 #include <boost/filesystem.hpp>
@@ -269,6 +275,155 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
 
     boost::filesystem::current_path(oldBasePath);
 
+    return true;
+  } catch (std::exception& e) {
+    std::cerr << "Error: " << e.what() << "\n";
+    return false;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CorrespondenceQuality
+///////////////////////////////////////////////////////////////////////////////
+void CorrespondenceQualityCommand::buildParser() {
+  const std::string prog = "correspondence-quality";
+  const std::string desc =
+      "Evaluate per-subject correspondence quality by reconstructing each shape from its local particles "
+      "(biharmonic mesh warp from the cohort L1-medoid template, matching Studio's median selection) and "
+      "measuring distance to the groomed mesh. Reports per-subject and aggregate statistics.";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help(
+      "Path to project file (.swproj or .xlsx).");
+  parser.add_option("--output").action("store").type("string").set_default("").help(
+      "Optional path to write per-subject CSV.");
+  parser.add_option("--output_meshes").action("store").type("string").set_default("").help(
+      "Optional directory; write reconstructed meshes with per-vertex distance field for visual inspection.");
+  std::list<std::string> methods{"point-to-cell", "point-to-point"};
+  parser.add_option("--method")
+      .action("store")
+      .type("choice")
+      .choices(methods.begin(), methods.end())
+      .set_default("point-to-cell")
+      .help("Distance method [default: %default].");
+  parser.add_option("--worst")
+      .action("store")
+      .type("int")
+      .set_default(5)
+      .help("Number of worst-ranked subjects to print [default: %default].");
+
+  Command::buildParser();
+}
+
+bool CorrespondenceQualityCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
+  const std::string& projectFile(static_cast<std::string>(options.get("name")));
+  const std::string& outputFile(static_cast<std::string>(options.get("output")));
+  const std::string& outputMeshesDir(static_cast<std::string>(options.get("output_meshes")));
+  const std::string methodopt(options.get("method"));
+  const int worst_n = static_cast<int>(options.get("worst"));
+
+  if (projectFile.empty()) {
+    std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
+    return false;
+  }
+
+  const auto method = (methodopt == "point-to-point") ? CorrespondenceEvaluation::DistanceMethod::PointToPoint
+                                                      : CorrespondenceEvaluation::DistanceMethod::PointToCell;
+
+  try {
+    ProjectHandle project = std::make_shared<Project>();
+
+    const auto oldBasePath = boost::filesystem::current_path();
+    auto base = StringUtils::getPath(projectFile);
+    auto filename = StringUtils::getFilename(projectFile);
+    if (base != projectFile) {
+      SW_LOG("Setting path to {}", base);
+      boost::filesystem::current_path(base.c_str());
+      project->set_filename(filename);
+    }
+
+    SW_LOG("Loading project: {}", filename);
+    project->load(filename);
+
+    // Resolve output-meshes dir relative to the caller's original CWD.
+    std::string meshes_dir;
+    if (!outputMeshesDir.empty()) {
+      boost::filesystem::path mp(outputMeshesDir);
+      if (!mp.is_absolute()) mp = boost::filesystem::path(oldBasePath) / mp;
+      meshes_dir = mp.string();
+    }
+
+    CorrespondenceQualityReport report;
+    try {
+      report = CorrespondenceEvaluation::evaluate(project, method, meshes_dir);
+    } catch (const std::exception& e) {
+      SW_ERROR("{}", e.what());
+      boost::filesystem::current_path(oldBasePath);
+      return false;
+    }
+
+    std::cout << "\n=== Correspondence Quality Summary ===\n";
+    std::cout << "Subjects evaluated: " << report.rows.size() << " (" << report.num_evaluated << " in aggregate, "
+              << report.num_template_rows << " template row(s) excluded)\n";
+    std::cout << "Template subject: " << report.template_subject << "\n";
+    std::cout << "Distance method: " << methodopt << "\n";
+    std::cout << std::fixed << std::setprecision(6);
+    std::cout << "Per-subject mean distance (reconstructed -> groomed):\n";
+    std::cout << "  mean   = " << report.agg_raw.mean << "\n";
+    std::cout << "  median = " << report.agg_raw.median << "\n";
+    std::cout << "  p95    = " << report.agg_raw.p95 << "\n";
+    std::cout << "  max    = " << report.agg_raw.max << "\n";
+    std::cout << "Normalized by per-subject groomed-mesh bbox diagonal (fraction):\n";
+    std::cout << "  mean   = " << report.agg_norm.mean << "  (" << std::setprecision(3)
+              << (report.agg_norm.mean * 100.0) << "%)\n";
+    std::cout << std::setprecision(6);
+    std::cout << "  median = " << report.agg_norm.median << "\n";
+    std::cout << "  p95    = " << report.agg_norm.p95 << "\n";
+    std::cout << "  max    = " << report.agg_norm.max << "\n";
+
+    // Worst-N (sorted by normalized mean; template excluded)
+    if (worst_n > 0) {
+      std::vector<CorrespondenceQualityRow> sorted_results;
+      sorted_results.reserve(report.rows.size());
+      for (const auto& r : report.rows) {
+        if (!r.is_template) sorted_results.push_back(r);
+      }
+      std::sort(sorted_results.begin(), sorted_results.end(),
+                [](const CorrespondenceQualityRow& a, const CorrespondenceQualityRow& b) {
+                  return a.norm_mean > b.norm_mean;
+                });
+      const int limit = std::min(worst_n, static_cast<int>(sorted_results.size()));
+      std::cout << "\nWorst " << limit << " subjects (ranked by normalized mean; template excluded):\n";
+      for (int i = 0; i < limit; ++i) {
+        const auto& r = sorted_results[i];
+        std::cout << "  " << r.subject << "  (domain " << r.domain << ")"
+                  << "  norm_mean=" << r.norm_mean << "  (" << std::setprecision(3) << (r.norm_mean * 100.0) << "%)"
+                  << std::setprecision(6) << "  mean=" << r.mean_dist << "  max=" << r.max_dist
+                  << "  bbox_diag=" << r.bbox_diag << "\n";
+      }
+    }
+
+    if (!outputFile.empty()) {
+      boost::filesystem::path out_path(outputFile);
+      if (!out_path.is_absolute()) {
+        out_path = boost::filesystem::path(oldBasePath) / out_path;
+      }
+      std::ofstream csv(out_path.string());
+      if (!csv) {
+        SW_ERROR("Failed to open output file: {}", out_path.string());
+        boost::filesystem::current_path(oldBasePath);
+        return false;
+      }
+      csv << "subject,domain,is_template,mean_dist,max_dist,bbox_diag,norm_mean,norm_max\n";
+      csv << std::fixed << std::setprecision(8);
+      for (const auto& r : report.rows) {
+        csv << r.subject << "," << r.domain << "," << (r.is_template ? 1 : 0) << "," << r.mean_dist << ","
+            << r.max_dist << "," << r.bbox_diag << "," << r.norm_mean << "," << r.norm_max << "\n";
+      }
+      SW_LOG("Wrote per-subject CSV: {}", out_path.string());
+    }
+
+    boost::filesystem::current_path(oldBasePath);
     return true;
   } catch (std::exception& e) {
     std::cerr << "Error: " << e.what() << "\n";
