@@ -4,6 +4,7 @@ set(Particles_sources
   ParticleSystemEvaluation.cpp
   ParticleShapeStatistics.cpp
   ShapeEvaluation.cpp
+  CorrespondenceEvaluation.cpp
   ReconstructSurface.cpp
   ParticleNormalEvaluation.cpp
   ParticleFile.cpp
@@ -14,6 +15,7 @@ set(Particles_headers
   ParticleShapeStatistics.h
   EvaluationUtil.h
   ShapeEvaluation.h
+  CorrespondenceEvaluation.h
   ReconstructSurface.h
   ParticleNormalEvaluation.h
   ParticleFile.h
@@ -32,6 +34,7 @@ target_include_directories(Particles PUBLIC
 target_link_libraries(Particles PUBLIC
   Mesh
   Optimize
+  Project
   tinyxml
   Eigen3::Eigen
   )

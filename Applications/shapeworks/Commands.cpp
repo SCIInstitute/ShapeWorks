@@ -5,13 +5,10 @@
 #include <Application/Job/PythonWorker.h>
 #include <Groom/Groom.h>
 #include <Logging.h>
-#include <Image/Image.h>
-#include <Mesh/Mesh.h>
-#include <Mesh/MeshWarper.h>
 #include <Optimize/Optimize.h>
 #include <Optimize/OptimizeParameterFile.h>
 #include <Optimize/OptimizeParameters.h>
-#include <Particles/ParticleFile.h>
+#include <Particles/CorrespondenceEvaluation.h>
 #include <Profiling.h>
 #include <Project/Project.h>
 #include <ShapeworksUtils.h>
@@ -20,8 +17,6 @@
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
-#include <limits>
-#include <numeric>
 
 #include <QCoreApplication>
 #include <boost/filesystem.hpp>
@@ -290,63 +285,6 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
 ///////////////////////////////////////////////////////////////////////////////
 // CorrespondenceQuality
 ///////////////////////////////////////////////////////////////////////////////
-namespace {
-
-Mesh load_groomed_as_mesh(const std::string& path) {
-  const std::string ext = StringUtils::getLowerExtension(path);
-  if (ext == ".nrrd" || ext == ".mha" || ext == ".mhd" || ext == ".nii" || ext == ".gz" || ext == ".tif" ||
-      ext == ".tiff") {
-    Image img(path);
-    return img.toMesh(0.0);
-  }
-  return Mesh(path);
-}
-
-Eigen::MatrixXd load_particles_matrix(const std::string& filename) {
-  Eigen::VectorXd v = particles::read_particles(filename);
-  const int n = static_cast<int>(v.size() / 3);
-  // read_particles returns interleaved [x0,y0,z0, x1,y1,z1, ...]
-  Eigen::MatrixXd m(n, 3);
-  for (int i = 0; i < n; ++i) {
-    m(i, 0) = v(3 * i + 0);
-    m(i, 1) = v(3 * i + 1);
-    m(i, 2) = v(3 * i + 2);
-  }
-  return m;
-}
-
-struct DistanceStats {
-  double mean = 0.0;
-  double max = 0.0;
-  double median = 0.0;
-  double p95 = 0.0;
-};
-
-DistanceStats summarize(std::vector<double> values) {
-  DistanceStats s;
-  if (values.empty()) return s;
-  std::sort(values.begin(), values.end());
-  s.mean = std::accumulate(values.begin(), values.end(), 0.0) / values.size();
-  s.max = values.back();
-  s.median = values[values.size() / 2];
-  const size_t p95_idx = std::min(values.size() - 1, static_cast<size_t>(0.95 * values.size()));
-  s.p95 = values[p95_idx];
-  return s;
-}
-
-struct SubjectResult {
-  std::string subject;
-  int domain;
-  double mean_dist;
-  double max_dist;
-  double bbox_diag;
-  double norm_mean;  // mean_dist / bbox_diag
-  double norm_max;   // max_dist / bbox_diag
-  bool is_template;
-};
-
-}  // namespace
-
 void CorrespondenceQualityCommand::buildParser() {
   const std::string prog = "correspondence-quality";
   const std::string desc =
@@ -389,8 +327,8 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
     return false;
   }
 
-  const Mesh::DistanceMethod distance_method =
-      (methodopt == "point-to-point") ? Mesh::DistanceMethod::PointToPoint : Mesh::DistanceMethod::PointToCell;
+  const auto method = (methodopt == "point-to-point") ? CorrespondenceEvaluation::DistanceMethod::PointToPoint
+                                                      : CorrespondenceEvaluation::DistanceMethod::PointToCell;
 
   try {
     ProjectHandle project = std::make_shared<Project>();
@@ -407,216 +345,53 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
     SW_LOG("Loading project: {}", filename);
     project->load(filename);
 
-    auto subjects = project->get_non_excluded_subjects();
-    if (subjects.empty()) {
-      SW_ERROR("No (non-excluded) subjects in project");
-      boost::filesystem::current_path(oldBasePath);
-      return false;
-    }
-    const int num_domains = project->get_number_of_domains_per_subject();
-    if (num_domains <= 0) {
-      SW_ERROR("Project has no domains");
-      boost::filesystem::current_path(oldBasePath);
-      return false;
-    }
-
-    // Pass 1: load every (subject, domain) particles + groomed paths. Keep only subjects
-    // that have complete data across all domains, so the L1-medoid is computed over a
-    // consistent cohort and the same global template is used in every domain.
-    std::vector<std::string> name_per_subject;
-    std::vector<std::vector<Eigen::MatrixXd>> particles_per_subject_domain;   // [subject][domain]
-    std::vector<std::vector<std::string>> groomed_per_subject_domain;          // [subject][domain]
-
-    for (auto& subj : subjects) {
-      auto particle_files = subj->get_local_particle_filenames();
-      auto groomed_files = subj->get_groomed_filenames();
-
-      bool complete = true;
-      std::vector<Eigen::MatrixXd> subj_particles;
-      std::vector<std::string> subj_groomed;
-      subj_particles.reserve(num_domains);
-      subj_groomed.reserve(num_domains);
-
-      for (int d = 0; d < num_domains; ++d) {
-        if (d >= static_cast<int>(particle_files.size()) || particle_files[d].empty() ||
-            d >= static_cast<int>(groomed_files.size()) || groomed_files[d].empty()) {
-          SW_LOG("Skipping subject '{}': missing particles or groomed for domain {}", subj->get_display_name(), d);
-          complete = false;
-          break;
-        }
-        try {
-          subj_particles.push_back(load_particles_matrix(particle_files[d]));
-        } catch (const std::exception& e) {
-          SW_LOG("Skipping subject '{}' domain {}: particle load failed: {}", subj->get_display_name(), d, e.what());
-          complete = false;
-          break;
-        }
-        subj_groomed.push_back(groomed_files[d]);
-      }
-
-      if (!complete) continue;
-      name_per_subject.push_back(subj->get_display_name());
-      particles_per_subject_domain.push_back(std::move(subj_particles));
-      groomed_per_subject_domain.push_back(std::move(subj_groomed));
-    }
-
-    const int num_subjects = static_cast<int>(name_per_subject.size());
-    if (num_subjects < 2) {
-      SW_ERROR("Need at least 2 subjects with complete data across all domains (have {})", num_subjects);
-      boost::filesystem::current_path(oldBasePath);
-      return false;
-    }
-
-    // Verify particle counts match across subjects per domain
-    std::vector<int> num_particles_per_domain(num_domains);
-    for (int d = 0; d < num_domains; ++d) {
-      num_particles_per_domain[d] = static_cast<int>(particles_per_subject_domain[0][d].rows());
-      for (int s = 1; s < num_subjects; ++s) {
-        if (particles_per_subject_domain[s][d].rows() != num_particles_per_domain[d]) {
-          SW_ERROR("Domain {}: subject '{}' has {} particles, expected {}", d, name_per_subject[s],
-                   particles_per_subject_domain[s][d].rows(), num_particles_per_domain[d]);
-          boost::filesystem::current_path(oldBasePath);
-          return false;
-        }
-      }
-    }
-
-    // L1-medoid template selection over concatenated per-domain local particles (matches
-    // Studio's compute_median_shape: argmin_i sum_j ||x_i - x_j||_1).
-    int template_idx = 0;
-    double best_l1_sum = std::numeric_limits<double>::infinity();
-    for (int i = 0; i < num_subjects; ++i) {
-      double sum_l1 = 0.0;
-      for (int j = 0; j < num_subjects; ++j) {
-        if (i == j) continue;
-        double pair_l1 = 0.0;
-        for (int d = 0; d < num_domains; ++d) {
-          pair_l1 += (particles_per_subject_domain[i][d] - particles_per_subject_domain[j][d]).cwiseAbs().sum();
-        }
-        sum_l1 += pair_l1;
-      }
-      if (sum_l1 < best_l1_sum) {
-        best_l1_sum = sum_l1;
-        template_idx = i;
-      }
-    }
-    SW_LOG("Template subject (L1-medoid): '{}' (sum of L1 distances to others = {:.4f})",
-           name_per_subject[template_idx], best_l1_sum);
-
-    // Resolve output meshes dir (create if missing)
-    boost::filesystem::path meshes_dir;
+    // Resolve output-meshes dir relative to the caller's original CWD.
+    std::string meshes_dir;
     if (!outputMeshesDir.empty()) {
-      meshes_dir = boost::filesystem::path(outputMeshesDir);
-      if (!meshes_dir.is_absolute()) {
-        meshes_dir = boost::filesystem::path(oldBasePath) / meshes_dir;
-      }
-      boost::filesystem::create_directories(meshes_dir);
-      SW_LOG("Writing reconstructed meshes to: {}", meshes_dir.string());
+      boost::filesystem::path mp(outputMeshesDir);
+      if (!mp.is_absolute()) mp = boost::filesystem::path(oldBasePath) / mp;
+      meshes_dir = mp.string();
     }
 
-    std::vector<SubjectResult> all_results;
-    std::vector<double> all_means;       // pooled raw mean distances (excluding template)
-    std::vector<double> all_norm_means;  // pooled bbox-normalized mean distances (excluding template)
-
-    // Pass 2: per-domain warp + distance using the single global template.
-    for (int domain = 0; domain < num_domains; ++domain) {
-      SW_LOG("=== Domain {} ===", domain);
-
-      Mesh template_mesh = load_groomed_as_mesh(groomed_per_subject_domain[template_idx][domain]);
-      MeshWarper warper;
-      warper.set_warp_method(WarpMethod::Biharmonic);
-      warper.set_reference_mesh(template_mesh.getVTKMesh(), particles_per_subject_domain[template_idx][domain]);
-      if (!warper.generate_warp()) {
-        SW_ERROR("Domain {}: failed to generate warp from template '{}'", domain, name_per_subject[template_idx]);
-        boost::filesystem::current_path(oldBasePath);
-        return false;
-      }
-
-      for (int i = 0; i < num_subjects; ++i) {
-        vtkSmartPointer<vtkPolyData> reconstructed = warper.build_mesh(particles_per_subject_domain[i][domain]);
-        if (!reconstructed) {
-          SW_LOG("Domain {}: subject '{}' reconstruction returned null, skipping", domain, name_per_subject[i]);
-          continue;
-        }
-
-        Mesh recon_mesh(reconstructed);
-        Mesh groomed_mesh = load_groomed_as_mesh(groomed_per_subject_domain[i][domain]);
-        auto field = recon_mesh.distance(groomed_mesh, distance_method)[0];
-
-        const int n = field->GetNumberOfTuples();
-        if (n == 0) continue;
-        double sum = 0.0;
-        double maxv = 0.0;
-        for (int k = 0; k < n; ++k) {
-          const double v = std::fabs(field->GetTuple1(k));
-          sum += v;
-          if (v > maxv) maxv = v;
-        }
-        const double mean_d = sum / n;
-
-        const auto bbox = groomed_mesh.boundingBox();
-        const double bbox_diag = (bbox.max - bbox.min).GetNorm();
-        const double norm_mean = (bbox_diag > 0.0) ? mean_d / bbox_diag : 0.0;
-        const double norm_max = (bbox_diag > 0.0) ? maxv / bbox_diag : 0.0;
-
-        const bool is_template = (i == template_idx);
-        all_results.push_back({name_per_subject[i], domain, mean_d, maxv, bbox_diag, norm_mean, norm_max, is_template});
-        if (!is_template) {
-          all_means.push_back(mean_d);
-          all_norm_means.push_back(norm_mean);
-        }
-
-        // Optional: write reconstructed mesh with distance field
-        if (!meshes_dir.empty()) {
-          field->SetName("distance");
-          recon_mesh.setField("distance", field, Mesh::FieldType::Point);
-          std::string fname = name_per_subject[i] + "_domain" + std::to_string(domain) + "_reconstructed.vtk";
-          if (is_template) fname = name_per_subject[i] + "_domain" + std::to_string(domain) + "_reconstructed_TEMPLATE.vtk";
-          boost::filesystem::path out_mesh = meshes_dir / fname;
-          recon_mesh.write(out_mesh.string());
-        }
-      }
-    }
-
-    if (all_results.empty()) {
-      SW_ERROR("No subjects evaluated");
+    CorrespondenceQualityReport report;
+    try {
+      report = CorrespondenceEvaluation::evaluate(project, method, meshes_dir);
+    } catch (const std::exception& e) {
+      SW_ERROR("{}", e.what());
       boost::filesystem::current_path(oldBasePath);
       return false;
     }
-
-    // Aggregate (excluding template — its reconstruction is near-identity and would skew
-    // small cohorts; e.g. with N=4 it dominates 25% of the average).
-    DistanceStats agg = summarize(all_means);
-    DistanceStats agg_norm = summarize(all_norm_means);
-    const size_t num_template_rows = all_results.size() - all_means.size();
 
     std::cout << "\n=== Correspondence Quality Summary ===\n";
-    std::cout << "Subjects evaluated: " << all_results.size() << " (" << all_means.size() << " in aggregate, "
-              << num_template_rows << " template row(s) excluded)\n";
-    std::cout << "Template subject: " << name_per_subject[template_idx] << "\n";
+    std::cout << "Subjects evaluated: " << report.rows.size() << " (" << report.num_evaluated << " in aggregate, "
+              << report.num_template_rows << " template row(s) excluded)\n";
+    std::cout << "Template subject: " << report.template_subject << "\n";
     std::cout << "Distance method: " << methodopt << "\n";
     std::cout << std::fixed << std::setprecision(6);
     std::cout << "Per-subject mean distance (reconstructed -> groomed):\n";
-    std::cout << "  mean   = " << agg.mean << "\n";
-    std::cout << "  median = " << agg.median << "\n";
-    std::cout << "  p95    = " << agg.p95 << "\n";
-    std::cout << "  max    = " << agg.max << "\n";
+    std::cout << "  mean   = " << report.agg_raw.mean << "\n";
+    std::cout << "  median = " << report.agg_raw.median << "\n";
+    std::cout << "  p95    = " << report.agg_raw.p95 << "\n";
+    std::cout << "  max    = " << report.agg_raw.max << "\n";
     std::cout << "Normalized by per-subject groomed-mesh bbox diagonal (fraction):\n";
-    std::cout << "  mean   = " << agg_norm.mean << "  (" << std::setprecision(3) << (agg_norm.mean * 100.0) << "%)\n";
+    std::cout << "  mean   = " << report.agg_norm.mean << "  (" << std::setprecision(3)
+              << (report.agg_norm.mean * 100.0) << "%)\n";
     std::cout << std::setprecision(6);
-    std::cout << "  median = " << agg_norm.median << "\n";
-    std::cout << "  p95    = " << agg_norm.p95 << "\n";
-    std::cout << "  max    = " << agg_norm.max << "\n";
+    std::cout << "  median = " << report.agg_norm.median << "\n";
+    std::cout << "  p95    = " << report.agg_norm.p95 << "\n";
+    std::cout << "  max    = " << report.agg_norm.max << "\n";
 
-    // Worst-N (sorted by normalized mean for scale-invariant ranking; template excluded)
+    // Worst-N (sorted by normalized mean; template excluded)
     if (worst_n > 0) {
-      std::vector<SubjectResult> sorted_results;
-      sorted_results.reserve(all_results.size());
-      for (const auto& r : all_results) {
+      std::vector<CorrespondenceQualityRow> sorted_results;
+      sorted_results.reserve(report.rows.size());
+      for (const auto& r : report.rows) {
         if (!r.is_template) sorted_results.push_back(r);
       }
       std::sort(sorted_results.begin(), sorted_results.end(),
-                [](const SubjectResult& a, const SubjectResult& b) { return a.norm_mean > b.norm_mean; });
+                [](const CorrespondenceQualityRow& a, const CorrespondenceQualityRow& b) {
+                  return a.norm_mean > b.norm_mean;
+                });
       const int limit = std::min(worst_n, static_cast<int>(sorted_results.size()));
       std::cout << "\nWorst " << limit << " subjects (ranked by normalized mean; template excluded):\n";
       for (int i = 0; i < limit; ++i) {
@@ -628,7 +403,6 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
       }
     }
 
-    // CSV
     if (!outputFile.empty()) {
       boost::filesystem::path out_path(outputFile);
       if (!out_path.is_absolute()) {
@@ -642,7 +416,7 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
       }
       csv << "subject,domain,is_template,mean_dist,max_dist,bbox_diag,norm_mean,norm_max\n";
       csv << std::fixed << std::setprecision(8);
-      for (const auto& r : all_results) {
+      for (const auto& r : report.rows) {
         csv << r.subject << "," << r.domain << "," << (r.is_template ? 1 : 0) << "," << r.mean_dist << ","
             << r.max_dist << "," << r.bbox_diag << "," << r.norm_mean << "," << r.norm_max << "\n";
       }
