@@ -34,9 +34,15 @@ target_include_directories(Particles PUBLIC
 target_link_libraries(Particles PUBLIC
   Mesh
   Optimize
-  Project
   tinyxml
   Eigen3::Eigen
+  )
+
+# Project is only used inside CorrespondenceEvaluation.cpp — keep PRIVATE so it
+# does not propagate to consumers of Particles (which was found to perturb VTK
+# static-init/link ordering in shapeworks_py and break .vtp reads).
+target_link_libraries(Particles PRIVATE
+  Project
   )
 
 # set
